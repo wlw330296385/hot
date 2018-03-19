@@ -1,0 +1,320 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    
+
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">会员 详细资料</h3>
+            </div>
+            <form class="form-horizontal" method="post" action="">
+                <input type="hidden" id="member-id" name="mid" value="{$memberInfo.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">HOT-ID</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.hot_id}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">推荐人</div>
+                        <div class="col-sm-5">
+                            {if $referer}
+                            {$referer.member}
+                            {else /}
+                            <a  class="btn btn-block btn-danger pop-iframe" data-href="{:url('admin/member/addReferer')}">添加推荐人</a>
+                            {/if}
+                        </div>
+                        
+                        <div class="col-sm-5">
+                            
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.telephone}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电子邮箱</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.email}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身份证</div>
+                        {volist name="certList" id="vol"}
+                        <div class="col-sm-5">
+                            {eq name="vol.cert_type" value="1"}
+                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
+                            {/eq}
+                        </div>
+                        <div class="col-sm-5">
+                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
+                        </div>
+                        {/volist}
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">头像</div>
+                        <div class="col-sm-5">
+                            {notempty name="memberInfo.avatar"}
+                            <img src="{$memberInfo.avatar}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">性别</div>
+                        <div class="col-sm-5">
+                            {switch name="memberInfo.sex"}
+                            {case value="1"}男{/case}
+                            {case value="2"}女{/case}
+                            {default/}未知
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">生日</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.birthday}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.province}-{$memberInfo.area}-{$memberInfo.city}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">居住地址</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.location}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">流量</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.flow}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">阶衔</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.level}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">积分余额</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.score}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">人民币余额</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.balance}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身高 体重 鞋码</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.height}cm  {$memberInfo.weight}kg {$memberInfo.shoe_code}码
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册时间</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$memberInfo.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">教练 详细资料</h3>
+            </div>
+            <form class="form-horizontal memberInfo-form" method="post" action="{:url('memberInfo/edit')}">
+                <input type="hidden" id="memberInfo-id" name="id" value="{$memberInfo.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">教练名称</div>
+                        <div class="col-sm-5">
+                            <input type="hidden" name="memberInfo" value="{$memberInfo.member}">
+                            {$coachInfo.coach}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">资质证书</div>
+                        {volist name="certList" id="vol"}
+                        <div class="col-sm-5">
+                            {eq name="vol.cert_type" value="3"}
+                            <img src="{$vol.photo_positive}" class="img-thumbnail" alt="">
+                            {/eq}
+                        </div>
+                        <div class="col-sm-5">
+                            <img src="{$vol.photo_back}" class="img-thumbnail" alt="">
+                        </div>
+                        {/volist}
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">形象照</div>
+                        <div class="col-sm-5">
+                            <img src="{$coachInfo.portraits}" class="img-thumbnail" alt="">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">等级</div>
+                        <div class="col-sm-5">
+                            {$coachInfo.coach_level}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">申请时间</div>
+                        <div class="col-sm-5">
+                            {$coachInfo.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$coachInfo.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">平台备注</div>
+                        <div class="col-sm-5">
+                            <textarea  class="form-control" name="system_remarks" rows="3">{$coachInfo.sys_remarks}</textarea>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+                </div>
+             
+            </form>
+        </div>
+        <div class="col-sm-12 col-md-12">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title">学生详细资料</h3>
+                </div>
+                {volist name="studentList" id="vol"}
+                    <div class="col-sm-6 col-md-6">
+                        <div class="box box-success">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">{$vol.student}</h3>
+                            </div>
+                            <form class="form-horizontal memberInfo-form" method="post" action="{:url('memberInfo/edit')}">
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">出生年月</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$vol.student_birthday}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">紧急号码</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$vol.emergency_telephone}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">身高 体重 鞋码</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$vol.student_height}cm  {$vol.student_weight}kg {$vol.student_shoe_code}码
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    
+    $(function(){
+        $('.pop-iframe').click(function() {
+            var iframeurl = $(this).attr('data-href');
+            // alert(iframeurl);return;
+            var title = $(this).text();
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: title,
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['900px', '650px'],
+                    content: iframeurl
+                });
+            });
+        });
+
+    })
+
+    function sendpost(memberInfo, code, sremarks) {
+        var serverurl = "{:url('memberInfo/audit')}";
+        $.post(serverurl, {
+            memberInfo: memberInfo,
+            code: code,
+            sys_remarks: sremarks
+        }, function(res) {
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营-活动详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('event/eventListOfCamp',['organization_id'=>$eventInfo['organization_id']])}">
+            <span class="return">返回活动列表</span>
+        </a>
+        <h1 class="mui-title">{$eventInfo.organization}</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="camp-list camp-lesson-list detalis-list">
+
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}" style="width:70px!important;height: 56px!important;">
+                    <div class="mui-media-body wd52">
+                        <strong>{$eventInfo.event}</strong>
+                        <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                    </div>
+                    <div class="price-frame">
+                        <a href="{:url('event/updateEvent',['event_id'=>$eventInfo['id']])}" class="mui-navigate-right">
+                            <span class="editor-btn">编辑</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">报名人员
+                    <a href="{:url('event/eventOfSignUpList',['event_id'=>$eventInfo['id']])}" class="mui-navigate-right colororange fr">
+                        <span style="display: table"> 已有 {$eventInfo.participator} 人报名，点击查看</span>
+                    </a>
+                </li>
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli">活动对象
+                    <span class="target_type"></span>
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='2||3'}show{else/}hide{/eq}">所属训练营
+                    <span>{$eventInfo.organization}</span>
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">所属班级
+                    <span>{$eventInfo.target}</span>
+                </li>
+                <li class="mui-table-view-cell listli" style="line-height:37px">活动套餐
+                    <span class="wd">
+                        {volist name='$eventInfo.doms' id="vol"}
+                        <button type="button" class="mui-btn selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
+                        {/volist}
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">费用结算人
+                    <span>{$eventInfo.finance}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动开始时间
+                    <span>{$eventInfo.starts}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动结束时间
+                    <span>{$eventInfo.ends}</span>
+                </li>
+                <li class="mui-table-view-cell listli">所属地区
+                    <span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">活动地点
+                    <span>{$eventInfo.location}</span>
+                </li>
+                <li class="mui-table-view-cell listli">人数范围
+                    <span>{$eventInfo.min}-{$eventInfo.max}人</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系人
+                    <span>{$eventInfo.contact}</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系电话
+                    <span>{$eventInfo.telephone}</span>
+                </li>
+            </ul>
+
+            <!--活动简介-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">活动简介</span>
+            </div>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli introBox intro1">{$eventInfo.event_des}</li>
+            </ul>
+
+            <!--已参与人员-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">已参与人员</span>
+            </div>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli introBox">
+                    <div class="box intro2" id="inactiveList"></div>
+                </li>
+            </ul>
+
+            <!--备注信息-->
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">备注信息</span>
+            </div>
+            <ul class="mui-table-view list mt55">
+                <li class="mui-table-view-cell listli introBox intro3">{$eventInfo.remarks}</li>
+            </ul>
+
+            {egt name="power" value='2'}
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen">
+                    <a href="{:url('event/recordEvent',['event_id'=>$eventInfo['id']])}">活动录入</a>
+                </li>
+            </ul>
+            {/egt}
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            toExpMemberList();
+
+            // 简介默认的提示
+            if ($(".intro1").text() == '') {
+                $(".intro1").append("<p class='nohave'>没有活动简介哦</p>")
+            }
+            if ($(".intro3").text() == '') {
+                $(".intro3").append("<p class='nohave'>没有备注信息哦</p>")
+            }
+
+            // 活动对象转换成文字显示
+            var target_type_name = '';
+            var target_type = "{$eventInfo.target_type}";
+            if (target_type == 1) {
+                target_type_name = "公开活动";
+            } else if (target_type == 2) {
+                target_type_name = "营内活动";
+            } else if (target_type == 3) {
+                target_type_name = "班内活动";
+            }
+            $(".target_type").text(target_type_name)
+        });
+
+        //更新学员序号
+        function changeIndex() {
+            var i = 1;
+            $(".checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        }
+
+        //获取已经分配班级的学员列表
+        var toExpMemberList = function () {
+            var url = "{:url('api/event_member/getEventMemberListNoPageApi',['event_id'=>$eventInfo.id])}";
+            var event_id = "{$eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    event_id: event_id,
+                    status: 3
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        totalLength = data.data.length;
+                        $(".mui-badge").text(totalLength);
+                        $("#inactiveList").empty();
+
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv = '<div class="mui-input-row mui-checkbox checkboxCont border-b"><label class="number wd45">' + (i + 1) + '</label><font>' + data.data[i].member + '</font></div>'
+                            $("#inactiveList").append(inactiveDiv);
+                        };
+                        if (inactiveDiv == '') {
+                            $("#inactiveList").append("<p class='nohave'>没有参与人员哦</p>")
+                        }
+                        changeIndex();//调用-更新序号
+                        totalNum = $(".checkboxCont").length;
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

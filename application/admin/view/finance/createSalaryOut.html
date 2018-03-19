@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/skins/skin-blue.min.css">
+</head>
+<body>
+	<!-- Main content -->
+	<section class="content">
+		<div class="row col-md-12 col-lg-12">
+			<!-- left column -->
+			<div class="col-md-6 col-lg-6">
+				<!-- general form elements -->
+				<div class="box box-primary bg-gray disabled ">
+					<div class="box-header with-border">
+						<h3 class="box-title">创建支付</h3>
+					</div>
+					<!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="" method="post">
+						<div class="box-body">
+							<div class="form-group">
+								<label for="">选择会员</label>
+								<select class="form-control " name="member_id" required="required">
+									{volist name="salaryInList" id="vol"}
+									<option value="{$vol.member_id}">{$vol.member}</option>
+									{/volist}
+								</select>
+							</div>
+							{:token()}
+                            <div class="form-group">
+                                <label for="">选择月份(限12个月)</label>
+                                <select class="form-control m data" id="start_end" name="system_remarks">
+                                    {volist name='mList' id = 'vol'}
+                                    <option value="{$vol.mm}" data = '{$vol.start},{$vol.end}' >{$vol.mm}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+							<div class="form-group">
+								<label for="">课时(shcedule)收入与业绩(rebate)收入/月</label>
+								<li class="form-control" id="totalSalary" >0</li>
+							</div>
+							
+							<div class="form-group"  required="required">
+								<label for="">填写提现金额   (最大:<span id="balance" style="color: red">0</span>) </label>
+								<input type="number" class="form-control data" name="salary" placeholder="0" value="" id="salary" >
+							</div>
+                            <div class="form-group">
+                                <label for="">选择到账账号</label>
+                                <select class="form-control data " name="bankcard_id" id="bankcard"  required="required">
+
+                                </select>
+                            </div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" checked=""> 是否发送模板消息
+								</label>
+							</div>
+						</div>
+						<!-- /.box-body -->
+
+						<div class="box-footer">
+							<input type="submit" id="" value="提交">
+						</div>
+					</div>
+				</form>
+				<!-- /.box -->
+
+
+
+				<!-- /input-group -->
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+	<!--/.col (left) -->
+
+	</div>
+	<!-- /.row -->
+	</section>
+</body>
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
+<script src="/static/backend/layui/layui.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+
+<script type="text/javascript">
+	var member_id = $('select[name=member_id]').val();
+    var start_end = $('select#start_end option:selected').attr('data');
+    var balance;
+	$(function(){
+         
+        // 切换用户
+		$('select[name=member_id]').on('change',function(){
+			member_id = $('select[name=member_id]').val();
+            // start_end = $('#start_end').val();
+            start_end = $('select#start_end option:selected').attr('data');
+			getSalaryInList(member_id,start_end);
+            getBankcardList(member_id);
+            console.log(balance)
+            balance = getMemberInfo();
+            console.log(balance)
+		});
+
+        $('#start_end').on('change',function(){
+            member_id = $('select[name=member_id]').val();
+            start_end = $('select#start_end option:selected').attr('data');
+            var betweenTime = $('select#start_end option:selected').attr('data').split(',');
+            getSalaryOutList({member_id:member_id,start:betweenTime[0],end:betweenTime[1]});
+            getSalaryInList(member_id,start_end);
+        })
+
+        // 提交
+        $('form').on('submit',function(){
+            if(balance<$('#salary').val()){
+                alert('金额不允许大于余额('+balance+')');
+                return false ;
+            }
+            // console.log($('#salary').val());return false;
+            var submiUrl = "";
+            var data = wooApi.getInputData('input', 'data');
+            var datas = wooApi.getInputData('number', 'data',data);
+            var arrData = wooApi.getInputData('select', 'data', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.__token__ = "{$Request.token}";
+            var ajaxResult = wooApi.asyncF(submiUrl, objData);
+            alert(ajaxResult.msg);
+        })
+
+        balance = getMemberInfo();
+        getBankcardList(member_id);
+		getSalaryInList(member_id,start_end);
+	})
+    var getMemberInfo = function(){
+        var url = "{:url('api/member/getmemberInfoApi')}";
+        member_id = $('select[name=member_id]').val();
+        $.post({
+            url: url,
+            data: {
+                "id":member_id,
+            },
+            async:false,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+
+                    result = data.data.balance;
+                    $("#balance").text(result);
+                    console.log(result)
+                    return result;
+                } else {
+                    $("#balance").text(0);
+                    return 0;
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+               return 0;
+            }
+        });
+    }
+
+	//月收入接口获取数据并追加到页面
+    var getSalaryInList = function (member_id,start_end) {
+        var url = "{:url('api/Salaryin/getSalaryInfoByMonthApi')}";
+        $.post({
+            url: url,
+            data: {
+                "member_id":member_id,
+                "start_end_str" : start_end
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    var scheduleIn = data.data.scheduleIn;
+                    $("#totalSalary").text(scheduleIn);
+                } else {
+                    $("#totalSalary").text(0);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+    //月收入接口获取数据并追加到页面
+    var getSalaryOutList = function (data) {
+        var url = "{:url('api/Salary_out/getSalaryoutListApi')}";
+        $.post({
+            url: url,
+            data: data,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (msg) {
+                if(msg.data.length>0){
+                    alert(`该用户这个月份已有${msg.data.length}笔提现,确定还要提现吗?`);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+
+    //鏈堟敹鍏ユ帴鍙ｈ幏鍙栨暟鎹苟杩藉姞鍒伴〉闈�
+    var getBankcardList = function (member_id) {
+        var url = "{:url('api/bankcard/getBankcardListApi')}";
+        $.post({
+            url: url,
+            data: {
+                "member_id":member_id,
+            },
+            dataType: 'json',//鏈嶅姟鍣ㄨ繑鍥瀓son鏍煎紡鏁版嵁
+            type: 'post',//HTTP璇锋眰绫诲瀷
+            timeout: 10000,//瓒呮椂鏃堕棿璁剧疆涓�10绉掞紱
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<option value='+data.data[i].id+'>['+data.data[i].bank_type+'('+data.data[i].realname+')]'+data.data[i].bank+'('+data.data[i].bank_card+')</option>';
+                    }
+                    if (newli == '') {
+                        newli = "<option>该用户无银行卡</option>"
+                    }
+                    $("#bankcard").html(newli);
+                } else {
+                    newli = "<option>该用户无银行卡</option>"
+                    $("#bankcard").html(newli);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络错误,请清空缓存');
+            }
+        });
+    };
+
+</script>
+</html>
+

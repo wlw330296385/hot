@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教练注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .regspan {
+            font-size: 12px;
+            text-align: center;
+            height: 20px;
+            padding: 10px 0;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader header2">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">注册教练身份</h1>
+    </header>
+    <div class="mui-content pt">
+
+        <div class="register">
+            <form action="" class="mui-input-group">
+                <input type="hidden" name="memberid" value="{$mid}"> {notempty name="memberInfo.nickname"}
+                <div class="mui-input-row">
+                    <label>微信昵称</label>
+                    <span>
+                        {$memberInfo['nickname']}</span>
+                </div>
+                {/notempty}
+                <div class="mui-input-row">
+                    <label>真实姓名</label>
+                    <input type="text" name="coach_name" value="" class="input coach_name" placeholder="请输入真实姓名">
+                </div>
+                <div class="mui-input-row">
+                    <label>身份证号码</label>
+                    <input type="text" name="idno" value="" class="input wd54 idno" placeholder="请输入身份证号码">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                        <label>身份证正面</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="photo_positive" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                        <label>身份证反面</label>
+                        <img id="preview_2" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="photo_back" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
+                        <label>个人形象照</label>
+                        <img id="preview_3" class="coachicon icon01 upload-preview">
+                        <input type="hidden" name="portraits" value=''>
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                        <label>资质证明</label>
+                        <img id="preview_4" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="cert" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373">
+                        </span>
+                    </a>
+                    <input id="location-input" type="hidden" name="locationStr" value="">
+                </div>
+                <div class="mui-input-row">
+                    <label>教龄</label>
+                    <input type="text" name="coach_year" value="" class="input coach_year" placeholder="请输入教学工作年数" value="">
+                </div>
+                <div class="mui-input-row h-auto">
+                    <label>教学经验描述</label>
+                    <textarea rows="4" class="experience" placeholder="填写教学经验"></textarea>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <label>教练宣言</label>
+                    <textarea rows="4" class="description" placeholder="个人宣言"></textarea>
+                </div>
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否公开到平台</label>
+                        <span class="select-row">
+                            <select id="openCoach" class="data" name="is_open">
+                                <option value="1">公开</option>
+                                <option value="-1">不公开</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">自我介绍</span>
+                </div>
+                <div class="mui-input-row tuwenEditor">
+                    <textarea name="introduction" class="data introduction" style="display: none"></textarea>
+                    <div class="introBox"></div>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div class="filePickerTwo">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+                </div>
+            </form>
+
+            <div class="tip-box">
+                <input name="iagree" type="checkbox" />&nbsp;
+                <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
+            </div>
+            <div class="tjbtn mb44">
+                <button type="button" class="mui-btn btn registerbtn2">注册</button>
+            </div>
+            <!--<p class="pass"><a href="{:url('index/index')}">[跳过，稍后完善]</a></p>-->
+        </div>
+    </div>
+
+    <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
+        <div class="page-header">
+            <span class="course">
+                <strong>篮球管家服务平台与用户共同确认：</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll"></div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        //地区选择器
+        (function ($, doc) {
+
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                var locationvalue = doc.getElementById('location-input');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+            });
+        })(mui, document);
+
+        //完善教练信息
+        $(function () {
+
+            //获取用户协议内容，放置弹出框中
+            mui.ajax("{:url('frontend/member/userAgreement')}", {
+                data: {},
+                dataType: 'html',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    // console.log(data);
+                    $("#userAgreement .mui-scroll").append(data);
+
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+
+
+            $(".registerbtn2").on("click", function () {
+
+
+                //图文编辑状态转换浏览状态
+                tuwenToView()
+
+                //获取最终含简单html标签的图文内容
+                var introHtml = $(".introBox").html();
+                /////////////////////////////////////////////////////////////////
+
+                var coachid = $('input[name=coachid]').val();
+                var memberid = $('input[name=memberid]').val();
+                var coach_name = $('.coach_name').val();
+                var coach_year = $(".coach_year").val();
+                var experience = $(".experience").val();
+                var description = $(".description").val();
+                var locationStr = $('input[name=locationStr]').val();
+                var idno = $(".idno").val();
+                var portraits = $("input[name=portraits]").val();
+                var photo_positive = $('input[name=photo_positive]').val();
+                var photo_back = $('input[name=photo_back]').val();
+                var cert = $('input[name=cert]').val();
+
+                if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(coach_name)) {
+                    mui.toast("请输入您的真实姓名");
+                    return false;
+                } else if (!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/).test(idno)) {
+                    mui.toast("请输入正确身份证号码");
+                    return false;
+                } else if (portraits == "" || photo_positive == "" || photo_back == "" || cert == "") {
+                    mui.toast("请上传对应证件");
+                    return false;
+                } else if (locationStr == "") {
+                    mui.toast("请选择所属地区");
+                    return false;
+                } else if (!(/^\+?[1-9]\d*$/).test(coach_year)) {
+                    mui.toast("请输入正确的教龄");
+                    return false;
+                } else if (experience == "" || introHtml == "" || description == '') {
+                    mui.toast("请完善教练经验、自我简介、教练宣言信息");
+                    return false;
+                } else if (!$('input[name=iagree]').is(':checked')) {
+                    mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+                    return false;
+                };
+
+                mui.confirm('确认提交填写信息吗?', '', ['取消', '确认'], function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/coach/createCoachApi')}", {
+                            data: {
+                                coachid: coachid,
+                                member_id: memberid,
+                                coach: coach_name,
+                                coach_year: coach_year,
+                                experience: experience,
+                                introduction: introHtml,
+                                description: description,
+                                portraits: portraits,
+                                locationStr: locationStr,
+                                photo_positive: photo_positive,
+                                photo_back: photo_back,
+                                cert: cert,
+                                idno: idno
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    window.location.href = "{:url('coach/registersuccess')}";
+                                } else {
+                                    //图文转换成可编辑状态
+                                    tuwenToEdit()
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(type);
+                            }
+                        });
+                    }
+                })
+
+            })
+
+        })
+    </script>
+</body>
+
+</html>

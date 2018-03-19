@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教学大纲详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('plan/planlist',['camp_id'=>$campInfo['id']])}{if $planInfo.camp_id==0 }?tab=sysPlanList{/if}">
+            <span class="return">返回教案列表</span>
+        </a>
+    </header>
+
+    <div class="mui-content whitebg mt55">
+
+        <div class="camp-list camp-lesson-list detalis-list grade-list editor program">
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell mui-media listli listinitial">
+
+                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/program.png" style="width: 45px !important;height: 45px !important; margin-right: 15px;">
+                    <div class="mui-media-body wd52">
+                        <strong>{$planInfo.outline}</strong>
+                        <p class="mui-ellipsis" style="text-indent: 0">作者:{$planInfo.member}</p>
+                    </div>
+                    {gt name="$power" value="2"}
+                    <div class="price-frame">
+                        <a href="{:url('plan/updatePlan',['plan_id'=>$planInfo['id']])}" class="mui-navigate-right">
+                                <span class="editor-btn">编辑</span>
+                        </a>
+                    </div>
+                    {/gt}
+                </li>
+            </ul>
+            <div class=program-view2>
+                <span class=fl>{$planInfo.grade_category}</span>
+                <span class=fr>{$planInfo.camp}</span>
+            </div>
+
+            <ul class="mui-table-view list border-b">
+                <li class="mui-table-view-cell listli">大纲介绍
+                    <span>{$planInfo.outline_detail}</span>
+                </li>
+            </ul>
+
+            <div class="program-view4">
+                <h5>训练项目</h5>
+                <div class="mt25">
+                    {volist name="planInfo.exercise_strarr" id="vo"}
+                    <ul class="mui-table-view list eType">
+                        <li class="mui-table-view-cell listli detalisli">
+                            <h5><strong class="daType">{$vo.exercise}</strong></h5>
+                            {if condition="isset($vo.sub)"} {volist name="vo.sub" id="sub"}
+                            <p>{$sub.exercise} <i class="fr f12">{$sub.exercise_time} 分钟</i></p>
+                            {/volist} {/if}
+                        </li>
+                    </ul>
+                    {/volist}
+                </div>
+            </div>
+
+            <!--<div class="program-view5 border-b">-->
+                <!--<div class="image-items">-->
+                    <!--<div class="imagef image">-->
+                        <!--视频区域-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="program-view6">
+                <p>
+                    <input type="checkbox" checked>对外开放
+                </p>
+            </div>-->
+        </div>
+        {if $planInfo.camp_id==0 }
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                添加到我的教案库
+            </li>
+        </ul>
+        {/if}
+
+        {if $planInfo.camp_id!=0 && $planInfo.pid==0 }
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli f12">
+                此教案从平台教案库添加
+            </li>
+        </ul>
+        {/if}
+    </div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+    // 获取数据并进行提交
+    function submitAction() {
+
+
+
+        var objData={};
+        objData.member = "{$memberInfo.member}";
+        objData.member_id = "{$memberInfo.id}";
+        objData.camp = "{$campInfo.camp}";
+        objData.camp_id = "{$campInfo.id}";
+        objData.pid = "0";
+        objData.grade_category = "{$planInfo.grade_category}";
+        objData.grade_category_id = "{$planInfo.grade_category_id}";
+        objData.outline = "{$planInfo.outline}";
+        objData.outline_detail = "{$planInfo.outline_detail}";
+        objData.exercise_str = JSON.stringify({$planInfo.exercise_str});
+
+        console.log(objData)
+//        return false;
+
+        var url = "{:url('api/plan/createPlanApi')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '教案添加成功', '确定', function () {
+                var goUrl = "{:url('plan/planinfo')}" + '/plan_id/' + ajaxResult.data + '/camp_id/{$campInfo.id}';
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '添加失败');
+        }
+    };
+
+
+</script>
+
+</html>

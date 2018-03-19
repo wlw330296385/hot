@@ -1,0 +1,403 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+{/block}
+
+{block name="page-content"}
+
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box" style="margin: 0; box-shadow: none;">
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<div class="input-group" data-toggle="modal" data-target="#campModal">
+									<input type="text" name="camp" class="form-control pull-right wAuto" placeholder="请选择训练营" value="">
+									<input type="hidden" name="camp_id" value="">
+									<div class="input-group-addon">
+										<i class="fa fa-angle-down"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>统计时间：</label>
+								<div class="input-group">
+									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>本月总收益：</small><strong class="text-yellow monthIn"></strong></span>
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- /.col -->
+</div>
+
+<div class="panel panel-default panel-intro">
+	<div class="panel-heading">
+		<h3 class="totalRight pull-right">
+			<span><small>课时收益：</small><strong class="text-yellow sXuefeiTotal"></strong></span>
+			<span><small>购买课量：</small><strong class="text-yellow sKeciTotal"></strong></span>
+			<span><small>购课人次：</small><strong class="text-yellow sRenciTotal"></strong></span>
+			<span><small>活动收益：</small><strong class="text-yellow eShouruTotal"></strong></span>
+			<span><small>报名人次：</small><strong class="text-yellow eRenciTotal"></strong></span>
+		</h3>
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#scheduleCount" data-toggle="tab">课时收益</a></li>
+			<li><a href="#eventCount" data-toggle="tab">活动收益</a></li>
+		</ul>
+	</div>
+	<div class="panel-body">
+
+		<div class="tab-content">
+			<!-- 系统统计 -->
+			<div class="tab-pane fade active in" id="scheduleCount">
+				<div class="col-md-12 col-sm-12">
+					<!-- Info boxes -->
+					<div class="row pab10">
+
+						<table id="scheduleList" class="table table-bordered table-striped dataTable" role="grid"
+							   aria-describedby="example1_info">
+							<thead>
+							<tr role="row">
+								<th class="sorting_asc">训练营</th>
+								<th>课程</th>
+								<th>课量</th>
+								<th>人次</th>
+								<th>学费</th>
+								<th>详情</th>
+							</tr>
+							</thead>
+							<tbody>
+							{volist name="list1" id="vol"}
+							<tr role="row" class="odd">
+								<td class="sorting_1">{$vol.camp}</td>
+								<td>{$vol.goods}</td>
+								<td class="sKeci">{$vol.s_total}</td>
+								<td class="sRenci">{$vol.c_id}</td>
+								<td class="sXuefei">{$vol.s_income}</td>
+								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+							</tr>
+							{/volist}
+							</tbody>
+							<tfoot>
+							<tr role="row">
+								<td>合计</td>
+								<td></td>
+								<td class="sKeciTotal"></td>
+								<td class="sRenciTotal"></td>
+								<td class="sXuefeiTotal"></td>
+								<td>-</td>
+							</tr>
+							</tfoot>
+						</table>
+
+					</div>
+					<!-- /.row -->
+				</div>
+			</div>
+
+			<!-- 微信统计 -->
+			<div class="tab-pane fade" id="eventCount">
+				<div class="col-md-12 col-sm-12">
+					<!-- Info boxes -->
+					<div class="row pab10">
+
+						<table id="eventList" class="table table-bordered table-striped dataTable" role="grid"
+							   aria-describedby="example1_info">
+							<thead>
+							<tr role="row">
+								<th class="sorting_asc">训练营</th>
+								<th>活动名称</th>
+								<th>活动单价</th>
+								<th>报名人次</th>
+								<th>活动收入</th>
+								<th>操作</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							{volist name="list2" id="vol"}
+							<tr role="row" class="odd">
+								<td class="sorting_1">{$vol.camp}</td>
+								<td>{$vol.goods}</td>
+								<td>{$vol.price}</td>
+								<td class="eRenci">{$vol.s_total}</td>
+								<td class="eShouru">{$vol.s_income}</td>
+								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+							</tr>
+							{/volist}
+							</tbody>
+							<tfoot>
+							<tr role="row">
+								<td>合计</td>
+								<td></td>
+								<td></td>
+								<td class="eRenciTotal"></td>
+								<td class="eShouruTotal"></td>
+								<td>-</td>
+							</tr>
+							</tfoot>
+						</table>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<h1>学费收益统计========================================</h1>
+{volist name="list1" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;训练营名称:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程名称:{$vol.goods}&nbsp;&nbsp;&nbsp;&nbsp;课次:{$vol.s_total}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.c_id}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+
+<h1>活动收益统计========================================</h1>
+{volist name="list2" id="vol"}
+<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;训练营名称:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程名称:{$vol.goods}&nbsp;&nbsp;&nbsp;&nbsp;课次:{$vol.s_total}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.c_id}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
+{/volist}
+
+
+<!-- Modal : Camp -->
+<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-group input-group-sm">
+					<input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称 ...">
+					<span class="input-group-btn">
+                      <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+				</div>
+				<div class="tableScroll">
+					<table id="campList" class="table table-bordered table-striped dataTable">
+						<thead>
+						<tr role="row">
+							<th>训练营名称</th>
+							<th>所属地区</th>
+							<th>详情</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr role="row" class="nodata"><td colspan="4">请搜索训练营</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+
+    var currCampName = localStorage.getItem('currCampName');
+    var currCampID = localStorage.getItem('currCampID');
+    var currDateYM = localStorage.getItem('currDateYM');
+
+    $(function () {
+
+        //=========================== 初始化数据 ==============================//
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+        if(currDateYM==''||currDateYM==null) {
+            var currDate = new Date();
+            var currYear = currDate.getFullYear();
+            var currMonth = currDate.getMonth();
+            if(currMonth==0){
+                currDateYM = parseInt(currYear)-1+'-12';
+            }else{
+                currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+                currDateYM = currYear+'-'+ currMonth ;
+            }
+            localStorage.setItem('currDateYM',currDateYM);
+        }
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=dateYM]").val(currDateYM);
+        if(currCampID!=''&&currCampID!=null){
+            $("input[name=camp_id]").val(currCampID);
+            $("input[name=camp]").val(currCampName);
+            $(".campKeyword").val(currCampName);
+            $(".campName").text(currCampName);
+        }
+
+
+        //=========================== 初始化数据 ==============================//
+
+
+
+        //遍历需要统计的数据列，并赋值到对应位置
+        var sKeci=0;
+        $(".sKeci").each(function () {
+            sKeci = sKeci + parseInt($(this).text());
+        });
+        var sRenci=0;
+        $(".sRenci").each(function () {
+            sRenci = sRenci + parseInt($(this).text());
+        });
+        var sXuefei=0;
+        $(".sXuefei").each(function () {
+            sXuefei = sXuefei + parseInt($(this).text());
+        });
+        var eRenci=0;
+        $(".eRenci").each(function () {
+            eRenci = eRenci + parseInt($(this).text());
+        });
+        var eShouru=0;
+        $(".eShouru").each(function () {
+            eShouru = eShouru + parseInt($(this).text());
+        });
+
+        $(".sKeciTotal").text(sKeci);
+        $(".sRenciTotal").text(sRenci);
+        $(".sXuefeiTotal").text(sXuefei);
+        $(".eRenciTotal").text(eRenci);
+        $(".eShouruTotal").text(eShouru);
+        var mIn = parseInt(sXuefei)+parseInt(eShouru);
+        $(".monthIn").text(mIn);
+
+
+
+
+        //平台后续换成分页版（地区代理商无需分页）
+        toCampList('');
+
+        $('#scheduleList,#eventList').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
+
+        //选择年月
+        $('#dateYM').datepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm",
+            minViewMode: 1,
+            todayBtn: true
+        });
+
+        //搜索训练营
+        $("#searchCampBtn").on("click", function () {
+            var keyword = $(".campKeyword").val();
+            if(keyword==""){
+                alert("请输入训练营名称！");
+            }else{
+                toCampList(keyword);
+            }
+        })
+
+        $("#campList tbody").on("click",".btn", function () {
+            var camp_id = $(this).attr("data-id");
+            var camp = $(this).attr("data-camp");
+            $("input[name=camp_id]").val(camp_id);
+            $("input[name=camp]").val(camp);
+            $(".campName").text(camp);
+            $('#campModal').modal('hide');
+        })
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var camp = $("input[name=camp]").val();
+            var camp_id = $("input[name=camp_id]").val();
+            var getYM = $("input[name=dateYM]").val();
+            if(camp_id==""){
+                alert("请选择训练营！");
+                return false;
+            }
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            localStorage.setItem('currCampName',camp);
+            localStorage.setItem('currCampID',camp_id);
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.location.href="{:url('/admin/Statistics_Camp/campIncome/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+        })
+
+
+
+    })
+
+
+    //接口获取数据并追加到页面
+    var toCampList = function (keyword) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
+        $.ajax({
+            url: url,
+            data: {
+                status: 1,
+                keyword: keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
+                    }
+                }
+                if (newli == '') {
+                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                }else{
+                    $("#campList tbody").empty().append(newli);
+                }
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+
+</script>
+{/block}

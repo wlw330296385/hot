@@ -1,0 +1,32 @@
+{__CONTENT__}
+
+
+<!--底部导航-->
+<nav class="mui-bar mui-bar-tab">
+	{volist name="footMenu" id="vol"}
+    <a class="mui-tab-item {eq name='controller' value='$vol.controller' } mui-active{/eq}" href="{:url($vol.controller.'/'.$vol.action)}">
+        <span class="mui-icon {$vol.icon}" id="{$vol.controller}" data="{$vol.controller}">
+        	<!-- <span class="mui-badge">5</span> -->
+        </span>
+        <span class="mui-tab-label">{$vol.name}</span>
+    </a>
+    {/volist}
+</nav>
+
+
+<script src="/static/frontend/js/wooApi.js"></script>
+<script type="text/javascript">
+	mui("body").on("tap","a",function(){
+	    window.top.location.href=this.href;
+	});
+    
+    if({$memberInfo.id}>0){
+        if(window.unReadMessage){
+            var html = `<span class="mui-badge">${window.unReadMessage}</span>`;
+            $('#Message').html(html);
+        }else{
+            wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
+        }
+        
+    }
+</script>

@@ -1,0 +1,155 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">场地 详细资料</h3>
+            </div>
+            <form class="form-horizontal court-form" method="post" action="">
+                <input type="hidden" id="court-id" name="id" value="{$data.id}">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">场地名称</div>
+                        <div class="col-sm-5">
+                            {$data.court}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">发布场地训练营</div>
+                        <div class="col-sm-5">
+                            {gt name="data.camp_id" value="0"}
+                            {$data.camp}
+                            {else/}平台发布
+                            {/gt}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$data.province}-{$data.city}-{$data.area}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">具体地址</div>
+                        <div class="col-sm-5">
+                            {$data.location}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">场地负责人</div>
+                        <div class="col-sm-5">
+                            {$data.principal}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">场地联系电话</div>
+                        <div class="col-sm-5">
+                            {$data.contract}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">散场租金</div>
+                        <div class="col-sm-5">
+                            {$data.chip_rent} 元
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">半场租金</div>
+                        <div class="col-sm-5">
+                            {$data.half_rent} 元
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">全场租金</div>
+                        <div class="col-sm-5">
+                            {$data.full_rent} 元
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">备注</div>
+                        <div class="col-sm-5">
+                            {$data.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">系统备注</div>
+                        <div class="col-sm-5">
+                            {$data.sys_remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">状态</div>
+                        <div class="col-sm-5">
+                            {$data.status}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {eq name="data.status_num" value="-1"}
+                            <button type="button" class="btn btn-success" onclick="check(1);">设为平台场地</button>
+                            <!--<button type="button" class="btn btn-default" onclick="check(-1);">审核不通过</button>-->
+                            {/eq}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    function check(code) {
+        var court = $('#court-id').val();
+        switch ( code ) {
+            case 1:
+                var msg = '确定设为平台场地?';
+                if ( confirm(msg) === true ) {
+                    sendpost(court, code);
+                }
+                break;
+            case -1:
+                var msg = '确定审核不通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(court, code);
+                }
+                break;
+        }
+    }
+
+    function sendpost(court, code) {
+        var serverurl = "{:url('court/audit')}";
+        $.post(serverurl, {
+            court: court,
+            code: code,
+        }, function(res) {
+            //console.log(res);
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}

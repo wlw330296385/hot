@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/backend/adminlte/css/skins/skin-blue.min.css">
+</head>
+<body>
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- left column -->
+			<div class="col-md-6">
+				<!-- general form elements -->
+				<div class="box box-primary bg-gray disabled ">
+					<div class="box-header with-border">
+						<h3 class="box-title">购买课程</h3>
+					</div>
+					<!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="" method="post">
+						<div class="box-body">
+							<div class="form-group">
+								<label for="">选择训练营</label>
+								<select class="form-control " name="camp_id"  required="required">
+									{volist name="campList" id="vol"}
+									<option value="{$vol.id}">{$vol.camp}({$vol.status})</option>
+									{/volist}
+								</select>
+							</div>
+							{:token()}
+							<div class="form-group">
+								<label for="">选择课程</label>
+								<select class="form-control data" name="lesson_id"  required="required">
+									<option></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="">选择学生</label>
+								<select class="form-control data" name="studentIndex"  required="required">
+									{volist name="studentList" id="vol"}
+									<option value="{$key}">{$vol.student}</option>
+									{/volist}
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="">填写购买数量</label>
+								<input type="number" class="form-control data" name="total" placeholder="请填写购买数量" value="" onblur='alert(`确定提这个购买${this.value}节课?`)'  required="required">
+							</div>
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" checked=""> 是否发送模板消息
+								</label>
+							</div>
+						</div>
+						<!-- /.box-body -->
+
+						<div class="box-footer">
+							<input type="submit" id="" value="提交">
+						</div>
+					</div>
+				</form>
+				<!-- /.box -->
+
+
+
+				<!-- /input-group -->
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+	<!--/.col (left) -->
+
+	</div>
+	<!-- /.row -->
+	</section>
+</body>
+<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/static/backend/adminlte/js/bootstrap.min.js"></script>
+<script src="/static/backend/layui/layui.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+
+<script type="text/javascript">
+	
+	var camp_id = "{$camp_id}";
+	$(function(){
+		$('select[name=camp_id]').on('change',function(){
+			camp_id = $(this).val();
+			getLessonList(camp_id);
+		});
+
+		// $('#submit').on('click',function(){
+		// 	var submiUrl = '';
+		// 	var data = wooApi.getInputData('input', 'data');
+		// 	var datas = wooApi.getInputData('number', 'data',data);
+  //       	var arrData = wooApi.getInputData('select', 'data', datas);
+  //       	var objData = wooApi.arrTOobj(arrData);
+  //       	objData.__token__ = "{}";
+  //       	var ajaxResult = wooApi.asyncF(submiUrl, objData);
+  //       	alert(ajaxResult.msg);
+		// })
+
+
+
+		getLessonList(1);
+	})
+
+
+	//训练营场地列表接口获取数据并追加到页面
+    var getLessonList = function () {
+        var url = "{:url('api/lesson/getLessonListNoPageApi')}";
+        $.post({
+            url: url,
+            data: {
+                "camp_id":camp_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli = newli + '<option value='+data.data[i].id+'>'+data.data[i].lesson+'('+data.data[i].status+')</option>';
+                    }
+                    if (newli == '') {
+                        newli = "<option disabled>没有任何课程</option>"
+                    }
+                    $("select[name=lesson_id]").html(newli);
+
+                } else {
+                    console.log('没有课程数据');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+</script>
+</html>
+

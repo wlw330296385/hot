@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>赠送课时</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-input-row a.mui-navigate-right {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+        
+        .mui-popover {
+            height: 300px;
+        }
+        
+        .mui-toast-container {
+            top: 250px
+        }
+        
+        .number {
+            width: 20% !important;
+        }
+        
+        .box {
+            max-height: 300px;
+            overflow: scroll;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .editor .image-items .mui-input-group .mui-input-row {
+            height: initial;
+        }
+        
+        #newdiv .tips {
+            color: #AAAAAA;
+            line-height: normal;
+        }
+        
+        .page-header {
+            background: #efeff4;
+        }
+        
+        .explain-cont {
+            padding: 15px;
+        }
+        
+        .explain-cont p {
+            margin-bottom: 2px;
+        }
+        
+        .checkboxCont font {
+            font-size: 14px;
+        }
+        
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
+        
+        .subheader {
+            border: none;
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <h1 class="mui-title">{$campInfo.camp}</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+
+            <div class="page-header">
+                <span class="course">赠送信息</span>
+            </div>
+            <ul class="mui-table-view list detalis-list">
+                <li class="mui-table-view-cell listli">课程名称<span>{$giftrecordInfo.lesson}</span></li>
+                <li class="mui-table-view-cell listli grade">班级名称<span>{$giftrecordInfo.grade}</span></li>
+                <li class="mui-table-view-cell listli">每人赠送课量<span>{$giftrecordInfo.gift_schedule}</span></li>
+                <li class="mui-table-view-cell listli border-b">赠送留言<span>{$giftrecordInfo.remarks}</span></li>
+            </ul>
+            <div class="page-header">
+                <span class="course">赠送对象</span>
+            </div>
+            <form class="mui-input-group">
+                <div class="box" style="border: none">
+                     {foreach name="studentList" item="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label class="number">{$key+1}</label>
+                        <font>{$vol.student}</font>
+                    </div>
+                    {/foreach}
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function(){
+            var grade = "{$giftrecordInfo.grade}";
+            if(grade==''){
+                $(".grade").hide();
+            }
+        })
+    </script>
+</body>
+
+</html>

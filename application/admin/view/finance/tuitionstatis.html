@@ -1,0 +1,143 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>学费统计(默认显示本月)</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="{:url('finance/tuitionstatis')}" class="form-inline" method="get">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label">选择月份</label>
+                                <input class="form-control layui-input" type="text" name="date" id="month-selecter" value="{$curdate}">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">选择年份</label>
+                                <input class="form-control layui-input" type="text" name="year" id="year-selecter" value="{$curyear}">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">日期范围</label>
+                                <input class="form-control layui-input" type="text" id="range" value="{$cur_range}">
+                                <input type="hidden" name="start" value="">
+                                <input type="hidden" name="end" value="">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>训练营</th>
+                                            <th>新报交费</th>
+                                            <th>续报交费</th>
+                                            <th>交费合计</th>
+                                            <th>退费</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="camps" id="vo"}
+                                        <tr>
+                                            <td>{$vo.camp}</td>
+                                            <td>
+                                                交费人数：{$vo.first.count}人
+                                                交费金额：{$vo.first.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$vo.renew.count}
+                                                交费金额：{$vo.renew.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$vo.sum.count}
+                                                交费金额：{$vo.sum.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$vo.refund.count}
+                                                交费金额：{$vo.refund.amount}
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="success">
+                                            <td>合计</td>
+                                            <td>
+                                                交费人数：{$sum.first.count}
+                                                交费金额：{$sum.first.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$sum.renew.count}
+                                                交费金额：{$sum.renew.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$sum.total.count}
+                                                交费金额：{$sum.total.amount}
+                                            </td>
+                                            <td>
+                                                交费人数：{$sum.refund.count}
+                                                交费金额：{$sum.refund.amount}
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+$(function() {
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        // 年月选择
+        laydate.render({
+            elem: '#month-selecter',
+            type: 'month'
+        });
+        // 年选择
+        laydate.render({
+            elem: '#year-selecter',
+            type: 'year'
+        });
+        // 年月范围
+        laydate.render({
+            elem: '#range',
+            range: true,
+            type:'month',
+            done: function(value, date, endDate) {
+                console.log(value); //得到日期生成的值，
+                console.log(date); //得到日期时间对象
+                console.log(endDate); //得结束的日期时间对象
+                $('input[name=start]').val(date.year+'-'+date.month);
+                $('input[name=end]').val(endDate.year+'-'+endDate.month);
+            }
+        })
+    });
+});
+</script>
+{/block}

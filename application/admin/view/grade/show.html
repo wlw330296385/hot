@@ -1,0 +1,183 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>班级详情 - {$grade.grade}</em>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#info" data-toggle="tab">详细资料</a></li>
+            <li><a href="#schedule" data-toggle="tab">课时列表</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="info">
+                <div class="row">
+                    <div class="col-md-3 col-sm-12">
+                        <p>班级成员</p>
+                        <ul class="list-group">
+                            {volist name="$grade.student" id="vo"}
+                            <li class="list-group-item">{$vo.student} {eq name="vo.type" value="体验生"} （{$vo.type}）{/eq}
+                                {neq name="vo.status" value="正常"} （{$vo.status}）{/neq}
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                    <div class="col-md-9 col-sm-12">
+                        <form class="form-horizontal coach-form" method="post" action="#">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">班级名称</div>
+                                    <div class="col-sm-5">{$grade.grade}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">所属训练营</div>
+                                    <div class="col-sm-5">{$grade.camp}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">课程名称</div>
+                                    <div class="col-sm-5">{$grade.lesson}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">上课周期</div>
+                                    <div class="col-sm-5">{$grade.week}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">上课时间</div>
+                                    <div class="col-sm-5">{$grade.lesson_time}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">学员人数</div>
+                                    <div class="col-sm-5">{$grade.students}</div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">领队</div>
+                                    <div class="col-sm-5">
+                                        {$grade.leader}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">班主任</div>
+                                    <div class="col-sm-5">
+                                        {$grade.teacher}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">主教练</div>
+                                    <div class="col-sm-5">
+                                        {$grade.coach}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">主教练底薪</div>
+                                    <div class="col-sm-5">
+                                        {$grade.coach_salary} 元
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">助教</div>
+                                    <div class="col-sm-5">
+                                        {if condition="is_array($grade['assistant'])"}
+                                        {foreach $grade.assistant as $vo}{$vo} {/foreach}
+                                        {/if}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">助教练底薪</div>
+                                    <div class="col-sm-5">
+                                        {$grade.assistant_salary} 元
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">提成基数</div>
+                                    <div class="col-sm-5">
+                                        {$grade.assistant_salary} 元
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">平台备注</div>
+                                    <div class="col-sm-5">
+                                        {$grade.remarks}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">状态</div>
+                                    <div class="col-sm-5">
+                                        {$grade.status}
+                                    </div>
+                                    <div class="col-sm-5"></div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="schedule">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="box">
+                            <div class="box-header">
+                                <h3 class="box-title">{$grade.grade}-课时表</h3>
+                            </div>
+                            <div class="box-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>上课时间</th>
+                                        <th>班级</th>
+                                        <th>教练员</th>
+                                        <th>上课场地</th>
+                                        <th>课时录入时间</th>
+                                        <th>课时状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {volist name="schedule" id="vo"}
+                                    <tr>
+                                        <td>{$vo.lesson_time}</td>
+                                        <td>{$vo.grade}</td>
+                                        <td>{$vo.coach}</td>
+                                        <td>{$vo.court}</td>
+                                        <td>{$vo.create_time}</td>
+                                        <td>
+                                            {switch name="vo.status"}
+                                            {case value="1"}课时已申核{/case}
+                                            {default /}课时未申核
+                                            {/switch}
+                                        </td>
+                                        <td>
+                                            <a href="{:url('schedule/detail', ['id' => $vo['id']])}"
+                                               class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看详细</i></a>
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{/block}

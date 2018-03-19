@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课程转换详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-input-row a.mui-navigate-right {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+
+        .mui-toast-container {
+            top: 250px
+        }
+
+        .number {
+            width: 20% !important;
+        }
+
+        #newdiv .tips {
+            color: #AAAAAA;
+            line-height: normal;
+        }
+
+        .page-header {
+            background: #efeff4;
+        }
+
+        .mui-navigate-right input[type='text'] {
+            padding-right: 30px !important;
+        }
+        .explain-cont {
+            padding: 15px;
+        }
+
+        .explain-cont p {
+            margin-bottom: 2px;
+        }
+        .number {
+            margin: 0px 10px;
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        <span class="return">返回</span>
+    </a>
+    <h1 class="mui-title">{$campInfo.camp}</h1>
+    <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
+    <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
+</header>
+
+<div class="mui-content">
+
+    <div class="camp-list camp-lesson-list detalis-list grade-list mt">
+        <form class="mui-input-group mt55">
+
+            <div class="mui-input-row">
+                <label>转换学生</label>
+                <span>{$changeLessonInfo.student}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>原课程</label>
+                <span>{$changeLessonInfo.original_lesson}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>新课程</label>
+                <span>{$changeLessonInfo.new_lesson}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>转换课时数量</label>
+                <span>{$changeLessonInfo.rest_schedule}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>转课时间</label>
+                <span>{$changeLessonInfo.create_time}</span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>备注</label>
+                <span>{$changeLessonInfo.remarks}</span>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+    })(mui);
+
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>学员列表</em>
+        </div>
+
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="{:url('index')}" class="form-inline" method="post">
+                        <fieldset>
+                            {if condition="!isset($curcamp)"}
+                            <div class="form-group">
+                                <label class="control-label">训练营</label>
+                                <!--<input class="form-control" type="text" name="camp" >-->
+                                <select name="camp_id" class="form-control">
+                                    <option value="">选择训练营</option>
+                                    {volist name="camplist" id="vo"}
+                                    <option value="{$vo.id}" {if condition="$camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="control-label">学员姓名</label>
+                                <input class="form-control" type="text" name="name" >
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">联系电话</label>
+                                <input class="form-control" type="text" name="tel" >
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="submit" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>学员姓名</th>
+                                                <th>会员id</th>
+                                                <th>会员姓名</th>
+                                                <th>联系电话</th>
+                                                <th>所属训练营</th>
+                                                <th>所在班级</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="list" id="vo"}
+                                        <tr>
+                                            <td>{$vo.id}</td>
+                                            <td>
+                                                {$vo.student}
+                                            </td>
+                                            <td>{$vo.hot_id}</td>
+                                            <td>{$vo.member}</td>
+                                            <td>{$vo.telephone}</td>
+                                            <td>{$vo.camp}</td>
+                                            <td>{$vo.grade}</td>
+                                            <td>
+                                                {switch name="vo.status"}
+                                                {case value="1"}正常{/case}
+                                                {case value="2"}退出{/case}
+                                                {case value="3"}被开除{/case}
+                                                {case value="4"}毕业{/case}
+                                                {/switch}
+                                            </td>
+                                            <td>
+                                                <a href="{:url('show', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i></a>
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="box-footer clearfix">
+                                    {$list->render()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

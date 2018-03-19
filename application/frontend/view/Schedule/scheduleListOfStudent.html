@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>课时列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style type="text/css">
+        select[name=grade_id] {
+            width: 50%;
+            direction: rtl
+        }
+
+        select[name=grade_id] option {
+            direction: ltr;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index',['camp_id'=>$camp_id])}">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title" style="font-size: 14px">
+            我的课时进度
+        </h1>
+    </header>
+
+    <div class="mui-content">
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+            <div class="nav-list">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>本月课量</span>
+                            <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>本年课量</span>
+                            <div class="mui-media-body">{$scheduleCount.year}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>剩余课量</span>
+                            <div class="mui-media-body">{$restSchedule}</div>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="mui-table-view mui-text-center border-b">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-xs-4 mui-col-sm-4">
+                                <select class="select" style="width: auto" name="student_id">
+                                    {volist name='studentList' id='vol'}
+                                    <option value="{$vol.student_id}" {eq name="$vol.student_id" value="$student_id" } selected="selected" {/eq}>{$vol.student}</option>
+                                    {/volist}
+                                </select>
+                                <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                            </li>
+                            <li class="mui-col-xs-8 mui-col-sm-8">
+                                <select class="select mui-text-center" name="grade_id">
+                                    <option>所有班级</option>
+                                    {volist name='gradeList' id='vol'}
+                                    <option value="{$vol.grade_id}">{$vol.grade}</option>
+                                    {/volist}
+                                </select>
+                                <i class="mui-icon mui-icon-arrowdown" style="float: none"></i>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-pullRefresh">
+                <div id="onlineScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top: 168px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view mui-text-center detalis-list list schedule"></ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+    var grade_id = JSON.stringify({$gradeIDS});
+
+    $(function () {
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#onlineScheduleList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+
+
+        //下拉刷新具体业务实现（已审）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toList('onlineScheduleList', page, gType, grade_id);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（已审）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toList('onlineScheduleList', page, gType, grade_id);//具体取数据的方法
+            }, 100);
+        }
+    })
+
+    //接口获取数据并追加到页面
+    var toList = function (wList, page, gType, grade_id) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
+        // var campID = ;
+        mui.ajax({
+            url: url,
+            data: {
+                // student_id:"{$studentList[0]['student_id']}",
+                grade_id: grade_id,
+                camp_id: "{$camp_id}",
+                status: 1,
+                // type:1
+                // grade_id:'';
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    var newDate = new Date();
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + "{$camp_id}";
+                        var lesson_time = data.data.data[i].lesson_time;
+                        // 已审，未审内容
+                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b">';
+                        newli += '<ul class="mui-row table"><li class="mui-col-xs-4 mui-col-sm-4">' + lesson_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].grade + '</li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul>';
+                        newli += '</li></a>';
+                    }
+                }
+
+                // 根据状态获取课时列表
+                if (gType == 1) {
+                    //上拉刷新
+                    $(".schedule").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $(".schedule").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+
+                } else {
+                    //下拉加载 gType==2
+                    $(".schedule").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    $('select[name=grade_id]').on('change', function () {
+        grade_id = $(this).val();
+        toList('onlineScheduleList', 1, 1, grade_id);
+    })
+
+    $('select[name=student_id]').on('change', function () {
+        student_id = $(this).val();
+        window.location.href = "{:url('frontend/schedule/scheduleListOfStudent',['camp_id'=>$camp_id])}/student_id/" + student_id;
+    })
+</script>
+
+</html>

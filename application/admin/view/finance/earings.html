@@ -1,0 +1,98 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>收益统计</em>
+
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="no-padding">
+            <div class="bootstrap-table">
+                <div class="search-form">
+                    <form action="{:url('finance/earings')}" class="form-inline" method="get">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label">选择月份</label>
+                                <input class="form-control layui-input" type="text" name="date" id="month-selecter" value="{$curdate}">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                    <button type="submit" class="btn btn-default btn-flat">重置</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+
+                <div class="fixed-table-container no-border">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box no-border">
+                                <div class="box-body">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>训练营</th>
+                                            <th>本月收款金额</th>
+                                            <th>平台收费</th>
+                                            <th>本月训练营收入</th>
+                                            <th>本月已结课时费</th>
+                                            <th>未结课时费</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {volist name="camps" id="vo"}
+                                        <tr>
+                                            <td>{$vo.camp}</td>
+                                            <td>{$vo.total_amount}</td>
+                                            <td>{$vo.system_rebate}</td>
+                                            <td>{$vo.camp_income}</td>
+                                            <td>{$vo.schedule_salaryin}</td>
+                                            <td>{$vo.schedule_salaryin_notsettle}</td>
+                                        </tr>
+                                        {/volist}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="success">
+                                            <td>本月合计</td>
+                                            <td>{$sum.total_amount}</td>
+                                            <td>{$sum.system_rebate}</td>
+                                            <td>{$sum.camp_income}</td>
+                                            <td>{$sum.schedule_salaryin}</td>
+                                            <td>{$sum.schedule_salaryin_notsettle}</td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script>
+    $(function() {
+//    $('#month-selecter').on('click', '',function() {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            laydate.render({
+                //指定元素,
+                elem: '#month-selecter',
+                type: 'month'
+            });
+        });
+//    });
+    });
+</script>
+{/block}

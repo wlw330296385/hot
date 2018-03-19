@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>申请注销训练营</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .systemReply {
+            background-color: #efeff4 !important;
+        }
+
+        .systemReply:after {
+            height: 0 !important;
+        }
+
+        .systemReply label {
+            padding: 13px 15px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>训练营名称</label>
+                <span>{$campInfo.camp}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>申请人</label>
+                <span>{$campInfo.realname}</span>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>注销原因</label>
+                <textarea rows="4" class="reason" placeholder="请填写你的注销原因">{notempty name="$campCancellInfo"}{$campCancellInfo.reason}{/notempty}</textarea>
+            </div>
+
+            {notempty name="$campCancellInfo"}
+            <div class="mui-input-row">
+                <label>申请状态</label>
+                <span>{$campCancellInfo.status_text}</span>
+            </div>
+
+            <!-- 系统回复内容 -->
+            <div class="mui-input-row h-auto systemReply">
+                <label class="colorred">系统回复：</label>
+                <textarea rows="4" class="colorred mui-text-left">{$campCancellInfo['system_reply']}</textarea>
+            </div>
+            {/notempty}
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            {if $campCancellInfo}
+            <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue undoBtn">撤销申请</li>
+            {else/}
+            <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue replyBtn">提交申请</li>
+            {/if}
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            // 提交申请
+            $(".replyBtn").on("tap", function () {
+                var btnArray = ['取消', '确认'];
+                mui.confirm('是否确认注销训练营？', '', btnArray, function (e) {
+                    var camp_id = "{$campInfo.id}";
+                    var reason = $(".reason").val();
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/camp/campcancellapply')}", {
+                            data: {
+                                camp_id: camp_id,
+                                reason: reason
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast("申请提交成功，请耐心等待");
+                                    window.setTimeout("location.reload()", 3000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                                mui.toast('网络异常');
+                            }
+                        });
+                    }
+                })
+            });
+
+            // 撤销申请
+            $(".undoBtn").on("tap", function () {
+                var btnArray = ['取消', '确认'];
+                mui.confirm('是否确认撤销注销训练营？', '', btnArray, function (e) {
+                    var camp_id = "{$campInfo.id}";
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/camp/withdrawcancellapply')}", {
+                            data: {
+                                camp_id: camp_id,
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast("撤销申请成功，请耐心等待");
+                                    window.setTimeout("window.location='{:url('camp/powercamp',['camp_id'=>$campInfo['id']])}'", 3000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                                mui.toast('网络异常');
+                            }
+                        });
+                    }
+                })
+            });
+        })
+    </script>
+
+</body>
+
+</html>

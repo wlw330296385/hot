@@ -1,0 +1,482 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">训练营 详细资料</h3>
+            </div>
+            <form class="form-horizontal camp-form" method="post" action="{:url('camp/edit')}">
+                <input type="hidden" id="camp-id" name="id" value="{$camp.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">训练营名称</div>
+                        <div class="col-sm-5">
+                            {$camp.camp}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所属公司</div>
+                        <div class="col-sm-5">
+                            {empty name="camp.company"}个人{else/}{$camp.company}{/empty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">训练营类型</div>
+                        <div class="col-sm-5">
+                            {switch name="camp.type"}
+                            {case value="1"}机构{/case}
+                            {case value="2"}其他{/case}
+                            {default/}独立用户
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">训练营创建人</div>
+                        <div class="col-sm-5">
+                            {$camp.realname}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-5">
+                            {$camp.camp_telephone}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">邮箱</div>
+                        <div class="col-sm-5">
+                            {$camp.camp_email}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">营业执照</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.cert.cert"}
+                            <img src="{$camp.cert.cert}" class="img-thumbnail" alt="logo">
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">法人身份证</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.cert.fr.photo_positive"}
+                            <img src="{$camp.cert.fr.photo_positive}" class="img-thumbnail" alt="logo">
+                            {/notempty}
+                            {notempty name="camp.cert.fr.cert_no"}
+                            <p>证件号: {$camp.cert.fr.cert_no}</p>
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建人身份证</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.cert.cjz.photo_positive"}
+                            <img src="{$camp.cert.cjz.photo_positive}" class="img-thumbnail" alt="logo">
+                            {/notempty}
+                            {notempty name="camp.cert.cjz.cert_no"}
+                            <p>证件号: {$camp.cert.cjz.cert_no}</p>
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">其他证明</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.cert.cert"}
+                            <img src="{$camp.cert.other}" class="img-thumbnail" alt="logo">
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">LOGO</div>
+                        <div class="col-sm-5">
+                            {empty name="camp.logo"}暂无
+                            {else/}
+                            <img src="{$camp.logo}" class="img-thumbnail" alt="logo">
+                            {/empty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">封面图</div>
+                        <div class="col-sm-5">
+                            {empty name="camp.banner"}暂无
+                            {else/}
+                            <img src="{$camp.banner}" class="img-thumbnail" alt="logo">
+                            {/empty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$camp.province}-{$camp.city}-{$camp.area}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">具体地址</div>
+                        <div class="col-sm-5">
+                            {$camp.location}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">训练营会员上限</div>
+                        <div class="col-sm-5">
+                            {$camp.max_member} (0为不限)
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">总教练数</div>
+                        <div class="col-sm-5">
+                            {$camp.total_coach}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活跃教练数</div>
+                        <div class="col-sm-5">
+                            {$camp.act_coach}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">总会员数</div>
+                        <div class="col-sm-5">
+                            {$camp.total_member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活跃会员数</div>
+                        <div class="col-sm-5">
+                            {$camp.act_member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">总课程数</div>
+                        <div class="col-sm-5">
+                            {$camp.total_lessons}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">已完成课程数</div>
+                        <div class="col-sm-5">
+                            {$camp.finished_lessons}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">评分</div>
+                        <div class="col-sm-5">
+                            {$camp.star}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">当前班级数</div>
+                        <div class="col-sm-5">
+                            {$camp.total_grade}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">现有班级数</div>
+                        <div class="col-sm-5">
+                            {$camp.act_grade}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">训练点数量</div>
+                        <div class="col-sm-5">
+                            {$camp.camp_base}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$camp.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">平台备注</div>
+                        <div class="col-sm-5">
+                            <textarea  class="form-control" name="system_remarks" rows="3">{$camp.system_remarks}</textarea>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">课时收入平台抽取比例（空值按平台默认比例计算）</div>
+                        <div class="col-sm-5">
+                            <input type="text" name="schedule_rebate" id="" value="{$camp.schedule_rebate}">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">状态</div>
+                        <div class="col-sm-5">
+                            {switch name="camp.status"}
+                            {case value="1"}已审核{/case}
+                            {case value="2"}关闭{/case}
+                            {case value="3"}审核未通过{/case}
+                            {default/}待审核
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {eq name="camp.status" value="0"}
+                            <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
+                            <button type="button" class="btn btn-default" onclick="check(3);">审核不通过</button>
+                            {else/}
+                            <button type="button" class="btn btn-info" onclick="check(2);">修改训练营信息</button>
+                            {/eq}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <a href="{:url('camp/sdel', ['id' => $camp.id])}" class="btn btn-warning change-btn">注销训练营</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {if condition="$camp['member_info']"}
+    <div class="col-sm-12 col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">训练营负责人 详细资料</h3>
+            </div>
+            <form class="form-horizontal" method="post">
+                <input type="hidden" id="member-id" name="mid" value="{$camp.member_info.id}">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">微信昵称</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.nickname}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">真实姓名</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.realname}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.telephone}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电子邮箱</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.email}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">证件</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.member_info.cert_id"}
+                            <img src="{$camp.member_info.cert.photo_positive}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.member_info.cert_id"}
+                            {notempty name="camp.member_info.cert.photo_back"}
+                            <img src="{$camp.member_info.cert.photo_back}" class="img-thumbnail" alt="">
+                            {/notempty}
+                            {/notempty}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">头像</div>
+                        <div class="col-sm-5">
+                            {notempty name="camp.member_info.avatar"}
+                            <img src="{$camp.member_info.avatar}" class="img-thumbnail" alt="">
+                            {/notempty}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">性别</div>
+                        <div class="col-sm-5">
+                            {switch name="camp.member_info.sex"}
+                            {case value="1"}男{/case}
+                            {case value="2"}女{/case}
+                            {default/}未知
+                            {/switch}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">生日</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.birthday}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">所在地区</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.province}-{$camp.member_info.city}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">居住地址</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.location}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">流量</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.flow}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">阶衔</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.level}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">积分余额</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.score}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">人民币余额</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.balance}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">身高 体重 鞋码</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.height}cm  {$camp.member_info.weight}kg {$camp.member_info.shoe_code}码
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">注册时间</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.create_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">个人备注</div>
+                        <div class="col-sm-5">
+                            {$camp.member_info.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {/if}
+</div>
+{/block}
+
+{block name="js"}
+<script>
+"use strict";
+function check(code) {
+    var campid = $('#camp-id').val();
+    var memberid = $('#member-id').val();
+    var sremarks_txt = $("textarea[name='system_remarks']").val();
+    switch ( code ) {
+        case 1:
+            var msg = '确定审核通过?';
+            if ( confirm(msg) === true ) {
+                sendpost(campid, memberid, code, '');
+            }
+            break;
+        case 2:
+            $('.camp-form').submit();
+            break;
+        case 3:
+            var msg = '确定审核不通过?';
+            if ( confirm(msg) === true ) {
+                if (sremarks_txt == "") {
+                    alert('请输入平台备注');
+                    return;
+                }
+                sendpost(campid, memberid, code, sremarks_txt);
+            }
+            break;
+    }
+}
+
+function sendpost(campid, memberid, code, sremarks) {
+    var serverurl = "{:url('camp/audit')}";
+    $.post(serverurl, {
+        campid: campid,
+        memberid: memberid,
+        status: code,
+        system_remarks: sremarks
+    }, function(res) {
+        //console.log(res);
+        alert(res.msg);
+        if (res.status) {
+            location.href = res.goto;
+        } else {
+            location.reload();
+        }
+    }, 'json');
+}
+
+$(function(){
+    $('.change-btn').click(function() {
+        if ( confirm('确定要'+$.trim($(this).text())+'吗?') ) {
+            return true;
+        }  else {
+            return false;
+        }
+    });
+});
+</script>
+{/block}

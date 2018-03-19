@@ -1,0 +1,166 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">教案详情 审核</h3>
+            </div>
+            <form  class="form-horizontal" method="post">
+                <input type="hidden" name="id" id="plan-id" value="{$plan.id}">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">教案名称</label>
+                        <div class="col-sm-8 col-md-8">
+                            <input type="text" name="outline" class="form-control" value="{$plan.outline}" disabled>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">适合阶段</label>
+                        <div class="col-sm-8 col-md-8">
+                            <select name="grade_category_id" id="grade_category_id" class="form-control" disabled>
+                                <option value=""></option>
+                                {volist name="category" id="vo"}
+                                <optgroup label="{$vo.name}">
+                                    {volist name="$vo['_data']" id="vo2"}
+                                    <option value="{$vo2.id}" {eq name="$plan.grade_category_id" value="$vo2['id']"}selected{/eq}>{$vo2.name}</option>
+                                    {/volist}
+                                </optgroup>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">教案介绍</label>
+                        <div class="col-sm-8 col-md-8">
+                            <textarea name="outline_detail"  class="form-control" rows="5" disabled>{$plan.outline_detail}</textarea>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">训练项目</label>
+                        <div class="col-sm-8 col-md-8">
+                            <input type="hidden" id="exercise_txt" name="exercise" class="form-control" value='{$plan.exercise}' disabled>
+                            <div class="row" id="program-list">{$plan.exercise_html}</div>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">教案发布人</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.member}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">所属训练营</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.camp}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">是否公开教案</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.is_open}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">状态</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.status}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">创建时间</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.create_time}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">最近修改时间</label>
+                        <div class="col-sm-8 col-md-8">
+                            <h5>{$plan.update_time}</h5>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 col-md-2 control-label">系统备注</label>
+                        <div class="col-sm-8 col-md-8">
+                            <textarea name="sys_remarks"  class="form-control" rows="5">{$plan.sys_remarks}</textarea>
+                        </div>
+                        <div class="col-sm-2 col-md-2"></div>
+                    </div>
+
+                </div>
+                <div class="box-footer">
+                    <div class="col-sm-12 col-sm-8 col-sm-offset-2">
+                        {eq name="plan.status" value="未审核"}
+                        <button type="button" class="btn btn-success btn-flat" onclick="audit(1)">审核通过</button>
+                        <button type="button" class="btn btn-default btn-flat" onclick="audit(2)">审核不通过</button>
+                        {/eq}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    "use strict";
+    function audit(code) {
+        var planid = $('#plan-id').val();
+        var sremarks_txt = $("textarea[name='sys_remarks']").val();
+        switch ( code ) {
+            case 1:
+                var msg = '确定审核通过?';
+                if ( confirm(msg) === true ) {
+                    sendpost(planid, code, '');
+                }
+                break;
+            case 2:
+                var msg = '确定审核不通过?';
+                if ( confirm(msg) === true ) {
+                    if (sremarks_txt == "") {
+                        alert('请输入系统备注');
+                        return;
+                    }
+                    sendpost(planid, code, sremarks_txt);
+                }
+                break;
+        }
+    }
+
+    function sendpost(planid, code, sremarks) {
+        var serverurl = "{:url('plan/audit')}";
+        $.post(serverurl, {
+            planid: planid,
+            code: code,
+            sys_remarks: sremarks
+        }, function(res) {
+            console.log(res);
+            alert(res.msg);
+            if (res.status) {
+                location.href = res.goto;
+            } else {
+                location.reload();
+            }
+        }, 'json');
+    }
+</script>
+{/block}

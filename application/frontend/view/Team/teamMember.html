@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>队员列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mbNumber {
+            width: 14%;
+            font-size: 24px;
+            line-height: 55px;
+            float: left;
+            font-weight: bold;
+            text-align: center;
+            margin-right: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a href="{:url('team/teammanage', ['team_id' => $team_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">队员列表</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list detalis-list coach">
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <div class="mui-media-body wd45">
+                        <strong class="f16">{$teamInfo.name}</strong>
+                        <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
+                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                        </p>
+                    </div>
+                    <div class="price-frame">
+                        <p class="f12" style="margin-top:37px">球队成员：
+                            <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="camp-lesson-list mui-bar-nav for-tab">
+                <div class="mui-segmented-control mb">
+                    <a class="mui-control-item mui-active" href="#onlineMemberList">在队</a>
+                    <a class="mui-control-item" href="#offlineMemberList">离队</a>
+                    <a class="mui-control-item" href="#nolineMemberList">未审核</a>
+                    <a class="mui-control-item" href="#nocontactMatchList">未关联</a>
+                </div>
+            </div>
+
+            <div class="tab-pullRefresh">
+                <div id="onlineMemberList" class="mui-scroll-wrapper mui-control-content mui-active" style="top:182px">
+                    <div class="mui-scroll">
+                        <div class="page-header">
+                            <span class="course">理事</span>
+                        </div>
+                        <ul class="mui-table-view detalis-list list border-b matchAdmin"></ul>
+                        <div class="page-header">
+                            <span class="course">队员</span>
+                        </div>
+                        <ul class="mui-table-view detalis-list list border-b matchCommon"></ul>
+                    </div>
+                </div>
+                <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match-1 OA_task_match"></ul>
+                    </div>
+                </div>
+                <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match0"></ul>
+                    </div>
+                </div>
+                <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content" style="top:182px">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view detalis-list list border-b match-2"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="mui-table-view operation pdmember">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="/frontend/">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <a href="{:url('team/addMemberOfTeam',['team_id'=>$team_id])}">
+                    <li class="mui-col-xs-10 mui-col-sm-10 opli bgred">
+                        添加队员
+                    </li>
+                </a>
+            </ul>
+
+        </div>
+
+
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function () {
+
+        // 判断添加队员的权限
+        var teamrole = "{$teamrole}";
+        if (teamrole <= 0) {
+            $(".pdmember").hide();
+        }
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+        var finishedCount = 1;
+        var notfinishedCount = 1;
+
+        mui('#onlineMemberList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#offlineMemberList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        mui('#nolineMemberList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshFinished
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshFinished
+            }
+        });
+
+        mui('#nocontactMatchList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshNotFinished
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshNotFinished
+            }
+        });
+
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toListIn('onlineMemberList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toListIn('onlineMemberList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toList('offlineMemberList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toList('offlineMemberList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（完成）
+        function pulldownRefreshFinished() {
+            setTimeout(function () {
+                finishedCount = 1;//刷新并显示第一页
+                var page = finishedCount;
+                var gType = 1;//代表下拉刷新
+                toList('nolineMemberList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（完成）
+        function pullupRefreshFinished() {
+            setTimeout(function () {
+                finishedCount++;//翻下一页
+                var page = finishedCount;
+                var gType = 2;//代表上拉加载
+                toList('nolineMemberList', page, gType, 0);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（未完成）
+        function pulldownRefreshNotFinished() {
+            setTimeout(function () {
+                notfinishedCount = 1;//刷新并显示第一页
+                var page = notfinishedCount;
+                var gType = 1;//代表下拉刷新
+                toList('nocontactMatchList', page, gType, -2);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（未完成）
+        function pullupRefreshNotFinished() {
+            setTimeout(function () {
+                notfinishedCount++;//翻下一页
+                var page = notfinishedCount;
+                var gType = 2;//代表上拉加载
+                toList('nocontactMatchList', page, gType, -2);//具体取数据的方法
+            }, 100);
+        }
+
+
+    })
+
+    // 在队
+    var toListIn = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/team/teammemberlist','','',true)}";
+        var team_id = "{$teamInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                page: page,
+                status: 1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli1 = '';
+                var newli0 = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
+                        if (data.data[i].role_arr != 0) {
+                            newli1 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                            if (data.data[i].number == null) {
+                                newli1 += '<div class="mbNumber">&nbsp;</div>';
+                            } else {
+                                newli1 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                            }
+                            newli1 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                            for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
+                                newli1 += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
+                            }
+                            newli1 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                        } else {
+                            newli0 += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                            if (data.data[i].number == null) {
+                                newli0 += '<div class="mbNumber">&nbsp;</div>';
+                            } else {
+                                newli0 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                            }
+                            newli0 += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+
+                            newli0 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                        }
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $(".matchAdmin").empty().append(newli1);
+                    $(".matchCommon").empty().append(newli0);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli1 == '') {
+                        $(".matchAdmin").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                    if (newli0 == '') {
+                        $(".matchCommon").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $(".matchAdmin").append(newli1);
+                    $(".matchCommon").append(newli0);
+                }
+
+                if (newli1 != '' || newli0 != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    // 其他
+    var toList = function (wList, page, gType, status) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/team/teammemberlist','','',true)}";
+        var team_id = "{$teamInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                page: page,
+                status: status
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/member_id/' + data.data[i].member_id;
+                        newli += '<li class="mui-table-view-cell mui-media listli coach"><a href="' + urls + '" class="mui-navigate-right">';
+                        if (data.data[i].number == null) {
+                            newli += '<div class="mbNumber">&nbsp;</div>';
+                        } else {
+                            newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                        }
+                        newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].member + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
+                        newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $(".match" + status).empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $(".match" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $(".match" + status).append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+</script>
+
+</html>

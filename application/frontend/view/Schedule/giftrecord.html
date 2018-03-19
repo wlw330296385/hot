@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>赠送课时</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-input-row a.mui-navigate-right {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-popover {
+            height: 300px;
+        }
+
+        .mui-toast-container {
+            top: 250px
+        }
+
+        .number {
+            width: 20% !important;
+        }
+
+        .box {
+            max-height: 300px;
+            overflow: scroll;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .editor .image-items .mui-input-group .mui-input-row {
+            height: initial;
+        }
+
+        #newdiv .tips {
+            color: #AAAAAA;
+            line-height: normal;
+        }
+
+        .page-header {
+            background: #efeff4;
+        }
+
+        .explain-cont {
+            padding: 15px;
+        }
+
+        .explain-cont p {
+            margin-bottom: 2px;
+        }
+
+        .checkboxCont font {
+            font-size: 14px;
+        }
+
+        .nohave {
+            margin: 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a href="{:url('camp/powercamp',['camp_id' => $camp_id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">{$campInfo.camp}</h1>
+        <input type="hidden" name="camp" value="{$campInfo.camp}" class="data">
+        <input type="hidden" name="camp_id" value="{$campInfo.id}" class="data">
+    </header>
+
+    <div class="mui-content">
+
+        <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <form class="mui-input-group mt55">
+
+                <div class="page-header">
+                    <span class="course">选择赠送对应所在的课程或班级</span>
+                </div>
+
+                <div class="mui-input-row">
+                    <a href="#Lesson" class="mui-navigate-right">
+                        <label>选择课程</label>
+                        <span class="lessonCont domData" name="lesson"></span>
+                        <input type="hidden" name="lesson_id" value="" class="lesson_id data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <a href="#Grade" class="mui-navigate-right">
+                        <label>选择班级</label>
+                        <span class="gradeCont" name="grade"></span>
+                        <input type="hidden" name="grade_id" value="" class="grade_id">
+                    </a>
+                </div>
+
+                <div class="page-header">
+                    <span class="course wd66">选择赠送对象</span>
+                </div>
+
+                <div class="box" style="border: none">
+                    <p class="nohave">请添加赠送对象</p>
+                </div>
+
+                <div class="page-header">
+                    <span class="course wd52 ">剩余赠送数量：
+                        <b class="resi_giftschedule"></b>
+                    </span>
+                    <a href="{:url('schedule/giftbuy',['camp_id' => $camp_id])}" class="mui-navigate-right">
+                        <span class="more" style="padding-right:0">购买课量</span>
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label style="width: 40%">每人赠送课量</label>
+                    <input type="text" name="gift_schedule" value="" class="data" placeholder="请填写人均赠送课时数量" style="width: 60%;">
+                </div>
+
+                <div class="mui-input-row">
+                    <label>赠送留言</label>
+                    <input type="text" name="remarks" value="" class="data" placeholder="请填写赠送留言">
+                </div>
+
+                <div class="page-header">
+                    <span class="course">注意事项</span>
+                </div>
+
+                <div class="explain-cont mt55">
+                    <p>1、赠送课时的优惠政策以及产生的费用由训练营自行负责;</p>
+                    <p>2、训练营必须先从平台购买课时用于赠送操作;</p>
+                    <p>3、赠送出去的课时会在每月结算时进行抵扣;</p>
+                </div>
+
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen operationBtn" style="color: #fff" onclick="submitAction()">
+                    提交赠送
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!--选择课程-->
+    <div id="Lesson" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>课程列表</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list lessonlist"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--选择班级-->
+    <div id="Grade" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>班级列表</strong>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keyword" placeholder="请输入班级名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchGR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:80px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list gradelist"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+
+            mui("body").on("tap", "a", function () {
+                window.top.location.href = this.href;
+            });
+
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        //初始化全局变量
+        var student_str = [];
+        var student_num = '';
+        var lesson_id = '';
+        var grade_id = '';
+        var keyword = '';
+        $(function () {
+            //选择课程
+            $(".lessonlist").on('tap', 'li', function () {
+                var lesson = $(this).text();
+                var resi_giftschedule = $(this).attr('data-resi_giftschedule');
+                lesson_id = $(this).attr('data-id');
+                $(".lessonCont").text(lesson);
+                $(".lesson_id").val(lesson_id);
+                $(".resi_giftschedule").text(resi_giftschedule);
+                toLessonStudentList();
+                $(".gradeCont").text('');
+                $("input[name=grade_id]").val('');
+                mui("#Lesson").popover("toggle");
+            });
+
+            //搜索班级
+            $("#searchGR").on("tap", function () {
+                var keyword = $(".keyword").val();
+                toGradeList(keyword, "Grade");
+            })
+
+            // 选择班级
+            $(".gradelist").on('tap', 'li', function () {
+                var grade = $(this).text();
+                grade_id = $(this).attr('data-id');
+                lesson_id = $(this).attr('data-lesson_id');
+                var lessonOfGrade = $(this).attr('data-lesson');
+                var resi_giftschedule = $(this).attr('data-resi_giftschedule');
+                $(".gradeCont").text(grade);
+                $(".grade_id").val(grade_id);
+                $(".lessonCont").text(lessonOfGrade);
+                $(".lesson_id").val(lesson_id);
+                $(".resi_giftschedule").text(resi_giftschedule);
+                toGradeStudentList();
+                mui("#Grade").popover("toggle");
+            });
+
+            changeIndex();
+            toLessonList();
+            toGradeList(keyword);
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+            studentList();
+
+            var lesson = $(".lessonCont").text();
+            var gift_schedule = $("input[name=gift_schedule]").val();
+            if (lesson == '' || gift_schedule == '' || student_str <= 0) {
+                mui.alert("请先填写信息后再提交");
+                return;
+            } else if (!(/^[0-9]*$/).test(gift_schedule)) {
+                mui.alert("请输入正确的课时数量");
+                return;
+            };
+
+            if ($("input[name=grade_id]").val() != '') {
+                $(".gradeCont").addClass("domData");
+                $("input[name=grade_id]").addClass("data");
+            };
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.student_str = JSON.stringify(student_str);
+            objData.student_num = JSON.stringify(student_num);
+            var url = "{:url('api/schedule/recordgift')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '赠送课时成功', '确定', function () {
+                    var goUrl = "{:url('schedule/giftlistOfCamp')}" + '/camp_id/{$campInfo.id}';
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '赠送课时失败', '确定');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+
+        //获取选择的学员名单
+        function studentList() {
+            student_str = [];//学员列表数组
+            $("input[type=checkbox]:checked").each(function () {
+                var id = $(this).attr("data-id");
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).attr("data-student");
+                student_num = $("input[type=checkbox]:checked").length;
+                student_str.push({ student: student, student_id: student_id, id: id });
+            });
+            console.log(student_str);
+            console.log(student_num);
+        };
+
+        //更新序号函数
+        function changeIndex() {
+            var i = 1;
+            $(".checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        };
+
+        //课程列表接口获取数据并追加到页面
+        function toLessonList() {
+            var url = "{:url('api/lesson/getLessonListApi','','',true)}";
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-resi_giftschedule="' + data.data[i].resi_giftschedule + '" >' + data.data[i].lesson + '</li>'
+                        }
+                        $("ul.lessonlist").empty();
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center>没有查找到相关数据哦</p>'
+                        }
+                        $("ul.lessonlist").append(newli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //选择课程对应的学生列表
+        function toLessonStudentList() {
+            var url = "{:url('api/lesson_member/getLessonMemberListNoPageApi','','',true)}";
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    lesson_id: lesson_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newstudentli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
+                        }
+                        $(".box").empty();
+                        if (newstudentli == '') {
+                            newstudentli = '<p class="nohave">该课程还没有学员哦</p>'
+                        }
+                        $(".box").append(newstudentli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //班级列表接口获取数据并追加到页面
+        function toGradeList(keyword) {
+            var url = "{:url('api/grade/getGradeListAll','','',true)}";
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    lesson_id: lesson_id,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    $("ul.gradelist").empty();
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data[i].id + '" data-lesson="' + data.data[i].lesson.lesson + '" data-lesson_id="' + data.data[i].lesson.id + '" data-resi_giftschedule="' + data.data[i].lesson.resi_giftschedule + '">' + data.data[i].grade + '</li>'
+                        }
+                        $("ul.gradelist").append(newli);
+                    } else {
+                        $("ul.gradelist").append('<p class="nohave">没有查找到相关数据哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+        //选择班级对应的学生列表
+        function toGradeStudentList() {
+            var url = "{:url('api/grade_member/getGradeMemberListNoPageApi','','',true)}";
+            var campID = "{$camp_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    grade_id: grade_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newstudentli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
+                        }
+                        $(".box").empty();
+                        if (newstudentli == '') {
+                            newstudentli = '<p class="nohave">该班级还没有学员哦</p>'
+                        }
+                        $(".box").append(newstudentli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

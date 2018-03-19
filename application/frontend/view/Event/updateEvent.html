@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>编辑活动</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        #eventDom .fl {
+            text-align: left;
+            float: left;
+        }
+
+        .cancel-dom {
+            font-size: 16px;
+            float: left;
+            margin: 13px 10px;
+        }
+
+        input[name=event-dom_price] {
+            border-left: 1px dotted #DDD;
+            text-align: center !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">{$eventInfo.organization}</h1>
+        <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
+        <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+        <input type="hidden" name="organization_type" value="1" class="data">
+    </header>
+
+    <div class="mui-content pt">
+
+        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+            <form action="" class="mui-input-group mt55">
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>活动对象</label>
+                        <span class="select-row">
+                            <select id="eventObject" class="data target_type" name="target_type" disabled="disabled">
+                                <option value="1">公开</option>
+                                <option value="2">营内</option>
+                                <option value="3">班内</option>
+                            </select>
+                        </span>
+                        <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                    </div>
+                </div>
+
+                <div class="mui-input-row target-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
+                    <a href="#target" class="mui-navigate-right">
+                        <label>具体对象</label>
+                        <span class="targetCont" name="target">{$eventInfo.target}</span>
+                        <input type="hidden" name="target_id" class="target_id" value="{$eventInfo.target_id}">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>活动主题</label>
+                    <input type="text" name="event" class="data" value="{$eventInfo.event}" placeholder="请输入活动主题">
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>活动类型</label>
+                        <span class="select-row">
+                            <select id="eventType" class="data" name="event_type">
+                                <optgroup label="活动类型">
+                                    <option value="团队建设">团队建设</option>
+                                    <option value="校园活动">校园活动</option>
+                                    <option value="亲子教育">亲子教育</option>
+                                    <option value="社交娱乐">社交娱乐</option>
+                                    <option value="学习交流">学习交流</option>
+                                </optgroup>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否收费</label>
+                        <span class="select-row">
+                            <select id="eventPrice" class="data" name="is_free">
+                                <option value="1">免费</option>
+                                <option value="2" style="display: none">收费</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <!--<div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">-->
+                <!--<label>活动单价</label>-->
+                <!--<input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">-->
+                <!--</div>-->
+
+                <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
+                    <a href="#cost" class="mui-navigate-right">
+                        <label class="wd36">费用结算人</label>
+                        <span class="finance " name="finance">{$eventInfo.finance}</span>
+                        <input type="hidden" name="finance_id" class="finance_id" value="">
+                    </a>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a href="#eventDom" class="mui-navigate-right">
+                        <label>活动套餐</label>
+                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">
+                            {volist name="$eventInfo.doms" id="vol"}
+                            <button type="button" class="selectDom">{$vol.name}<div>{$vol.price}</div></button>
+                            {/volist}
+                        </span>
+                    </a>
+                </div>
+
+                <div class="mui-input-row picker btnStart" data-options='{"beginYear":2017,"endYear":2050}'>
+                    <div class="mui-navigate-right">
+                        <label>开始时间</label>
+                        <span id="resultStart" class="ui-alert domData" name="starts">{$eventInfo.starts}</span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnEnd" data-options='{"beginYear":2017,"endYear":2050}'>
+                    <div class="mui-navigate-right">
+                        <label>结束时间</label>
+                        <span id="resultEnd" class="ui-alert domData" name="ends">{$eventInfo.ends}</span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <div class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>活动地点</label>
+                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label class="wd36">最少参与人数</label>
+                    <div class="mui-numbox">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <label class="wd36">最多参与人数</label>
+                    <div class="mui-numbox">
+                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                        <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
+                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>联系人</label>
+                    <input type="text" name="contact" class="data" value="{$eventInfo.contact}" placeholder="请输入联系人">
+                </div>
+
+                <div class="mui-input-row">
+                    <label>联系电话</label>
+                    <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>活动封面</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$eventInfo.cover}">
+                        <input type="hidden" name="cover" value='{$eventInfo.cover}' class="data">
+                    </a>
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="course">活动简介</span>
+                </div>
+                <div class="mui-input-row tuwenEditor">
+                    <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                    <div class="introBox">{$eventInfo.event_des}</div>
+                    <div class="mui-row mui-text-center mui-row-operation">
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame up pd">上移</a>
+                            <a class="frame down pd">下移</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame titleClass">添加标题</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame textClass">添加正文</a>
+                        </div>
+                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                            <a class="frame imageClass">
+                                <div id="uploader-demo">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div class="filePickerTwo">选择图片</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+                </div>
+
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-col-xs-12 opli bggreen"onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!--报名种类选择-->
+    <div id="eventDom" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36">
+                <strong>活动套餐</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="domConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button id="domAdd">添加</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group">
+                    {volist name='$eventInfo.doms' id="vol"}
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <i class="cancel-dom mui-icon mui-icon-close"></i>
+                        <input type="text" name="event-dom" class="wd58 fl" value="{$vol.name}" placeholder="请填写种类名称">
+                        <input type="text" name="event-dom_price" class="wd27 fr" value="{$vol.price}" placeholder="价格">
+                    </div>
+                    {/volist}
+                </form>
+                <div class="tjbtn">
+                    <br />
+                    <p>温馨提示：注意填写完点击确认按钮。收费活动套餐价格必填。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--具体对象-->
+    <div id="target" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>具体对象</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list campGradeList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--费用结算人-->
+    <div id="cost" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择费用结算人</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="StudentDel">清除</button>
+            </span>
+        </div>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item11">学生列表</a>
+                <a class="mui-control-item" href="#item22">管理员列表</a>
+            </div>
+        </div>
+        <div id="item11" class="mui-control-content mui-active">
+            <div class="pop-search">
+                <input type="search" class="keywordLD" placeholder="请输入学生名称搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchLD"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:40px !important;">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list campMemberType campMemberStudent">
+                    </ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="item22" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list campMemberType campMemberAdmin">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'event'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.ready(function (i, j, k) {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{$eventInfo.province}"));
+                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{$eventInfo.city}"));
+                // cityPicker3.pickers[2].setSelectedIndex(2);
+
+                // for (i = 0; i < cityData3.length; i++) {
+                //     cityData3[i].index = i;
+                //     console.log(cityData3.length)
+                //     console.log(cityData3[i].text + '第一级')
+                //     for (j = 0; j < cityData3.length; i++) {
+                //         cityData3[i].children[j].index = j;
+                //         console.log(cityData3[i].children[j].length)
+                //         console.log(cityData3[i].children[j].text + '第二级')
+                //         for (k = 0; k < cityData3.length; i++) {
+                //             cityData3[i].children[j].children[k].index = k;
+                //             console.log(cityData3[i].children[j].children[k].text + '第三级')
+                //         }
+                //     }
+
+                // }
+                // console.log(cityData3)
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+
+                //开始时间
+                var resultStart = $('#resultStart')[0];
+                var btnStart = $('.btnStart');
+                btnStart.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //结束时间
+                var resultEnd = $('#resultEnd')[0];
+                var btnEnd = $('.btnEnd');
+                btnEnd.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultEnd.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
+
+        // 获取省索引值
+        function searchProvince(cityData3, province) {
+            var i = cityData3.length;
+            while (i -= 1) {
+                if (cityData3[i].text == province) {
+                    return i;
+                }
+            }
+            return false;
+        }
+
+        //初始化全局变量
+        eventDomArr = [];
+        $("#eventDom .mui-checkbox").each(function () {
+            var eDom = $(this).find("input[name='event-dom']").val();
+            var eDomPrice = $(this).find("input[name='event-dom_price']").val();
+            var ePrice = $("#eventPrice").val();
+            //eventDomArr.push({ name: eDom, price: eDomPrice });
+            if(ePrice == 2){
+                eventDomArr.push({ name: eDom, price: eDomPrice });
+            }else{
+                eventDomArr.push({ name: eDom, price: '' });
+            }
+        });
+        $(function () {
+//
+//            var cDoms = $(".hdDoms").text();
+//            console.log(cDoms)
+//            cDoms = cDoms.substring(0, cDoms.length - 1);
+//            $(".hdDoms").text(cDoms);
+
+            //获取训练营粉丝列表
+            var StudentKeyword = '';
+            var wStudents = '';
+            var pageLD = 1;
+            toStudentList(StudentKeyword, wStudents, 1);
+            toCampMemberList(); // 调用训练营身份列表
+            toCampGradeList(); //调用训练营班级列表
+            isFree();  //判断是否收费显示data
+
+
+            //判断只有大热俱乐部可以收费
+            var organization_id = $("input[name=organization_id]").val();
+            if (organization_id == 9) {
+                $("#eventPrice").children().show();
+            }
+
+            // 具体对象
+            $(".campGradeList").on('tap', 'li', function () {
+                var target = $.trim($(this).text());
+                var target_id = $(this).attr('data-id');
+                $(".target_id").val(target_id);
+                $(".targetCont").text(target);
+                mui("#target").popover("toggle");
+            });
+
+            // 设置活动对象默认值
+            $('#eventObject option[value="{$eventInfo.target_type}"]').prop("selected", true);
+            // 设置活动类型默认值
+            $('#eventType option[value="{$eventInfo.event_type}"]').prop("selected", true);
+            // 设置收费默认值
+            $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
+
+            // 选择活动对象显示隐藏具体对象
+            $("#eventObject").on("change", '', '', function () {
+                var initial = "{$eventInfo.target_type}";
+                var selection = $(this).find("option:selected").val();
+                if (selection < initial) {
+                    mui.alert("不能选择上级对象");
+                    $('#eventObject').find("option").removeAttr("selected");
+                    $('#eventObject option[value="' + initial + '"]').prop("selected", true);
+                };
+
+                if ($(this).children('option:selected').text() == '班内') {
+                    $(".target-input-row").show();
+                    $(".targetCont").addClass("domData");
+                    $(".target_id").addClass("data");
+                } else {
+                    $(".target-input-row").hide();
+                    $(".targetCont").removeClass("domData");
+                    $(".target_id").removeClass("data");
+                };
+            });
+
+            //报名种类确认
+            $("#domConfirm").on('tap', this, function () {
+                var isTrue = true;
+                var eDoms = '';
+                var eDom = '';
+                var eDomPrice = '';
+                var ePrice = $("#eventPrice").val();
+                console.log(ePrice)
+                eventDomArr = [];
+                //把所选课量串在一起，以逗号分隔
+                $("#eventDom .mui-checkbox").each(function () {
+                    eDom = $(this).find("input[name='event-dom']").val();
+                    eDomPrice = $(this).find("input[name='event-dom_price']").val();
+                    if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || eDomPrice == 0 || !(/^[1-9]\+?[0-9]\d*$/).test(eDomPrice))) { //////加上判断是否收费
+                        isTrue = false;
+                        return false;
+                    } else {
+                        if(ePrice == 2){
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
+                            eventDomArr.push({ name: eDom, price: eDomPrice });
+                        }else{
+                            eDoms += '<button type="button" class="selectDom">'+eDom+'</button>'
+                            eventDomArr.push({ name: eDom, price: '' });
+                        }
+
+                    }
+                });
+                if (isTrue) {
+                    $(".eventDom").html(eDoms);
+                    console.log(eventDomArr)
+                    mui('#eventDom').popover('toggle');
+                } else {
+                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
+                        eDoms = '';
+                    })
+                }
+            })
+
+            //添加
+            $("#domAdd").on('tap', this, function () {
+                $("#eventDom form").append('<div class="mui-input-row mui-checkbox mui-left"><i class="cancel-dom mui-icon mui-icon-close"></i><input type="text" name="event-dom" class="wd58 fl" value="" placeholder="请填写种类名称"><input type="text" name="event-dom_price" class="wd27 fr" value="" placeholder="价格"></div>');
+                if ($("#eventPrice").val() == 1) {
+                    $("input[name='event-dom_price']").hide();
+                }
+            })
+            // 删除
+            $(document).on('tap', ".cancel-dom", function () {
+                $(this).parent().remove();
+            });
+
+            //判断是否免费隐藏价格
+            if ($("#eventPrice").val() == 1) {
+                $("input[name='event-dom_price']").hide();
+            }
+
+            // 选择是否收费显示隐藏活动单价和费用结算人
+            $("#eventPrice").change(function () {
+                $(".eventDom").text("");
+                eventDomArr = [{ name: '默认', price: '' }];
+                if ($(this).children('option:selected').text() == '免费') {
+                    $("input[name='event-dom_price']").hide();
+                    $(".price-input-row").hide();
+                    $(".finance").removeClass("domData");
+                    $("input[name='finance_id']").removeClass("data");
+                } else {
+                    $("input[name='event-dom_price']").show();
+                    $(".price-input-row").show();
+                    $(".finance").addClass("domData").val('');
+                    $("input[name='finance_id']").addClass("data").val('');
+                }
+            });
+
+            // 费用结算人
+            $(".campMemberType").on('click', 'li', function () {
+                var finance = $(this).find("font").text();
+                $(".finance").text(finance);
+                var id = $(this).attr('data-id');
+                $(".finance_id").val(id);
+                mui("#cost").popover("toggle");
+            })
+            //清除费用结算人
+            $("#StudentDel").on('tap', '', function () {
+                $(".finance").text('');
+                $(".finance_id").val("");
+                mui("#cost").popover("toggle");
+            })
+            //搜索费用结算人学生
+            $("#searchLD").on("click", function () {
+                var keyword = $(".keywordLD").val();
+                var pageLD = 1;
+                toStudentList(keyword, "cost", pageLD);
+            })
+            //费用结算人学生弹出框页码控制
+            $("#cost").on('click', '.next_page', function () {
+                var getTotalPage = $("#cost .totalPage").text();
+                pageLD++;
+                if (pageLD > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toStudentList(keyword, "cost", pageLD);
+                }
+            })
+            $("#cost").on('click', '.prev_page', function () {
+                pageLD--;
+                if (pageLD < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toStudentList(keyword, "cost", pageLD);
+                }
+            })
+
+
+
+        });
+
+        //判断是否收费显示data
+        function isFree() {
+            var is_free = "{$eventInfo.is_free}";
+            if (is_free == 1) {
+                $("input[name='price']").removeClass("data");
+                $(".costCont").removeClass("domData");
+                $("input[name='finance_id']").removeClass("data");
+            } else {
+                $(".price-input-row").show();
+                $("input[name='price']").addClass("data");
+                $(".costCont").addClass("domData");
+                $("input[name='finance_id']").addClass("data");
+            }
+        }
+
+        // 获取数据并进行提交(编辑活动)
+        function submitAction() {
+
+            if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+                mui.alert("请输入正确的手机格式");
+                return;
+            };
+
+            //图文编辑状态转换浏览状态
+            tuwenToView()
+
+            //获取最终含简单html标签的图文内容
+            var introHtml = $(".introBox").html();
+            /////////////////////////////////////////////////////////////////
+
+            $(".event_des").val(introHtml);
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var event_des = $('textarea.data').val();
+            objData.dom = JSON.stringify(eventDomArr);
+            objData.event_des = event_des;
+            if (eventDomArr.length == 0 || eventDomArr == undefined || eventDomArr == []) {
+                eventDomArr = [{ name: '默认', price: '' }];
+            }
+            objData.price = eventDomArr[0].price;
+            if (objData.is_free == 2 && objData.price == '') {
+                mui.alert("请添加收费活动套餐的价格");
+                return false;
+            }
+
+            //            console.log(eventDomArr)
+            //            return false;
+            var url = "{:url('api/event/updateEventApi')}" + '/event_id/{$eventInfo.id}';
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
+                    var goUrl = "{:url('event/eventinfoOfCamp')}" + '/event_id/' + ajaxResult.data;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                //图文转换成可编辑状态
+                tuwenToEdit()
+                mui.alert(ajaxResult.msg, '活动修改失败', '确定', function () {
+
+                });
+            };
+        };
+
+        //自定义获取训练营班级列表
+        var toCampGradeList = function () {
+            var url = "{:url('api/grade/getGradeListApi','','',true)}";
+            var campID = "{$eventInfo.organization_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var gradeli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            gradeli = gradeli + '<li class="mui-table-view-cell listli detalisli target" data-id="' + data.data[i].id + '">' + data.data[i].grade + '</li>'
+                        }
+                        $("ul.campGradeList").empty();
+                        if (gradeli == '') {
+                            gradeli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $("ul.campGradeList").append(gradeli);
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取训练营身份列表没分页
+        var toCampMemberList = function () {
+            var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
+            var campID = "{$eventInfo.organization_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    type: 2
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            type = data.data[i].type;
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli cost" data-id="' + data.data[i].member_id + '"><font class="member">' + data.data[i].member + '</font><span class="wd36">' + data.data[i].type + '</span></li>'
+                        }
+
+                        $("ul.campMemberAdmin").empty();
+                        $("ul.campMemberAdmin").append(newli);
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+        //训练营下学生身份列表接口获取数据并追加到页面
+        var toStudentList = function (keyword, wStudents, page) {
+            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
+            var campID = "{$eventInfo.organization_id}";
+            var typeID = "1";
+            var wStudentsList = "ul.campMemberStudent";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wStudents != '') {
+                wStudentsList = "#" + wStudents + " ul.campMemberStudent";
+                currPage = "#" + wStudents + " .currPage";
+                totalPage = "#" + wStudents + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    type: typeID,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                //processData:false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '"><font class="member">' + data.data.data[i].member + '</font></li>'
+                        }
+                        $(wStudentsList).empty();
+                        if (newli == '') {
+                            newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        }
+                        $(wStudentsList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>
