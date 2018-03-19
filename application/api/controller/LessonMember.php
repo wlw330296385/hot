@@ -11,11 +11,7 @@ class LessonMember extends Base{
         $this->LessonMemberService = new LessonMemberService;
 	}
 
-<<<<<<< HEAD
-    // 搜索学生
-=======
     // 搜索学生带page
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function searchLessonMemberByPageApi(){
         try{
 
@@ -40,11 +36,7 @@ class LessonMember extends Base{
         }
     }
 
-<<<<<<< HEAD
-    // 搜索学生
-=======
     // 搜索课程学生不带page
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function searchLessonMemberNoPageApi(){
         try{
 
@@ -57,11 +49,6 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-<<<<<<< HEAD
-            $LessonMember = new \app\model\LessonMember;
-            $result =  $LessonMember->where($map)->select();
-            if($result){
-=======
             if(isset($map['rest_schedule'])){
                 $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
@@ -75,7 +62,6 @@ class LessonMember extends Base{
                     $result[$k]['type_num'] = $getData['type'];
                     $result[$k]['status_num'] = $getData['status'];
                 }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
@@ -86,11 +72,7 @@ class LessonMember extends Base{
         }
     }
 
-<<<<<<< HEAD
-    // 获取训练营下的学生
-=======
     // 获取训练营下的学生带page(唯一)
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function getLessonMemberListOfCampByPageApi(){
         try{
             $map = input('post.');
@@ -101,12 +83,9 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-<<<<<<< HEAD
-=======
             if(isset($map['rest_schedule'])){
                 $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->LessonMemberService->getLessonMemberListOfCampWithStudentByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -118,10 +97,7 @@ class LessonMember extends Base{
         }
     }
 
-<<<<<<< HEAD
-=======
     // 获取课程学生数据带page
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function getLessonMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -132,12 +108,9 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-<<<<<<< HEAD
-=======
             if(isset($map['rest_schedule'])){
                 $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
@@ -149,11 +122,7 @@ class LessonMember extends Base{
         }
     }
 
-<<<<<<< HEAD
-   
-=======
     
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 获取与课程|班级|训练营相关的学生|体验生-不带page
     public function getLessonMemberListNoPageApi(){
         try{
@@ -165,12 +134,9 @@ class LessonMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-<<<<<<< HEAD
-=======
             if(isset($map['rest_schedule'])){
                 $map['rest_schedule'] = ['lt',$map['rest_schedule']];
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $LessonMember = new \app\model\LessonMember;
             $result = $LessonMember->where($map)->select();
             if($result){
@@ -183,8 +149,6 @@ class LessonMember extends Base{
         }
     }
 
-<<<<<<< HEAD
-=======
     // 获取训练营相同价格的课程带分页带搜索
     public function getSamePriceLessonMemberListByPageApi(){
         try{
@@ -227,17 +191,10 @@ class LessonMember extends Base{
         }
     }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 获取未分配班级的学生列表-带page
     public function getNoGradeMemberListByPageApi(){
         try{
             $map = input('post.');
-<<<<<<< HEAD
-            // 已分配的学生IDs
-            $IDs = db('grade_member')->where($map)->where('delete_time','null')->column('student_id');
-            $map['student_id']=['not in',$IDs];
-            $result = $this->LessonMemberService->getLessonMemberListByPage($map);
-=======
             $keyword = input('param.keyword');
 
             // 已分配的学生IDs
@@ -247,7 +204,6 @@ class LessonMember extends Base{
             }
             $map['student_id']=['not in',$IDs];
             $result = $this->LessonMemberService->getLessonMemberListWithStudentByPage($map);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
@@ -257,8 +213,6 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-<<<<<<< HEAD
-=======
 
 
     // 课程转移
@@ -337,5 +291,4 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

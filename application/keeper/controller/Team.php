@@ -60,11 +60,7 @@ class Team extends Base {
         ];
         foreach ($rolemembers as $rolemember) {
             if ($rolemember['type'] == 4) {
-<<<<<<< HEAD
-                $roleslist['coach_ids'] .= $rolemember['member_id'].',';
-=======
                 $roleslist['coach_ids'] .= $rolemember['id'].',';
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
@@ -73,11 +69,7 @@ class Team extends Base {
                 ]);
             }
             if ($rolemember['type'] == 1 ) {
-<<<<<<< HEAD
-                $roleslist['committee_ids'] .= $rolemember['member_id'].',';
-=======
                 $roleslist['committee_ids'] .= $rolemember['id'].',';
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 array_push($roleslist['committee_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
@@ -439,11 +431,7 @@ class Team extends Base {
         return view('Team/matchInfo');
     }
 
-<<<<<<< HEAD
-    // 创建比赛
-=======
     // 创建比赛信息
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function creatematch() {
         $teamS = new TeamService();
         // 传入客队id 页面输出信息
@@ -467,8 +455,6 @@ class Team extends Base {
         ]);
     }
 
-<<<<<<< HEAD
-=======
     // 创建+录入比赛
     public function directmatch() {
         $match_id = input('match_id', 0);
@@ -512,7 +498,6 @@ class Team extends Base {
         return view('Team/directMatch');
     }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 编辑比赛
     public function matchedit() {
         $match_id = input('match_id', 0);

@@ -97,11 +97,6 @@ class Lesson extends Backend {
     public function buyLesson(){
         $LessonService = new LessonService;
         $lessonList = $LessonService->getLessonList();
-<<<<<<< HEAD
-        $breadcrumb = ['ptitle' => '课程管理', 'title' => '帮购买课程'];
-        $this->assign('breadcrumb',$breadcrumb);
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $member_id = input('param.member_id');
         $memebrInfo = db('member')->where(['id'=>$member_id])->find();
         if(!$memebrInfo){
@@ -144,30 +139,17 @@ class Lesson extends Backend {
                 $BillService = new \app\service\BillService;
                 $result = $BillService->createBill($billInfo);
                 if($result['code']==200){
-<<<<<<< HEAD
-                    $res = $BillService->pay(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
-                    if($res){
-                        echo '<script type="text/javascript">alert("'.$result["msg"].'")</script>';
-                        // return json(['code'=>100,'msg'=>'操作成功']);
-                    }else{
-                        echo "<script type='text/javascript'>alert('后续操作有bug,请联系woo')</script>";
-=======
                     $res = $BillService->payNoNotice(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
                     if($res){
                         echo '<script type="text/javascript">alert("'.$result["msg"].'");window.opener=null;window.close();</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
                         echo "<script type='text/javascript'>alert('".$result['msg']."并联系woo')</script>";
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         // return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
                     }
                     
                 }else{
-<<<<<<< HEAD
-                    return json(['code'=>100,'msg'=>'订单生成失败']);
-=======
                     return json(['code'=>100,'msg'=>$result['msg']]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }catch (Exception $e){
                 return json(['code'=>100,'msg'=>$e->getMessage()]);

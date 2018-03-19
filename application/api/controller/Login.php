@@ -18,13 +18,9 @@ class Login extends Base{
     public function registerApi(){
         try{
         	$data = input('post.');
-            /*$pid = input('param.pid');
+            $pid = input('param.pid');
             if($pid){
                 $data['pid'] = $pid;
-            }*/
-            // 推荐人id
-            if (Cookie::has('pid')) {
-                $data['pid'] = Cookie::get('pid');
             }
             // 推荐人id
             if (Cookie::has('pid')) {
@@ -41,12 +37,8 @@ class Login extends Base{
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
-<<<<<<< HEAD
-                    $data['avatar'] = $memberInfo['avatar'];
-=======
                     //$data['avatar'] = $memberInfo['avatar'];
                     $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
 
@@ -141,9 +133,6 @@ class Login extends Base{
     }
 
     public function autoLogin(){
-<<<<<<< HEAD
-        $id = input('param.id',1);
-=======
         $id = input('param.id');
         $hot_id = input('param.hot_id');
         if(!$id){
@@ -151,7 +140,6 @@ class Login extends Base{
         }else{
             $map = ['id'=>$id];
         }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $member =new \app\service\MemberService;
         $memberInfo = $member->getMemberInfo($map);
         unset($memberInfo['password']);
@@ -166,8 +154,6 @@ class Login extends Base{
         if ( session('?memberInfo') ) {
             return json( session('memberInfo', '','think') );
         }
-<<<<<<< HEAD
-=======
     }
 
 
@@ -180,6 +166,5 @@ class Login extends Base{
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }

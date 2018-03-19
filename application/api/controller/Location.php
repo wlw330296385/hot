@@ -48,8 +48,6 @@ class Location extends Base{
             return json(['code'=>200,'msg'=>$ip,'data'=>$ip]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
-<<<<<<< HEAD
-=======
         }
     }
 
@@ -74,7 +72,6 @@ class Location extends Base{
             return json(['code'=>200,'msg'=>'成功','data'=>round($calculatedDistance)]); 
         }catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 

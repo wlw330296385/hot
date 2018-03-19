@@ -36,11 +36,7 @@ class Grade extends Backend {
             $map['coach'] = ['like', '%'. $coach .'%'];
         }
 
-<<<<<<< HEAD
-        $list = GradeModel::where($map)->order('id desc')->paginate(15);
-=======
         $list = GradeModel::where($map)->order('id desc')->paginate(15, false, ['query' => request()->param()]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         $this->assign('list', $list);
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '班级管理' ];

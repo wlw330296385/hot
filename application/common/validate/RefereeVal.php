@@ -6,19 +6,6 @@ class RefereeVal extends Validate{
 
     protected $rule = [
         'referee'  =>  'require|max:60',
-<<<<<<< HEAD
-        'member_id'  =>  'require|max:60',
-    ];
-    
-    protected $message = [
-        'referee.require'  =>  '用户名必须',
-        'member_id'     =>'用户名ID必须',
-    ];
-    
-    protected $scene = [
-        'add'   =>  ['referee'],
-        'edit'  =>  ['referee'],
-=======
         'member_id'  =>  'require|gt:0',
         'appearance_fee' => 'number',
         'referee_year' => 'number',
@@ -38,7 +25,6 @@ class RefereeVal extends Validate{
     protected $scene = [
         'add'   =>  ['referee', 'member_id', 'appearance_fee', 'referee_year', 'level', 'province'],
         'edit'  =>  ['referee', 'member_id', 'appearance_fee', 'referee_year', 'level', 'province'],
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     ];    
 
 }

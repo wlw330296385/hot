@@ -16,10 +16,7 @@ class Camp extends Base{
     public function searchCampApi(){
         try{
             $map = input('post.');
-<<<<<<< HEAD
-=======
             $orderBy = input('param.orderBy')?input('param.orderBy'):'total_schedule DESC';
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $keyword = input('param.keyword');
             $province = input('param.province');
             $page = input('param.page')?input('param.page'):1;
@@ -42,11 +39,7 @@ class Camp extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-<<<<<<< HEAD
-            $result = $this->CampService->getCampList($map,$page);
-=======
             $result = $this->CampService->getCampList($map,$page,10,$orderBy);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
              if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -57,8 +50,6 @@ class Camp extends Base{
         }       
     }
 
-<<<<<<< HEAD
-=======
     // 搜索全部训练营(一页全部)
     public function searchCampListAllApi(){
         try{
@@ -97,7 +88,6 @@ class Camp extends Base{
         }       
     }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 获取训练营的列表有page
     public function getCampListByPageApi(){
         try{
@@ -312,17 +302,11 @@ class Camp extends Base{
     public function getHotCampList(){
         $province = input('param.province');
         $city = input('param.city');
-<<<<<<< HEAD
-        $map['province']=$province;
-        $map['city'] = $city;
-        $map['hot'] = 1;
-=======
         $status = input('param.status',1);
         $map['province']=$province;
         $map['city'] = $city;
         $map['hot'] = 1;
         $map['status'] = $status;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         foreach ($map as $key => $value) {
             if($value == ''|| empty($value) || $value==' '){
                 unset($map[$key]);
@@ -364,8 +348,6 @@ class Camp extends Base{
         $updateCampStatus = $campS->updateCampStatus($camp_id, $setcampstatus);
         if (!$updateCampStatus) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-<<<<<<< HEAD
-=======
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
@@ -459,8 +441,6 @@ class Camp extends Base{
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
-        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }

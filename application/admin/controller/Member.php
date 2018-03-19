@@ -32,13 +32,6 @@ class Member extends Backend{
 			
 		
 
-<<<<<<< HEAD
-		$memberList = $this->MemberService->getMemberListByPage($map);
-		// dump($memberList->toArray());die;
-		// 模板变量赋值
-
-
-=======
 		//$memberList = $this->MemberService->getMemberListByPage($map);
 		// dump($memberList->toArray());die;
 		// 模板变量赋值
@@ -69,14 +62,11 @@ class Member extends Backend{
             }
         });
         //dump($memberList);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		$this->assign('field',$field);
 		$this->assign('memberList', $memberList);
 		return view('member/memberList');
 	}
 
-<<<<<<< HEAD
-=======
 	public function memberInfo(){
 		$member_id = input('param.member_id');
 		$memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
@@ -97,7 +87,6 @@ class Member extends Backend{
 		$this->assign('memberInfo',$memberInfo);
 		return view('member/memberInfo');
 	}
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
 	public function createMember(){
 

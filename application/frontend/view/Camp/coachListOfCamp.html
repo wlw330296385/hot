@@ -18,16 +18,11 @@
 <body>
     <!--头部搜索2-->
     <header id="header" class="mui-bar mui-bar-nav subheader">
-<<<<<<< HEAD
-        <a class="mui-pull-left" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"><span class="mui-icon mui-icon-left-nav"></span>{$campInfo.camp}</a>
-        <a class="mui-pull-right" href="{:url('camp/coachListOfCamp', ['status' => 0, 'camp_id' => $camp_id])}">待审核教练<span class="mui-icon mui-icon-forward"></span></a>
-=======
         <a class="mui-pull-left" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">
             <span class="mui-icon mui-icon-left-nav"></span>{$campInfo.camp}</a>
         <a class="mui-pull-right" href="{:url('camp/coachListOfCamp', ['status' => 0, 'camp_id' => $camp_id])}">待审核教练
             <span class="mui-icon mui-icon-forward"></span>
         </a>
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     </header>
 
     <div class="mui-content">
@@ -97,15 +92,9 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-<<<<<<< HEAD
-                            var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/' + campID + '?camp_name=' + camp_name;
-                            var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '">删除</span></div><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame">'
-=======
                             var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/' + campID;
                             var star = data.data[i].star;
                             newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-grey" data-level="' + data.data[i].level + '">设为正职</span><span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '">删除</span></div><div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p></div><div class="price-frame">'
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             if (star == 0) {
                                 newli += '<div class="icons mui-inline"><i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
                             } else {
@@ -129,36 +118,22 @@
             });
         };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         //拖拽后显示操作图标，点击操作图标删除元素；
         $('#OA_task_coach').on('tap', '.mui-btn', function (event) {
             var elem = this;
             var li = elem.parentNode.parentNode;
             var btnArray = ['确认', '取消'];
-<<<<<<< HEAD
-            var url = "{:url('api/campMember/removerelationship')}";
-            var campmemberid = $(this).attr("data-id");
-            mui.confirm('确认删除该教练？', '提示', btnArray, function (e) {
-=======
             var txt = elem.innerHTML;
             var url = "{:url('api/campMember/removerelationship')}";
             var campmemberid = $(this).attr("data-id");
             var level = $(this).attr("data-level");
             mui.confirm('确认将该教练' + txt + '?', '提示', btnArray, function (e) {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 if (e.index == 0) {
                     mui.ajax({
                         url: url,
                         data: {
-<<<<<<< HEAD
-                            "campmemberid": campmemberid
-=======
                             campmemberid: campmemberid,
                             level: level
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -183,16 +158,9 @@
                             mui.toast('网络异常,请稍候再试');
                         }
                     });
-<<<<<<< HEAD
-
-                } else {
-                    setTimeout(function () {
-                        $.swipeoutClose(li);
-=======
                 } else {
                     setTimeout(function () {
                         mui.swipeoutClose(li);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }, 0);
                 }
             });

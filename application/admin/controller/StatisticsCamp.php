@@ -567,59 +567,21 @@ class StatisticsCamp extends Backend{
 
     // 训练营订单列表
     public function campBillList(){
-        $camp_id = $this->campInfo['id'];
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
-        $campBillList = db('bill')->where(['camp'=>$camp_id])->where('delete_time',null)->select();
         //查询条件：camp_id，goods_type，monthstart，monthend
-        $this->assign('campBillList',$campBillList);
         return $this->fetch('StatisticsCamp/campBillList');
     }
     // 训练营提现列表
     public function campWithdraw(){
-        $camp_id = $this->campInfo['id'];
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
         //查询条件：camp_id，monthstart，monthend
-        $list = db('output')
-            ->where(['camp'=>$camp_id,'type'=>-1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
-        $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campWithdraw');
     }
     // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）
     public function campCoachSallaryMth(){
-        $camp_id = $this->campInfo['id'];
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
         //查询条件：camp_id，monthstart，monthend
-        $list = db('salary_in')
-            ->where(['camp'=>$camp_id,'type'=>1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
-        $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campCoachSallaryMth');
     }
     // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
     public function campCoachSallary(){
-        $camp_id = $this->campInfo['id'];
-        $member_id = input('member_id',0);
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
-        $list = db('schedule')
-            ->where(['camp'=>$camp_id,'type'=>1,'coach_id'=>$member_id,'is_settle'=>1])
-            ->where(['lesson_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
-        $this->assign('list',$list);
         //查询条件：camp_id，member_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campCoachSallary');
     }

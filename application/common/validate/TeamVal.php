@@ -11,11 +11,7 @@ class TeamVal extends Validate {
 //        'name' => 'require|length:2,16|chsDash|unique:team|token',
         'name' => 'require|length:2,16|chsDash|token',
         // 会员id大于0表示已注册或登录会员
-<<<<<<< HEAD
-        'member_id' => 'require|gt:0',
-=======
         'member_id' => 'gt:0',
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         'type' => 'require',
         // type（球队类型）值为1（即青少年训练营）时camp_id必填
         'camp_id' => 'requireIf:type,1',
@@ -27,12 +23,8 @@ class TeamVal extends Validate {
         'avg_age' => 'number',
         'avg_height' => 'number',
         'avg_weight' => 'number',
-<<<<<<< HEAD
-        'cover' => 'require'
-=======
         'cover' => 'require',
         'descri' => 'max:100'
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     ];
 
     // 提示信息
@@ -43,10 +35,6 @@ class TeamVal extends Validate {
         'name.chsDash' => '球队名称只能填写汉字、英文、数字和下划线_及破折号-',
         'name.unique' => '填写的球队名称已存在，请填写其他名称',
         'name.token' => '请不要重复点击提交',
-<<<<<<< HEAD
-        'member_id.require' => '请先注册会员或重新登录平台',
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         'member_id.gt' => '请先注册会员或重新登录平台',
         'type.require' => '请选择球队类型',
         'camp_id.requireIf' => '请选择所属训练营',
@@ -58,22 +46,14 @@ class TeamVal extends Validate {
         'avg_height.number' => '平均身高填写数字',
         'avg_weight.number' => '平均体重填写数字',
         'cover.require' => '请上传球队封面图',
-<<<<<<< HEAD
-=======
         'descri.max' => '简介不能超过100个字'
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     ];
 
     // 验证场景
     protected $scene = [
         'add' => [
             'name' => 'require|length:2,16|chsDash|unique:team|token',
-<<<<<<< HEAD
-            'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover'],
-        'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover']
-=======
             'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri'],
         'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri']
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     ];
 }

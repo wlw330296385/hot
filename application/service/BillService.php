@@ -75,12 +75,6 @@ class BillService {
         $data['pay_time'] = time();
         $data['expire'] = 0;
         $result = $this->Bill->save($data,$map);      
-<<<<<<< HEAD
-        if($result){
-            $billInfo = $this->Bill->where($map)->find();
-            $billData = $billInfo->toArray();
-            $res = $this->finishBill($billData);
-=======
         if($result){
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
@@ -102,24 +96,12 @@ class BillService {
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBillNoNotic($billData);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $res;
         }else{
             return false;
         }
     }
 
-<<<<<<< HEAD
-
-
-
-    /**
-    * 订单支付完成操作
-    * @param $data 一条订单记录
-    **/
-    private function finishBill($data){
-        $MessageService = new \app\service\MessageService;
-=======
 
 
     /**
@@ -277,84 +259,10 @@ class BillService {
         if($ress){
             db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
         }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
-<<<<<<< HEAD
-            // 训练营的余额和历史会员增加
-            $setting = db('setting')->find();
-            $campBlance = ($data['balance_pay']*(1-$setting['sysrebate']));
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-
-            if($ress){
-                db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$setting['sysrebate']),'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time()]);
-            }
-            //学生表的总课程和总课量+n;   
-            db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
-            // 发送个人消息           
-            $MessageData = [
-                "touser" => '',
-                "template_id" => config('wxTemplateID.successBill'),
-                "url" => url('frontend/bill/billInfo',['bill_order'=>$data['bill_order']],'',true),
-                "topcolor"=>"#FF0000",
-                "data" => [
-                    'first' => ['value' => '订单支付成功通知'],
-                    'keyword1' => ['value' => $data['student']],
-                    'keyword2' => ['value' => $data['bill_order']],
-                    'keyword3' => ['value' => $data['balance_pay'].'元'],
-                    'keyword4' => ['value' => $data['goods_des']],
-                    'remark' => ['value' => '篮球管家']
-                ]
-            ];
-            $saveData = [
-                            'title'=>"订单支付成功-{$data['goods']}",
-                            'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>支付学生信息:{$data['student']}",
-                            'url'=>url('frontend/bill/billInfo',['bill_order'=>$data['bill_order']],'',true),
-                            'member_id'=>$data['member_id']
-                        ];
-            //给训练营营主发送消息
-            if($data['balance_pay'] > 0){
-                $MessageCampData = [
-                    "touser" => '',
-                    "template_id" => config('wxTemplateID.successBill'),
-                    "url" => url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true),
-                    "topcolor"=>"#FF0000",
-                    "data" => [
-                        'first' => ['value' => '订单支付成功通知'],
-                        'keyword1' => ['value' => $data['student']],
-                        'keyword2' => ['value' => $data['bill_order']],
-                        'keyword3' => ['value' => $data['balance_pay'].'元'],
-                        'keyword4' => ['value' => $data['goods_des']],
-                        'remark' => ['value' => '篮球管家']
-                    ]
-                ];
-                $MessageCampSaveData = [
-                    'title'=>"购买-{$data['goods']}",
-                    'content'=>"订单号: {$data['bill_order']}<br/>支付金额: {$data['balance_pay']}元<br/>购买人:{$data['member']}<br/>购买理由: {$data['remarks']}",
-                    'member_id'=>$data['member_id'],
-                    'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
-                ];
-            }
-            // camp_member操作
-            $CampMember = new CampMember;
-            $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
-            if($is_campMember){
-                // 强制更新
-                 $CampMember->save(['type'=>1],['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']]);
-            }else{
-                $CampMember->save(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
-            }
-            // lesson_member操作
-            $LessonMember = new LessonMember;
-            $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->find();
-            
-            //添加一条学生数据
-            if(!$is_student2){
-                if($data['balance_pay']>0){
-                    $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'type'=>1]);
-=======
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             
@@ -395,26 +303,11 @@ class BillService {
             //添加一条学生数据
             if(!$is_student2){
                     $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'total_schedule'=>$data['total'],'type'=>1]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     if(!$re){
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                     }else{
                         db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                     }
-<<<<<<< HEAD
-                }
-            }else{
-                // 课量增加
-                // 只有正式学生课量增加,并且状态强制改为正式学生
-                if($data['balance_pay']>0){
-                    $re = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->setInc('rest_schedule',$data['total']);
-                    $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
-                    if(!$re){
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
-                    }else{
-                        db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
-                    }
-=======
             }else{
                 // 课量增加
                 $re = db('lesson_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status'=>1]);
@@ -423,17 +316,11 @@ class BillService {
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                 }else{
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
                 
             }
         //结束增加学生数据
         // 发送模板消息
-<<<<<<< HEAD
-        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
-        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-        //结束课程操作
-=======
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
             //结束课程操作
             // 记录训练营课程营业额
@@ -449,7 +336,6 @@ class BillService {
                 'datetime' => $daytime
             ];
             CampFinance::create($dataCampFinance);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;
@@ -458,8 +344,6 @@ class BillService {
                 //成为粉丝
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
-<<<<<<< HEAD
-=======
             $dataCampFinance = [
                 'camp_id' => $data['camp_id'],
                 'camp' => $data['camp'],
@@ -471,16 +355,12 @@ class BillService {
                 'datetime' => $daytime
             ];
             CampFinance::create($dataCampFinance);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }   
                 
         return 1;
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     //判断订单付款金额
     public function isPay($map){
         $result = $this->Bill->where($map)->find();
@@ -520,11 +400,7 @@ class BillService {
                         $MessageCampData = [
                             "touser" => '',
                             "template_id" => config('wxTemplateID.successRefund'),
-<<<<<<< HEAD
-                            "url" => url('frontend/bill/billInfoOfCamp',$map,'',true),
-=======
                             "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']],'',true),
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             "topcolor"=>"#FF0000",
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
@@ -537,11 +413,7 @@ class BillService {
                         $saveData = [
                                 'title'=>"退款申请-{$billInfo['goods']}",
                                 'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: {$billInfo['balance_pay']}元<br/>退款理由:{$billInfo['remarks']}",
-<<<<<<< HEAD
-                                'url'=>url('frontend/bill/billInfoOfCamp',$map)
-=======
                                 'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']])
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             ];
                         $MessageService->sendCampMessage($billInfo['camp_id'],$MessageCampData,$saveData);
                     }
@@ -589,12 +461,6 @@ class BillService {
                                 // 剩余课时的变化
                                 $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
                                 if($rest_schedule == 0){
-<<<<<<< HEAD
-                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>4]);
-                                }else{
-                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
-                                }
-=======
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
                                 }else{
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
@@ -615,7 +481,6 @@ class BillService {
                                 ]);
                                 // 减少训练营营业额
                                 db('camp')->where(['id'=>$billInfo['camp_id']])->setDec('balance',($refundTotal*$billInfo['price']));
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             }
                         }else{
                             // 其他订单
@@ -682,29 +547,6 @@ class BillService {
 
 
 
-<<<<<<< HEAD
-    // 订单支付
-    public function billPay($bill_order,$callback_str){
-        
-        $data = ['is_pay'=>1,'pay_time'=>time(),'callback_str'=>$callback_str];
-        // dump($data);
-        $result = $this->Bill->where(['bill_order'=>$bill_order])->update($data);
-        if($result){
-            $billInfo = $this->getBill(['bill_order'=>$bill_order]);
-            if($billInfo){
-                $balance_pay = $billInfo['balance_pay'];
-                // 返现返积分
-                return ['code'=>200,'msg'=>'支付成功'];
-            }else{
-                return ['code'=>100,'msg'=>'找不到订单信息'];
-            }
-            
-        }else{
-            return ['code'=>100,'msg'=>'支付失败,请联系客服'];
-        }
-    }
-=======
     
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
 }

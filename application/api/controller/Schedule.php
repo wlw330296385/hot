@@ -27,10 +27,6 @@ class Schedule extends Base
     {
         try {
             $lesson_id = input('param.lesson_id');
-<<<<<<< HEAD
-            
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $lesson_time = input('param.lesson_time');
             $grade_id = input('param.grade_id');
             $camp_id = input('param.camp_id');
@@ -115,14 +111,11 @@ class Schedule extends Base
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
-<<<<<<< HEAD
-=======
             // 训练时间不能大于当前时间
             if ($data['lesson_time'] > time()) {
                 return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);
             }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->ScheduleService->createSchedule($data);
             return json($result);
         } catch (Exception $e) {
@@ -144,15 +137,12 @@ class Schedule extends Base
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
-<<<<<<< HEAD
-=======
             
             // 训练时间不能大于当前时间
             if ($data['lesson_time'] > time()) {
                 return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);
             }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->ScheduleService->updateSchedule($data, $schedule_id);
             return json($result);
         } catch (Exception $e) {
@@ -222,11 +212,7 @@ class Schedule extends Base
             if(isset($map['grade_id']) && is_array($map['grade_id'])) {
                 $map['grade_id'] = ['in',$map['grade_id']];
             }
-<<<<<<< HEAD
-            $result = $this->ScheduleService->getScheduleListByPage($map);
-=======
             $result = $this->ScheduleService->getScheduleListByPage($map, 'lesson_time desc');
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -237,14 +223,6 @@ class Schedule extends Base
     public function getScheduleListOfCoachByPageApi()
     {
         try {
-<<<<<<< HEAD
-            $coach_id = input('param.coach_id');
-            $map = function ($query) use ($coach_id) {
-                $query->where(['schedule.coach_id' => $coach_id])->whereOr('schedule.assistant_id', 'like', "%\"$coach_id\"%");
-            };
-            $result = $this->ScheduleService->getScheduleListByPage($map);
-            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
-=======
             $map = input('post.');
             $y = input('param.y');
             $m = input('param.m');
@@ -270,7 +248,6 @@ class Schedule extends Base
                 return json(['code' => 100, 'msg' => '无数据','data'=>[]]);
             }
             
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -309,36 +286,19 @@ class Schedule extends Base
             if (!$schedule) {
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }
-<<<<<<< HEAD
-            //dump($schedule);
-            if ($schedule['status'] != 0) {
-                return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-            }
-=======
 
             /*if ($schedule['status'] != -1) {
                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
             }*/
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             if ($action == 'editstatus') {
                 // 审核课时
                 $res = $scheduleS->saveScheduleMember($scheduleid);
                 return json($res);
-<<<<<<< HEAD
-//            if ($res) {
-//                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-//            } else {
-//                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-//            }
-//            return json($response);
-            } else {
-=======
             } else {
                 if ($schedule['status'] == 1) {
                     return ['code' => 100, 'msg' => '该课时记录已审核，不能删除'];
                 }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $res = $scheduleS->delSchedule($scheduleid);
                 if ($res) {
                     $response = ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -358,22 +318,6 @@ class Schedule extends Base
         try {
             $scheduleid = input('scheduleid');
             $scheduleS = new ScheduleService();
-<<<<<<< HEAD
-            $members = $scheduleS->getScheduleStudentMemberList($scheduleid);
-//            dump($members);
-            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
-//        dump($schedule);
-
-            $templateData = [
-                'title' => $schedule['grade'] . '最新课时',
-                'content' => '您参加的' . $schedule['camp'] . '-' . $schedule['lesson'] . '-' . $schedule['grade'] . '班级 发布最新课时',
-                'lesson_time' => date('Y-m-d H:i', $schedule['lesson_time']),
-                'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true)
-            ];
-            //dump($templateData);
-            $messageS = new MessageService();
-            $res = $messageS->sendschedule($templateData, $members);
-=======
             // 获取课时学员数据
             $scheduleStudents = $scheduleS->getScheduleStudentMemberList($scheduleid);
 
@@ -404,7 +348,6 @@ class Schedule extends Base
             ];
             $messageS = new MessageService();
             $res = $messageS->sendMessageToMembers($member_ids, $templateData, config('wxTemplateID.sendSchedule'));
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
@@ -426,8 +369,6 @@ class Schedule extends Base
             if ($camppower < 2) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '不能操作']);
             }
-<<<<<<< HEAD
-=======
             $lessonInfo =  db('lesson')->where(['id'=>$request['lesson_id']])->find();
             if(!$lessonInfo){
                 return json(['code' => 100, 'msg' =>'找不到课程信息']);
@@ -437,7 +378,6 @@ class Schedule extends Base
             if($campInfo['balance_true']<$totalCost){
                 return json(['code' => 100, 'msg' =>'训练营余额不足']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
             $scheduleS = new ScheduleService();
@@ -448,11 +388,8 @@ class Schedule extends Base
                 if (!$updateLesson) {
                     return json(['code' => 100, 'msg' => '更新课程赠送课时' . __lang('MSG_400')]);
                 }
-<<<<<<< HEAD
-=======
                 // 扣除训练营的余额
                 db('camp')->where(['id'=>$camp_id])->dec('balance_true',$totalCost)->updaet();
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             return json($res);
         } catch (Exception $e) {
@@ -495,8 +432,6 @@ class Schedule extends Base
             if ($lesson['resi_giftschedule'] < $numChangegiftschedule) {
                 return json(['code' => 100, 'msg' => '课程剩余赠送数量不足，点击"购买课量"进入购买']);
             } else {
-<<<<<<< HEAD
-=======
                 //学员剩余课时更新
                 if (!empty($request['student_str'])) {
                     $studentList = json_decode($request['student_str'], true);
@@ -529,29 +464,10 @@ class Schedule extends Base
                     // 保存赠课与学员关系记录
                     $saveScheduleGiftStudentResult = $scheduleS->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent);
                 }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $res = $scheduleS->recordgift($request);
                 if (!$res) {
                     $response = json(['code' => 100, 'msg' => '赠送课时' . __lang('MSG_400')]);
                 } else {
-<<<<<<< HEAD
-                    //学员剩余课时更新
-                    if (!empty($request['student_str'])) {
-                        $studentList = json_decode($request['student_str'], true);
-                        //dump($studentList);
-                        $studentMap = [];
-                        foreach ($studentList as $student) {
-                            $studentMap['camp_id'] = $request['camp_id'];
-                            $studentMap['student_id'] = $student['student_id'];
-                            $studentMap['lesson_id'] = $request['lesson_id'];
-                            $saveStudentRestschedule = $scheduleS->saveStudentRestschedule($studentMap, $request['gift_schedule']);
-                            if (!$saveStudentRestschedule) {
-                                return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
-                            }
-                        }
-                    }
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     // 课程赠送课程更新
                     $updateLesson = $lessonDb->where('id', $request['lesson_id'])
                         ->inc('total_giftschedule', $numChangegiftschedule)
@@ -584,8 +500,6 @@ class Schedule extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
-<<<<<<< HEAD
-=======
 
     // 2018-01-26 删除已申课时
     public function delcheckedschedule() {
@@ -639,5 +553,4 @@ class Schedule extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

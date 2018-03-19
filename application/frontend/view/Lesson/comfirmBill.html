@@ -56,9 +56,6 @@
             <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
             <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
             </li>
-<<<<<<< HEAD
-            <li class="mui-table-view-cell listli mb mt"><span>课程总价<b class="colororange total_fee"></b></span></li>
-=======
             {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
             <li class="mui-table-view-cell listli">
                 赠送卡券
@@ -81,7 +78,6 @@
             {/if}
             <li class="mui-table-view-cell listli mb mt"><span>课程总价<b class="colororange total_fee"></b></span></li>
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         </ul>
 
         <div class="page-header">
@@ -164,20 +160,11 @@
     var total_fee = "{$lessonInfo.cost}" * total;
     var strBillInfo = '{$jsonBillInfo}';
     var objBillInfo = JSON.parse(strBillInfo);
-<<<<<<< HEAD
-=======
     var item_coupon_ids = JSON.stringify({$item_coupon_ids});
     $(function () {
 
         $('.total').text(total);
         $('.total_fee').text("￥" + total_fee);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
-
-    $(function () {
-
-<<<<<<< HEAD
-        $('.total').text(total);
-        $('.total_fee').text("￥" + total_fee);
 
 
         // 添加学生
@@ -244,72 +231,6 @@
         })
 
 
-=======
-        // 添加学生
-        $('#addBtn').on('click', '', function () {
-            var mID = "{$memberInfo.id}";
-            if (mID <= 0) {
-                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
-                    if (e.index===1) {
-                        window.location.href="{$fasturl}";
-                    }
-                });
-            } else {
-                var btnArray = ['确定', '取消'];
-                var addForm = '<div class="mui-popup-input"><span class="colororange">请勿同时填写多名学员姓名</span><input type="text" name="student" class="data" placeholder="学员姓名" autofocus=""><input type="text" name="parent" class="data" placeholder="家长姓名"><input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}"></div>'
-                mui.confirm(addForm, '添加学员信息', btnArray, function (e) {
-                    if (e.index == 0) {
-                        //确定添加，进行提交
-                        var telephone = $('.telephone').val();
-                        var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
-                        if (!codeRegTelephone.test(telephone)) {
-                            mui.toast('请填写正确的手机号码');
-                            return false;
-                        }
-                        var getStudent = $('input[name="student"]').val();
-                        var codeRegStudent = /^(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]{2,20}$/;
-                        if (!codeRegStudent.test(getStudent)) {
-                            mui.toast('学员姓名只能包含汉字、字母、数字！');
-                            return false;
-                        } else {
-                            if (isExistOption(getStudent)) {
-                                mui.toast(getStudent + "已经存在，请 [ 取消 ] 返回选择！");
-                                return false;
-                            }
-                            var arrData = wooApi.getInputData();
-                            var objData = wooApi.arrTOobj(arrData);
-                            objData.student_province = "{$lessonInfo.province}";
-                            objData.student_city = "{$lessonInfo.city}";
-                            objData.student_area = "{$lessonInfo.area}";
-                            var url = "{:url('api/student/createStudentApi')}";
-                            var ajaxResult = wooApi.asyncF(url, objData);
-                            // console.log(ajaxResult);
-
-                            if (ajaxResult.code == 200) {
-                                mui.toast(ajaxResult.msg);
-                                location.reload()
-                            } else {
-                                mui.toast(ajaxResult.msg);
-                                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                                    if (data.code === 200) {
-                                        $('input[name=__token__]').val(data.data);
-                                    }
-                                }, 'json');
-                            }
-                        }
-                    }
-                })
-            }
-        })
-
-        //替换学生列表
-        $('.selectStudent').on('change', function () {
-            $('#parent').text($(this).find("option:selected").attr("data-parent"));
-            $('#emergency_telephone').text($(this).find("option:selected").attr("data-telephone"));
-        })
-
-
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // 获取学生数据
         getStudentList();
 
@@ -424,22 +345,6 @@
         var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}", objBillInfo);
         return result;
     }
-<<<<<<< HEAD
-
-    function pay(callback_str) {
-        var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}", {
-            'balance_pay': total_fee,
-            'callback_str': callback_str
-        });
-
-        if (result.code == 200) {
-            mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。', '购买成功', '确定', function () {
-                window.location.href = "{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
-            });
-        } else {
-            mui.toast(result.msg);
-        }
-=======
 
     function pay(callback_str) {
         var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}", {
@@ -474,7 +379,6 @@
         wooApi.asyncT("{:url('api/follow/followCampApi')}", {
                 'camp_id': {$lessonInfo.camp_id},
             });
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 
 </script>

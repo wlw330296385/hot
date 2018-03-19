@@ -14,15 +14,6 @@ class SalaryOut extends Base{
     // 不分页获取记录
     public function getSalaryoutListApi(){
         try{
-<<<<<<< HEAD
-            $start = input('start')?input('start'):date(strtotime('-1 month'));
-            $end = intpu('end')?input('end'):date('Y-m-d',time());
-            $startInt = strtotime($start);
-            $endInt = strtotime($end);
-            $member_id = input('member_id')?input('member_id'):$this->memberInfo['id'];
-            $salaryList = $this->SalaryOut->getSalaryList($startInt,$endInt,$member_id);
-            return json(['code'=>200,'msg'=>'ok','data'=>$salaryList]);
-=======
             $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
             $map = ['member_id'=>$member_id];
             // $start = input('start')?input('start'):date(strtotime('-1 month'));
@@ -67,7 +58,6 @@ class SalaryOut extends Base{
                 return json(['code'=>100,'msg'=>'无数据']);
             }
             
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }        

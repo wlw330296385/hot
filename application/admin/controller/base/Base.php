@@ -13,11 +13,7 @@ class Base extends Controller {
     public $AuthService;
     public $admin;
     public function _initialize() {
-<<<<<<< HEAD
-
-=======
         $this->AuthService = new AuthService;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // 获取平台数据
         $SystemS = new SystemService();
         $site = $SystemS->getSite();
@@ -46,15 +42,11 @@ class Base extends Controller {
             ];
             return $res;
         } else {
-<<<<<<< HEAD
-            return ;
-=======
             $res = [
                 'camp_id' => 15,
                 'camp' =>'钟声训练营', 
             ];
             return $res;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 

@@ -3,11 +3,8 @@ namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\CourtService;
 use think\Db;
-<<<<<<< HEAD
-=======
 use think\Exception;
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 class Court extends Base{
 	protected $CourtService;
 
@@ -104,8 +101,6 @@ class Court extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
             }
-<<<<<<< HEAD
-=======
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -138,7 +133,6 @@ class Court extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -184,8 +178,6 @@ class Court extends Base{
                 return json(['code'=>100,'msg'=>__lang('MSG_403')]);
             }
             $result = $this->CourtService->updateCourt($data,$court_id);
-<<<<<<< HEAD
-=======
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -204,7 +196,6 @@ class Court extends Base{
             $data['member'] = session('admin.username');
             $data['system_remark'] = 'system:{'.session('admin.username').'}修改场地信息';
             $result = $this->CourtService->updateCourt($data,$court_id);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

@@ -10,15 +10,10 @@ class Tag extends Base {
     // 获取上架所有标签
     public function tagall() {
         try {
-<<<<<<< HEAD
-            $tagS = new TagService();
-            $res = $tagS->getTags(['status' => 1]);
-=======
             $map = input('param.');
             $map['status'] = input('param.status', 1);
             $tagS = new TagService();
             $res = $tagS->getTags($map);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($res) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
             } else {
@@ -33,13 +28,10 @@ class Tag extends Base {
     // 添加标签评论
     public function addtagcomment() {
         try {
-<<<<<<< HEAD
-=======
             // 检测会员登录
             if (!$this->memberInfo || $this->memberInfo['id'] === 0){
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if (!input('?tag_ids')) {
                 return json(['code' => 100, 'msg' => '请选择印象标签']);
             }

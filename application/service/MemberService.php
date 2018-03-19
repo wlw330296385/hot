@@ -21,15 +21,6 @@ class MemberService{
 		return $result;
 	}
 
-<<<<<<< HEAD
-	//获取资源列表
-	public function getMemberList($map = []){
-		$result = $this->memberModel->where($map)->select();
-		if($result){
-			$res = $result->toArray();
-			return $res;
-		}
-=======
 	// 会员列表
 	public function getMemberList($map = [], $order='id desc',$page=1, $limit=10){
 	    $model = new Member();
@@ -60,28 +51,12 @@ class MemberService{
 		// 	$res = $result->toArray();
 		// 	return $res;
 		// }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
-		return $result;
-	}
-
-	//获取资源列表
-	public function getMemberListByPage($map = [],$order = '',$paginate = 10){
-		$result = $this->memberModel->with('student')->where($map)->order($order)->paginate($paginate);
-		// echo $this->memberModel->getlastsql();die;
-		// if($result){
-		// 	$res = $result->toArray();
-		// 	return $res;
-		// }
 		return $result;
 	}
 
 	//修改会员资料
 	public function updateMemberInfo($data,$map){
-<<<<<<< HEAD
-
-=======
 		
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 		$result = $this->memberModel->save($data,$map);
 		
 		if($result ===false){
@@ -99,10 +74,6 @@ class MemberService{
 		// 生成一个随机id
 		$hot_id = $this->getHotID();
 		$MemberModel = new Member();
-<<<<<<< HEAD
-        $request['password'] = passwd($request['password']);
-        $request['repassword'] = passwd($request['repassword']);
-=======
 		if(isset($request['password'])){
 			$request['password'] = passwd($request['password']);
         	$request['repassword'] = passwd($request['repassword']);
@@ -111,7 +82,6 @@ class MemberService{
         	$request['repassword'] = passwd(123456);
 		}
         
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $request['hot_id'] = $hot_id;
         if (!isset($request['avatar'])) {
             $request['avatar'] = '/static/default/avatar.png';
@@ -256,22 +226,14 @@ class MemberService{
         //dump($parent_member);
         if ($parent_member) {
             $parent_member = $parent_member->toArray();
-<<<<<<< HEAD
-            $parent_member['tier'] = 2;
-=======
             $parent_member['tier'] = 1;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $parent_member['sid'] = $member['member_id'];
             $parent_member['s_member'] = $member['member'];
             array_push($tree, $parent_member);
             $parent_member2 = $model->field($field)->where('id', $parent_member['pid'])->find();
             if ($parent_member2) {
                 $parent_member2 = $parent_member2->toArray();
-<<<<<<< HEAD
-                $parent_member2['tier'] =3;
-=======
                 $parent_member2['tier'] =2;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $parent_member2['sid'] = $parent_member['member_id'];
                 $parent_member2['s_member'] = $parent_member['member'];
                 array_push($tree, $parent_member2);
@@ -279,8 +241,6 @@ class MemberService{
         }
         return $tree;
     }
-<<<<<<< HEAD
-=======
 
     // 提取微信受案信息头像 下载到本地
     public function downwxavatar($avatar) {
@@ -295,5 +255,4 @@ class MemberService{
         }
         return 0;
     }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

@@ -3,10 +3,7 @@
 namespace app\frontend\controller;
 
 
-<<<<<<< HEAD
-=======
 use app\service\MatchService;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 use app\service\TeamService;
 
 class Team extends Base {
@@ -19,12 +16,9 @@ class Team extends Base {
         $team_id = input('team_id');
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
-<<<<<<< HEAD
-=======
         if ($team_id && !$teamInfo) {
             $this->error('没有球队信息');
         }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->team_id = $team_id;
         $this->teamInfo = $teamInfo;
         $this->assign('team_id', $team_id);
@@ -55,16 +49,6 @@ class Team extends Base {
     public function teamedit() {
         // 获取球队有角色身份的会员列表
         $teamS = new TeamService();
-<<<<<<< HEAD
-        $rolemembers = $teamS->getTeamRoleMembers($this->team_id);
-        //dump($rolemembers);
-        // 教练、队委名单集合组合
-        $roleslist = [
-            'coach_ids' => '',
-            'coach_names' => '',
-            'committee_ids' => '',
-            'committee_names' => ''
-=======
         $rolemembers = $teamS->getTeamRoleMembers($this->team_id, 'team_member.member_id asc');
         // 教练、队委名单集合组合
         $roleslist = [
@@ -72,18 +56,10 @@ class Team extends Base {
             'committee_ids' => '',
             'coach_names' => [],
             'committee_names' => []
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         ];
         foreach ($rolemembers as $rolemember) {
             if ($rolemember['type'] == 2) {
                 $roleslist['coach_ids'] .= $rolemember['member_id'].',';
-<<<<<<< HEAD
-                $roleslist['coach_names'] .= $rolemember['member'].',';
-            }
-            if ($rolemember['type'] ==1 ) {
-                $roleslist['committee_ids'] .= $rolemember['member_id'].',';
-                $roleslist['committee_names'] .= $rolemember['member'].',';
-=======
                 array_push($roleslist['coach_names'], [
                     'id' => $rolemember['id'],
                     'member_id' => $rolemember['member_id'],
@@ -97,19 +73,12 @@ class Team extends Base {
                     'member_id' => $rolemember['member_id'],
                     'member' => $rolemember['member']
                 ]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
         }
         // 去掉结尾最后一个逗号
         $roleslist['coach_ids'] = rtrim($roleslist['coach_ids'], ',');
-<<<<<<< HEAD
-        $roleslist['coach_names'] = rtrim($roleslist['coach_names'], ',');
-        $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
-        $roleslist['committee_names'] = rtrim($roleslist['committee_names'], ',');
-=======
         $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
         // 教练、队委名单集合组合 end
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         $this->assign('rolemembers', $rolemembers);
         $this->assign('roleslist', $roleslist);
@@ -118,19 +87,6 @@ class Team extends Base {
 
     // 球队首页
     public function teaminfo() {
-<<<<<<< HEAD
-        // 球队胜率输出
-        $this->teamInfo['win_rate'] = 0;
-        if ($this->teamInfo['match_num']) {
-            if ($this->teamInfo['match_win']) {
-                $winrate = ($this->teamInfo['match_win']/$this->teamInfo['match_num']);
-                $winrate = sprintf("%.2f", $winrate);
-                $this->teamInfo['win_rate'] = $winrate*100;
-            }  else {
-                $this->teamInfo['win_rate'] = 0;
-            }
-        }
-=======
         // 变量标识$isMemberInTeam：判断当前会员有无在球队正式成员
         $teamS = new TeamService();
         $teamMemberInfo = $teamS->getTeamMemberInfo([
@@ -141,7 +97,6 @@ class Team extends Base {
         $isMemberInTeam = ($teamMemberInfo) ? 1 : 0;
         
         $this->assign('isMemberInTeam', $isMemberInTeam);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return view('Team/teamInfo');
     }
 
@@ -155,8 +110,6 @@ class Team extends Base {
 
     // 队员列表
     public function teammember() {
-<<<<<<< HEAD
-=======
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         $teamS = new TeamService();
         $teamMemberInfo = $teamS->getTeamMemberInfo([
@@ -170,7 +123,6 @@ class Team extends Base {
             $teamrole = -1;
         }
         $this->assign('teamrole', $teamrole);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return view('Team/teamMember');
     }
 
@@ -183,24 +135,14 @@ class Team extends Base {
         // 获取队员在当前球队的数据信息
         $map = ['team_id' => $team_id, 'member_id' => $member_id];
         $teamMemberInfo = $teamS->getTeamMemberInfo($map);
-<<<<<<< HEAD
-=======
         if (!$teamMemberInfo) {
             $this->error('无此队员信息');
         }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         // 该队员的其他球队列表
         $memberOtherTeamMap = [ 'member_id' => $member_id, 'team_id' => ['neq', $team_id]];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
-<<<<<<< HEAD
-        $this->assign('teamMemberInfo', $teamMemberInfo);
-        $this->assign('memberOtherTeam', $memberOtherTeam);
-        return view('Team/teamMemberInfo');
-    }
-
-=======
         // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
         $delbtnDisplay = 0;
         if ($this->memberInfo['id'] == $this->teamInfo['leader_id']) {
@@ -250,7 +192,6 @@ class Team extends Base {
         return view('Team/teamMemberEdit');
     }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 申请加入列表
     public function teamapplylist() {
         return view('Team/teamApplyList');
@@ -291,14 +232,6 @@ class Team extends Base {
         return view('Team/album');
     }
 
-<<<<<<< HEAD
-    // 比赛列表（球队参与的）
-    public function competition() {
-        return view('Team/competition');
-    }
-
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 添加活动
     public function createevent() {
         return view('Team/createEvent');
@@ -311,37 +244,26 @@ class Team extends Base {
         $directentry = 0;
         // 如果有event_id参数即修改活动，没有就新增活动并录入活动（事后录活动）
         if ($event_id === 0) {
-<<<<<<< HEAD
-            $eventInfo = [];
-=======
             $eventInfo = [
                 'id' => 0,
                 'send_message' => 0
             ];
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $directentry = 1;
             $memberlist = [];
         } else {
             $teamS = new TeamService();
             $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
             $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
-<<<<<<< HEAD
-=======
             if (!empty($eventInfo['album'])) {
                 $eventInfo['album'] = json_decode($eventInfo['album'], true);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
 
         $this->assign('event_id', $event_id);
         $this->assign('eventInfo', $eventInfo);
         $this->assign('directentry', $directentry);
         $this->assign('memberList', $memberlist);
-<<<<<<< HEAD
-        return view('Team/EventEdit');
-=======
         return view('Team/eventEdit');
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 
     // 活动列表管理
@@ -360,12 +282,6 @@ class Team extends Base {
         $event_id = input('param.event_id');
         $teamS = new TeamService();
         $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
-<<<<<<< HEAD
-        // 获取会员在球队角色身份
-        $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
-        $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
-
-=======
         if (!empty($eventInfo['album'])) {
             $eventInfo['album'] = json_decode($eventInfo['album'], true);
         }
@@ -383,7 +299,6 @@ class Team extends Base {
             $teamrole = -1;
         }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('teamrole', $teamrole);
         $this->assign('eventInfo', $eventInfo);
         $this->assign('memberList', $memberlist);
@@ -392,11 +307,6 @@ class Team extends Base {
 
     // 活动报名人员名单
     public function eventsignuplist() {
-<<<<<<< HEAD
-        return view('Team/eventSignupList');
-    }
-
-=======
         // 活动详情数据
         $event_id = input('param.event_id');
         $teamS = new TeamService();
@@ -562,5 +472,4 @@ class Team extends Base {
         return view('Team/memberApplyInfo');
     }
     
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

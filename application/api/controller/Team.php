@@ -3,15 +3,6 @@
 namespace app\api\controller;
 
 
-<<<<<<< HEAD
-use app\service\MessageService;
-use app\service\TeamService;
-use think\Exception;
-
-class Team extends Base {
-    // 创建球队
-    public function createteam() {
-=======
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\MessageService;
@@ -24,7 +15,6 @@ class Team extends Base
     // 创建球队
     public function createteam()
     {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         try {
             // 处理请求参数
             $data = input('param.');
@@ -42,11 +32,7 @@ class Team extends Base
             //dump($data);
             // 执行创建球队
             $teamS = new TeamService();
-<<<<<<< HEAD
-             $res = $teamS->createTeam($data);
-=======
             $res = $teamS->createTeam($data);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 创建球队成功 保存创建者会员的球队-会员关系team_member
             if ($res['code'] !== 100) {
                 $teamMemberData = [
@@ -54,11 +40,8 @@ class Team extends Base
                     'team' => $data['name'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
-<<<<<<< HEAD
-=======
                     'name' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                     'telephone' => $this->memberInfo['telephone'],
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'sex' => $this->memberInfo['sex'],
                     'avatar' => $this->memberInfo['avatar'],
                     'yearsexp' => $this->memberInfo['yearsexp'],
@@ -77,17 +60,11 @@ class Team extends Base
                 // 领队身份
                 $teamMemberRoleData = [
                     'leader_id' => $this->memberInfo['id'],
-<<<<<<< HEAD
-                    'captain_id' => $this->memberInfo['id']
-                ];
-                $saveTeamMemberRoleRes1 = $teamS->saveTeamMemberRole($teamMemberRoleData, $team_id);
-=======
                     'leader' => $this->memberInfo['member'],
                     'captain_id' => $this->memberInfo['id'],
                     'captain' => $this->memberInfo['member']
                 ];
                 $saveTeamMemberRoleRes1 = $teamS->setTeamMemberRole($teamMemberRoleData, $team_id);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 if ($saveTeamMemberRoleRes1['code'] != 200) {
                     return json($saveTeamMemberRoleRes1);
                 }
@@ -99,21 +76,6 @@ class Team extends Base
     }
 
     // 修改球队
-<<<<<<< HEAD
-    public function updateteam() {
-        try {
-            $data = input('post.');
-            $team_id = input('post.id');
-            $data['member_id'] = $this->memberInfo['id'];
-            $teamS = new TeamService();
-            //$teamS->saveTeamMemberRole($data, $team_id);
-            $result = $teamS->updateTeam($data, $team_id);
-            if ($result['code'] == 200) {
-                $teamS->saveTeamMemberRole($data, $team_id);
-            }
-            return json($result);
-        }catch (Exception $e) {
-=======
     public function updateteam()
     {
         try {
@@ -139,18 +101,11 @@ class Team extends Base
             }
             return json($result);
         } catch (Exception $e) {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
     // 球队列表有分页页码
-<<<<<<< HEAD
-    public function teamlistpage() {
-        try {
-            $map = input('post.');
-            $page = input('page', 1);
-=======
     public function teamlistpage()
     {
         try {
@@ -160,7 +115,6 @@ class Team extends Base
             if ( cookie('module') ) {
                 $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $teamS = new TeamService();
             $result = $teamS->getTeamListPaginator($map);
             if ($result) {
@@ -175,12 +129,6 @@ class Team extends Base
     }
 
     // 球队列表
-<<<<<<< HEAD
-    public function teamlist() {
-        try {
-            $map = input('param.');
-            $page = input('page', 1);
-=======
     public function teamlist()
     {
         try {
@@ -192,7 +140,6 @@ class Team extends Base
                 $map['type'] = (cookie('module')=='frontend') ? ['eq', 1] : ['neq', 1];
             }
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             unset($map['page']);
             $teamS = new TeamService();
             $result = $teamS->getTeamList($map, $page);
@@ -208,12 +155,8 @@ class Team extends Base
     }
 
     // 平台首页-搜索球队列表
-<<<<<<< HEAD
-    public function searchteamlist() {
-=======
     public function searchteamlist()
     {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         try {
             // 整合接收参数 组合查询条件
             $map = input('param.');
@@ -227,15 +170,6 @@ class Team extends Base
                 unset($map['type']);
             }
             // 关键字搜索
-<<<<<<< HEAD
-            if (!empty($map['keyword'])) {
-                $keyword = $map['keyword'];
-                $map['name'] = ['like', "%$keyword%"];
-
-            }
-            unset($map['keyword']);
-            unset($map['page']);
-=======
             $keyword = input('keyword');
             if ( !empty($keyword) ) {
                 $map['name'] = ['like', "%$keyword%"];
@@ -259,7 +193,6 @@ class Team extends Base
             if( input('?page') ) {
                 unset($map['page']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $teamS = new TeamService();
             $result = $teamS->getTeamList($map, $page);
             if ($result) {
@@ -273,14 +206,6 @@ class Team extends Base
         }
     }
 
-<<<<<<< HEAD
-    // 会员申请加入球队
-    public function applyjointeam() {
-        try {
-            // 检查球队信息是否有传入
-            if (!input('?post.team_id')) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球队']);
-=======
     // 搜索球队列表（有分页页码）
     public function searchteamlistpage()
     {
@@ -344,26 +269,12 @@ class Team extends Base
             // 检查球队信息是否有传入
             if (!input('?post.team_id')) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '请选择球队']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             // 处理接收参数
             $data = input('post.');
             $teamS = new TeamService();
             $teamInfo = $teamS->getTeam(['id' => $data['team_id']]);
             if (!$teamInfo) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球队信息']);
-            }
-            //dump($teamInfo);
-            // 会员有没在队信息
-            $teamMemberMap = [
-                'team_id' => $teamInfo['id'],
-                'member_id' => $this->memberInfo['id'],
-                'status' => 1
-            ];
-            $teamMember = $teamS->getTeamMemberInfo($teamMemberMap);
-            if ($teamMember) {
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '无此球队信息']);
             }
             //dump($teamInfo);
@@ -373,7 +284,6 @@ class Team extends Base
                 'member_id' => $this->memberInfo['id'],
             ]);
             if ($teamMember && $teamMember['status_num'] == 1) {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return json(['code' => 100, 'msg' => '你已经是球队的成员了，无需再次加入']);
             }
             // 有无申请记录
@@ -383,13 +293,6 @@ class Team extends Base
                 'organization_id' => $teamInfo['id'],
                 'member_id' => $this->memberInfo['id']
             ];
-<<<<<<< HEAD
-            $hasApply = $teamS->getApplyInfo($mapApplyinfo);
-            if ($hasApply) {
-                return json(['code' => 100, 'msg' => '你已经提交了加入申请，请等待球队处理回复']);
-            }
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 插入申请记录
             $dataApply = [
                 'member_id' => $this->memberInfo['id'],
@@ -399,22 +302,6 @@ class Team extends Base
                 'organization_id' => $teamInfo['id'],
                 'type' => 1,
                 'apply_type' => 1,
-<<<<<<< HEAD
-                'remarks' => $data['remarks']
-            ];
-            $saveApply = $teamS->saveApply($dataApply);
-            //dump($saveApply);
-            if ($saveApply['code'] == 200) {
-                // 插入message数据
-                // 发送加入申请消息给领队
-                $messageData = [
-                    'title' => '加入球队申请',
-                    'content' => '您好，会员'.$dataApply['member'].'申请加入您的'.$teamInfo['name'],
-                    'url' => url('frontend/message/index', '', '', true),
-                    'keyword1' => (!empty($this->memberInfo['realname'])) ? $this->memberInfo['realname'] : $this->memberInfo['member'],
-                    'keyword2' => date('Y年m月d日 H:i', time()),
-                    'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复'
-=======
                 'remarks' => $data['remarks'],
                 'status' => 1
             ];
@@ -464,7 +351,6 @@ class Team extends Base
                     'keyword2' => date('Y年m月d日 H:i', time()),
                     'remark' => '点击登录平台查看更多信息，对加入申请作同意或拒绝回复',
                     'steward_type' => 2
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 ];
                 //dump($messageData);
                 $messageS = new MessageService();
@@ -477,18 +363,6 @@ class Team extends Base
     }
 
     // 回复球队申请加入
-<<<<<<< HEAD
-    public function applyreply() {
-        try {
-            // 接收参数 判断正确有无传参
-            $apply_id = input('apply_id');
-            $reply = input('reply');
-            if (!$apply_id && !$reply) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
-            }
-            if ( !in_array($reply, [2,3]) ) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请正确传参']);
-=======
     public function applyreply()
     {
         try {
@@ -505,67 +379,19 @@ class Team extends Base
             }
             if (!in_array($status, [2, 3])) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传参']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             // 查询apply数据
             $teamS = new TeamService();
             $applyInfo = $teamS->getApplyInfo(['id' => $apply_id]);
             if (!$applyInfo) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有此申请记录']);
-            }
-            if ($applyInfo['status'] != 1) {
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此申请记录']);
             }
             if ($applyInfo['status_num'] != 1) {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
             }
             // 查询team_member_role 判断当前会员有无操作权限
             $checkRole = $teamS->checkMemberTeamRole($applyInfo['organization_id'], $this->memberInfo['id']);
             if (!$checkRole) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_403').'，您无法进行此操作']);
-            }
-            //dump($applyInfo);
-            // 更新apply数据，$reply=2同意，3拒绝
-            $applySaveResult = $teamS->saveApply(['id' => $applyInfo['id'], 'status' => $reply]);
-            //dump($applySave);
-            $replystr = '已拒绝';
-            if ($reply == 2) {
-                if ($applySaveResult['code'] == 200) {
-                    // 保存球队-会员信息，会员有真实姓名记录真实姓名否则记录会员名
-                    $dataTeamMember = [
-                        'team_id' => $applyInfo['organization_id'],
-                        'team' => $applyInfo['organization'],
-                        'member_id' => $applyInfo['member']['id'],
-                        'member' => (!empty($applyInfo['member']['realname'])) ? $applyInfo['member']['realname'] : $applyInfo['member']['member'],
-                        'sex' => $applyInfo['member']['sex'],
-                        'avatar' => $applyInfo['member']['avatar'],
-                        'age' => getMemberAgeByBirthday($applyInfo['member']['id']),
-                        'yearsexp' => $applyInfo['member']['yearsexp'],
-                        'height' => $applyInfo['member']['height'],
-                        'weight' => $applyInfo['member']['weight'],
-                        'status' => 1
-                    ];
-                    $teamS->saveTeamMember($dataTeamMember);
-                    // 获取现在球队队员的平均年龄、身高、体重
-                    $avgMap['team_id'] = $applyInfo['organization_id'];
-                    $avgMap['age'] = ['gt', 0];
-                    $avgMap['height'] = ['gt', 0];
-                    $avgMap['weight'] = ['gt', 0];
-                    $avg = db('team_member')->where($avgMap)->field('avg(age) avg_age, avg(height) avg_height, avg(weight) avg_weight')->select();
-                    // 更新team统计字段:队员数+1，更新平均年龄、身高、体重
-                    db('team')->where('id', $applyInfo['organization_id'])
-                        ->data([
-                            'avg_age' => $avg[0]['avg_age'],
-                            'avg_height' => $avg[0]['avg_height'],
-                            'avg_weight' => $avg[0]['avg_weight']
-                        ])
-                        ->inc('member_num', 1)
-                        ->update();
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '，您无法进行此操作']);
             }
             //dump($applyInfo);
@@ -604,20 +430,10 @@ class Team extends Base
                             'status' => 1, 'create_time' => time()
                         ]);
                     }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
                 $replystr = '已通过';
             }
             // 发送消息模板给申请人
-<<<<<<< HEAD
-            $messageData = [
-                'title' => '加入球队申请结果通知',
-                'content' => '加入球队'. $applyInfo['organization'] .'申请结果通知：'.$replystr,
-                'url' => url('frontend/message/index', '', '', true),
-                'keyword1' => '加入球队，队名：'.$applyInfo['organization'],
-                'keyword2' => $replystr,
-                'remark' => '点击登录平台查看更多信息'
-=======
             if (!empty($reply)) {
                 $reply = '对方回复：'.$reply;
             }
@@ -629,7 +445,6 @@ class Team extends Base
                 'keyword2' => $replystr,
                 'remark' => '点击登录平台查看更多信息',
                 'steward_type' => 2
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             ];
             //dump($messageData);
             $messageS = new MessageService();
@@ -641,15 +456,10 @@ class Team extends Base
     }
 
     // 我的球队列表
-<<<<<<< HEAD
-    public function myteamlist() {
-        try {
-=======
     public function myteamlist()
     {
         try {
             $map = input('param.');
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $map['member_id'] = $this->memberInfo['id'];
             $page = input('page', 1);
             $teamS = new TeamService();
@@ -666,17 +476,6 @@ class Team extends Base
     }
 
     // 球队成员列表
-<<<<<<< HEAD
-    public function teammemberlist() {
-        try {
-            $team_id = input('param.team_id');
-            if (!$team_id) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').',请选择球队']);
-            }
-            $page = input('page', 1);
-            $teamS = new TeamService();
-            $map['team_id'] = $team_id;
-=======
     public function teammemberlist()
     {
         try {
@@ -692,7 +491,6 @@ class Team extends Base
                 unset($map['page']);
             }
             $teamS = new TeamService();
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $teamS->getTeamMemberList($map, $page);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -706,12 +504,6 @@ class Team extends Base
     }
 
     // 修改球队成员信息
-<<<<<<< HEAD
-    public function updateteammember() {
-        try {
-            $data = input('post.');
-            $teamS = new TeamService();
-=======
     public function updateteammember()
     {
         try {
@@ -726,21 +518,14 @@ class Team extends Base
             if (!$teamMemberInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 球衣号码可提交空值，有填入值时检查同队有重复号码的队员 提示号码不能重复
             if (empty($data['number'])) {
                 $data['number'] = null;
             } else {
                 $numberIsUsedMap = [
-<<<<<<< HEAD
-                    'team_id' => $data['team_id'],
-                    'number' => $data['number'],
-                    'member' => ['<>', $data['member']],
-=======
                     'id' => ['<>', $data['id']],
                     'team_id' => $data['team_id'],
                     'number' => $data['number'],
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'status' => 1
                 ];
                 $numberIsUsed = $teamS->getTeamMemberInfo($numberIsUsedMap);
@@ -748,9 +533,6 @@ class Team extends Base
                     return json(['code' => 100, 'msg' => '输入的球衣号码已有同队成员使用了，请输入其他号码']);
                 }
             }
-<<<<<<< HEAD
-            $res = $teamS->saveTeamMember($data, $data['id']);
-=======
             // 更新球员信息
             $res = $teamS->saveTeamMember($data);
             if ($res['code'] == 200) {
@@ -894,18 +676,12 @@ class Team extends Base
                 'steward_type' => 2
             ];
             $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.checkPend'));
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
-<<<<<<< HEAD
-    // 创建球队活动
-    public function createteamevent() {
-        try {
-=======
     // 检查成员是否有球队-成员数据
     public function checkteammember() {
         try {
@@ -1635,19 +1411,11 @@ class Team extends Base
             if ( $this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 接收传参
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             // 时间格式转换类型
-<<<<<<< HEAD
-            if (input('?start_time')) {
-                $data['start_time'] = strtotime(input('start_time'));
-            }
-            if (input('?end_time')) {
-                $data['end_time'] = strtotime(input('end_time'));
-=======
             // 检查开始时间和结束时间与当前时间比较是否合法
             $nowTime = time();
             if (input('?start_time')) {
@@ -1661,7 +1429,6 @@ class Team extends Base
                 if ($nowTime > $data['end_time']) {
                     return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
                 }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             $teamS = new TeamService();
             $res = $teamS->createTeamEvent($data);
@@ -1672,33 +1439,6 @@ class Team extends Base
     }
 
     // 修改球队活动
-<<<<<<< HEAD
-    public function updateteamevent() {
-        try {
-            // 接收传参
-            $data = input('post.');
-            if (input('?start_time')) {
-                $data['start_time'] = strtotime(input('start_time'));
-            }
-            if (input('?end_time')) {
-                $data['end_time'] = strtotime(input('end_time'));
-                // 结束时间小于当前时间即活动已完成
-                if ($data['end_time'] < time()) {
-                    $data['is_finished'] = 1;
-                }
-            }
-            $teamS = new TeamService();
-            $resUpdateTeamEvent = $teamS->updateTeamEvent($data);
-            if ($resUpdateTeamEvent['code'] == 200) {
-                if ( input('?memberData') && !empty($data['memberData']) ) {
-                    $memberArr = json_decode($data['memberData'], true);
-                    foreach ($memberArr as $k => $member) {
-                        $memberArr[$k]['status'] = 3;
-                    }
-                    $teamS->saveAllTeamEventMember($memberArr);
-                }
-            }
-=======
     public function updateteamevent()
     {
         try {
@@ -1773,7 +1513,6 @@ class Team extends Base
             }
             // 修改球队活动主表数据
             $resUpdateTeamEvent = $teamS->updateTeamEvent($request);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json($resUpdateTeamEvent);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -1781,40 +1520,26 @@ class Team extends Base
     }
 
     // 直接创建并录入活动
-<<<<<<< HEAD
-    public function directcreateteamevent() {
-=======
     public function directcreateteamevent()
     {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         try {
             // 接收传参
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-<<<<<<< HEAD
-            // 时间格式转换类型
-=======
             // 活动人员状态修改值
             $memberStatus = 1;
             // 时间格式转化时间戳
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if (input('?start_time')) {
                 $data['start_time'] = strtotime(input('start_time'));
             }
             if (input('?end_time')) {
                 $data['end_time'] = strtotime(input('end_time'));
-<<<<<<< HEAD
-                // 结束时间小于当前时间即活动已完成
-                if ($data['end_time'] < time()) {
-                    $data['is_finished'] = 1;
-=======
             }
             // 活动完成标识
             if (isset($data['is_finished'])) {
                 if ($data['is_finished'] == 1) {
                     $memberStatus = 3;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
             $teamS = new TeamService();
@@ -1823,11 +1548,6 @@ class Team extends Base
                 if (input('?memberData')) {
                     $memberArr = json_decode($data['memberData'], true);
                     foreach ($memberArr as $k => $member) {
-<<<<<<< HEAD
-                        $memberArr[$k]['event_id'] = $resCreateTeamEvent['data'];
-                        $memberArr[$k]['event'] = $data['event'];
-                        $memberArr[$k]['status'] = 3;
-=======
                         // 获取球队成员数据
                         $teamMemberInfo = $teamS->getTeamMemberInfo(['team_id' => $data['team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
                         $memberArr[$k]['event_id'] = $resCreateTeamEvent['data'];
@@ -1835,7 +1555,6 @@ class Team extends Base
                         $memberArr[$k]['event'] = $data['event'];
                         $memberArr[$k]['avatar'] = ($teamMemberInfo) ? $teamMemberInfo['avatar'] : config('default_image.member_avatar');
                         $memberArr[$k]['status'] = $memberStatus;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     $teamS->saveAllTeamEventMember($memberArr);
                 }
@@ -1847,18 +1566,11 @@ class Team extends Base
     }
 
     // 球队活动列表（有页码）
-<<<<<<< HEAD
-    public function teameventlistpage() {
-        try {
-            // 传递参数作为查询条件
-            $map = input('post.');
-=======
     public function teameventlistpage()
     {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $page = input('page', 1);
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
@@ -1869,8 +1581,6 @@ class Team extends Base
                 }
                 unset($map['year']);
             }
-<<<<<<< HEAD
-=======
             // 活动类型为空 查询所有类型数据
             if (input('?event_type')) {
                 $event_type = input('event_type');
@@ -1898,7 +1608,6 @@ class Team extends Base
             }
             // 查询条件组合 end
             
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $teamS = new TeamService();
             $result = $teamS->teamEventPaginator($map);
             if ($result) {
@@ -1913,20 +1622,12 @@ class Team extends Base
     }
 
     // 球队活动列表
-<<<<<<< HEAD
-    public function teameventlist() {
-        try {
-            // 传递参数作为查询条件
-            $map = input('post.');
-            $page = input('page', 1);
-=======
     public function teameventlist()
     {
         try {
             // 传递参数作为查询条件
             $map = input('param.');
             $page = input('param.page', 1);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 如果有传入年份 查询条件 create_time在区间内
             if (input('?year')) {
                 $year = input('year');
@@ -1936,8 +1637,6 @@ class Team extends Base
                 }
                 unset($map['year']);
             }
-<<<<<<< HEAD
-=======
             // 活动类型为空 查询所有类型数据
             if (input('?event_type')) {
                 $event_type = input('event_type');
@@ -1965,7 +1664,6 @@ class Team extends Base
             }
             // 查询条件组合 end
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $teamS = new TeamService();
             $result = $teamS->teamEventList($map, $page);
             if ($result) {
@@ -1980,10 +1678,6 @@ class Team extends Base
     }
 
     // 球队活动管理操作
-<<<<<<< HEAD
-    public function removeevent() {
-        try {
-=======
     public function removeevent()
     {
         try {
@@ -1991,7 +1685,6 @@ class Team extends Base
             if ($this->memberInfo['id'] === 0) {
                 return json(['code' => 100, 'msg' => '请先登录或注册会员']);
             }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             // 接收参数
             $event_id = input('post.eventid');
             $action = input('post.action');
@@ -2001,26 +1694,11 @@ class Team extends Base
             $teamS = new TeamService();
             $event = $teamS->getTeamEventInfo(['id' => $event_id]);
             if (!$event) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'，没有球队活动信息']);
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有球队活动信息']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             // 检查当前会员有无操作权限
             $role = $teamS->checkMemberTeamRole($event['team_id'], $this->memberInfo['id']);
             if (!$role) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_403').'，你在球队只是普通成员不能操作']);
-            }
-            // 根据活动当前状态(1上架,2下架)+不允许操作条件
-            // 根据action参数 editstatus执行上下架/del删除操作
-            // 更新数据 返回结果
-            switch ( $event['status_num'] ) {
-                case 1 : {
-                    if ($action == 'editstatus') {
-                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 2], 1);
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_403') . '，你在球队只是普通成员不能操作']);
             }
             // 根据活动当前状态(1上架,-1下架)+不允许操作条件
@@ -2030,16 +1708,11 @@ class Team extends Base
                 case 1 : {
                     if ($action == 'editstatus') {
                         $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => -1], 1);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     } else {
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
                             // 球队活动数统计-1
-<<<<<<< HEAD
-                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
-=======
                             db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -2055,11 +1728,7 @@ class Team extends Base
                         $delRes = $teamS->deleteTeamEvent($event['id']);
                         if ($delRes) {
                             // 球队活动数统计-1
-<<<<<<< HEAD
-                            db('team_event')->where(['id' => $event['team_id']])->setDec('event_num', 1);
-=======
                             db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                         } else {
                             $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -2075,14 +1744,6 @@ class Team extends Base
     }
 
     // 报名参加球队活动
-<<<<<<< HEAD
-    public function jointeamevent() {
-        try {
-            // 接收参数
-            $event_id = input('post.event_id');
-            if (!$event_id) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请选择球队活动']);
-=======
     public function jointeamevent()
     {
         try {
@@ -2094,29 +1755,11 @@ class Team extends Base
             $event_id = input('post.event_id');
             if (!$event_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请选择球队活动']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             $teamS = new TeamService();
             // 查询球队活动数据，检查活动是否下架、已结束、已满人提示信息
             $event = $teamS->getTeamEventInfo(['id' => $event_id]);
             if (!$event) {
-<<<<<<< HEAD
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'，请选择其他球队活动']);
-            }
-            // 会员是否发布活动的球队成员
-            $checkteammember = $teamS->getTeamMemberInfo(['team_id' => $event['team_id'], 'member_id' => $this->memberInfo['id']]);
-            if (!$checkteammember) {
-                return json(['code' => 100, 'msg' => '您不是此活动的球队成员，请选择其他球队活动']);
-            }
-            if ($event['status_num'] === 2) {
-                return json(['code' => 100, 'msg' => '此活动已'.$event['status'].'，请选择其他球队活动']);
-            }
-            if ($event['is_finished_num'] === 1) {
-                return json(['code' => 100, 'msg' => '此活动'.$event['is_finished'].'，请选择其他球队活动']);
-            }
-            if ($event['is_max_num'] === -1) {
-                return json(['code' => 100, 'msg' => '此活动'.$event['is_max'].'，请选择其他球队活动']);
-=======
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队活动']);
             }
             // 会员是否发布活动的球队成员
@@ -2132,7 +1775,6 @@ class Team extends Base
             }
             if ($event['is_max_num'] === -1) {
                 return json(['code' => 100, 'msg' => '此活动' . $event['is_max'] . '，请选择其他球队活动']);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             //dump($event);
             // 会员是否已报名活动
@@ -2144,18 +1786,12 @@ class Team extends Base
             $data = [
                 'event_id' => $event['id'],
                 'event' => $event['event'],
-<<<<<<< HEAD
-                'member_id' => $this->memberInfo['id'],
-                'member' => $this->memberInfo['member'],
-                'avatar' => $this->memberInfo['avatar'],
-=======
                 'member_id' => $teammemberinfo['member_id'],
                 'member' => $teammemberinfo['member'],
                 'avatar' => $teammemberinfo['avatar'],
                 'contact_tel' => $teammemberinfo['telephone'],
                 'student_id' => !empty($teammemberinfo['student_id']) ? teammemberinfo['student_id'] : 0,
                 'student' => !empty($teammemberinfo['student']) ? $teammemberinfo['student'] : '',
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 'is_pay' => 1,
                 'is_sign' => 1,
                 'status' => 1,
@@ -2168,12 +1804,8 @@ class Team extends Base
     }
 
     // 球队活动-会员关联列表（有页码）
-<<<<<<< HEAD
-    public function teameventmemberlistpage() {
-=======
     public function teameventmemberlistpage()
     {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         try {
             $map = input('post.');
             $page = input('page', 1);
@@ -2191,12 +1823,8 @@ class Team extends Base
     }
 
     // 球队活动-会员关联列表
-<<<<<<< HEAD
-    public function teameventmemberlist() {
-=======
     public function teameventmemberlist()
     {
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         try {
             $map = input('post.');
             $page = input('page', 1);
@@ -2214,19 +1842,12 @@ class Team extends Base
     }
 
     // 球队活动-会员列表（无分页）
-<<<<<<< HEAD
-    public function teameventmemberall() {
-        try {
-            $map = input('post.');
-            $teamS = new TeamService();
-=======
     public function teameventmemberall()
     {
         try {
             $map = input('post.');
             $teamS = new TeamService();
             $map['status'] = ['>', 0];
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $teamS->teamEventMembers($map);
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -2238,8 +1859,6 @@ class Team extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
-<<<<<<< HEAD
-=======
 
     // 球队模块评论列表
     public function teamcommentlist()
@@ -2485,5 +2104,4 @@ class Team extends Base
     }
 
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

@@ -105,10 +105,6 @@
         <div class="list detalis-list">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media" style="padding:15px 15px;">
-<<<<<<< HEAD
-                    <a href="javascript:;">
-=======
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         <div class="mui-media-body">
                             {$courtInfo.court}
 
@@ -118,27 +114,6 @@
 
                         </div>
                         {eq name="button" value="2" }
-<<<<<<< HEAD
-                        <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary">
-                            <div class="price-frame camp-num">
-                                <ul>
-                                    <li class="fr">
-                                        <span class="more">编辑</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </a>
-                        {/eq} {eq name="button" value="1"}
-                        <div class="price-frame camp-num" onclick="addCourt({$courtInfo['id']})">
-                            <ul>
-                                <li class="fr">
-                                    <span class="mui-btn mui-btn-primary">添加到我的训练营</span>
-                                </li>
-                            </ul>
-                        </div>
-                        {/eq}
-                    </a>
-=======
                         <a href="{:url('court/updateCourt',['court_id'=>$courtInfo['id']])}" class="mui-btn mui-btn-primary fr">编辑</a>
                         {/eq} {eq name="button" value="1"}
                         <div class="mui-btn mui-btn-primary fr" onclick="addCourt({$courtInfo['id']})">
@@ -150,7 +125,6 @@
                             已添加
                         </div>
                         {/eq}
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </li>
             </ul>
 
@@ -158,13 +132,6 @@
                 <li class="mui-table-view-cell listli detalisli">所属地区
                     <span>{$courtInfo.province} {$courtInfo.city} {$courtInfo.area}</span>
                 </li>
-<<<<<<< HEAD
-                <li class="mui-table-view-cell listli detalisli">具体地址
-                    <span>
-                        <a href="#mapFrame" class="location" style="display: block">
-                            <i class="mui-icon mui-icon-location"></i>{$courtInfo.location}</a>
-                    </span>
-=======
                 <li class="mui-table-view-cell listli detalisli">场地定位
                     <span>
                         <a href="#mapFrame" class="location" style="display: block">
@@ -172,7 +139,6 @@
                         <font class="getDistance colororange"></font>
                     </span>
 
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </li>
                 <li class="mui-table-view-cell listli detalisli">联系人
                     <span>{$courtInfo.principal}</span>
@@ -221,8 +187,6 @@
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
 
     <script>
-<<<<<<< HEAD
-=======
         var lng = '{$courtInfo.lng}';
         var lat = '{$courtInfo.lat}';
         // map(选择具体地址)
@@ -300,7 +264,6 @@
 
     </script>
     <script>
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
@@ -314,86 +277,7 @@
 
 
         $(function () {
-<<<<<<< HEAD
-            // map(选择具体地址)
-            var map = new AMap.Map('container', {
-                resizeEnable: true,
-                zoom: 12,
-            });
-            var geocoder;
 
-            //点击获取地址
-            AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
-                var geocoder = new AMap.Geocoder({
-
-                });
-                var marker = new AMap.Marker({
-                    map: map,
-                    bubble: true
-                })
-                //设置深圳站定位
-                var aa = {
-                    N: "{$courtInfo.lng}",
-                    Q: "{$courtInfo.lat}",
-                    lat: "{$courtInfo.lat}",
-                    lng: "{$courtInfo.lng}",
-                }
-                marker.setPosition(aa);
-
-                map.on('click', function (e) {
-                    marker.setPosition(e.lnglat);
-                    geocoder.getAddress(e.lnglat, function (status, result) {
-                        if (status == 'complete') {
-                            alert(result.regeocode.formattedAddress)
-                        }
-                    })
-                });
-
-                // geolocation = new AMap.Geolocation({
-                //     enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                //     timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-                //     maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                //     convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                //     showButton: true,        //显示定位按钮，默认：true
-                //     buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
-                //     buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                //     showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                //     showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                //     panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                //     zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-                // });
-
-                // geolocation.getCurrentPosition(function (status, result) {
-                //     console.log(result);
-                //     lng = result.position.lng;
-                //     lat = result.position.lat;
-                // });
-
-                // var autoOptions = {
-                //     city: "深圳市", //城市，默认全国
-                //     input: "keyword"//使用联想输入的input的id
-                // };
-                // autocomplete = new AMap.Autocomplete(autoOptions);
-                // var placeSearch = new AMap.PlaceSearch({
-                //     city: '',
-                //     map: map
-                // })
-                // AMap.event.addListener(autocomplete, "select", function (e) {
-                //     //TODO 针对选中的poi实现自己的功能
-                //     placeSearch.setCity(e.poi.adcode);
-                //     placeSearch.search(e.poi.name)
-                // });
-
-            });
-
-            // 搜多地区input不能选择
-            $(document).on('tap', '.location', function () {
-                console.log(211)
-                $("#keyword").attr("disabled",true);
-            })
-=======
-
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             //获取场地下训练营
             toCampList('', '');
@@ -426,12 +310,8 @@
                         }
                         $("#campList span").append(newli);
                     } else {
-<<<<<<< HEAD
-                        mui.toast('训练营教练列表获取失败,请稍候再试');
-=======
 //                        mui.toast('训练营教练列表获取失败,请稍候再试');
                         $("#campList span").append("暂无训练营进驻");
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                 },
                 error: function (xhr, type, errerThrown) {

@@ -24,11 +24,7 @@ class Bonus extends Base{
             }  
             
         }catch (Exception $e){
-<<<<<<< HEAD
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-=======
             return json(['code'=>100,'msg'=>$e->getMessage()]);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
  
@@ -55,24 +51,16 @@ class Bonus extends Base{
             if(!$member_id){
                 return json(['code'=>100,'msg'=>'请先登录']);
             }
-<<<<<<< HEAD
-=======
             // 找到礼包
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $bonusInfo = $this->BonusService->getbonusInfo(['id'=>$bonus_id,'status'=>1]);
             if(!$bonusInfo){
                 return json(['code'=>100,'msg'=>'礼包无效']);
             }
             $isBonus = $this->BonusService->getBonusMember(['bonus_id'=>$bonus_id,'member_id'=>$member_id,'status'=>1]);
             if($isBonus){
-<<<<<<< HEAD
-                return json(['code'=>100,'msg'=>'你已经领过该礼包']);
-            }
-=======
                 return json(['code'=>101,'msg'=>'你已经领过该礼包']);
             }
             // 领取礼包
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $member = $this->memberInfo['member'];
             $data = ['bonus_id'=>$bonus_id,'member_id'=>$member_id,'member'=>$member,'bonus'=>$bonusInfo['bonus'],'status'=>1];
             $result = $this->BonusService->createBonusMember($data);

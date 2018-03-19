@@ -108,29 +108,16 @@ class Court extends Backend {
                 }
                 db('log_sendtemplatemsg')->insert($log_sendTemplateData);
 
-<<<<<<< HEAD
-                db('message')->insert([
-                    'title' => $sendTemplateData['data']['first']['value'],
-                    'content' => $sendTemplateData['data']['first']['value'],
-                    'url' => $url,
-                    'camp_id' => $court['camp_id'],
-                    'is_system' => 1,
-=======
                 db('message_member')->insert([
                     'title' => $sendTemplateData['data']['first']['value'],
                     'content' => $sendTemplateData['data']['first']['value'],
                     'url' => $url,
                     'member_id' => $camp['member_id'],
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'create_time' => time(),
                     'status' => 1
                 ]);
 
-<<<<<<< HEAD
-                $doing = '审核场地id: '. $id .' 审核操作:'. $checkstr .'成功';
-=======
                 $doing = '场地id: '. $id .' 设为平台场地:'. $checkstr .'成功';
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $Auth->record($doing);
                 $response = [ 'status' => 1, 'msg' => __lang('MSG_200'), 'goto' => url('court/index') ];
             } else {

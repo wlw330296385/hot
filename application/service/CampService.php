@@ -24,10 +24,7 @@ class CampService {
                 if ($val['star'] > 0) {
                     $result[$k]['star'] = ceil($val['star']/$val['star_num']);   
                 }
-<<<<<<< HEAD
-=======
                 $result[$k]['fans_num'] = getfansnum($val['id'], 2);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             return $result;
         }else{
@@ -40,10 +37,7 @@ class CampService {
             if ($item['star'] > 0) {
                 $item['star'] = ceil($item['star']/$item['star_num']);
             }
-<<<<<<< HEAD
-=======
             //$item['fans_num'] = getfansnum($item['id'], 2);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $item;
         });
         
@@ -81,10 +75,7 @@ class CampService {
         }
         $result = $res->toArray();
         $result['status_num'] = $res->getData('status');
-<<<<<<< HEAD
-=======
         $result['fans_num'] = getfansnum($result['id'], 2);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $result;
     }
 
@@ -95,10 +86,7 @@ class CampService {
         }
         $result = $res->toArray(); 
         $result['status_num'] = $res->getData('status');
-<<<<<<< HEAD
-=======
         $result['fans_num'] = getfansnum($result['id'], 2);
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $result;
     }
 
@@ -264,20 +252,6 @@ class CampService {
         $res = $model->where('id', $camp_id)->setField('status', $status);
         return $res;
     }
-<<<<<<< HEAD
-
-    // 获取训练营下在营教练列表
-    public function getCoachList($camp_id) {
-        $map['camp_id'] = $camp_id;
-        $map['camp_member.status'] = 1;
-        $map['camp_member.type'] = ['in', '2,4'];
-        $list = Db::view('camp_member')
-            ->view('coach', '*', 'coach.member_id=camp_member.member_id')
-            ->where($map)
-            ->order('camp_member.id desc')
-            ->select();
-        return $list;
-=======
 
     // 获取训练营下在营教练列表
     public function getCoachList($camp_id) {
@@ -340,6 +314,5 @@ class CampService {
         $result = $res->toArray();
         $result['status_text'] = $res->status_text;
         return $result;
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }

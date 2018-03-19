@@ -32,16 +32,9 @@ class Base extends Controller{
 
     // }
 
-<<<<<<< HEAD
-    public function checklogin(){
-        return json(['code'=>100,'msg'=>'请重新登录']);
-        redirect('frontend/login/login');
-    }
-=======
     // public function checklogin(){
     //     return json(['code'=>100,'msg'=>'请重新登录']);
     //     redirect('frontend/login/login');
     // }
->>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
 }
