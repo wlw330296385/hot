@@ -122,7 +122,7 @@
 											{/volist}
 											<li class="colTotal" id="giftOut"><</li>
 										</ul>
-										<ul class="dataCol-3 colCount" linkTo="">
+										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campBillList/status/-2/">
 											{volist name='list2' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
@@ -130,13 +130,13 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/campBillList/goods_type/1/">
 											{volist name='list_income1' id='vol'}
 											<li><span>{$vol.s_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="scheduleIn"></li>
 										</ul>
-										<ul class="dataCol-2 colCount" linkTo="">
+										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/campBillList/goods_type/2/">>
 											{volist name='list_income2' id='vol'}
 											<li><span>{$vol.s_income}</span></li>
 											{/volist}
@@ -238,45 +238,6 @@
 		</div>
 	</div>
 </div>
-
-
-<h1>学费收入========================================</h1>
-{volist name="list_income1" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
-
-<h1>活动收入========================================</h1>
-{volist name="list_income2" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
-
-<h1>赠课支出========================================</h1>
-{volist name="list1" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
-{/volist}
-
-<h1>课时退费支出========================================</h1>
-{volist name="list2" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
-{/volist}
-
-<h1>课时教练支出支出========================================</h1>
-{volist name="list3" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
-{/volist}
-
-<h1>:平台分成支出========================================</h1>
-{volist name="list4" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
-{/volist}
-
-<h1>提现支出========================================</h1>
-{volist name="list_1" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;支出:{$vol.s_output}</p>
-{/volist}
-{/block}
-
-
 
 
 
@@ -398,7 +359,16 @@
             var getLink = $(this).parent().parent().attr("linkTo");
             var getLiIndex = $(this).parent().index();
             var getDate = $(".dateList li").eq(getLiIndex).text();
-            window.open(getLink+"/camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
+            localStorage.removeItem('currLessonName');
+            localStorage.removeItem('currLessonID');
+            localStorage.removeItem('currCoachName');
+            localStorage.removeItem('currMemberID');
+            window.open(getLink+"camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
+
+            if(getLink=="campBillList/goods_type/2"){
+                localStorage.setItem('currGoodTypeID','2');
+            }
+            window.open("/admin/Statistics_Camp/"+getLink+"/camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
         })
 
     });
