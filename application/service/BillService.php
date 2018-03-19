@@ -392,7 +392,11 @@ class BillService {
                         if($lesson_member['rest_schedule'] < 1){
                             return ['code'=>100,'msg'=>'您已上完课,不允许退款了'];
                         }
+                        $refundTotal = ($lesson_member['rest_schedule']<$billInfo['total'])?$lesson_member['rest_schedule']:$billInfo['total'];
+                    }else{
+                        $refundTotal = $billInfo['balance_pay'];
                     }
+                    
                     $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
                     $result = $this->Bill->save($updateData,$map);
                     if($result){
@@ -405,7 +409,7 @@ class BillService {
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
                                 'keyword1' => ['value' => $billInfo['bill_order']],
-                                'keyword2' => ['value' => $billInfo['balance_pay'].'元'],
+                                'keyword2' => ['value' => $refundTotal.'元'],
                                 'keyword3' => ['value' => $billInfo['remarks']],
                                 'remark' => ['value' => '大热篮球']
                             ]
@@ -465,17 +469,18 @@ class BillService {
                                 }else{
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
                                 }
-
+                                $campInfo = db('camp')->where(['id'=>$billInfo['camp_id']])->find();
                                 //训练营营业额对冲
-                                db('income')->insert([
-                                    'income'        => -($refundTotal*$billInfo['price']),
-                                    'lesson_id'     => $billInfo['goods_id'],
-                                    'lesson'        => $billInfo['goods'],
+                                db('output')->insert([
+                                    'output'        => $refundTotal*$billInfo['price'],
                                     'camp_id'       => $billInfo['camp_id'],
                                     'camp'          => $billInfo['camp'],
-                                    'schedule_rebate' => 0,
                                     'member_id'     => $billInfo['member_id'],
                                     'member'        => $billInfo['member'],
+                                    'type'          => 2,
+                                    'e_balance'     =>$campInfo['balance'] - ($refundTotal*$billInfo['price']),
+                                    's_balance'     =>$campInfo['balance'],
+                                    'f_id'          =>$billInfo['id'],
                                     'create_time'   => time(),
                                     'update_time'   => time(),
                                 ]);
@@ -505,7 +510,7 @@ class BillService {
                             ];
                             $saveData = [
                                             'title'=>"{$billInfo['goods']}退款申请已被同意",
-                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: {$billInfo['balance_pay']}元<br/>支付信息:{$billInfo['student']}",
+                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: -({$refundTotal}*{$billInfo['price']})元<br/>支付信息:{$billInfo['student']}",
                                             'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
                                             'member_id'=>$data['member_id']
                                         ];

@@ -39,7 +39,7 @@ class Crontab extends Controller {
             $nowDate = date('Ymd', time());
             $map['can_settle_date'] = $nowDate;
             // $map['can_settle_date'] = 20180314;
-            $map['rebate_type'] = 1;
+            // $map['rebate_type'] = 1;
             //$map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules) {
                 foreach ($schedules as $schedule) {

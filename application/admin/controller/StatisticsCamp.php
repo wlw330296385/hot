@@ -183,7 +183,7 @@ class StatisticsCamp extends Backend{
             // 提现
             $output_1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时教练支出
-            $output3 = db('output')->field("sum(output) as s_output,from_unixtime(schedule_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output3 = db('output')->field("sum(output) as s_output,from_unixtime(schedule_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>3])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             //平台分成
             $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
@@ -436,7 +436,7 @@ class StatisticsCamp extends Backend{
 
     // 课时详情
     public function lessonSchedule(){
-        $lesson_id = input('param.lesson_id',13);
+        $lesson_id = input('param.lesson_id');
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
@@ -444,7 +444,6 @@ class StatisticsCamp extends Backend{
         $camp_id = input('param.camp_id');
         $keyword = input('param.keyword');
         $member_id = input('param.member_id');
-        $map['salary_in.lesson_id'] = $lesson_id;
         if($camp_id){
             $map['salary_in.camp_id'] = $camp_id;
         }
@@ -454,7 +453,9 @@ class StatisticsCamp extends Backend{
         if($member_id){
             $map['salary_in.member_id'] = $member_id;
         }
-        // dump($map);
+        if($lesson_id){
+            $map['salary_in.lesson_id'] = $lesson_id;
+        }
         $scheduleList = db('salary_in')
         ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
         ->where($map)
