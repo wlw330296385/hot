@@ -346,7 +346,6 @@
         </div>
     </div>
 
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.view.js "></script>
@@ -360,14 +359,14 @@
             });
         })(mui);
 
+        var member = "{$teamMemberInfo.member}";
+        var member_id = "{$teamMemberInfo.member_id}";
+        var team_id = "{$teamMemberInfo.team_id}";
+        var id = "{$teamMemberInfo.id}";
         $(function () {
 
-            $(".fbcomment").on("tap", function () {
-                mui.toast("暂未开放，敬请期待")
-            })
-
-            var follow = "{$teamMemberInfo.member_id}";
-            if (follow == -1) {
+            // 非平台会员不显示关注按钮
+            if (member_id == -1) {
                 $(".follow").hide();
             }
 
@@ -406,7 +405,6 @@
 
             // 关注会员
             $(".follow").on("tap", '', function () {
-                var member_id = "{$teamMemberInfo.member_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
                         type: 1,
@@ -436,9 +434,6 @@
             // 领队移除队员操作
             $(".signOut").on("tap", '', function () {
                 var btnArray = ['取消', '确认'];
-                var team_id = "{$teamMemberInfo.team_id}";
-                var member_id = "{$teamMemberInfo.member_id}";
-                var id = "{$teamMemberInfo.id}";
                 mui.confirm('是否确认移除此队员？', '', btnArray, function (e) {
                     if (e.index == 1) {
                         mui.ajax("{:url('api/team/removeteammember')}", {
@@ -461,7 +456,6 @@
                                 }
                             },
                             error: function (xhr, type, errorThrown) {
-                                console.log(data);
                                 mui.toast("网络异常,请稍候再试");
                             }
                         });
@@ -474,9 +468,6 @@
             // 球队成员申请离队操作
             $(".applyOut").on("tap", '', function () {
                 var btnArray = ['取消', '确认'];
-                var team_id = "{$teamMemberInfo.team_id}";
-                var member_id = "{$teamMemberInfo.member_id}";
-                var id = "{$teamMemberInfo.id}";
                 mui.confirm('是否确认申请离队？', '', btnArray, function (e) {
                     if (e.index == 1) {
                         mui.ajax("{:url('api/team/applyleaveteam')}", {
@@ -509,86 +500,41 @@
                 })
             });
 
-
-            // 邀请队员
+            // 邀请队员回球队
             var teamStatus = "{$teamMemberInfo.status}";
-            var member_id = "{$teamMemberInfo.member_id}";
             if (teamStatus == "离队") {
                 if (member_id != -1) {
                     $(".applyIn").show();
-                    $(".signOut").hide();
-                }else{
-                    $(".applyIn").show().text("添加队员");
-                    $(".signOut").hide();
                 }
-                
             }
             $(".applyIn").on("tap", '', function () {
-                var team_id = "{$teamMemberInfo.team_id}";
-                var name = "{$teamMemberInfo.name}";
-                var number = "{$teamMemberInfo.number}";
-                var position = "{$teamMemberInfo.position}";
-                var telephone = "{$teamMemberInfo.telephone}";
-                if (member_id == -1) {
-                    mui.ajax("{:url('api/team/addnoregmember')}", {
-                        data: {
-                            team_id:team_id,
-                            name: name,
-                            number: number,
-                            position: position,
-                            telephone: telephone,
-                            role:''
-                        },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            console.log(data);
-                            if (data.code == 200) {
-                                mui.toast("添加成功");
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            //异常处理；
-                            console.log(type);
+                mui.ajax("{:url('api/team/returnteamember')}", {
+                    data: {
+                        team_id: team_id,
+                        id: id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("操作成功");
+                            window.setTimeout("history.go(-1)", 2000);
+                        } else {
+                            mui.toast(data.msg);
                         }
-                    });
-                } else {
-                    mui.ajax("{:url('api/team/addmember')}", {
-                        data: {
-                            team_id: team_id,
-                            member_id: member_id,
-                        },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            console.log(data);
-                            if (data.code == 200) {
-                                mui.toast("已经发送请求，请耐心等待回复");
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            //异常处理；
-                            console.log(type);
-                        }
-                    });
-                }
-
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             });
-
 
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {
-                var commented = "{$teamMemberInfo.member}";
-                var commented_id = "{$teamMemberInfo.member_id}";
-
                 var tags = $(".tagAll .bgorange").map(function () {
                     return $(this).attr("data-tag_name");
                 }).get().join(",");
@@ -605,8 +551,8 @@
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 1,
-                        commented: commented,
-                        commented_id: commented_id,
+                        commented: member,
+                        commented_id: member_id,
                         tags: tags,
                         tag_ids: tag_ids,
                     },
@@ -634,22 +580,17 @@
 
             //评论功能
             $(".fbcommentBtn").on('tap', function () {
-
-                var commented_id = "{$teamMemberInfo.member_id}";
-                var commented = "{$teamMemberInfo.member}";
                 var comment = $(".comment").val();
-
                 if (comment == '') {
                     mui.toast("评价内容不能为空哦");
                     return false;
                 }
-
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        commented_id: commented_id,
+                        commented_id: member_id,
                         comment_type: 4,
                         comment: comment,
-                        commented: commented
+                        commented: member
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -672,14 +613,11 @@
                     }
                 });
             });
-
             followStatus(); //判断当前的关注状态
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             toCommentList(); //获取评论列表
-
         });
-
 
         //下拉刷新具体业务实现
         function pulldownRefresh() {
@@ -702,14 +640,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}";
-            var commented_id = "{$teamMemberInfo.member_id}";
-            var commented = "{$teamMemberInfo.member}"
             mui.ajax({
                 url: url,
                 data: {
                     page: page,
-                    commented: commented,
-                    commented_id: commented_id,
+                    commented: member,
+                    commented_id: member_id,
                     comment_type: 4,
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -741,10 +677,8 @@
             });
         };
 
-
         // 判断当前的关注状态
         function followStatus() {
-            var member_id = "{$teamMemberInfo.member_id}"
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 1,
@@ -806,7 +740,7 @@
             mui.ajax("{:url('api/tag/commentlist')}", {
                 data: {
                     comment_type: 1,
-                    commented_id: "{$teamMemberInfo.member_id}",
+                    commented_id: member_id,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -831,7 +765,6 @@
                 }
             });
         };
-
     </script>
 
 </body>
