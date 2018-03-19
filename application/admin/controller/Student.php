@@ -12,9 +12,14 @@ class Student extends Backend {
     public function index() {
         // 搜索筛选
         $map = [];
+<<<<<<< HEAD
+        if ($cur_camp = $this->cur_camp) {
+            $map['grade_member.camp_id'] = $cur_camp['camp_id'];
+=======
         $camp_id = input('camp_id');
         if ($camp_id) {
             $map['grade_member.camp_id']=$camp_id;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
         $camp = input('camp');
         if ($camp) {
@@ -35,7 +40,11 @@ class Student extends Backend {
             ->where($map)
             ->where('grade_member.delete_time', null)
             ->order('student.member_id desc')
+<<<<<<< HEAD
+            ->paginate(15);
+=======
             ->paginate(15, false, ['query' => request()->param()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 //        dump($list->toArray());die;
         $this->assign('list', $list);
         $this->assign('camp_id', $camp_id);

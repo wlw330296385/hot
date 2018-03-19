@@ -175,7 +175,41 @@ class LessonService {
             return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $this->lessonModel->id];
         }else{
             return ['msg'=>__lang('MSG_400'), 'code' => 100];
+<<<<<<< HEAD
         }
+    }
+
+    // 保存课程指定对象
+    public function saveLessonAssign($data) {
+        if (!$data['lesson_id']) {
+            return ['code' => 100, 'msg' => '课程'.__lang('MSG_402')];
+        }
+        $model = new LessonAssignMember();
+        // 查询课程有无指定数据
+        $haslist = $model->where(['lesson_id' => $data['lesson_id']])->select();
+        if (!$haslist->isEmpty()) {
+            // 过滤选择指定会员被删除的数据
+            $model->where(['lesson_id' => $data['lesson_id']])->setField('status', -1);
+        }
+        // 保存数据 若已有数据就更新数据
+        $members = json_decode($data['memberData'], true);
+        $dataSave = [];
+        foreach ($members as $k => $member) {
+            $memberassign = $model->where(['lesson_id' => $data['lesson_id'], 'member_id' => $member['id']])->find();
+            if ($memberassign) {
+                $memberassign = $memberassign->toArray();
+                $dataSave[$k]['id'] = $memberassign['id'];
+            }
+            $dataSave[$k]['lesson_id'] = $data['lesson_id'];
+            $dataSave[$k]['lesson'] = $data['lesson'];
+            $dataSave[$k]['member_id'] = $member['id'];
+            $dataSave[$k]['member'] = $member['member'];
+            $dataSave[$k]['status'] = 1;
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+        }
+        $res = $model->saveAll($dataSave);
+        return $res;
     }
 
     // 保存课程指定对象
@@ -269,11 +303,22 @@ class LessonService {
         $CampMember = new \app\model\CampMember;
         $camp_member = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'status'=>1])->find();
         if(!$camp_member){
+<<<<<<< HEAD
+            $res = $CampMember->save($data);
+=======
             $res = $CampMember->allowField(true)->save($data);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if(!$res){
                 return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
             }
         }
+<<<<<<< HEAD
+
+        $LessonMember = new \app\model\LessonMember;
+        $lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
+        if(!$lesson_member){
+            $res = $LessonMember->save($data);
+=======
         // 检查学员有无lesson_member数据
         $LessonMember = new \app\model\LessonMember;
         //$lesson_member = $LessonMember->where(['lesson_id'=>$data['lesson_id'],'student_id'=>$data['student_id'],'status'=>1,'type'=>2])->find();
@@ -292,11 +337,15 @@ class LessonService {
             }
             // 其他情况更新数据
             $res = $LessonMember->allowField(true)->isUpdate(true)->save($data, ['id' => $lesson_member['id']]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if(!$res){
                 return ['code'=>100,'msg'=>'预约失败,请稍后再试'];
             }
         }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // 发送训练营模板消息
          $MessageCampData = [
             "touser" => '',

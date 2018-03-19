@@ -35,6 +35,9 @@ class Lesson extends Base{
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
         $isPower = $this->LessonService->isPower($lessonInfo['camp_id'],$this->memberInfo['id']);
+<<<<<<< HEAD
+
+=======
         //卡券列表
         $map = function($query)use($lessonInfo){
             // $query->where(['target_type'=>1,'target_id'=>0])
@@ -70,8 +73,10 @@ class Lesson extends Base{
         }
         $this->assign('couponListOfSystem',$couponListOfSystem);
         $this->assign('couponListOfCamp',$couponListOfCamp);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('isPower',$isPower);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('memberInfo', $this->memberInfo);
         return view('Lesson/lessonInfo');
     }
 
@@ -157,6 +162,8 @@ class Lesson extends Base{
         $shareurl = request()->url(true);
         $wechatS = new WechatService();
         $jsapi = $wechatS->jsapi($shareurl);
+<<<<<<< HEAD
+=======
         
         //卡券列表
         $map = function($query) use($lessonInfo){
@@ -175,6 +182,7 @@ class Lesson extends Base{
                         ->where($map)
                         ->column('id');
         $item_coupon_ids = array_merge($item_coupon_ids1,$item_coupon_ids2);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
          // 平台卡券
         $couponListOfSystem = $ItemCoupon
@@ -309,10 +317,13 @@ class Lesson extends Base{
         //训练营主教练
         $camp_id = input('param.camp_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+<<<<<<< HEAD
+=======
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
         if($is_power<2){
             $this->error('您没有权限');
         }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类

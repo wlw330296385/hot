@@ -3,15 +3,21 @@
 namespace app\frontend\controller;
 
 
+<<<<<<< HEAD
+=======
 use app\service\MatchService;
 use app\service\TeamService;
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 class Match extends Base {
     // 赛事列表（平台展示）
     public function matchlist() {
         return view('Match/matchList');
     }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     // 赛事详情
     public function matchinfo() {
         return view('Match/matchInfo');
@@ -19,9 +25,12 @@ class Match extends Base {
 
     // 创建比赛
     public function creatematch() {
+<<<<<<< HEAD
+=======
         // 从球队模块进入页面 带team_id处理
         $homeTeamId = input('team_id', 0);
         $this->assign('homeTeamId', $homeTeamId);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return view('Match/createMatch');
     }
 
@@ -29,6 +38,8 @@ class Match extends Base {
     public function matchedit() {
         return view('Match/matchEdit');
     }
+<<<<<<< HEAD
+=======
     // 比赛管理列表
     public function matchlistofteam() {
         return view('Match/matchlistofteam');
@@ -66,4 +77,5 @@ class Match extends Base {
         $this->assign('teamInfo', $teamInfo);
         return view('Match/friendlyinfo');
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

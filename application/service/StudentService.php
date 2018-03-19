@@ -22,7 +22,10 @@ class StudentService{
         $res = $model->with('member')->where($map)->find();
         if($res){
             $result = $res->toArray();
+<<<<<<< HEAD
+=======
             $result['age'] = getAgeByBirthday($result['student_birthday']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $result;
         }else{
             return $res;
@@ -201,6 +204,8 @@ class StudentService{
             ->select();
         return $result;
     }
+<<<<<<< HEAD
+=======
 
     // 学员所在训练营
     public function getCamps($map=[]) {
@@ -216,4 +221,5 @@ class StudentService{
             ->select();
         return $result;
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

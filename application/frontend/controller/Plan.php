@@ -54,7 +54,11 @@ class Plan extends Base{
         $ExerciseService = new \app\service\ExerciseService;
         $exerciseList = $ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
 
+<<<<<<< HEAD
+
+=======
 //    dump($exerciseList);die;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('exerciseList',$exerciseList);
         $this->assign('gradecateList',$gradecateList);
         $this->assign('planInfo',$planInfo);

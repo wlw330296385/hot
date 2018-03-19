@@ -1,7 +1,10 @@
 <?php
 // 球队service
 namespace app\service;
+<<<<<<< HEAD
+=======
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 use app\model\Apply;
 use app\model\Team;
 use app\model\TeamComment;
@@ -9,6 +12,13 @@ use app\model\TeamEvent;
 use app\model\TeamEventMember;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
+<<<<<<< HEAD
+use think\Db;
+
+class TeamService {
+    // 我的球队列表（与会员有关联的球队）
+    public function myTeamList($map=[], $page=1, $order='id desc', $limit=10) {
+=======
 use app\model\TeamMessage;
 use think\Db;
 
@@ -17,6 +27,7 @@ class TeamService
     // 我的球队列表（与会员有关联的球队）
     public function myTeamList($map = [], $page = 1, $order = 'id desc', $limit = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamMember();
         $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
@@ -27,8 +38,12 @@ class TeamService
     }
 
     // 我的球队列表（带输出在队职位角色）
+<<<<<<< HEAD
+    public function myTeamWithRole($member_id) {
+=======
     public function myTeamWithRole($member_id)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamMember();
         $map['member_id'] = $member_id;
         $map['status'] = 1;
@@ -39,9 +54,15 @@ class TeamService
             $roleModel = new TeamMemberRole();
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
+<<<<<<< HEAD
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                foreach ($memberRole as $val) {
+                    $teammembers[$k]['role_text'] .= $val['type'].',';
+=======
                 $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
                 foreach ($memberRole as $val) {
                     $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
             return $teammembers;
@@ -50,6 +71,10 @@ class TeamService
         }
     }
 
+<<<<<<< HEAD
+    // 创建球队
+    public function createTeam($data) {
+=======
     // 我的球队列表（与会员有关联的球队）所有数据
     public function myTeamAll($member_id) {
         $model = new TeamMember();
@@ -66,25 +91,38 @@ class TeamService
     // 创建球队
     public function createTeam($data)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new Team();
         // 验证数据
         $validate = validate('TeamVal');
         if (!$validate->scene('add')->check($data)) {
+<<<<<<< HEAD
+           return ['code' => 100, 'msg' => $validate->getError()];
+=======
             return ['code' => 100, 'msg' => $validate->getError()];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
         // 保存数据，成功返回自增id，失败记录错误信息
         $res = $model->data($data)->allowField(true)->save();
         if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
         } else {
+<<<<<<< HEAD
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
     // 获取球队详情
+<<<<<<< HEAD
+    public function getTeam($map) {
+=======
     public function getTeam($map)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new Team();
         $res = $model->where($map)->find();
         if ($res) {
@@ -92,6 +130,8 @@ class TeamService
             $result = $res->getData();
             $result['status_text'] = $res->status;
             $result['type_text'] = $res->type;
+<<<<<<< HEAD
+=======
             // 计算球队胜率
             if ($result['match_num'] > 0) {
                 $result['match_lose'] = $result['match_num'] - $result['match_win'];
@@ -108,6 +148,7 @@ class TeamService
             // 球队特点 字符串转数组输出
             $result['charater_arr'] = explode(',', $result['charater']);
             $result['fans_num'] = getfansnum($result['id'], 4);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $result;
         } else {
             return $res;
@@ -115,6 +156,13 @@ class TeamService
     }
 
     // 球队列表
+<<<<<<< HEAD
+    public function getTeamList($map=[], $page=1, $order='id desc', $limit=10) {
+        $model = new Team();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            return $res->toArray();
+=======
     public function getTeamList($map = [], $page = 1, $order = 'id desc', $limit = 10)
     {
         $model = new Team();
@@ -125,12 +173,20 @@ class TeamService
                 $result[$k]['fans_num'] = getfansnum($val['id'], 4);
             }
             return $result;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         } else {
             return $res;
         }
     }
 
     // 球队列表带分页页码
+<<<<<<< HEAD
+    public function getTeamListPaginator($map=[], $order='id desc', $paginate=10) {
+        $model = new Team();
+        $res = $model->where($map)->order($order)->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+=======
     public function getTeamListPaginator($map = [], $order = 'id desc', $paginate = 10)
     {
         $model = new Team();
@@ -141,12 +197,21 @@ class TeamService
                 $result['data'][$k]['fans_num'] = getfansnum($val['id'], 4);
             }
             return $result;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         } else {
             return $res;
         }
     }
 
     // 修改球队信息
+<<<<<<< HEAD
+    public function updateTeam($data, $id) {
+        $model = new Team();
+        // 验证数据
+        $validate = validate('TeamVal');
+        if (!$validate->scene('edit')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+=======
     public function updateTeam($data, $id, $validate=0)
     {
         $model = new Team();
@@ -156,6 +221,7 @@ class TeamService
             if (!$validate->scene('edit')->check($data)) {
                 return ['code' => 100, 'msg' => $validate->getError()];
             }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
         // 保存数据，区分是否修改数据。成功返回true，失败记录错误信息
         //$res = $model->allowField(true)->update($data);
@@ -163,11 +229,43 @@ class TeamService
         if ($res || ($res === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
+<<<<<<< HEAD
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
+<<<<<<< HEAD
+
+    // 保存team_member球队-会员关系信息
+    public function saveTeamMember($data, $teamMember_id=0) {
+        $model = new TeamMember();
+        // 有传入team_member表id 更新关系数据，否则新增关系数据
+        if ($teamMember_id) {
+            $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+    }
+
+    // 获取球队成员列表
+    public function getTeamMemberList($map=[], $page=1, $order='id asc', $limit=10) {
+=======
     // 自动更新球队字段值
     public function autoUpdateTeam($team_id) {
         // 获取现在球队队员的平均年龄、身高、体重
@@ -274,6 +372,7 @@ class TeamService
     // 获取球队成员列表
     public function getTeamMemberList($map = [], $page = 1, $order = 'id asc', $limit = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamMember();
         $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
@@ -282,6 +381,11 @@ class TeamService
             $roleModel = new TeamMemberRole();
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
+<<<<<<< HEAD
+                $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select()->toArray();
+                foreach ($memberRole as $val) {
+                    $teammembers[$k]['role_text'] .= $val['type'].',';
+=======
                 $teammembers[$k]['role_arr'] = [];
                 $memberRole = $roleModel->where([
                     'member_id' => $teammember['member_id'],
@@ -293,6 +397,7 @@ class TeamService
                 foreach ($memberRole as $val) {
                     $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
                     array_push($teammembers[$k]['role_arr'], $val['type_text']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
             return $teammembers;
@@ -302,8 +407,12 @@ class TeamService
     }
 
     // 获取球队-队员详细
+<<<<<<< HEAD
+    public function getTeamMemberInfo($map) {
+=======
     public function getTeamMemberInfo($map)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamMember();
         $res = $model->where($map)->find();
         if ($res) {
@@ -313,6 +422,11 @@ class TeamService
             // 获取成员在球队的角色身份
             $roleModel = new TeamMemberRole();
             $result['role_text'] = '';
+<<<<<<< HEAD
+            $memberRole = $roleModel->where(['member_id' => $result['member_id'], 'team_id' => $result['team_id'], 'status' => 1])->select()->toArray();
+            foreach ($memberRole as $val) {
+                $result['role_text'] .= $val['type'].',';
+=======
             $memberRole = $roleModel->where([
                 'member_id' => $result['member_id'],
                 'name' => $result['name'],
@@ -321,6 +435,7 @@ class TeamService
             ])->select();
             foreach ($memberRole as $val) {
                 $result['role_text'] .= $val['type_text'] . ',';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             return $result;
         } else {
@@ -328,6 +443,135 @@ class TeamService
         }
     }
 
+<<<<<<< HEAD
+    // 保存team_member_role 会员-球队角色关联信息
+    public function saveTeamMemberRole($data, $team_id) {
+        $model = new TeamMemberRole();
+        // 修改数组定义
+        $saveAlldata = [];
+        // 查询当前领队数据（领队一个）
+        $roleLeader = $model->where([ 'team_id' => $team_id, 'type' => 4 ])->find();
+        if (!$roleLeader) {
+            // 直接插入新数据
+            array_push($saveAlldata, [
+                'type' => 4,
+                'team_id' => $team_id,
+                'member_id' => $data['leader_id'],
+                'status' => 1
+            ]);
+        } else {
+            $roleLeader = $roleLeader->toArray();
+            // 领队有改变 组合修改数组
+            if ($roleLeader['member_id'] != $data['leader_id']) {
+                array_push($saveAlldata, [
+                    'id' => $roleLeader['id'],
+                    'member_id' => $data['leader_id']
+                ]);
+            }
+        }
+        // 查询当前队长数据（队长一个）
+        $roleCaptain = $model->where([ 'team_id' => $team_id, 'type' => 3 ])->find();
+        if (!$roleCaptain) {
+            // 直接插入新数据
+            array_push($saveAlldata, [
+                'type' => 3,
+                'team_id' => $team_id,
+                'member_id' => $data['leader_id'],
+                'status' => 1
+            ]);
+        } else {
+
+            $roleCaptain = $roleCaptain->toArray();
+            // 队长有改变 组合修改数组
+            if ($roleCaptain['member_id'] != $data['captain_id']) {
+                array_push($saveAlldata, [
+                    'id' => $roleCaptain['id'],
+                    'member_id' => $data['captain_id']
+                ]);
+            }
+        }
+        // 处理提交的coach_id
+        if (isset($data['coach_id'])) {
+            // 查询当前教练数据member_id集合（教练可多个）
+            $roleCoachs = $model->where([ 'team_id' => $team_id, 'type' => 2, 'status' => 1])->column('member_id');
+            // 拆分遍历提交的coach_id是否在当前球队教练数据member_id集合中
+            $coach_ids = explode(',', $data['coach_id']);
+            foreach ($coach_ids as $val) {
+                // 不在集合中
+                if (!in_array($val, $roleCoachs)) {
+                    // 有无team_member_role教练数据
+                    $hasCoach = $model->where([ 'team_id' => $team_id, 'type' => 2, 'member_id' => $val ])->find();
+                    if (!$hasCoach) {
+                        // 插入新的team_member_role教练数据
+                        array_push($saveAlldata, [
+                            'team_id' => $team_id,
+                            'member_id' => $val,
+                            'type' => 2,
+                            'status' => 1
+                        ]);
+                    } else {
+                        // 更新新的team_member_role教练数据
+                        $coach = $hasCoach->toArray();
+                        $status = $hasCoach->getData('status');
+                        array_push($saveAlldata, [
+                            'id' => $coach['id'],
+                            'status' => ( $status == 1) ? -1 : 1
+                        ]);
+                    }
+                }
+            }
+            // 将不在提交的coach_id中 其他的球队教练更新status=-1
+            $model->where([ 'team_id' => $team_id, 'type' => 2, 'member_id' => ['not in', $coach_ids] ])->update(['status' => -1]);
+        }
+        // 拆分提交的committee_id
+        if (isset($data['committee_id'])) {
+            // 查询当前队委数据member_id集合（可多个）
+            $roleCommittees = $model->where([ 'team_id' => $team_id, 'type' => 1, 'status' => 1 ])->column('member_id');
+            // 拆分遍历提交的committee_id是否在当前球队队委数据member_id集合中
+            $committee_ids = explode(',', $data['committee_id']);
+            foreach ($committee_ids as $val) {
+                // 不在集合中
+                if (!in_array($val, $roleCommittees)) {
+                    // 有无team_member_role队委数据
+                    $hascommittee = $model->where([ 'team_id' => $team_id, 'type' => 1, 'member_id' => $val ])->find();
+                    if (!$hascommittee) {
+                        // 插入新的team_member_role队委数据
+                        array_push($saveAlldata, [
+                            'team_id' => $team_id,
+                            'member_id' => $val,
+                            'type' => 1,
+                            'status' => 1
+                        ]);
+                    } else {
+                        // 更新新的team_member_role队委数据
+                        $committee = $hascommittee->toArray();
+                        $status = $hascommittee->getData('status');
+                        array_push($saveAlldata, [
+                            'id' => $committee['id'],
+                            'status' => ( $status == 1) ? -1 : 1
+                        ]);
+                    }
+                }
+            }
+            // 将不在提交的committee_id中 其他的球队队委更新status=-1
+            $model->where([ 'team_id' => $team_id, 'type' => 1, 'member_id' => ['not in', $committee_ids] ])->update(['status' => -1]);
+        }
+        $res = $model->saveAll($saveAlldata);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 获取球队有角色身份的会员列表
+    public function getTeamRoleMembers($team_id, $order='type desc')
+    {
+        $list = Db::view('team_member_role', '*, status as role_status')
+            ->view('team_member', '*', 'team_member.member_id=team_member_role.member_id', 'left')
+            ->where(['team_member.team_id' => $team_id, 'team_member_role.status' => 1, 'team_member.status' => 1])
+=======
     // 获取球队-队员统计数
     public function getTeamMemberCount($map)
     {
@@ -609,6 +853,7 @@ class TeamService
                 'team_member.status' => 1,
                 'team_member_role.status' => 1
             ])
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             ->where('team_member.delete_time', null)
             ->where('team_member_role.delete_time', null)
             ->order($order)
@@ -616,6 +861,13 @@ class TeamService
         return $list;
     }
 
+<<<<<<< HEAD
+    // 获取会员在球队的身份角色
+    public function checkMemberTeamRole($team_id, $member_id) {
+        $model = new TeamMemberRole();
+        $res = $model->where(['team_id' => $team_id, 'member_id' => $member_id])
+            ->where(['status' => 1])->value('type');
+=======
     // 获取会员在球队的最大身份角色
     public function checkMemberTeamRole($team_id, $member_id)
     {
@@ -624,10 +876,18 @@ class TeamService
             ->where(['status' => 1])
             ->order('type desc')
             ->value('type');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return $res ? $res : 0;
     }
 
     // 查看会员加入球队申请记录
+<<<<<<< HEAD
+    public function getApplyInfo($map) {
+        $model = new Apply();
+        $res = $model->with('member')->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+=======
     public function getApplyInfo($map)
     {
         $model = new Apply();
@@ -637,14 +897,19 @@ class TeamService
             $getData = $res->getData();
             $result['status_num'] = $getData['status'];
             return $result;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         } else {
             return $res;
         }
     }
 
     // 保存加入球队申请数据
+<<<<<<< HEAD
+    public function saveApply($data) {
+=======
     public function saveApply($data)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new Apply();
         // 如果有带更新条件记录id就更新数据
         if (isset($data['id'])) {
@@ -652,24 +917,38 @@ class TeamService
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
+<<<<<<< HEAD
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
             // 插入一条加入球队申请数据
             $res = $model->allowField(true)->save($data);
             if ($res) {
+<<<<<<< HEAD
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
     }
 
     // 创建球队活动
+<<<<<<< HEAD
+    public function createTeamEvent($data) {
+=======
     public function createTeamEvent($data)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEvent();
         // 验证数据
         $validate = validate('TeamEventVal');
@@ -684,14 +963,22 @@ class TeamService
             $teamModel->where('id', $data['team_id'])->setInc('event_num', 1);
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
+<<<<<<< HEAD
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
     // 修改球队活动
+<<<<<<< HEAD
+    public function updateTeamEvent($data, $noval=0) {
+=======
     public function updateTeamEvent($data, $noval = 0)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEvent();
         // 传入$noval=1 忽略验证器
         if ($noval === 0) {
@@ -701,26 +988,42 @@ class TeamService
                 return ['code' => 100, 'msg' => $validate->getError()];
             }
         }
+<<<<<<< HEAD
+        // 保存数据，成功返回自增id，失败记录错误信息
+=======
         // 保存数据，成功返回，失败记录错误信息
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $res = $model->allowField(true)->isUpdate(true)->save($data);
         if ($res || ($res === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
+<<<<<<< HEAD
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
     // 软删除球队活动
+<<<<<<< HEAD
+    public function deleteTeamEvent($id) {
+=======
     public function deleteTeamEvent($id)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $res = TeamEvent::destroy($id);
         return $res;
     }
 
     // 球队活动列表分页
+<<<<<<< HEAD
+    public function teamEventPaginator($map, $order='id desc', $paginate=10) {
+=======
     public function teamEventPaginator($map, $order = 'id desc', $paginate = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEvent();
         $res = $model->where($map)->order($order)->paginate($paginate);
         if ($res) {
@@ -731,8 +1034,12 @@ class TeamService
     }
 
     // 球队活动列表
+<<<<<<< HEAD
+    public function teamEventList($map, $page=1, $order='id desc', $limit=10) {
+=======
     public function teamEventList($map, $page = 1, $order = 'id desc', $limit = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEvent();
         $res = $model->where($map)->order($order)->page($page, $limit)->select();
         if ($res) {
@@ -741,6 +1048,15 @@ class TeamService
             return $res;
         }
     }
+<<<<<<< HEAD
+    
+    // 球队活动详情
+    public function getTeamEventInfo($map) {
+        $model = new TeamEvent();
+        $res = $model->where($map)->find();
+        if ($res) {
+            $result = $res->toArray();
+=======
 
     // 球队活动列表（无分页)
     public function teamEventListAll($map, $order = 'id desc')
@@ -773,6 +1089,7 @@ class TeamService
         if ($res) {
             $result = $res->toArray();
             $result['start_time_stamp'] = $res->getData('start_time');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result['event_type_num'] = $res->getData('event_type');
             $result['is_max_num'] = $res->getData('is_max');
             $result['is_finished_num'] = $res->getData('is_finished');
@@ -784,8 +1101,12 @@ class TeamService
     }
 
     // 获取会员-球队活动关联
+<<<<<<< HEAD
+    public function getMemberTeamEvent($map) {
+=======
     public function getMemberTeamEvent($map)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         $res = $model->where($map)->find();
         if ($res) {
@@ -796,8 +1117,12 @@ class TeamService
     }
 
     // 保存球队活动-会员关联数据
+<<<<<<< HEAD
+    public function saveTeamEventMember($data, $map=[]) {
+=======
     public function saveTeamEventMember($data, $map = [])
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         if (!empty($map)) {
             // 更新数据
@@ -805,7 +1130,11 @@ class TeamService
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
+<<<<<<< HEAD
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         } else {
@@ -825,29 +1154,45 @@ class TeamService
                 }
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
+<<<<<<< HEAD
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
     }
 
     // 更新球队活动-会员关联数据
+<<<<<<< HEAD
+    public function saveAllTeamEventMember($data=[]) {
+=======
     public function saveAllTeamEventMember($data = [])
     {
         //dump($data);die;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         $res = $model->saveAll($data);
         if ($res || ($res === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
+<<<<<<< HEAD
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+=======
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
     // 球队活动-会员关联列表分页
+<<<<<<< HEAD
+    public function teamEventMemberPaginator($map, $order='id desc', $paginate=10) {
+=======
     public function teamEventMemberPaginator($map, $order = 'id desc', $paginate = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         $res = $model->where($map)->order($order)->paginate($paginate);
         if ($res) {
@@ -858,8 +1203,12 @@ class TeamService
     }
 
     // 球队活动-会员关联列表
+<<<<<<< HEAD
+    public function teamEventMemberList($map, $page=1, $order='id desc', $limit=10) {
+=======
     public function teamEventMemberList($map, $page = 1, $order = 'id desc', $limit = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         $res = $model->where($map)->order($order)->page($page, $limit)->select();
         if ($res) {
@@ -870,8 +1219,12 @@ class TeamService
     }
 
     // 球队活动-会员关联列表（无分页）
+<<<<<<< HEAD
+    public function teamEventMembers($map, $order='id desc') {
+=======
     public function teamEventMembers($map, $order = 'id desc')
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamEventMember();
         $res = $model->where($map)->order($order)->select();
         if ($res) {
@@ -882,8 +1235,12 @@ class TeamService
     }
 
     // 球队模块评论列表分页
+<<<<<<< HEAD
+    public function getCommentPaginator($map, $order='id desc', $paginate=10) {
+=======
     public function getCommentPaginator($map, $order = 'id desc', $paginate = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamComment();
         // 只列出有评论文字内容的数据
         $res = $model->where($map)->whereNotNull('comment')->order($order)->paginate($paginate);
@@ -895,8 +1252,12 @@ class TeamService
     }
 
     // 球队模块评论列表
+<<<<<<< HEAD
+    public function getCommentList($map, $page=1, $order='id desc', $limit=10) {
+=======
     public function getCommentList($map, $page = 1, $order = 'id desc', $limit = 10)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamComment();
         // 只列出有评论文字内容的数据
         $res = $model->where($map)->whereNotNull('comment')->order($order)->page($page, $limit)->select();
@@ -908,8 +1269,12 @@ class TeamService
     }
 
     // 球队模块点赞数统计
+<<<<<<< HEAD
+    public function getCommentThumbCount($map) {
+=======
     public function getCommentThumbCount($map)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamComment();
         $map['thumbsup'] = 1;
         $res = $model->where($map)->count();
@@ -917,14 +1282,22 @@ class TeamService
     }
 
     // 保存球队模块评论、点赞数据
+<<<<<<< HEAD
+    public function saveComment($data) {
+=======
     public function saveComment($data)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamComment();
         // 根据传参 有id字段更新数据否则新增数据
         if (isset($data['id'])) {
             // 更新数据
             $res = $model->allowField(true)->save($data, ['id' => $data['id']]);
+<<<<<<< HEAD
+            if ($res || ($res === 0) ) {
+=======
             if ($res || ($res === 0)) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -941,8 +1314,12 @@ class TeamService
     }
 
     // 获取球队模块评论详情
+<<<<<<< HEAD
+    public function getCommentInfo($map) {
+=======
     public function getCommentInfo($map)
     {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new TeamComment();
         $res = $model->where($map)->find();
         if ($res) {
@@ -951,6 +1328,8 @@ class TeamService
             return $res;
         }
     }
+<<<<<<< HEAD
+=======
 
     // 保存球队公告信息
     public function saveTeamMessage($data)
@@ -987,4 +1366,5 @@ class TeamService
             return $res;
         }
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

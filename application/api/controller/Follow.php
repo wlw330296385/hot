@@ -127,12 +127,19 @@ class Follow extends Base {
     public function myfollow() {
         try {
             $page = input('param.page', 1);
+<<<<<<< HEAD
+=======
             $map = input('post.');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $map['member_id'] = $this->memberInfo['id'];
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);
             if ($res) {
+<<<<<<< HEAD
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()];
+=======
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
@@ -145,6 +152,15 @@ class Follow extends Base {
     // 粉丝（被关注）的列表
     public function myfans() {
         try {
+<<<<<<< HEAD
+            $page = input('param.page', 1);
+            $type = input('param.type');
+            if (!$type) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+
+            switch ($type) {
+=======
             $map = input('param.');
             $page = input('param.page', 1);
             $keyword = input('param.keyword');
@@ -153,6 +169,7 @@ class Follow extends Base {
             }
 
             switch ($map['type']) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 case 1: {
                     $map['follow_id'] = $this->memberInfo['id'];
                     break;
@@ -163,7 +180,10 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '训练营'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $camp_id;
+<<<<<<< HEAD
+=======
                     unset($map['camp_id']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     break;
                 }
                 case 3: {
@@ -172,7 +192,10 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '班级'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $grade_id;
+<<<<<<< HEAD
+=======
                     unset($map['grade_id']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     break;
                 }
                 case 4: {
@@ -181,6 +204,12 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '球队'.__lang('MSG_402')]);
                     }
                     $map['follow_id'] = $team_id;
+<<<<<<< HEAD
+                    break;
+                }
+            }
+            $map['type'] = $type;
+=======
                     unset($map['team_id']);
                     break;
                 }
@@ -201,10 +230,14 @@ class Follow extends Base {
             if (isset($map['page'])) {
                 unset($map['page']);
             }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $map['status'] = 1;
             $followS = new FollowService();
             $res = $followS->getfollowlist($map);
             if ($res) {
+<<<<<<< HEAD
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res->toArray()];
+=======
                 if (!empty($res['data'])) {
                     // 并入当前会员有无关注实体粉丝的信息
                     foreach ($res['data'] as $k => $val) {
@@ -215,6 +248,7 @@ class Follow extends Base {
 
 
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
@@ -311,6 +345,8 @@ class Follow extends Base {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+<<<<<<< HEAD
+=======
 
 
 
@@ -360,4 +396,5 @@ class Follow extends Base {
 
 
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

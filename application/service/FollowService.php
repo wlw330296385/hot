@@ -11,6 +11,14 @@ class FollowService {
             $data['status'] = 1;
             $result = $model->allowField(true)->save($data);
             if ($result) {
+<<<<<<< HEAD
+                // 操作camp_member数据
+                if ($data['type'] == 2) {
+                    $this->saveCampMember($data);
+                }
+
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -25,6 +33,13 @@ class FollowService {
             } else {
                 $data['status'] = 1;
                 $msg = '关注成功';
+<<<<<<< HEAD
+                // 操作camp_member数据
+                if ($data['type'] == 2) {
+                    $this->saveCampMember($data);
+                }
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }
             $result = $model->allowField(true)->isUpdate()->save($data);
             if ($result) {
@@ -36,6 +51,8 @@ class FollowService {
         return $response;
     }
 
+<<<<<<< HEAD
+=======
     // 关注列表
     public function getfollowlist($map, $order='id desc', $paginate=10) {
         $model = new Follow();
@@ -59,6 +76,7 @@ class FollowService {
     }
 
     // 保存canmp_mebmer数据
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     protected function saveCampMember($data) {
         $campmemberDb = db('camp_member');
         $campmember = $campmemberDb->where(['camp_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
@@ -78,6 +96,24 @@ class FollowService {
         }
     }
 
+<<<<<<< HEAD
+    // 关注列表
+    public function getfollowlist($map, $order='id desc', $paginate=10) {
+        $model = new Follow();
+        $list = $model->where($map)->order($order)->paginate($paginate);
+        return $list;
+    }
+
+    // 获取关注数据
+    public function getfollow($map) {
+        $model = new Follow();
+        $result = $model->where($map)->find();
+        if ($result) {
+            return $result->toArray();
+        } else {
+            return $result;
+        }
+=======
     // 实体获取粉丝数
     public function getfansnum($follow_id, $type=1) {
         $model = new Follow();
@@ -87,5 +123,6 @@ class FollowService {
             'type' => $type
         ])->count();
         return ($count) ? $count : 0;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 }

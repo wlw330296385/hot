@@ -6,7 +6,10 @@ use app\service\MatchService;
 use app\service\MessageService;
 use app\service\RefereeService;
 use think\Exception;
+<<<<<<< HEAD
+=======
 use think\Db;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
 class Referee extends Base{
 	protected $refereeService;
@@ -715,7 +718,11 @@ class Referee extends Base{
         try{
             $map = input('param.');
 
+<<<<<<< HEAD
+            // 无传入referee_id 根据当前会员查询裁判员信息
+=======
            /* 无传入referee_id 根据当前会员查询裁判员信息
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -725,7 +732,11 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
+<<<<<<< HEAD
+            }
+=======
             }*/
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             if (input('page')) {
                 unset($map['page']);
@@ -749,7 +760,11 @@ class Referee extends Base{
             $map = input('param.');
             $page = input('page', 1);
 
+<<<<<<< HEAD
+            // 无传入referee_id 根据当前会员查询裁判员信息
+=======
             /*无传入referee_id 根据当前会员查询裁判员信息
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $refereeId = input('param.referee_id');
             if (!$refereeId) {
                 $refereeInfo = $this->refereeService->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
@@ -759,7 +774,11 @@ class Referee extends Base{
             }
             if ($refereeInfo) {
                 $map['referee_id'] = $refereeInfo['id'];
+<<<<<<< HEAD
+            }
+=======
             }*/
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             if (input('page')) {
                 unset($map['page']);
@@ -776,6 +795,8 @@ class Referee extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+<<<<<<< HEAD
+=======
 
     // 裁判-比赛订单
     public function refereeorders() {
@@ -807,4 +828,5 @@ class Referee extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

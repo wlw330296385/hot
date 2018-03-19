@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$billInfo.is_pay}订单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        label{
+            padding: 13px 15px !important;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <!-- <header id="header" class="mui-bar mui-bar-nav subheader"> -->
+    <!-- <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return"></span></a> -->
+    <input type="hidden" name="bill_id" value="{$billInfo.id}">
+    <input type="hidden" name="camp" value="{$billInfo.camp}">
+    <input type="hidden" name="camp_id" value="{$billInfo.camp_id}">
+    <input type="hidden" name="student" value="{$billInfo.student}">
+    <input type="hidden" name="student_id" value="{$billInfo.student_id}">
+    <input type="hidden" name="member" value="{$billInfo.member}">
+    <input type="hidden" name="member_id" value="{$billInfo.member_id}">
+    <input type="hidden" name="score_pay" value="{$billInfo.score_pay}">
+    <input type="hidden" name="balance_pay" value="{$billInfo.balance_pay}">
+    <!-- </header> -->
+
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class=" mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('bill/billList')}?member_id={$billInfo['member_id']}"><span class="return">我的订单</span></a>
+        <h1 class="mui-title" style="font-size: 14px">
+            {$billInfo.is_pay}订单
+        </h1>
+    </header>
+
+
+    <div class="mui-content">
+
+            <div class="page-header">
+                <span class="course"><strong>订单信息</strong></span>
+            </div>
+            <ul class="mui-table-view list detalis-list mb">
+                <li class="mui-table-view-cell listli">订单号<span class="bill_order">{$billInfo.bill_order}</span></li>
+                <li class="mui-table-view-cell listli">订单日期<span>{$billInfo.create_time}</span></li>
+                <li class="mui-table-view-cell listli">订单金额<span>{$billInfo.price*$billInfo.total}</span></li>
+                <li class="mui-table-view-cell listli">支付人<span>{$billInfo.member}</span></li>
+                <li class="mui-table-view-cell listli">已付金额<span>{$billInfo.balance_pay}</span></li>
+                <li class="mui-table-view-cell listli">支付方式<span>{$billInfo.pay_type}</span></li>
+            </ul>
+
+            <div class="page-header">
+                <span class="course"><strong>商品信息</strong></span>
+            </div>
+            <ul class="mui-table-view list detalis-list mb mt55">
+               <li class="mui-table-view-cell listli">商品类型<span class="goods_type">{$billInfo.goods_type}</span></li>
+               <li class="mui-table-view-cell listli">商品名称<span class="goods">{$billInfo.camp} {$billInfo.goods}</span><input type="hidden" name="goods_id" value="{$billInfo.goods_id}"></li>
+               <li class="mui-table-view-cell listli">商品数量<span class="total">{$billInfo.total}</span></li>
+               <li class="mui-table-view-cell listli">商品单价<span class="price">{$billInfo.price}</span></li>
+               <li class="mui-table-view-cell listli border-b">商品描述<span class="goods_des">{$billInfo.goods_des}</span></li>
+           </ul>
+
+
+           {switch name="billInfo.status"}
+           {case  value="0"}
+           <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+                class="mui-icon mui-icon-phone"></span>电话咨询
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen"
+                style="color:#fff;border-left: 1px solid #ccc;" onclick="wxpay()" >立即支付
+            </li>
+    </ul>
+    {/case}
+    {case  value="1"}
+    <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%;">
+        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli"><span
+            class="mui-icon mui-icon-phone"></span>电话咨询
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-6 opli "
+        style="color:#000;border-left: 1px solid #ccc;"><a href="#delete">申请退款</a>
+    </li>
+</ul>
+
+<div id="delete" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
+    <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+      <ul class="mui-table-view mui-text-left operation">
+        <h5 class="mui-text-left">退款申请<a class="mui-icon mui-icon-closeempty" href="#delete"></a></h5>
+        <div class="mui-input-row" style="font-size: 14px;color: #737373">
+            
+        </div>
+        <li class="mui-table-view-cell">
+            <textarea id="question" class="mui-input-clear question" placeholder="请在此处填写申请退款的原因..." value=""></textarea>
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli tjBtn" style="background:#59b200"  disabled="true"><a href="#" >提交申请</a>
+        </li>
+    </ul>
+
+</div>
+</div>
+{/case}
+{case  value="-1"}
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred">退款中</li>
+        </ul>
+{/case}
+{case  value="-2"}
+        <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款</li>
+        </ul>
+{/case}
+{/switch}
+
+</div>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+    // 申请退款
+    $(".tjBtn").click(function(){
+        var remarks = $(".question").val();
+        if(remarks==''){
+            mui.toast("请填写退款理由");
+            return false;
+        }
+        mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
+            data:{
+                "remarks":remarks,
+                'action':1,
+            },
+            dataType:'json',//服务器返回json格式数据
+            type:'post',//HTTP请求类型
+            timeout:10000,//超时时间设置为10秒；
+            headers:{'Content-Type':'application/json'},                  
+            success:function(result){ 
+                //服务器返回响应，根据响应结果，分析是否登录成功；
+                if(result.code == 200){
+                    mui.alert('',result.msg,'确定',function(){
+                        location.reload();
+                    });
+                }else{
+                    mui.alert('',result.msg,'确定',function(){
+                    });
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+            }
+        });
+    })
+
+
+// 立即支付
+function wxpay(){
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+        }else if (document.attachEvent){
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+        }
+    }else{
+       onBridgeReady();
+    }
+}
+
+//微信支付
+function onBridgeReady(){
+    var strJsApiParameters = '{$jsApiParameters}';
+    var objJsApiParameters = JSON.parse(strJsApiParameters);
+    WeixinJSBridge.invoke(
+        'getBrandWCPayRequest', {
+               "appId":objJsApiParameters.appId,     //公众号名称，由商户传入     
+               "timeStamp":"{:time()}",         //时间戳，自1970年以来的秒数     
+               "nonceStr":objJsApiParameters.nonceStr, //随机串     
+               "package":objJsApiParameters.package,     
+               "signType":"MD5",         //微信签名方式：     
+               "paySign":objJsApiParameters.paySign, //微信签名
+               'payType':objJsApiParameters.payType
+             },
+            function(res){     
+               if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                  pay(JSON.stringify(res));
+               }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+            }
+        ); 
+}
+
+//支付完成
+function pay(callback_str){
+        // var result = wooApi.asyncF("{:url('api/BillTest/payApi',['bill_order'=>$billInfo['bill_order']])}",{
+        //     'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
+        //     'callback_str':callback_str,
+        //     'is_pay':1,
+        //     'status':1
+        // });
+        $.ajax({
+                url: "{:url('api/BillTest/payApi',['bill_order'=>$billInfo['bill_order']])}",
+                data: {
+                    'balance_pay' : "{$billInfo['total']*$billInfo['price']}",
+                    'callback_str':callback_str,
+                    'is_pay':1,
+                    'status':1
+                },
+                async: false,
+                type: 'post',
+                dataType:'json',
+                complete: function(msg) {
+                    console.log(msg)
+                    // alert(JSON.stringify(msg));
+                },
+                success:function(msg){
+                    if(result.code == 200){
+                        mui.alert('支付成功','提示','确定',function(){
+                            location.reload()
+                          });
+                    }else{
+                        mui.toast(result.msg);
+                    }
+                }
+            });
+    }
+
+</script>
+<script type="text/javascript">
+    wx.config({
+            //开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug:false,
+            appId: "{$jsApi.appId}", // 必填，企业号的唯一标识，此处填写企业号corpid
+            timestamp: "{$jsApi.timestamp}", // 必填，生成签名的时间戳
+            nonceStr: "{$jsApi.nonceStr}", // 必填，生成签名的随机串
+            signature: "{$jsApi.signature}",// 必填，签名，见附录1
+            jsApiList:  [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+
+    wx.ready(function () {   
+        // 微信支付分享朋友圈页面
+        wx.onMenuShareTimeline({
+            title: '代付订单', // 分享标题
+            link: "{:url('frontend/bill/billinfotest',['bill_order'=>$billInfo['bill_order']],'',true)}", // 分享链接，该链接域名必须与当前企业的可信域名一致
+            imgUrl: "{$memberInfo['avatar']}", // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '代付订单', // 分享标题
+            link: "{:url('frontend/bill/billinfotest',['bill_order'=>$billInfo['bill_order']],'',true)}", // 分享链接，该链接域名必须与当前企业的可信域名一致
+            imgUrl: "{$memberInfo['avatar']}", // 分享图标
+            desc:"{$billInfo['member']}买了{$billInfo['goods']},帮我支付吧!",
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    })
+</script>
+</body>
+</html>

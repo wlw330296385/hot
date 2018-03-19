@@ -29,7 +29,10 @@
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在营</a>
+<<<<<<< HEAD
+=======
             <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">结业</a>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             <a class="mui-control-item" search-id="sOff" href="#offlineStudentList">离营</a>
             <a class="mui-control-item" search-id="sPend" href="#pendingStudentList">待处理</a>
         </div>
@@ -44,14 +47,23 @@
         <div class="mui-input-row mui-search" id="sOn">
             <input type="search" class="mui-input-clear keywordOn" placeholder="请输入在营学员名称">
         </div>
+<<<<<<< HEAD
+=======
         <div class="mui-input-row mui-search" id="sGraduate" style="display: none;">
             <input type="search" class="mui-input-clear keywordGraduate" placeholder="请毕业学员名称">
         </div>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         <div class="mui-input-row mui-search" id="sOff" style="display: none;">
             <input type="search" class="mui-input-clear keywordOff" placeholder="请输入离营学员名称">
         </div>
         <div class="mui-input-row mui-search" id="sPend" style="display: none;">
             <input type="search" class="mui-input-clear keywordPend" placeholder="请输入未处理学员名称">
+<<<<<<< HEAD
+        </div>
+        <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:80px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
+=======
         </div>
         <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:80px">
             <div class="mui-scroll">
@@ -61,6 +73,7 @@
         <div id="graduateStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student4 OA_task_student"></ul>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             </div>
         </div>
         <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
@@ -101,7 +114,10 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
+<<<<<<< HEAD
+=======
         var gdCount = 1;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         var pendCount = 1;
         var keywordOn='';
         $('.keywordOn').val(keywordOn);
@@ -109,8 +125,11 @@
         $('.keywordOff').val(keywordOff);
         var keywordPend='';
         $('.keywordPend').val(keywordPend);
+<<<<<<< HEAD
+=======
         var keywordGraduate='';
         $('.keywordGraduate').val(keywordGraduate);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
         //搜索
 
@@ -118,6 +137,11 @@
             keywordOn = $(this).val();
             toList('onlineStudentList', 1, 1, 1, keywordOn);
         })
+<<<<<<< HEAD
+        $(".keywordOff").on("blur",'', function () {
+            keywordOff = $(this).val();
+            toList('offlineStudentList', 1, 1, 1, keywordOff);
+=======
         $(".keywordGraduate").on("blur",'', function () {
             keywordGraduate = $(this).val();
             toList('graduateStudentList', 1, 1, 4, keywordGraduate);
@@ -125,6 +149,7 @@
         $(".keywordOff").on("blur",'', function () {
             keywordOff = $(this).val();
             toList('offlineStudentList', 1, 1, -1, keywordOff);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         })
         $(".keywordPend").on("blur",'', function () {
             keywordPend = $(this).val();
@@ -178,6 +203,8 @@
             }, 100);
         }
 
+<<<<<<< HEAD
+=======
         // 获取毕业学生列表
          mui('#graduateStudentList').pullRefresh({
             down: {
@@ -219,6 +246,7 @@
             }, 100);
         }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         mui('#offlineStudentList').pullRefresh({
             down: {
                 //下拉刷新
@@ -323,18 +351,29 @@
             success: function (data) {
 
                 var newli = '';
+<<<<<<< HEAD
+=======
                 var lessonName = '';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
+<<<<<<< HEAD
+                        if (status == 1) {
+=======
                         if (status >= 1) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
+<<<<<<< HEAD
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+=======
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div></a></div>';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         newli += '</li>';
                     }
                 }
@@ -415,7 +454,11 @@
     //训练营训练营未分配班级学生
     var toPendList = function (wList, page, gType, status, keyword) {
         //搜索关键字不能完全为空，否则查询为空
+<<<<<<< HEAD
+        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page;
+=======
         var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
@@ -435,7 +478,11 @@
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
+<<<<<<< HEAD
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><div class="mui-media-body wd45">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].student_id + '</p></div></a></div>';
+=======
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">学员ID：' + data.data.data[i].lesson + '</p></div></a></div>';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         newli += '</li>';
                     }
                 }
@@ -466,6 +513,10 @@
         });
     };
 
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </script>
 </html>

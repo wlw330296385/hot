@@ -21,6 +21,10 @@
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('team/teamManage',['team_id' => $team_id])}"></a>
                 <a class="mui-control-item mui-active" href="#onlineEventList">上架</a>
                 <a class="mui-control-item" href="#offlineEventList">下架</a>
+<<<<<<< HEAD
+                <a class="mui-control-item" href="{:url('team/createEvent',['team_id' => $team_id])}">添加</a>
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             </div>
         </div>
     </header>
@@ -35,11 +39,17 @@
             </div>
             <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
+<<<<<<< HEAD
+                    <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+=======
                     <ul class="mui-table-view detalis-list list border-b event-1 OA_task_event"></ul>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </div>
             </div>
         </div>
 
+<<<<<<< HEAD
+=======
         
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
@@ -54,10 +64,16 @@
             </a>
         </ul>
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<<<<<<< HEAD
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 <script>
     //初始化
     mui.init({
@@ -140,7 +156,11 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
+<<<<<<< HEAD
+                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+=======
                 toList('offlineEventList', page, gType, -1);//具体取数据的方法
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }, 100);
         }
 
@@ -150,7 +170,11 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
+<<<<<<< HEAD
+                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+=======
                 toList('offlineEventList', page, gType, -1);//具体取数据的方法
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             }, 100);
         }
 
@@ -164,7 +188,11 @@
         mui.ajax({
             url: url,
             data: {
+<<<<<<< HEAD
+                team_id:team_id,
+=======
                 team_id: team_id,
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 status: status,
             },
             dataType: 'json',//服务器返回json格式数据
@@ -177,19 +205,42 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
 
+<<<<<<< HEAD
+                        // 获取当前时间
+                        var d = new Date()
+                        var minutes = d.getMinutes()
+                        var hours = d.getHours()
+                        var day = d.getDate()
+                        var month = d.getMonth() + 1
+                        var year = d.getFullYear()
+                        var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + "{$team_id}";
                         newli += '<li class="mui-table-view-cell mui-media listli">'
                         if (status == 1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+<<<<<<< HEAD
+                        } else if (status == 2) {
+=======
                         } else if (status == -1) {
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
                         newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
                         if (data.data[i].is_max == "已满人") {
+<<<<<<< HEAD
+                            newli += '<font style="color:red">&nbsp;&nbsp;[满人]</font>';
+                        }
+                        if (data.data[i].end_time < time) {
+                            newli += '<font style="color:#b1b0b0">&nbsp;&nbsp;[结束]</font>';
+=======
                             newli += '<font class="tipCorner bgred">满人</font>';
                         }
                         if (data.data[i].is_finished == "已结束") {
                             newli += '<font class="tipCorner bggray">结束</font>';
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         }
                         newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].reg_number + '人参与</a></div>'
                         newli += '</li>';

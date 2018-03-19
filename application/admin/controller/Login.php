@@ -79,4 +79,9 @@ class Login extends Controller
         Cache::clear(); 
         $this->success('清空成功');
     }
+
+    public function clearCache(){
+        Cache::clear(); 
+        $this->success('清空成功');
+    }
 }

@@ -13,6 +13,11 @@ class Bankcard extends Base{
     public function getBankcardListApi(){
          try{
             $map = input('post.');
+<<<<<<< HEAD
+             $page = input('param.page')?input('param.page'):1; 
+            $result = $this->BankcardService->getBankcardList($map,$page);    
+             return json($result);
+=======
             $page = input('param.page')?input('param.page'):1; 
             $result = $this->BankcardService->getBankcardList($map,$page);  
             if($result){
@@ -21,6 +26,7 @@ class Bankcard extends Base{
                 return json(['code'=>100,'msg'=>'无数据']);
             }  
             
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
@@ -42,8 +48,11 @@ class Bankcard extends Base{
     public function createBankcardApi(){
          try{
              $data = input('post.');
+<<<<<<< HEAD
+=======
              $data['member_id'] = $this->memberInfo['id'];
              $data['member'] = $this->memberInfo['member'];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->BankcardService->createBankcard($data);
              return json($result);   
          }catch (Exception $e){

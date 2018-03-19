@@ -2,7 +2,10 @@
 namespace app\frontend\controller;
 use think\Controller;
 use app\service\WechatService;
+<<<<<<< HEAD
+=======
 use app\service\MemberService;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 use think\Cookie;
 
 class Login extends Controller{
@@ -44,6 +47,12 @@ class Login extends Controller{
     // 微信用户授权回调
     public function wxlogin() {
         $WechatS = new WechatService;
+<<<<<<< HEAD
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+=======
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
@@ -53,6 +62,7 @@ class Login extends Controller{
             // 查询有无member数据
             $dbMember = db('member');
             $isMember = $dbMember->where(['openid' => $userinfo['openid']])->whereNotNull('delete_time')->find();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($isMember) {
 
                 unset($isMember['password']);
@@ -60,7 +70,10 @@ class Login extends Controller{
                 cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
+<<<<<<< HEAD
+=======
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 // if (session('memberInfo', '', 'think')) {
                  if( Cookie::has('url') ){
                      $url = cookie('url');
@@ -127,18 +140,28 @@ class Login extends Controller{
 
     public function fastRegister(){
         $WechatS = new WechatService;
+<<<<<<< HEAD
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+=======
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
             cache('userinfo_'.$userinfo['openid'], $userinfo);
             $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
 //            $avatar = $memberS->downwxavatar($userinfo);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $member = [
                 'id' => 0,
                 'openid' => $userinfo['openid'],
                 'member' => $userinfo['nickname'],
                 'nickname' => $userinfo['nickname'],
+<<<<<<< HEAD
+                'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+=======
                 'avatar' => $avatar,
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 'hp' => 0,
                 'level' => 0,
                 'telephone' =>'',
@@ -169,6 +192,8 @@ class Login extends Controller{
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
         }
+<<<<<<< HEAD
+=======
         $pid = cookie('pid');
         if($pid){
             $memberInfoP = db('member')->where(['id'=>$pid])->find();
@@ -176,6 +201,7 @@ class Login extends Controller{
             $memberInfoP = [];
         }
         $this->assign('memberInfoP',$memberInfoP);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->assign('userinfo', $userinfo);
         return view('Login/fastRegister');
     }

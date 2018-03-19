@@ -1,3 +1,417 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$campInfo.camp}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style type="text/css">
+        #popSelectTime{ height: 200px !important; }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
+                <a class="mui-control-item monthlyTuition mui-active" href="#monthlyTuition">学费月表</a>
+                <a class="mui-control-item tuitionStatistics" href="#tuitionStatistics">学费统计</a>
+                <a class="mui-control-item earningsStatistics" href="#earningsStatistics">收益统计</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <div class="mui-content">
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+            <div class="tab-pullRefresh">
+                <!--学费月表-->
+                <div id="mTuitionTitle" class="nav-list">
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <p class="mui-navigate-right">
+                                当前月份<span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>{$dateTime.year}-{$dateTime.month}</span>
+                            </p>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-text-center border-b" >
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-3 mui-col-sm-3">交费日期</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">人数</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">金额</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-text-center operation bgorange">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-3 mui-col-sm-3">本月合计</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3 people-sum">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3 total-sum">￥0</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div id="monthlyTuition" class="mui-scroll-wrapper mui-control-content mui-active" style="top:135px;bottom:45px;">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view mui-text-center datalist"></ul>
+                    </div>
+
+                </div>
+                <!--学费统计-->
+                <div id="tuitionStatistics" class="mui-control-content">
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <a href="#popSelectTime" class="mui-navigate-right">
+                                统计时间段<span id="tStatisticsTime">{$dateTime.fistday} 至 {$dateTime.lastday}</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-text-center">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table ">
+                                <li class="mui-col-xs-3 mui-col-sm-3">统计类型</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">人数</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">交费金额</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table first-ul">
+                                <li class="mui-col-xs-3 mui-col-sm-3">新报交费</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table renew-ul">
+                                <li class="mui-col-xs-3 mui-col-sm-3">续报交费</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell mb">
+                            <ul class="mui-row table sum-ul">
+                                <li class="mui-col-xs-3 mui-col-sm-3">合计交费</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-text-center mb border-b">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-3 mui-col-sm-3">统计类型</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">人数</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">退费金额</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table refund-ul">
+                                <li class="mui-col-xs-3 mui-col-sm-3">退费</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3"></li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">0</li>
+                                <li class="mui-col-xs-3 mui-col-sm-3">￥0</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!--收支统计-->
+                <div id="earningsStatistics" class="mui-control-content">
+
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <p class="mui-navigate-right">
+                                结算月份<span class="btnTime" id="eStatisticsTime" data-options='{"type":"month"}'>{$dateTime.lastmonth_year}-{$dateTime.lastmonth}</span>
+                            </p>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view border-b earing-ul">
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-6 mui-col-sm-6">统计类型</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">金额</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-6 mui-col-sm-6">课时结算总收入</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell" style="display: none;">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-6 mui-col-sm-6">平台服务支出</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-6 mui-col-sm-6">教练员工资支出</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
+                            </ul>
+                        </li>
+                        <li class="mui-table-view-cell">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-6 mui-col-sm-6">本月训练营收入</li>
+                                <li class="mui-col-xs-6 mui-col-sm-6 mui-text-right">￥0</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--学费统计时间段弹框-->
+    <div id="popSelectTime" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course"><strong>请选择统计时间段</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="timeConfirm">确认</button></span>
+        </div>
+        <form class="mui-input-group">
+            <div class="mui-input-row mui-left"><label class="label">起始日期</label>
+                <span class="btnTime" id="startTime" data-options='{"type":"date"}'>{$dateTime.fistday}</span>
+            </div>
+            <div class="mui-input-row mui-left"><label class="label">结束日期</label>
+                <span class="btnTime" id="endTime" data-options='{"type":"date"}'>{$dateTime.lastday}</span>
+            </div>
+        </form>
+    </div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap","a",function(){
+        window.top.location.href=this.href;
+    });
+
+    (function ($, doc) {
+        $.ready(function () {
+
+            //开始时间
+            var btnTimes = $('.btnTime');
+            btnTimes.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var wTime = this;
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        //如果是选择统计月表日期，则执行交费月表api
+                        if(id=="mStatisticsTime"){
+                            getMonthlyTuition(rs.text);
+                        }
+                        //如果是选择收支月表日期，则执行收支月表api
+                        if(id=="eStatisticsTime"){
+                            getEarnings(rs.text);
+                        }
+                        wTime.innerText = rs.text;
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
+
+    mui('#monthlyTuition').pullRefresh({});
+
+
+
+    $(function () {
+
+        //获取当前日期初始值，赋予对应位置并输出数据
+//        var currYearMonth = "2017-11";
+//        var currYMfirstDay = "2017-11-1";
+//        var currYMlastDay = "2017-11-30";
+//        var currLastMonth = "2017-10";
+//        $("#mStatisticsTime").text(currYearMonth);
+//        $("#tStatisticsTime").text(currYMfirstDay+' 至 '+currYMlastDay);
+//        $("#eStatisticsTime").text(currLastMonth);
+        var currYearMonth = $('#mStatisticsTime').text();
+        var currYMfirstDay = $('#startTime').text();
+        var currYMlastDay = $('#endTime').text();
+        var currLastMonth = $('#eStatisticsTime').text();
+        getMonthlyTuition(currYearMonth);
+        getTuitionStatistics(currYMfirstDay,currYMlastDay);
+        getEarnings(currLastMonth);
+
+
+        //切换tab的同时切换搜索框
+        $(".mui-control-item").on("tap",'', function () {
+            if($(this).hasClass("monthlyTuition")==true){
+                $("#mTuitionTitle").show();
+            }else{
+                $("#mTuitionTitle").hide();
+            }
+
+        })
+
+        //学费统计时间段确认
+        $("#timeConfirm").on("tap",'', function () {
+            var sTime = $("#startTime").text();
+            var eTime = $("#endTime").text();
+            $("#tStatisticsTime").text(sTime+' 至 '+eTime);
+
+            //api查询输出数据////////////
+            getTuitionStatistics(sTime,eTime);
+            //关闭弹框
+            mui('#popSelectTime').popover('toggle');
+        })
+
+    });
+
+    //获取交费月表数据
+    var getMonthlyTuition = function (d) {
+//        alert(d);
+//        console.log(d);
+        var yearandmonth = d.split("-");
+        year = yearandmonth[0];
+        month = yearandmonth[1];
+        //console.log(yearandmonth);
+        mui.ajax("{:url('api/financial/monthbill')}", {
+            data: {
+                year: year,
+                month: month,
+                camp_id: "{$camp_id}"
+            },
+            dateType: 'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                var newli = '';
+                if (data.code === 200) {
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+                        for (var i=0; i<data.data.length;i++) {
+                            urls = "{:url('frontend/financial/billlist')}/camp_id/{$camp_id}" + "/days/"+ data.data[i].days;
+                            newli += '<li class="mui-table-view-cell">';
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><ul class="mui-row table">';
+                            newli += '<li class="mui-col-xs-3 mui-col-sm-3">' + data.data[i].days + '</li><li class="mui-col-xs-3 mui-col-sm-3"></li><li class="mui-col-xs-3 mui-col-sm-3">'+ data.data[i].count +'</li><li class="mui-col-xs-3 mui-col-sm-3">￥'+ data.data[i].total +'</li>';
+                            newli += '</ul></a></li>';
+                        }
+                    }
+                    $('#mTuitionTitle .people-sum').html(data.sum.sum_people);
+                    $('#mTuitionTitle .total-sum').html('￥'+data.sum.sum_total);
+                    $('#monthlyTuition .datalist').html(newli);
+                } else {
+                    newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $('#mTuitionTitle .people-sum').html(0);
+                    $('#mTuitionTitle .total-sum').html('￥0');
+                    $('#monthlyTuition .datalist').html(newli);
+                }
+            },
+            error:function(xhr,type,errorThrown){
+
+                console.log(type);
+            }
+        });
+    }
+
+    //获取学费统计数据
+    var getTuitionStatistics = function (s,e) {
+        mui.ajax("{:url('api/financial/statistics')}", {
+            data: {
+                start: s,
+                end: e,
+                camp_id: "{$camp_id}"
+            },
+            dateType: 'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                if (data.code==200) {
+                    //console.log(data);
+                    $('.first-ul li').eq(2).html(data.data.first.count);
+                    $('.first-ul li').eq(3).html('￥'+data.data.first.total);
+                    $('.renew-ul li').eq(2).html(data.data.renew.count);
+                    $('.renew-ul li').eq(3).html('￥'+data.data.renew.total);
+                    $('.sum-ul li').eq(2).html(data.data.sum.count);
+                    $('.sum-ul li').eq(3).html('￥'+data.data.sum.total);
+                    $('.refund-ul li').eq(2).html(data.data.refund.count);
+                    $('.refund-ul li').eq(3).html('￥'+data.data.refund.total);
+                }
+            },
+            error:function(xhr,type,errorThrown){
+
+                console.log(type);
+            }
+        });
+    }
+
+    //获取收支月表数据
+    var getEarnings = function (d) {
+        var yearandmonth = d.split("-");
+        year = yearandmonth[0];
+        month = yearandmonth[1];
+        mui.ajax("{:url('api/financial/earnings')}", {
+            data: {
+                year: year,
+                month: month,
+                camp_id: "{$camp_id}"
+            },
+            dateType: 'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                if (data.code==200) {
+                    console.log(data);
+                    $('.earing-ul').children('li').eq(1).find('.mui-text-right').html('￥'+data.data.schedule_salaryin);
+                    $('.earing-ul').children('li').eq(2).find('.mui-text-right').html('￥'+data.data.system_extract);
+                    $('.earing-ul').children('li').eq(3).find('.mui-text-right').html('￥'+data.data.coach_salary);
+                    $('.earing-ul').children('li').eq(4).find('.mui-text-right').html('￥'+data.data.camp_income);
+                }
+            },
+            error:function(xhr,type,errorThrown){
+
+                console.log(type);
+            }
+        });
+    }
+
+</script>
+=======
 <!DOCTYPE html>
 <html>
 
@@ -410,4 +824,5 @@
     }
 
 </script>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

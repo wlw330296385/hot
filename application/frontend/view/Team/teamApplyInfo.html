@@ -11,6 +11,22 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+<<<<<<< HEAD
+    <style>
+        .examineBox {
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .examine {
+            width: 100%;
+            min-height: 40px;
+            font-size: 14px;
+            color: #737373;
+        }
+    </style>
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </head>
 
 <body class=whitebg>
@@ -74,13 +90,51 @@
         });
 
         $(function () {
+<<<<<<< HEAD
+            sex();
 
+            
+        })
+        // 审核操作
+        function check_status(value) {
+                var apply_id = document.getElementById('applyid').value;
+                mui.ajax("{:url('api/team/applyreply')}", {
+                    data: {
+                        apply_id: apply_id,
+                        reply: value
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            mui.toast(res.msg);
+                            window.location.href = "{:url('frontend/team/teamApplyList')}/team_id/{$teamInfo.id}";
+                        } else {
+                            mui.toast(res.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                        mui.toast('网络异常');
+                    }
+                });
+            }
+        function sex() {
+=======
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             var sex = "{$applyInfo.member.sex}";
             if (sex == 1) {
                 $(".sex").text("男");
             } else {
                 $(".sex").text("女");
             }
+<<<<<<< HEAD
+        }
+=======
         })
 
         // 审核操作
@@ -111,6 +165,7 @@
             });
         }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     </script>
 
 </body>

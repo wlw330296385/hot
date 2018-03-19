@@ -22,6 +22,13 @@ class Plan extends Base{
             $PlanModel = new \app\model\Plan;
             $result = $PlanModel->where($map)->select();
             if($result){
+<<<<<<< HEAD
+                return json(['code'=>200,'data'=>$result->toArray(),'msg'=>'ok']);
+            }else{
+                return json(['code'=>100,'msg'=>'没有教案']);
+            }
+            
+=======
                 $res = $result->toArray();
             }else{
                 $res = [];
@@ -31,6 +38,7 @@ class Plan extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'没有教案']);
             }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

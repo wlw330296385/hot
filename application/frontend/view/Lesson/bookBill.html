@@ -1,3 +1,263 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>预约体验</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">确认订单</h1>
+</header>
+<div class="mui-content">
+
+    <!--课程订单支付-->
+    <div class="list">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell mui-media listli mb">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left" src="/static/frontend/images/shuijiao.jpg">
+                    <div class="mui-media-body wd45">
+                        {$lessonInfo.lesson}
+                        <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
+                    </div>
+                    <div class="price-frame singup-num">
+                        {$lessonInfo.students}人已报名
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="mui-table-view border-b">
+            <li class="mui-table-view-cell listli">
+                <a class="mui-navigate-right">
+                    所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b> 元</span></li>
+            <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b> 节</span></li>
+            <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
+            <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
+            <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
+            <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
+        </ul>
+        <div class="page-header">
+            <span class="title">体验生信息</span>
+            <span class="fr"><span id="addBtn" class="mui-btn mui-btn-blue">添加学生</span></span>
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        </div>
+        <div class="mui-input-group mb44">
+
+            <div id="oldStudent">
+                <div class="mui-input-row">
+                    <p class="mui-navigate-right">
+                        <label>学员姓名</label>
+                        <span class="select-row">
+                        <select class="selectStudent">
+                        </select>
+                    </span>
+                    </p>
+                </div>
+                <div class="mui-input-row">
+                    <label>家长姓名</label>
+                    <span id="parent"></span>
+                </div>
+                <div class="mui-input-row">
+                    <label>手机号码</label>
+                    <span class="width" id="emergency_telephone"></span>
+                </div>
+
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <label>备注</label>
+                <textarea rows="5" name="remarks" class="remarks" placeholder="预约留言"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="bookLeeson()">立即预约</li>
+    </ul>
+
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui('.mui-scroll-wrapper').scroll();
+    mui('body').on('shown', '.mui-popover', function (e) {
+        //console.log('shown', e.detail.id);//detail为当前popover元素
+    });
+    mui('body').on('hidden', '.mui-popover', function (e) {
+        //console.log('hidden', e.detail.id);//detail为当前popover元素
+    });
+
+    var isStudent = false;
+    var strLessonInfo = '{$jsonLessonInfo}';
+    var objLessonInfo = JSON.parse(strLessonInfo);
+    $(function(){
+        $('.total').html(1);
+        $('.total_fee').html("￥"+0);
+
+
+        // 添加学生
+        $('#addBtn').on('click','',function(){
+            var mID = "{$memberInfo.id}";
+            if (mID <= 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
+                    if (e.index===1) {
+                        window.location.href="{$fasturl}";
+                    }
+                });
+            }else{
+                var btnArray = ['确定', '取消'];
+                var addForm = '<div class="mui-popup-input"><span class="colororange">请勿同时填写多名学员姓名</span><input type="text" name="student" class="data" placeholder="学员姓名" autofocus=""><input type="text" name="parent" class="data" placeholder="家长姓名"><input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}"></div>'
+                mui.confirm(addForm, '添加学员信息', btnArray, function(e) {
+                    if (e.index == 0) {
+                        //确定添加，进行提交
+                        var telephone = $('.telephone').val();
+                        var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+                        if (!codeRegTelephone.test(telephone)) {
+                            mui.toast('请填写正确的手机号码');
+                            return false;
+                        }
+                        var getStudent = $('input[name="student"]').val();
+                        var codeRegStudent = /^(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]{2,20}$/;
+                        if (!codeRegStudent.test(getStudent)) {
+                            mui.toast('学员姓名只能包含汉字、字母、数字！');
+                            return false;
+                        }else{
+                            if(isExistOption(getStudent)){
+                                mui.toast(getStudent+"已经存在，请 [ 取消 ] 返回选择！");
+                                return false;
+                            }
+                            var arrData = wooApi.getInputData();
+                            var objData = wooApi.arrTOobj(arrData);
+                            objData.student_province = "{$lessonInfo.province}";
+                            objData.student_city = "{$lessonInfo.city}";
+                            objData.student_area = "{$lessonInfo.area}";
+                            var url = "{:url('api/student/createStudentApi')}";
+                            var ajaxResult = wooApi.asyncF(url,objData);
+                            // console.log(ajaxResult);
+
+                            if(ajaxResult.code == 200){
+                                mui.toast(ajaxResult.msg);
+                                location.reload()
+                            }else{
+                                mui.toast(ajaxResult.msg);
+                                mui.get("{:url('api/frontend/reloadtoken')}", function(data){
+                                    if(data.code===200) {
+                                        $('input[name=__token__]').val(data.data);
+                                    }
+                                }, 'json');
+                            }
+                        }
+                    }
+                })
+            }
+        })
+
+        //替换学生列表
+        $('.selectStudent').on('change',function(){
+            $('#parent').text($(this).find("option:selected").attr("data-parent"));
+            $('#emergency_telephone').text($(this).find("option:selected").attr("data-telephone"));
+        })
+
+        // 获取学生数据
+        getStudentList();
+
+    })
+
+    //判断要新添加的学生是否存在
+    function isExistOption(newName){
+        var isExist = false;
+        var optName ='';
+        $(".selectStudent option").each(function () {
+            optName = $(this).text();
+            if(newName==optName){
+                isExist = true;
+                return false;
+            }
+        });
+        return isExist;
+    }
+
+    // 获取学生数据
+    function getStudentList(){
+        // 获取学生列表
+        var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
+        
+        if(result.code == 100){
+            $('#oldStudent').hide();
+        }else{
+            var studentList = result.data;
+            isStudent = true;
+            // 循环输出其他的学生
+            for (var i = 0; i < studentList.length; i++) {
+                var strhtml = '<option value="'+studentList[i].id+'" data-parent="'+studentList[i].parent+'" data-telephone="'+studentList[i].emergency_telephone+'">'+studentList[i].student+'</option>';
+                $('.selectStudent').append(strhtml)
+            }
+            $('#parent').text(studentList[0].parent);
+            $('#emergency_telephone').text(studentList[0].emergency_telephone);
+        }
+
+    }
+
+
+    // 购买成功提交数据
+    function bookLeeson(){
+        //条件1判断是否没数据
+        if(!isStudent){
+             mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
+             return false;
+        }
+        
+        var remarks = $('.remarks').val();
+        var student = $('.selectStudent').find("option:selected").text();
+        var student_id = $('.selectStudent').val();
+        objLessonInfo.student_id = student_id;
+        objLessonInfo.student = student;
+        objLessonInfo.remarks = remarks;
+        objLessonInfo.__token__ = "{$Request.token}";
+        console.log(objLessonInfo);
+        var result = wooApi.asyncF("{:url('api/lesson/bookLessonApi')}",objLessonInfo);
+        if(result.code == 200){
+          // window.location.href="{:url('frontend/bill/finishBookBill',['bill_order'=>$billOrder])}";
+          mui.alert('您的课程体验已预约成功，请留意课程消息及公告。','预约成功','确定',function(){
+            window.location.href="{:url('frontend/student/studentInfoOfCamp',['camp_id'=>$lessonInfo['camp_id']])}"+'/student_id/'+student_id;
+          });
+
+        }else{
+        mui.toast(result.msg);
+        }
+    }
+
+</script>
+=======
 <!DOCTYPE html>
 <html>
 
@@ -267,4 +527,5 @@
 
 
 </script>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

@@ -7,7 +7,11 @@ use think\Db;
 class CourtService {
     private $CourtModel;
     public function __construct(){
+<<<<<<< HEAD
+        $this->courtModel = new Court;
+=======
         $this->CourtModel = new Court;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $this->CourtCampModel = new CourtCamp;
     }
     // 场地列表
@@ -84,9 +88,14 @@ class CourtService {
         $list = Db::view('court_camp',['id', 'camp_id', 'camp', 'court_id', 'court'])
             ->view('court', ['cover', 'status'=>'courtisopen', 'location', 'area'], 'court.id=court_camp.court_id')
             ->where($map)
+<<<<<<< HEAD
+            ->limit(5)->page($page)->select();
+
+=======
             ->limit($limit)->page($page)->select();
             // echo db('court')->getlastsql();
             // die;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         foreach ($list as $key => $value) {
             if ($value['cover']) {
                 $list[$key]['covers'] = unserialize($value['cover']);
@@ -97,10 +106,11 @@ class CourtService {
 
     // 编辑场地
     public function updateCourt($data,$id){
-        $courtInfo = $this->CourtModel->where(['id'=>$id,'status'=>1])->find();
-       /* if($courtInfo){
+<<<<<<< HEAD
+        $courtInfo = $this->Court->where(['id'=>$id,'status'=>1])->find();
+        if($courtInfo){
             return ['msg' => '已公开的场地不允许编辑', 'code' => 100];
-        }*/
+        }
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -109,12 +119,32 @@ class CourtService {
             $data['cover'] = serialize($data['covers']);
         }else{
              $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
+=======
+        $courtInfo = $this->CourtModel->where(['id'=>$id,'status'=>1])->find();
+       /* if($courtInfo){
+            return ['msg' => '已公开的场地不允许编辑', 'code' => 100];
+        }*/
+        $validate = validate('CourtVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
+        }
+        if($data['covers']){
+            $data['cover'] = serialize($data['covers']);
+        }else{
+             $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);
         }
         $result = $this->CourtModel->allowField(true)->save($data,['id'=>$id]);
         if($result){
+<<<<<<< HEAD
+            return ['code'=>100,'data'=>$result,'msg'=>__lang('MSG_200')];
+        }else{
+            return ['code'=>100,'msg'=>$this->courtModel->getError()];
+=======
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
             return ['code'=>100,'msg'=>$this->CourtModel->getError()];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -123,12 +153,21 @@ class CourtService {
         $validate = validate('CourtVal');
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
+<<<<<<< HEAD
         }
         if($data['covers']){
             $data['cover'] = serialize($data['covers']);
         }else{
             $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);;
         }
+=======
+        }
+        if($data['covers']){
+            $data['cover'] = serialize($data['covers']);
+        }else{
+            $data['cover'] = serialize(['/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg','/static/frontend/images/uploadDefault.jpg']);;
+        }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $model = new Court();
         $result = $model->allowField(true)->save($data);
         if($result){
@@ -146,7 +185,11 @@ class CourtService {
             db('camp')->where(['id'=>$data['camp_id']])->setInc('camp_base',1);
             return ['code'=>200,'data'=>$result,'msg'=>__lang('MSG_200')];
         }else{
+<<<<<<< HEAD
+            return ['code'=>100,'msg'=>$this->courtModel->getError()];
+=======
             return ['code'=>100,'msg'=>$this->CourtModel->getError()];
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
 
@@ -157,7 +200,11 @@ class CourtService {
         if($is_own){
             return ['code'=>100,'msg'=>"重复添加"];
         }
+<<<<<<< HEAD
+        $courtInfoOBJ = $this->courtModel->where(['id'=>$court_id,'status'=>1])->find();
+=======
         $courtInfoOBJ = $this->CourtModel->where(['id'=>$court_id,'status'=>1])->find();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(!$courtInfoOBJ || !$campInfo){
             return ['code'=>100,'msg'=>"查询不到该场地或者训练营"];

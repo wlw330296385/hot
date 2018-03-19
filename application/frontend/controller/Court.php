@@ -25,6 +25,16 @@ class Court extends Base{
         $power = 0;
         $button = 0;
         $courtInfo = $this->CourtService->getCourtInfoWithCourtCamp($court_id,$camp_id);
+<<<<<<< HEAD
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($camp_id!=$courtInfo['camp_id'] && $power>2 && $courtInfo['status'] == 1){
+            // 可以将场地添加到自己场地
+            $button = 1;
+        }elseif ( $courtInfo['camp_id'] == $camp_id && $power>2 && $courtInfo['status'] == -1){
+            //可以编辑
+            $button = 2;
+=======
 
         $CampService = new \app\service\CampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
@@ -36,6 +46,7 @@ class Court extends Base{
             $button = 2;
         }elseif ($courtInfo['campid'] == $camp_id && $power>2 && $courtInfo['status'] == 1){
             $button = 3;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
         $this->assign('camp_id',$camp_id);
         $this->assign('button',$button);
@@ -54,7 +65,11 @@ class Court extends Base{
     	$court_id = input('param.court_id');
         $CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
         $CampService = new \app\service\CampService;
+<<<<<<< HEAD
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
+=======
         $power = $CampService->isPower($CourtInfo['camp_id'],$this->memberInfo['id']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         if($power<2){
             $this->error('请先加入一个训练营并成为管理员或者创建训练营');
         }

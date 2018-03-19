@@ -21,6 +21,19 @@ class Index extends Base{
 
     public function index() {
 
+<<<<<<< HEAD
+        $bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit(3)->select();
+  
+                
+        // dump($bannerList);die;
+    	// 热门课程
+    	// $hotLessonList = $this->LessonService->getLessonList([],$page,'hot ASC',4);
+    	//推荐课程
+    	// $sortLessonList = $this->LessonService->getLessonList([],$page,'sort ASC',4);
+    	$this->assign('bannerList',$bannerList);
+    	// $this->assign('hotLessonList',$hotLessonList);
+    	// $this->assign('sortLessonList',$sortLessonList);
+=======
         //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
         // 培训管家banner
         $bannerService = new BannerService();
@@ -59,6 +72,7 @@ class Index extends Base{
         $this->assign('bonusInfo',$bonusInfo);
     	$this->assign('bannerList',$bannerList);
     	$this->assign('ArticleList',$ArticleList);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         return view('Index/index');
     }
 
@@ -75,6 +89,15 @@ class Index extends Base{
         return view('Index/indexOfCamp');
     }
 
+<<<<<<< HEAD
+    // 微信用户授权回调
+    public function wxindex() {
+        $WechatS = new WechatService;
+        $userinfo = $WechatS->oauthUserinfo();
+        if ($userinfo) {
+            cache('userinfo_'.$userinfo['openid'], $userinfo);
+            $isMember = db('member')->where(['openid' => $userinfo['openid']])->find();
+=======
     // 微信授权回调
     public function wxindex() {
         $WechatS = new WechatService;
@@ -87,6 +110,7 @@ class Index extends Base{
 
             $dbMember = db('member');
             $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
@@ -100,7 +124,11 @@ class Index extends Base{
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],
+<<<<<<< HEAD
+                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+=======
                     'avatar' => $avatar,
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     'hp' => 0,
                     'level' => 0,
                     'telephone' =>'',

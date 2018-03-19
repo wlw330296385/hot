@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 
@@ -118,4 +119,126 @@
 
 </script>
 
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练项目列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-table-view-cell.mui-active .daType { font-weight: bold; background: #efeff4; }
+        .daType b { font-size: 12px; margin-right: 5px; font-weight: normal; }
+        a.noData { text-align: center; display: block;}
+        ol { padding-left: 25px; }
+        ol li{ list-style: decimal; padding: 8px 10px; border-bottom: 1px solid #EEE; position: relative;}
+        ol li:last-child { border-bottom: none !important; }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id'=>$campInfo['id']])}"></a>
+                <a class="mui-control-item" href="{:url('plan/planList',['camp_id'=>$campInfo['id']])}">教案</a>
+                <a class="mui-control-item mui-active" href="{:url('exercise/exerciseList',['camp_id'=>$campInfo['id']])}">训练项目</a>
+            </div>
+        </div>
+
+        <div class="mui-segmented-control seg-control whitebg" style="margin:10px;">
+            <a class="mui-control-item sysExerciseList" href="#sysExerciseList">平台项目库</a>
+            <a class="mui-control-item myExerciseList mui-active" href="#myExerciseList">训练营项目库</a>
+            <a class="mui-control-item" href="{:url('Exercise/createExercise',['camp_id'=>$campInfo['id']])}">添加项目</a>
+        </div>
+
+    </header>
+
+
+    <div class="mui-content" style="padding-top:100px;">
+        
+        <div class="tab-pullRefresh">
+            <div id="sysExerciseList" class="mui-control-content mt">
+
+                {volist name = "sysExerciseList" id="vol"}
+                <ul class="mui-table-view list mb">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#"><b>★</b> {$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            <ol>
+                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$campInfo[id]' class='noData'>没有此类项目，点击立即添加</a>" }
+                            <li class="mui-navigate-right">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id'],'camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp']])}">{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟 </i></a>
+                            </li>
+                            {/volist}
+                            </ol>
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
+            </div>
+            <div id="myExerciseList" class="mui-control-content mt mui-active">
+
+                {volist name = "myExerciseList" id="vol"}
+                <ul class="mui-table-view list mb">
+                    <li class="mui-table-view-cell mui-collapse listli detalisli">
+                        <a class="mui-navigate-right daType" href="#"><b>☆</b> {$vol.exercise_setion}</a>
+                        <div class="mui-collapse-content">
+                            <ol>
+                            {volist name="$vol.daughter" id="v" empty="<a href='/frontend/exercise/createExercise/camp_id/$campInfo[id]' class='noData'>没有此类项目，点击立即添加</a>"}
+                            <li class="mui-navigate-right">
+                                <a href="{:url('frontend/exercise/exerciseInfo',['exercise_id'=>$v['id'],'camp_id'=>$campInfo['id'],'camp'=>$campInfo['camp']])}">{$v.exercise} <i class="fr f12">{$v.exercise_time} 分钟 </i></a>
+                            </li>
+                            {/volist}
+                            </ol>
+                        </div>
+                    </li>
+                </ul>
+                {/volist}
+
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+
+    $(function () {
+
+        // 获取默认选项卡名字并选中对应选项
+        var witchTab = wooApi.GetQueryString('tab');
+        if(witchTab=="sysExerciseList"){
+            $(".mui-control-item,.mui-control-content").removeClass("mui-active");
+            $(".mui-control-item").removeClass("mui-active");
+            $(".sysExerciseList").addClass("mui-active");
+            $("#sysExerciseList").addClass("mui-active");
+        }
+
+    });
+
+</script>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

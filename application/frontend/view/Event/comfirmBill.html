@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+<<<<<<< HEAD
+=======
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     <style>
 
         .mui-popover {
@@ -61,6 +64,8 @@
             <ul class="mui-table-view">
                 <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+<<<<<<< HEAD
+=======
                 {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
             <li class="mui-table-view-cell listli">
                 赠送卡券
@@ -86,6 +91,7 @@
                         <img src="{$vol.image_url}"  style="border:2px red">
                     {/volist}
                 </li>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
                 <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
                 <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
@@ -172,9 +178,14 @@
         var total=wooApi.GetQueryString('total');
         var total_fee = "{$eventInfo.price}"*total;
         $('.eventTotal').text('￥'+total_fee+'元');
+<<<<<<< HEAD
+        var studentList = [{ student: "{$memberInfo.member}", student_id: 0, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+        // var studentList = new Array();
+=======
         var studentList = [{ student: "{$memberInfo.member}", student_id: '0', total:total, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
         // var studentList = new Array();
         var item_coupon_ids = JSON.stringify({$item_coupon_ids});
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $(function () {
             $('.eventNum').val(total);
 
@@ -183,16 +194,43 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-student']").prop("checked", false);
                 //然后遍历出对应所选
+<<<<<<< HEAD
+                for (var ii = 0; ii <= studentList.length - 1; ii++) {
+                    $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                        return $(this).attr("data-student_id") == studentList[ii].student_id
+=======
                 var getStudentIDs = studentList[0].student_id.split(',');
                 for (var ii = 0; ii <= getStudentIDs.length - 1; ii++) {
                     $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
                         return $(this).attr("data-student_id") == getStudentIDs[ii]
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }).prop("checked", true);
                 }
             });
 
             // 学员名单
             $("#studentConfirm").on('tap', '', function () {
+<<<<<<< HEAD
+                var studentNames = "";
+                studentList = [];
+                $("input[type=checkbox]:checked").each(function (i) {
+                    var student_id = $(this).attr("data-student_id");
+                    var student = $(this).val();
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    studentStr = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
+                    studentNames += student + ',';
+                    studentList.push(studentStr);
+                });
+                $(".studentCont").text(studentNames.substring(0, studentNames.length - 1))
+                
+                if(studentList.length>total){
+                    alert('参与人员不可大于报名人数['+total+']');
+                    debug = '参与人员不可大于报名人数['+total+']';
+                    return false;
+                }
+                
+=======
                 var studentIDs = "";
                 var studentNames = "";
                 studentList = [];
@@ -221,6 +259,7 @@
                     studentList.push(studentStr);
                 }
                 console.log(studentList)
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 debug = 1;
                 
                 mui('#student').popover('toggle');
@@ -265,7 +304,10 @@
             var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
             var result = wooApi.asyncF(url+'/total/'+total,objData);
             if(result.code == 200){
+<<<<<<< HEAD
+=======
                 presentItemCoupon()
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
                     window.location.href="{:url('frontend/event/eventList')}";
                 });
@@ -274,6 +316,8 @@
             }
         }
 
+<<<<<<< HEAD
+=======
 
         // 赠送卡券操作
         function presentItemCoupon(){
@@ -284,6 +328,7 @@
         }
     }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     </script>
 
 

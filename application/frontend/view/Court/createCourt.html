@@ -1,3 +1,378 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加场地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .previewList {
+            overflow: hidden;
+            padding: 0 10px;
+        }
+        
+        .previewList li {
+            float: left;
+            width: 17%;
+            position: relative;
+            display: flex;
+            margin-right: 8px;
+        }
+        
+        .previewList i {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #f00;
+        }
+        
+        .previewList img {
+            width: 55px;
+            height: 55px;
+            margin-right: 0
+        }
+        
+        #container {
+            width: 100%;
+            height: 250px;
+            margin-top: 30px;
+        }
+        
+        #mapFrame {
+            height: 250px;
+            padding-bottom: 0px;
+        }
+
+        #map {
+            background-color: #EEE;
+        }
+        #map input[type=button] {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 20%;
+            height: 40px !important;
+            text-align: center;
+            color:#FFF;
+        }
+        #map .mui-icon-location{
+            width: 10%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 40px !important;
+            line-height: 35px;
+            background-color: #EEE;
+            font-size: 20px;
+            padding-right:0px !important;
+            text-align: center;
+        }
+        #tip {
+            color: #333;
+            position: absolute;
+            top: 0px;
+            left: 10%;
+            right: 20%;
+            overflow: hidden;
+            width: 70%;
+        }
+        #tip input[type="text"] {
+            background-color: #EEE;
+            border: 0;
+            padding-left: 0px;
+            width: 100%;
+            height: 40px !important;
+            outline: none;
+            text-align: left;
+        }
+        span.getFromMap {
+            width: 60%;
+            line-height: 18px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mui-content">
+
+        <header id="header" class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">添加训练营场地</h1>
+        </header>
+        <div class="mui-content pt">
+            <div class="register">
+                <form action="" class="mui-input-group">
+                    <!-- map -->
+                    <div class="mui-input-row h-auto" id="mapFrame">
+                        <div id="map">
+                            <div>{:token()}</div>
+                            <div id="container"></div>
+                            <span class="mui-icon mui-icon-location"></span>
+                            <div id="tip">
+                                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址或直接点击地图" />
+                            </div>
+                            <input type="button" class="bgblue" id="mapConfirm" value="确认" />
+                        </div>
+                    </div>
+                    <div class="mui-input-row h-auto">
+                            <label>场地定位</label>
+                            <span class="getFromMap"></span>
+                            <input type="hidden" name="location" value="" class="location getFromMap">
+                    </div>
+
+                    <div class="mui-input-row"><label>场地名称</label>
+                        <input type="text" class="court" placeholder="请输入训练场地名称">
+                        <input type="hidden" name="camp_id" value="{$campInfo['id']}">
+                        <input type="hidden" name="camp" value="{$campInfo['camp']}">
+                    </div>
+
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert address province city area"></span>
+                        </a>
+                    </div>
+
+
+                    <div class="mui-input-row h-auto"><label>营业时间</label>
+                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea>
+                    </div>
+
+                    <div class="mui-input-row"><label>联系电话</label>
+                        <input type="text" class="contract" placeholder="请填写手机号或区号加固话">
+                    </div>
+
+                    <div class="mui-input-row"><label>联系人</label>
+                        <input type="text" class="principal" placeholder="请输入联系人">
+                    </div>
+
+                    <div class="mui-input-row"><label>散场（次）</label>
+                        <input type="text" class="chip_rent checkNum" placeholder="请输入散场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label class="wd45">包半场（小时)</label>
+                        <input type="text" class="half_rent checkNum wd52" placeholder="请输入半场价格">
+                    </div>
+
+                    <div class="mui-input-row"><label class="wd45">包全场（小时）</label>
+                        <input type="text" class="full_rent checkNum wd52" placeholder="请输入全场价格">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <a href="#" class="mui-navigate-right">
+                            <label>场地类型</label>
+                            <span class="select-row">
+                            <select class="data" name="outdoors" class="outdoors">
+                                <option value="1">室外</option>
+                                <option value="0">室内</option>
+                                <option value="2">室内|室外</option>
+                            </select>
+                    </span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto"><label>温馨提示</label>
+                        <textarea rows="4" class="remarks" placeholder="温馨提示内容"></textarea>
+                    </div>
+
+                    <div class="mui-input-row h-auto ">
+                        <a class="mui-navigate-right portraits filePicker" onclick="add_id(1)">
+                            <label>场地环境</label>
+                            <img id="preview_1" class="coachicon icon01 upload-preview">
+                            <input type="hidden" name="portraits" value='' class="covers">
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto mt55">
+                        <ul class="previewList">
+
+                        </ul>
+                    </div>
+
+                    <ul class="mui-table-view operation list">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen createBtn" style="color: #fff">提交场地</li>
+                    </ul>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+                                                                                 var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script src="/static/frontend/js/map.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+            });
+        })(mui, document);
+
+        //检测输入是否为数字
+        $(".checkNum").blur(function () {
+            var num = $(this).val();
+            if (isNaN(num)) {
+                mui.toast("请填写数字");
+                return false;
+            }
+        });
+        // map(选择具体地址)
+        $("#mapConfirm").on('tap', '', function () {
+            var mapkeyword = $("input[name='keyword']").val();
+            $(".getFromMap").val(mapkeyword);
+            $(".getFromMap").text(mapkeyword);
+        });
+
+
+        //创建场地
+        $(".createBtn").click(function () {
+            var covers = [];
+            $(".previewList img").each(function () {
+                covers.push($(this).attr('src'));
+            }).get().join(",");
+            // 上面获取图片地址
+            var court = $(".court").val();
+            var address = $(".address").text();
+            var province = getProvince;
+            var city = getCity;
+            var area = getArea;
+            var location = $(".location").val();
+            var open_time = $(".open_time").val();
+            var contract = $(".contract").val();
+            var principal = $(".principal").val();
+            var outdoors = $(".outdoors").val();
+            var chip_rent = $(".chip_rent").val();
+            var half_rent = $(".half_rent").val();
+            var full_rent = $(".full_rent").val();
+            var remarks = $(".remarks").val();
+            var camp_id = "{$campInfo['id']}";
+            var camp = "{$campInfo['camp']}";
+
+
+            if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/).test(contract)) {
+                mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
+                return false;
+            };
+            if (isNaN(chip_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+            if (isNaN(half_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+            if (isNaN(full_rent)) {
+                mui.toast("请填写正确的价格");
+                return false;
+            };
+
+            mui.ajax("{:url('api/court/createCourtApi')}", {
+                data: {
+                    court: court,
+                    province: getProvince,
+                    city: getCity,
+                    area: getArea,
+                    location: location,
+                    open_time: open_time,
+                    contract: contract,
+                    principal: principal,
+                    chip_rent: chip_rent,
+                    half_rent: half_rent,
+                    full_rent: full_rent,
+                    outdoors: outdoors,
+                    remarks: remarks,
+                    covers: covers,
+                    camp_id: camp_id,
+                    camp: camp,
+                    lng: lng,
+                    lat: lat,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data)
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        setTimeout(window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$campInfo['id']])}", 3000);
+                    } else {
+                        mui.toast(data.msg)
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        })
+    </script>
+
+</body>
+
+=======
 <!DOCTYPE html>
 <html>
 
@@ -484,4 +859,5 @@
 
 </body>
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

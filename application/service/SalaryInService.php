@@ -28,7 +28,11 @@ class SalaryInService {
 
 
     // 获取工资列表
+<<<<<<< HEAD
+    public function getSalaryInList($map,$order = 'id DESC'){
+=======
     public function getSalaryInList($map = [],$order = 'id DESC'){
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         $res = $this->SalaryIn->where($map)->order($order)->select();
         if($res){
             // 数据集转换为数组
@@ -40,6 +44,8 @@ class SalaryInService {
                     $result[$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
                 }
             }
+<<<<<<< HEAD
+=======
             return $result;
         }else{
             return $res;
@@ -59,6 +65,7 @@ class SalaryInService {
                     $result['data'][$k]['schedule_time'] = date('Y-m-d H:i', $val['schedule_time']);
                 }
             }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return $result;
         }else{
             return $res;

@@ -1,4 +1,14 @@
 <?php
+<<<<<<< HEAD
+// 证件 service
+namespace app\service;
+use app\common\validate\BankcardVal;
+
+use app\model\Bankcard;
+
+class BankcardService {
+    protected $BankcardModel;
+=======
 
 namespace app\service;
 
@@ -8,10 +18,17 @@ use app\common\validate\BankcardVal;
 class BankcardService {
     private $BankcardModel;
     private $BankcardMemberModel;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function __construct(){
         $this->BankcardModel = new Bankcard;
     }
 
+<<<<<<< HEAD
+    public static function getBankcardInfo($map) {
+        $result = $this->BankcardModel->where($map)->find();
+        if($result){
+            return $result->toArray();
+=======
 
     // 获取所有银行卡
     public function getBankcardList($map=[],$page = 1,$order='',$paginate = 10) {
@@ -20,11 +37,56 @@ class BankcardService {
         if($result){
             $res = $result->toArray();
             return $res;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }else{
             return $result;
         }
     }
 
+<<<<<<< HEAD
+    public function getBankcardList($map,$page = 1,$p= 10){
+       $res = Bankcard::where($map)->page($page,$p)->select();
+       if($res){
+           $result = $res->toArray();
+           return ['code'=>200,'msg'=>'ok','data'=>$result];
+       }else{
+           return ['code'=>100,'msg'=>'暂无数据'];
+       }
+    }
+
+
+    public function createBankcard($data){
+        $validate = validate('BankcardVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+
+        $result = $this->BankcardModel->save($data);
+        if($result){
+            return ['code'=>200,'msg'=>'创建成功','data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>'创建失败','data'=>$result];
+        }
+
+    }
+
+
+    public function updateBankcard($data,$id){
+        $validate = validate('BankcardVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        $result = $this->BankcardModel->save($data,['id'=>$id]);
+        if($result){
+            return ['code'=>200,'msg'=>'创建成功','data'=>$result];
+        }else{
+            return ['code'=>100,'msg'=>'创建失败','data'=>$result];
+        }
+    }
+
+    
+}
+=======
     // 分页获取银行卡
     public function getBankcardListByPage($map=[], $order='',$paginate=10){
         $result = Bankcard::where($map)->order($order)->paginate($paginate);
@@ -98,3 +160,4 @@ class BankcardService {
 
 }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4

@@ -57,6 +57,8 @@ class Grade extends Base{
         }
     }
 
+<<<<<<< HEAD
+=======
     // 班级列表（不分页所有数据)
     public function getGradeListAll(){
         try{
@@ -97,6 +99,7 @@ class Grade extends Base{
         }
     }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     public function getGradeListByPageApi(){
         try{
             $map = input('post.');
@@ -179,6 +182,20 @@ class Grade extends Base{
                 }             
             }
             $GradeService = new GradeService;
+<<<<<<< HEAD
+            $result = $GradeService->updateGrade($data,$data['grade_id']);
+            if($result['code']==200){
+                if( !empty($data['studentData']) && $data['studentData'] != '[]' ){
+                    $studentData = json_decode($data['studentData'],true);
+                    $StudentService = new \app\service\StudentService;
+                    $res = $StudentService->saveAllStudent($studentData);
+                    return json($res);
+                }else{
+                    return json($result);
+                }
+                
+            }
+=======
 
             if ( !empty($data['studentData']) && $data['studentData'] != '[]' ) {
                 $studentData = json_decode($data['studentData'], true);
@@ -188,7 +205,9 @@ class Grade extends Base{
                 }
             }
             $result = $GradeService->updateGrade($data, $data['grade_id']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             return json($result);
+            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -297,7 +316,11 @@ class Grade extends Base{
                         }
                     } else {
                         // 当前班级不能删除
+<<<<<<< HEAD
+                        $response = json(['code' => 100, 'msg' => '当前班级不能删除,请先下架班级']);
+=======
                         $response = json(['code' => 100, 'msg' => '当前班级不能删除,请先将班级设为预排班级']);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     return $response;
                     break;
@@ -334,6 +357,11 @@ class Grade extends Base{
     public function getGradeListOfCoachByPageApi(){
         try{
             $coach_id = input('param.coach_id');
+<<<<<<< HEAD
+            $map = function ($query) use ($coach_id){
+                $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
+            };
+=======
             $camp_id = input('param.camp_id');
             if($camp_id){
                 $map = function ($query) use ($coach_id,$camp_id){
@@ -345,6 +373,7 @@ class Grade extends Base{
                 };
             }
             
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $result = $this->GradeService->getGradeListByPage($map);
             if($result){
                 return json(['code' => 200, 'msg' => '获取成功','data'=>$result]);

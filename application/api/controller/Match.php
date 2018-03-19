@@ -173,8 +173,11 @@ class Match extends Base
                         'match_id' => $matchId,
                         'match' => $matchData['name'],
                         'match_record_id' => $matchRecordId,
+<<<<<<< HEAD
+=======
                         'team_id' => $matchData['team_id'],
                         'team' => $matchData['team'],
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         'referee_id' => $refereeInfo['id'],
                         'referee' => $refereeInfo['referee'],
                         'referee_avatar' => $refereeInfo['portraits'],
@@ -401,6 +404,11 @@ class Match extends Base
                     }
                     $isFinished = 1;
                     $post['finished_time'] = $matchTimeStamp;
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             }
             // 以有无post[id]区分插入/更新数据
@@ -563,6 +571,8 @@ class Match extends Base
                             // 发送比赛完成信息给对手球队
                             // 发送比赛完成信息给对手球队 end
                         }
+<<<<<<< HEAD
+=======
                         // 保存裁判出席名单
                         if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
                             $matchRefereeAttend = [];
@@ -599,6 +609,7 @@ class Match extends Base
                             }
                         }
                         // 保存裁判出席名单
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     // 比赛完成的操作 end
 
@@ -761,6 +772,8 @@ class Match extends Base
 
                         // 发送比赛完成信息给对手球队
                         // 发送比赛完成信息给对手球队 end
+<<<<<<< HEAD
+=======
 
                         // 保存裁判出席名单
                         if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
@@ -798,6 +811,7 @@ class Match extends Base
                             }
                         }
                         // 保存裁判出席名单
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     }
                     // 比赛完成的操作 end
                 }

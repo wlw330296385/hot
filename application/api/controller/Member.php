@@ -22,6 +22,29 @@ class Member extends Base{
     {
 
 
+<<<<<<< HEAD
+    }
+
+
+
+    // 提现申请
+    // public function withdrawApi(){
+    // 	try{
+    // 		$data = input('post.');
+    //         $data['member_id'] = $this->memberInfo['id'];
+    //         $data['member'] = $this->memberInfo['member'];
+    //         // 余额
+    //         if($memberInfo['balance']<$data['money']){
+    //             return json(['code'=>200,'msg'=>'余额不足']);die;
+    //         }
+    //  	$result = $this->SalaryOut->saveSalaryOut($data);
+    //  	return json($result);
+    // 	}catch (Exception $e){
+    // 		return json(['code'=>200,'msg'=>$e->getMessage()]);
+    // 	}
+
+    // }
+=======
     }
     public function getMemberInfoApi(){
         try{
@@ -55,6 +78,7 @@ class Member extends Base{
     	}
 
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
 
     // 编辑个人资料
@@ -83,7 +107,11 @@ class Member extends Base{
                 'openid' => '',
                 'member' => 'youke',
                 'nickname' => '游客',
+<<<<<<< HEAD
+                'avatar' => '',
+=======
                 'avatar' => config('default_image.member_avatar'),
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 'hp' => 0,
                 'level' => 0,
                 'telephone' => '',
@@ -208,6 +236,63 @@ class Member extends Base{
             }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+<<<<<<< HEAD
+        }
+    }
+
+    // 用户openid是否有会员信息
+    public function checkopenid() {
+        if (cookie('openid')) {
+            $openid = cookie('openid');
+            $memberS = new MemberService();
+            $memberInfo = $memberS->getMemberInfo(['openid' => $openid]);
+            if ($memberInfo) {
+                unset($memberInfo['password']);
+                cookie('mid', $memberInfo['id']);
+                cookie('member', md5($memberInfo['id'].$memberInfo['member'].config('salekey')) );
+                session('memberInfo', $memberInfo, 'think');
+                $this->memberInfo = $memberInfo;
+                return json(['code' => 200, 'msg' => 1, 'data' => $memberInfo]);
+            } else {
+                $userinfo = cache('userinfo_'.$openid);
+                $member = [
+                    'id' => 0,
+                    'openid' => $userinfo['openid'],
+                    'member' => $userinfo['nickname'],
+                    'nickname' => $userinfo['nickname'],
+                    'avatar' => str_replace("http://", "https://", $userinfo['headimgurl']),
+                    'hp' => 0,
+                    'level' => 0,
+                    'telephone' =>'',
+                    'email' =>'',
+                    'realname'  =>'',
+                    'province'  =>'',
+                    'city'  =>'',
+                    'area'  =>'',
+                    'location'  =>'',
+                    'sex'   =>0,
+                    'height'    =>0,
+                    'weight'    =>0,
+                    'charater'  =>'',
+                    'shoe_code' =>0,
+                    'birthday'  =>'0000-00-00',
+                    'create_time'=>0,
+                    'pid'   =>0,
+                    'hp'    =>0,
+                    'cert_id'   =>0,
+                    'score' =>0,
+                    'flow'  =>0,
+                    'balance'   =>0,
+                    'remarks'   =>0,
+                    'hot_id'=>00000000,
+                ];
+//                cookie('mid', 0);
+                cookie('member', md5($member['id'].$member['member'].config('salekey')) );
+                session('memberInfo', $member, 'think');
+                $this->memberInfo = $member;
+                return json(['code' => 100, 'msg' => -1, 'data' => $member]);
+            }
+=======
         }
     }
 
@@ -394,6 +479,19 @@ class Member extends Base{
             return json($response);
         } catch(Exception $e){
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         }
     }
+
+
+
+
+
+
+    // 清理模板缓存
+    public function clearTempAhce(){
+        $Cache = new \think\Cache;
+        $Cache::clear();
+        return json(['code' => 200, 'msg' => '清理成功']);
+    }  
 }

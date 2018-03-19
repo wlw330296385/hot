@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 
@@ -101,4 +102,109 @@
 
 </script>
 
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营-课程详情页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+        h5.fr { padding: 8px; }
+    </style>
+</head>
+
+<body class=whitebg>
+
+
+    <!--首页-->
+    <div class="mui-content">
+
+        <header id="header" class="mui-bar mui-bar-nav subheader">
+            <a class="mui-pull-left" href="{:url('lesson/lessonlistofcamp',['camp_id'=>$lessonInfo['camp_id']])}"><span class="mui-icon mui-icon-left-nav"></span>课程列表</a>
+            <h5 class="fr">{$lessonInfo.camp}</h5>
+        </header>
+
+        <div class="camp-list camp-lesson-list pt">
+            <ul class="mui-table-view list mb">
+                <li class="mui-table-view-cell mui-media listli">
+                    <img class="mui-media-object mui-pull-left" src="{$lessonInfo.cover}">
+                    <div class="mui-media-body wd60">
+                        <strong>{$lessonInfo.lesson}</strong>
+                        <p class="mui-ellipsis">[{$lessonInfo.status}] &nbsp; {$lessonInfo.gradecate_setion}{$lessonInfo.gradecate}</p>
+                    </div>
+                    {gt name="$power" value="2"}
+                    <div class="price-frame">
+                        <a href="{:url('lesson/updateLesson',['camp_id'=>$lessonInfo['camp_id'],'lesson_id'=>$lessonInfo['id']])}" class="mui-navigate-right">
+                            <span class="editor-btn">编辑</span>
+                        </a>
+                    </div>
+                    {/gt}
+                </li>
+            </ul>
+
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">课程单价<span>￥{$lessonInfo.cost}/课时</span></li>
+                <li class="mui-table-view-cell listli">课程数量<span class="courseDoms">{volist name="$lessonInfo.doms" id="vol" }{$vol},{/volist}</span></li>
+                <!-- <li class="mui-table-view-cell listli">课程所需积分<span class="width">{$lessonInfo.score}积分</span></li> -->
+                <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
+                <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.court}</span></li>
+                <li class="mui-table-view-cell listli">具体地址<span>{$lessonInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">人数范围<span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
+                <li class="mui-table-view-cell listli">主教练<span>{$lessonInfo.coach}</span></li>
+                <li class="mui-table-view-cell listli">助理教练<span>{$lessonInfo.assistants}</span></li>
+                <li class="mui-table-view-cell listli">领队<span>{$lessonInfo.leader}</span></li>
+                <li class="mui-table-view-cell listli">班主任<span>{$lessonInfo.teacher}</span></li>
+                <li class="mui-table-view-cell listli {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}">私密课程指定会员<span class="wd60">{volist name="$assignMemberList" id="vol" }{$vol.member},{/volist}</span></li>
+                <li class="mui-table-view-cell listli">备注<span>{$lessonInfo.remarks}</span></li>
+                <li class="mui-table-view-cell listli border-b">咨询电话<span>{$lessonInfo.telephone}</span></li>
+            </ul>
+
+
+            <div class="page-header">
+                <span class="course">课时信息</span>
+            </div>
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">历史赠送<span>{$lessonInfo.total_giftschedule}节</span></li>
+                <li class="mui-table-view-cell listli">剩余赠送<span>{$lessonInfo.resi_giftschedule}节</span></li>
+                <li class="mui-table-view-cell listli">未结算课时<span>{$lessonInfo.unbalanced_giftschedule}节</span></li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+    $(function () {
+        var cDoms = $(".courseDoms").text();
+        cDoms = cDoms.substring(0, cDoms.length - 1);
+        $(".courseDoms").text(cDoms);
+    })
+
+</script>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 </html>

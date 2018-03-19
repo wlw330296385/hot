@@ -20,9 +20,29 @@
             display: table;
             width: 100%;
         }
+<<<<<<< HEAD
+
+        .frame {
+            width: 100%;
+            padding: 15px 2px;
+            font-size: 14px;
+            border: 1px dashed #ddd;
+            color: #b1b0b0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
+
+=======
+    </style>
+</head>
+
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
@@ -129,9 +149,18 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动详情</span>
                 </div>
+<<<<<<< HEAD
+
+                <div class="mui-input-row h-auto">
+                    <div class="mui-input-row h-auto" style="margin-bottom: 10px">
+                        <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                        <div class="introBox"></div>
+                    </div>
+=======
                 <div class="mui-input-row tuwenEditor">
                     <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                     <div class="introBox"></div>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame up pd">上移</a>
@@ -147,7 +176,11 @@
                             <a class="frame imageClass">
                                 <div id="uploader-demo">
                                     <div id="fileList" class="uploader-list"></div>
+<<<<<<< HEAD
+                                    <div id="filePickerTwo">选择图片</div>
+=======
                                     <div class="filePickerTwo">选择图片</div>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                                 </div>
                             </a>
                         </div>
@@ -155,7 +188,10 @@
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
+<<<<<<< HEAD
+=======
                         <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     <span class="f12">说明：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
                 </div>
 
@@ -185,7 +221,10 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+<<<<<<< HEAD
+=======
     <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     <script>
         //初始化
         mui.init({
@@ -298,6 +337,82 @@
                 }
             });
 
+<<<<<<< HEAD
+            //添加活动详情标题
+            $(".titleClass").on('tap', '', function () {
+                var title = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="" value="" class="mui-text-left title delClass" placeholder="标题"></div>';
+                $(".introBox").append(title);
+            });
+
+            //添加活动详情正文
+            $(".textClass").on('tap', '', function () {
+                var text = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" name="" class="mui-text-left text delClass textarea"></div>';
+                $(".introBox").append(text);
+            });
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            // 焦点离开后把内容放在h5标签里
+            $(document).on('blur', '.operationDiv input', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).val() != '') {
+                    var inputValue = '<h5>' + $(this).val() + '</h5>';
+                    $(this).parent().html(inputValue).removeClass("bgorange")
+                } else {
+                    var inputValueNull = '<h5>标题</h5>';
+                    $(this).parent().html(inputValueNull)
+                }
+            });
+            // 点击时显示input框
+            $(document).on('tap', '.operationDiv h5', function () {
+                var YinputValue = '<i class="delbtn mui-icon mui-icon-close"></i><input type="text" name="title" autofocus value="' + $(this).text() + '" class="mui-text-left title delClass" placeholder="标题">';
+                $(this).parent(".operationDiv").html(YinputValue).addClass("bgorange");
+                console.log(YinputValue)
+            });
+            // 焦点离开后把内容放在p标签里
+            $(document).on('blur', '.operationDiv .textarea', function () {
+                $(this).siblings(".delbtn").remove();
+                if ($(this).text() != '') {
+                    var divValue = '<p>' + $(this).text() + '</p>';
+                    $(this).parent().html(divValue).removeClass("bgorange")
+                } else {
+                    var divValueNull = '<p>请输入正文</p>';
+                    $(this).parent().html(divValueNull)
+                }
+            });
+            // 点击时显示div框
+            $(document).on('tap', '.operationDiv p', function () {
+                var YdivValue = '<i class="delbtn mui-icon mui-icon-close"></i><div contenteditable="true" placeholder="请输入正文" value="' + $(this).text() + '"  class="mui-text-left text delClass textarea">' + $(this).text() + '</div>';
+                $(this).parent().html(YdivValue).addClass("bgorange");
+            });
+
+            // 图片的移动操作
+            $(document).on('tap', '.desimg', function () {
+                var bgg = $(this).parent().hasClass("bgorange");
+                if (bgg == false) {
+                    $(this).parent().addClass("bgorange")
+                    return false;
+                } else {
+                    $(document).on('tap',function () {
+                        $(".desimg").parent().removeClass("bgorange")
+                    });
+                }
+            });
+
+            // 上移动
+            $(document).on('tap', '.up', function () {
+                $(".bgorange").prev().insertAfter(".bgorange");
+            });
+            // 上移动
+            $(document).on('tap', '.down', function () {
+                $(".bgorange").next().insertBefore(".bgorange");
+            });
+
+=======
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
         })
 
         // 获取数据并进行提交
@@ -310,6 +425,11 @@
                 return false;
             }
 
+<<<<<<< HEAD
+            $(".delbtn").remove();
+            var totalHtml = $(".introBox").html();
+            $(".event_des").val(totalHtml);
+=======
             //图文编辑状态转换浏览状态//////////////////////////////////////////
             tuwenToView()
 
@@ -317,6 +437,7 @@
             var introHtml = $(".introBox").html();
             $(".event_des").val(introHtml);
             /////////////////////////////////////////////////////////////////
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -334,7 +455,10 @@
                 })
             } else {
                 mui.alert(ajaxResult.msg, '创建失败');
+<<<<<<< HEAD
+=======
                 tuwenToEdit(); //图文转换成可编辑状态
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);

@@ -33,9 +33,12 @@ class Frontend extends Base{
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+<<<<<<< HEAD
+=======
 
 
     public function checklogin(){
 
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 }

@@ -211,7 +211,11 @@
                 </div>
                 <div class="mui-input-row refereeCount hide">
                     <label>随机安排人数</label>
+<<<<<<< HEAD
+                    <input type="text" name="referee_count" value="" class="data refereeCount" placeholder="请填写随机安排的人数">
+=======
                     <input type="text" name="referee_count" value="" class="data countNum" placeholder="请填写随机安排的人数">
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 </div>
                 {empty name="refereeInfo"}
                 <div class="mui-input-row refereeRow hide">
@@ -221,7 +225,11 @@
                         <div class="hideList"></div>
                         <input type="hidden" name="referee_id" value="" class="data">
                         <input type="hidden" name="referee_cost" value="" class="data">
+<<<<<<< HEAD
+                        <input type="hidden" name="referee_count" value="" class="data">
+=======
                         <input type="hidden" name="referee_count" value="" class="data rowNum">
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                     </a>
                 </div>
                 {else/}
@@ -235,16 +243,28 @@
                         </div>
                         <input type="hidden" name="referee_id" value="{$refereeInfo.id}" class="data">
                         <input type="hidden" name="referee_cost" value="{$refereeInfo.appearance_fee}" class="data">
+<<<<<<< HEAD
+                        <input type="hidden" name="referee_count" value="{$refereeInfo.referee_count}" class="data">
+                    </a>
+                </div>
+                {/empty}
+                
+=======
                     </a>
                 </div>
                 {/empty}
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 <div class="mui-input-row ">
                     <div class="mui-navigate-right">
                         <label class="wd45">裁判付费方式</label>
                         <span class="select-row">
                             <select class="data" name="referee_cost_bear">
+<<<<<<< HEAD
+                                <option value="">请选择</option>
+=======
                                 <option value="">免费</option>
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                                 <option value="1">费用AA</option>
                                 <option value="2">主队负责</option>
                                 <option value="3">客队负责</option>
@@ -661,6 +681,21 @@
             // 裁判列表是否显示
             $("#refereeSlecct").change(function () {
                 var refereeNum = $(this).children("option:selected").val()
+<<<<<<< HEAD
+                if (refereeNum == 2) {
+                    $(".refereeRow").show();
+                } else {
+                    $(".refereeRow").hide();
+                    $("input[name=referee_id]").val('');
+                    $('input[name=referee_cost]').val('');
+                }
+
+                if (refereeNum == 1) {
+                    $(".refereeCount").show();
+                } else if (refereeNum == 0 || refereeNum == 2) {
+                    $(".refereeCount").hide();
+                    $(".refereeCount").val('');
+=======
                 if (refereeNum == 0) {
                     $(".refereeCount").hide();
                     $(".refereeRow").hide();
@@ -670,6 +705,7 @@
                 } else if (refereeNum == 2) {
                     $(".refereeCount").hide();
                     $(".refereeRow").show();
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 }
             });
 
@@ -735,7 +771,11 @@
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
                         $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
                         $("input[name=referee_cost]").val(refereeSum);
+<<<<<<< HEAD
+                        $("input[name=referee_count]").val(refereeName.length);
+=======
                         $(".refereeRow input[name=referee_count]").val(refereeName.length);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                         console.log(refereeName.length)
                         hideList += '<input type="hidden" class="hideList" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '">';
                         mui("#refereeDom").popover("hide");
@@ -745,7 +785,11 @@
                     }
                 });
                 $(".hideList").html(hideList);
+<<<<<<< HEAD
+                
+=======
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             });
             // //////////////////////////////////////////////////////////
 
@@ -956,6 +1000,14 @@
             }
 
             var refereeNum = $("#refereeSlecct").children("option:selected").val();
+<<<<<<< HEAD
+            var refereeRow = $(".referee").text();
+            var refereeCount = $("input[name=referee_count]").val();
+            if (refereeNum == 2 && refereeRow == '') {
+                mui.toast("请选择裁判");
+                return false;
+            }
+=======
             var refereeCount = $(".refereeCount input[name=referee_count]").val();
             if (refereeNum == 2) {
                 $(".countNum").removeClass("data");
@@ -967,6 +1019,7 @@
                 $(".countNum").addClass("data");
             }
 
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             if (!(/^[0-3]*$/).test(refereeCount)) {
                 mui.toast("裁判人数请填写数字且不能大于3人");
                 return false;

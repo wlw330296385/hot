@@ -58,6 +58,22 @@ class Camp extends Backend {
                 $this->error($validate->getError());
                 return;
             }
+<<<<<<< HEAD
+
+            $update = [
+                'id' => $id,
+                'system_remarks' => $sys_remarks,
+                'update_time' => time()
+            ];
+            $execute = Db::name('camp')->update($update);
+
+            $Auth = new AuthService();
+            if ( $execute ) {
+                $Auth->record('训练营id:'. $id .' 修改平台备注 成功');
+                $this->success(__lang('MSG_200'), 'camp/index');
+            } else {
+                $Auth->record('训练营id:'. $id .' 修改平台备注 失败');
+=======
             if (isset($request['__token__'])) {
                 unset($request['__token__']);
             }
@@ -73,6 +89,7 @@ class Camp extends Backend {
                 $this->success(__lang('MSG_200'), 'camp/index');
             } else {
                 $Auth->record('训练营id:'. $id .' 修改信息 失败');
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
                 $this->error(__lang('MSG_400'));
             }
         }
@@ -201,7 +218,11 @@ class Camp extends Backend {
         $messageS = new MessageService();
         if ($camp['status_num'] == 1) { // 执行下架
             $lessonM = new \app\model\Lesson();
+<<<<<<< HEAD
+            $lessonM->where(['camp_id' => $camp['id'], 'status'=>1])->setField('status', -1);
+=======
             $lessonM->where(['camp_id' => $camp['id']])->setField('status', -1);
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
             $setcampstatus = 2;
             $messageData = [
                 'title' => '您好,您的"'. $camp['camp'] .'"训练营被平台设为下架状态',

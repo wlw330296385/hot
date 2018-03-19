@@ -3,8 +3,11 @@ namespace app\service;
 use app\model\Coach;
 use app\common\validate\CoachVal;
 use app\model\Grade;
+<<<<<<< HEAD
+=======
 use app\model\Lesson;
 use app\model\Schedule;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 use think\Db;
 class CoachService{
 	private $CoachModel;
@@ -175,6 +178,35 @@ class CoachService{
     }
 
     // 教练在训练营的课程列表
+<<<<<<< HEAD
+    public function inlessonlist($coach_id, $camp_id) {
+        $model = new \app\model\Lesson();
+        $iscoachlist = $model->where(['camp_id' => $camp_id, 'coach_id' => $coach_id])->select();
+        if (!$iscoachlist) {
+            return $iscoachlist;
+        }
+        $isassistantlist = [];
+        $assistants = $model->where(['camp_id' => $camp_id])->select();
+        if (!$assistants) {
+            return $assistants;
+        }
+        $assistants = $assistants->toArray();
+
+        foreach ($assistants as $assistant) {
+            if ($assistant) {
+                $assistantId = unserialize($assistant['assistant_id']);
+                if ($assistantId) {
+                    foreach ($assistantId as $val) {
+                        if ($val && $val == $coach_id) {
+                            array_push($isassistantlist, $assistant);
+                        }
+                    }
+                }
+            }
+        }
+        $result = array_merge($iscoachlist->toArray(), $isassistantlist);
+        return $result;
+=======
     public function inlessonlist($coach_id, $camp_id=0) {
         $model = new Lesson();
         $map = [];
@@ -204,6 +236,7 @@ class CoachService{
             ->where('coach_id = :coach_id or assistant like :coach', ['coach_id' => $coach_id, 'coach' => "%".$coach['coach']."%"])
             ->count();
         return ($query) ? $query : 0;
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
     }
 
     // 教练执教学员统计
@@ -223,6 +256,8 @@ class CoachService{
         }
     }
 
+<<<<<<< HEAD
+=======
     // 教练课时流量
     public function schedulecount($coach_id, $camp_id=0) {
         $model = new Schedule();
@@ -237,6 +272,7 @@ class CoachService{
             ->count();
         return ($query) ? $query : 0;
     }
+>>>>>>> 12f73e9f54aec3c924def7292bf18f1602adfef4
 
     // 创建教练评论
     public function createCoachComment($data){
