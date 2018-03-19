@@ -94,7 +94,7 @@
 								<td class="sRenci">{$vol.s_students}</td>
 								<td class="sShouru">{$vol.s_schedule_income}</td>
 								<td class="sXuefei">{$vol.s_income}</td>
-								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+								<td><a href="#" class="btn btn-xs btn-info" linkTo="/admin/Statistics_Camp/lessonSchedule/camp_id/{$vol.camp_id}/lesson_id/{$vol.lesson_id}/"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
@@ -144,7 +144,7 @@
 								<td>{$vol.price}</td>
 								<td class="eRenci">{$vol.s_total}</td>
 								<td class="eShouru">{$vol.s_income}</td>
-								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+								<td><a href="#" class="btn btn-xs btn-info" linkTo="/admin/Statistics_Camp/campBillList/goods_type/2/camp_id/{$vol.camp_id}/"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
@@ -355,6 +355,13 @@
             window.location.href="{:url('/admin/Statistics_Camp/campIncome/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
+        //点击链接到详情页面
+        $(".table a.btn").on("click", function () {
+            var getLink = $(this).attr("linkTo");
+            var getLiIndex = $(this).parent().index();
+            var getDate = $(".dateList li").eq(getLiIndex).text();
+            window.open(getLink+"/camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
+        })
 
 
     })
