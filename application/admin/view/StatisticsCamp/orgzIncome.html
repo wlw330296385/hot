@@ -93,7 +93,7 @@
 								<td class="sKeci">{$vol.s_total}</td>
 								<td class="sRenci">{$vol.c_id}</td>
 								<td class="sXuefei">{$vol.s_income}</td>
-								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+								<td><a href="#" class="btn btn-xs btn-info" linkTo="/admin/Statistics_Camp/campBillList/goods_type/1/camp_id/{$vol.camp_id}/"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
@@ -141,7 +141,7 @@
 								<td>{$vol.price}</td>
 								<td class="eRenci">{$vol.s_total}</td>
 								<td class="eShouru">{$vol.s_income}</td>
-								<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+								<td><a href="#" class="btn btn-xs btn-info" linkTo="/admin/Statistics_Camp/campBillList/goods_type/2/camp_id/{$vol.camp_id}/"><i class="fa fa-inbox"></i> 查看详情</a></td>
 							</tr>
 							{/volist}
 							</tbody>
@@ -163,17 +163,6 @@
 		</div>
 	</div>
 </div>
-
-
-<h1>学费收益统计========================================</h1>
-{volist name="list1" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;训练营名称:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程名称:{$vol.goods}&nbsp;&nbsp;&nbsp;&nbsp;课次:{$vol.s_total}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.c_id}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
-
-<h1>活动收益统计========================================</h1>
-{volist name="list2" id="vol"}
-<p>日期:{$key}&nbsp;&nbsp;&nbsp;&nbsp;训练营名称:{$vol.camp}&nbsp;&nbsp;&nbsp;&nbsp;课程名称:{$vol.goods}&nbsp;&nbsp;&nbsp;&nbsp;课次:{$vol.s_total}&nbsp;&nbsp;&nbsp;&nbsp;人次:{$vol.c_id}&nbsp;&nbsp;&nbsp;&nbsp;收入:{$vol.s_income}</p>
-{/volist}
 
 
 <!-- Modal : Camp -->
@@ -354,6 +343,34 @@
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
             window.location.href="{:url('/admin/Statistics_Camp/campIncome/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+        })
+
+        //点击链接到详情页面
+        $("#scheduleList a.btn").on("click", function () {
+            var getLink = $(this).attr("linkTo");
+            localStorage.setItem('currGoodTypeID',"1");
+            var getYM = $("input[name=dateYM]").val();
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.open(getLink+"/monthstart/"+beginDate+"/monthend/"+endDate);
+        })
+
+        //点击链接到详情页面
+        $("#eventList a.btn").on("click", function () {
+            var getLink = $(this).attr("linkTo");
+            localStorage.setItem('currGoodTypeID',"2");
+            var getYM = $("input[name=dateYM]").val();
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.open(getLink+"/monthstart/"+beginDate+"/monthend/"+endDate);
         })
 
 
