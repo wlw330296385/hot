@@ -382,7 +382,8 @@ class TeamService
                     'id' => $roleLeader['id'],
                     'member_id' => $leaderTm['member_id'],
                     'member' => $leaderTm['member'],
-                    'name' => $leaderTm['name']
+                    'name' => $leaderTm['name'],
+                    'status' => 1
                 ]);
             }
         } else {
@@ -410,7 +411,8 @@ class TeamService
                         'id' => $roleManager['id'],
                         'member_id' => $managerTm['member_id'],
                         'member' => $managerTm['member'],
-                        'name' => $managerTm['name']
+                        'name' => $managerTm['name'],
+                        'status' => 1
                     ]);
                 }
             } else {
@@ -445,7 +447,8 @@ class TeamService
                         'id' => $roleCaptain['id'],
                         'member_id' => $captainTm['member_id'],
                         'member' => $captainTm['member'],
-                        'name' => $captainTm['name']
+                        'name' => $captainTm['name'],
+                        'status' => 1
                     ]);
                 }
             } else {
@@ -480,7 +483,8 @@ class TeamService
                         'id' => $roleViceCaptain['id'],
                         'member_id' => $viceCaptainTm['member_id'],
                         'member' => $viceCaptainTm['member'],
-                        'name' => $viceCaptainTm['name']
+                        'name' => $viceCaptainTm['name'],
+                        'status' => 1
                     ]);
                 }
             } else {
