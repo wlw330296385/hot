@@ -290,6 +290,7 @@
             <div class="choise">
                 {switch name="delbtnDisplay"} {case value="2"}
                 <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
+                <button type="button" class="mui-btn mui-btn-primary f16 applyIn hide">邀请队员</button>
                 {/case} {case value="1"}
                 <button type="button" class="mui-btn mui-btn-danger f16 applyOut">申请退出球队</button>
                 {/case} {/switch}
@@ -360,6 +361,7 @@
         })(mui);
 
         $(function () {
+
             $(".fbcomment").on("tap", function () {
                 mui.toast("暂未开放，敬请期待")
             })
@@ -508,6 +510,80 @@
             });
 
 
+            // 邀请队员
+            var teamStatus = "{$teamMemberInfo.status}";
+            var member_id = "{$teamMemberInfo.member_id}";
+            if (teamStatus == "离队") {
+                if (member_id != -1) {
+                    $(".applyIn").show();
+                    $(".signOut").hide();
+                }else{
+                    $(".applyIn").show().text("添加队员");
+                    $(".signOut").hide();
+                }
+                
+            }
+            $(".applyIn").on("tap", '', function () {
+                var team_id = "{$teamMemberInfo.team_id}";
+                var name = "{$teamMemberInfo.name}";
+                var number = "{$teamMemberInfo.number}";
+                var position = "{$teamMemberInfo.position}";
+                var telephone = "{$teamMemberInfo.telephone}";
+                if (member_id == -1) {
+                    mui.ajax("{:url('api/team/addnoregmember')}", {
+                        data: {
+                            team_id:team_id,
+                            name: name,
+                            number: number,
+                            position: position,
+                            telephone: telephone,
+                            role:''
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("添加成功");
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                } else {
+                    mui.ajax("{:url('api/team/addmember')}", {
+                        data: {
+                            team_id: team_id,
+                            member_id: member_id,
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("已经发送请求，请耐心等待回复");
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
+
+            });
+
+
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {
                 var commented = "{$teamMemberInfo.member}";
@@ -631,7 +707,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    page:page,
+                    page: page,
                     commented: commented,
                     commented_id: commented_id,
                     comment_type: 4,
