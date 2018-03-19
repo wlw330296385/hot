@@ -251,10 +251,34 @@ class TeamService
         ];
         $data = [
             'status' => -1,
-            //'delete_time' => time()
         ];
-        // 清理team_mebmer_role
+        // 查询球员的team_member_role数据
         $modelRole = new TeamMemberRole();
+        // 根据职务数据集 抽取“经理”“队长”“副队长”，更新team数据
+        $roles = $modelRole->where($where)->select();
+        if ($roles) {
+            $dataTeam = [];
+            $roles = $roles->toArray();
+            foreach ($roles as $k => $val) {
+                if ($val['type'] == 5) {
+                    $dataTeam = array_merge($dataTeam, ['manager_id' => 0, 'manager' => '']);
+                }
+                if ($val['type'] == 3) {
+                    $dataTeam = array_merge($dataTeam, ['captain_id' => 0, 'captain' => '']);
+                }
+                if ($val['type'] == 2) {
+                    $dataTeam = array_merge($dataTeam, ['vice_captain_id' => 0, 'vice_captain' => '']);
+                }
+            }
+            if ($dataTeam) {
+                $updateTeam = db('team')->where('id', $teamMember['team_id'])->update($dataTeam);
+                if (!$updateTeam) {
+                    trace('error:' . ', \n sql:' . db('team')->getLastSql(), 'error');
+                    return ['code' => 100, 'msg' => __lang('MSG_400')];
+                }
+            }
+        }
+        // 清理team_mebmer_role
         $delTeamRole = $modelRole->save($data, $where);
         if (false === $delTeamRole) {
             trace('error:' . $modelRole->getError() . ', \n sql:' . $modelRole->getLastSql(), 'error');
@@ -270,6 +294,7 @@ class TeamService
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
+
 
     // 获取球队成员列表
     public function getTeamMemberList($map = [], $page = 1, $order = 'id asc', $limit = 10)

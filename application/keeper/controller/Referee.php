@@ -34,7 +34,7 @@ class Referee extends Base{
         ]);
         // 受邀次数
         $totalInvited = $matchService->getMatchRerfereeApplyCount([
-            'apply_type' => 1,
+            'apply_type' => 2,
             'referee_id' => $refereeInfo['id']
         ]);
 
@@ -156,6 +156,12 @@ class Referee extends Base{
         $matchInfo = $matchService->getMatch(['id' => $applyInfo['match_id']]);
         $matchRecordInfo = $matchService->getMatchRecord(['id' => $applyInfo['match_record_id']]);
         if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+            }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
             $matchInfo['record'] = $matchRecordInfo;
         }
 

@@ -593,28 +593,25 @@ class Team extends Base
             if ($teammember['status_num'] != 1) {
                 return json(['code' => 100, 'msg' => '该成员已离队']);
             }
-            // 更新成员数据
-            $res = $teamS->saveTeamMember([
-                'id' => $teammember['id'],
-                'status' => -1
-            ]);
+            // 删除球队成员数据
+            $res = $teamS->delTeamMember($teammember);
             if ($res['code'] == 200) {
-                // 更新成员的team_member_role表所有相关数据status=-1
-                db('team_member_role')->where(['team_id' => $team_id, 'member_id' => $member_id])->update(['status' => -1, 'update_time' => time()]);
                 // 更新球队的成员数统计-1
                 db('team')->where('id', $team_id)->setDec('member_num', 1);
-                // 发送消息通知给离队成员
-                $messageS = new MessageService();
-                $messageData = [
-                    'title' => '您已退出"' . $teammember['team'] . '"球队',
-                    'content' => '您已退出"' . $teammember['team'] . '"球队',
-                    'url' => url('keeper/message/index', '', '', true),
-                    'keyword1' => $teammember['member'],
-                    'keyword2' => date('Y年m月d日 H:i'),
-                    'remark' => '点击进入查看详细信息',
-                    'steward_type' => 2
-                ];
-                $messageS->sendMessageToMember($member_id, $messageData, config('wxTemplateID.memberQuit'));
+                // 发送消息通知给离队成员（平台会员）
+                if ($member_id > 0) {
+                    $messageS = new MessageService();
+                    $messageData = [
+                        'title' => '您已退出"' . $teammember['team'] . '"球队',
+                        'content' => '您已退出"' . $teammember['team'] . '"球队',
+                        'url' => url('keeper/message/index', '', '', true),
+                        'keyword1' => $teammember['member'],
+                        'keyword2' => date('Y年m月d日 H:i'),
+                        'remark' => '点击进入查看详细信息',
+                        'steward_type' => 2
+                    ];
+                    $messageS->sendMessageToMember($member_id, $messageData, config('wxTemplateID.memberQuit'));
+                }
                 // 更新球队统计字段
                 $teamS->autoUpdateTeam($team_id);
             }
@@ -1173,6 +1170,114 @@ class Team extends Base
             }
 
             return json($resSaveTeamMember);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 离队成员回到球队中
+    public function returnteamember() {
+        try {
+            // 检测会员登录
+            if ($this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            $data = input('post.');
+            // 提交参数验证
+            if (!isset($data['id'])) {
+                // 这id为team_member表id字段
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传入id']);
+            }
+            if (!isset($data['team_id'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，请正确传入team_id']);
+            }
+            $teamS = new TeamService();
+            // 查询team_member数据
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $data['id']]);
+            if (!$teamMemberInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，无此球队成员信息']);
+            }
+            // 获取球队信息
+            $teamInfo = $teamS->getTeam(['id' => $data['team_id']]);
+            if (!$teamInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队']);
+            }
+            // 区分平台会员/非平台会员业务
+            if ($teamMemberInfo['member_id'] > 0 ) {
+                // 平台会员： 发送球队邀请
+                // 获取会员信息
+                $memberS = new MemberService();
+                $memberInfo = $memberS->getMemberInfo(['id' => $teamMemberInfo['member_id']]);
+                if (!$memberInfo) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他会员']);
+                }
+                // 更新球队成员信息
+                $data = [
+                    'id' => $teamMemberInfo['id'],
+                    'team_id' => $teamInfo['id'],
+                    'team' => $teamInfo['name'],
+                    'name' => empty($memberInfo['realname']) ? $memberInfo['member'] : $memberInfo['realname'], // name是会员真实名或会员账号
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'telephone' => $memberInfo['telephone'],
+                    'sex' => $memberInfo['sex'],
+                    'avatar' => $memberInfo['avatar'],
+                    'yearsexp' => $memberInfo['yearsexp'],
+                    'birthday' => $memberInfo['birthday'],
+                    'age' => $memberInfo['age'],
+                    'height' => $memberInfo['height'],
+                    'weight' => $memberInfo['weight'],
+                    'shoe_size' => $memberInfo['shoe_code'],
+                    'status' => -2,
+                    'number' => null
+                ];
+                // 执行保存球队成员数据
+                $resultSaveTeamMember = $teamS->saveTeamMember($data);
+                // 保存成员数据成功
+                if ($resultSaveTeamMember['code'] == 200) {
+                    // 插入邀请apply 数据
+                    $dataApply = [
+                        'type' => 2,
+                        'apply_type' => 2,
+                        'organization_type' => 2,
+                        'organization_id' => $teamInfo['id'],
+                        'organization' => $teamInfo['name'],
+                        'inviter' => $this->memberInfo['member'],
+                        'inviter_id' => $this->memberInfo['id'],
+                        'member' => $memberInfo['member'],
+                        'member_id' => $memberInfo['id'],
+                        'remarks' => '球队-'.$teamInfo['name'].'邀请您回球队',
+                        'status' => 1
+                    ];
+                    $resultSaveApply = $teamS->saveApply($dataApply);
+                    if ($resultSaveApply['code'] == 100) {
+                        return json(['code' => 100, 'msg' => '发送邀请失败']);
+                    }
+                    $applyId = $resultSaveApply['data'];
+                    // 发送邀请通知给会员
+                    $messageData = [
+                        'title' => '球队-'.$teamInfo['name'].'邀请您回球队',
+                        'content' => '球队-'.$teamInfo['name'].'邀请您回球队',
+                        'url' => url('keeper/team/memberapplyinfo', ['id' =>$applyId ], '', true),
+                        'keyword1' => '球队邀请',
+                        'keyword2' => $this->memberInfo['member'],
+                        'keyword3' => date('Y年m月d日 H:i', time()),
+                        'remark' => '点击登录平台查看更多信息',
+                        'steward_type' => 2
+                    ];
+                    $messageS = new MessageService();
+                    $messageS->sendMessageToMember($memberInfo['id'], $messageData, config('wxTemplateID.checkPend'));
+                }
+            } else {
+                // 非平台会员：更新team_member status=1
+                $data = [
+                    'id' => $teamMemberInfo['id'],
+                    'status' => 1,
+                ];
+                // 执行保存球队成员数据
+                $resultSaveTeamMember = $teamS->saveTeamMember($data);
+            }
+            return json($resultSaveTeamMember);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
