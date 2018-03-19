@@ -24,14 +24,14 @@
         <div class="list">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                        <h4>{$teamInfo.name}</h4>
+                    <a href="{:url('team/teamInfo',['team_id'=>$applyInfo['team']['id']])}" class="mui-navigate-right">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$applyInfo.team.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                        <h4>{$applyInfo.team.name}</h4>
                         <div class="mui-media-body wd49" style="line-height:20px !important">
-                            <p>{$teamInfo.city} {$teamInfo.area}</p>
+                            <p>{$teamInfo.city} {$applyInfo.team.area}</p>
                             <p class="f12">队员：
-                                <strong>{$teamInfo.member_num}</strong>人 | 粉丝：
-                                <strong>{$teamInfo.fans_num}</strong>
+                                <strong>{$applyInfo.team.member_num}</strong>人 | 粉丝：
+                                <strong>{$applyInfo.team.fans_num}</strong>
                             </p>
                         </div>
                     </a>
@@ -48,10 +48,13 @@
                 <label>回复的内容：</label>
                 <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
             </div>
+
+            {eq name="$applyInfo.revice_team_id"  value="$team_id"}
             <div class="mui-button-row h-auto operationFrame">
                 <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
             </div>
+            {/eq}
 
             <p class="pline"></p>
 

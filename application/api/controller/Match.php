@@ -1502,10 +1502,20 @@ class Match extends Base
             $request['member_avatar'] = $this->memberInfo['avatar'];
             $request['revice_team_id'] = $matchInfo['team_id'];
             $request['revice_team'] = $matchInfo['team'];
+            // 查询有无比赛约战申请记录
+            $matchApply = $matchS->getMatchApply([
+                'team_id' => $request['team_id'],
+                'match_id' => $request['match_id'],
+                'revice_team_id' => $matchInfo['team_id']
+            ]);
+            if ($matchApply) {
+                $request['id'] = $matchApply['id'];
+            }
 
             // 保存球队参加比赛申请
             $resultJoinMatchApply = $matchS->saveMatchApply($request);
             if ($resultJoinMatchApply['code'] == 200) {
+                $applyId = isset($matchApply) ? $matchApply['id'] : $resultJoinMatchApply['data'];
                 // 更新比赛信息
                 db('match')->where('id', $matchInfo['id'])->update(['apply_status' => 1]);
                 // 获取比赛的发布球队信息
@@ -1514,7 +1524,7 @@ class Match extends Base
                 $dataMessage = [
                     'title' => '您好，您发布的比赛有球队报名迎战',
                     'content' => '您所在球队' . $teamInfo['name'] . '发布的比赛' . $request['team'] . '报名迎战',
-                    'url' => url('keeper/team/matchapplylist', ['team_id' => $teamInfo['id']], '', true),
+                    'url' => url('keeper/team/matchapplyinfo', ['team_id' => $teamInfo['id'], 'apply_id' => $applyId], '', true),
                     'keyword1' => '约战应战申请',
                     'keyword2' => $this->memberInfo['member'],
                     'keyword3' => date('Y-m-d h:i', time()),
@@ -1557,9 +1567,9 @@ class Match extends Base
             if (!$applyInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此申请记录']);
             }
-            if ($applyInfo['status'] != 1) {
+            /*if ($applyInfo['status'] != 1) {
                 return json(['code' => 100, 'msg' => '此申请记录已回复结果，无需重复操作']);
-            }
+            }*/
             // 获取match_apply的match信息
             $matchInfo = $matchS->getMatch(['id' => $applyInfo['match_id']]);
             //dump($matchInfo);
@@ -1567,7 +1577,7 @@ class Match extends Base
             $replystr = '已拒绝';
             // 更新match_apply数据组合
             $dataSaveApply = ['id' => $applyInfo['id'], 'status' => $status, 'reply' => $reply];
-            if ($reply == 2) {
+            if ($status == 2) {
                 // 同意操作
                 // 更新比赛战绩对手球队信息
                 $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
@@ -1589,7 +1599,7 @@ class Match extends Base
                 // 更新比赛match信息
                 db('match')->where('id', $matchInfo['id'])->update([
                     'name' => $matchName,
-                    'apply_status' => 2
+                    'apply_status' => $status
                 ]);
 
                 // 组合推送消息内容
@@ -1630,6 +1640,11 @@ class Match extends Base
         try {
             // 传入变量作为查询条件
             $map = input('param.');
+            // 发送申请|收到申请team_id
+            if (input('?team_id')) {
+                unset($map['team_id']);
+                $map['team_id|revice_team_id'] = input('team_id');
+            }
             if (input('?param.page')) {
                 unset($map['page']);
             }
@@ -1655,6 +1670,11 @@ class Match extends Base
             // 传入变量作为查询条件
             $map = input('param.');
             $page = input('page', 1);
+            // 发送申请|收到申请team_id
+            if (input('?team_id')) {
+                unset($map['team_id']);
+                $map['team_id|revice_team_id'] = input('team_id');
+            }
             if (input('?param.page')) {
                 unset($map['page']);
             }

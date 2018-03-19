@@ -81,7 +81,7 @@
 
     <div class="mui-content">
         <div class="list coach mt55">
-            <ul class="mui-table-view mb" style="background-image:url('/static/frontend/images/yzbg.jpg')">
+            <ul class="mui-table-view mb" >
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
@@ -330,7 +330,9 @@
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label class="mui-text-left">所属球队</label>
-                        <span class="select-row selectTeam wd60"></span>
+                        <span class="select-row wd60">
+                            <select class="selectTeam" id=""></select>
+                        </span>
                     </div>
                 </div>
                 <div class="mui-input-row">
@@ -647,8 +649,8 @@
             $(".matchPKBtn").on("tap", "", function () {
                 var match = "{$matchInfo.name}";
                 var match_id = "{$matchInfo.id}";
-                var team = $(".choiseTeam").children("option:selected").text();
-                var team_id = $(".choiseTeam").children("option:selected").val();
+                var team = $(".selectTeam").children("option:selected").text();
+                var team_id = $(".selectTeam").children("option:selected").val();
                 var contact = $(".contact").val();
                 var telphone = $(".telphone").val();
                 var remarks = $(".remarks").val();
@@ -817,7 +819,8 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<select class="data choiseTeam" name="team"><option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option></select>'
+                            // newli = newli + '<select class="data choiseTeam" name="team"><option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option></select>'
+                            newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
                         }
                         $(".selectTeam").empty().append(newli);
                     } else {
