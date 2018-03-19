@@ -119,4 +119,14 @@ class Index extends Base{
             $this->redirect('keeper/index/index');
         }
     }
+
+     // 最近赛事列表
+     public function lateLyMatchList() {
+        return view('Index/lateLyMatchList');
+    }
+
+    // 最近活动列表
+    public function lateLyEventList() {
+        return view('Index/lateLyEventList');
+    }
 }

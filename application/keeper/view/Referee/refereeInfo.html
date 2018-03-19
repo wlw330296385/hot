@@ -200,7 +200,7 @@
                 </h5>
                 <div class="mui-card" style="margin:0 !important;border-radious:0 !important">
                     <ul class="mui-table-view mui-text-left" style="margin:0 !important">
-                        <li class="mui-table-view-cell mui-collapse">
+                        <li class="mui-table-view-cell mui-collapse teamli">
                             <a class="mui-navigate-right" href="#">
                                 <strong>所属球队</strong>
                             </a>
@@ -216,7 +216,7 @@
                                 </form>
                             </div>
                         </li>
-                        <li class="mui-table-view-cell mui-collapse">
+                        <li class="mui-table-view-cell mui-collapse matchli">
                             <a class="mui-navigate-right" href="#">
                                 <strong>所属球队比赛</strong>
                             </a>
@@ -520,9 +520,11 @@
             });
         };
 
-        $(document).on("tap", ".choiseDiv", function () {
+       $(document).on("tap", ".choiseDiv", function () {
             $(".choiseDiv").removeClass("bgorange");
             $(this).addClass("bgorange");
+            $(".teamli").removeClass("mui-active");
+            $(".matchli").addClass("mui-active");
             teamId = $(this).attr("data-team_id");
             toMatch();
         });
@@ -560,8 +562,14 @@
                         $(".choiseMatch").nextAll().remove();
                         $(newli).insertAfter(".choiseMatch");
                     } else {
+                        var btnArray = ['取消', '确认'];
+                        mui.confirm('该球队还没有比赛记录，去创建比赛吧', '', btnArray, function (e) {
+                            if (e.index == 1) {
+                                window.location.href = "{:url('team/createMatch')}" + "/team_id/" + teamId;
+                            }
+                        });
                         $(".choiseMatch").nextAll().remove();
-                        $("<div class='colorgray' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(".choiseMatch");
+                        $("<div class='colorgray nomatch' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(".choiseMatch");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
