@@ -273,7 +273,7 @@ class StatisticsCamp extends Backend{
         ->group('goods_id')->select();
         $list2 = $income2;
         if($this->campInfo['rebate_type'] == 1){
-            $income3 = db('income')->field("sum(income) as s_income,sum(schedule_income) as s_schedule_income,count('id') as c_id,sum(students) as s_students,lesson,goods,camp")
+            $income3 = db('income')->field("sum(income) as s_income,sum(schedule_income) as s_schedule_income,count('id') as c_id,sum(students) as s_students,lesson,goods,camp,camp_id,lesson_id")
             ->where(['camp_id'=>$camp_id,'type'=>3])
             ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
