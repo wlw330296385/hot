@@ -23,6 +23,7 @@
                 <a class="mui-control-item" href="#offlineMatchList">未公开</a>
                 <a class="mui-control-item" href="#finishedlineMatchList">完成</a>
                 <a class="mui-control-item" href="#notfinishedlineMatchList">未完成</a>
+                <a class="mui-control-item" href="#claimMatchList">比赛认领</a>
             </div>
         </div>
     </header>
@@ -48,6 +49,11 @@
             <div id="notfinishedlineMatchList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b finished-1"></ul>
+                </div>
+            </div>
+            <div id="claimMatchList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b claim"><li class="nodata"><p>没有相关数据哦</p></li></ul>
                 </div>
             </div>
         </div>
@@ -86,7 +92,8 @@
         var offCount = 1;
         var finishedCount = 1;
         var notfinishedCount = 1;
-
+        var claimCount = 1;
+        
         mui('#onlineMatchList').pullRefresh({
             down: {
                 //下拉刷新
@@ -164,6 +171,26 @@
                 contentrefresh: '正在加载...',
                 contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshNotFinished
+            }
+        });
+
+         mui('#claimMatchList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshClaim
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshClaim
             }
         });
 
@@ -247,7 +274,26 @@
                 toIsFinishedList('notfinishedlineMatchList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
+        
+        //下拉刷新具体业务实现（认领）
+        function pulldownRefreshClaim() {
+            setTimeout(function () {
+                claimCount = 1;//刷新并显示第一页
+                var page = claimCount;
+                var gType = 1;//代表下拉刷新
+                toIsFinishedList('claimMatchList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
 
+        //上拉加载具体业务实现（认领）
+        function pullupRefreshClaim() {
+            setTimeout(function () {
+                claimCount++;//翻下一页
+                var page = claimCount;
+                var gType = 2;//代表上拉加载
+                toIsFinishedList('claimMatchList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
 
     })
 
@@ -380,6 +426,7 @@
             }
         });
     };
+
 
     //拖拽后显示操作图标，点击操作图标删除元素；
     $('.OA_task_match').on('tap', '.mui-btn', function (match) {
