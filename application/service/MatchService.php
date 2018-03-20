@@ -183,11 +183,20 @@ class MatchService {
     }
 
     // 保存球队比赛战绩
-    public function saveMatchRecord($data) {
+    public function saveMatchRecord($data, $condition=[]) {
         $model = new MatchRecord();
-        // 根据提交的参数有无id 识别执行更新/插入数据
+        // 带更新条件更新数据
+        if (!empty($condition)) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 更新数据
         if (isset($data['id'])) {
-            // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -195,15 +204,14 @@ class MatchService {
                 trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
-            // 插入数据
-            $res = $model->allowField(true)->save($data);
-            if ($res) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
-            } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
