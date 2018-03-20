@@ -456,12 +456,17 @@ class StatisticsCamp extends Backend{
         if($lesson_id){
             $map['salary_in.lesson_id'] = $lesson_id;
         }
-        $scheduleList = db('salary_in')
-        ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
-        ->where($map)
-        ->join('schedule','schedule.id = salary_in.schedule_id')
-        ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
-        ->select();
+        if(isset($map)){
+            $scheduleList = db('salary_in')
+            ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
+            ->where($map)
+            ->join('schedule','schedule.id = salary_in.schedule_id')
+            ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->select();
+        }else{
+            $scheduleList = [];
+        }
+        
         // dump($scheduleList);die;
         $this->assign('scheduleList',$scheduleList);
 
@@ -576,8 +581,9 @@ class StatisticsCamp extends Backend{
         $month_end = strtotime($monthEnd)+86399;
         $goods_type = input('param.goods_type',1);
         $status = input('param.status',1);
-        $list = db('bill')->where(['camp'=>$camp_id,'goods_type'=>$goods_type,'status'=>1])->where('delete_time',null)->select();
+        $list = db('bill')->where(['camp_id'=>$camp_id,'goods_type'=>$goods_type])->where('delete_time',null)->select();
         //查询条件：camp_id，goods_type，monthstart，monthend
+        // dump($list);
         $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campBillList');
     }
@@ -593,6 +599,7 @@ class StatisticsCamp extends Backend{
             ->where(['camp'=>$camp_id,'type'=>-1])
             ->where(['create_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)->select();
+
         $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campWithdraw');
     }
@@ -605,9 +612,12 @@ class StatisticsCamp extends Backend{
         $month_end = strtotime($monthEnd)+86399;
         //查询条件：camp_id，monthstart，monthend
         $list = db('salary_in')
-            ->where(['camp'=>$camp_id,'type'=>1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
+            ->field('sum(salary) as s_salary,sum(push_salary) as s_push_salary,count(id) as s_id,member,realname,member_id,camp_id,camp')
+            ->where(['camp_id'=>$camp_id,'type'=>1])
+            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where('delete_time',null)
+            ->group('member_id')
+            ->select();
         $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campCoachSallaryMth');
     }
@@ -620,10 +630,16 @@ class StatisticsCamp extends Backend{
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $list = db('salary_in')
-            ->where(['camp'=>$camp_id,'type'=>1,'member_id'=>$member_id])
-            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
+            ->join('schedule','schedule.id=salary_in.schedule_id')
+            ->where(['salary_in.camp_id'=>$camp_id,'type'=>1,'member_id'=>$member_id])
+            ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where('salary_in.delete_time',null)
+            ->order('salary_in.id desc')
+            ->select();
+        // echo db('salary_in')->getlastsql();
+        // dump($list);
         $this->assign('list',$list);
+
         //查询条件：camp_id，member_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campCoachSallary');
     }

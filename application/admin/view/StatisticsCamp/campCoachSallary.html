@@ -77,8 +77,8 @@
                     {volist name="list" id="vol"}
                   <tr>
                     <td>{$vol.member}</td>
+                    <td>{$vol.salary+$vol.push_salary}</td>
                     <td class="sIn">{$vol.salary}</td>
-                    <td>{$vol.coach_salary}</td>
                     <td>{$vol.push_salary}</td>
                     <td>
                       {$vol.type}    
@@ -86,12 +86,16 @@
                     <td>{$vol.camp}</td>
                     <td>{$vol.schedule_time|date='Y-m-d',###}</td>
                     <td>
-                      课程：石厦学校兰球队（单价：100）<br>
-                      班级：石厦学校兰球队<br>
-                      上课时间：2018-03-11 16:30<br>
-                      正式学员人数：6<br>
-                      学员名单：周凯炀,周宇希,周浩楠,张毓楠,吴师隽,黄浩,<br>
-                      课时工资（供参考）：600                                        </td>
+                      课程：{$vol.lesson}（单价：{$vol.cost}）<br>
+                      班级：{$vol.grade}<br>
+                      上课时间：{$vol.lesson_time|date='Y-m-d H:i',###}<br>
+                      正式学员人数：{$vol.students}<br>
+                      学员名单：<?php $students = unserialize($vol['student_str']);
+                        foreach($students as $k =>$v){
+                          echo $v['student'].' ';
+                        }
+                      ?><br>
+                      课时工资（供参考）：{$vol.coach_salary}                                        </td>
                     <td>
                       <a href="/admin/schedule/detail/id/493" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看课时详情</i></a>
                     </td>
