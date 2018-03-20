@@ -56,6 +56,7 @@ class MatchService {
             $result['is_finished_num'] = $res->getData('is_finished');
             $result['status_num'] = $res->getData('status');
             $result['apply_status_num'] = $res->getData('apply_status');
+            $result['match_timestamp'] = $res->getData('match_time');
             return $result;
         } else {
             return $res;
