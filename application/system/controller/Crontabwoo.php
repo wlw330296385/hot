@@ -12,7 +12,7 @@ use app\model\CampFinance;
 use think\Controller;
 use think\Db;
 use think\Exception;
-use think\helper\Time;
+
 
 class Crontabwoo extends Controller {
     public $setting;
@@ -435,7 +435,8 @@ class Crontabwoo extends Controller {
     // 结算上一个月收入 会员分成
     public function salaryinrebate(){
         try {
-            list($start, $end) = Time::lastMonth();
+            $Time = new \think\helper\Time;
+            list($start, $end) = $Time ::lastMonth();
             $map['status'] = 1;
             $map['has_rebate'] = 0;
             $map['create_time'] = ['between', [$start, $end]];

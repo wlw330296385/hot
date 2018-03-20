@@ -181,8 +181,6 @@ class Index extends Controller{
             db('output')->insert($data);
             db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$data['output'])->update();
         }
-        
-
     }
 
     public function schedulecost(){
