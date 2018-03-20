@@ -218,28 +218,28 @@
         //遍历需要统计的数据列，并赋值到对应位置
 		var sSum=0;
         $(".sID").each(function () {
-            sSum = sSum + parseInt($(this).text());
+            sSum = sSum + parseFloat($(this).text());
         });
         var spSum=0;
         $(".sPay").each(function () {
-            spSum = spSum + parseInt($(this).text());
+            spSum = spSum + parseFloat($(this).text());
         });
         var eSum=0;
         $(".eID").each(function () {
-            eSum = eSum + parseInt($(this).text());
+            eSum = eSum + parseFloat($(this).text());
         });
         var epSum=0;
         $(".ePay").each(function () {
-            epSum = epSum + parseInt($(this).text());
+            epSum = epSum + parseFloat($(this).text());
         });
 
-        $(".eIDTotal").text('￥'+eSum);
-        $(".ePayTotal").text('￥'+epSum);
-        $(".sIDTotal").text('￥'+sSum);
-        $(".sPayTotal").text('￥'+spSum);
+        $(".eIDTotal").text(eSum);
+        $(".ePayTotal").text('￥'+epSum.toFixed(2));
+        $(".sIDTotal").text(sSum);
+        $(".sPayTotal").text('￥'+spSum.toFixed(2));
 
-        $(".monthLesson").text('￥'+spSum);
-        $(".monthEvent").text('￥'+epSum);
+        $(".monthLesson").text('￥'+spSum.toFixed(2));
+        $(".monthEvent").text('￥'+epSum.toFixed(2));
 
 
         //平台后续换成分页版（地区代理商无需分页）
@@ -304,6 +304,32 @@
             window.location.href="{:url('/admin/Statistics_Camp/campTurnover/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
+        //点击链接到详情页面
+        $("#lessonList a.btn").on("click", function () {
+            var camp_id = $("input[name=camp_id]").val();
+            localStorage.setItem('currGoodTypeID',"1");
+            var getYM = $("input[name=dateYM]").val();
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+            window.open("{:url('/admin/Statistics_Camp/campBillList/')}"+"camp_id/"+camp_id+"/goods_type/1/monthstart/"+beginDate+"/monthend/"+endDate);
+        })
+
+        //点击链接到详情页面
+        $("#eventList a.btn").on("click", function () {
+            var camp_id = $("input[name=camp_id]").val();
+            localStorage.setItem('currGoodTypeID',"2");
+            var getYM = $("input[name=dateYM]").val();
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.open("{:url('/admin/Statistics_Camp/campBillList/')}"+"camp_id/"+camp_id+"/goods_type/2/monthstart/"+beginDate+"/monthend/"+endDate);
+        })
 
 
     })

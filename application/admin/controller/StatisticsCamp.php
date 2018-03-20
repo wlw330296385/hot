@@ -175,23 +175,23 @@ class StatisticsCamp extends Backend{
 
         }else{
             // 课程订单收入
-            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>1])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 赠课支出
-            $output1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时退费
-            $output2 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output2 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>2])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 提现
-            $output_1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output_1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时教练支出
-            $output3 = db('output')->field("sum(output.output) as s_output,from_unixtime(output.schedule_time,'%Y%m%d') as days,sum(schedule.schedule_income) as s_schedule_income")->join('schedule','schedule.id=output.f_id')->where(['output.camp_id'=>$camp_id,'output.type'=>3])->where(['output.create_time'=>['between',[$month_start,$month_end]]])->where('output.delete_time',null)->group('days')->order('output.id desc')->select();
+            $output3 = db('output')->field("sum(output.output) as s_output,output.camp_id,from_unixtime(output.schedule_time,'%Y%m%d') as days,sum(schedule.schedule_income) as s_schedule_income")->join('schedule','schedule.id=output.f_id')->where(['output.camp_id'=>$camp_id,'output.type'=>3])->where(['output.create_time'=>['between',[$month_start,$month_end]]])->where('output.delete_time',null)->group('days')->order('output.id desc')->select();
 
             //平台分成
-            $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
             $list1 = []; $list2 = []; $list3 = []; $list4 = []; $list_1 = []; $list_income1 = []; $list_income2 = [];
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
-                $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00,'s_schedule_income'=>0];
-                $list_income1[$i] = $list_income2[$i] = ['s_income'=>0.00];
+                $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00,'s_schedule_income'=>0,'camp_id'=>0];
+                $list_income1[$i] = $list_income2[$i] = ['s_income'=>0.00,'camp_id'=>0];
             }
             foreach ($list1 as $key => &$value) {
                 foreach ($output1 as $k => $val) {
@@ -241,8 +241,7 @@ class StatisticsCamp extends Backend{
                         $value = $val;
                     }
                 }
-            } 
-
+            }
             $this->assign('list1',$list1);
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);
@@ -267,7 +266,7 @@ class StatisticsCamp extends Backend{
         $income = [];
         $list2 = [];//活动收入
         $list3 = [];//课时收入
-        $income2 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods_id,goods,camp,price,f_id")
+        $income2 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods_id,goods,camp,price,f_id,camp_id")
         ->where(['camp_id'=>$camp_id,'type'=>2])
         // ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
@@ -284,7 +283,7 @@ class StatisticsCamp extends Backend{
             $this->assign('list3',$list3);
             return view('StatisticsCamp/campIncome'); 
         }else{
-            $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id")
+            $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
             ->where(['camp_id'=>$camp_id,'type'=>1])
             ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)

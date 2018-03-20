@@ -109,33 +109,33 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+										<ul class="dataCol-3 colCount" linkTo="lessonSchedule">
 											{volist name='list4' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
 											<li class="colTotal" id="hotOut"><</li>
 										</ul>
-										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campGift/">
+										<ul class="dataCol-3 colCount" linkTo="campGift">
 											{volist name='list1' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
 											<li class="colTotal" id="giftOut"><</li>
 										</ul>
-										<ul class="dataCol-3 colCount" linkTo="/admin/Statistics_Camp/campBillList/status/-2/">
+										<ul class="dataCol-3 colCount" linkTo="campBillList/status/-2">
 											{volist name='list2' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
-											<li class="colTotal" id="refundOut"><</li> 
+											<li class="colTotal" id="refundOut"><</li>
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/campBillList/goods_type/1/">
+										<ul class="dataCol-2 colCount" linkTo="campBillList/goods_type/1">
 											{volist name='list_income1' id='vol'}
 											<li><span>{$vol.s_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="scheduleIn"></li>
 										</ul>
-										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/campBillList/goods_type/2/">>
+										<ul class="dataCol-2 colCount" linkTo="campBillList/goods_type/2">
 											{volist name='list_income2' id='vol'}
 											<li><span>{$vol.s_income}</span></li>
 											{/volist}
@@ -143,13 +143,13 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+										<ul class="dataCol-2 colCount" linkTo="lessonSchedule">
 											{volist name='list3' id='vol'}
 											<li><span>{$vol.s_schedule_income}</span></li>
 											{/volist}
 											<li class="colTotal" id="scheduleXF"></li>
 										</ul>
-										<ul class="dataCol-2 colCount" linkTo="/admin/Statistics_Camp/lessonSchedule/">
+										<ul class="dataCol-2 colCount" linkTo="lessonSchedule">
 											{volist name='list3' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
@@ -157,7 +157,7 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-1 colCount">
+										<ul class="dataCol-1 colCount" linkTo="campWithdraw">
 											{volist name='list_1' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
@@ -285,15 +285,15 @@
         $(".colCount").each(function () {
             var liNum = 0;
             $(this).find("li").not(".colTotal").each(function () {
-                liNum = liNum + parseInt($(this).text());
+                liNum = liNum + parseFloat($(this).text());
             });
-            $(this).find("li.colTotal").text(liNum);
+            $(this).find("li.colTotal").text(liNum.toFixed(2));
         });
 
-        var mOut = parseInt($("#hotOut").text())+parseInt($("#giftOut").text())+parseInt($("#refundOut").text());
-        var mIn = parseInt($("#scheduleIn").text())+parseInt($("#eventIn").text());
-        $(".monthIn").text(mIn);
-        $(".monthOut").text(mOut);
+        var mOut = parseFloat($("#hotOut").text())+parseFloat($("#giftOut").text())+parseFloat($("#refundOut").text());
+        var mIn = parseFloat($("#scheduleIn").text())+parseFloat($("#eventIn").text());
+        $(".monthIn").text(mIn.toFixed(2));
+        $(".monthOut").text(mOut.toFixed(2));
         $(".monthXF").text($("#scheduleXF").text());
         $(".monthTX").text($("#withdraw").text());
 
@@ -362,8 +362,9 @@
             localStorage.removeItem('currLessonID');
             localStorage.removeItem('currCoachName');
             localStorage.removeItem('currMemberID');
-            window.open(getLink+"camp_id/"+currCampID+"/monthstart/"+getDate+"/monthend/"+getDate);
-
+            if(getLink=="campBillList/goods_type/1"){
+                localStorage.setItem('currGoodTypeID','1');
+            }
             if(getLink=="campBillList/goods_type/2"){
                 localStorage.setItem('currGoodTypeID','2');
             }

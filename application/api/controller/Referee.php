@@ -1,6 +1,7 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
+use app\model\MatchRefereeApply;
 use app\service\CertService;
 use app\service\MatchService;
 use app\service\MessageService;
@@ -311,7 +312,21 @@ class Referee extends Base{
                 }
             }
 
-
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
 
             if ( isset($map['page']) ) {
                 unset($map['page']);
@@ -352,12 +367,27 @@ class Referee extends Base{
                 }
             }
 
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+
             if ( isset($map['page']) ) {
                 unset($map['page']);
             }
 
             // 查询申请|受邀比赛列表
-            $matchService = new MatchService();
             $matchService = new MatchService();
             $result = $matchService->getMatchRefereeApplyList($map, $page);
             if ($result) {
@@ -777,31 +807,54 @@ class Referee extends Base{
         }
     }
 
-    // 裁判-比赛订单
-    public function refereeorders() {
+    // 裁判最近比赛关系列表
+    public function refereelastmatch() {
         // 裁判-比赛申请|邀请+比赛裁判关联，未完成的比赛先列出
         try {
             $map = input('param.');
             $page = input('page', 1);
             $size = input('size', 10);
 
+            // 查询条件组合
+            // 默认查询比赛-裁判申请|邀请 status>0的数据
+            $map['match_referee_apply.status'] = ['gt', 0];
+
             if (input('page')) {
                 unset($map['page']);
             }
-
+            $matchService = new MatchService();
+            // 视图查询 裁判比赛申请|邀请与比赛信息，以比赛（match）表is_finished（比赛完成状态）升序排序，将未完成比赛先列出
             $list = Db::view('match_referee_apply')
-                ->view('match', ['*', 'status' => 'match_status'], 'match.id=match_referee_apply.match_id', 'left')
+                ->view('match', ['id' => 'match_id', 'name' => 'match'], 'match.id=match_referee_apply.match_id', 'left')
+                ->where($map)
                 ->whereNull('match_referee_apply.delete_time')
                 ->whereNull('match.delete_time')
-                ->order(['match.is_finished' => 'asc'])
+                ->order([
+                    'match.is_finished' => 'asc',
+                    'match.id' => 'desc'
+                ])
                 ->page($page)
                 ->limit($size)
                 ->select();
+
             if ($list) {
+                foreach ($list as $k => $val) {
+                    // 遍历查询比赛信息详细数据
+                    $match = $matchService->getMatch(['id' => $val['match_id']]);
+                    if ($match) {
+                        $list[$k]['match'] = $match;
+                    }
+                    // 遍历查询比赛战绩详细数据
+                    $matchRecord = $matchService->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
+                    if ($matchRecord) {
+                        $list[$k]['record'] = $matchRecord;
+                    }
+                }
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
-            } else { 
+            } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             }
+
             return json($response);
         } catch(Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

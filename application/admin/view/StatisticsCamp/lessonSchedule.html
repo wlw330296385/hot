@@ -458,6 +458,16 @@
                 alert("至少选择训练营、教练员、课程其中一项");
                 return false;
             }
+            var linkPram = "";
+            if(camp_id!=""){
+                linkPram = linkPram+"camp_id/"+camp_id+"/";
+			}
+            if(member_id!=""){
+                linkPram = linkPram+"member_id/"+member_id+"/";
+            }
+            if(lesson_id!=""){
+                linkPram = linkPram+"lesson_id/"+lesson_id+"/";
+            }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
             localStorage.setItem('currCampName',camp);
@@ -472,7 +482,7 @@
             var beginDate = arrYM[0]+arrYM[1]+'01';
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/lessonSchedule/')}"+"camp_id/"+camp_id+"/lesson_id/"+lesson_id+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            window.location.href="{:url('/admin/Statistics_Camp/lessonSchedule/')}"+linkPram+"monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
 

@@ -11,9 +11,6 @@ class TeamMemberRole extends Model {
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
-    protected $resultSetType = 'array';
-
-
     // type(球队角色)中文获取器
     // 球队角色:1队委|2副队长|3队长|4教练|5领队(经理)
     public function getTypeTextAttr($value, $data) {

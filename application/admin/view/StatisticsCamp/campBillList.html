@@ -68,7 +68,6 @@
 										<th>ID</th>
 										<th>订单号</th>
 										<th>购买会员</th>
-										<th>购买类型</th>
 										<th>购买商品</th>
 										<th>商品所属训练营</th>
 										<th>商品价格</th>
@@ -86,7 +85,6 @@
 										<td>{$vol.id}</td>
 										<td>>{$vol.bill_order}</td>
 										<td>{$vol.student}</td>
-										<td>课程</td>
 										<td>{$vol.goods}</td>
 										<td>{$vol.camp}</td>
 										<td>{$vol.balance_pay}</td>
@@ -271,14 +269,16 @@
             var camp_id = $("input[name=camp_id]").val();
             var goods_type = $("select[name=goods_type]").val();
             var getYM = $("input[name=dateYM]").val();
-            if(goods_type==""&&camp_id==""){
-                alert("请选择训练营和订单类型");
+            if(camp_id==""){
+                alert("请选择训练营");
                 return false;
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
             localStorage.setItem('currCampName',camp);
             localStorage.setItem('currCampID',camp_id);
+            localStorage.setItem('currGoodTypeID',goods_type);
+
             //拆分日期
             var arrYM = getYM.split('-');
             var getLastDate = new Date(arrYM[0],arrYM[1],0);
