@@ -272,10 +272,10 @@ class TeamService
             }
             if ($dataTeam) {
                 $updateTeam = db('team')->where('id', $teamMember['team_id'])->update($dataTeam);
-                if (!$updateTeam) {
+                /*if (!$updateTeam) {
                     trace('error:' . ', \n sql:' . db('team')->getLastSql(), 'error');
                     return ['code' => 100, 'msg' => __lang('MSG_400')];
-                }
+                }*/
             }
         }
         // 清理team_mebmer_role
