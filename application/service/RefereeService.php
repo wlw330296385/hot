@@ -93,9 +93,22 @@ class RefereeService{
     }
 
 
+    // 裁判列表（关联会员） 分页
+    public function getRefereeWithMemberPaginator( $map=[],$order='id desc',$paginate = 10) {
+        $res = $this->RefereeModel->with('member')
+            ->where($map)
+            ->order($order)
+            ->paginate($paginate);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
     // 裁判列表 分页
     public function getRefereePaginator( $map=[],$order='id desc',$paginate = 10) {
-        $res = $this->RefereeModel->with('member')
+        $res = $this->RefereeModel
             ->where($map)
             ->order($order)
             ->paginate($paginate);

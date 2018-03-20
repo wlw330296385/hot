@@ -571,6 +571,14 @@ class Team extends Base {
         return view('Team/matchListOfTeam');
     }
 
+    // 球队认领已完成比赛
+    public function claimfinshedmatch() {
+        // 比赛id
+        $matchId = input('match_id');
+
+        return view('Team/claimFinshedMatch');
+    }
+
     // 比赛报名/出席人员名单
     public function matchsignuplist() {
         // 活动详情数据

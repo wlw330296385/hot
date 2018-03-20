@@ -53,7 +53,7 @@ class Referee extends Base{
             }
             // 组合查询条件 end
 
-	        $res = $this->refereeService->getRefereePaginator($map);
+	        $res = $this->refereeService->getRefereeWithMemberPaginator($map);
 	        if ($res) {
 	            $response = ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res];
             } else {
@@ -417,6 +417,110 @@ class Referee extends Base{
         }
     }
 
+    // 获取裁判列表与裁判-比赛申请|邀请关系数据（分页）
+    public function getrefereepagewithmatchapply() {
+        try {
+            // 请求参数作查询条件（match_referee_apply）
+            $map = input('param.');
+            // 必须传入match_id
+            if (!isset($map['match_id'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请选择比赛id']);
+            }
+            $refereeService = new RefereeService();
+            $matchService = new MatchService();
+
+            // 平台正式裁判员列表
+            $refereeMap['status'] = 1;
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $refereeMap['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+            $refereeList = $refereeService->getRefereePaginator($refereeMap);
+
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+
+            if ($refereeList) {
+                // 遍历获取裁判与比赛申请|邀请关系
+                foreach ($refereeList['data'] as $k => $val) {
+                    $map['referee_id'] = $val['id'];
+                    $matchRefereeApply = $matchService->getMatchRerfereeApply($map);
+                    $refereeList['data'][$k]['match_apply'] = ($matchRefereeApply) ? $matchRefereeApply : [];
+                }
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $refereeList];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取裁判列表与裁判-比赛申请|邀请关系数据
+    public function getrefereelistwithmatchapply() {
+        try {
+            // 请求参数作查询条件（match_referee_apply）
+            $map = input('param.');
+            $page = input('page', 1);
+            // 必须传入match_id
+            if (!isset($map['match_id'])) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'，请选择比赛id']);
+            }
+            $refereeService = new RefereeService();
+            $matchService = new MatchService();
+            // 平台正式裁判员列表
+            $refereeMap['status'] = 1;
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $refereeMap['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+            $refereeList = $refereeService->getRefereeList($refereeMap, $page);
+
+            if ( isset($map['page']) ) {
+                unset($map['page']);
+            }
+
+            if ($refereeList) {
+                // 遍历获取裁判与比赛申请|邀请关系
+                foreach ($refereeList as $k => $val) {
+                    $map['referee_id'] = $val['id'];
+                    $matchRefereeApply = $matchService->getMatchRerfereeApply($map);
+                    $refereeList[$k]['match_apply'] = ($matchRefereeApply) ? $matchRefereeApply : [];
+                }
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $refereeList];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     // 裁判申请执裁比赛
     public function applymatchreferee() {
         try {
@@ -482,6 +586,7 @@ class Referee extends Base{
                 'referee_id' => $refereeInfo['id'],
                 'referee' => $refereeInfo['referee'],
                 'referee_avatar' => $refereeInfo['portraits'],
+                'referee_cost' => $refereeInfo['appearance_fee'],
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
                 'member_avatar' => $this->memberInfo['avatar'],

@@ -780,7 +780,7 @@ class MatchService {
     // 获取比赛申请|邀请裁判数据
     public function getMatchRerfereeApply($map=[]) {
         $model = new MatchRefereeApply();
-        $res = $model->with('match')->where($map)->find();
+        $res = $model->where($map)->find();
         if (!$res) {
             return $res;
         }
