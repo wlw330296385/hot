@@ -312,7 +312,21 @@ class Referee extends Base{
                 }
             }
 
-
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
 
             if ( isset($map['page']) ) {
                 unset($map['page']);
@@ -353,12 +367,27 @@ class Referee extends Base{
                 }
             }
 
+            // 关键字搜索:裁判名字
+            $keyword = input('keyword');
+            if (input('?param.keyword')) {
+                unset($map['keyword']);
+                // 关键字内容
+                if ($keyword != null) {
+                    if (!empty($keyword) || !ctype_space($keyword)) {
+                        $map['referee'] = ['like', "%$keyword%"];
+                    }
+                }
+            }
+            // 关键字null情况处理
+            if ($keyword == null) {
+                unset($map['keyword']);
+            }
+
             if ( isset($map['page']) ) {
                 unset($map['page']);
             }
 
             // 查询申请|受邀比赛列表
-            $matchService = new MatchService();
             $matchService = new MatchService();
             $result = $matchService->getMatchRefereeApplyList($map, $page);
             if ($result) {
