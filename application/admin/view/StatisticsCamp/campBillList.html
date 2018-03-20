@@ -269,9 +269,15 @@
             var camp_id = $("input[name=camp_id]").val();
             var goods_type = $("select[name=goods_type]").val();
             var getYM = $("input[name=dateYM]").val();
+            var linkPram = '';
             if(camp_id==""){
                 alert("请选择训练营");
                 return false;
+            }else{
+                linkPram = linkPram+"camp_id/"+camp_id+"/";
+            }
+            if(goods_type!=""){
+                linkPram = linkPram+"goods_type/"+goods_type+"/";
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
@@ -285,7 +291,7 @@
             var beginDate = arrYM[0]+arrYM[1]+'01';
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/campBillList/')}"+"camp_id/"+camp_id+"/goods_type/"+goods_type+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            window.location.href="{:url('/admin/Statistics_Camp/campBillList/')}"+linkPram+"monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
 
