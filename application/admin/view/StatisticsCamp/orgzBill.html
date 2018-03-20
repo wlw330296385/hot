@@ -157,7 +157,7 @@
 										</ul>
 									</td>
 									<td>
-										<ul class="dataCol-1 colCount">
+										<ul class="dataCol-1 colCount" linkTo="campWithdraw">
 											{volist name='list_1' id='vol'}
 											<li><span>{$vol.s_output}</span></li>
 											{/volist}
@@ -285,15 +285,15 @@
         $(".colCount").each(function () {
             var liNum = 0;
             $(this).find("li").not(".colTotal").each(function () {
-                liNum = liNum + parseInt($(this).text());
+                liNum = liNum + parseFloat($(this).text());
             });
-            $(this).find("li.colTotal").text(liNum);
+            $(this).find("li.colTotal").text(liNum.toFixed(2));
         });
 
-        var mOut = parseInt($("#hotOut").text())+parseInt($("#giftOut").text())+parseInt($("#refundOut").text());
-        var mIn = parseInt($("#scheduleIn").text())+parseInt($("#eventIn").text());
-        $(".monthIn").text(mIn);
-        $(".monthOut").text(mOut);
+        var mOut = parseFloat($("#hotOut").text())+parseFloat($("#giftOut").text())+parseFloat($("#refundOut").text());
+        var mIn = parseFloat($("#scheduleIn").text())+parseFloat($("#eventIn").text());
+        $(".monthIn").text(mIn.toFixed(2));
+        $(".monthOut").text(mOut.toFixed(2));
         $(".monthXF").text($("#scheduleXF").text());
         $(".monthTX").text($("#withdraw").text());
 

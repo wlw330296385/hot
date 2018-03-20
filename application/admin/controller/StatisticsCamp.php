@@ -241,8 +241,7 @@ class StatisticsCamp extends Backend{
                         $value = $val;
                     }
                 }
-            } 
-    dump($list2);
+            }
             $this->assign('list1',$list1);
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);
