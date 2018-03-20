@@ -280,21 +280,22 @@
                 <input type="text" name="referee_count" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_count}"
                     {/eq} class="data" placeholder="请填写随机安排的人数">
             </div>
-            <div class="mui-input-row refereeCount hide">
+            <div class="mui-input-row refereeCount hide h-auto">
                 <a href="#refereeAp" id="setRefereeAp" class="mui-navigate-right">
                     <label>裁判名单</label>
-                    <span class="refereeAp wd52" name="referee" style="width: 60%"></span>
+                    <span class="refereeAp wd52" style="width: 60%"></span>
                     <div class="hideApListIni"></div>
-                    <div class="hideApList"></div>
-                    <input type="hidden" name="referee_id" value="" class="data">
-                    <input type="hidden" name="referee_cost" value="" class="data">
+                    <div class="hideApList hide"></div>
+                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}" class="data">
+                    <input type="hidden" name="referee_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_cost}"
+                        {/eq} class="data">
                 </a>
             </div>
 
             <div class="mui-input-row refereeRow hide h-auto">
                 <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
-                    <label style="width:40%">裁判名单</label>
-                    <span class="referee wd52" name="referee" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                    <label>裁判名单</label>
+                    <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                     <div class="hideListIni">
                         {volist name="$refereeList" id="vol"}
                         <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
@@ -1111,7 +1112,6 @@
                 $(".referee").empty();
                 $(".refereeRow input[name=referee_id]").val("");
                 $('.refereeRow input[name=referee_cost]').val('');
-                // $('.refereeRow input[name=referee_count]').val('');
                 $(".hideList").empty();
                 var refereeMember = "";
                 var refereeMember_id = "";
@@ -1232,8 +1232,9 @@
                         return false;
                     }
                 });
+                console.log(refereeSum)
                 $(".hideApList").html(hideApList);
-                
+
                 //裁判列表复选框赋值
                 $("#setRefereeAp").on('tap', '', function () {
                     //每次打开先清空所有选择
@@ -1421,7 +1422,7 @@
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" ></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-id="' + $(this).attr("data-id") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-id="' + $(this).attr("data-id") + '"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                 });
@@ -1553,7 +1554,7 @@
         //     $("#AwayinactiveList .checkboxCont").each(function () { //循环checkboxCont
         //         $(this).find("label").text(i++);//更新序号
         //     });
-        //  }
+        //  }              $("#courtCostBear").children("option:selected").val()
 
         // 获取数据并进行提交
         function submitAction() {
@@ -1597,7 +1598,9 @@
             $("#inactiveList input[name=member]").each(function () {
                 member = $(this).attr("data-member");
                 member_id = $(this).attr("data-member_id");
-                HomeMemberList.push({ member: member, member_id: member_id });
+                name = $(this).attr("data-name");
+                id = $(this).attr("data-id");
+                HomeMemberList.push({ member: member, member_id: member_id,name:name,id:id });
             });
             console.log(HomeMemberList)
             ////////////////////////最终选择的活动人员/////////////////////////////////////////
@@ -1606,20 +1609,20 @@
             var idDelID = ""
             //去除活动人员
             $("#hideStListIni input[name=member]").each(function (i) {
-                var dsid = $(this).attr("data-member_id");
+                var dsid = $(this).attr("data-id");
                 //默认为要去除的活动人员
                 idDelID = "Yes";
                 //该人员遍历新编辑的活动人员表判断是否存在
                 $("#hideStList input[name=member]").each(function () {
-                    if (dsid == $(this).attr("data-member_id")) {
+                    if (dsid == $(this).attr("data-id")) {
                         idDelID = "No";
                         return false;
                     }
                 });
                 //上面遍历过不存在就添加到最终变动活动人员列表中
                 if (idDelID == "Yes") {
-                    var member_id = $(this).attr("data-member_id");
-                    HomeMemberListDel.push({ member_id: member_id, status: -1 });
+                    var member_id = $(this).attr("data-id");
+                    HomeMemberListDel.push({ member_id: member_id, name:name,id:id,status: -1 });
                 }
                 console.log(HomeMemberListDel)
             });
@@ -1640,156 +1643,134 @@
                 return false;
             }
 
-             // 提交裁判员出席数组
-             refereeAp_str = [];
-            $(".hideApListIni input").each(function () {
-                var referee = $(this).attr("data-referee");
-                var referee_id = $(this).attr("data-referee_id");
-                var referee_cost = $(this).attr("data-referee_cost");
-                var apply_status = $(this).attr("data-status");
-                refereeAp_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status:apply_status });
-            })
-            // 提交裁判员出席数组
-            referee_str = [];
-            $(".hideListIni input").each(function () {
-                var referee = $(this).attr("data-referee");
-                var referee_id = $(this).attr("data-referee_id");
-                var referee_cost = $(this).attr("data-referee_cost");
-                var apply_status = $(this).attr("data-status");
-                referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status:apply_status });
-            })
-
-
-
-
-
-
-            ////////////////////////系统邀请裁判名单//////////////////////////////////////// 
-            refereeApChange_str = [];
-            var apNewID = ""
-            //新增裁判
-            $(".hideApListIni input").each(function (i) {
-                var asid = $(this).attr("data-referee_id");
-                //默认为新添加裁判
-                apNewID = "Yes";
-                //该裁判遍历原裁判表判断是否存在
-                $(".hideApList input").each(function () {
-                    if (asid == $(this).attr("data-referee_id")) {
-                        apNewID = "No";
-                        return false;
-                    }
-                });
-                //上面遍历过不存在就添加到最终变动裁判列表中
-                if (apNewID == "Yes") {
+            var referee_type = $("#refereeSlecct").children("option:selected").val();
+            if (referee_type == 1) {
+                $(".refereeRow input[name=referee_cost]").removeClass('data');
+                // 提交裁判员出席数组
+                refereeAp_str = [];
+                $(".hideApListIni input").each(function () {
                     var referee = $(this).attr("data-referee");
                     var referee_id = $(this).attr("data-referee_id");
                     var referee_cost = $(this).attr("data-referee_cost");
                     var apply_status = $(this).attr("data-status");
-                    refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status: apply_status });
-                }
-            });
-
-            var apDelID = ""
-            //去除裁判
-            $(".hideApListIni input").each(function (i) {
-                var adsid = $(this).attr("data-referee_id");
-                //默认为要去除的裁判
-                apDelID = "Yes";
-                //该裁判遍历新编辑的表判断是否存在
-                $(".hideApList input").each(function () {
-                    if (adsid == $(this).attr("data-referee_id")) {
-                        apDelID = "No";
-                        return false;
+                    refereeAp_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                });
+                ////////////////////////系统邀请裁判名单//////////////////////////////////////// 
+                refereeApChange_str = [];
+                var apNewID = ""
+                //新增裁判
+                $(".hideApList input").each(function (i) {
+                    var asid = $(this).attr("data-referee_id");
+                    //默认为新添加裁判
+                    apNewID = "Yes";
+                    //该裁判遍历原裁判表判断是否存在
+                    $(".hideApListIni input").each(function () {
+                        if (asid == $(this).attr("data-referee_id")) {
+                            apNewID = "No";
+                            return false;
+                        }
+                    });
+                    //上面遍历过不存在就添加到最终变动裁判列表中
+                    if (apNewID == "Yes") {
+                        var referee = $(this).attr("data-referee");
+                        var referee_id = $(this).attr("data-referee_id");
+                        var referee_cost = $(this).attr("data-referee_cost");
+                        var apply_status = $(this).attr("data-status");
+                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
                     }
                 });
-                //上面遍历过不存在就添加到最终变动学员列表中
-                if (apDelID == "Yes") {
-                    var referee = $(this).attr("data-referee");
-                    var referee_id = $(this).attr("data-referee_id");
-                    var referee_cost = $(this).attr("data-referee_cost");
-                    var apply_status = $(this).attr("data-status");
-                    refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status: apply_status });
-                }
-            });
-            ////////////////////////系统邀请裁判名单///////////////////////////////////////// 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-           
-            ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
-            refereeChange_str = [];
-            var NewID = ""
-            //新增裁判
-            $(".hideList input").each(function (i) {
-                var sid = $(this).attr("data-referee_id");
-                //默认为新添加裁判
-                NewID = "Yes";
-                //该裁判遍历原裁判表判断是否存在
+                var apDelID = ""
+                //去除裁判
+                $(".hideApList input").each(function (i) {
+                    var adsid = $(this).attr("data-referee_id");
+                    //默认为要去除的裁判
+                    apDelID = "Yes";
+                    //该裁判遍历新编辑的表判断是否存在
+                    $(".hideApListIni input").each(function () {
+                        if (adsid == $(this).attr("data-referee_id")) {
+                            apDelID = "No";
+                            return false;
+                        }
+                    });
+                    //上面遍历过不存在就添加到最终变动学员列表中
+                    if (apDelID == "Yes") {
+                        var referee = $(this).attr("data-referee");
+                        var referee_id = $(this).attr("data-referee_id");
+                        var referee_cost = $(this).attr("data-referee_cost");
+                        var apply_status = $(this).attr("data-status");
+                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                    }
+                });
+                console.log(refereeApChange_str)
+                ////////////////////////系统邀请裁判名单///////////////////////////////////////// 
+            } else if (referee_type == 2) {
+                $("input[name=referee_count]").val('');
+                $(".refereeCount input[name=referee_cost]").removeClass('data');
+                // 提交裁判员出席数组
+                referee_str = [];
                 $(".hideListIni input").each(function () {
-                    if (sid == $(this).attr("data-referee_id")) {
-                        NewID = "No";
-                        return false;
-                    }
-                });
-                //上面遍历过不存在就添加到最终变动裁判列表中
-                if (NewID == "Yes") {
                     var referee = $(this).attr("data-referee");
                     var referee_id = $(this).attr("data-referee_id");
                     var referee_cost = $(this).attr("data-referee_cost");
                     var apply_status = $(this).attr("data-status");
-                    if(apply_status == "undefined"){
-                        apply_status = 0
-                    }
-                    refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status: apply_status });
-                }
-            });
+                    referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                });
 
-            var DelID = ""
-            //去除裁判
-            $(".hideListIni input").each(function (i) {
-                var dsid = $(this).attr("data-referee_id");
-                //默认为要去除的裁判
-                DelID = "Yes";
-                //该裁判遍历新编辑的表判断是否存在
-                $(".hideList input").each(function () {
-                    if (dsid == $(this).attr("data-referee_id")) {
-                        DelID = "No";
-                        return false;
+                ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
+                refereeChange_str = [];
+                var NewID = ""
+                //新增裁判
+                $(".hideList input").each(function (i) {
+                    var sid = $(this).attr("data-referee_id");
+                    //默认为新添加裁判
+                    NewID = "Yes";
+                    //该裁判遍历原裁判表判断是否存在
+                    $(".hideListIni input").each(function () {
+                        if (sid == $(this).attr("data-referee_id")) {
+                            NewID = "No";
+                            return false;
+                        }
+                    });
+                    //上面遍历过不存在就添加到最终变动裁判列表中
+                    if (NewID == "Yes") {
+                        var referee = $(this).attr("data-referee");
+                        var referee_id = $(this).attr("data-referee_id");
+                        var referee_cost = $(this).attr("data-referee_cost");
+                        var apply_status = $(this).attr("data-status");
+                        if (apply_status == "undefined") {
+                            apply_status = 0
+                        }
+                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
                     }
                 });
-                //上面遍历过不存在就添加到最终变动学员列表中
-                if (DelID == "Yes") {
-                    var referee = $(this).attr("data-referee");
-                    var referee_id = $(this).attr("data-referee_id");
-                    var referee_cost = $(this).attr("data-referee_cost");
-                    var apply_status = $(this).attr("data-status");
-                    if(apply_status == "undefined"){
-                        apply_status = 0
+                var DelID = ""
+                //去除裁判
+                $(".hideListIni input").each(function (i) {
+                    var dsid = $(this).attr("data-referee_id");
+                    //默认为要去除的裁判
+                    DelID = "Yes";
+                    //该裁判遍历新编辑的表判断是否存在
+                    $(".hideList input").each(function () {
+                        if (dsid == $(this).attr("data-referee_id")) {
+                            DelID = "No";
+                            return false;
+                        }
+                    });
+                    //上面遍历过不存在就添加到最终变动学员列表中
+                    if (DelID == "Yes") {
+                        var referee = $(this).attr("data-referee");
+                        var referee_id = $(this).attr("data-referee_id");
+                        var referee_cost = $(this).attr("data-referee_cost");
+                        var apply_status = $(this).attr("data-status");
+                        if (apply_status == "undefined") {
+                            apply_status = 0
+                        }
+                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
                     }
-                    refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost,apply_status: apply_status });
-                }
-            });
-            ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
+                });
+                ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
 
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -1804,10 +1785,14 @@
             objData.remarks = remarks;
             var description = $('textarea.description').val();
             objData.description = description;
-            objData.referee_str = JSON.stringify(referee_str);
-            objData.refereeAp_str = JSON.stringify(refereeAp_str);
-            objData.refereeChange_str = JSON.stringify(refereeChange_str);
-            objData.refereeApChange_str = JSON.stringify(refereeApChange_str);
+            if (referee_type == 1) {
+                objData.refereeAp_str = JSON.stringify(refereeAp_str);
+                objData.refereeApChange_str = JSON.stringify(refereeApChange_str);
+            } else if (referee_type == 2) {
+                objData.referee_str = JSON.stringify(referee_str);
+                objData.refereeChange_str = JSON.stringify(refereeChange_str);
+            }
+
 
             var url = "{:url('api/match/storefriendlymatchrecord')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -1937,7 +1922,7 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].member + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].member + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" type="checkbox" ></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" type="checkbox" ></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
@@ -2014,12 +1999,11 @@
                         var inactiveDiv = '';
                         totalLength = data.data.length;
                         $(".mui-badge").text(totalLength);
-
                         HomeMemberList = [];//报名人员列表数组
                         $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].member + '</font><input name="member" value="' + data.data[i].member_id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" ></div>'
-                            HomeMemberList.push({ member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '"></div>'
+                            HomeMemberList.push({name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
                         };
                         console.log(HomeMemberList)
 
@@ -2159,7 +2143,7 @@
                     status: 1,
                     page: page,
                     keyword: keyword,
-                    match_id:match_id
+                    match_id: match_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -2171,7 +2155,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data.data[i].referee + '</label>';
-                                if (data.data.data[i].match_apply.status == 1) {
+                            if (data.data.data[i].match_apply.status == 1) {
                                 newli += '<span class="wd45">未回复</span>';
                             } else if (data.data.data[i].match_apply.status == 2) {
                                 newli += '<span class="wd45">已同意</span>';
