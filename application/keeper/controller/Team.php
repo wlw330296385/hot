@@ -582,49 +582,48 @@ class Team extends Base {
         $matchInfo = $matchService->getMatch(['id' => $matchId]);
         // 获取要认领的比赛战绩数据
         $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id']]);
-        // 进入认领编辑页按钮显示判断
-        $canClaim = 0;
+
         // 比赛战绩是属于球队的话，插入球队认领的比赛战绩数据
         if ($matchRecordInfo) {
-            if ($matchRecordInfo['away_team_id'] == $this->team_id) {
-                // 比赛双方球队比分信息数据位置对换
-                $claimRecordData = [
-                    'match_id' => $matchInfo['id'],
-                    'match' => $matchRecordInfo['away_team'] . ' vs ' . $matchRecordInfo['home_team'],
-                    'match_schedule_id' => $matchRecordInfo['match_schedule_id'],
-                    'match_time' => $matchRecordInfo['match_time'],
-                    'team_id' => $this->team_id,
-                    'home_team_id' => $this->team_id,
-                    'home_team' => $matchRecordInfo['away_team'],
-                    'home_team_logo' => $matchRecordInfo['away_team_logo'],
-                    'home_team_color' => $matchRecordInfo['away_team_color'],
-                    'home_team_colorstyle' => $matchRecordInfo['away_team_colorstyle'],
-                    'home_score' => $matchRecordInfo['away_score'],
-                    "away_team_id" => $matchRecordInfo['home_team_id'],
-                    "away_team" => $matchRecordInfo['home_team'],
-                    "away_team_logo" => $matchRecordInfo['home_team_logo'],
-                    "away_team_color" => $matchRecordInfo['home_team_color'],
-                    "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
-                    "away_score" => $matchRecordInfo['home_score'],
-                    'win_team_id' => $matchRecordInfo['win_team_id'],
-                    'claim_status' => 0,
-                    'claim_team_id' => $this->team_id,
-                    'claim_record_id' => $matchRecordInfo['id']
-                ];
-                // 查询有无已有数据
-                $hasClaimRecord = $matchService->getMatchRecord([
-                    'match_id' => $matchInfo['id'],
-                    'claim_team_id' => $this->team_id,
-                    'claim_record_id' => $matchRecordInfo['id']
-                ]);
-                if ($hasClaimRecord) {
-                    $claimRecordData['id'] = $hasClaimRecord['id'];
-                }
-                $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
-                $canClaim = 1;
-                $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
+            // 比赛双方球队比分信息数据位置对换
+            $claimRecordData = [
+                'match_id' => $matchInfo['id'],
+                'match' => $matchRecordInfo['away_team'] . ' vs ' . $matchRecordInfo['home_team'],
+                'match_schedule_id' => $matchRecordInfo['match_schedule_id'],
+                'match_time' => $matchRecordInfo['match_time'],
+                'team_id' => $this->team_id,
+                'home_team_id' => $this->team_id,
+                'home_team' => $matchRecordInfo['away_team'],
+                'home_team_logo' => $matchRecordInfo['away_team_logo'],
+                'home_team_color' => $matchRecordInfo['away_team_color'],
+                'home_team_colorstyle' => $matchRecordInfo['away_team_colorstyle'],
+                'home_score' => $matchRecordInfo['away_score'],
+                "away_team_id" => $matchRecordInfo['home_team_id'],
+                "away_team" => $matchRecordInfo['home_team'],
+                "away_team_logo" => $matchRecordInfo['home_team_logo'],
+                "away_team_color" => $matchRecordInfo['home_team_color'],
+                "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
+                "away_score" => $matchRecordInfo['home_score'],
+                'win_team_id' => $matchRecordInfo['win_team_id'],
+                'claim_status' => 0,
+                'claim_team_id' => $this->team_id,
+                'claim_record_id' => $matchRecordInfo['id']
+            ];
+            // 查询有无已有数据
+            $hasClaimRecord = $matchService->getMatchRecord([
+                'match_id' => $matchInfo['id'],
+                'claim_team_id' => $this->team_id,
+                'claim_record_id' => $matchRecordInfo['id']
+            ]);
+            if ($hasClaimRecord) {
+                $claimRecordData['id'] = $hasClaimRecord['id'];
             }
+            $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
+            $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
         }
+
+        // 进入认领编辑页按钮显示判断
+        $canClaim = ($matchRecordInfo['away_team_id'] == $this->team_id) ? 1 : 0;
         // 裁判列表
         $refereeList= [];
         if (!empty($matchInfo['referee_str'])) {

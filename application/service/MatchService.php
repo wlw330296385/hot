@@ -248,6 +248,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res['data'] as $k => $val) {
+                $res['data'][$k]['match_timestamp'] = $val['match_time'];
+                $res['data'][$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res['data'][$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res['data'][$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
@@ -284,6 +286,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
@@ -319,6 +323,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();

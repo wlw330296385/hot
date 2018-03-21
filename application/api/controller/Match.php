@@ -320,280 +320,280 @@ class Match extends Base
 
     // 更新球队比赛
     public function updateteammatch() {
-        // 接收输入变量 其中post[record]为match_record保存数据
-        $post = input('post.');
-        // 验证提交参数
-        if (!$post['id']) {
-            return json(['code' => 100, 'msg' => __lang('MSG_402').'，缺少比赛id']);
-        }
-        if (!$post['record']['id']) {
-            return json(['code' => 100, 'msg' => __lang('MSG_402').'，缺少比赛战绩id']);
-        }
-        // service
-        $matchS = new MatchService();
-        $teamS = new TeamService();
-        $messageS = new MessageService();
+        try {
 
-        // 获取当前比赛数据、比赛战绩数据
-        $match_id = $post['id'];
-        $match = $matchS->getMatch(['id' => $match_id]);
-        $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
-        if (!$match) {
-            return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
-        }
-
-        // post[match_time] 比赛时间转为时间戳格式
-        $matchTimeStamp = strtotime($post['match_time']);
-        // 比赛完成状态match is_finished标识
-        $isFinished = 0;
-        // 提取球队、比分变量
-        $homeTeamId = $post['record']['home_team_id'];
-        $homeScore = $post['record']['home_score'];
-        $awayTeamId = $post['record']['away_team_id'];
-        $awayScore = $post['record']['away_score'];
-        // 提交is_finished=1 即比赛完成（match记录完成状态is_finished）
-        if (isset($post['is_finished'])) {
-            if ($post['is_finished'] == 1) {
-                if (empty($post['record']['away_team_id']) && empty($post['record']['away_team'])) {
-                    return json(['code' => 100, 'msg' => '请填写客队信息']);
-                }
-                $isFinished = 1;
-                $post['finished_time'] = $matchTimeStamp;
+            // 接收输入变量 其中post[record]为match_record保存数据
+            $post = input('post.');
+            // 验证提交参数
+            if (!$post['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，缺少比赛id']);
             }
-        }
-
-        // 组合match_record保存数据
-        $recordData = $post['record'];
-        $recordData['match_time'] = $matchTimeStamp;
-        // 相册不为空保存数据
-        if (isset($post['album']) && $post['album'] != "[]") {
-            $recordData['album'] = $post['album'];
-        }
-        // recordData[win_team_id]: 比赛胜利球队id
-        if ($isFinished == 1) {
-            if ($homeScore > 0 && $awayScore > 0) {
-                if ($homeScore >= $awayScore) {
-                    $recordData['win_team_id'] = $recordData['home_team_id'];
-                } else {
-                    $recordData['win_team_id'] = $recordData['away_team_id'];
-                }
+            if (!$post['record']['id']) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . '，缺少比赛战绩id']);
             }
-        }
-        // 组合match_record保存数据 end
-        // 组合match保存数据
-        $dataMatch = $post;
-        $dataMatch['match_time'] = $matchTimeStamp;
-        // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
-        if (!empty($post['record']['away_team'])) {
-            $matchName = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
-        } else {
-            $matchName = $post['record']['home_team'] . ' vs （待定）';
-        }
-        $recordData['match'] = $matchName;
-        $dataMatch['name'] = $matchName;
-        if ($isFinished ==1 ){
-            $dataMatch['is_live'] = -1;
-        }
-        // 保存比赛球队成员
-        // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
-        if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
-            $homeMember = json_decode($post['HomeMemberData'], true);
-            $dataUpdateTeamMember = [];
-            foreach ($homeMember as $k => $member) {
-                // 查询有无match_record_member原数据，有则更新原数据否则插入新数据
-                $hasMatchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
-                if ($hasMatchRecordMember) {
-                    $homeMember[$k]['id'] = $hasMatchRecordMember['id'];
-                }
-                // 获取球队成员数据
-                $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
-                $homeMember[$k]['match_id'] = $match['id'];
-                $homeMember[$k]['match'] = $matchName;
-                $homeMember[$k]['team_id'] = $recordData['home_team_id'];
-                $homeMember[$k]['team'] = $recordData['home_team'];
-                $homeMember[$k]['match_record_id'] = $recordData['id'];
-                $homeMember[$k]['avatar'] = ($teamMember) ? $teamMember['avatar'] : config('default_image.member_avatar');
-                $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
-                $homeMember[$k]['status'] = 1;
-                $homeMember[$k]['is_checkin'] = 1;
-                // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
-                if ($isFinished == 1) {
-                    $homeMember[$k]['is_attend'] = 1;
+            // service
+            $matchS = new MatchService();
+            $teamS = new TeamService();
+            $messageS = new MessageService();
 
-                    // 批量更新team_member 比赛数match_num
-                    if ($hasMatchRecordMember['is_checkin'] != 1) {
-                        //dump($teamMember);
-                        if ($teamMember) {
-                            $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
-                            $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
-                        }
+            // 获取当前比赛数据、比赛战绩数据
+            $match_id = $post['id'];
+            $match = $matchS->getMatch(['id' => $match_id]);
+            $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
+            if (!$match) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
+            }
+
+            // post[match_time] 比赛时间转为时间戳格式
+            $matchTimeStamp = strtotime($post['match_time']);
+            // 比赛完成状态match is_finished标识
+            $isFinished = 0;
+            // 提取球队、比分变量
+            $homeTeamId = $post['record']['home_team_id'];
+            $homeScore = $post['record']['home_score'];
+            $awayTeamId = $post['record']['away_team_id'];
+            $awayScore = $post['record']['away_score'];
+            // 提交is_finished=1 即比赛完成（match记录完成状态is_finished）
+            if (isset($post['is_finished'])) {
+                if ($post['is_finished'] == 1) {
+                    if (empty($post['record']['away_team_id']) && empty($post['record']['away_team'])) {
+                        return json(['code' => 100, 'msg' => '请填写客队信息']);
                     }
-                }
-            }
-            //dump($dataUpdateTeamMember);
-            $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
-//                        if ($saveHomeTeamMemberRes['code'] == 100) {
-//                            return json($saveHomeTeamMemberRes);
-//                        }
-            $teamS->saveAllTeamMember($dataUpdateTeamMember);
-        }
-        // 剔除不显示的成员名单（无效 status=-1）
-        if (isset($post['HomeMemberDataDel']) && $post['HomeMemberDataDel'] != "[]") {
-            $memberArr = json_decode($post['HomeMemberDataDel'], true);
-            $dataUpdateTeamMemberDec = [];
-            foreach ($memberArr as $k => $member) {
-                // 查询有无match_record_member原数据，有则更新原数据否则插入新数据
-                $hasMatchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
-                if ($hasMatchRecordMember2) {
-                    $memberArr[$k]['id'] = $hasMatchRecordMember2['id'];
-                }
-                $memberArr[$k]['match'] = $matchName;
-                $memberArr[$k]['status'] = -1;
-                $memberArr[$k]['is_checkin'] = -1;
-
-                // 批量更新team_member 比赛数match_num
-                $teamMember = $teamS->getTeamMemberInfo(['team_id' => $recordData['home_team_id'], 'member_id' => $member['member_id'], 'member' => $member['member']]);
-                //dump($teamMember);
-                if ($teamMember) {
-                    $dataUpdateTeamMemberDec[$k]['id'] = $teamMember['id'];
-                    $dataUpdateTeamMemberDec[$k]['match_num'] = $teamMember['match_num'] - 1;
-                }
-            }
-            $resultsaveMatchRecordMember2 = $matchS->saveAllMatchRecordMember($memberArr);
-//                        if ($resultsaveMatchRecordMember2['code'] == 100) {
-//                            return json($resultsaveMatchRecordMember2);
-//                        }
-            $teamS->saveAllTeamMember($dataUpdateTeamMemberDec);
-        }
-        // 保存比赛球队成员 end
-        // 保存match_record数据成功 保存match数据
-        $resultSaveMatchRecord = $matchS->saveMatchRecord($recordData);
-        if ($resultSaveMatchRecord['code'] == 100) {
-            return json(['code' => 100, 'msg' => '保存比赛比分失败']);
-        } else {
-            // 更新match数据
-            $resultSaveMatch = $matchS->saveMatch($dataMatch);
-            if ($resultSaveMatch['code'] == 100) {
-                return json(['code' => 100, 'msg' => '更新比赛信息失败']);
-            }
-            // 更新球队胜场数、比赛场数
-            $matchS->countTeamMatchNum($homeTeamId);
-            $matchS->countTeamMatchNum($awayTeamId);
-
-            // 原match_record表away_team字段为空并post提交away_team不为空 代表对away_team发送约战邀请
-            if ( empty($matchRecord['away_team']) && !empty($recordData['away_team']) ) {
-                // 发送比赛邀请给对手球队
-                $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
-                if ($awayTeam) {
-                    // 保存约战申请
-                    $applyData = [
-                        'match_id' => $match['id'],
-                        'match' => $matchName,
-                        'team_id' => $post['team_id'],
-                        'team' => $recordData['home_team'],
-                        'telphone' => $this->memberInfo['telephone'],
-                        'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
-                        'member_id' => $this->memberInfo['id'],
-                        'member' => $this->memberInfo['member'],
-                        'member_avatar' => $this->memberInfo['avatar'],
-                        'revice_team_id' => $awayTeam['id'],
-                        'revice_team' => $awayTeam['name'],
-                        'status' => 1
-                    ];
-                    $resApply = $matchS->saveMatchApply($applyData);
-                    // 组合推送消息内容
-                    $dataMessage = [
-                        'title' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
-                        'content' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
-                        'url' => url('keeper/team/matchapplyinfo', ['apply_id' => $resApply['data'], 'team_id' => $awayTeam['id']], '', true),
-                        'keyword1' => '球队发起约战',
-                        'keyword2' => $this->memberInfo['member'],
-                        'keyword3' => date('Y-m-d h:i', time()),
-                        'remark' => '请登录平台进入球队管理-》约战申请回复处理',
-                        // 比赛发布球队id
-                        'team_id' => $post['team_id'],
-                        'steward_type' => 2
-                    ];
-                    // 推送消息给发布比赛的球队领队
-                    $messageS->sendMessageToMember($awayTeam['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
-                    // 保存球队公告
-                    $teamS->saveTeamMessage($dataMessage);
+                    $isFinished = 1;
+                    $post['finished_time'] = $matchTimeStamp;
                 }
             }
 
-            // 比赛完成的操作
+            // 组合match_record保存数据
+            $recordData = $post['record'];
+            $recordData['match_time'] = $matchTimeStamp;
+            // 相册不为空保存数据
+            if (isset($post['album']) && $post['album'] != "[]") {
+                $recordData['album'] = $post['album'];
+            }
+            // recordData[win_team_id]: 比赛胜利球队id
             if ($isFinished == 1) {
-                // (比赛未完成执行的操作)
-                if ($match['is_finished_num'] === 0) {
-                    // 保存球队历史比赛对手信息
-                    // 查询有无原数据
-                    $mapHistoryTeam = [
-                        'team_id' => $post['record']['home_team_id'],
-                        'opponent_team_id' => $post['record']['away_team_id']
-                    ];
-                    $historyTeam = $matchS->getHistoryTeam($mapHistoryTeam);
-                    // 插入新数据
-                    if (!$historyTeam) {
-                        $dataHistoryTeam = [
-                            'team_id' => $post['record']['home_team_id'],
-                            'team' => $post['record']['home_team'],
-                            'opponent_team_id' => $post['record']['away_team_id'],
-                            'opponent_team' => $post['record']['away_team'],
-                            'match_num' => 1
-                        ];
+                if ($homeScore > 0 && $awayScore > 0) {
+                    if ($homeScore >= $awayScore) {
+                        $recordData['win_team_id'] = $recordData['home_team_id'];
                     } else {
-                        // 更新原数据 比赛次数+1
-                        $dataHistoryTeam['id'] = $historyTeam['id'];
-                        $dataHistoryTeam['match_num'] = $historyTeam['match_num'] + 1;
+                        $recordData['win_team_id'] = $recordData['away_team_id'];
                     }
-                    $matchS->saveHistoryTeam($dataHistoryTeam);
-                    // 保存球队历史比赛对手信息 end
-
-                    // 发送比赛完成信息给对手球队
-                    // 发送比赛完成信息给对手球队 end
                 }
+            }
+            // 组合match_record保存数据 end
+            // 组合match保存数据
+            $dataMatch = $post;
+            $dataMatch['match_time'] = $matchTimeStamp;
+            // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
+            if (!empty($post['record']['away_team'])) {
+                $matchName = $post['record']['home_team'] . ' vs ' . $post['record']['away_team'];
+            } else {
+                $matchName = $post['record']['home_team'] . ' vs （待定）';
+            }
+            $recordData['match'] = $matchName;
+            $dataMatch['name'] = $matchName;
+            if ($isFinished == 1) {
+                $dataMatch['is_live'] = -1;
+            }
+            // 保存比赛球队成员
+            // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
+            if (isset($post['HomeMemberData']) && $post['HomeMemberData'] != "[]") {
+                $homeMember = json_decode($post['HomeMemberData'], true);
+                $dataUpdateTeamMember = [];
+                foreach ($homeMember as $k => $member) {
+                    // 提交有match_record_member的id主键
+                    // 查询球员有无对应比赛match_record_member记录
+                    if (isset($member['id'])) {
+                        $matchRecordMember = $matchS->getMatchRecordMember(['id' => $member['id']]);
+                    } else {
+                        $matchRecordMember = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member|name' => $member['name']]);
+                    }
+                    if ($matchRecordMember) {
+                        // 更新match_record_member
+                        $homeMember[$k]['id'] = $matchRecordMember['id'];
+                    }
+                    // 获取球队成员数据
+                    $teamMember = $teamS->getTeamMemberInfo(['id' => $member['tmid']]);
+                    $homeMember[$k]['match_id'] = $match['id'];
+                    $homeMember[$k]['match'] = $matchName;
+                    $homeMember[$k]['team_id'] = $recordData['home_team_id'];
+                    $homeMember[$k]['team'] = $recordData['home_team'];
+                    $homeMember[$k]['team_member_id'] = ($teamMember) ? $teamMember['id'] : 0;
+                    $homeMember[$k]['match_record_id'] = $recordData['id'];
+                    $homeMember[$k]['avatar'] = ($teamMember['member_id'] > 0) ? $teamMember['avatar'] : config('default_image.member_avatar');
+                    $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
+                    $homeMember[$k]['status'] = 1;
+                    $homeMember[$k]['is_checkin'] = 1;
+                    // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
+                    if ($isFinished == 1) {
+                        $homeMember[$k]['is_attend'] = 1;
 
-                // 保存裁判出席名单
-                if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
-                    $matchRefereeAttend = [];
-                    // 转换裁判出席比赛名单格式
-                    $refereeAttends = json_decode($post['refereeAttend_str'], true);
-                    if ($refereeAttends) {
-                        // 遍历组合更新match_referee数据
-                        foreach ($refereeAttends as $k => $referee) {
-                            $matchRefereeAttend[$k] = [
-                                'match_id' => $post['id'],
-                                'match_record_id' => $recordData['id'],
-                                'referee_id' => $referee['referee_id'],
-                                'referee' => $referee['referee'],
-                                'appearance_fee' => $referee['referee_cost'],
-                                'is_attend' => 2, //裁判出席比赛is_attend=2
-                                'status' => 1
-                            ];
-                            $matchRefereeInfo = $matchS->getMatchReferee([
-                                'match_id' => $post['id'],
-                                'match_record_id' => $recordData['id'],
-                                'referee_id' => $referee['referee_id'],
-                                'referee' => $referee['referee'],
-                                'appearance_fee' => $referee['referee_cost'],
-                            ]);
-                            if ($matchRefereeInfo) {
-                                $matchRefereeAttend[$k]['id'] = $matchRefereeInfo['id'];
+                        // 批量更新team_member 比赛数match_num
+                        if ($matchRecordMember['is_checkin'] == 1) {
+                            if ($teamMember) {
+                                $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
+                                $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
                             }
                         }
-                        // 批量更新match_referee数据
-                        $resSaveMatchReferee = $matchS->saveAllMatchReferee($matchRefereeAttend);
-                        if ($resSaveMatchReferee['code'] ==100) {
-                            return json(['code' => 100, 'msg' => '保存裁判出席名单出错']);
-                        }
                     }
                 }
-                // 保存裁判出席名单
+                //$saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
+                $teamS->saveAllTeamMember($dataUpdateTeamMember);
             }
-            // 比赛完成的操作 end
+            // 剔除不显示的成员名单（无效 status=-1）
+            if (isset($post['HomeMemberDataDel']) && $post['HomeMemberDataDel'] != "[]") {
+                $memberArr = json_decode($post['HomeMemberDataDel'], true);
+                foreach ($memberArr as $k => $member) {
+                    // 提交有match_record_member的id主键
+                    // 查询球员有无对应比赛match_record_member记录
+                    if (isset($member['id'])) {
+                        $matchRecordMember2 = $matchS->getMatchRecordMember(['id' => $member['id']]);
+                    } else {
+                        $matchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'member|name' => $member['name']]);
+                    }
+                    if ($matchRecordMember2) {
+                        // 更新match_record_member
+                        $homeMember[$k]['id'] = $matchRecordMember2['id'];
+                    }
+                    $memberArr[$k]['match'] = $matchName;
+                    $memberArr[$k]['status'] = -1;
+                    $memberArr[$k]['is_checkin'] = -1;
+                }
+                $resultsaveMatchRecordMember2 = $matchS->saveAllMatchRecordMember($memberArr);
+            }
+            // 保存比赛球队成员 end
+            // 保存match_record数据成功 保存match数据
+            $resultSaveMatchRecord = $matchS->saveMatchRecord($recordData);
+            if ($resultSaveMatchRecord['code'] == 100) {
+                return json(['code' => 100, 'msg' => '保存比赛比分失败']);
+            } else {
+                // 更新match数据
+                $resultSaveMatch = $matchS->saveMatch($dataMatch);
+                if ($resultSaveMatch['code'] == 100) {
+                    return json(['code' => 100, 'msg' => '更新比赛信息失败']);
+                }
+                // 更新球队胜场数、比赛场数
+                //$matchS->countTeamMatchNum($homeTeamId);
+                $matchS->countTeamMatchNum($awayTeamId);
 
-            // 返回响应结果
-            return json($resultSaveMatchRecord);
+                // 原match_record表away_team字段为空并post提交away_team不为空 代表对away_team发送约战邀请
+                if ( empty($matchRecord['away_team']) && !empty($recordData['away_team']) ) {
+                    // 发送比赛邀请给对手球队
+                    $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+                    if ($awayTeam) {
+                        // 保存约战申请
+                        $applyData = [
+                            'match_id' => $match['id'],
+                            'match' => $matchName,
+                            'team_id' => $post['team_id'],
+                            'team' => $recordData['home_team'],
+                            'telphone' => $this->memberInfo['telephone'],
+                            'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
+                            'member_id' => $this->memberInfo['id'],
+                            'member' => $this->memberInfo['member'],
+                            'member_avatar' => $this->memberInfo['avatar'],
+                            'revice_team_id' => $awayTeam['id'],
+                            'revice_team' => $awayTeam['name'],
+                            'status' => 1
+                        ];
+                        $resApply = $matchS->saveMatchApply($applyData);
+                        // 组合推送消息内容
+                        $dataMessage = [
+                            'title' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                            'content' => '您好，'. $recordData['home_team'] .'球队向您所在 '. $awayTeam['name'] .'球队发起约战',
+                            'url' => url('keeper/team/matchapplyinfo', ['apply_id' => $resApply['data'], 'team_id' => $awayTeam['id']], '', true),
+                            'keyword1' => '球队发起约战',
+                            'keyword2' => $this->memberInfo['member'],
+                            'keyword3' => date('Y-m-d h:i', time()),
+                            'remark' => '请登录平台进入球队管理-》约战申请回复处理',
+                            // 比赛发布球队id
+                            'team_id' => $post['team_id'],
+                            'steward_type' => 2
+                        ];
+                        // 推送消息给发布比赛的球队领队
+                        $messageS->sendMessageToMember($awayTeam['leader_id'], $dataMessage, config('wxTemplateID.checkPend'));
+                        // 保存球队公告
+                        $teamS->saveTeamMessage($dataMessage);
+                    }
+                }
+
+                // 比赛完成的操作
+                if ($isFinished == 1) {
+                    // (比赛未完成执行的操作)
+                    if ($match['is_finished_num'] === 0) {
+                        // 保存球队历史比赛对手信息
+                        // 查询有无原数据
+                        $mapHistoryTeam = [
+                            'team_id' => $post['record']['home_team_id'],
+                            'opponent_team_id' => $post['record']['away_team_id']
+                        ];
+                        $historyTeam = $matchS->getHistoryTeam($mapHistoryTeam);
+                        // 插入新数据
+                        if (!$historyTeam) {
+                            $dataHistoryTeam = [
+                                'team_id' => $post['record']['home_team_id'],
+                                'team' => $post['record']['home_team'],
+                                'opponent_team_id' => $post['record']['away_team_id'],
+                                'opponent_team' => $post['record']['away_team'],
+                                'match_num' => 1
+                            ];
+                        } else {
+                            // 更新原数据 比赛次数+1
+                            $dataHistoryTeam['id'] = $historyTeam['id'];
+                            $dataHistoryTeam['match_num'] = $historyTeam['match_num'] + 1;
+                        }
+                        $matchS->saveHistoryTeam($dataHistoryTeam);
+                        // 保存球队历史比赛对手信息 end
+
+                        // 发送比赛完成信息给对手球队
+                        // 发送比赛完成信息给对手球队 end
+                    }
+
+                    // 保存裁判出席名单
+                    if (!empty($post['refereeAttend_str']) && $post['refereeAttend_str'] != '[]') {
+                        $matchRefereeAttend = [];
+                        // 转换裁判出席比赛名单格式
+                        $refereeAttends = json_decode($post['refereeAttend_str'], true);
+                        if ($refereeAttends) {
+                            // 遍历组合更新match_referee数据
+                            foreach ($refereeAttends as $k => $referee) {
+                                $matchRefereeAttend[$k] = [
+                                    'match_id' => $post['id'],
+                                    'match_record_id' => $recordData['id'],
+                                    'referee_id' => $referee['referee_id'],
+                                    'referee' => $referee['referee'],
+                                    'appearance_fee' => $referee['referee_cost'],
+                                    'is_attend' => 2, //裁判出席比赛is_attend=2
+                                    'status' => 1
+                                ];
+                                $matchRefereeInfo = $matchS->getMatchReferee([
+                                    'match_id' => $post['id'],
+                                    'match_record_id' => $recordData['id'],
+                                    'referee_id' => $referee['referee_id'],
+                                    'referee' => $referee['referee'],
+                                    'appearance_fee' => $referee['referee_cost'],
+                                ]);
+                                if ($matchRefereeInfo) {
+                                    $matchRefereeAttend[$k]['id'] = $matchRefereeInfo['id'];
+                                }
+                            }
+                            // 批量更新match_referee数据
+                            $resSaveMatchReferee = $matchS->saveAllMatchReferee($matchRefereeAttend);
+                            if ($resSaveMatchReferee['code'] ==100) {
+                                return json(['code' => 100, 'msg' => '保存裁判出席名单出错']);
+                            }
+                        }
+                    }
+                    // 保存裁判出席名单
+                }
+                // 比赛完成的操作 end
+
+                // 返回响应结果
+                return json($resultSaveMatchRecord);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -789,6 +789,7 @@ class Match extends Base
         try {
             // 接收输入变量 其中post[record]为match_record保存数据
             $post = input('post.');
+            dump($post);exit();
             // service
             $matchS = new MatchService();
             $teamS = new TeamService();
@@ -1438,10 +1439,8 @@ class Match extends Base
             // 有传入查询年份
             if (input('?param.year')) {
                 $year = input('param.year');
-                //if (is_numeric($year)) {
                 $tInterval = getStartAndEndUnixTimestamp($year);
                 $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
-                //}
                 unset($map['year']);
             }
             // 传入球队team_id 组合复合查询 查询作为主队或客队
@@ -1649,6 +1648,8 @@ class Match extends Base
                 $dataRecordMember['team'] = $inHomeTeam['team'];
                 $dataRecordMember['member_id'] = $inHomeTeam['member_id'];
                 $dataRecordMember['member'] = $inHomeTeam['member'];
+                $dataRecordMember['name'] = $inHomeTeam['name'];
+                $dataRecordMember['team_member_id'] = $inHomeTeam['id'];
                 $dataRecordMember['avatar'] = $inHomeTeam['avatar'];
                 $dataRecordMember['contact_tel'] = $inHomeTeam['telephone'];
                 if ($inHomeTeam['student_id']) {
@@ -1660,6 +1661,8 @@ class Match extends Base
                 $dataRecordMember['team'] = $inAwayTeam['team'];
                 $dataRecordMember['member_id'] = $inAwayTeam['member_id'];
                 $dataRecordMember['member'] = $inAwayTeam['member'];
+                $dataRecordMember['name'] = $inAwayTeam['name'];
+                $dataRecordMember['team_member_id'] = $inAwayTeam['id'];
                 $dataRecordMember['avatar'] = $inAwayTeam['avatar'];
                 $dataRecordMember['contact_tel'] = $inAwayTeam['telephone'];
                 if ($inAwayTeam['student_id']) {
