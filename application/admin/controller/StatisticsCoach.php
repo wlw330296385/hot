@@ -115,26 +115,8 @@ class StatisticsCoach extends Backend{
         return view('StatisticsCoach/coachSchedule');
     }
 
-    // 个人（教练）提现列表  //准哥写的，待丽文检查
-    public function coachWithdraw(){
-        $member_id = input('member_id',0);
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
-        //查询条件：camp_id，monthstart，monthend
-        $list = db('output')
-            ->where(['member_id'=>$member_id,'type'=>-1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
-
-        $this->assign('list',$list);
-
-        return $this->fetch('StatisticsCoach/coachWithdraw');
-    }
-
     // 个人（教练）工资列表（列出教练员当月的工资）//准哥写的，待丽文检查
-    public function coachSallary(){
+    public function coachSalary(){
         $member_id = input('member_id',0);
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
@@ -151,21 +133,25 @@ class StatisticsCoach extends Backend{
         // dump($list);
         $this->assign('list',$list);
 
-        return $this->fetch('StatisticsCoach/coachSallary');
+        return $this->fetch('StatisticsCoach/coachSalary');
     }
 
-    // 个人（教练）返利列表 //准哥写的，待丽文检查
-    public function coachRebate(){
+    // 个人（教练）提现列表  //准哥写的，待丽文检查
+    public function coachWithdraw(){
         $member_id = input('member_id',0);
-        $yearMonth = input('yearmonth','201111');
-        //查询条件：member_id，yearmonth
-        $list = db('rebate')
-            ->where(['member_id'=>$member_id,'datemonth'=>$yearMonth])
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd)+86399;
+        //查询条件：member_id，monthstart，monthend
+        $list = db('salary_out')
+            ->where(['member_id'=>$member_id,'status'=>1])
+            ->where(['pay_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)->select();
 
         $this->assign('list',$list);
 
-        return $this->fetch('StatisticsCoach/coachRebate');
+        return $this->fetch('StatisticsCoach/coachWithdraw');
     }
     
 }
