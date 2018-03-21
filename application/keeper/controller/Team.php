@@ -668,6 +668,7 @@ class Team extends Base {
         $matchInfo['record'] = $matchRecordInfo;
 
         // 裁判列表
+        $refereeList=[];
         if (!empty($matchInfo['referee_str'])) {
             $refereeList = json_decode($matchInfo['referee_str'], true);
         }
