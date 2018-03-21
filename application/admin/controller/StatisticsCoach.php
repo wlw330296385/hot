@@ -69,7 +69,7 @@ class StatisticsCoach extends Backend{
         $salaryinList = [];
         $rebateList = [];
         if($member_id){
-            $yearmonth = date('Ym')-1;
+            $yearmonth = input('param.yearmonth',(date('Ym')-1));
             $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
             $monthEnd = input('param.monthend',date('Ymd'));
             $month_start = strtotime($monthStart);
