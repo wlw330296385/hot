@@ -578,7 +578,7 @@ class StatisticsCamp extends Backend{
         $month_end = strtotime($monthEnd)+86399;
         $goods_type = input('param.goods_type',1);
         $status = input('param.status',1);
-        $list = db('bill')->where(['camp_id'=>$camp_id,'goods_type'=>$goods_type])->where('delete_time',null)->select();
+        $list = db('bill')->where(['camp_id'=>$camp_id,'goods_type'=>$goods_type,'create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->select();
         //查询条件：camp_id，goods_type，monthstart，monthend
         // dump($list);
         $this->assign('list',$list);

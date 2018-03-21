@@ -215,7 +215,7 @@
                 </div>
                 {empty name="refereeInfo"}
                 <div class="mui-input-row refereeRow hide">
-                    <a href="#refereeDom" class="mui-navigate-right">
+                    <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
                         <label>裁判名单</label>
                         <span class="referee" name="referee" style="width: 60%"></span>
                         <div class="hideList"></div>
@@ -226,7 +226,7 @@
                 </div>
                 {else/}
                 <div class="mui-input-row refereeRow">
-                    <a href="#refereeDom" class="mui-navigate-right">
+                    <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
                         <label>裁判名单</label>
                         <!-- url传入裁判id -->
                         <span class="referee" name="referee" style="width: 60%">{$refereeInfo.referee}</span>
@@ -235,7 +235,7 @@
                         </div>
                         <input type="hidden" name="referee_id" value="{$refereeInfo.id}" class="data">
                         <input type="hidden" name="referee_cost" value="{$refereeInfo.appearance_fee}" class="data">
-                        <input type="hidden" name="referee_count" value="{$refereeInfo.referee_count}" class="data">
+                        <input type="hidden" name="referee_count" value="" class="data rowNum">
                     </a>
                 </div>
                 {/empty}
@@ -753,6 +753,19 @@
                 $(".hideList").html(hideList);
 
             });
+             //裁判列表复选框赋值
+             $("#setReferee").on('tap', '', function () {
+                    //每次打开先清空所有选择
+                    $(".refereeList input[name='checkbox-referee']").prop("checked", false);
+                    //然后遍历出对应所选
+                    var str = $(".refereeRow input[name='referee_id']").val();
+                    var s = str.split(',');
+                    for (var i = 0; i < s.length; i++) {
+                        $(".refereeList input[name='checkbox-referee']").filter(function (index) {
+                            return $(this).attr("data-referee_id") == s[i]
+                        }).prop("checked", true);
+                    }
+                });
             // //////////////////////////////////////////////////////////
 
             // 主场球服
