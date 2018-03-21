@@ -118,7 +118,10 @@ class MatchService {
     
     // 软删除比赛记录
     public function deleteMatch($id) {
+        // match表记录软删除
         $res = Match::destroy($id);
+        // match_record表 match_id相关数据 软删除
+        db('match_record')->where('match_id', $id)->update(['delete_time' => time()]);
         return $res;
     }
 
