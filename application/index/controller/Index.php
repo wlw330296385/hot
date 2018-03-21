@@ -17,31 +17,9 @@ class Index extends Controller{
     
 
     public function test(){
-        $list = [];
-        for ($i=1; $i <= 16; $i++) { 
-            $list[]  = $i;
-            $list[]  = $i;
-            $list[]  = $i;
-            $list[]  = $i;
-        }
-
-        $times = 1;
-        foreach ($list as $key => &$value) {
-            $value = $value*10;
-            if($times == 4){
-                $times = 5;
-            }
-            $value.=$times;
-            $times++;
-            if($times>5){
-                $times = 1;
-            }
-        }
-
-        dump($list);
-        foreach ($list as $key => $value) {
-           db('test')->insert(['name'=>$value]);
-        }
+        $url = url('frontend/index/index');
+        dump($url);
+        header('Location:'.$url);
     }
 
     public function salaryinStudents(){

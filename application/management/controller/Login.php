@@ -15,7 +15,7 @@ class Login extends Controller
 
 	public function login(){
 		if (cookie('member_id')) {
-            $this->error('你已经登录，无需重复登录', url('Index/index'));
+            $this->error('你已经登录，无需重复登录', url('Index/choose'));
         }
 		if(request()->isPost()){
 			$username = input('post.username');
@@ -29,14 +29,22 @@ class Login extends Controller
 					}	
 				)->where('password',$password);
 			}
-
 			$AuthService = new AuthService;
 			$result = $AuthService ->login($map,$keeplogin);
 
 			if($result){
-				$this->success('登陆成功', url('Index/index'));
+				$this->success('登陆成功,请选择你的身份', url('Index/choose'));
 			}else{
-				$this->error('账号密码错误', url('Index/index'));
+				$lock = cache('lock');
+				if($lock<6){
+					$num = $lock++;
+					cache('lock',$num);
+					// $this->error("账号密码错误,错误6次需要更改密码,已错{$lock}次");
+					$this->error("账号密码错误");
+				}else{
+					$this->error("账号密码错误次数太多,已被锁定");
+				}
+				
 			}
 		}
 
