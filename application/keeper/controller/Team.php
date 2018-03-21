@@ -630,6 +630,9 @@ class Team extends Base {
             $refereeList = json_decode($matchInfo['referee_str'], true);
         }
 
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $this->team_id ]);
+
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         $teamMemberInfo = $teamS->getTeamMemberInfo([
             'team_id' => $this->team_id,
@@ -646,7 +649,8 @@ class Team extends Base {
             'canClaim' => $canClaim,
             'matchInfo' => $matchInfo,
             'teamrole' => $teamrole,
-            'refereeList' => $refereeList
+            'refereeList' => $refereeList,
+            'countTeamMember' => $countTeamMember
         ]);
     }
 
