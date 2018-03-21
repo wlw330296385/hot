@@ -21,6 +21,8 @@ class StatisticsCoach extends Backend{
         $salaryin = [];
         $list1 = [];
         $list2 = [];
+        $s_rebate = 0;
+        $yearmonth = input('param.yearmonth',(date('Ym')-1));
         if($member_id){
             $map['create_time'] = ['between',[$month_start,$month_end]];
             $map['member_id'] = $member_id;
@@ -49,11 +51,15 @@ class StatisticsCoach extends Backend{
                     }
                 }
             }
+
+            $s_rebate = db('rebate')->where(['member_id'=>$member_id,'datemonth'=>$yearmonth])->sum('salary');
+            
         }
         // dump($list2);
         // dump($list1);die;
         $this->assign('list2',$list2);
         $this->assign('list1',$list1);
+        $this->assign('s_rebate',$s_rebate);
         return view('StatisticsCoach/coachBill');
     }
 
