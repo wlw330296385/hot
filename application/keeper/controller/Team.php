@@ -572,7 +572,7 @@ class Team extends Base {
     }
 
     // 球队认领已完成比赛
-    public function claimfinshedmatch() {
+    public function claimfinishedmatch() {
         // 比赛id
         $matchId = input('match_id', 0);
         // service
@@ -625,14 +625,14 @@ class Team extends Base {
             }
         }
 
-        return view('Team/claimFinshedMatch', [
+        return view('Team/claimFinishedMatch', [
             'canClaim' => $canClaim,
             'matchInfo' => $matchInfo
         ]);
     }
 
     // 球队认领已完成比赛提交编辑
-    public function claimfinshedmatchedit() {
+    public function claimfinishedmatchedit() {
         // 比赛id
         $matchId = input('match_id', 0);
         $recordId = input('recored_id', 0);
@@ -644,7 +644,7 @@ class Team extends Base {
         $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id'], 'id' => $recordId]);
         $matchInfo['record'] = $matchRecordInfo;
 
-        return view('Team/claimFinshedMatchEdit', [
+        return view('Team/claimFinishedMatchEdit', [
             'matchInfo' => $matchInfo
         ]);
     }
