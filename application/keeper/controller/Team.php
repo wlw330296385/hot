@@ -577,6 +577,7 @@ class Team extends Base {
         $matchId = input('match_id', 0);
         // service
         $matchService = new MatchService();
+        $teamS = new TeamService();
         // 获取比赛数据
         $matchInfo = $matchService->getMatch(['id' => $matchId]);
         // 获取要认领的比赛战绩数据
@@ -624,10 +625,29 @@ class Team extends Base {
                 $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
             }
         }
+        // 裁判列表
+        $refereeList= [];
+        if (!empty($matchInfo['referee_str'])) {
+            $refereeList = json_decode($matchInfo['referee_str'], true);
+        }
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
 
         return view('Team/claimFinishedMatch', [
             'canClaim' => $canClaim,
-            'matchInfo' => $matchInfo
+            'matchInfo' => $matchInfo,
+            'teamrole' => $teamrole,
+            'refereeList' => $refereeList
         ]);
     }
 
@@ -644,8 +664,13 @@ class Team extends Base {
         $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id'], 'id' => $recordId]);
         $matchInfo['record'] = $matchRecordInfo;
 
+        // 裁判列表
+        if (!empty($matchInfo['referee_str'])) {
+            $refereeList = json_decode($matchInfo['referee_str'], true);
+        }
         return view('Team/claimFinishedMatchEdit', [
-            'matchInfo' => $matchInfo
+            'matchInfo' => $matchInfo,
+            'refereeList' => $refereeList
         ]);
     }
 
