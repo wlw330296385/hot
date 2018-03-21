@@ -618,7 +618,7 @@ class StatisticsCamp extends Backend{
         return $this->fetch('StatisticsCamp/campWithdraw');
     }
     // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）
-    public function campCoachSallaryMth(){
+    public function campCoachSalaryMth(){
         $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
@@ -633,10 +633,10 @@ class StatisticsCamp extends Backend{
             ->group('member_id')
             ->select();
         $this->assign('list',$list);
-        return $this->fetch('StatisticsCamp/campCoachSallaryMth');
+        return $this->fetch('StatisticsCamp/campCoachSalaryMth');
     }
     // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
-    public function campCoachSallary(){
+    public function campCoachSalary(){
         $camp_id = $this->campInfo['id'];
         $member_id = input('member_id',0);
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
@@ -655,6 +655,6 @@ class StatisticsCamp extends Backend{
         $this->assign('list',$list);
 
         //查询条件：camp_id，member_id，monthstart，monthend
-        return $this->fetch('StatisticsCamp/campCoachSallary');
+        return $this->fetch('StatisticsCamp/campCoachSalary');
     }
 }

@@ -430,7 +430,7 @@
     //完成未完成
     var toClaimList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/match/teamclaimfinshedmatchpage')}?page=" + page;
+        var url = "{:url('api/match/teamclaimfinishmatchpage')}?page=" + page;
         var team_id = "{$team_id}"
         mui.ajax({
             url: url,
@@ -446,12 +446,9 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
+                        var urls = "{:url('team/claimFinishedMatch')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                         newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].name + '';
-                        if (data.data.data[i].status == "公开") {
-                            newli += '<font class="tipCorner bgorange">公开</font>';
-                        }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].home_team + '';
                         if (data.data.data[i].match_time == 0) {
                             newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                         } else {
@@ -461,7 +458,7 @@
                         newli += '</li>';
                     }
                 }
-
+    
                 if (gType == 1) {
                     //上拉刷新
                     $("ul.claim").empty().append(newli);

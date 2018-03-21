@@ -134,12 +134,14 @@
                         </div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('team/eventListOfPlatform')}">
+                        <!-- <a href="{:url('team/eventListOfPlatform')}"> -->
+                        <div class="goConfirm">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-activity"></use>
                             </svg>
                             <div class="mui-media-body">活动</div>
-                        </a>
+                        </div>
+                        <!-- </a> -->
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('team/matchListOfPlatform')}">
@@ -236,7 +238,8 @@
             <div class="page-header border-b">
                 <span class="course">最近赛事</span>
                 <span class="more pdr15">
-                    <a href="{:url('Index/lateLyMatchList')}" class="mui-navigate-right">更多</a>
+                    <a href="" class="mui-navigate-right">更多</a>
+                    <!-- <a href="{:url('Index/lateLyMatchList')}" class="mui-navigate-right">更多</a> -->
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
@@ -245,7 +248,8 @@
             <div class="page-header border-b">
                 <span class="course">最近活动</span>
                 <span class="more pdr15">
-                    <a href="{:url('Index/lateLyEventList')}" class="mui-navigate-right">更多</a>
+                    <a href="" class="mui-navigate-right">更多</a>
+                    <!-- <a href="{:url('Index/lateLyEventList')}" class="mui-navigate-right">更多</a> -->
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
@@ -254,7 +258,7 @@
             <div class="page-header border-b refereeOrder">
                 <span class="course">最近订单</span>
                 <span class="more pdr15">
-                    <a href="{:url('referee/orderList')}" class="mui-navigate-right">更多</a>
+                    <a id="orderMore" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newReferee refereeOrder"></ul>
@@ -452,8 +456,6 @@
                 }
             })
 
-
-
             //比赛报名功能
             $(document).on('tap', '.signupMatchBtn', function () {
                 //判断是否登陆会员
@@ -645,9 +647,9 @@
                     var div = '';
                     if (data.code == 200) {
                         // 将时间戳转成日期格式
-                        var Tmonth = gettimem(data.data[0].match_time * 1000);
-                        var Tday = gettimed(data.data[0].match_time * 1000);
-                        var Ttime = gettimeh(data.data[0].match_time * 1000);
+                        var Tmonth = gettimem(data.data[0].match_timestamp * 1000);
+                        var Tday = gettimed(data.data[0].match_timestamp * 1000);
+                        var Ttime = gettimeh(data.data[0].match_timestamp * 1000);
                         matchid = data.data[0].id
                         var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].match_id;
                         div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
@@ -696,9 +698,9 @@
                     console.log(data);
                     if (data.code == 200) {
                         referee_id = data.data.id;
-                        console.log(referee_id)
+                        $("#orderMore").attr("href", "{:url('referee/orderList')}/" + "referee_id/" + referee_id);
                         toLastRefereeList(referee_id);
-                    }else{
+                    } else {
                         $(".refereeOrder").hide();
                     }
                 },
@@ -709,11 +711,11 @@
             });
         };
         //获取最近订单
-        function toLastRefereeList() {
-            mui.ajax("{:url('api/referee/matchapplylist')}", {
+        function toLastRefereeList(referee_id) {
+            mui.ajax("{:url('api/referee/refereelastmatch')}", {
                 data: {
                     page: 1,
-                    referee_id: 2
+                    referee_id: referee_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -723,10 +725,10 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.slice(0, 4).length - 1; i++) {
+                        for (var i = 0; i <= data.data.slice(0, 3).length - 1; i++) {
                             var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + + data.data[i].team_id;
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name+'';
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="width:45px !important;height:45px !important;border-radius:50% !important;"><div class="mui-media-body wd">' + data.data[i].match.name + '';
                             if (data.data[i].match.match_time == 0) {
                                 newli += '<p class="address" style="line-height:20px !important">比赛时间待定</p>';
                             } else {
@@ -756,7 +758,7 @@
                             newli += '</div></a></li>';
                         }
                         $("ul.newReferee").empty().append(newli);
-                    }else{
+                    } else {
                         $("ul.newReferee").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有订单数据哦</p></li>');
                     }
                 },

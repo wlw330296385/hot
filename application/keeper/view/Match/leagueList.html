@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>球队列表</title>
+    <title>联赛列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -16,12 +16,40 @@
             .list .listli .mui-media-body {
                 width: 62% !important;
             }
+            #refreshContainer {
+                margin-top: 250px !important;
+            }
         }
 
         @media screen and (min-width: 375px) {
             .list .listli .mui-media-body {
                 width: 67% !important;
             }
+            #refreshContainer {
+                margin-top: 283px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 308px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 529px !important;
+            }
+        }
+
+        .lineHeight20 {
+            line-height: 20px;
+        }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
         }
     </style>
 </head>
@@ -29,13 +57,38 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav search2">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">
-            <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
-        </h1>
-        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+    <header class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
+
+    <!--图片轮播-->
+    <div id="slider" class="mui-slider">
+        <div class="mui-slider-group mui-slider-loop">
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+            <!-- 第一张 -->
+            <div class="mui-slider-item">
+                <a href="">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+        </div>
+        <div class="mui-slider-indicator">
+            <div class="mui-indicator mui-active"></div>
+            <div class="mui-indicator"></div>
+            <div class="mui-indicator"></div>
+        </div>
+    </div>
 
     <div class="mui-content">
 
@@ -48,32 +101,29 @@
             </span>
             <span class="location-choise">
                 <select id="teamType" class="data" name="type">
-                    <option value="">全部类型</option>
-                    {if cookie('module') == 'keeper'}
-                    <option value="3" selected>业余组织</option>
-                    <option value="2">企事业单位</option>
-                    {/if}
-                    <option value="1">训练营</option>
-                    <option value="4">大学生</option>
-                    <option value="5">高中生</option>
-                    <option value="6">初中生</option>
-                    <option value="7">小学生</option>
+                    <option value="">比赛类型</option>
+                    <option value="3">友谊赛</option>
+                    <option value="2">联赛</option>
                 </select>
             </span>
         </div>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
+        <div id="refreshContainer" class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b team"></ul>
             </div>
         </div>
 
-        <ul class="mui-table-view operation">
-            <a href="{:url('team/createTeam')}">
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                    创建球队
-                </li>
-            </a>
+        <!--底部操作-->
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/keeper/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
+                <a href="{:url('')}" class="">创建联赛</a>
+            </li>
         </ul>
 
     </div>
@@ -197,7 +247,7 @@
                         city: sCity,
                         area: sArea,
                         keyword: keyword,
-                        type:sTeamType,
+                        type: sTeamType,
                         status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -211,9 +261,16 @@
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].name + '</font>';
-                                newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].member_num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].area + '</p></div></a>'
-                                newli += '</li>';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><h4>' + data.data[i].name + '</h4><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:90px !important;">';
+                                newli += ' <div class="mui-media-body"><p class="mui-ellipsis lineHeight20">2018/12/12-2018/12/18</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;关注：<font class="colororange">' + data.data[i].id + '</font></p><p class="mui-ellipsis lineHeight20">' + data.data[i].type;
+                                if (data.data[i].status == "下架") {
+                                    newli += '<font class="tipCorner bggray" style="margin-left: 10px !important;">已结束</font>';
+                                } else if (data.data[i].status == "上架") {
+                                    newli += '<font class="tipCorner bgred" style="margin-left: 10px !important;">进行中</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bggreen" style="margin-left: 10px !important;">报名</font>';
+                                }
+                                newli += '</p></div></a></li>'
                             }
                         }
                         if (gType == 1) {

@@ -248,6 +248,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res['data'] as $k => $val) {
+                $res['data'][$k]['match_timestamp'] = $val['match_time'];
+                $res['data'][$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res['data'][$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res['data'][$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
@@ -284,6 +286,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
@@ -319,6 +323,8 @@ class MatchService {
             // match字段内容输出转换
             $modelMatch = new Match();
             foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
                 $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
                 $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
                 $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
@@ -643,6 +649,42 @@ class MatchService {
             'referee_str' => $refereeStr,
             'referee_cost' => $refereeCost
         ]);
+    }
+
+    /** 在match原有referee_str
+     * @param $match
+     * @param array $newReferee
+     */
+    public function getNewMatchRefereeStr($match, $newReferee=[]) {
+        $refereeCost = $match['referee_cost'];
+        $refereeStr = $match['referee_str'];
+        // 转格式后referee_str
+        $matchRefereeStr = json_decode($match['referee_str'], true);
+        if (empty($matchRefereeStr)) {
+            // 插入一个新的裁判信息
+            $refereeArr = [
+                'referee' => $newReferee['referee'],
+                'referee_id' => $newReferee['referee_id'],
+                'referee_cost' => $newReferee['referee_cost']
+            ];
+            $refereeCost = $newReferee['referee_cost'];
+            $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
+            $refereeStr = '[' . $refereeStr .']';
+        } else {
+            // 新加入的裁判不在数据中 补充新的裁判进referee_str
+            if ( !deep_in_array( $newReferee['referee_id'], $matchRefereeStr ) ) {
+                array_push($matchRefereeStr, [
+                    'referee' => $newReferee['referee'],
+                    'referee_id' => $newReferee['referee_id'],
+                    'referee_cost' => $newReferee['referee_cost']
+                ]);
+                foreach ($matchRefereeStr as $matchReferee) {
+                    $refereeCost += $matchReferee['referee_cost'];
+                }
+                $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
+            }
+        }
+        return $refereeStr;
     }
 
     // 获取比赛-裁判关系详细

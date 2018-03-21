@@ -277,18 +277,19 @@
 
             <div class="mui-input-row refereeCount hide">
                 <label>系统邀请人数</label>
-                <input type="text" name="referee_count" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_count}"
-                    {/eq} class="data" placeholder="请填写系统邀请的人数">
+                <input type="text" name="referee_count" value="{$matchInfo.referee_count}" class="data" placeholder="请填写系统邀请的人数">
             </div>
             <div class="mui-input-row refereeCount hide h-auto">
                 <a href="#refereeAp" id="setRefereeAp" class="mui-navigate-right">
                     <label>裁判名单</label>
-                    <span class="refereeAp wd52" style="width: 60%"></span>
-                    <div class="hideApListIni"></div>
+                    <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                    <div class="hideApListIni">
+                        {volist name="$refereeList" id="vol"}
+                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
+                    </div>
                     <div class="hideApList hide"></div>
                     <input type="hidden" name="referee_id" value="{volist name="$refereeList" id="vol "}{$vol.referee_id},{/volist}" class="data">
-                    <input type="hidden" name="referee_cost" {eq name="directentry" value="1" } value="" {else/}value="{$matchInfo.referee_cost}"
-                        {/eq} class="data">
+                    <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
                 </a>
             </div>
 
@@ -1218,6 +1219,7 @@
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
+                        var applyId = $(this).attr('data-id');
                         var status = $(this).attr("data-status");
                         refereeSum += parseInt(referee_cost);
                         refereeMember += referee + ','
@@ -1225,7 +1227,7 @@
                         $(".refereeAp").text(refereeMember.substring(0, refereeMember.length - 1));
                         $(".refereeCount input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
                         $(".refereeCount input[name=referee_cost]").val(refereeSum);
-                        hideApList += '<input type="hidden" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '"  data-status="' + status + '">';
+                        hideApList += '<input type="hidden" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '"  data-status="' + status + '" data-id="'+ applyId +'">';
                         mui("#refereeAp").popover("hide");
                     } else {
                         mui.toast("随机邀请人数与裁判人数不符，请修改随机邀请人数后再选择裁判");
@@ -1398,7 +1400,7 @@
                 changeIndexHome();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="'+ $(this).attr("data-name") +'" data-tmid="'+ $(this).attr('data-tmid') +'" data-id="'+ $(this).attr('data-id') +'" type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="'+ $(this).attr("data-name") +'" data-tmid="'+ $(this).attr('data-tmid') +'" data-id="'+ $(this).attr('data-id') +'"></div>';
                     $("#hideStList").append(str);
                 })
                 totalNum = $("#inactiveList .checkboxCont").length;
@@ -1422,7 +1424,7 @@
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-id="' + $(this).attr("data-id") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-id="' + $(this).attr("data-id") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                 });
@@ -1599,8 +1601,9 @@
                 member = $(this).attr("data-member");
                 member_id = $(this).attr("data-member_id");
                 name = $(this).attr("data-name");
-                id = $(this).attr("data-id");
-                HomeMemberList.push({ member: member, member_id: member_id,name:name,id:id });
+                tmid = $(this).attr("data-tmid");
+                id = $(this).attr('data-id');
+                HomeMemberList.push({ member: member, member_id: member_id,name:name, tmid: tmid, id:id });
             });
             console.log(HomeMemberList)
             ////////////////////////最终选择的活动人员/////////////////////////////////////////
@@ -1621,7 +1624,7 @@
                 });
                 //上面遍历过不存在就添加到最终变动活动人员列表中
                 if (idDelID == "Yes") {
-                    var member_id = $(this).attr("data-id");
+                    var member_id = $(this).attr("data-member_id");
                     HomeMemberListDel.push({ member_id: member_id, name:name,id:id,status: -1 });
                 }
                 console.log(HomeMemberListDel)
@@ -1658,7 +1661,11 @@
                     var referee_id = $(this).attr("data-referee_id");
                     var referee_cost = $(this).attr("data-referee_cost");
                     var apply_status = $(this).attr("data-status");
-                    refereeAp_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                    var apply_id = $(this).attr('data-id');
+                    if (apply_id == "undefined") {
+                        apply_id = 0;
+                    }
+                    refereeAp_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status, id:apply_id });
                 });
                 ////////////////////////系统邀请裁判名单//////////////////////////////////////// 
                 refereeApChange_str = [];
@@ -1681,7 +1688,11 @@
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
                         var apply_status = $(this).attr("data-status");
-                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                        var apply_id = $(this).attr('data-id');
+                        if (apply_id == "undefined") {
+                            apply_id = 0;
+                        }
+                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status, id:apply_id  });
                     }
                 });
                 var apDelID = ""
@@ -1799,7 +1810,7 @@
             }
 
 
-            var url = "{:url('api/match/storefriendlymatchrecord')}";
+            var url = "{:url('api/match/updateteammatch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
@@ -1927,7 +1938,7 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-id="' + data.data[i].id + '" type="checkbox" ></div>'
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-tmid="' + data.data[i].id + '" type="checkbox" ></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
@@ -2007,8 +2018,8 @@
                         HomeMemberList = [];//报名人员列表数组
                         $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '"></div>'
-                            HomeMemberList.push({name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id });
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="'+ data.data[i].team_member_id +'" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + ' data-tmid="'+ data.data[i].team_member_id+'"></div>'
+                            HomeMemberList.push({name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id, tmid: data.data[i].team_member_id });
                         };
                         console.log(HomeMemberList)
 
@@ -2112,7 +2123,7 @@
                             } else if (data.data.data[i].status == 3) {
                                 newli += '<span class="wd45">已拒绝</span>';
                             }
-                            newli += '<input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].referee_cost + '" data-status="' + data.data.data[i].status + '"></li>'
+                            newli += '<input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].referee_id + '" data-referee_cost="' + data.data.data[i].referee_cost + '" data-status="' + data.data.data[i].status + '" data-id="'+ data.data.data[i].id +'"></li>'
                         }
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'

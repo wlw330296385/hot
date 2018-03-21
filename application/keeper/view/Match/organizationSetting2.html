@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>组织设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav" style="padding: 0">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
+                <a class="mui-control-item" href="{:url('match/organizationSetting1')}">基本信息</a>
+                <a class="mui-control-item mui-active" href="{:url('match/organizationSetting2')}">认证信息</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <form action="" class="mui-input-group">
+
+            <div class="mui-input-row">
+                <label>组织名称</label>
+                <span></span>
+                <input type="hidden" name="campid" value="">
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <label>营业执照</label>
+                    <img id="preview_1" class="icon01 upload-preview" src="">
+                    <input type="hidden" name="cert" value="">
+                </a>
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <label>负责人身份证</label>
+                    <img id="preview_2" class="icon01 upload-preview" src="">
+                    <input type="hidden" name="fr_idcard" value="">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <label class="wd45">负责人身份证号</label>
+                <input type="text" class="fridno wd52" value="" placeholder="请输入身份证号码">
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                    <label>创建者身份证</label>
+                    <img id="preview_3" class="icon01 upload-preview" src="">
+                    <input type="hidden" name="cjz_idcard" value="">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <label class="wd45">创建者身份证号</label>
+                <input type="text" class="cjzidno" value="" placeholder="请输入创建者身份证号码" style="width: 55%">
+            </div>
+
+            <div class="mui-input-row border-b h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>其他证明</label>
+                    <img id="preview_4" class="icon01 upload-preview" src="">
+                    <input type="hidden" name="other_cert" value="">
+                </a>
+            </div>
+
+        </form>
+
+        <div class="tip-box">
+            修改后需要重新审核认证信息，审核通过前比赛的发布、展示功能将停止使用
+        </div>
+
+        <div class="tjbtn mb44">
+            <button type="button" class="mui-btn btn" id="submit-form2">提交修改</button>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        mui("body").on("tap", "a.mui-control-item", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            $('#submit-form2').click(function () {
+                var campid = $('input[name=campid]').val();
+                var cert = $('input[name=cert]').val();
+                var fr_idcard = $('input[name=fr_idcard]').val();
+                var fr_idno = $('.fridno').val();
+                var cjz_idcard = $('input[name=cjz_idcard]').val();
+                var cjz_idno = $('.cjzidno').val();
+                var other_cert = $('input[name=other_cert]').val();
+                var idno = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+
+                if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+                    mui.toast("请输入正确身份证号码");
+                    return false;
+                };
+                if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
+                    mui.toast("请上传证件照");
+                    return false;
+                };
+
+                var btnArray = ['取消', '确认'];
+                mui.confirm('修改认证资料需要重新审核', '确认要提交修改吗?', btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/camp/updatecampcert')}", {
+                            data: {
+                                camp_id: campid,
+                                cert: cert,
+                                fr_idcard: fr_idcard,
+                                fr_idno: fr_idno,
+                                cjz_idcard: cjz_idcard,
+                                cjz_idno: cjz_idno,
+                                other_cert: other_cert
+                            },
+                            dataType: 'json',
+                            type: 'post',
+                            timeout: 10000,
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (res) {
+                                if (res.code == 200) {
+                                    setTimeout(window.location.href = "{:url('camp/editsuccess', ['edit' => 1])}", 3000);
+                                } else {
+                                    mui.toast(res.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(type);
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#close-camp').on('click', '', function () {
+                var curcampstatus = $(this).attr('data-status');
+                if (curcampstatus === 1) { // 关闭组织
+                    campclosepost(curcampstatus, '关闭组织会使课程的发布、展示、购买功能停止使用', '确认要关闭组织吗？');
+                } else { //开启组织
+                    campclosepost(curcampstatus, '开启组织会使课程的发布、展示、购买功能恢复使用', '确认要开启组织吗？');
+                }
+
+            });
+
+            function campclosepost(campstatus, cfmessage, cftitle) {
+                var campid = $('input[name=campid]').val();
+                mui.confirm(cfmessage, cftitle, ['取消', '确认'], function (e) {
+                    if (e.index == 1) {
+                        mui.post("{:url('api/camp/campclose')}", {
+                            camp_id: campid,
+                            status: campstatus
+                        }, function (data) {
+                            if (data.code === 200) {
+                                setTimeout(window.location.href = "{:url('camp/editsuccess', ['edit' => 2])}", 3000);
+                            } else {
+                                //mui.toast(res.msg);
+                                mui.alert(data.msg);
+                            }
+                        }, 'json');
+                    }
+                });
+            }
+        });
+
+    </script>
+</body>
+
+</html>
