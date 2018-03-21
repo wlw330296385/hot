@@ -6,7 +6,7 @@ use think\Controller;
 /**
 * 基本层
 */
-class ClassName extends AnotherClass
+class Base extends Controller
 {
 	public $memberInfo;
 	function _initialize()
@@ -21,6 +21,7 @@ class ClassName extends AnotherClass
 				$this->error('登陆账号与服务器不一致,请重新登录','Login/login');
 			}
 			$this->memberInfo = $memberInfo;
+			$this->assign('memberInfo',$memberInfo);
 		}
 	}
 }

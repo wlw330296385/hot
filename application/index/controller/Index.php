@@ -6,6 +6,10 @@ use think\Db;
 use app\service\WechatService;
 class Index extends Controller{
 
+    public function _initialize(){
+        // $this->success('??????什么情况','frontend/index/index');
+    }
+
     public function counttest(){
         db('log_wxpay')->count('*');
         echo db('log_wxpay')->getlastsql();

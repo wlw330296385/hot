@@ -25,9 +25,9 @@ class Index extends Base
 			cache('camp',$camp['camp']);
 			cache('camp_id',$camp['camp_id']);
 			if($camp['type'] == '营主'){
-				cache('power',4);
+				cache("power_{$this->memberInfo['id']}",4);
 			}else{
-				cache('power',3);
+				cache("power_{$this->memberInfo['id']}",3);
 			}
 			header(url('Index/index'));
 		}
