@@ -1,10 +1,604 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>球队认领已完成比赛</title>
+    <meta charset="utf-8">
+    <title>认领数据-比赛详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .teamLogo {
+            width: 100%;
+            border-radius: 50%;
+        }
+
+        @media screen and (min-width: 320px) {
+            .teamLogo {
+                height: 5.4rem;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .teamLogo {
+                height: 6.6rem;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .teamLogo {
+                height: 7.4rem;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .teamLogo {
+                height: 14.8rem;
+            }
+        }
+
+        /* 花絮 */
+
+        .albumImg {
+            position: relative;
+        }
+
+        .albumImg .delbtn {
+            font-size: 16px;
+            right: 12px;
+            position: absolute;
+            top: 2px;
+            color: #fff;
+        }
+
+        .albumImg img {
+            float: left;
+            margin-right: 10px;
+            margin-bottom: 5px
+        }
+
+        i.tip {
+            height: 0;
+            color: red;
+            float: right;
+            font-size: 22px;
+        }
+
+        i.color {
+            width: 12px;
+            height: 12px;
+            display: block;
+            float: left;
+            margin-right: 10px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .colorLineHeight li {
+            line-height: 43px;
+            padding: 0 15px !important;
+        }
+
+        .addInput {
+            margin-top: 15px;
+        }
+
+        .addBtn {
+            margin-top: 15px;
+            padding: 12px 11px;
+        }
+    </style>
+    <style type="text/css">
+        .mui-preview-image.mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        .mui-preview-header,
+        .mui-preview-footer {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            z-index: 10;
+        }
+
+        .mui-preview-header {
+            height: 44px;
+            top: 0;
+        }
+
+        .mui-preview-footer {
+            height: 50px;
+            bottom: 0px;
+        }
+
+        .mui-preview-header .mui-preview-indicator {
+            display: block;
+            line-height: 50px;
+            color: #fff;
+            text-align: center;
+            margin: 15px auto 4;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .mui-preview-image {
+            display: none;
+            -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+        }
+
+        .mui-preview-image.mui-preview-in {
+            -webkit-animation-name: fadeIn;
+            animation-name: fadeIn;
+        }
+
+        .mui-preview-image.mui-preview-out {
+            background: none;
+            -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+        }
+
+        .mui-preview-image.mui-preview-out .mui-preview-header,
+        .mui-preview-image.mui-preview-out .mui-preview-footer {
+            display: none;
+        }
+
+        .mui-zoom-scroller {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .mui-preview-image img.mui-transitioning {
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
+    </style>
 </head>
-<body>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content mt55">
+        <div class="list coach">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
+                            <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
+                        </div>
+                        <div class="mui-col-sm-3 mui-col-xs-3" style="padding: 12% 0;">
+                            <h3>VS</h3>
+                        </div>
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                            <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
+                        </div>
+                    </div>
+                    <div class="mui-row">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
+                            <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
+                        </div>
+                        <div class="mui-col-sm-3 mui-col-xs-3"></div>
+                        <div class="mui-col-sm-4 mui-col-xs-4">
+                            <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
+                        </div>
+                    </div>
+                    <div class="mui-row score">
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred" style="margin-left:13px">{$matchInfo.record.home_score}</h2>
+                        <div class="mui-col-sm-3 mui-col-xs-3"></div>
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.away_score}</h2>
+                    </div>
+                </li>
+            </ul>
+
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
+                    <span class="away_team">{$matchInfo.record.away_team}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                    <span class="match_time">{$matchInfo.match_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                    <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <span>{$matchInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
+                    <span>{$matchInfo.court_cost}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
+                    <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
+                    <span class="refereeType">{$matchInfo.referee_type}</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeCount">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
+                    <span class="wd60">{$matchInfo.referee_count}/人</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeName">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
+                    <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                    <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <form action="" class="mui-input-group mt55">
+            <!-- 主队 -->
+            <div class="operation-box">
+                <div class="mui-input-row">
+                    <label class="wd">主队参赛人员</label>
+                </div>
+                <div class="box" id="inactiveList"></div>
+                <div class="box" id="hideStList" style="display:none"></div>
+                <div class="box" id="hideStListIni" style="display:none"></div>
+                <div class="operation-btn">
+                    <span class="mui-badge badgeHome">0</span>
+                    <a class="all">全选</a>
+                    <a class="cancel">取消</a>
+                    <a class="del">[删除]</a>
+                    <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
+                </div>
+            </div>
+            
+            <p class="pline"></p>
+
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
+                    <span class="h-auto">比赛花絮</span>
+                    <a class="mui-navigate-right fr wd60">
+                        <div id="uploader-demo1" class="fr pdr15">
+                            <div id="fileList" class="uploader-list"></div>
+                            <div id="filePickerOne">选择图片</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli albumBox">
+                    {volist name="matchInfo.record.album" id="vol"}
+                    <div class="fl albumImg">
+                        <i class="delbtn mui-icon mui-icon-close"></i>
+                        <img src="{$vol}">
+                    </div>{/volist}
+                </li>
+            </ul>
+        </form>
+
+        <!-- 底部操作 -->
+        <ul class="mui-table-view operation mt">
+
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bggreen">
+                <a href="{:url('team/claimFinishedMatchEdit',['team_id'=>$team_id,'match_id'=>$matchInfo.id])}">前往编辑认领</a>
+            </li>
+        </ul>
+
+    </div>
+
+    </div>
+    <!--主队人员名单-->
+    <div id="addTeamMember" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>主队球员名单</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="HomeMemberConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group addTeamMemberList"></form>
+            </div>
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/mui.zoom.js"></script>
+    <script src="/static/frontend/js/mui.previewimage.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'teammatch'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script>
+        mui.previewImage();
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // a标签跳转
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            var count = 1;
+            isthumbsup(); //点赞状态
+            toSignUpList(); // 报名/参赛人员
+            toHomeMemberList();
+            // 去逗号
+            var refereeList = $(".refereeList").text()
+            $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
+
+            // 没有对手比分不显示
+            var homeTeam = "{$matchInfo.record.home_score}";
+            var awayTeam = "{$matchInfo.record.away_score}";
+            if (homeTeam == 0 && awayTeam == 0) {
+                $(".score").hide();
+            }
+
+            // 如果对手为空
+            if ($(".away_team").text() == '') {
+                $(".away_team").text("暂无应战");
+            }
+
+            // 时间待定显示
+            var match_time = "{$matchInfo.match_time}";
+            if (match_time == 0) {
+                $(".match_time").text("待定");
+            }
+
+            // 场地付费方式文字转换中文
+            var court_cost_bear = "{$matchInfo.court_cost_bear}";
+            if (court_cost_bear == 0) {
+                $(".courtCostBear").text("免费");
+            } else if (court_cost_bear == 1) {
+                $(".courtCostBear").text("费用AA");
+            } else if (court_cost_bear == 2) {
+                $(".courtCostBear").text("主队负责");
+            } else if (court_cost_bear == 3) {
+                $(".courtCostBear").text("客队负责");
+            }
+
+            // 裁判列表文字转换中文
+            var referee_type = "{$matchInfo.referee_type}";
+            if (referee_type == 0) {
+                $(".refereeType").text("免裁判");
+                $(".refereeName").hide();
+                $(".refereeCount").hide();
+            } else if (referee_type == 1) {
+                $(".refereeType").text("系统随机安排");
+                $(".refereeName").hide();
+                $(".refereeCount").show();
+            } else if (referee_type == 2) {
+                $(".refereeType").text("自行安排");
+                $(".refereeCount").hide();
+            }
+
+            // 付费方式文字转换中文
+            var referee_cost_bear = "{$matchInfo.referee_cost_bear}";
+            if (referee_cost_bear == 0) {
+                $(".refereeCostBear").text("免费");
+            } else if (referee_cost_bear == 1) {
+                $(".refereeCostBear").text("费用AA");
+            } else if (referee_cost_bear == 2) {
+                $(".refereeCostBear").text("主队负责");
+            } else if (referee_cost_bear == 3) {
+                $(".refereeCostBear").text("客队负责");
+            }
+
+        });
+        // 点赞状态
+        function isthumbsup() {
+            var commented_id = "{$matchInfo.id}";
+            mui.ajax("{:url('api/team/isthumbup')}", {
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 3,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //获取已经报名的活动人员列表
+        function toSignUpList() {
+            var url = "{:url('api/match/recordmemberlist')}";
+            var match_id = "{$matchInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: match_id,
+                    status: 1,
+                    // is_apply: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        $(".imgShow").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            $(".signup_num").text(data.data.length);
+                            // 出勤率
+                            var rateNum = data.data.length / "{$countTeamMember}" * 100;
+                            $(".rate").text(parseInt(rateNum) + "%");
+                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                        };
+                        $(".imgShow").append(inactiveDiv);
+                    }
+                    if (data.code == 100) {
+                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
+        //获取主队成员列表
+        function toHomeMemberList() {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/teammemberlist')}", {
+                data: {
+                    team_id: team_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-tmid="' + data.data[i].id + '" type="checkbox" ></div>'
+                        }
+                        $("#newdiv").empty();
+                        $("#newdiv").append(div);
+
+                        if (div == '') {
+                            $("#newdiv").append('<p class="nodata">没有相关数据哦</p>');
+                        }
+                        if ($("#inactiveList").html() == '') {
+                            $("#inactiveList").append('<p class="nohave">还没有参赛人员哦</p>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        };
+    </script>
 
 </body>
+
 </html>
