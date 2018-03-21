@@ -72,5 +72,33 @@ class Match extends Base {
         return view('Match/friendlyinfo');
     }
 
-    //
+    // 联赛组织创建1
+    public function createOrganization1() {
+        return view('Match/createOrganization1');
+    }
+
+    // 联赛组织创建2
+    public function createOrganization2() {
+        return view('Match/createOrganization2');
+    }
+
+    // 联赛组织创建3
+    public function createOrganization3() {
+        return view('Match/createOrganization3');
+    }
+
+    // 联赛组织编辑1
+    public function organizationSetting1() {
+        return view('Match/organizationSetting1');
+    }
+
+    // 联赛组织编辑2
+    public function organizationSetting2() {
+        return view('Match/organizationSetting2');
+    }
+
+    // 联赛列表
+    public function leagueList() {
+        return view('Match/leagueList');
+    }
 }

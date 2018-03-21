@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>联赛列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        @media screen and (min-width: 320px) {
+            .list .listli .mui-media-body {
+                width: 62% !important;
+            }
+            #refreshContainer {
+                margin-top: 250px !important;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .list .listli .mui-media-body {
+                width: 67% !important;
+            }
+            #refreshContainer {
+                margin-top: 283px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 308px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 529px !important;
+            }
+        }
+
+        .lineHeight20 {
+            line-height: 20px;
+        }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
+        }
+    </style>
+</head>
+
+
+<body class=whitebg>
+
+    <header class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <!--图片轮播-->
+    <div id="slider" class="mui-slider">
+        <div class="mui-slider-group mui-slider-loop">
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+            <!-- 第一张 -->
+            <div class="mui-slider-item">
+                <a href="">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="/uploads\images\teammatch\2018\03\thumb_5ab20a981200f.jpg">
+                </a>
+            </div>
+        </div>
+        <div class="mui-slider-indicator">
+            <div class="mui-indicator mui-active"></div>
+            <div class="mui-indicator"></div>
+            <div class="mui-indicator"></div>
+        </div>
+    </div>
+
+    <div class="mui-content">
+
+        <div class="location-frame">
+            <span class="location"></span>
+            <span class="location-choise">
+                <select id="areaSelect">
+                    <option value="">全部区域</option>
+                </select>
+            </span>
+            <span class="location-choise">
+                <select id="teamType" class="data" name="type">
+                    <option value="">比赛类型</option>
+                    <option value="3">友谊赛</option>
+                    <option value="2">联赛</option>
+                </select>
+            </span>
+        </div>
+
+        <div id="refreshContainer" class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b team"></ul>
+            </div>
+        </div>
+
+        <!--底部操作-->
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="/keeper/">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
+                <a href="{:url('')}" class="">创建联赛</a>
+            </li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script>
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+            //初始化全局变量
+            var count = 1;
+            var sTeamType = '';
+            var sArea = '';
+            var keyword = wooApi.GetQueryString('keyword');
+            $('.keyword').val(keyword);
+            var teamID = wooApi.GetQueryString('team_id');
+            var teamName = wooApi.GetQueryString('team_name');
+
+            //获取定位省市区
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var sCity = getLocationTB['city'];
+            var sProvince = getLocationTB['province'];
+            var allArea = getLocationTB['areas'];
+            $('.location').text(sCity);
+            if (teamName != '' && teamName != null) {
+                $('.location').text(teamName);
+                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
+                $("#areaSelect").parent().hide();
+            }
+
+            //生成区域选择下拉菜单
+            var arrArea = allArea.split(',');
+            var selectArea = '';
+            $.each(arrArea, function (i, areaName) {
+                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
+            });
+            $('#areaSelect').append(selectArea);
+
+            //搜索球队
+            $("#searchBtn").on("click", function () {
+                keyword = $(".keyword").val();
+                searchToList();
+            })
+
+            //选择球队类型下拉
+            $("#teamType").on("change", function () {
+                sTeamType = $(this).find("option:checked").val();
+                searchToList();
+            });
+
+            //选择地区下拉
+            $("#areaSelect").on("change", function () {
+                sArea = $(this).val();
+                searchToList();
+            });
+            //搜索、下拉刷选后触发
+            function searchToList() {
+                count = 1;//显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toList(page, gType);//具体取数据的方法
+            }
+
+            mui.init({
+                swipeBack: true, //启用右滑关闭功能
+                pullRefresh: {
+                    //下拉刷新上拉加载教练列表
+                    container: "#refreshContainer",
+                    down: {
+                        //下拉刷新
+                        height: 50,//可选.默认50.触发下拉刷新拖动距离
+                        auto: true,//可选,默认false.自动下拉刷新一次
+                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                        callback: pulldownRefresh
+                    },
+                    up: {
+                        //上拉加载
+                        height: 150,//可选.默认50.触发上拉加载拖动距离
+                        //auto:true,//可选,默认false.自动上拉加载一次
+                        contentrefresh: '正在加载...',
+                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        callback: pullupRefresh
+                    }
+                }
+            });
+            //下拉刷新具体业务实现
+            function pulldownRefresh() {
+                setTimeout(function () {
+                    count = 1;//刷新并显示第一页
+                    var page = count;
+                    var gType = 1;//代表下拉刷新
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //上拉加载具体业务实现
+            function pullupRefresh() {
+                setTimeout(function () {
+                    count++;//翻下一页
+                    var page = count;
+                    var gType = 2;//代表上拉加载
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //接口获取数据并追加到页面
+            var toList = function (page, gType) {
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/team/searchteamlist','','',true)}";
+                mui.ajax({
+                    url: url,
+                    data: {
+                        page: page,
+                        province: sProvince,
+                        city: sCity,
+                        area: sArea,
+                        keyword: keyword,
+                        type: sTeamType,
+                        status: 1
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
+                                newli += '<li class="mui-table-view-cell mui-media listli">';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><h4>' + data.data[i].name + '</h4><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:90px !important;">';
+                                newli += ' <div class="mui-media-body"><p class="mui-ellipsis lineHeight20">2018/12/12-2018/12/18</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;关注：<font class="colororange">' + data.data[i].id + '</font></p><p class="mui-ellipsis lineHeight20">' + data.data[i].type;
+                                if (data.data[i].status == "下架") {
+                                    newli += '<font class="tipCorner bggray" style="margin-left: 10px !important;">已结束</font>';
+                                } else if (data.data[i].status == "上架") {
+                                    newli += '<font class="tipCorner bgred" style="margin-left: 10px !important;">进行中</font>';
+                                } else if (data.data[i].status == 3) {
+                                    newli += '<font class="tipCorner bggreen" style="margin-left: 10px !important;">报名</font>';
+                                }
+                                newli += '</p></div></a></li>'
+                            }
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.team").empty().append(newli);
+                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.team").append(newli);
+                        }
+                        if (newli != '') {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+                });
+            };
+
+
+        })
+    </script>
+</body>
+
+</html>
