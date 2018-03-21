@@ -48,47 +48,27 @@
             <div class="col-sm-12">
               <div class="box-body">
 
-                <table id="withdrawList" class="table table-bordered table-striped dataTable" role="grid"
+                <table id="rebateList" class="table table-bordered table-striped dataTable" role="grid"
                        aria-describedby="example1_info">
                   <thead>
                   <tr>
-                    <th>会员/教练</th>
-                    <th>收入金额</th>
-                    <th>基本收入</th>
-                    <th>提成收入</th>
-                    <th>收入类型</th>
-                    <th>所属训练营</th>
+                    <th>ID</th>
+                    <th>推荐人</th>
+                    <th>被推荐人</th>
+                    <th>被推荐层级</th>
+                    <th>奖励金额</th>
                     <th>结算时间</th>
-                    <th>课时信息</th>
-                    <th>操作</th>
                   </tr>
                   </thead>
                   <tbody>
                   {volist name="list" id="vol"}
                   <tr>
+                    <td>{$vol.id}</td>
                     <td>{$vol.member}</td>
-                    <td>{$vol.salary+$vol.push_salary}</td>
+                    <td>{$vol.s_member}</td>
+                    <td>{$vol.tier}</td>
                     <td class="sIn">{$vol.salary}</td>
-                    <td>{$vol.push_salary}</td>
-                    <td>
-                      {$vol.type}
-                    </td>
-                    <td>{$vol.camp}</td>
-                    <td>{$vol.schedule_time|date='Y-m-d',###}</td>
-                    <td>
-                      课程：{$vol.lesson}（单价：{$vol.cost}）<br>
-                      班级：{$vol.grade}<br>
-                      上课时间：{$vol.lesson_time|date='Y-m-d H:i',###}<br>
-                      正式学员人数：{$vol.students}<br>
-                      学员名单：<?php $students = unserialize($vol['student_str']);
-                        foreach($students as $k =>$v){
-                      echo $v['student'].' ';
-                      }
-                      ?><br>
-                      课时工资（供参考）：{$vol.coach_salary}                                        </td>
-                    <td>
-                      <a href="/admin/schedule/detail/id/493" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看课时详情</i></a>
-                    </td>
+                    <td>{$vol.datemonth}</td>
                   </tr>
                   {/volist}
                   </tbody>
@@ -168,8 +148,17 @@
 
     $(function () {
 
-        $(".content-header h1").html('<i class="fa fa-fw fa-th-large"></i> 平台教练工资');
+
         //=========================== 初始化数据 ==============================//
+
+        $('#rebateList').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
 
         //判断是否有年月的本地存储，没则获取当前月的上一个月
         if(currDateYM==''&&currDateYM!=null) {
@@ -247,13 +236,9 @@
             localStorage.setItem('currDateYM',getYM);
             localStorage.setItem('currCoachName',coach);
             localStorage.setItem('currMemberID',member_id);
-            //拆分日期
+            //转换日期格式 2018-03 => 201803
             var arrYM = getYM.split('-');
-            var getLastDate = new Date(arrYM[0],arrYM[1],0);
-            var beginDate = arrYM[0]+arrYM[1]+'01';
-            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
-
-            window.location.href="{:url('/admin/Statistics_Coach/coachSallary/')}"+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+            window.location.href="{:url('/admin/Statistics_Coach/coachRebate/')}"+"/member_id/"+member_id+"/yearmonth/"+arrYM[0]+arrYM[1];
         })
 
 

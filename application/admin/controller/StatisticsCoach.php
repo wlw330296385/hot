@@ -106,5 +106,57 @@ class StatisticsCoach extends Backend{
         return view('StatisticsCoach/coachSchedule');
     }
 
+    // 个人（教练）提现列表  //准哥写的，待丽文检查
+    public function coachWithdraw(){
+        $member_id = input('member_id',0);
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd)+86399;
+        //查询条件：camp_id，monthstart，monthend
+        $list = db('output')
+            ->where(['member_id'=>$member_id,'type'=>-1])
+            ->where(['create_time'=>['between',[$month_start,$month_end]]])
+            ->where('delete_time',null)->select();
+
+        $this->assign('list',$list);
+
+        return $this->fetch('StatisticsCoach/coachWithdraw');
+    }
+
+    // 个人（教练）工资列表（列出教练员当月的工资）//准哥写的，待丽文检查
+    public function coachSallary(){
+        $member_id = input('member_id',0);
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd)+86399;
+        $list = db('salary_in')
+            ->join('schedule','schedule.id=salary_in.schedule_id')
+            ->where(['type'=>1,'member_id'=>$member_id])
+            ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where('salary_in.delete_time',null)
+            ->order('salary_in.id desc')
+            ->select();
+        // echo db('salary_in')->getlastsql();
+        // dump($list);
+        $this->assign('list',$list);
+
+        return $this->fetch('StatisticsCoach/coachSallary');
+    }
+
+    // 个人（教练）返利列表 //准哥写的，待丽文检查
+    public function coachRebate(){
+        $member_id = input('member_id',0);
+        $yearMonth = input('yearmonth','201111');
+        //查询条件：member_id，yearmonth
+        $list = db('rebate')
+            ->where(['member_id'=>$member_id,'datemonth'=>$yearMonth])
+            ->where('delete_time',null)->select();
+
+        $this->assign('list',$list);
+
+        return $this->fetch('StatisticsCoach/coachRebate');
+    }
     
 }
