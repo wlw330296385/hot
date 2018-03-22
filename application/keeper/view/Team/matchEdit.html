@@ -271,7 +271,7 @@
             </div>
 
             <div class="mui-input-row refereeRow hide h-auto">
-                <a href="#refereeDom" id="setReferee" class="mui-navigate-right">
+                <a href="#refereeDom" class="mui-navigate-right setReferee">
                     <label>裁判名单</label>
                     <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                     <div class="hideListIni">
@@ -679,14 +679,14 @@
                 <ul id="refereeDiv" class="mui-table-view mui-input-group list refereeList"></ul>
                 <ul class="mui-pager">
                     <li>
-                        <a href="#" class="prev_page">上一页</a>
+                        <a href="#" class="prev_pageIni">上一页</a>
                     </li>
                     <li>
-                        <span class="currPage">0</span>/
-                        <span class="totalPage">0</span>
+                        <span class="currPageIni">0</span>/
+                        <span class="totalPageIni">0</span>
                     </li>
                     <li>
-                        <a href="#" class="next_page">下一页</a>
+                        <a href="#" class="next_pageIni">下一页</a>
                     </li>
                 </ul>
             </div>
@@ -715,14 +715,14 @@
                 <ul id="refereeApDiv" class="mui-table-view mui-input-group list refereeApList"></ul>
                 <ul class="mui-pager">
                     <li>
-                        <a href="#" class="prev_page">上一页</a>
+                        <a href="#" class="prev_pageAp">上一页</a>
                     </li>
                     <li>
-                        <span class="currPage">0</span>/
-                        <span class="totalPage">0</span>
+                        <span class="currPageAp">0</span>/
+                        <span class="totalPageAp">0</span>
                     </li>
                     <li>
-                        <a href="#" class="next_page">下一页</a>
+                        <a href="#" class="next_pageAp">下一页</a>
                     </li>
                 </ul>
             </div>
@@ -780,24 +780,24 @@
 
                 // 获取省市区默认值
                 // 获取省索引值
-                // function searchProvince(province) {
-                //     for (var i = 0; i <= cityData3.length; i++) {
-                //         if (cityData3[i].text == province) {
-                //             return i;
-                //         }
-                //     }
-                // }
-                // //  获取市索引值
-                // function searchCity(city) {
-                //     for (var i = 0; i < cityData3.length; i++) {
-                //         for (var j = 0; j < cityData3[i].children.length; j++) {
-                //             if (cityData3[i].children[j].text == city) {
-                //                 return j;
-                //             }
-                //         }
-                //     }
-                // }
-                // //  获取区索引值
+                function searchProvince(province) {
+                    for (var i = 0; i <= cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //  获取区索引值
                 // function searchArea(area) {
                 //     for (var i = 0; i < cityData3.length; i++) {
                 //         for (var j = 0; j < cityData3[i].children.length; j++) {
@@ -809,13 +809,9 @@
                 //         }
                 //     }
                 // }
-                // cityPicker3.pickers[0].setSelectedIndex(searchProvince('{$matchInfo.province}'));
-                // cityPicker3.pickers[1].setSelectedIndex(searchCity('{$matchInfo.city}'));
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince('{$matchInfo.province}'));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity('{$matchInfo.city}'));
                 // cityPicker3.pickers[2].setSelectedIndex(searchArea('{$matchInfo.area}'));
-
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
 
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
@@ -1017,17 +1013,17 @@
                 toRefereeList(keyword, "refereeDom", pageRE);
             })
             //裁判弹出框页码控制
-            $("#refereeDom").on('tap', '.next_page', function () {
-                var getTotalPage = $("#referee .totalPage").text();
+            $("#refereeDom").on('tap', '.next_pageIni', function () {
+                var getTotalPage = $("#refereeDom .totalPageIni").text();
                 pageRE++;
                 if (pageRE > getTotalPage) {
                     mui.toast("已经最后一页了");
                 } else {
-                    var keyword = $(".keywordLD").val();
+                    var keyword = $(".keywordRE").val();
                     toRefereeList(keyword, "refereeDom", pageRE);
                 }
             })
-            $("#refereeDom").on('tap', '.prev_page', function () {
+            $("#refereeDom").on('tap', '.prev_pageIni', function () {
                 pageRE--;
                 if (pageRE < 1) {
                     mui.toast("已经是第一页了");
@@ -1075,7 +1071,7 @@
             });
 
             //裁判列表复选框赋值
-            $("#setReferee").on('tap', '', function () {
+            $(".setReferee").on('tap', '', function () {
                 //每次打开先清空所有选择
                 $(".refereeList input[name='checkbox-referee']").prop("checked", false);
                 //然后遍历出对应所选
@@ -1092,8 +1088,8 @@
             // 系统邀请/////////////////////////////////////////////////
             //清除裁判
             $("#RefereeApDel").on('tap', '', function () {
-                $(".refereeAp").empty();
-                $(".refereeCount input[name=referee_id]").val("");
+                $(".refereeApply").empty();
+                $(".refereeCount input[name=referee_id]").val('');
                 $('.refereeCount input[name=referee_cost]').val('');
                 $('.refereeApList input[name=checkbox-referee]').prop("checked", false);
                 $(".hideApList").empty();
@@ -1106,8 +1102,8 @@
                 toRefereeApList(keyword, "refereeAp", pageRE);
             })
             //裁判弹出框页码控制
-            $("#refereeAp").on('tap', '.next_page', function () {
-                var getTotalPage = $("#refereeAp .totalPage").text();
+            $("#refereeAp").on('tap', '.next_pageAp', function () {
+                var getTotalPage = $("#refereeAp .totalPageAp").text();
                 pageRE++;
                 if (pageRE > getTotalPage) {
                     mui.toast("已经最后一页了");
@@ -1116,7 +1112,7 @@
                     toRefereeApList(keyword, "refereeAp", pageRE);
                 }
             })
-            $("#refereeAp").on('tap', '.prev_page', function () {
+            $("#refereeAp").on('tap', '.prev_pageAp', function () {
                 pageRE--;
                 if (pageRE < 1) {
                     mui.toast("已经是第一页了");
@@ -1943,13 +1939,13 @@
         function toRefereeApList(keyword, wRefereeAp, page) {
             var url = "{:url('api/referee/matchapplypage','','',true)}/?page=" + page;
             var wRefereeList = "ul.refereeApList";
-            var currPage = ".currPage";
-            var totalPage = ".totalPage";
+            var currPage = ".currPageAp";
+            var totalPage = ".totalPageAp";
             var match_id = "{$matchInfo.id}"
             if (keyword != '' && wRefereeAp != '') {
                 wRefereeList = "#" + wRefereeAp + " ul.refereeApList";
-                currPage = "#" + wRefereeAp + " .currPage";
-                totalPage = "#" + wRefereeAp + " .totalPage";
+                currPage = "#" + wRefereeAp + " .currPageAp";
+                totalPage = "#" + wRefereeAp + " .totalPageAp";
             }
             mui.ajax({
                 url: url,
@@ -1998,12 +1994,12 @@
             var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page;
             var match_id = "{$matchInfo.id}"
             var wRefereeList = "ul.refereeList";
-            var currPage = ".currPage";
-            var totalPage = ".totalPage";
+            var currPage = ".currPageIni";
+            var totalPage = ".totalPageIni";
             if (keyword != '' && wReferee != '') {
                 wRefereeList = "#" + wReferee + " ul.refereeList";
-                currPage = "#" + wReferee + " .currPage";
-                totalPage = "#" + wReferee + " .totalPage";
+                currPage = "#" + wReferee + " .currPageIni";
+                totalPage = "#" + wReferee + " .totalPageIni";
             }
             mui.ajax({
                 url: url,
