@@ -44,7 +44,7 @@ class Login extends Controller
 			}
 		}
 
-		// return view('Login/login');
+		return view('Login/login');
 	}
 
 
