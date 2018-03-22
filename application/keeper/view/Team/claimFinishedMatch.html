@@ -239,27 +239,33 @@
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
                             <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
+                            <input type="hidden" name="record[home_team_logo]" class="data" value="{$matchInfo.record.home_team_logo}">
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3" style="padding: 12% 0;">
                             <h3>VS</h3>
                         </div>
                         <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
                             <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
+                            <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}">
                         </div>
                     </div>
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
                             <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
+                            <input type="hidden" name="record[home_team]" class="data" value="{$matchInfo.record.home_team}">
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3"></div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
                             <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
+                            <input type="hidden" name="record[away_team]" class="data" value="{$matchInfo.record.away_team}">
                         </div>
                     </div>
                     <div class="mui-row score">
                         <h2 class="mui-col-sm-4 mui-col-xs-4 colorred" style="margin-left:13px">{$matchInfo.record.home_score}</h2>
                         <div class="mui-col-sm-3 mui-col-xs-3"></div>
                         <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.away_score}</h2>
+                        <input type="hidden" name="record[home_score]" class="data" value="{$matchInfo.record.home_score}">
+                        <input type="hidden" name="record[away_score]" class="data" value="{$matchInfo.record.away_score}">
                     </div>
                 </li>
             </ul>
@@ -270,56 +276,72 @@
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
                     <span class="away_team">{$matchInfo.record.away_team}</span>
+                    <input type="hidden" name="record[away_team]" class="data" value="{$matchInfo.record.away_team}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
                     <span class="match_time">{$matchInfo.match_time}</span>
+                    <input type="hidden" name="match_time" class="data" value="{$matchInfo.record.match_time}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
+                    <input type="hidden" name="province" class="data" value="{$matchInfo.province}">
+                    <input type="hidden" name="city" class="data" value="{$matchInfo.city}">
+                    <input type="hidden" name="area" class="data" value="{$matchInfo.area}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
                     <span>{$matchInfo.court}</span>
+                    <input type="hidden" name="court" class="data" value="{$matchInfo.court}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
                     <span>{$matchInfo.court_cost}</span>
+                    <input type="hidden" name="court_cost" class="data" value="{$matchInfo.court_cost}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
                     <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
+                    <input type="hidden" name="court_cost_bear" class="data" value="{$matchInfo.court_cost_bear}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
                     <span class="refereeType">{$matchInfo.referee_type}</span>
+                    <input type="hidden" name="referee_type" class="data" value="{$matchInfo.referee_type}">
                 </li>
                 <li class="mui-table-view-cell listli refereeCount">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
                     <span class="wd60">{$matchInfo.referee_count}/人</span>
+                    <input type="hidden" name="referee_count" class="data" value="{$matchInfo.referee_count}">
                 </li>
                 <li class="mui-table-view-cell listli refereeName">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
                     <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
+                    <div class="hideReferee">
+                        {volist name="$refereeList" id="vol"}
+                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
+                    </div>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
                     <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
+                    <input type="hidden" name="referee_cost_bear" class="data" value="{$matchInfo.referee_cost_bear}">
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
                     <span class="match_time">{$matchInfo.type}</span>
+                    <input type="hidden" name="type" class="data" value="{$matchInfo.type}">
                 </li>
 
             </ul>
@@ -327,10 +349,9 @@
         </div>
 
         <form action="" class="mui-input-group mt55">
-            <!-- 主队 -->
             <div class="operation-box">
                 <div class="mui-input-row">
-                    <label class="wd">主队参赛人员</label>
+                    <label class="wd">参赛队员</label>
                 </div>
                 <div class="box" id="inactiveList"></div>
                 <div class="box" id="hideStList" style="display:none"></div>
@@ -343,7 +364,7 @@
                     <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
                 </div>
             </div>
-            
+
             <p class="pline"></p>
 
             <ul class="mui-table-view">
@@ -368,26 +389,20 @@
 
         <!-- 底部操作 -->
         <ul class="mui-table-view operation mt">
-
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bggreen">
-                <a href="{:url('team/claimFinishedMatchEdit',['team_id'=>$team_id,'match_id'=>$matchInfo.id])}">前往编辑认领</a>
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
+                提交认领
             </li>
         </ul>
 
     </div>
 
     </div>
-    <!--主队人员名单-->
+    <!--参赛队员名单-->
     <div id="addTeamMember" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course">
-                <strong>主队球员名单</strong>
+                <strong>队员名单</strong>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="HomeMemberConfirm">确认</button>
@@ -400,10 +415,11 @@
         </div>
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
-    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
-    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.zoom.js"></script>
     <script src="/static/frontend/js/mui.previewimage.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'teammatch'])}";
@@ -418,16 +434,13 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        // a标签跳转
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
         $(function () {
+
+            mui.alert("如果你认同比赛成绩，请在底部录入参赛队员和比赛花絮，提交认领此场比赛记录，积分规则：胜队积两分，负队积一分，不录入不计分！");
 
             var count = 1;
             isthumbsup(); //点赞状态
-            toSignUpList(); // 报名/参赛人员
+            toSignUpList(); // 报名/参赛队员
             toHomeMemberList();
             // 去逗号
             var refereeList = $(".refereeList").text()
@@ -490,7 +503,166 @@
                 $(".refereeCostBear").text("客队负责");
             }
 
+            //花絮图删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            //全选
+            $(".all").click(function () {
+                $(this).parents().siblings().find('.checkboxCont input').prop('checked', true)
+            })
+
+            //取消全选
+            $(".cancel").click(function () {
+                $(this).parents().siblings().find('.checkboxCont input').prop('checked', false)
+            })
+
+            //删除
+            $(document).on('click', '.del', function () {
+                $(this).parents().siblings().find("input[name='member']:checked").parents(".checkboxCont").remove();
+                changeIndexHome();
+                $("#hideStList").empty();
+                $("#inactiveList input[type=checkbox]").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" data-id="' + $(this).attr('data-id') + '" type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" data-id="' + $(this).attr('data-id') + '"></div>';
+                    $("#hideStList").append(str);
+                })
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+            });
+
+            //主队参赛队员列表复选框赋值
+            $("#setTeamMemberBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-member']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".stdList").each(function (i) {
+                    var member_id = $(this).attr("data-member_id");
+                    $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
+                        return $(this).attr("data-member_id") == member_id
+                    }).prop("checked", true);
+                });
+            });
+            // 选择添加主队参赛队员点击事件
+            $("#HomeMemberConfirm").on('click', function () {
+                $("#inactiveList").empty();
+                $("#hideStList").empty();
+                $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '"></div>';
+                    $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
+                });
+                changeIndexHome();//调用-更新序号
+                mui("#addTeamMember").popover("toggle");
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".badgeHome").text(totalNum);
+            });
+
         });
+
+        // 活动花絮图提交数组
+        function albumImg() {
+            album = [];
+            $(".albumImg img").each(function () {
+                var src = $(this).attr('src')
+                album.push(src);
+            }).get().join(",");
+            console.log(album)
+        }
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var html = $("#inactiveList").children().hasClass("checkboxCont");
+            if (html == false) {
+                mui.toast("请录入出席比赛的参赛队员");
+                return false;
+            }
+
+            album = [];
+            albumImg();//调用活动花絮图片组好的数组
+
+            referee_str = [];
+            $(".hideReferee input").each(function () {
+                var referee = $(this).attr("data-referee");
+                var referee_id = $(this).attr("data-referee_id");
+                var referee_cost = $(this).attr("data-referee_cost");
+                referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost });
+            });
+
+            HomeMemberListDel = [];
+            HomeMemberList = [];
+            ////////////////////////最终选择的活动队员/////////////////////////////////////////
+            $("#inactiveList input[name=member]").each(function () {
+                member = $(this).attr("data-member");
+                member_id = $(this).attr("data-member_id");
+                name = $(this).attr("data-name");
+                tmid = $(this).attr("data-tmid");
+                id = $(this).attr('data-id');
+                HomeMemberList.push({ member: member, member_id: member_id, name: name, tmid: tmid });
+            });
+            console.log(HomeMemberList)
+            ////////////////////////最终选择的活动队员/////////////////////////////////////////
+
+            ////////////////////////在已选列表中删除了的队员/////////////////////////////////////////
+            var idDelID = ""
+            //去除活动队员
+            $("#hideStListIni input[name=member]").each(function (i) {
+                var dsid = $(this).attr("data-id");
+                //默认为要去除的活动队员
+                idDelID = "Yes";
+                //该队员遍历新编辑的活动队员表判断是否存在
+                $("#hideStList input[name=member]").each(function () {
+                    if (dsid == $(this).attr("data-id")) {
+                        idDelID = "No";
+                        return false;
+                    }
+                });
+                //上面遍历过不存在就添加到最终变动活动队员列表中
+                if (idDelID == "Yes") {
+                    var member_id = $(this).attr("data-member_id");
+                    HomeMemberListDel.push({ member_id: member_id, name: name, id: id, status: -1 });
+                }
+                console.log(HomeMemberListDel)
+            });
+            ////////////////////////在已选列表中删除了的队员/////////////////////////////////////////
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.referee_str = JSON.stringify(referee_str);
+            objData.HomeMemberData = JSON.stringify(HomeMemberList);
+            objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel); //在已选列表中删除了的队员
+            objData.album = JSON.stringify(album);
+
+
+            var url = "{:url('api/match/updateteammatch')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
+                    var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+
+        };
+
+        //更新主队参赛队员序号
+        function changeIndexHome() {
+            var i = 1;
+            $("#inactiveList .checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        }
         // 点赞状态
         function isthumbsup() {
             var commented_id = "{$matchInfo.id}";
@@ -523,7 +695,7 @@
             });
         }
 
-        //获取已经报名的活动人员列表
+        //获取已经报名的活动队员列表
         function toSignUpList() {
             var url = "{:url('api/match/recordmemberlist')}";
             var match_id = "{$matchInfo.id}";
@@ -553,7 +725,7 @@
                         $(".imgShow").append(inactiveDiv);
                     }
                     if (data.code == 100) {
-                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                        $(".imgShow").append('<p class="mui-text-center">还没有参赛队员哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -587,7 +759,7 @@
                             $("#newdiv").append('<p class="nodata">没有相关数据哦</p>');
                         }
                         if ($("#inactiveList").html() == '') {
-                            $("#inactiveList").append('<p class="nohave">还没有参赛人员哦</p>');
+                            $("#inactiveList").append('<p class="nohave">还没有参赛队员哦</p>');
                         }
                     }
                 },
