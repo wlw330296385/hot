@@ -232,6 +232,7 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <input type="hidden" class="data" name="id" value="{$matchInfo.record.match_id}">
         <input type="hidden" class="data" name="record[id]" value="{$matchInfo.record.id}">
+        <input type="hidden" class="data" name="team_id" value="{$team_id}">
     </header>
 
     <div class="mui-content list mt55">
@@ -241,35 +242,27 @@
                 <div class="mui-row">
                     <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
                         <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
-                        <input type="hidden" name="record[home_team_logo]" class="data" value="{$matchInfo.record.home_team_logo}">
                     </div>
                     <div class="mui-col-sm-3 mui-col-xs-3" style="padding: 12% 0;">
                         <h3>VS</h3>
                     </div>
                     <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
                         <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
-                        <input type="hidden" name="record[away_team_logo]" class="data" value="{$matchInfo.record.away_team_logo}">
                     </div>
                 </div>
                 <div class="mui-row">
                     <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
                         <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
-                        <input type="hidden" name="record[home_team_id]" class="data" value="{$matchInfo.record.home_team_id}">
-                        <input type="hidden" name="record[home_team]" class="data" value="{$matchInfo.record.home_team}">
                     </div>
                     <div class="mui-col-sm-3 mui-col-xs-3"></div>
                     <div class="mui-col-sm-4 mui-col-xs-4">
                         <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
-                        <input type="hidden" name="record[away_team_id]" class="data" value="{$matchInfo.record.away_team_id}">
-                        <input type="hidden" name="record[away_team]" class="data" value="{$matchInfo.record.away_team}">
                     </div>
                 </div>
                 <div class="mui-row score">
                     <h2 class="mui-col-sm-4 mui-col-xs-4 colorred" style="margin-left:13px">{$matchInfo.record.home_score}</h2>
                     <div class="mui-col-sm-3 mui-col-xs-3"></div>
                     <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">{$matchInfo.record.away_score}</h2>
-                    <input type="hidden" name="record[home_score]" class="data" value="{$matchInfo.record.home_score}">
-                    <input type="hidden" name="record[away_score]" class="data" value="{$matchInfo.record.away_score}">
                 </div>
             </li>
         </ul>
@@ -280,72 +273,60 @@
                 <label>
                     <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
                 <span class="away_team">{$matchInfo.record.away_team}</span>
-                <input type="hidden" name="record[away_team]" class="data" value="{$matchInfo.record.away_team}">
+                <input type="hidden" name="" class="data" value="{$matchInfo.record.away_team}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
                 <span class="match_time">{$matchInfo.match_time}</span>
-                <input type="hidden" name="match_time" class="data" value="{$matchInfo.record.match_time}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
                 <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
-                <input type="hidden" name="province" class="data" value="{$matchInfo.province}">
-                <input type="hidden" name="city" class="data" value="{$matchInfo.city}">
-                <input type="hidden" name="area" class="data" value="{$matchInfo.area}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
                 <span>{$matchInfo.court}</span>
-                <input type="hidden" name="court" class="data" value="{$matchInfo.court}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
                 <span>{$matchInfo.court_cost}</span>
-                <input type="hidden" name="court_cost" class="data" value="{$matchInfo.court_cost}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
                 <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
-                <input type="hidden" name="court_cost_bear" class="data" value="{$matchInfo.court_cost_bear}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
                 <span class="refereeType">{$matchInfo.referee_type}</span>
-                <input type="hidden" name="referee_type" class="data" value="{$matchInfo.referee_type}">
             </li>
             <li class="mui-table-view-cell listli refereeCount">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
                 <span class="wd60">{$matchInfo.referee_count}/人</span>
-                <input type="hidden" name="referee_count" class="data" value="{$matchInfo.referee_count}">
             </li>
             <li class="mui-table-view-cell listli refereeName">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
                 <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                 <div class="hideReferee">
-                    {volist name="$refereeList" id="vol"}
-                    <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
+
                 </div>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
                 <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
-                <input type="hidden" name="referee_cost_bear" class="data" value="{$matchInfo.referee_cost_bear}">
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
                 <span class="match_time">{$matchInfo.type}</span>
-                <input type="hidden" name="type" class="data" value="{$matchInfo.type}">
             </li>
 
         </ul>
@@ -648,12 +629,12 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.referee_str = JSON.stringify(referee_str);
+            //objData.referee_str = JSON.stringify(referee_str);
             objData.HomeMemberData = JSON.stringify(HomeMemberList);
             objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel); //在已选列表中删除了的队员
             objData.album = JSON.stringify(album);
 
-            var url = "{:url('api/match/updateteammatch')}";
+            var url = "{:url('api/match/claimfinishmatch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
