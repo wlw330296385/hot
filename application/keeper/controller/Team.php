@@ -613,6 +613,7 @@ class Team extends Base {
                 "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
                 "away_score" => $matchRecordInfo['home_score'],
                 'win_team_id' => $matchRecordInfo['win_team_id'],
+                'lose_team_id' => $matchRecordInfo['lose_team_id'],
                 'claim_status' => 0,
                 'claim_team_id' => $this->team_id,
                 'claim_record_id' => $matchRecordInfo['id']
@@ -625,6 +626,7 @@ class Team extends Base {
             ]);
             if ($hasClaimRecord) {
                 $claimRecordData['id'] = $hasClaimRecord['id'];
+                $claimRecordData['claim_status'] = ($hasClaimRecord['claim_status'] == 1) ? 1 : 0;
             }
             $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
             $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);

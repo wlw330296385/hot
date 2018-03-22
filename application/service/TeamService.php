@@ -10,6 +10,7 @@ use app\model\TeamEventMember;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
 use app\model\TeamMessage;
+use app\model\TeamRank;
 use think\Db;
 
 class TeamService
@@ -1014,6 +1015,50 @@ class TeamService
             return $res->toArray();
         } else {
             return $res;
+        }
+    }
+
+    // 保存球队积分
+    public function saveTeamRank($data=[], $condition=[]) {
+        $model = new TeamRank();
+        // 带更新条件更新数据
+        if(!empty($condition)) {
+            // 检查有无符合条件数据
+            $rows = $model->where($condition)->select();
+            if ($rows) {
+                // 更新数据
+                $res = $model->allowField(true)->save($data, $condition);
+                if ($res || ($res === 0)) {
+                    return ['code' => 200, 'msg' => __lang('MSG_200')];
+                } else {
+                    return ['code' => 100, 'msg' => __lang('MSG_400')];
+                }
+            } else {
+                //新增数据
+                $res = $model->allowField(true)->isUpdate(false)->save($data);
+                if ($res) {
+                    return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+                } else {
+                    return ['code' => 100, 'msg' => __lang('MSG_400')];
+                }
+            }
+        }
+        // 根据主键id 跟新数据
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 新增数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 }
