@@ -1,6 +1,6 @@
 <?php 
 namespace app\management\controller;
-use app\management\Base;
+use app\management\controller\Base;
 
 
 /**
@@ -31,7 +31,12 @@ class Guider extends Base
 			}
 			header(url('Index/index'));
 		}
+		if($campList){
+			$campList = $campList->toArray();
+		}else{
+			$campList = [];
+		}
 		$this->assign('campList',$campList);
-		return view('Index/choose');	
+		return view('Guider/choose');	
 	}
 }

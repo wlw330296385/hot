@@ -14,9 +14,9 @@ class Login extends Controller
 	}
 
 	public function login(){
-		if (cookie('member_id')) {
-            $this->error('你已经登录，无需重复登录', url('Guider/choose'));
-        }
+		// if (cookie('member_id')) {
+  //           $this->error('你已经登录，无需重复登录', url('Guider/choose'));
+  //       }
 		if(request()->isPost()){
 			$username = input('post.username');
 
@@ -24,7 +24,7 @@ class Login extends Controller
 
 			$keeplogin = input('post.keeplogin',3600);
 			$map = function($query) use ($password,$username){
-				$query -> where('member|telephone','=',$username)->where('password',$password);
+				$query -> where('member|telephone','=',$username)->where('password',passwd($password));
 			};
 			$AuthService = new AuthService;
 			$result = $AuthService ->login($map,$keeplogin);

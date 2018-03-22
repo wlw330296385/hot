@@ -10,11 +10,12 @@ class AuthService {
 		$Member = new \app\model\Member;
 		$memberInfo = $Member->where($map)->find();
 		if($memberInfo){
-			$Member->logintime++;
-	        $Member->lastlogin_at = time();
-	        $Member->lastlogin_ip = request()->ip();
-	        $Member->lastlogin_ua = request()->header('user-agent');
-	        $Member->save();
+			$memberInfo = $memberInfo->toArray();
+			$data['logintime'] = $memberInfo['logintime'] ++;
+	        $data['lastlogin_at'] = time();
+	        $data['lastlogin_ip'] = request()->ip();
+	        $data['lastlogin_ua'] = request()->header('user-agent');
+	        $Member->save($data);
 			cookie('member_id',$memberInfo['id'],$keeptime);
 			cache('memberInfo',$memberInfo);
 			return true;
