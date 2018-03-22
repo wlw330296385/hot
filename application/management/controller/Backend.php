@@ -20,13 +20,14 @@ class Backend extends Base
 		}else{
 			$this->error('权限不足','Login/login');
 		}
-		// 获取面包屑
-		$_location = $this->checkAuth($power);
-		if(!$_location){
+		
+		if(!$this->checkAuth($power)){
 			$this->error('权限不足,不可访问此页面');
 		}
-		
+		// 获取面包屑
+		$_location = $this->getLocation();
 		$menuList = cache("menuList_{$this->memberInfo['id']}");
+		// dump($menuList);
 		$this->assign('_sidebar_menus',$menuList);
 		$this->assign('_location',$_location);
 	}
@@ -34,25 +35,18 @@ class Backend extends Base
 
 
  	private	function checkAuth($power){
- 		return [0=>['title'=>'开发者1','url_value'=>111],0=>['title'=>'开发者2','url_value'=>111]];
+ 		// return [0=>['title'=>'开发者1','url_value'=>111],0=>['title'=>'开发者2','url_value'=>111]];
  		$c = request()->controller();
  		$a = request()->action();
  		$url_value = strtolower("$c/$a");
  		$powerList = cache("powerList_{$this->memberInfo['id']}"); 
  		foreach ($powerList as $key => $value) {
  			if($url_value == strtolower($value['url_value'])){
- 				//获取面包屑地址
- 				$_location = [];
- 				$_location[1] = $value;
- 				foreach ($powerList as $k => $val) {
- 					if($val['id'] == $vallue['pid']){
- 						$_location[0] = $val;
- 					}
- 				}
- 				return $_location;
+ 				
+ 				return true;
  			}
  		}
-		return true;
+		return false;
 	}
 
 
@@ -63,6 +57,17 @@ class Backend extends Base
 		$c = request()->controller();
  		$a = request()->action();
  		$url_value = strtolower("$c/$a");
+ 		if($url_value == strtolower($value['url_value'])){
+			//获取面包屑地址
+			$_location = [];
+			$_location[1] = $value;
+			foreach ($powerList as $k => $val) {
+				if($val['id'] == $value['pid']){
+					$_location[0] = $val;
+				}
+			}
+			return $_location;
+		}
 
 	}
 }

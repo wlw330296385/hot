@@ -18,9 +18,10 @@
 		.lockscreen-logo small { font-size: 45%; }
 		.lockscreen-logo h1 { line-height: 30px; }
 		.lockscreen-logo .icon-logo-Big{ font-size: 60px; line-height:60px; float: left; margin-left: 125px; margin-right: 10px; margin-top: -15px; }
-		.bgLogo { position: absolute; z-index: -999; font-size: 200em; left: -20%; top:-180%; color: #FFF; opacity: 0.3; }
-		.pull-right { text-align: right;}
+		.bgLogo { position: absolute; z-index: -999; font-size: 200em; line-height: 1; left: -20%; top:-120%; color: #FFF; opacity: 0.3; }
+		.callout { cursor: pointer; }
 		.callout .icon { float: right; font-size: 60px; position: relative; top:-20px; right: -20px; }
+		.row, #sourceData{ display: none;}
 	</style>
 	<!--[if lt IE 9]>
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -42,17 +43,10 @@
 						<h3 class="box-title">营主身份</h3>
 					</div>
 					<div class="box-body">
-						<div class="callout callout-danger">
-							<i class="icon iconfont icon-team-homepage"></i>
-							<h4>大热篮球俱乐部</h4>
-							训练营的各项每月报表等统计数据
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-
 		<div class="row type3" id="campManager">
 			<div class="col-md-12">
 				<div class="box box-default">
@@ -61,18 +55,10 @@
 						<h3 class="box-title">管理员身份</h3>
 					</div>
 					<div class="box-body">
-						<div class="callout callout-success">
-							<i class="icon iconfont icon-training-teaching"></i>
-							<h4>安西教练</h4>
-							查看您在篮球管家平台教练员身份的各项统计数据
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-
-
 		<div class="row type2" id="hotCoach">
 			<div class="col-md-12">
 				<div class="box box-default">
@@ -81,19 +67,11 @@
 						<h3 class="box-title">教练员身份</h3>
 					</div>
 					<div class="box-body">
-						<div class="callout callout-info">
-							<i class="icon iconfont icon-training-coach"></i>
-							<h4>安西教练</h4>
-							查看您在篮球管家平台教练员身份的各项统计数据
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-	<!-- /.login-box-body -->
 </div>
-<!-- /.login-box -->
 
 <div id="sourceData">
 	{volist name="campList" id="vol"}
@@ -102,6 +80,7 @@
 		<li class="camp">{$vol.camp}</li>
 		<li class="member">{$vol.member}</li>
 		<li class="type">{$vol.type}</li>
+		<li class="remarks">{$vol.remarks}</li>
 	</ul>
 	{/volist}
 </div>
@@ -117,35 +96,41 @@
 
     $(function () {
 
-        $("#sourceData").on("click",'ul', function () {
-            $('input[name="key"]').val($(this).find(".key").text());
+        $(".box-body").on("click",'.callout', function () {
+            $('input[name="key"]').val($(this).attr("data-key"));
             $("#conform").submit();
         })
-
 
         //遍历源数据插入到对应位置
 		var campCreator = '';
         var campManager = '';
         var hotCoach = '';
-
         var getType = '';
         $("#sourceData ul").each(function () {
             getType = $(this).find(".type").text();
-            $(this).find(".key").text();
-            $(this).find(".camp").text();
-            $(this).find(".member").text();
-
+			if(getType=='4'){
+                campCreator = campCreator + '<div class="callout callout-danger" data-key="'+$(this).find(".key").text()+'"><i class="icon iconfont icon-team-homepage"></i><h4>'+$(this).find(".camp").text()+'</h4>'+$(this).find(".remarks").text()+'</div>'
+			}else if(getType=='3'){
+                campManager = campManager + '<div class="callout callout-success" data-key="'+$(this).find(".key").text()+'"><i class="icon iconfont icon-training-teaching"></i><h4>'+$(this).find(".camp").text()+'</h4>'+$(this).find(".remarks").text()+'</div>'
+            }else{
+                hotCoach = '<div class="callout callout-info" data-key="'+$(this).find(".key").text()+'"><i class="icon iconfont icon-training-coach"></i><h4>'+$(this).find(".member").text()+'</h4>'+$(this).find(".remarks").text()+'</div>'
+			}
         });
-
+		if(campCreator!=''){
+            $("#campCreator .box-body").html(campCreator);
+            $("#campCreator").show();
+		}
+        if(campManager!=''){
+            $("#campManager .box-body").html(campManager);
+            $("#campManager").show();
+        }
+        if(hotCoach!=''){
+            $("#hotCoach .box-body").html(hotCoach);
+            $("#hotCoach").show();
+        }
 
     });
 
 </script>
 </body>
 </html>
-
-选择对应身份之后,post对应的 $key上来即可
-{volist name="campList" id="vol"}
-	{$key}:
-	<?php dump($vol); ?>
-{/volist}

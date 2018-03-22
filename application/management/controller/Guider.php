@@ -24,26 +24,27 @@ class Guider extends Base
 			$camp = $campList[$key];
 			cache('camp',$camp['camp']);
 			cache('camp_id',$camp['camp_id']);
-			if($camp['type'] == '创建者'){
+
+			if($camp['type'] == '4'){
 				cache("power_{$this->memberInfo['id']}",4);
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['egt',4],'module'=>'management'])->select();
-				$menuList = getTree($menuList,0);
-				cache("powerList_$this->memberInfo['id']",$powerList);
-				cache("menuList_$this->memberInfo['id']");
-			}elseif($camp['type'] == '管理员'){
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['egt',3],'module'=>'management'])->select();
-				$menuList = getTree($menuList,0);
-				cache("powerList_$this->memberInfo['id']",$powerList);
-				cache("menuList_$this->memberInfo['id']");
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',4],'module'=>'management'])->select();
+				$menuList = getTree($powerList,0);
+				cache("powerList_".$this->memberInfo['id'],$powerList);
+				cache("menuList_".$this->memberInfo['id'],$menuList);
+			}elseif($camp['type'] == '3'){
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',3],'module'=>'management'])->select();
+				$menuList = getTree($powerList,0);
+				cache("powerList_".$this->memberInfo['id'],$powerList);
+				cache("menuList_".$this->memberInfo['id'],$menuList);
 				cache("power_{$this->memberInfo['id']}",3);
-			}elseif($camp['type'] == '教练'){
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>2,'power'=>['egt',2],'module'=>'management'])->select();
-				$menuList = getTree($menuList,0);
-				cache("powerList_$this->memberInfo['id']",$powerList);
-				cache("menuList_$this->memberInfo['id']");
+			}elseif($camp['type'] == '2'){
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>2,'power'=>['elt',2],'module'=>'management'])->select();
+				$menuList = getTree($powerList,0);
+				cache("powerList_".$this->memberInfo['id'],$powerList);
+				cache("menuList_".$this->memberInfo['id'],$menuList);
 				cache("power_{$this->memberInfo['id']}",2);
 			}
-			header(url('Index/index'));
+			header("Location:".url('Index/index'));
 		}
 		
 		$this->assign('campList',$campList);
