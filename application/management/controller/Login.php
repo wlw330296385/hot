@@ -14,6 +14,7 @@ class Login extends Controller
 	}
 
 	public function login(){
+		// dump(cache('power_8'));
 		// if (cookie('member_id')) {
   //           $this->error('你已经登录，无需重复登录', url('Guider/choose'));
   //       }
@@ -47,6 +48,14 @@ class Login extends Controller
 		return view('Login/login');
 	}
 
+
+	public function test(){
+		$l = db('grade_category')->select();
+		// $c = channelLevel($l,0,'id');
+		$d = getTree($l);
+		// dump($c);
+		// dump($d);
+	}
 
 
 }

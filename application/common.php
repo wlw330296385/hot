@@ -31,6 +31,16 @@ function __lang($name, $vars = [], $lang = '') {
     return $Lang::get($name, $vars, $lang);
 }
 
+function getTree($arr = [],$pid = 0){
+    $list = [];
+     foreach ($arr as $key => &$value) {
+        if($value['pid'] == $pid){
+            $value['daughter'] = getTree($arr,$value['id']);
+            $list[] = $value;
+        }
+    }
+    return $list;
+}
 /** 返回多级栏目
  * @param $data 数组
  * @param int $pid 一级pid值
