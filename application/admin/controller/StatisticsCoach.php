@@ -59,7 +59,7 @@ class StatisticsCoach extends Backend{
         // dump($list1);die;
         $this->assign('list2',$list2);
         $this->assign('list1',$list1);
-        $this->assign('s_rebate',$s_rebate);
+        $this->assign('s_rebate',$s_rebate?$s_rebate:0);
         return view('StatisticsCoach/coachBill');
     }
 

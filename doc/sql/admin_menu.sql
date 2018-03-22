@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2018 年 03 月 16 日 19:33
+-- 生成日期: 2018 年 03 月 21 日 18:27
 -- 服务器版本: 5.5.53
 -- PHP 版本: 5.4.45
 
@@ -181,11 +181,11 @@ INSERT INTO `admin_menu` (`id`, `pid`, `module`, `title`, `icon`, `url_type`, `u
 (134, 125, 'admin', '赠课记录', 'fa fa-cog', 0, 'admin/Statistics_Camp/campGift', '_self', 1, 6, 1, 0, 0),
 (135, 125, 'admin', '订单列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBillList', '_self', 1, 5, 1, 0, 0),
 (136, 125, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campWithdraw', '_self', 1, 7, 1, 0, 0),
-(137, 125, 'admin', '教练工资月表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSallaryMth', '_self', 1, 2, 1, 0, 0),
+(137, 125, 'admin', '教练工资月表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalaryMth', '_self', 1, 2, 1, 0, 0),
 (138, 119, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachWithdraw', '_self', 1, 4, 1, 0, 0),
-(139, 119, 'admin', '返利列表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachRebate', '_self', 1, 3, 1, 0, 0),
-(140, 119, 'admin', '课时收入表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSallary', '_self', 1, 2, 1, 0, 0),
-(141, 125, 'admin', '教练工资明细', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSallary', '_self', 1, 3, 1, 0, 0);
+(139, 119, 'admin', '返利列表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachRebate', '_self', 0, 3, 0, 0, 0),
+(140, 119, 'admin', '课时收入表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSalary', '_self', 1, 2, 1, 0, 0),
+(141, 125, 'admin', '教练工资明细', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalary', '_self', 1, 3, 1, 0, 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
