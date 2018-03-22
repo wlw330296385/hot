@@ -1289,6 +1289,7 @@ class Team extends Base
         try {
             // 接收请求参数作查询条件
             $map = input('param.');
+            $page = input('param.page', 1);
             // serivce
             $matchS = new MatchService();
             $teamS = new TeamService();
@@ -1324,11 +1325,15 @@ class Team extends Base
             $map['is_finished'] = input('param.is_finished', -1);
             // 查询条件组合end
 
-            $lastMatch = $matchS->matchRecordListAll($map);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+
+            $lastMatch = $matchS->matchRecordList($map, $page);
             // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
                 unset($map['is_finished']);
-                $lastMatch = $matchS->matchRecordListAll($map, 'id desc');
+                $lastMatch = $matchS->matchRecordList($map, $page,'id desc');
                 // 球队无比赛记录
                 if (!$lastMatch) {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1336,15 +1341,8 @@ class Team extends Base
             }
             // 比赛成员名单+人数统计（列出当前球队）
             // 当前球队成员数
-            /*$teamInfo = $teamS->getTeam(['id' => $team_id]);
             foreach ($lastMatch as $k => $val) {
-                $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $team_id, 'status' => ['>', 0]]);
-                $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
-                $lastMatch[$k]['max'] = $teamInfo['member_num'];
-            }*/
-            foreach ($lastMatch as $k => $val) {
-                $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
+                $matchMembers = $matchS->getMatchRecordMemberList(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
                 $lastMatch[$k]['memberlist'] = $matchMembers;
                 $lastMatch[$k]['reg_number'] = count($matchMembers);
@@ -1362,15 +1360,13 @@ class Team extends Base
         try {
             // 接收请求参数作查询条件
             $map = input('param.');
+            $page = input('page', 1);
             // 必传参数:球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
                 $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
                 unset($map['team_id']);
             }
-//            else {
-//                return json(['code' => 100, 'msg' => __lang('MSG_402') . '请选择球队']);
-//            }
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.staus', 1);
             // 默认查询未完成比赛(is_finished=-1)
@@ -1379,14 +1375,18 @@ class Team extends Base
             $map['hot'] = input('param.hot', 1);
             // 查询条件组合end
 
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+
             // serivce
             $matchS = new MatchService();
             $teamS = new TeamService();
-            $lastMatch = $matchS->matchRecordListAll($map);
+            $lastMatch = $matchS->matchRecordList($map, $page);
             // 如果没有未完成的比赛记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
                 unset($map['is_finished']);
-                $lastMatch = $matchS->matchRecordListAll($map, 'id desc');
+                $lastMatch = $matchS->matchRecordList($map, $page, 'id desc');
                 // 球队无比赛记录
                 if (!$lastMatch) {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1394,13 +1394,6 @@ class Team extends Base
             }
             // 比赛成员名单+人数统计（列出当前球队）
             // 当前球队成员数
-            /*$teamInfo = $teamS->getTeam(['id' => $team_id]);
-            foreach ($lastMatch as $k => $val) {
-                $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $team_id, 'status' => ['>', 0]]);
-                $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
-                $lastMatch[$k]['max'] = $teamInfo['member_num'];
-            }*/
             foreach ($lastMatch as $k => $val) {
                 $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
@@ -1419,13 +1412,9 @@ class Team extends Base
     public function lastevent()
     {
         try {
-            // 球队id比传
-//            $team_id = input('param.team_id');
-//            if (!$team_id) {
-//                return json(['code' => 100, 'msg' => __lang('MSG_402') . ',请选择球队']);
-//            }
             $teamS = new TeamService();
             $map = input('param.');
+            $page = input('page', 1);
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
@@ -1448,11 +1437,15 @@ class Team extends Base
             $map['is_finished'] = input('param.is_finished', -1);
             // 查询条件组合end
 
-            $lastEvent = $teamS->teamEventListAll($map);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+
+            $lastEvent = $teamS->teamEventList($map, $page);
             // 如果没有未发生的活动记录，清理查询条件is_finished=0，再次执行查询
             if (!$lastEvent) {
                 unset($map['is_finished']);
-                $lastEvent = $teamS->teamEventListAll($map, 'id desc');
+                $lastEvent = $teamS->teamEventList($map, $page,'id desc');
                 // 球队无活动记录
                 if (!$lastEvent) {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1472,14 +1465,10 @@ class Team extends Base
     public function hotevent()
     {
         try {
-            // 球队id比传
-//            $team_id = input('param.team_id');
-//            if (!$team_id) {
-//                return json(['code' => 100, 'msg' => __lang('MSG_402') . ',请选择球队']);
-//            }
             $teamS = new TeamService();
             // 最新一条未发生的活动记录，若无未发生就列出最新一条活动
             $map = input('param.');
+            $page = input('page', 1);
             // 默认查询上架活动(status=1)
             $map['status'] = input('param.staus', 1);
             // 默认查询未完成活动(is_finished=-1)
@@ -1488,11 +1477,15 @@ class Team extends Base
             $map['hot'] = input('param.hot', 1);
             // 查询条件组合end
 
-            $lastEvent = $teamS->teamEventListAll($map);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+
+            $lastEvent = $teamS->teamEventList($map, $page);
             // 如果没有未发生的活动记录，清理查询条件is_finished=0，再次执行查询
             if (!$lastEvent) {
                 unset($map['is_finished']);
-                $lastEvent = $teamS->teamEventListAll($map, 'id desc');
+                $lastEvent = $teamS->teamEventList($map, $page,'id desc');
                 // 球队无活动记录
                 if (!$lastEvent) {
                     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
