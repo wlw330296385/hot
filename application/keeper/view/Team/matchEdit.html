@@ -276,7 +276,8 @@
                     <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                     <div class="hideListIni">
                         {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
+                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
+                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}
                     </div>
                     <div class="hideList hide"></div>
                     <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}" class="data">
@@ -1165,7 +1166,7 @@
                 $(".hideApList").html(hideApList);
 
             });
-            
+
             //裁判列表复选框赋值
             $(".setRefereeAp").on('tap', '', function () {
                 //每次打开先清空所有选择
@@ -1602,7 +1603,8 @@
                     var referee_id = $(this).attr("data-referee_id");
                     var referee_cost = $(this).attr("data-referee_cost");
                     var apply_status = $(this).attr("data-status");
-                    referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                    var id = $(this).attr("data-id");
+                    referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status,id:id });
                 });
 
                 ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
@@ -1626,10 +1628,11 @@
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
                         var apply_status = $(this).attr("data-status");
+                        var id = $(this).attr("data-id");
                         if (apply_status == "undefined") {
                             apply_status = 0
                         }
-                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status,id:id });
                     }
                 });
                 var DelID = ""
@@ -1651,10 +1654,11 @@
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
                         var apply_status = $(this).attr("data-status");
+                        var id = $(this).attr("data-id");
                         if (apply_status == "undefined") {
                             apply_status = 0
                         }
-                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                        refereeChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status,id:id });
                     }
                 });
                 ////////////////////////自行邀请裁判名单///////////////////////////////////////// 
@@ -1664,82 +1668,52 @@
                 var btnArray = ["取消", "确认"];
                 mui.confirm("比赛记录将会发送给客队，如果客队认领了此场比赛记录，则双方可积分，积分规则：胜队积两分，负队积一分，没有认领,则不计分！", "", btnArray, function (e) {
                     if (e.index == 1) {
-                        var data = wooApi.getInputData('input', 'data');
-                        datas = wooApi.getInputData('select', 'data', data);
-                        // 获取其他标签值
-                        arrData = wooApi.getDomData('domData', datas);
-                        var objData = wooApi.arrTOobj(arrData);
-                        objData.HomeMemberData = JSON.stringify(HomeMemberList);
-                        objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel);
-                        objData.album = JSON.stringify(album);
-                        var remarks = $('textarea.remarks').val();
-                        objData.remarks = remarks;
-                        var description = $('textarea.description').val();
-                        objData.description = description;
-                        if (referee_type == 1) {
-                            objData.refereeAp_str = JSON.stringify(refereeAp_str);
-                            objData.refereeApChange_str = JSON.stringify(refereeApChange_str);
-                        } else if (referee_type == 2) {
-                            objData.referee_str = JSON.stringify(referee_str);
-                            objData.refereeChange_str = JSON.stringify(refereeChange_str);
-                        }
-
-                        var url = "{:url('api/match/updateteammatch')}";
-                        var ajaxResult = wooApi.asyncF(url, objData);
-                        if (ajaxResult.code == 200) {
-                            mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
-                                var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
-                                window.top.location.href = goUrl;
-                            })
-                        } else {
-                            mui.alert(ajaxResult.msg, '修改失败');
-                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                                if (data.code === 200) {
-                                    $('input[name=__token__]').val(data.data);
-                                }
-                            }, 'json');
-                        }
+                        submit();
                     }
                 });
             } else {
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                var objData = wooApi.arrTOobj(arrData);
-                objData.HomeMemberData = JSON.stringify(HomeMemberList);
-                objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel);
-                objData.album = JSON.stringify(album);
-                var remarks = $('textarea.remarks').val();
-                objData.remarks = remarks;
-                var description = $('textarea.description').val();
-                objData.description = description;
-                if (referee_type == 1) {
-                    objData.refereeAp_str = JSON.stringify(refereeAp_str);
-                    objData.refereeApChange_str = JSON.stringify(refereeApChange_str);
-                } else if (referee_type == 2) {
-                    objData.referee_str = JSON.stringify(referee_str);
-                    objData.refereeChange_str = JSON.stringify(refereeChange_str);
-                }
-
-                var url = "{:url('api/match/updateteammatch')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
-                        var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '修改失败');
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
+                submit();
             }
 
         };
+
+        function submit() {
+            var referee_type = $("#refereeSlecct").children("option:selected").val();
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.HomeMemberData = JSON.stringify(HomeMemberList);
+            objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel);
+            objData.album = JSON.stringify(album);
+            var remarks = $('textarea.remarks').val();
+            objData.remarks = remarks;
+            var description = $('textarea.description').val();
+            objData.description = description;
+            if (referee_type == 1) {
+                objData.refereeAp_str = JSON.stringify(refereeAp_str);
+                objData.refereeApChange_str = JSON.stringify(refereeApChange_str);
+            } else if (referee_type == 2) {
+                objData.referee_str = JSON.stringify(referee_str);
+                objData.refereeChange_str = JSON.stringify(refereeChange_str);
+            }
+            var url = "{:url('api/match/updateteammatch')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '比赛编辑成功', '确定', function () {
+                    var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        }
 
         //球队列表接口获取数据并追加到页面
         function toTeamList(keyword, wTeams, page) {
