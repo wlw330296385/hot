@@ -318,44 +318,19 @@
 
         <!-- 底部操作 -->
         <ul class="mui-table-view operation mt">
-
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                 <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee" style="display:none">
-                申请执裁
-            </li>
-
-            <!-- 队员身份加未完成 -->
-            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn addClass status1" style="display:none">
-                参加
-            </li>
-
-            <!-- 队员身份加已完成 -->
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee" style="display:none">申请执裁</li>
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status1" style="display:none">参加</li>
             <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue status2" style="display:none">
                 <a href="#fbcomment">发表评论</a>
             </li>
-
-            <!-- 队委以上身份加已完成 -->
-            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgblue status3" style="display:none">
-                <a href="#fbcomment">发表评论 </a>
-            </li>
             <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen status3" style="display:none">
-                <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}"> 编辑/录入 </a>
-            </li>
-
-
-            <!-- 队委以上身份加未完成 -->
-            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn addClass status4" style="display:none">
-                报名
-            </li>
-            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen addClass4 status4" style="display:none">
                 <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">编辑/录入 </a>
             </li>
-
-
         </ul>
 
     </div>
@@ -594,55 +569,55 @@
             var referee_type = "{$matchInfo.referee_type}"
             var teamrole = "{$teamrole}";
             var is_finished = "{$matchInfo.is_finished_num}";
-            // 
+
+            // 队委
             if (teamrole > 0 && is_finished == 1) {
-                $(".status3").show();
+                $(".status2").show();
             } else if (teamrole > 0 && is_finished == -1) {
-                $(".status4").show();
                 if (memberRefereeInfoId != '' && referee_type != 0) {
-                    $(".matchpk").show().removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
-                    $(".matchpk").show().removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
-                    $(".addClass").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
-                    $(".addClass").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
-                    $(".addClass4").removeClass("mui-col-sm-5").addClass("mui-col-sm-4");
-                    $(".addClass4").removeClass("mui-col-xs-5").addClass("mui-col-xs-4");
-                    return false;
-                }
-            } else if (teamrole == 0 && is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != 0) {
-                    $(".matchpk").show();
                     $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
+                    $(".status3").show();
+                    $(".status3").removeClass("mui-col-xs-5").addClass("mui-col-xs-4");
+                    $(".status3").removeClass("mui-col-sm-5").addClass("mui-col-sm-4");
+                    $(".matchpk").show();
+                    $(".matchpk").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
+                    $(".matchpk").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
                     return false;
-                }else if (memberRefereeInfoId != '' && referee_type == 0){
-                    $(".status1").show().removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-                    $(".status1").show().removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-                }
-            } else if (teamrole < 0 && is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != 0) {
-                    $(".matchpk").hide();
-                    $(".status1").show().removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-                    $(".status1").show().removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-                    return false;
+                } else {
+                    $(".status1").show();
+                    $(".status3").show();
                 }
             }
 
+            // 队员
             if (teamrole == 0 && is_finished == 1) {
                 $(".status2").show();
             } else if (teamrole == 0 && is_finished == -1) {
-                $(".status1").show();
-            }
-
-            if (teamrole == -1 && is_finished == 1) {
-                $(".status2").show();
-            } else if (teamrole == -1 && is_finished == -1) {
-                $(".status1").show();
                 if (memberRefereeInfoId != '' && referee_type != 0) {
+                    $(".status1").show();
                     $(".matchpk").show();
                     return false;
                 } else {
-                    $(".addClass").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-                    $(".addClass").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+                    $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+                }
+            }
+
+            // 平台会员
+            if (teamrole < 0 && is_finished == 1) {
+                $(".status2").show();
+            } else if (teamrole < 0 && is_finished == -1) {
+                if (memberRefereeInfoId != '' && referee_type != 0) {
+                    $(".status1").show();
+                    $(".matchpk").show();
                     return false;
+                } else {
+                    $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
                 }
             }
 
