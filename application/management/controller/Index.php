@@ -1,12 +1,12 @@
 <?php 
 namespace app\management\controller;
-use app\management\Base;
+use app\management\controller\Backend;
 
 
 /**
 * 引导页
 */
-class Index extends Base
+class Index extends Backend
 {
 	
 	function _initialize()
@@ -14,7 +14,9 @@ class Index extends Base
 		parent::_initialize();
 	}
 
-
+	public function index(){
+		
+	}
 
 	public function choose(){
 		$CampMember = new \app\model\CampMember;

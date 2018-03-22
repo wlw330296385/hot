@@ -11,6 +11,8 @@ class Backend extends Base
 	function _initialize()
 	{
 		parent::_initialize();
+
+
 		$power = cache("power_{$this->memberInfo['id']}");
 		if($power){
 			$this->power = $power;
@@ -22,11 +24,26 @@ class Backend extends Base
 			$this->error('权限不足,不可访问此页面');
 		}
 		
+
 	}
 
 
 
  	private	function checkAuth($power){
- 		
+
+		// echo request()->controller();
+		// echo request()->action();die;
+		return true;
+	}
+
+
+
+	private function getTree(){
+
+	}
+
+
+	private function getMenu(){
+
 	}
 }
