@@ -1,0 +1,172 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>工资/收入列表</em>
+            <p>上课学员人数=上课正式学员人数-抵扣赠课数</p>
+            <p>主教练工资=班级主教练底薪+上课学员人数*班级设定提成基数（提成基数可为0）</p>
+            <p>助教练工资=班级助教练底薪+上课学员人数*班级设定提成基数（提成基数可为0）</p>
+            <p>直接收入=班级课程单价*上课学员人数*90%-主教练工资-助教练工资</p>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="bootstrap-table">
+            <div class="search-form">
+                <form action="" class="form-inline" method="get">
+                    <fieldset>
+                        {if condition="!isset($curcamp)"}
+                        <div class="form-group">
+                            <label class="control-label">训练营</label>
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="camp_id" class="form-control">
+                                <option value="">选择训练营</option>
+                                {volist name="camplist" id="vo"}
+                                <option value="{$vo.id}" {if condition="$camp_id eq $vo['id']"}selected{/if}>{$vo.camp}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        {/if}
+                        <div class="form-group">
+                            <label class="control-label">教练</label>
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="coach_member_id" class="form-control">
+                                <option value="">选择教练</option>
+                                {volist name="coachlist" id="vo"}
+                                <option value="{$vo['member_id']}" {if condition="$coach_member_id eq $vo['member_id']"}selected{/if}>{$vo.coach}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">课程</label>
+                            <!--<input class="form-control" type="text" name="camp" >-->
+                            <select name="lesson_id" class="form-control">
+                                <option value="">选择课程</option>
+                                {volist name="lessonlist" id="vo"}
+                                <option value="{$vo.id}" {if condition="$lesson_id eq $vo['id']"}selected{/if}>{$vo.lesson}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">课时月份</label>
+                            <input class="form-control layui-input" type="text" name="schedule_date" id="month-selecter2" value="{$curschedule_date}">
+                        </div>
+                        <!--<div class="form-group">
+                            <label class="control-label">会员</label>
+                            <input class="form-control" type="text" name="member" >
+                        </div>-->
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                <button type="submit" class="btn btn-default btn-flat">重置</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="fixed-table-container no-border">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box no-border">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h3><strong>余额：</strong>{$sumSalaryin}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>上课节数：</strong>{$sumSchedule}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>实际上课人次：</strong>{$sumScheduleStudent}</h3>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3><strong>赠课人次：</strong>{$sumScheduleGift}</h3>
+                                    </div>
+                                </div>
+                                <hr>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <!--<th>ID</th>-->
+                                        <th>收入金额</th>
+                                        <th>基本收入</th>
+                                        <th>提成收入</th>
+                                        <th>收入类型</th>
+                                        <th>所属训练营</th>
+                                        <th>会员/教练</th>
+                                        <th>结算时间</th>
+                                        <th>课时信息</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {volist name="list" id="vo"}
+                                    <tr>
+                                        <!--<td>{$vo.id}</td>-->
+                                        <td>{$vo.salary+$vo.push_salary}</td>
+                                        <td>{$vo.salary}</td>
+                                        <td>{$vo.push_salary}</td>
+                                        <td>
+                                            {switch name="vo.type"}
+                                            {case value="1"}教学（{$vo.member_type}）{/case}
+                                            {default/}其他
+                                            {/switch}
+                                        </td>
+                                        <td>{$vo.camp}</td>
+                                        <td>{$vo.realname}</td>
+                                        <td>{notempty name="vo['schedule']['finish_settle_time']"}{$vo['schedule']['finish_settle_time']|date="Y-m-d H:i", ###}{else/}{$vo.update_time}{/notempty}</td>
+                                        <td>
+                                            {eq name="vo.type" value="1"}
+                                            课程：{$vo['lesson']['lesson']}（单价：{$vo['lesson']['cost']}）<br>
+                                            班级：{$vo['schedule']['grade']}<br>
+                                            上课时间：{$vo['schedule']['lesson_time']}<br>
+                                            正式学员人数：{$vo['schedule']['num_student']}<br>
+                                            学员名单：{volist name="vo['schedule']['studentlist']" id="student"}{$student.student},{/volist}<br>
+                                            课时工资（供参考）：{$vo.schedule.schedule_income}
+                                            {notempty name="vo.system_remarks"}系统备注：{$vo.system_remarks}{/notempty}
+                                            {/eq}
+                                        </td>
+                                        <td>
+                                            <a href="{:url('schedule/detail', ['id' => $vo['schedule']['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看课时详情</i></a>
+                                            <a href="{:url('finance/salaryin', ['id' => $vo['id']])}" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看工资详情</i></a>
+                                            <!--<a href="" class="btn btn-xs btn-danger del-btn"><i class="fa fa-trash"></i></a>-->
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-footer clearfix">
+                                {$page}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script>
+    $(function() {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            // 年月选择
+            laydate.render({
+                elem: '#month-selecter1',
+                type: 'month'
+            });
+            laydate.render({
+                elem: '#month-selecter2',
+                type: 'month'
+            });
+        });
+    });
+</script>
+{/block}

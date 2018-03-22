@@ -12,9 +12,8 @@ class Backend extends Base
 	{
 		parent::_initialize();
 
-		//获取权限和菜单
-		// $power = cache("power_{$this->memberInfo['id']}");
-		$power = 1;
+		// 获取权限和菜单
+		$power = cache("power_{$this->memberInfo['id']}");
 		if($power){
 			$this->power = $power;
 		}else{
@@ -27,7 +26,8 @@ class Backend extends Base
 		// 获取面包屑
 		$_location = $this->getLocation();
 		$menuList = cache("menuList_{$this->memberInfo['id']}");
-		// dump($menuList);
+		dump($_location);
+		dump($menuList);die;
 		$this->assign('_sidebar_menus',$menuList);
 		$this->assign('_location',$_location);
 	}
@@ -57,17 +57,18 @@ class Backend extends Base
 		$c = request()->controller();
  		$a = request()->action();
  		$url_value = strtolower("$c/$a");
- 		if($url_value == strtolower($value['url_value'])){
-			//获取面包屑地址
-			$_location = [];
-			$_location[1] = $value;
-			foreach ($powerList as $k => $val) {
-				if($val['id'] == $value['pid']){
-					$_location[0] = $val;
+ 		foreach ($powerList as $key => $value) {
+	 		if($url_value == strtolower($value['url_value'])){
+				//获取面包屑地址
+				$_location = [];
+				$_location[1] = $value;
+				foreach ($powerList as $k => $val) {
+					if($val['id'] == $value['pid']){
+						$_location[0] = $val;
+					}
 				}
+				return $_location;
 			}
-			return $_location;
 		}
-
 	}
 }

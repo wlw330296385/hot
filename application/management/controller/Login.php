@@ -2,6 +2,8 @@
 namespace app\management\controller;
 use think\Controller;
 use app\management\service\AuthService;
+use think\Cache;
+use think\Session;
 /**
 * 用户登录模块
 */
@@ -15,9 +17,9 @@ class Login extends Controller
 
 	public function login(){
 		// dump(cache('power_8'));
-		// if (cookie('member_id')) {
-  //           $this->error('你已经登录，无需重复登录', url('Guider/choose'));
-  //       }
+		if (cookie('member_id')) {
+            $this->error('你已经登录，无需重复登录', url('Guider/choose'));
+        }
 		if(request()->isPost()){
 			$username = input('post.username');
 
@@ -57,5 +59,22 @@ class Login extends Controller
 		// dump($d);
 	}
 
+	public function logout() {
+        // $cache_tag  = strtolower('_sidebar_menus_'.session('admin.id'));
+        // Cache::rm($cache_tag); 
+        // $group_id = session('admin.group_id');
+        // Cache::rm('group_id_menu_auth_'.$group_id); 
+        // Cache::clear(); 
+        cookie('mmeber_id', null);
+        //$this->success('退出成功', url('Login/index'));
+        $this->redirect('Index/index');
+    }
+
+    public function clearCache(){
+        cookie('member_id', null);
+        Cache::clear(); 
+        Session::delete('camp_member');
+        $this->success('清空成功');
+    }
 
 }

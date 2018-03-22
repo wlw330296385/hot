@@ -1,0 +1,320 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+{/block}
+{block name="page-content"}
+
+<!----------------------------------- 教练员提现列表 ： 开始-------------------------------------------->
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>教练：</label>
+								<div class="input-group" data-toggle="modal" data-target="#coachModal">
+									<input type="text" name="coach" class="form-control pull-right" placeholder="选择教练员" value="">
+									<input type="hidden" name="member_id" value="">
+									<div class="input-group-addon">
+										<i class="fa fa-angle-down"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>查询时间：</label>
+								<div class="input-group">
+									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>提现总额：</small><strong class="text-yellow monthIn"></strong></span>
+							</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="box-body">
+
+								<table id="withdrawList" class="table table-bordered table-striped dataTable" role="grid"
+									   aria-describedby="example1_info">
+									<thead>
+									<tr>
+										<th>ID</th>
+										<th>提现金额</th>
+										<th>冻结金额</th>
+										<th>会员</th>
+										<th>提现后余额</th>
+										<th>真实姓名</th>
+										<th>提现平台</th>
+										<th>提现账号</th>
+										<th>手续费</th>
+										<th>联系电话</th>
+										<th>申请时间</th>
+										<th>完成提现时间</th>
+										<th>是否到账</th>
+										<th>状态</th>
+									</tr>
+									</thead>
+									<tbody>
+									{volist name='list' id="vol"}
+									<tr>
+										<td>{$vol.id}</td>
+										<td>{$vol.salary}</td>
+										<td>{$vol.buffer}</td>
+										<td>{$vol.member}</td>
+										<td>{$vol.e_balance}</td>
+										<td>{$vol.realname}</td>
+										<td>{$vol.bank}</td>
+										<td>{$vol.bank_card}</td>
+										<td>{$vol.fee}</td>
+										<td>{$vol.telephone}</td>
+										<td>{$vol.create_time|date="Y-m-d H:i", ###}</td>
+										<td>{$vol.pay_time|date="Y-m-d H:i", ###}</td>
+										<td>{$vol.is_pay?'已出账':'未出帐'}</td>
+										<td style="color:red">{$vol.status?'已处理':'未处理'}</td>
+									</tr>
+									{/volist}
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- /.col -->
+</div>
+
+<!----------------------------------- 教练员提现列表 ： 结束-------------------------------------------->
+
+
+
+
+
+
+<!-- Modal : Coach -->
+<div class="modal fade" id="coachModal" tabindex="-1" role="dialog" aria-labelledby="coachModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="coachModalLabel">请选择教练员</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-group input-group-sm">
+					<input type="text" name="coachKeyword" class="form-control coachKeyword" placeholder="请输入教练员名称 ...">
+					<span class="input-group-btn">
+                      <button type="button" id="searchCoachBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+				</div>
+				<div class="tableScroll">
+					<table id="coachList" class="table table-bordered table-striped dataTable">
+						<thead>
+						<tr role="row">
+							<th>教练员名称</th>
+							<th>所属地区</th>
+							<th>详情</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr role="row" class="nodata"><td colspan="4">请先搜索教练员</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<!--<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>-->
+<!-- date-range-picker -->
+<!--<script src="/static/plugins/moment/moment.js"></script>-->
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+
+    var currCoachName = localStorage.getItem('currCoachName');
+    var currMemberID = localStorage.getItem('currMemberID');
+    var currDateYM = localStorage.getItem('currDateYM');
+
+    $(function () {
+
+
+        $('#withdrawList').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
+
+        //=========================== 初始化数据 ==============================//
+
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+        if(currDateYM==''&&currDateYM!=null) {
+            var currDate = new Date();
+            var currYear = currDate.getFullYear();
+            var currMonth = currDate.getMonth();
+            if(currMonth==0){
+                currDateYM = parseInt(currYear)-1+'-12';
+            }else{
+                currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+                currDateYM = currYear+'-'+ currMonth ;
+            }
+            localStorage.setItem('currDateYM',currDateYM);
+        }
+
+        //遍历需要统计的数据列，并赋值到对应位置
+        var wInCount = 0;
+        $(".wIn").each(function () {
+            wInCount = wInCount + parseFloat($(this).text());
+        });
+        $(".monthIn").text(wInCount.toFixed(2));
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:even").addClass("even");
+
+        //判断是否有指定教练员的本地存储
+        $("input[name=dateYM]").val(currDateYM);
+        if(currMemberID!=''&&currMemberID!=null){
+            $("input[name=member_id]").val(currMemberID);
+            $("input[name=coach]").val(currCoachName);
+            $(".coachKeyword").val(currCoachName);
+            $(".coachName").text(currCoachName);
+        }
+
+        //=========================== 初始化数据 ==============================//
+
+
+        //选择年月
+        $('#dateYM').datepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm",
+            minViewMode: 1,
+            todayBtn: true
+        });
+
+
+        //搜索教练员
+        $("#searchCoachBtn").on("click", function () {
+            var keyword = $(".coachKeyword").val();
+            var camp_id = $('input[name="camp_id"]').val();
+            if(keyword==""||camp_id==""){
+                alert("请先选择训练营，再输入教练员名称！");
+            }else{
+                //搜索教练员列表查询
+                toCoachList(keyword);
+            }
+        })
+
+
+        $("#coachList tbody").on("click",".btn", function () {
+            var member_id = $(this).attr("data-member_id");
+            var coach = $(this).attr("data-coach");
+            $("input[name=member_id]").val(member_id);
+            $("input[name=coach]").val(coach);
+            $('#coachModal').modal('hide');
+        })
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var coach = $("input[name=coach]").val();
+            var member_id = $("input[name=member_id]").val();
+            var getYM = $("input[name=dateYM]").val();
+            if(member_id==""){
+                alert("请选择教练员！");
+                return false;
+            }
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            localStorage.setItem('currCoachName',coach);
+            localStorage.setItem('currMemberID',member_id);
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.location.href="{:url('/admin/Statistics_Coach/coachWithdraw/')}"+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;;
+        })
+
+
+    })
+
+
+    //接口获取数据并追加到页面：平台教练员
+    var toCoachList = function (keyword) {
+        console.log(keyword)
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/coach/searchCoachListAllApi','','',true)}";
+        $.ajax({
+            url: url,
+            data: {
+                status: 1,
+                page:1,
+                keyword: keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[i].coach + '" data-member_id="' + data.data[i].member_id + '">确定</span></td></tr>';
+                    }
+                }
+                if (newli == '') {
+                    $("#coachList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                }else{
+                    $("#coachList tbody").empty().append(newli);
+                }
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+</script>
+
+{/block}
+
+

@@ -1,0 +1,23 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+	
+
+{volist name='scheduleList' id='vol'}
+  <!-- <?php dump($vol);?> -->
+  <p>上课时间:{$vol.lessonTime} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班级:{$vol.grade} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正式学员人数:{$vol.students}   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;学员名单: {volist name="$vol.studentList" id="v"}{$v.student}&nbsp;&nbsp;&nbsp;{/volist}   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+  <!--  计算规则:(课程单价({$vol.cost})*平台分成(1-{$vol.schedule_rebate})-人头基数({$vol.salary_base}))*人数{$vol.students}-教练底薪({$vol.coach_salary})-助教底薪({$vol.assistant_salary}) = {$vol.schedule_income} -->
+
+计算规则:教练底薪({$vol.coach_salary})+人头基数({$vol.salary_base}))*人数{$vol.students} = {$vol.coach_salary+$vol.salary_base*$vol.students}
+
+</p>
+{/volist}
+
+
+
+
+{/block}
+{block name='js'}
+
+{/block}
