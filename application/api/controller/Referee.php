@@ -144,6 +144,7 @@ class Referee extends Base{
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
             $request['status'] = 0;
+            $request['portraits'] = empty($request['portraits']) ? $this->memberInfo['avatar'] : $request['portraits'];
 
             // 保存证件数据
             $certS = new CertService();
