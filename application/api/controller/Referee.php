@@ -560,7 +560,7 @@ class Referee extends Base{
             }
 
             // 检查比赛已确认裁判人数，最多3个裁判
-            $matchRefereeCount = $matchService->getMatchRefereeCount([ 'match_id' => $matchInfo['id'], 'referee_id' => $matchInfo['record']['id'], 'status' => 1 ]);
+            $matchRefereeCount = $matchService->getMatchRefereeCount([ 'match_id' => $matchInfo['id'], 'match_record_id' => $matchInfo['record']['id'], 'status' => 1 ]);
             if ($matchRefereeCount == $matchInfo['referee_max']) {
                 return json(['code' => 100, 'msg' => '此比赛裁判数已满，请选择其他比赛']);
             }
@@ -681,8 +681,8 @@ class Referee extends Base{
             ]);
             if ($status == 2) {
                 //同意
-                // 更新比赛referee_str字段：将裁判员信息插入
-                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo);
+                // 组合最新的比赛referee_str字段：将裁判员信息插入
+                $matchS->setMatchRefereeStr($matchInfo, $refereeInfo, 1);
 
                 // 保存比赛-裁判关系
                 $dataMatchReferee = [

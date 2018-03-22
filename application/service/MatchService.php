@@ -611,80 +611,77 @@ class MatchService {
     /** 裁判员信息插入到比赛referee_str字段
      * @param $matchRefereeStr 比赛信息
      * @param $referee 裁判员信息数组
+     * @param $updateMatch 是否更新match数据 1更新
      */
-    public function setMatchRefereeStr($match=[], $referee) {
+    public function setMatchRefereeStr($match=[], $referee=[], $updateMatch=0) {
         $refereeCost = $match['referee_cost'];
         $refereeStr = $match['referee_str'];
         // 转格式后referee_str
         $matchRefereeStr = json_decode($match['referee_str'], true);
-        if (empty($matchRefereeStr)) {
-            // 插入一个新的裁判信息
-            $refereeArr = [
-                'referee' => $referee['referee'],
-                'referee_id' => $referee['id'],
-                'referee_cost' => $referee['appearance_fee']
-            ];
-            $refereeCost = $referee['appearance_fee'];
-            $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
-            $refereeStr = '[' . $refereeStr .']';
-        } else {
-            // 新加入的裁判不在数据中 补充新的裁判进referee_str
-            if ( !deep_in_array( $referee['id'], $matchRefereeStr ) ) {
-                array_push($matchRefereeStr, [
+        if (count($referee)== count($referee, 1)) {
+            // 单个裁判员信息数组
+            if (empty($matchRefereeStr)) {
+                // 插入一个新的裁判信息
+                $refereeArr = [
                     'referee' => $referee['referee'],
                     'referee_id' => $referee['id'],
                     'referee_cost' => $referee['appearance_fee']
-                ]);
-                foreach ($matchRefereeStr as $matchReferee) {
-                    $refereeCost += $matchReferee['referee_cost'];
+                ];
+                $refereeCost = $referee['appearance_fee'];
+                $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
+                $refereeStr = '[' . $refereeStr .']';
+            } else {
+                if (!deep_in_array($referee['id'], $matchRefereeStr)) {
+                    array_push($matchRefereeStr, [
+                        'referee' => $referee['referee'],
+                        'referee_id' => $referee['id'],
+                        'referee_cost' => $referee['appearance_fee']
+                    ]);
+                    foreach ($matchRefereeStr as $matchReferee) {
+                        $refereeCost += $matchReferee['referee_cost'];
+                    }
+                    $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
                 }
-                $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
             }
-        }
-
-        // 更新比赛信息
-        $model = new Match();
-        $res = $model->isUpdate(true)->save([
-            'id' => $match['id'],
-            'referee_str' => $refereeStr,
-            'referee_cost' => $refereeCost
-        ]);
-    }
-
-    /** 在match原有referee_str
-     * @param $match
-     * @param array $newReferee
-     */
-    public function getNewMatchRefereeStr($match, $newReferee=[]) {
-        $refereeCost = $match['referee_cost'];
-        $refereeStr = $match['referee_str'];
-        // 转格式后referee_str
-        $matchRefereeStr = json_decode($match['referee_str'], true);
-        if (empty($matchRefereeStr)) {
-            // 插入一个新的裁判信息
-            $refereeArr = [
-                'referee' => $newReferee['referee'],
-                'referee_id' => $newReferee['referee_id'],
-                'referee_cost' => $newReferee['referee_cost']
-            ];
-            $refereeCost = $newReferee['referee_cost'];
-            $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
-            $refereeStr = '[' . $refereeStr .']';
         } else {
-            // 新加入的裁判不在数据中 补充新的裁判进referee_str
-            if ( !deep_in_array( $newReferee['referee_id'], $matchRefereeStr ) ) {
-                array_push($matchRefereeStr, [
-                    'referee' => $newReferee['referee'],
-                    'referee_id' => $newReferee['referee_id'],
-                    'referee_cost' => $newReferee['referee_cost']
-                ]);
-                foreach ($matchRefereeStr as $matchReferee) {
-                    $refereeCost += $matchReferee['referee_cost'];
+            // 多个裁判员信息数组
+            foreach ($referee as $k => $val) {
+                if (empty($matchRefereeStr)) {
+                    // 插入一个新的裁判信息
+                    $refereeArr = [
+                        'referee' => $val['referee'],
+                        'referee_id' => $val['id'],
+                        'referee_cost' => $val['appearance_fee']
+                    ];
+                    $refereeCost = $val['appearance_fee'];
+                    $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
+                    $refereeStr = '[' . $refereeStr .']';
+                } else {
+                    if (!deep_in_array($val['id'], $matchRefereeStr)) {
+                        array_push($matchRefereeStr, [
+                            'referee' => $val['referee'],
+                            'referee_id' => $val['id'],
+                            'referee_cost' => $val['appearance_fee']
+                        ]);
+                        foreach ($matchRefereeStr as $matchReferee) {
+                            $refereeCost += $matchReferee['referee_cost'];
+                        }
+                        $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
+                    }
                 }
-                $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
             }
         }
-        return $refereeStr;
+
+        if ($updateMatch == 1) {
+            // 更新比赛信息
+            $model = new Match();
+            $res = $model->isUpdate(true)->save([
+                'id' => $match['id'],
+                'referee_str' => $refereeStr,
+                'referee_cost' => $refereeCost
+            ]);
+        }
+        return ['referee_str' => $refereeStr, 'referee_cost' => $refereeCost];
     }
 
     // 获取比赛-裁判关系详细
