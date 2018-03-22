@@ -32,7 +32,7 @@ class Guider extends Base
 				cache("menuList_$this->memberInfo['id']");
 			}elseif($camp['type'] == '管理员'){
 				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['egt',3],'module'=>'management'])->select();
-				$menuList = getTree($menuList,0,);
+				$menuList = getTree($menuList,0);
 				cache("powerList_$this->memberInfo['id']",$powerList);
 				cache("menuList_$this->memberInfo['id']");
 				cache("power_{$this->memberInfo['id']}",3);
