@@ -77,8 +77,8 @@ class Match extends Base
                     $applyData = [
                         'match_id' => $res['data'],
                         'match' => $data['name'],
-                        //'team_id' => $data['team_id'],
-                        //'team' => $data['team'],
+                        'team_id' => $data['team_id'],
+                        'team' => $data['team'],
                         'telphone' => $this->memberInfo['telephone'],
                         'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                         'member_id' => $this->memberInfo['id'],
@@ -269,8 +269,8 @@ class Match extends Base
                     $applyData = [
                         'match_id' => $res['data'],
                         'match' => $data['name'],
-                        //'team_id' => $data['team_id'],
-                        //'team' => $data['team'],
+                        'team_id' => $data['team_id'],
+                        'team' => $data['team'],
                         'telphone' => $this->memberInfo['telephone'],
                         'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                         'member_id' => $this->memberInfo['id'],
@@ -335,7 +335,7 @@ class Match extends Base
             $matchS = new MatchService();
             $teamS = new TeamService();
             $messageS = new MessageService();
-
+            $refereeS = new RefereeService();
             // 获取当前比赛数据、比赛战绩数据
             $match_id = $post['id'];
             $match = $matchS->getMatch(['id' => $match_id]);
@@ -468,15 +468,52 @@ class Match extends Base
             if ($resultSaveMatchRecord['code'] == 100) {
                 return json(['code' => 100, 'msg' => '保存比赛比分失败']);
             }
+
             // 裁判名单有变动（要保留的数据）
             if ( isset($post['refereeApChange_str']) && $post['refereeApChange_str'] != '[]' ) {
                 $refereeApplyChange = json_decode( $post['refereeApChange_str'], true);
                 if ($refereeApplyChange) {
-                    $saveAllMatchRefereeApplyData = $saveAllMatchRefereeData = $reviceMessageMemberIds = [];
+                    $saveAllMatchRefereeApplyData = $saveAllMatchRefereeData = $reviceMessageMemberIds = $insertRerfereeStr = [];
                     // 遍历更新裁判-比赛申请|邀请数据
                     foreach ($refereeApplyChange as $k => $refereeApply) {
+                        // 当前match_referee_apply status字段内容
+                        $applyStatus = $refereeApply['apply_status'];
+                        // match_referee_apply status字段要更新的内容 默认为1（未处理）
+                        $applyToStatus = 1;
+                        if ($applyStatus == 1 || $applyToStatus== -1 || $applyToStatus==3) {
+                            // 设为“同意”
+                            $applyToStatus = 2;
+                        } else if ($applyStatus==2) {
+                            // 设为”已撤销“
+                            $applyToStatus = -1;
+                        }
+                        // 查询裁判信息详细数据
+                        $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeApply['referee_id']]);
+                        // 查询裁判有无裁判-比赛制裁关系数据
+                        $matchReferee = $matchS->getMatchReferee([
+                            'match_id' => $match['id'],
+                            'match_record_id' => $matchRecord['id'],
+                            'referee_id' => $refereeApply['referee_id']
+                        ]);
+                        // 保存match_referee数据,查询有无原数据 有则更新数据
+                        $saveAllMatchRefereeData[$k] = [
+                            'match_id' => $match['id'],
+                            'match' => $matchName,
+                            'match_record_id' => $matchRecord['id'],
+                            'referee_id' => $refereeInfo['id'],
+                            'referee' => $refereeInfo['referee'],
+                            'member_id' => $refereeInfo['member_id'],
+                            'member' => $refereeInfo['member']['member'],
+                            'referee_type' => 1,
+                            'appearance_fee' => $refereeInfo['appearance_fee'],
+                            'is_attend' => ($isFinished == 1) ? 2 : 1, // 比赛完成 裁判出勤比赛制裁
+                            'status' => ($applyToStatus == -1) ? -1 : 1, // 撤销裁判-比赛申请数据
+                        ];
+                        if ($matchReferee) {
+                            $saveAllMatchRefereeData[$k]['id'] = $matchReferee['id'];
+                        }
                         // 查询有无裁判-比赛申请|邀请原数据
-                        if ($refereeApply['id']) {
+                        if (isset($refereeApply['id'])) {
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['id' => $refereeApply['id']]);
                         } else {
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['match_id' => $match_id, 'match_record_id' => $recordData['id'], 'referee_id' => $refereeApply['referee_id']]);
@@ -485,54 +522,43 @@ class Match extends Base
                             // 更新裁判-比赛申请|邀请原数据
                             $saveAllMatchRefereeApplyData[$k]['id'] = $refereeApply['id'];
                         }
-                        $saveAllMatchRefereeApplyData[$k]['status'] = 2;
+                        // 更新match_referee_apply status字段
+                        $saveAllMatchRefereeApplyData[$k]['status'] = $applyToStatus;
                         $reviceMessageMemberIds[$k]['id'] = $refereeMatchApply['member_id'];
-                        // 保存match_referee数据,查询有无原数据 有则更新数据
-                        $saveAllMatchRefereeData[$k] = [
-                            'match_id' => $match['id'],
-                            'match' => $matchName,
-                            'match_record_id' => $matchRecord['id'],
-                            'referee_id' => $refereeMatchApply['referee_id'],
-                            'referee' => $refereeMatchApply['referee'],
-                            'member_id' => $refereeMatchApply['member_id'],
-                            'member' => $refereeMatchApply['member'],
-                            'referee_type' => 1,
-                            'appearance_fee' => $refereeApply['referee_cost'],
-                        ];
-                        $matchReferee = $matchS->getMatchReferee([
-                            'match_id' => $match['id'],
-                            'match_record_id' => $matchRecord['id'],
-                            'referee_id' => $refereeApply['referee_id']
-                        ]);
-                        if ($matchReferee) {
-                            $saveAllMatchRefereeData[$k]['id'] = $matchReferee['id'];
-                        }
+
                         // 组合match表referee_str字段
-                        $dataMatch['referee_str'] = $matchS->getNewMatchRefereeStr($match, [
+                        /*$insertRerfereeStr[$k] = [
                             'referee' => $refereeApply['referee'],
                             'referee_id' => $refereeApply['referee_id'],
                             'referee_cost' => $refereeApply['referee_cost']
-                        ]);
+                        ];*/
                     }
+                    /*if (!empty($insertRerfereeStr)) {
+                        $dataMatch['referee_str'] = json_encode($insertRerfereeStr, JSON_UNESCAPED_UNICODE);
+                    }*/
                     // 批量更新match_referee_apply数据
-                    $matchS->saveAllMatchRerfereeApply($saveAllMatchRefereeApplyData);
-                    $matchS->saveAllMatchReferee($saveAllMatchRefereeData);
-                    // 发送同意比赛制裁申请通知
-                    $wxTemplateID = config('wxTemplateID.refereeTask');
-                    $messageData = [
-                        'title' => '您好，您的"'. $match['name'] .'" 执裁比赛申请已被同意。',
-                        'content' => '您好，您的"'. $match['name'] .'" 执裁比赛申请已被同意。',
-                        'keyword1' => $match['match_time'],
-                        'keyword2' => $match['court'],
-                        'remark' => '点击查看更多',
-                        'steward_type' => 2,
-                        'url' => url('keeper/team/matchInfo', ['match_id' => $match['id']], '', true)
-                    ];
-                    // 发送通知给邀请人
-                    $messageS->sendMessageToMembers($reviceMessageMemberIds, $messageData, $wxTemplateID);
+                    if (!empty($saveAllMatchRefereeApplyData)) {
+                        $matchS->saveAllMatchRerfereeApply($saveAllMatchRefereeApplyData);
+                        // 发送同意比赛制裁申请通知
+                        $wxTemplateID = config('wxTemplateID.refereeTask');
+                        $messageData = [
+                            'title' => '您好，您的"'. $match['name'] .'" 执裁比赛申请已被同意。',
+                            'content' => '您好，您的"'. $match['name'] .'" 执裁比赛申请已被同意。',
+                            'keyword1' => $match['match_time'],
+                            'keyword2' => $match['court'],
+                            'remark' => '点击查看更多',
+                            'steward_type' => 2,
+                            'url' => url('keeper/team/matchInfo', ['match_id' => $match['id']], '', true)
+                        ];
+                        $messageS->sendMessageToMembers($reviceMessageMemberIds, $messageData, $wxTemplateID);
+                    }
+                    // 批量更新match_referee数据
+                    if (!empty($saveAllMatchRefereeData)) {
+                        $matchS->saveAllMatchReferee($saveAllMatchRefereeData);
+                    }
                 }
-
             }
+            // 裁判名单有变动（要保留的数据） end
 
             // 原match_record表away_team字段为空并post提交away_team不为空 代表对away_team发送约战邀请
             if ( empty($matchRecord['away_team']) && !empty($recordData['away_team']) ) {
@@ -620,7 +646,6 @@ class Match extends Base
 
             // 返回响应结果
             return json($resultSaveMatchRecord);
-
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

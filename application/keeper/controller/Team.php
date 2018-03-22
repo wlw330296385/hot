@@ -3,6 +3,7 @@
 namespace app\keeper\controller;
 
 
+use app\model\MatchRefereeApply;
 use app\service\MatchService;
 use app\service\RefereeService;
 use app\service\TeamService;
@@ -547,7 +548,14 @@ class Team extends Base {
             }
             // 裁判列表
             if (!empty($matchInfo['referee_str'])) {
-                $refereeList = json_decode($matchInfo['referee_str'], true);
+                //$refereeList = json_decode($matchInfo['referee_str'], true);
+                // 获取已同意的裁判比赛申请|邀请的裁判名单
+                $modelMatchRefereeApply = new MatchRefereeApply();
+                $refereeList = $modelMatchRefereeApply->where([
+                    'match_id' => $matchRecordInfo['match_id'],
+                    'match_record_id' => $matchRecordInfo['id'],
+                    'status' => 2
+                ])->select();
             }
         }
         

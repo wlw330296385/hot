@@ -285,7 +285,7 @@
                     <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
                     <div class="hideApListIni">
                         {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"> {/volist}
+                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}" data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}
                     </div>
                     <div class="hideApList hide"></div>
                     <input type="hidden" name="referee_id" value="{volist name="$refereeList" id="vol "}{$vol.referee_id},{/volist}" class="data">
@@ -1055,7 +1055,8 @@
             ////////////////////////////////////////////////////////////
             // 去逗号
             var referee = $(".referee").text()
-            $(".referee").text(referee.substring(0, referee.length - 1));
+            console.log(referee);
+            //$(".referee").text(referee.substring(0, referee.length - 1));
 
             //裁判列表是否显示
             $("#refereeSlecct").change(function () {
@@ -1243,6 +1244,7 @@
                     $(".refereeApList input[name='checkbox-referee']").prop("checked", false);
                     //然后遍历出对应所选
                     var str = $(".refereeCount input[name='referee_id']").val();
+                    console.log(str);
                     var s = str.split(',');
                     for (var i = 0; i < s.length; i++) {
                         $(".refereeApList input[name='checkbox-referee']").filter(function (index) {
@@ -1689,9 +1691,6 @@
                         var referee_cost = $(this).attr("data-referee_cost");
                         var apply_status = $(this).attr("data-status");
                         var apply_id = $(this).attr('data-id');
-                        if (apply_id == "undefined") {
-                            apply_id = 0;
-                        }
                         refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status, id:apply_id  });
                     }
                 });
@@ -1714,7 +1713,8 @@
                         var referee_id = $(this).attr("data-referee_id");
                         var referee_cost = $(this).attr("data-referee_cost");
                         var apply_status = $(this).attr("data-status");
-                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status });
+                        var apply_id = $(this).attr('data-id');
+                        refereeApChange_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost, apply_status: apply_status, id:apply_id  });
                     }
                 });
                 console.log(refereeApChange_str)

@@ -651,42 +651,6 @@ class MatchService {
         ]);
     }
 
-    /** 在match原有referee_str
-     * @param $match
-     * @param array $newReferee
-     */
-    public function getNewMatchRefereeStr($match, $newReferee=[]) {
-        $refereeCost = $match['referee_cost'];
-        $refereeStr = $match['referee_str'];
-        // 转格式后referee_str
-        $matchRefereeStr = json_decode($match['referee_str'], true);
-        if (empty($matchRefereeStr)) {
-            // 插入一个新的裁判信息
-            $refereeArr = [
-                'referee' => $newReferee['referee'],
-                'referee_id' => $newReferee['referee_id'],
-                'referee_cost' => $newReferee['referee_cost']
-            ];
-            $refereeCost = $newReferee['referee_cost'];
-            $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
-            $refereeStr = '[' . $refereeStr .']';
-        } else {
-            // 新加入的裁判不在数据中 补充新的裁判进referee_str
-            if ( !deep_in_array( $newReferee['referee_id'], $matchRefereeStr ) ) {
-                array_push($matchRefereeStr, [
-                    'referee' => $newReferee['referee'],
-                    'referee_id' => $newReferee['referee_id'],
-                    'referee_cost' => $newReferee['referee_cost']
-                ]);
-                foreach ($matchRefereeStr as $matchReferee) {
-                    $refereeCost += $matchReferee['referee_cost'];
-                }
-                $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
-            }
-        }
-        return $refereeStr;
-    }
-
     // 获取比赛-裁判关系详细
     public function getMatchReferee($map) {
         $model = new MatchReferee();
