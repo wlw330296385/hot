@@ -6,7 +6,7 @@ use app\management\Base;
 /**
 * 引导页
 */
-class Index extends Base
+class Guider extends Base
 {
 	
 	function _initialize()

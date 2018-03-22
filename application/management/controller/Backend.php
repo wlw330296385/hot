@@ -18,6 +18,15 @@ class Backend extends Base
 			$this->error('权限不足','Login/login');
 		}
 
+		if(!$this->checkAuth($power)){
+			$this->error('权限不足,不可访问此页面');
+		}
 		
+	}
+
+
+
+ 	private	function checkAuth($power){
+ 		
 	}
 }
