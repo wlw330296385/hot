@@ -506,10 +506,8 @@ class Match extends Base
                         }
                         // 查询有无裁判-比赛申请|邀请原数据
                         if (isset($refereeApply['id'])) {
-                            echo 1;
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['id' => $refereeApply['id']]);
                         } else {
-                            echo 2;
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['match_id' => $match_id, 'match_record_id' => $recordData['id'], 'referee_id' => $refereeApply['referee_id']]);
                         }
                         if ($refereeMatchApply) {
@@ -562,7 +560,7 @@ class Match extends Base
                             // 查询裁判-比赛申请记录
                             $refereeApplyInvitation = $matchS->getMatchRerfereeApply(['id' => $val['id']]);
                             if ($refereeApplyInvitation && $refereeApplyInvitation['status'] == 0) {
-                                $refereeMemberIds[$k]['member_id'] = $refereeInfo['member_id'];
+                                $refereeMemberIds[$k]['id'] = $refereeInfo['member_id'];
                             }
                         } else {
                             // 插入新的裁判-比赛申请数据
@@ -590,11 +588,12 @@ class Match extends Base
                             ]);
                             // 数据保存出现错误 跳出循环
                             if ($resSaveMatchRefereeApplyInvitaion['code'] == 100) {
-                                continue;
+                                return ['code' => 100, 'msg' => '邀请裁判失败'];
                             }
-                            $refereeMemberIds[$k]['member_id'] = $refereeInfo['member_id'];
+                            $refereeMemberIds[$k]['id'] = $refereeInfo['member_id'];
                         }
                     }
+
                     if (!empty($refereeMemberIds)) {
                         // 发送比赛制裁邀请给裁判
                         $daidingStr = '待定';
@@ -893,8 +892,7 @@ class Match extends Base
             if ($matchInfo['is_finished_num'] != 1) {
                 return json(['code' => 100, 'msg' => '该比赛未完成']);
             }
-            //dump($matchInfo);
-            //dump($matchRecordInfo);
+
             $winTeam = ($matchRecordInfo['win_team_id'] == $matchRecordInfo['home_team_id']) ? $matchRecordInfo['home_team'] : $matchRecordInfo['away_team'];
             // 发送比赛完成信息给对方球队
             $messageData = [
