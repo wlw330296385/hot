@@ -609,77 +609,28 @@ class MatchService {
     }
 
     /** 裁判员信息插入到比赛referee_str字段
-     * @param $matchRefereeStr 比赛信息
      * @param $referee 裁判员信息数组
-     * @param $updateMatch 是否更新match数据 1更新
      */
-    public function setMatchRefereeStr($match=[], $referee=[], $updateMatch=0) {
-        $refereeCost = $match['referee_cost'];
-        $refereeStr = $match['referee_str'];
-        // 转格式后referee_str
-        $matchRefereeStr = json_decode($match['referee_str'], true);
-        if (count($referee)== count($referee, 1)) {
-            // 单个裁判员信息数组
-            if (empty($matchRefereeStr)) {
-                // 插入一个新的裁判信息
-                $refereeArr = [
-                    'referee' => $referee['referee'],
-                    'referee_id' => $referee['id'],
-                    'referee_cost' => $referee['appearance_fee']
-                ];
-                $refereeCost = $referee['appearance_fee'];
-                $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
-                $refereeStr = '[' . $refereeStr .']';
-            } else {
-                if (!deep_in_array($referee['id'], $matchRefereeStr)) {
-                    array_push($matchRefereeStr, [
-                        'referee' => $referee['referee'],
-                        'referee_id' => $referee['id'],
-                        'referee_cost' => $referee['appearance_fee']
-                    ]);
-                    foreach ($matchRefereeStr as $matchReferee) {
-                        $refereeCost += $matchReferee['referee_cost'];
-                    }
-                    $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
-                }
-            }
-        } else {
-            // 多个裁判员信息数组
-            foreach ($referee as $k => $val) {
-                if (empty($matchRefereeStr)) {
-                    // 插入一个新的裁判信息
-                    $refereeArr = [
-                        'referee' => $val['referee'],
-                        'referee_id' => $val['id'],
-                        'referee_cost' => $val['appearance_fee']
-                    ];
-                    $refereeCost = $val['appearance_fee'];
-                    $refereeStr = json_encode($refereeArr, JSON_UNESCAPED_UNICODE); //json不转码中文
-                    $refereeStr = '[' . $refereeStr .']';
-                } else {
-                    if (!deep_in_array($val['id'], $matchRefereeStr)) {
-                        array_push($matchRefereeStr, [
-                            'referee' => $val['referee'],
-                            'referee_id' => $val['id'],
-                            'referee_cost' => $val['appearance_fee']
-                        ]);
-                        foreach ($matchRefereeStr as $matchReferee) {
-                            $refereeCost += $matchReferee['referee_cost'];
-                        }
-                        $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
-                    }
-                }
-            }
+    public function setMatchRefereeStr($matchId=0, $recordId=0) {
+        $model = new MatchRefereeApply();
+        $res = $model->where(['match_id' => $matchId, 'match_record_id' => $recordId, 'status' => 2])->select();
+        $refereeCost= 0;
+        $refereeStr=[];
+        if (!$res) {
+            return ['referee_str' => $refereeStr, 'referee_cost' => $refereeCost];
         }
-
-        if ($updateMatch == 1) {
-            // 更新比赛信息
-            $model = new Match();
-            $res = $model->isUpdate(true)->save([
-                'id' => $match['id'],
-                'referee_str' => $refereeStr,
-                'referee_cost' => $refereeCost
+        $result = $res->toArray();
+        $matchRefereeStr=[];
+        foreach ($result as $val) {
+            array_push($matchRefereeStr, [
+                'referee' => $val['referee'],
+                'referee_id' => $val['id'],
+                'referee_cost' => $val['referee_cost']
             ]);
+            foreach ($matchRefereeStr as $matchReferee) {
+                $refereeCost += $matchReferee['referee_cost'];
+            }
+            $refereeStr = json_encode($matchRefereeStr, JSON_UNESCAPED_UNICODE); //json不转码中文
         }
         return ['referee_str' => $refereeStr, 'referee_cost' => $refereeCost];
     }

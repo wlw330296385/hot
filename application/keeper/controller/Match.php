@@ -101,4 +101,9 @@ class Match extends Base {
     public function leagueList() {
         return view('Match/leagueList');
     }
+
+    // 联赛主页
+    public function leagueInfo() {
+        return view('Match/leagueInfo');
+    }
 }
