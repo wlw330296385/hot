@@ -42,7 +42,8 @@ return [
         'scheduleExpend'=>'squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4', //课时消耗通知
         'refereeTask' => '9XyZ3Mb70gR8HmE0N6y_9TESECJYyi3r4kA_c45d_EU', // 裁判任务通知
         'receviceInvitaion' => '68DeWPCsdhaPuLJfPCPwPhrjhxo3m2ZUqa7b9j8XIfg', // 邀请已接受通知
-        'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒
+        'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒,
+        'matchResult' => 'R5jFmx4b5mTSXyRXyls3AAGO0vGgy7tbTMJ6GcEdotI' // 比赛结果通知
     ],
 
     // 七牛云
