@@ -904,7 +904,8 @@ class Match extends Base
                 'keyword2' => $matchRecordInfo['home_score'].'：'.$matchRecordInfo['away_score'],
                 'keyword3' => $winTeam,
                 'remark' => '点击进入查看详情',
-                'url' => url('keeper/team/claimfinishedmatch', ['match_id' => $matchInfo['id'], 'team_id' => $matchRecordInfo['away_team_id']], '', true)
+                'url' => url('keeper/team/claimfinishedmatch', ['match_id' => $matchInfo['id'], 'team_id' => $matchRecordInfo['away_team_id']], '', true),
+                'steward_type' =>2
             ];
             $memberId = db('team')->where('id', $matchRecordInfo['away_team_id'])->value('member_id');
             $messageS->sendMessageToMember($memberId, $messageData, config('wxTemplateID.matchResult'));
