@@ -1650,6 +1650,7 @@ class Match extends Base
             }
             // 比赛已完成
             $map['match.is_finished'] = 1;
+            $map['match_record.claim_team_id'] = 0;
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1694,6 +1695,7 @@ class Match extends Base
             }
             // 比赛已完成
             $map['match.is_finished'] = 1;
+            $map['match_record.claim_team_id'] = 0;
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1812,6 +1814,10 @@ class Match extends Base
             $recordData['claim_status'] = 1;
             $resultSaveMatchRecord = $matchS->saveMatchRecord($recordData);
             if ($resultSaveMatchRecord['code'] == 200) {
+                // 更新被认领比赛战绩 认领状态claim_status=1
+                if ($post['claim_record_id']) {
+                    db('match_record')->where('id', $post['claim_record_id'])->update(['claim_status' => 1]);
+                }
                 // 球队积分数据 胜队积2分，输队积1分
                 $dataWinTeamRank = [
                     'match_id' => $match['id'],
