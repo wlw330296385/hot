@@ -754,7 +754,14 @@ class TeamService
         $model = new TeamEvent();
         $res = $model->where($map)->order($order)->paginate($paginate);
         if ($res) {
-            return $res->toArray();
+            $list = $res->toArray();
+            foreach ($list['data'] as $k => $val) {
+                // 获取原始数据
+                $origData = $model::get($val['id'])->getData();
+                $list['data'][$k]['start_time_stamp'] = $origData['start_time'];
+                $list['data'][$k]['is_finished_num'] = $origData['is_finished'];
+            }
+            return $list;
         } else {
             return $res;
         }
@@ -766,7 +773,14 @@ class TeamService
         $model = new TeamEvent();
         $res = $model->where($map)->order($order)->page($page, $limit)->select();
         if ($res) {
-            return $res->toArray();
+            $list = $res->toArray();
+            foreach ($list as $k => $val) {
+                // 获取原始数据
+                $origData = $model::get($val['id'])->getData();
+                $list[$k]['start_time_stamp'] = $origData['start_time'];
+                $list[$k]['is_finished_num'] = $origData['is_finished'];
+            }
+            return $list;
         } else {
             return $res;
         }
