@@ -121,4 +121,5 @@ class Match extends Base {
     public function leagueRecord() {
         return view('Match/leagueRecord');
     }
+    
 }
