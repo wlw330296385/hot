@@ -559,8 +559,10 @@ class Match extends Base
                             // 提交名单数据内有裁判-比赛申请记录
                             // 查询裁判-比赛申请记录
                             $refereeApplyInvitation = $matchS->getMatchRerfereeApply(['id' => $val['id']]);
-                            if ($refereeApplyInvitation && $refereeApplyInvitation['status'] == 0) {
-                                $refereeMemberIds[$k]['id'] = $refereeInfo['member_id'];
+                            if ($refereeApplyInvitation) {
+                                if ($refereeApplyInvitation['status'] == 0) {
+                                    $refereeMemberIds[$k]['id'] = $refereeInfo['member_id'];
+                                }
                             }
                         } else {
                             // 插入新的裁判-比赛申请数据
@@ -722,10 +724,12 @@ class Match extends Base
         try {
             // 接收输入变量 其中post[record]为match_record保存数据
             $post = input('post.');
+
             // service
             $matchS = new MatchService();
             $teamS = new TeamService();
             $messageS = new MessageService();
+            $refereeS = new RefereeService();
             // post[match_time] 比赛时间转为时间戳格式
             $matchTimeStamp = strtotime($post['match_time']);
             // 比赛完成状态match is_finished标识
@@ -811,19 +815,71 @@ class Match extends Base
                         $homeMember[$k]['is_checkin'] = 1;
 
                         // 批量更新team_member 比赛数match_num
-                        //dump($teamMember);
                         if ($teamMember) {
                             $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
                             $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
                         }
                     }
-                    $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
-                    if ($saveHomeTeamMemberRes['code'] == 100) {
-                        return json($saveHomeTeamMemberRes);
+                    if (!empty($homeMember)) {
+                        $saveHomeTeamMemberRes = $matchS->saveAllMatchRecordMember($homeMember);
+                       if ($saveHomeTeamMemberRes['code'] == 100) {
+                           return json($saveHomeTeamMemberRes);
+                       }
+                       $teamS->saveAllTeamMember($dataUpdateTeamMember);
                     }
-                    $teamS->saveAllTeamMember($dataUpdateTeamMember);
+
                 }
                 // 保存参赛球队成员 end
+
+                // 保存裁判信息
+                if (isset($post['referee_str']) && $post['referee_str']!='[]') {
+                    $refereeStr = json_decode($post['referee_str'], true);
+                    // 遍历提交的裁判名单
+                    $saveAllMatchRefereeApplyData = $saveAllMatchRefereeData = [];
+                    foreach ($refereeStr as $k => $referee) {
+                        // 获取裁判员信息
+                        $refereeInfo = $refereeS->getRefereeInfo(['id' => $referee['referee_id']]);
+                        // 组合match_referee_apply数据
+                        $saveAllMatchRefereeApplyData[$k] = [
+                            'apply_type' => 2,
+                            'match_id' => $resultSaveMatch['data'],
+                            'match' => $post['name'],
+                            'match_record_id' => $resultSaveMatchRecord['data'],
+                            'team_id' => $post['team_id'],
+                            'team' => $post['team'],
+                            'referee_id' => $refereeInfo['id'],
+                            'referee' => $refereeInfo['referee'],
+                            'referee_cost' =>  $refereeInfo['appearance_fee'],
+                            'member_id' => $this->memberInfo['id'],
+                            'member' => $this->memberInfo['member'],
+                            'member_avatar' => $this->memberInfo['avatar'],
+                            'status' => 2
+                        ];
+                        // 组合match_referee数据
+                        $saveAllMatchRefereeData[$k] = [
+                            'match_id' => $resultSaveMatch['data'],
+                            'match' => $post['name'],
+                            'match_record_id' => $resultSaveMatchRecord['data'],
+                            'referee_id' => $refereeInfo['id'],
+                            'referee' => $refereeInfo['referee'],
+                            'appearance_fee' =>  $refereeInfo['appearance_fee'],
+                            'member_id' => $refereeInfo['member_id'],
+                            'member' => $refereeInfo['member']['member'],
+                            'referee_type' => 1,
+                            'is_attend' => 2,
+                            'status' => 1
+                        ];
+                    }
+                    // 批量保存match_referee_apply
+                    if (!empty($saveAllMatchRefereeApplyData)) {
+                        $matchS->saveAllMatchRerfereeApply($saveAllMatchRefereeApplyData);
+                    }
+                    // 批量保存match_referee
+                    if (!empty($saveAllMatchRefereeData)) {
+                        $matchS->saveAllMatchReferee($saveAllMatchRefereeData);
+                    }
+                }
+                // 保存裁判信息 end
 
                 // 更新球队胜场数、比赛场数
                 // 更新球队胜场数、比赛场数
