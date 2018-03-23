@@ -93,7 +93,7 @@
         var finishedCount = 1;
         var notfinishedCount = 1;
         var claimCount = 1;
-        
+
         mui('#onlineMatchList').pullRefresh({
             down: {
                 //下拉刷新
@@ -174,7 +174,7 @@
             }
         });
 
-         mui('#claimMatchList').pullRefresh({
+        mui('#claimMatchList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -274,7 +274,7 @@
                 toIsFinishedList('notfinishedlineMatchList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
-        
+
         //下拉刷新具体业务实现（认领）
         function pulldownRefreshClaim() {
             setTimeout(function () {
@@ -427,7 +427,7 @@
         });
     };
 
-    //完成未完成
+    //认领
     var toClaimList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/match/teamclaimfinishmatchpage')}?page=" + page;
@@ -448,17 +448,25 @@
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('team/claimFinishedMatch')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                         newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].home_team + '';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].match + '';
                         if (data.data.data[i].match_time == 0) {
                             newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                         } else {
                             newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
                         }
-                        newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].type + '</a></div>'
-                        newli += '</li>';
+                        newli += '</div><div class="price-frame">';
+                        if (data.data.data[i].claim_status == 0) {
+                            newli += '<div class="mui-inline"><b class="colororange f16">未认领</b></div>'
+                        } else if (data.data.data[i].claim_status == 1) {
+                            newli += '<div class="mui-inline"><b class="colororange f16">已认领</b></div>'
+                        } else if (data.data.data[i].claim_status == 2) {
+                            newli += '<div class="mui-inline"><b class="colorgray f16">失效</b></div>'
+                        }
+
+                        newli += '<p class="address">' + data.data.data[i].type + '</p></a></div></li>'
                     }
                 }
-    
+
                 if (gType == 1) {
                     //上拉刷新
                     $("ul.claim").empty().append(newli);
