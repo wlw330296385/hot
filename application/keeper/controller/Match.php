@@ -106,4 +106,19 @@ class Match extends Base {
     public function leagueInfo() {
         return view('Match/leagueInfo');
     }
+
+    // 联赛章程
+    public function leagueGulations() {
+        return view('Match/leagueGulations');
+    }
+
+    // 联赛赛程
+    public function leagueSchedule() {
+        return view('Match/leagueSchedule');
+    }
+
+    // 联赛战绩
+    public function leagueRecord() {
+        return view('Match/leagueRecord');
+    }
 }
