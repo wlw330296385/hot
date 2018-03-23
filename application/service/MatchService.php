@@ -120,8 +120,10 @@ class MatchService {
     public function deleteMatch($id) {
         // match表记录软删除
         $res = Match::destroy($id);
-        // match_record表 match_id相关数据 软删除
+        // match_record比赛战绩表相关数据 软删除
         db('match_record')->where('match_id', $id)->update(['delete_time' => time()]);
+        // match_referee比赛裁判表相关数据 软删除
+        db('match_referee')->where('match_id', $id)->update(['delete_time' => time()]);
         return $res;
     }
 
@@ -624,7 +626,7 @@ class MatchService {
         foreach ($result as $val) {
             array_push($matchRefereeStr, [
                 'referee' => $val['referee'],
-                'referee_id' => $val['id'],
+                'referee_id' => $val['referee_id'],
                 'referee_cost' => $val['referee_cost']
             ]);
             foreach ($matchRefereeStr as $matchReferee) {
