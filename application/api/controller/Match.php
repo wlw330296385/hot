@@ -461,7 +461,7 @@ class Match extends Base
                 return json(['code' => 100, 'msg' => '保存比赛比分失败']);
             }
 
-            // 裁判名单有变动（要保留的数据）
+            // 裁判系统安排：裁判名单有变动
             if ( isset($post['refereeApChange_str']) && $post['refereeApChange_str'] != '[]' ) {
                 $refereeApplyChange = json_decode( $post['refereeApChange_str'], true);
                 if ($refereeApplyChange) {
@@ -472,7 +472,7 @@ class Match extends Base
                         $applyStatus = $refereeApply['apply_status'];
                         // match_referee_apply status字段要更新的内容 默认为1（未处理）
                         $applyStatusTo = 1;
-                        if ($applyStatus == 1 || $applyStatusTo==3) {
+                        if ($applyStatus == 1 || $applyStatus==3) {
                             // 设为“同意”
                             $applyStatusTo = 2;
                         } else if ($applyStatus==2) {
@@ -506,8 +506,10 @@ class Match extends Base
                         }
                         // 查询有无裁判-比赛申请|邀请原数据
                         if (isset($refereeApply['id'])) {
+                            echo 1;
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['id' => $refereeApply['id']]);
                         } else {
+                            echo 2;
                             $refereeMatchApply = $matchS->getMatchRerfereeApply(['match_id' => $match_id, 'match_record_id' => $recordData['id'], 'referee_id' => $refereeApply['referee_id']]);
                         }
                         if ($refereeMatchApply) {
@@ -544,7 +546,76 @@ class Match extends Base
                     }
                 }
             }
-            // 裁判名单有变动（要保留的数据） end
+            // 裁判系统安排：裁判名单有变动end
+
+            // 裁判自行安排：裁判名单有变动
+            if (isset($post['refereeChange_str']) && $post['refereeChange_str'] != []) {
+                $refereeChange = json_decode($post['refereeChange_str'], true);
+                if ($refereeChange) {
+                    // 遍历提交的数据
+                    $refereeMemberIds= [];
+                    foreach ($refereeChange as $k => $val) {
+                        // 获取裁判员信息
+                        $refereeInfo = $refereeS->getRefereeInfo(['id' => $val['referee_id']]);
+                        if ($val['id']) {
+                            // 提交名单数据内有裁判-比赛申请记录
+                            // 查询裁判-比赛申请记录
+                            $refereeApplyInvitation = $matchS->getMatchRerfereeApply(['id' => $val['id']]);
+                            if ($refereeApplyInvitation && $refereeApplyInvitation['status'] == 0) {
+                                $refereeMemberIds[$k]['member_id'] = $refereeInfo['member_id'];
+                            }
+                        } else {
+                            // 插入新的裁判-比赛申请数据
+                            $dataRefereeApplyInvitaion = [
+                                'apply_type' => 2,
+                                'match_id' => $matchRecord['match_id'],
+                                'match' => $matchName,
+                                'match_record_id' => $matchRecord['id'],
+                                'team_id' => $match['team_id'],
+                                'team' => $match['team'],
+                                'referee_id' => $val['referee_id'],
+                                'referee' => $val['referee'],
+                                'referee_cost' => $val['referee_cost'],
+                                'referee_avatar' => $refereeInfo['portraits'],
+                                'member_id' => $this->memberInfo['id'],
+                                'member' => $this->memberInfo['member'],
+                                'member_avatar' => $this->memberInfo['avatar'],
+                                'status' => 1
+                            ];
+                            $resSaveMatchRefereeApplyInvitaion = $matchS->saveMatchRerfereeApply($dataRefereeApplyInvitaion, [
+                                'apply_type' => 2,
+                                'match_id' => $matchRecord['match_id'],
+                                'match_record_id' => $matchRecord['id'],
+                                'referee_id' => $val['referee_id']
+                            ]);
+                            // 数据保存出现错误 跳出循环
+                            if ($resSaveMatchRefereeApplyInvitaion['code'] == 100) {
+                                continue;
+                            }
+                            $refereeMemberIds[$k]['member_id'] = $refereeInfo['member_id'];
+                        }
+                    }
+                    if (!empty($refereeMemberIds)) {
+                        // 发送比赛制裁邀请给裁判
+                        $daidingStr = '待定';
+                        $linkurl = url('keeper/referee/matchapply', ['match_id' => $matchRecord['match_id']], '', true);
+                        $title = '您有一条执裁比赛邀请信息';
+                        $content = '您好，有比赛邀请您执裁';
+                        $messageData = [
+                            'title' => $title,
+                            'content' => $content,
+                            'url' => $linkurl,
+                            'keyword1' => empty($matchTimeStamp) ? $daidingStr : date('Y年m月d日 H:i', $matchTimeStamp),
+                            'keyword2' => empty($post['court']) ? $daidingStr : $post['court'],
+                            'keyword3' => $matchName,
+                            'remark' => '点击进入，查看比赛信息',
+                            'steward_type' => 2
+                        ];
+                        $messageS->sendMessageToMembers($refereeMemberIds, $messageData, config('wxTemplateID.refereeTask'));
+                    }
+                }
+            }
+
             // 组合match表referee_str字段：match_referee_apply status=2的裁判信息
             $newRefereeStr = $matchS->setMatchRefereeStr($matchRecord['match_id'], $matchRecord['id']);
             if ($newRefereeStr) {
@@ -1779,6 +1850,9 @@ class Match extends Base
             $match = $matchS->getMatch(['id' => $id]);
             if (!$match) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，没有此比赛信息']);
+            }
+            if ($match['is_finished_num'] == 1) {
+                return json(['code' => 100, 'msg' => __lang('MSG_400') . '，此比赛已完成不能删除']);
             }
             // 根据比赛当前状态(1上架,-1下架)+不允许操作条件
             // 根据action参数 editstatus执行上下架/del删除操作

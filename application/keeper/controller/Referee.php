@@ -148,7 +148,7 @@ class Referee extends Base{
         }
         if ($matchId) {
             $map['match_id'] = $matchId;
-            $map['referee_id'] = $refereeInfo['id'];
+            //$map['referee_id'] = $refereeInfo['id'];
         }
         $matchService = new MatchService();
         $applyInfo = $matchService->getMatchRerfereeApply($map);
