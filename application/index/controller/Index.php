@@ -19,6 +19,9 @@ class Index extends Controller{
         phpinfo();
     }
     
+    public function sumgradecourtmember(){
+        $list = db('grade')->field()->
+    }
 
     public function test(){
         $url = url('frontend/index/index');

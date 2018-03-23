@@ -2,8 +2,6 @@
 namespace app\management\controller;
 use app\management\controller\Camp;
 
-
-
 class StatisticsCamp extends Camp{
     
 	public function _initialize(){
