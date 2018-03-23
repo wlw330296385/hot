@@ -20,28 +20,6 @@
                         <span>控制台</span>
                     </a>
                 </li>
-
-                {if condition="isset($curcamp)"}
-                <li>
-                    <a href="{:url('camp/index')}" title="点击进入切换训练营">
-                        <i class="fa fa-leaf"></i>
-                        <span>{$curcamp.camp}</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{:url('camp/clearcur')}">
-                        <span>清空选择</span>
-                    </a>
-                </li>
-                {else/}
-                <li>
-                    <a href="{:url('camp/index')}" title="点击进入切换训练营">
-                        <i class="fa fa-leaf"></i>
-                        <span>选择查看训练营</span>
-                    </a>
-                </li>
-                {/if}
             </ul>
         </div>
 
@@ -104,16 +82,16 @@
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="{$admin.avatar}" class="user-image" alt="User Image">
-                        <span class="hidden-xs">{$admin.username}</span>
+                        <img src="{$memberInfo.avatar}" class="user-image" alt="User Image">
+                        <span class="hidden-xs">{$memberInfo.member}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header">
-                            <img src="{$admin.avatar}" class="img-circle" alt="User Image">
+                            <img src="{$memberInfo.avatar}" class="img-circle" alt="User Image">
 
                             <p>
-                                {$admin.username}
-                                <small>{$admin.lastlogin_at|date='Y-m-d H:i:s', ###}</small>
+                                {$memberInfo.member}
+                                <small>上次登录时间:{$memberInfo.lastlogin_at|date='Y-m-d H:i:s',###}</small>
                             </p>
                         </li>
                         <!-- Menu Body
@@ -133,7 +111,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="{:url('admin/user/edit', ['id'=>$admin['id']])}" class="btn btn-default btn-flat">个人资料</a>
+                                <a href="{:url('admin/user/edit', ['id'=>$memberInfo['id']])}" class="btn btn-default btn-flat">个人资料</a>
                             </div>
                             <div class="pull-right">
                                 <a href="{:url('login/logout')}" class="btn btn-default btn-flat">退出</a>

@@ -1,7 +1,9 @@
 <?php 
 namespace app\management\controller;
 use app\management\controller\Camp;
-// 按课时结算的训练营财务页面
+
+
+
 class StatisticsCamp extends Camp{
     
 	public function _initialize(){

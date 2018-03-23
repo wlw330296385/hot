@@ -12,8 +12,8 @@ class Base extends Controller
 	function _initialize()
 	{
 		$member_id = cookie('member_id');
-		$memberInfo = cache('memberInfo');
-		if(!$member_id ||!$memberInfo){
+		$memberInfo = session('memberInfo');
+		if(!$member_id &&!$memberInfo){
 			$this->error('登陆过期,请先登录','Login/login');
 		}else{
 			if($member_id <> $memberInfo['id']){

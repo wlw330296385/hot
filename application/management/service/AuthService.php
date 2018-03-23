@@ -17,7 +17,7 @@ class AuthService {
 	        $data['lastlogin_ua'] = request()->header('user-agent');
 	        $Member->save($data);
 			cookie('member_id',$memberInfo['id'],$keeptime);
-			cache('memberInfo',$memberInfo);
+			session('memberInfo',$memberInfo);
 			return true;
 		}else{
 			return false;

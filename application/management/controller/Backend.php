@@ -60,10 +60,10 @@ class Backend extends Base
 	 		if($url_value == strtolower($value['url_value'])){
 				//获取面包屑地址
 				$_location = [];
-				$_location[1] = $value;
+				$_location[0] = $value;
 				foreach ($powerList as $k => $val) {
 					if($val['id'] == $value['pid']){
-						$_location[0] = $val;
+						$_location[1] = $val;
 					}
 				}
 				return $_location;

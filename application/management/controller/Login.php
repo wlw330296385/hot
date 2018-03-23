@@ -65,14 +65,16 @@ class Login extends Controller
         // $group_id = session('admin.group_id');
         // Cache::rm('group_id_menu_auth_'.$group_id); 
         // Cache::clear(); 
+        Session::delete('memberInfo');
         cookie('mmeber_id', null);
         //$this->success('退出成功', url('Login/index'));
-        $this->redirect('Index/index');
+        $this->redirect('Login/login');
     }
 
     public function clearCache(){
         cookie('member_id', null);
         Cache::clear(); 
+        Session::delete('memberInfo');
         Session::delete('camp_member');
         $this->success('清空成功');
     }
