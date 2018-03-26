@@ -361,8 +361,8 @@
     <?php } else { ?>
     <div class="exception">
         
-            <div class="info"><h1><?php echo htmlentities($message); ?></h1></div>
-        
+            <!-- <div class="info"><h1><?php echo htmlentities($message); ?></h1></div> -->
+        <div class="info"><h1>页面正在更新新功能,请稍后再操作,谢谢! <br/>O(∩_∩)O</h1></div>
     </div>
     <?php } ?>
     

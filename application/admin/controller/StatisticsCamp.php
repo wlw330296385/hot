@@ -91,9 +91,11 @@ class StatisticsCamp extends Backend{
     // 资金账目
     public function campBill(){
         // $camp_id = $this->campInfo['id'];
-        $camp_id = input('param.camp_id');
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
+        $camp_id = input('param.camp_id',9);
+        // $monthStart = input('param.monthstart',date('Ym',strtotime('-1 month', strtotime("first day of this month"))));
+        // $monthEnd = input('param.monthend',date('Ym'));
+        $monthStart = input('param.monthstart',20171201);
+        $monthEnd = input('param.monthend',20171231);
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $income = [];
@@ -299,7 +301,7 @@ class StatisticsCamp extends Backend{
         }else{
             $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
             ->where(['camp_id'=>$camp_id,'type'=>1])
-            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where(['create_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
             ->group('lesson_id')->select();
             $list1 = $income1;
