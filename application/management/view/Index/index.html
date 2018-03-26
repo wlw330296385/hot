@@ -10,7 +10,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">总收益</span>
-                <span class="info-box-number">88960<small></small></span>
+                <span class="info-box-number">{$totalIncome}<small></small></span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -23,7 +23,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">赠课总人次</span>
-                <span class="info-box-number">41,410</span>
+                <span class="info-box-number">{$totalGift}</span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -40,7 +40,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">学员上课总人次</span>
-                <span class="info-box-number">760</span>
+                <span class="info-box-number">{$totalStudents}</span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -53,7 +53,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">总课时</span>
-                <span class="info-box-number">2,000</span>
+                <span class="info-box-number">{$totalSchedule}</span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -133,14 +133,15 @@
 
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
-
+    let eventBill = JSON.parse('{$eventBill}');
+    let lessonBill = JSON.parse('{$lessonBill}');
     // 基于准备好的dom，初始化echarts实例
     var turnoverMonth = echarts.init(document.getElementById('turnoverMonth'),'hot');
 
     // 指定图表的配置项和数据
     optionTM = {
         title: {
-            text: '2018年3月营业额折线图'
+            text: "{:date('Y年m月',time())}营业额折线图"
         },
         tooltip: {
             trigger: 'axis'
@@ -167,13 +168,13 @@
                 name:'培训购买',
                 type:'line',
                 stack: '总量',
-                data:[10000, 20000, 30000, 20000, 30500, 20000, 20000, 20000, 20400, 30000, 40000, 20000, 10000, 20000, 30000, 20000, 50000, 30000, 20000, 30000, 20000, 10000, 10000, 20000, 20000, 10000, 20000, 30000, 20000, 30000, 30000]
+                data:lessonBill
             },
             {
                 name:'活动购买',
                 type:'line',
                 stack: '总量',
-                data:[10000, 20000, 30000, 20000, 50000, 30000, 20000, 30000, 20000, 10000, 10000, 20000, 20000, 10000, 20000, 30000, 20000, 30000, 30000, 30500, 20000, 20000, 20000, 20400, 30000, 40000, 20000, 10000, 20000, 30000, 20000]
+                data:eventBill
             }
         ]
     };

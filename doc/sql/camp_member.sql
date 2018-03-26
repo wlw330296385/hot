@@ -1,372 +1,505 @@
--- phpMyAdmin SQL Dump
--- version 4.7.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: 2017-12-22 14:51:23
--- 服务器版本： 10.1.23-MariaDB-9+deb9u1
--- PHP Version: 7.0.19-1
+/*
+ Navicat Premium Data Transfer
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
+ Source Server         : 29
+ Source Server Type    : MySQL
+ Source Server Version : 100123
+ Source Host           : localhost:3306
+ Source Schema         : hot
 
+ Target Server Type    : MySQL
+ Target Server Version : 100123
+ File Encoding         : 65001
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+ Date: 26/03/2018 17:22:24
+*/
 
---
--- Database: `hot`
---
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
--- --------------------------------------------------------
-
---
--- 表的结构 `camp_member`
---
-
-CREATE TABLE `camp_member` (
-  `id` int(10) UNSIGNED NOT NULL,
+-- ----------------------------
+-- Table structure for camp_member
+-- ----------------------------
+DROP TABLE IF EXISTS `camp_member`;
+CREATE TABLE `camp_member`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `camp_id` int(10) NOT NULL,
-  `camp` varchar(60) NOT NULL,
+  `camp` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `member_id` int(10) NOT NULL,
-  `member` varchar(60) NOT NULL,
-  `remarks` varchar(255) NOT NULL COMMENT '备注',
-  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1:学生|2:教练|3:管理员|4:创建者|-1:粉丝',
-  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:待审核|1:正常|2:退出|-1:被辞退|3:''已毕业''|-2:被拒绝',
-  `system_remarks` text NOT NULL,
+  `member` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remarks` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '备注',
+  `type` tinyint(4) NOT NULL DEFAULT 0 COMMENT '1:学生|2:教练|3:管理员|4:创建者|-1:一份子',
+  `level` int(11) NOT NULL DEFAULT 0 COMMENT '角色等级:1兼职教练|2正职教练',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:待审核|1:正常|2:退出|-1:被辞退|3:\'已毕业\'|-2:被拒绝',
+  `system_remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `create_time` int(10) NOT NULL,
-  `delete_time` int(10) DEFAULT NULL,
-  `update_time` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='训练营身份权限表';
+  `delete_time` int(10) NULL DEFAULT NULL,
+  `update_time` int(11) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 530 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '训练营身份权限表' ROW_FORMAT = Compact;
 
---
--- 转存表中的数据 `camp_member`
---
+-- ----------------------------
+-- Records of camp_member
+-- ----------------------------
+INSERT INTO `camp_member` VALUES (1, 1, '大热体适能中心', 2, '大热篮球2', '创建训练营', 4, 0, 1, '', 1506412380, NULL, 1506412380);
+INSERT INTO `camp_member` VALUES (3, 3, '猴赛雷训练营', 1, '陈侯', '创建训练营', 4, 0, 1, '', 1506412381, NULL, 1506412381);
+INSERT INTO `camp_member` VALUES (4, 1, '大热体适能中心', 1, 'HoChen', '你好', -1, 0, -1, '20171107侯哥删除关联', 1506414072, NULL, 0);
+INSERT INTO `camp_member` VALUES (6, 1, '大热体适能中心', 3, 'Hot Basketball 1', 'ho t', -1, 0, 1, '', 1506414141, NULL, 0);
+INSERT INTO `camp_member` VALUES (7, 3, '猴赛雷训练营', 4, 'weilin666', '加入做教练', 2, 0, 1, '', 1506414192, NULL, 1507630647);
+INSERT INTO `camp_member` VALUES (9, 1, '大热体适能中心', 4, 'weilin666', '加入教练', 2, 0, 1, '', 1506414220, NULL, 1506414603);
+INSERT INTO `camp_member` VALUES (10, 3, '猴赛雷训练营', 5, '123abc', '江河湖海', 2, 0, -1, '', 1506414545, NULL, 0);
+INSERT INTO `camp_member` VALUES (12, 1, '大热体适能中心', 5, '123abc', '嘉兴', 2, 0, 1, '', 1506414573, NULL, 0);
+INSERT INTO `camp_member` VALUES (13, 4, '准行者训练营', 6, '陈烈准', '创建训练营', 4, 0, 1, '', 1506415619, NULL, 1506415619);
+INSERT INTO `camp_member` VALUES (15, 4, '准行者训练营', 1, 'HoChen', '我', 1, 0, -1, '20171107侯哥删除关联', 1506502597, NULL, 1510100359);
+INSERT INTO `camp_member` VALUES (16, 5, '荣光训练营', 7, '张伟荣', '创建训练营', 4, 0, 1, '', 1506565273, NULL, 1506565273);
+INSERT INTO `camp_member` VALUES (25, 9, '大热篮球俱乐部', 2, '大热篮球', '创建训练营', 4, 0, 1, '', 1506676445, NULL, 1506676445);
+INSERT INTO `camp_member` VALUES (29, 4, '准行者训练营', 7, 'wayen_z', '我要成为粉丝', 2, 0, -1, '', 1506754252, NULL, 1509092961);
+INSERT INTO `camp_member` VALUES (31, 3, '猴赛雷训练营', 11, 'hot111', 'Hi', 2, 0, 0, '', 1507350804, NULL, 0);
+INSERT INTO `camp_member` VALUES (32, 3, '猴赛雷训练营', 13, 'Greeny', '', 1, 0, 1, '', 1507355231, NULL, 1507355231);
+INSERT INTO `camp_member` VALUES (37, 3, '猴赛雷训练营', 4, 'weilin666', '升级管理员2', 2, 0, 0, '', 1506414192, NULL, 1520233749);
+INSERT INTO `camp_member` VALUES (38, 9, '大热篮球俱乐部', 15, '13537781797', '', 1, 0, 1, '', 1507728831, NULL, 1519542911);
+INSERT INTO `camp_member` VALUES (39, 9, '大热篮球俱乐部', 3, 'Hot Basketball 1', '冯冯冯', 3, 0, 1, '', 1507778591, NULL, 1508469017);
+INSERT INTO `camp_member` VALUES (40, 4, '准行者训练营', 5, '123abc', '', 1, 0, 1, '', 1507880299, NULL, 1507880299);
+INSERT INTO `camp_member` VALUES (41, 5, '荣光训练营', 4, 'weilin666', '测试推送', 1, 0, 1, '', 1507890574, NULL, 1512640656);
+INSERT INTO `camp_member` VALUES (42, 5, '荣光训练营', 4, 'weilin666', '手动改数据的', 1, 0, 1, '', 1507947074, NULL, 1512640656);
+INSERT INTO `camp_member` VALUES (43, 13, 'AKcross训练营', 18, '安凯翔', '创建训练营', 4, 0, 1, '', 1507951263, NULL, 1507951263);
+INSERT INTO `camp_member` VALUES (44, 14, 'Ball  is  life', 17, '董硕同', '创建训练营', 4, 0, 1, '', 1507951319, NULL, 1507951319);
+INSERT INTO `camp_member` VALUES (45, 3, '猴赛雷训练营', 24, 'Hot777', 'Yo ', 2, 0, 1, '', 1507972576, NULL, 1507972674);
+INSERT INTO `camp_member` VALUES (46, 15, '钟声训练营', 19, '钟声', '创建训练营', 4, 0, 1, '', 1508037092, NULL, 1508037092);
+INSERT INTO `camp_member` VALUES (47, 16, '热风学校', 11, '陈永仁', '创建训练营', 4, 0, 1, '', 1508037396, NULL, 1508037396);
+INSERT INTO `camp_member` VALUES (48, 16, '热风学校', 1, 'HoChen', '我', 3, 0, 1, '', 1508040916, NULL, 1508040916);
+INSERT INTO `camp_member` VALUES (49, 9, '大热篮球俱乐部', 6, 'legend', '准哥加入，查看数据', 3, 0, 1, '', 1508055043, NULL, 1508055043);
+INSERT INTO `camp_member` VALUES (51, 9, '大热篮球俱乐部', 23, '钟欣志', '', 1, 0, 1, '系统插入2017年10月18日17:34:40', 1508141658, NULL, 0);
+INSERT INTO `camp_member` VALUES (52, 9, '大热篮球俱乐部', 25, '罗翔宇', '', 1, 0, 1, '系统插入2017年10月18日17:34:43', 1508141658, NULL, 0);
+INSERT INTO `camp_member` VALUES (53, 4, '准行者训练营', 33, 'yanyan', '', 1, 0, 1, '', 1508206653, NULL, 1521946803);
+INSERT INTO `camp_member` VALUES (54, 15, '钟声训练营', 22, '邓赖迪', '', 1, 0, 1, '20180105更正学生所属训练营和对应课程（之前买的时候是“大热前海训练营”，可能还没有创建钟声训练营）', 1508242058, NULL, 1508242058);
+INSERT INTO `camp_member` VALUES (55, 15, '钟声训练营', 26, '陈承铭', '', 1, 0, 1, '系统插入2017年10月18日17:30:21', 1508318976, NULL, 0);
+INSERT INTO `camp_member` VALUES (58, 3, '猴赛雷训练营', 5, '123abc', '', 1, 0, 1, '', 1508396332, NULL, 1508396332);
+INSERT INTO `camp_member` VALUES (59, 4, '准行者训练营', 4, 'weilin666', '加入做教务\n', 3, 0, -1, '', 1508399193, NULL, 1510986601);
+INSERT INTO `camp_member` VALUES (60, 15, '钟声训练营', 2, 'Hot-basketball2', 'ttt', 3, 0, -1, '', 1508469074, NULL, 1508859524);
+INSERT INTO `camp_member` VALUES (61, 3, '猴赛雷训练营', 6, 'legend', '', 1, 0, 1, '', 1508489474, NULL, 1510047890);
+INSERT INTO `camp_member` VALUES (62, 15, '钟声训练营', 43, '陈润宏', '', 1, 0, 1, '', 1508554705, NULL, 1515051756);
+INSERT INTO `camp_member` VALUES (63, 15, '钟声训练营', 42, '李润弘', '', 1, 0, 1, '', 1508554790, NULL, 1508554790);
+INSERT INTO `camp_member` VALUES (64, 15, '钟声训练营', 48, '郑肖杰', '', 1, 0, 1, '', 1508639992, NULL, 1508639992);
+INSERT INTO `camp_member` VALUES (65, 15, '钟声训练营', 49, '黄浩', '', 1, 0, 1, '', 1508658061, NULL, 1508658061);
+INSERT INTO `camp_member` VALUES (66, 15, '钟声训练营', 52, '吴师隽', '', 1, 0, 1, '', 1508661867, NULL, 1508661867);
+INSERT INTO `camp_member` VALUES (67, 15, '钟声训练营', 55, '唐轩衡', '', 1, 0, 1, '', 1508676524, NULL, 1515053846);
+INSERT INTO `camp_member` VALUES (68, 15, '钟声训练营', 56, '郑皓畅', '', 1, 0, 1, '', 1508723298, NULL, 1515052924);
+INSERT INTO `camp_member` VALUES (69, 15, '钟声训练营', 59, '陈高翔', '', 1, 0, 1, '', 1508723330, NULL, 1508723330);
+INSERT INTO `camp_member` VALUES (70, 15, '钟声训练营', 51, '战奕名', '', 1, 0, 1, '', 1508724644, NULL, 1515054068);
+INSERT INTO `camp_member` VALUES (71, 15, '钟声训练营', 46, '李语辰', '', 1, 0, 1, '', 1508725788, NULL, 1515054006);
+INSERT INTO `camp_member` VALUES (72, 15, '钟声训练营', 50, '张毓楠', '', 1, 0, 1, '', 1508726077, NULL, 1508726077);
+INSERT INTO `camp_member` VALUES (73, 15, '钟声训练营', 60, '王钰龙', '', 1, 0, 1, '', 1508726145, NULL, 1515053491);
+INSERT INTO `camp_member` VALUES (74, 15, '钟声训练营', 62, '刘宇恒', '', 1, 0, 1, '', 1508729344, NULL, 1515053629);
+INSERT INTO `camp_member` VALUES (75, 15, '钟声训练营', 63, 'leonhuang', '', 1, 0, 1, '', 1508730455, NULL, 1508730455);
+INSERT INTO `camp_member` VALUES (76, 15, '钟声训练营', 66, '20101119', '', 1, 0, 1, '', 1508732408, NULL, 1508732408);
+INSERT INTO `camp_member` VALUES (77, 15, '钟声训练营', 67, 'gaojun', '', 1, 0, 1, '', 1508735155, NULL, 1508735155);
+INSERT INTO `camp_member` VALUES (78, 15, '钟声训练营', 61, '万宇宸', '', 1, 0, 1, '', 1508737749, NULL, 1515053923);
+INSERT INTO `camp_member` VALUES (79, 15, '钟声训练营', 73, 'SZQIUJB', '', 1, 0, 1, '', 1508766198, NULL, 1515052981);
+INSERT INTO `camp_member` VALUES (80, 15, '钟声训练营', 74, '13823181560', '', 1, 0, 1, '', 1508766363, NULL, 1508766363);
+INSERT INTO `camp_member` VALUES (81, 15, '钟声训练营', 58, '饶滨', '', 1, 0, 1, '', 1508770994, NULL, 1508770994);
+INSERT INTO `camp_member` VALUES (82, 13, 'AKcross训练营', 2, 'Hot-basketball2', '哗啦啦啦啦', 3, 0, 1, '', 1508829675, NULL, 1508829726);
+INSERT INTO `camp_member` VALUES (83, 13, 'AKcross训练营', 79, 'Youboy806', '', 1, 0, 1, '', 1508831427, NULL, 1515161014);
+INSERT INTO `camp_member` VALUES (84, 9, '大热篮球俱乐部', 78, '张雅璐', '恭喜发财', 3, 0, 1, '', 1508831833, NULL, 1508923164);
+INSERT INTO `camp_member` VALUES (86, 9, '大热篮球俱乐部', 19, '钟声', '钟声', 2, 0, 1, '', 1508849680, NULL, 1508854111);
+INSERT INTO `camp_member` VALUES (87, 9, '大热篮球俱乐部', 80, 'kiko', '', 1, 0, 1, '', 1508849732, NULL, 1508849732);
+INSERT INTO `camp_member` VALUES (88, 15, '钟声训练营', 82, '13927482132', '', 1, 0, 1, '', 1508850520, NULL, 1508850520);
+INSERT INTO `camp_member` VALUES (89, 9, '大热篮球俱乐部', 18, '18566201712', 'jjjj', 2, 0, 1, '', 1508917693, NULL, 1508919856);
+INSERT INTO `camp_member` VALUES (90, 5, '荣光训练营', 6, 'legend', '', 1, 0, 1, '', 1508985553, NULL, 1513827377);
+INSERT INTO `camp_member` VALUES (91, 15, '钟声训练营', 86, '姚定希', '', 1, 0, 1, '', 1508986357, NULL, 1508986357);
+INSERT INTO `camp_member` VALUES (92, 15, '钟声训练营', 83, '梁懿', '', 1, 0, 1, '', 1508986589, NULL, 1508986589);
+INSERT INTO `camp_member` VALUES (93, 15, '钟声训练营', 76, 'cjwcyc', '', 1, 0, 1, '', 1508989728, NULL, 1508989728);
+INSERT INTO `camp_member` VALUES (95, 15, '钟声训练营', 81, 'rebeccazhangly', '', 1, 0, 1, '', 1509001967, NULL, 1509001967);
+INSERT INTO `camp_member` VALUES (96, 15, '钟声训练营', 84, '余永康', '', 1, 0, 1, '', 1509006277, NULL, 1515054371);
+INSERT INTO `camp_member` VALUES (97, 15, '钟声训练营', 36, 'Gavin.zhuang', '申请助教', 2, 0, 1, '', 1509007513, NULL, 1509007968);
+INSERT INTO `camp_member` VALUES (98, 15, '钟声训练营', 39, '饶宏宇', '', 1, 0, 1, '', 1509008231, NULL, 1509008231);
+INSERT INTO `camp_member` VALUES (99, 15, '钟声训练营', 87, '朱涛', '', 1, 0, 1, '', 1509009392, NULL, 1509009392);
+INSERT INTO `camp_member` VALUES (100, 15, '钟声训练营', 65, '蒋清奕', '', 1, 0, 1, '系统插入2017年10月27日10:43:48', 1508774400, NULL, 1508774400);
+INSERT INTO `camp_member` VALUES (101, 15, '钟声训练营', 75, 'Jerry', '', 1, 0, 1, '', 1509079444, NULL, 1515053332);
+INSERT INTO `camp_member` VALUES (102, 15, '钟声训练营', 89, 'Li hong', '', 1, 0, 0, '系统插入时间2017年10月27日14:11:16', 1508774400, NULL, 1508947200);
+INSERT INTO `camp_member` VALUES (103, 15, '钟声训练营', 91, '小苹果', '', 1, 0, 1, '', 1509086650, NULL, 1509086650);
+INSERT INTO `camp_member` VALUES (104, 9, '大热篮球俱乐部', 14, 'MirandaXian', '想', 3, 0, 1, '', 1509432610, NULL, 1522025997);
+INSERT INTO `camp_member` VALUES (106, 9, '大热篮球俱乐部', 17, 'Bruce.Dong', '啊', 2, 0, 1, '', 1509444728, NULL, 1509444740);
+INSERT INTO `camp_member` VALUES (107, 17, 'FIT', 16, '林泽铭', '创建训练营', 4, 0, 1, '', 1509449155, NULL, 1509449155);
+INSERT INTO `camp_member` VALUES (108, 9, '大热篮球俱乐部', 36, 'Gavin.zhuang', '申请加入', 2, 0, 1, '', 1509504493, NULL, 1509504512);
+INSERT INTO `camp_member` VALUES (109, 15, '钟声训练营', 102, '张广涵', '', 1, 0, 1, '系统插入:2017年11月3日14:30:45', 1509683448, NULL, 1509683448);
+INSERT INTO `camp_member` VALUES (110, 9, '大热篮球俱乐部', 101, 'LIANG', '', 1, 0, 1, '系统插入:2017年11月3日14:30:45', 1509683448, NULL, 1509683448);
+INSERT INTO `camp_member` VALUES (111, 15, '钟声训练营', 103, '腾月', '', 1, 0, 1, '系统插入,时间2017年11月3日16:30:42', 1509697785, NULL, 1509697785);
+INSERT INTO `camp_member` VALUES (112, 15, '钟声训练营', 104, '赵俊豪', '', 1, 0, 1, '', 1509703640, NULL, 1515051362);
+INSERT INTO `camp_member` VALUES (113, 9, '大热篮球俱乐部', 105, '30988232', '', 1, 0, 1, '', 1509720686, NULL, 1509720686);
+INSERT INTO `camp_member` VALUES (114, 9, '大热篮球俱乐部', 106, 'hou1298280', '', 1, 0, 1, '', 1509782830, NULL, 1509782830);
+INSERT INTO `camp_member` VALUES (115, 9, '大热篮球俱乐部', 16, 'andy.lin', '教练', 2, 0, 1, '', 1509782999, NULL, 1509783014);
+INSERT INTO `camp_member` VALUES (116, 9, '大热篮球俱乐部', 107, 'HANA', '', 1, 0, 1, '', 1509783164, NULL, 1509783164);
+INSERT INTO `camp_member` VALUES (117, 9, '大热篮球俱乐部', 108, '061683', '', 1, 0, 1, '', 1509783379, NULL, 1509783379);
+INSERT INTO `camp_member` VALUES (118, 9, '大热篮球俱乐部', 109, 'lily', '', 1, 0, 1, '', 1509784749, NULL, 1509784749);
+INSERT INTO `camp_member` VALUES (119, 9, '大热篮球俱乐部', 110, '关乐耀', '', 1, 0, 1, '', 1509784965, NULL, 1510903112);
+INSERT INTO `camp_member` VALUES (120, 9, '大热篮球俱乐部', 111, '张益凯', '', 1, 0, 1, '', 1509786985, NULL, 1509786985);
+INSERT INTO `camp_member` VALUES (121, 9, '大热篮球俱乐部', 112, 'chenjiahang', '', 1, 0, 1, '', 1509787853, NULL, 1509787853);
+INSERT INTO `camp_member` VALUES (122, 9, '大热篮球俱乐部', 113, '王浩丁', '', 1, 0, 1, '', 1509844432, NULL, 1509844432);
+INSERT INTO `camp_member` VALUES (123, 9, '大热篮球俱乐部', 114, '颜若宸', '', 1, 0, 1, '', 1509845658, NULL, 1509845658);
+INSERT INTO `camp_member` VALUES (124, 9, '大热篮球俱乐部', 115, '熊天华', '', 1, 0, 1, '', 1509856196, NULL, 1509856196);
+INSERT INTO `camp_member` VALUES (125, 9, '大热篮球俱乐部', 27, 'coachj', '无', 2, 0, 1, '', 1509868622, NULL, 1509869423);
+INSERT INTO `camp_member` VALUES (126, 9, '大热篮球俱乐部', 116, '13670022780', '', 1, 0, 1, '', 1509871789, NULL, 1509871789);
+INSERT INTO `camp_member` VALUES (127, 9, '大热篮球俱乐部', 117, '王少华', '', 1, 0, 1, '', 1509943670, NULL, 1510191105);
+INSERT INTO `camp_member` VALUES (128, 9, '大热篮球俱乐部', 118, '黄子杰', '', 1, 0, 1, '', 1509943739, NULL, 1509943739);
+INSERT INTO `camp_member` VALUES (129, 9, '大热篮球俱乐部', 119, '13662248558', '', 1, 0, 1, '', 1509970166, NULL, 1509970166);
+INSERT INTO `camp_member` VALUES (130, 9, '大热篮球俱乐部', 120, '6222355892320034', '', 1, 0, 1, '', 1509985530, NULL, 1509985530);
+INSERT INTO `camp_member` VALUES (131, 9, '大热篮球俱乐部', 1, 'HoChen', '来', 3, 0, 1, '20171107手动通过教务申请', 1510020895, NULL, 1522054944);
+INSERT INTO `camp_member` VALUES (133, 4, '准行者训练营', 121, 'jason', '', 1, 0, 1, '', 1510044582, NULL, 1510044582);
+INSERT INTO `camp_member` VALUES (134, 4, '准行者训练营', 122, '1234', '', 1, 0, 1, '', 1510044746, NULL, 1510044746);
+INSERT INTO `camp_member` VALUES (135, 9, '大热篮球俱乐部', 123, '065385', '', 1, 0, 1, '', 1510059638, NULL, 1510059638);
+INSERT INTO `camp_member` VALUES (136, 5, '荣光训练营', 6, 'legend', '申请管理员', 1, 0, 0, '', 1510062298, NULL, 1513827377);
+INSERT INTO `camp_member` VALUES (137, 9, '大热篮球俱乐部', 126, '6222024000065498186', '', 1, 0, 1, '', 1510116547, NULL, 1510369090);
+INSERT INTO `camp_member` VALUES (138, 9, '大热篮球俱乐部', 124, '黄俊豪', '', 1, 0, 1, '', 1510117401, NULL, 1510117401);
+INSERT INTO `camp_member` VALUES (139, 18, '劉嘉興', 5, '劉嘉興', '创建训练营', 4, 0, 1, '', 1510382967, NULL, 1510382967);
+INSERT INTO `camp_member` VALUES (140, 13, 'AKcross训练营', 4, 'weilin666', '', 1, 0, 1, '', 1510388218, NULL, 1510388893);
+INSERT INTO `camp_member` VALUES (141, 9, '大热篮球俱乐部', 128, '军歌', '', 1, 0, 1, '', 1510388668, NULL, 1510388668);
+INSERT INTO `camp_member` VALUES (142, 9, '大热篮球俱乐部', 125, '13825243733', '', 1, 0, 1, '系统插入时间2017年11月11日16:27:45', 1510388877, NULL, 1510388877);
+INSERT INTO `camp_member` VALUES (143, 9, '大热篮球俱乐部', 129, '红茶????', '', 1, 0, 1, '', 1510393607, NULL, 1510393607);
+INSERT INTO `camp_member` VALUES (144, 9, '大热篮球俱乐部', 130, '锦华', '', 1, 0, 1, '', 1510671523, NULL, 1510671523);
+INSERT INTO `camp_member` VALUES (145, 9, '大热篮球俱乐部', 135, 'bemyself', '', 1, 0, 1, '', 1510819362, NULL, 1510819362);
+INSERT INTO `camp_member` VALUES (146, 9, '大热篮球俱乐部', 142, '卢盛良', '', 1, 0, 1, '', 1510825439, NULL, 1521465348);
+INSERT INTO `camp_member` VALUES (147, 9, '大热篮球俱乐部', 146, '言覃多多', '', 1, 0, 1, '', 1510828278, NULL, 1519800713);
+INSERT INTO `camp_member` VALUES (148, 9, '大热篮球俱乐部', 148, 'wiya', '', 1, 0, 1, '', 1510841933, NULL, 1513841887);
+INSERT INTO `camp_member` VALUES (149, 9, '大热篮球俱乐部', 149, 'fanghk', '', 1, 0, 1, '', 1510876936, NULL, 1513841811);
+INSERT INTO `camp_member` VALUES (151, 9, '大热篮球俱乐部', 150, '中国太保惠霞', '', 1, 0, 1, '', 1510889749, NULL, 1513843712);
+INSERT INTO `camp_member` VALUES (152, 9, '大热篮球俱乐部', 140, '袁梓钦YZQ', '', 1, 0, 1, '', 1510890307, NULL, 1510890307);
+INSERT INTO `camp_member` VALUES (153, 9, '大热篮球俱乐部', 141, '鲁秋娟¹⁵⁹²⁰⁰⁸⁵⁹⁶⁰', '', 1, 0, 1, '', 1510890324, NULL, 1510902957);
+INSERT INTO `camp_member` VALUES (154, 9, '大热篮球俱乐部', 139, '杨灿13662559960', '', 1, 0, 1, '', 1510890344, NULL, 1510890344);
+INSERT INTO `camp_member` VALUES (155, 9, '大热篮球俱乐部', 133, '晨曦', '', 1, 0, 1, '', 1510890357, NULL, 1510890357);
+INSERT INTO `camp_member` VALUES (156, 9, '大热篮球俱乐部', 147, '静', '', 1, 0, 1, '', 1510890372, NULL, 1510890372);
+INSERT INTO `camp_member` VALUES (157, 9, '大热篮球俱乐部', 143, '谢睿轩Ryan', '', 1, 0, 1, '', 1510890389, NULL, 1510890389);
+INSERT INTO `camp_member` VALUES (158, 9, '大热篮球俱乐部', 144, '丹佛儿', '', 1, 0, 1, '', 1510890406, NULL, 1520478734);
+INSERT INTO `camp_member` VALUES (159, 9, '大热篮球俱乐部', 134, '刘欣洋', '', 1, 0, 1, '', 1510891561, NULL, 1516923986);
+INSERT INTO `camp_member` VALUES (160, 9, '大热篮球俱乐部', 145, 'Taily', '', 1, 0, 1, '', 1510892291, NULL, 1513816560);
+INSERT INTO `camp_member` VALUES (161, 9, '大热篮球俱乐部', 153, 'Yrb801129', '', 1, 0, 1, '', 1510919368, NULL, 1510919369);
+INSERT INTO `camp_member` VALUES (162, 9, '大热篮球俱乐部', 159, 'Lisa Lee(李建平)', '', 1, 0, 1, '', 1510996699, NULL, 1510996700);
+INSERT INTO `camp_member` VALUES (163, 13, 'AKcross训练营', 166, '雪', '', 1, 0, 1, '', 1511073367, NULL, 1511089434);
+INSERT INTO `camp_member` VALUES (164, 9, '大热篮球俱乐部', 172, 'luojiuyu', '', 1, 0, 1, '', 1511228103, NULL, 1511228105);
+INSERT INTO `camp_member` VALUES (165, 9, '大热篮球俱乐部', 151, '欧阳宇航的外公', '', 1, 0, 1, '', 1511247036, NULL, 1513842242);
+INSERT INTO `camp_member` VALUES (166, 9, '大热篮球俱乐部', 156, 'victor', '', 1, 0, 1, '', 1511247071, NULL, 1511247072);
+INSERT INTO `camp_member` VALUES (167, 9, '大热篮球俱乐部', 136, '18923856665', '', 1, 0, 1, '', 1511247150, NULL, 1521345301);
+INSERT INTO `camp_member` VALUES (168, 9, '大热篮球俱乐部', 137, '吴靖宇wjy', '', 1, 0, 1, '', 1511247811, NULL, 1515560571);
+INSERT INTO `camp_member` VALUES (169, 9, '大热篮球俱乐部', 168, 'huangzq', '', 1, 0, 1, '', 1511247853, NULL, 1513845982);
+INSERT INTO `camp_member` VALUES (170, 9, '大热篮球俱乐部', 160, '张春丽＆', '', 1, 0, 1, '', 1511247962, NULL, 1511536625);
+INSERT INTO `camp_member` VALUES (171, 9, '大热篮球俱乐部', 162, '龙船????唐力', '', 1, 0, 1, '', 1511247988, NULL, 1513844464);
+INSERT INTO `camp_member` VALUES (172, 9, '大热篮球俱乐部', 163, 'yolanda传奇', '', 1, 0, 1, '', 1511248038, NULL, 1514716517);
+INSERT INTO `camp_member` VALUES (173, 9, '大热篮球俱乐部', 164, 'zhouyinmu', '', 1, 0, 1, '', 1511248068, NULL, 1515557891);
+INSERT INTO `camp_member` VALUES (174, 9, '大热篮球俱乐部', 165, '飘', '', 1, 0, 1, '', 1511248133, NULL, 1513844519);
+INSERT INTO `camp_member` VALUES (175, 9, '大热篮球俱乐部', 161, '浪花', '', 1, 0, 1, '', 1511248207, NULL, 1516700537);
+INSERT INTO `camp_member` VALUES (176, 9, '大热篮球俱乐部', 131, 'Dorothy', '', 1, 0, 1, '', 1511248240, NULL, 1514882978);
+INSERT INTO `camp_member` VALUES (177, 9, '大热篮球俱乐部', 152, 'Jack123', '', 1, 0, 1, '', 1511248283, NULL, 1513844716);
+INSERT INTO `camp_member` VALUES (178, 9, '大热篮球俱乐部', 157, '19782174', '', 1, 0, 1, '', 1511248707, NULL, 1513844016);
+INSERT INTO `camp_member` VALUES (179, 9, '大热篮球俱乐部', 175, '休闲的人²⁰¹⁷', '', 1, 0, 1, '', 1511335243, NULL, 1513848869);
+INSERT INTO `camp_member` VALUES (180, 9, '大热篮球俱乐部', 173, '????✨Mandy*????', '', 1, 0, 1, '', 1511335795, NULL, 1511335795);
+INSERT INTO `camp_member` VALUES (181, 9, '大热篮球俱乐部', 138, '听海', '', 1, 0, 1, '', 1511336015, NULL, 1513842974);
+INSERT INTO `camp_member` VALUES (182, 9, '大热篮球俱乐部', 174, 'hcyhcy', '', 1, 0, 1, '', 1511336112, NULL, 1516964249);
+INSERT INTO `camp_member` VALUES (183, 9, '大热篮球俱乐部', 176, 'ൠ杨ྉ子ྉൠ', '', 1, 0, 1, '', 1511339255, NULL, 1511339255);
+INSERT INTO `camp_member` VALUES (184, 9, '大热篮球俱乐部', 177, '黄之麓666', '', 1, 0, -1, '', 1511339402, NULL, 1522038129);
+INSERT INTO `camp_member` VALUES (185, 9, '大热篮球俱乐部', 178, 'liwentao', '', 1, 0, 1, '', 1511342456, NULL, 1511342457);
+INSERT INTO `camp_member` VALUES (186, 9, '大热篮球俱乐部', 171, 'Lynch', '', 1, 0, 1, '', 1511343443, NULL, 1513843279);
+INSERT INTO `camp_member` VALUES (187, 15, '钟声训练营', 27, 'coachj', '黄sir', 2, 0, 1, '', 1511416016, NULL, 1511416061);
+INSERT INTO `camp_member` VALUES (188, 9, '大热篮球俱乐部', 158, '风格独特见解', '', 1, 0, 1, '', 1511579302, NULL, 1511579304);
+INSERT INTO `camp_member` VALUES (189, 13, 'AKcross训练营', 180, '戒驕戒躁', '你好', 1, 0, 0, '', 1511591584, NULL, 1511591584);
+INSERT INTO `camp_member` VALUES (190, 9, '大热篮球俱乐部', 182, '蒙致远mengzhiyuan', '', 1, 0, 1, '', 1511678308, NULL, 1511678308);
+INSERT INTO `camp_member` VALUES (191, 9, '大热篮球俱乐部', 183, '艾望承', '', 1, 0, 1, '', 1511921783, NULL, 1515501991);
+INSERT INTO `camp_member` VALUES (192, 13, 'AKcross训练营', 186, '师蓉', '', 1, 0, 1, '', 1511929149, NULL, 1511929149);
+INSERT INTO `camp_member` VALUES (193, 13, 'AKcross训练营', 190, '娟娟', '', 1, 0, 1, '', 1511943480, NULL, 1511943480);
+INSERT INTO `camp_member` VALUES (194, 13, 'AKcross训练营', 191, '昕恩', '', 1, 0, 1, '', 1511945507, NULL, 1511945507);
+INSERT INTO `camp_member` VALUES (195, 9, '大热篮球俱乐部', 184, '涵叔', '龙岗课程', 2, 0, 1, '', 1511947853, NULL, 1511947898);
+INSERT INTO `camp_member` VALUES (196, 13, 'AKcross训练营', 192, '梁妹子', '', 1, 0, 1, '', 1511957794, NULL, 1511957794);
+INSERT INTO `camp_member` VALUES (197, 9, '大热篮球俱乐部', 201, '13603032922', '', 1, 0, 1, '', 1512095904, NULL, 1512095904);
+INSERT INTO `camp_member` VALUES (198, 9, '大热篮球俱乐部', 207, '杨熙', '', 1, 0, 1, '', 1512270106, NULL, 1512270106);
+INSERT INTO `camp_member` VALUES (201, 9, '大热篮球俱乐部', 211, '刘子豪', '', 1, 0, 1, '', 1512734994, NULL, 1512734994);
+INSERT INTO `camp_member` VALUES (202, 13, 'AKcross训练营', 212, '孟想', '', 1, 0, 1, '', 1512887691, NULL, 1512887691);
+INSERT INTO `camp_member` VALUES (205, 9, '大热篮球俱乐部', 214, '洪新铠', '', 1, 0, 1, '', 1513053397, NULL, 1513324647);
+INSERT INTO `camp_member` VALUES (206, 13, 'AKcross训练营', 215, '何锦宸', '', 1, 0, 1, '', 1513059123, NULL, 1522034295);
+INSERT INTO `camp_member` VALUES (209, 19, '17体适能', 12, '吴光蔚', '创建训练营', 4, 0, 1, '', 1513146153, NULL, 1513146153);
+INSERT INTO `camp_member` VALUES (210, 19, '17体适能', 18, '18566201712', '＋', 2, 0, 1, '', 1513147619, NULL, 1513147627);
+INSERT INTO `camp_member` VALUES (211, 19, '17体适能', 16, 'andy.lin', '…', 2, 0, 1, '', 1513150350, NULL, 1513150372);
+INSERT INTO `camp_member` VALUES (219, 4, '准行者训练营', 1, 'HoChen', '', 2, 0, -1, '', 1513237699, NULL, 1513239930);
+INSERT INTO `camp_member` VALUES (224, 3, '猴赛雷训练营', 227, 'BINGOZ', 'Bingo', 3, 0, 1, '', 1513249267, NULL, 1513249771);
+INSERT INTO `camp_member` VALUES (225, 29, '深圳市南山区桃源街道篮球协会', 228, '杨超林', '创建训练营', 4, 0, 1, '', 1513324275, NULL, 1513324275);
+INSERT INTO `camp_member` VALUES (227, 9, '大热篮球俱乐部', 230, '蒋成栋', '', 1, 0, 1, '', 1513399087, NULL, 1513843219);
+INSERT INTO `camp_member` VALUES (228, 9, '大热篮球俱乐部', 231, '可心', '', 1, 0, 1, '', 1513412668, NULL, 1513843151);
+INSERT INTO `camp_member` VALUES (229, 9, '大热篮球俱乐部', 232, '王剑平', '', 1, 0, 1, '', 1513495704, NULL, 1513495704);
+INSERT INTO `camp_member` VALUES (230, 9, '大热篮球俱乐部', 233, '蓝天白云', '', 1, 0, 1, '', 1513553778, NULL, 1513553778);
+INSERT INTO `camp_member` VALUES (231, 13, 'AKcross训练营', 234, '郑伟军', '', 1, 0, 1, '', 1513565032, NULL, 1516786858);
+INSERT INTO `camp_member` VALUES (232, 9, '大热篮球俱乐部', 235, '谭晟中谭正中', '', 1, 0, -1, '', 1513567576, NULL, 1522054501);
+INSERT INTO `camp_member` VALUES (233, 9, '大热篮球俱乐部', 155, 'TAN谭天笑', '', 1, 0, 1, '', 1513570637, NULL, 1513570637);
+INSERT INTO `camp_member` VALUES (234, 13, 'AKcross训练营', 236, '李红', '', 1, 0, 1, '', 1513582724, NULL, 1515037823);
+INSERT INTO `camp_member` VALUES (235, 9, '大热篮球俱乐部', 237, '三吉木易', '', 1, 0, 1, '', 1513583423, NULL, 1513583423);
+INSERT INTO `camp_member` VALUES (236, 9, '大热篮球俱乐部', 238, '王珑桥', '', 1, 0, 1, '', 1513585395, NULL, 1513585395);
+INSERT INTO `camp_member` VALUES (237, 13, 'AKcross训练营', 239, '赵小莉', '', 1, 0, 1, '', 1513585638, NULL, 1515037795);
+INSERT INTO `camp_member` VALUES (238, 13, 'AKcross训练营', 240, '周香香', '', 1, 0, 1, '', 1513585828, NULL, 1515037754);
+INSERT INTO `camp_member` VALUES (239, 13, 'AKcross训练营', 3, 'Hot Basketball 1', '我', 3, 0, 1, '', 1513586198, NULL, 1513586209);
+INSERT INTO `camp_member` VALUES (240, 9, '大热篮球俱乐部', 154, '小福和小小福和小小小福', '', 1, 0, 1, '', 1513586377, NULL, 1516963849);
+INSERT INTO `camp_member` VALUES (241, 9, '大热篮球俱乐部', 241, '朱俊亦', '', 1, 0, 1, '', 1513587751, NULL, 1513587751);
+INSERT INTO `camp_member` VALUES (242, 9, '大热篮球俱乐部', 242, '何思源', '', 1, 0, 1, '', 1513589993, NULL, 1513589993);
+INSERT INTO `camp_member` VALUES (243, 9, '大热篮球俱乐部', 132, 'Eva', '', 1, 0, 1, '', 1513590932, NULL, 1513590932);
+INSERT INTO `camp_member` VALUES (244, 9, '大热篮球俱乐部', 243, '卢星丞', '', 1, 0, 1, '', 1513591407, NULL, 1513591407);
+INSERT INTO `camp_member` VALUES (245, 9, '大热篮球俱乐部', 244, '强亦宸', '', 1, 0, 1, '', 1513592024, NULL, 1513646977);
+INSERT INTO `camp_member` VALUES (246, 9, '大热篮球俱乐部', 245, '杨鑫财', '', 1, 0, 1, '', 1513592467, NULL, 1513592467);
+INSERT INTO `camp_member` VALUES (247, 9, '大热篮球俱乐部', 246, '万博宇', '', 1, 0, 1, '', 1513664592, NULL, 1513664592);
+INSERT INTO `camp_member` VALUES (249, 9, '大热篮球俱乐部', 247, '邱智鸿', '', 1, 0, 1, '', 1513664663, NULL, 1513664691);
+INSERT INTO `camp_member` VALUES (250, 9, '大热篮球俱乐部', 248, '王炫程', '', 1, 0, 1, '', 1513664789, NULL, 1513664789);
+INSERT INTO `camp_member` VALUES (251, 9, '大热篮球俱乐部', 249, '刘家琦', '', 1, 0, 1, '', 1513664823, NULL, 1513664823);
+INSERT INTO `camp_member` VALUES (252, 9, '大热篮球俱乐部', 250, '张文瑄', '', 1, 0, 1, '', 1513664857, NULL, 1513664857);
+INSERT INTO `camp_member` VALUES (253, 9, '大热篮球俱乐部', 251, '薛若鸿', '', 1, 0, 1, '', 1513664874, NULL, 1513664874);
+INSERT INTO `camp_member` VALUES (254, 9, '大热篮球俱乐部', 252, '严振轩', '', 1, 0, 1, '', 1513664911, NULL, 1513664911);
+INSERT INTO `camp_member` VALUES (255, 9, '大热篮球俱乐部', 253, '郭皓晗', '', 1, 0, 1, '', 1513664988, NULL, 1521432646);
+INSERT INTO `camp_member` VALUES (256, 9, '大热篮球俱乐部', 254, '周学谦', '', 1, 0, 1, '', 1513665046, NULL, 1513665046);
+INSERT INTO `camp_member` VALUES (257, 9, '大热篮球俱乐部', 255, '冯镇壕', '', 1, 0, 1, '', 1513665184, NULL, 1513665184);
+INSERT INTO `camp_member` VALUES (258, 9, '大热篮球俱乐部', 256, '周一泉', '', 1, 0, 1, '', 1513665213, NULL, 1513665213);
+INSERT INTO `camp_member` VALUES (259, 9, '大热篮球俱乐部', 257, '潘乐航', '', 1, 0, 1, '', 1513665244, NULL, 1513665244);
+INSERT INTO `camp_member` VALUES (260, 9, '大热篮球俱乐部', 258, '汪星辰', '', 1, 0, 1, '', 1513665270, NULL, 1513665270);
+INSERT INTO `camp_member` VALUES (261, 9, '大热篮球俱乐部', 259, '马明道', '', 1, 0, 1, '', 1513665326, NULL, 1513665326);
+INSERT INTO `camp_member` VALUES (262, 29, '深圳市南山区桃源街道篮球协会', 18, 'AK', '安教练', 2, 0, 1, '', 1513740522, NULL, 1513762283);
+INSERT INTO `camp_member` VALUES (263, 17, 'FIT', 18, 'AK', '安凯', 2, 0, 1, '', 1513740565, NULL, 1513740645);
+INSERT INTO `camp_member` VALUES (264, 14, 'Ball  is  life', 18, 'AK', '安凯', 2, 0, 1, '', 1513740615, NULL, 1513741249);
+INSERT INTO `camp_member` VALUES (265, 13, 'AKcross训练营', 16, 'andy.lin', '…', 2, 0, 0, '', 1513740678, NULL, 1513740678);
+INSERT INTO `camp_member` VALUES (266, 13, 'AKcross训练营', 17, 'Bruce.Dong', '啊', 2, 0, 0, '', 1513741308, NULL, 1513741308);
+INSERT INTO `camp_member` VALUES (267, 17, 'FIT', 17, 'Bruce.Dong', '啊', 2, 0, 1, '', 1513741327, NULL, 1513741422);
+INSERT INTO `camp_member` VALUES (268, 31, 'wow篮球兴趣训练营', 8, '吴丽文', '创建训练营', 4, 0, 1, '', 1513741459, NULL, 1516329200);
+INSERT INTO `camp_member` VALUES (269, 31, 'wow篮球兴趣训练营', 18, 'AK', '安教练', 2, 0, 1, '', 1513742502, NULL, 1513742520);
+INSERT INTO `camp_member` VALUES (270, 31, 'wow篮球兴趣训练营', 17, 'Bruce.Dong', 'a', 2, 0, 1, '', 1513742774, NULL, 1513742816);
+INSERT INTO `camp_member` VALUES (272, 31, 'wow篮球兴趣训练营', 12, 'willng', '光头', 1, 0, 0, '', 1513743160, NULL, 1513745162);
+INSERT INTO `camp_member` VALUES (273, 31, 'wow篮球兴趣训练营', 21, 'Bingo', '通过我', 3, 0, 0, '', 1513743223, NULL, 1520590380);
+INSERT INTO `camp_member` VALUES (274, 31, 'wow篮球兴趣训练营', 9, 'GaoYan', '学生', 1, 0, 0, '', 1513743369, NULL, 1513743469);
+INSERT INTO `camp_member` VALUES (275, 31, 'wow篮球兴趣训练营', 5, '+*', '劉嘉興', 1, 0, 0, '', 1513744036, NULL, 1513746435);
+INSERT INTO `camp_member` VALUES (276, 31, 'wow篮球兴趣训练营', 14, 'MirandaXian', '', 1, 0, 1, '', 1513744412, NULL, 1513744412);
+INSERT INTO `camp_member` VALUES (277, 31, 'wow篮球兴趣训练营', 16, 'andy.lin', '…', 1, 0, 0, '', 1513744493, NULL, 1513744493);
+INSERT INTO `camp_member` VALUES (278, 32, '燕子Happy篮球训练营', 9, '高艳', '创建训练营', 4, 0, 1, '', 1513744809, NULL, 1513744809);
+INSERT INTO `camp_member` VALUES (281, 31, 'wow篮球兴趣训练营', 4, 'weilin666', '作粉丝', -1, 0, 1, '', 1513757680, NULL, 1513757680);
+INSERT INTO `camp_member` VALUES (283, 31, 'wow篮球兴趣训练营', 6, 'legend', '', -1, 0, 1, '', 1513758021, NULL, 1513758021);
+INSERT INTO `camp_member` VALUES (284, 9, '大热篮球俱乐部', 188, 'M00100895', '', 1, 0, 1, '', 1513765513, NULL, 1513765513);
+INSERT INTO `camp_member` VALUES (285, 13, 'AKcross训练营', 260, '杜宇轩', '', 1, 0, 1, '', 1513768032, NULL, 1513768032);
+INSERT INTO `camp_member` VALUES (286, 9, '大热篮球俱乐部', 286, '康正浩', '', 1, 0, 1, '', 1513837922, NULL, 1513837922);
+INSERT INTO `camp_member` VALUES (287, 9, '大热篮球俱乐部', 285, '崔展豪', '', 1, 0, 1, '', 1513837954, NULL, 1513837954);
+INSERT INTO `camp_member` VALUES (288, 9, '大热篮球俱乐部', 284, '洪旭林', '', 1, 0, 1, '', 1513837976, NULL, 1513837976);
+INSERT INTO `camp_member` VALUES (289, 9, '大热篮球俱乐部', 283, '石原炜', '', 1, 0, 1, '', 1513837999, NULL, 1513837999);
+INSERT INTO `camp_member` VALUES (290, 9, '大热篮球俱乐部', 282, '王北鲲', '', 1, 0, 1, '', 1513838039, NULL, 1513838039);
+INSERT INTO `camp_member` VALUES (291, 9, '大热篮球俱乐部', 281, '唐佳诺', '', 1, 0, 1, '', 1513838064, NULL, 1513838064);
+INSERT INTO `camp_member` VALUES (292, 9, '大热篮球俱乐部', 280, '刘炜文', '', 1, 0, 1, '', 1513838082, NULL, 1520244370);
+INSERT INTO `camp_member` VALUES (293, 9, '大热篮球俱乐部', 279, '罗仕杰', '', 1, 0, 1, '', 1513838112, NULL, 1520332274);
+INSERT INTO `camp_member` VALUES (294, 9, '大热篮球俱乐部', 278, '王廖聪', '', 1, 0, 1, '', 1513838139, NULL, 1520752107);
+INSERT INTO `camp_member` VALUES (295, 9, '大热篮球俱乐部', 277, '郭栩源', '', 1, 0, 1, '', 1513838228, NULL, 1513838228);
+INSERT INTO `camp_member` VALUES (296, 9, '大热篮球俱乐部', 276, '张益畅', '', 1, 0, 1, '', 1513838258, NULL, 1513838258);
+INSERT INTO `camp_member` VALUES (297, 9, '大热篮球俱乐部', 275, '彭梓睿', '', 1, 0, 1, '', 1513838283, NULL, 1513838283);
+INSERT INTO `camp_member` VALUES (298, 9, '大热篮球俱乐部', 274, '任志诚', '', 1, 0, 1, '', 1513838302, NULL, 1513838302);
+INSERT INTO `camp_member` VALUES (299, 9, '大热篮球俱乐部', 273, '郑新浩', '', 1, 0, 1, '', 1513838324, NULL, 1513838324);
+INSERT INTO `camp_member` VALUES (300, 9, '大热篮球俱乐部', 272, '郭子阅', '', 1, 0, 1, '', 1513838839, NULL, 1513838839);
+INSERT INTO `camp_member` VALUES (301, 9, '大热篮球俱乐部', 271, '刘阳', '', 1, 0, 1, '', 1513838878, NULL, 1513838878);
+INSERT INTO `camp_member` VALUES (302, 9, '大热篮球俱乐部', 270, '冯啟桓', '', 1, 0, 1, '', 1513838978, NULL, 1513838978);
+INSERT INTO `camp_member` VALUES (303, 9, '大热篮球俱乐部', 269, '杨欣霈', '', 1, 0, 1, '', 1513838996, NULL, 1513838996);
+INSERT INTO `camp_member` VALUES (304, 9, '大热篮球俱乐部', 268, '汪子杰', '', 1, 0, 1, '', 1513839010, NULL, 1513839010);
+INSERT INTO `camp_member` VALUES (305, 9, '大热篮球俱乐部', 267, ' 李承彧', '', 1, 0, 1, '', 1513839027, NULL, 1513839027);
+INSERT INTO `camp_member` VALUES (306, 9, '大热篮球俱乐部', 266, '谈朔显', '', 1, 0, 1, '', 1513839068, NULL, 1513839068);
+INSERT INTO `camp_member` VALUES (307, 9, '大热篮球俱乐部', 265, '罗宁', '', 1, 0, 1, '', 1513839092, NULL, 1520046397);
+INSERT INTO `camp_member` VALUES (308, 9, '大热篮球俱乐部', 264, '花梓鹏', '', 1, 0, 1, '', 1513839135, NULL, 1513839135);
+INSERT INTO `camp_member` VALUES (309, 9, '大热篮球俱乐部', 263, '李俊晔', '', 1, 0, 1, '', 1513839158, NULL, 1520844897);
+INSERT INTO `camp_member` VALUES (310, 9, '大热篮球俱乐部', 262, '陈江函', '', 1, 0, 1, '', 1513839187, NULL, 1513839187);
+INSERT INTO `camp_member` VALUES (311, 9, '大热篮球俱乐部', 261, '阮烨才', '', 1, 0, 1, '', 1513839217, NULL, 1513839217);
+INSERT INTO `camp_member` VALUES (312, 13, 'AKcross训练营', 287, '吴浩睿', '', 1, 0, 1, '', 1513840442, NULL, 1521277236);
+INSERT INTO `camp_member` VALUES (313, 9, '大热篮球俱乐部', 302, '叶子枫', '', 1, 0, 1, '', 1513840741, NULL, 1513840741);
+INSERT INTO `camp_member` VALUES (314, 9, '大热篮球俱乐部', 301, '龚湖宸', '', 1, 0, 1, '', 1513840764, NULL, 1513840764);
+INSERT INTO `camp_member` VALUES (315, 9, '大热篮球俱乐部', 300, '程翰哲', '', 1, 0, 1, '', 1513840786, NULL, 1513840786);
+INSERT INTO `camp_member` VALUES (316, 9, '大热篮球俱乐部', 299, '周煜轩', '', 1, 0, 1, '', 1513840803, NULL, 1513840803);
+INSERT INTO `camp_member` VALUES (317, 9, '大热篮球俱乐部', 298, ' 戴溪亭', '', 1, 0, 1, '', 1513840826, NULL, 1513840826);
+INSERT INTO `camp_member` VALUES (318, 9, '大热篮球俱乐部', 297, '张圣泽', '', 1, 0, 1, '', 1513840852, NULL, 1513840852);
+INSERT INTO `camp_member` VALUES (319, 9, '大热篮球俱乐部', 296, '雷卓凡', '', 1, 0, 1, '', 1513840872, NULL, 1513840872);
+INSERT INTO `camp_member` VALUES (320, 9, '大热篮球俱乐部', 295, '秦铭远', '', 1, 0, 1, '', 1513841204, NULL, 1513841204);
+INSERT INTO `camp_member` VALUES (321, 9, '大热篮球俱乐部', 294, '严俊朗', '', 1, 0, 1, '', 1513841441, NULL, 1513841441);
+INSERT INTO `camp_member` VALUES (322, 9, '大热篮球俱乐部', 293, '许辰镝', '', 1, 0, 1, '', 1513841528, NULL, 1513841528);
+INSERT INTO `camp_member` VALUES (323, 9, '大热篮球俱乐部', 292, '张皓然', '', 1, 0, 1, '', 1513841558, NULL, 1513841558);
+INSERT INTO `camp_member` VALUES (324, 9, '大热篮球俱乐部', 291, '蒙卓朗', '', 1, 0, 1, '', 1513841573, NULL, 1513841573);
+INSERT INTO `camp_member` VALUES (325, 9, '大热篮球俱乐部', 290, '杜沛霖', '', 1, 0, 1, '', 1513841596, NULL, 1520499403);
+INSERT INTO `camp_member` VALUES (326, 9, '大热篮球俱乐部', 289, '欧阳舒轩', '', 1, 0, 1, '', 1513841619, NULL, 1513841619);
+INSERT INTO `camp_member` VALUES (327, 9, '大热篮球俱乐部', 288, '李卓逸', '', 1, 0, 1, '', 1513841640, NULL, 1513841640);
+INSERT INTO `camp_member` VALUES (328, 9, '大热篮球俱乐部', 170, 'snowy', '', 1, 0, 1, '', 1513841728, NULL, 1513841728);
+INSERT INTO `camp_member` VALUES (329, 9, '大热篮球俱乐部', 303, '李兆堂', '', 1, 0, 1, '', 1513841956, NULL, 1513841956);
+INSERT INTO `camp_member` VALUES (330, 9, '大热篮球俱乐部', 306, '侯朝歌', '', 1, 0, 1, '', 1513848609, NULL, 1521439370);
+INSERT INTO `camp_member` VALUES (331, 9, '大热篮球俱乐部', 305, '辛禹霏', '', 1, 0, -1, '', 1513848637, NULL, 1521439617);
+INSERT INTO `camp_member` VALUES (332, 9, '大热篮球俱乐部', 304, '张诗婷', '', 1, 0, -1, '', 1513848653, NULL, 1521439610);
+INSERT INTO `camp_member` VALUES (333, 9, '大热篮球俱乐部', 307, 'chupa', '', 1, 0, 1, '', 1514001123, NULL, 1514001177);
+INSERT INTO `camp_member` VALUES (334, 1, '大热体适能中心', 307, 'chupa', '', -1, 0, 1, '', 1514005243, NULL, 1514005243);
+INSERT INTO `camp_member` VALUES (335, 9, '大热篮球俱乐部', 308, 'Raymond', '', 1, 0, 1, '', 1514088220, NULL, 1514088220);
+INSERT INTO `camp_member` VALUES (336, 9, '大热篮球俱乐部', 309, '冰雪纷飞', '', 1, 0, 1, '', 1514173177, NULL, 1514173177);
+INSERT INTO `camp_member` VALUES (337, 33, 'B—Ball 篮球训练营', 21, '张文清', '创建训练营', 4, 0, 1, '', 1514256932, NULL, 1514256932);
+INSERT INTO `camp_member` VALUES (338, 34, 'BALON篮球训练营', 14, '冼玉华', '创建训练营', 4, 0, 1, '', 1514257427, NULL, 1514257427);
+INSERT INTO `camp_member` VALUES (339, 34, 'BALON篮球训练营', 2, 'Hot-basketball2', 'f', 2, 0, 1, '', 1514259397, NULL, 1519616261);
+INSERT INTO `camp_member` VALUES (340, 9, '大热篮球俱乐部', 317, '秋雨', '', 1, 0, 1, '', 1514288786, NULL, 1514379120);
+INSERT INTO `camp_member` VALUES (341, 13, 'AKcross训练营', 78, '张雅璐', '点我通过', 3, 0, 1, '', 1514289001, NULL, 1514538403);
+INSERT INTO `camp_member` VALUES (342, 9, '大热篮球俱乐部', 319, '魏信迪', '', 1, 0, 1, '', 1514359601, NULL, 1514359601);
+INSERT INTO `camp_member` VALUES (344, 13, 'AKcross训练营', 14, 'MirandaXian', '。', 3, 0, 1, '', 1514538363, NULL, 1514538396);
+INSERT INTO `camp_member` VALUES (345, 13, 'AKcross训练营', 322, '金典', '', 1, 0, 1, '', 1514691002, NULL, 1515037883);
+INSERT INTO `camp_member` VALUES (346, 9, '大热篮球俱乐部', 323, '谢佳希', '', 1, 0, 1, '', 1514697133, NULL, 1516953487);
+INSERT INTO `camp_member` VALUES (349, 33, 'B—Ball 篮球训练营', 6, 'legend', '111', 1, 0, 1, '', 1514885968, NULL, 1515396528);
+INSERT INTO `camp_member` VALUES (350, 33, 'B—Ball 篮球训练营', 6, 'legend', '111', 1, 0, 1, '', 1514886230, NULL, 1515396528);
+INSERT INTO `camp_member` VALUES (354, 9, '大热篮球俱乐部', 324, '黎彬', '', 1, 0, 1, '', 1514950903, NULL, 1514950903);
+INSERT INTO `camp_member` VALUES (363, 13, 'AKcross训练营', 325, '谢俊棋', '', 1, 0, 1, '', 1515036042, NULL, 1515036042);
+INSERT INTO `camp_member` VALUES (364, 13, 'AKcross训练营', 326, '蔡硕勋', '', 1, 0, 1, '', 1515036596, NULL, 1522037566);
+INSERT INTO `camp_member` VALUES (365, 13, 'AKcross训练营', 327, ' 潘思达', '', 1, 0, 1, '', 1515036614, NULL, 1515124810);
+INSERT INTO `camp_member` VALUES (366, 13, 'AKcross训练营', 321, '李炬豪', '', 1, 0, 1, '', 1515036750, NULL, 1516974638);
+INSERT INTO `camp_member` VALUES (367, 13, 'AKcross训练营', 320, 'l朱民皓', '', 1, 0, 1, '', 1515036783, NULL, 1515140529);
+INSERT INTO `camp_member` VALUES (368, 13, 'AKcross训练营', 328, '张梓峰', '', 1, 0, 1, '', 1515036835, NULL, 1515122101);
+INSERT INTO `camp_member` VALUES (369, 13, 'AKcross训练营', 329, '汤镕章', '', 1, 0, 1, '', 1515036868, NULL, 1515039031);
+INSERT INTO `camp_member` VALUES (370, 13, 'AKcross训练营', 330, '郑宏轩', '', 1, 0, 1, '', 1515036903, NULL, 1519729636);
+INSERT INTO `camp_member` VALUES (371, 13, 'AKcross训练营', 331, '黄得珉', '', 1, 0, 1, '', 1515036926, NULL, 1515036926);
+INSERT INTO `camp_member` VALUES (372, 13, 'AKcross训练营', 332, '郑竣隆', '', 1, 0, 1, '', 1515036948, NULL, 1520063416);
+INSERT INTO `camp_member` VALUES (373, 13, 'AKcross训练营', 333, '郑竣丰', '', 1, 0, 1, '', 1515036972, NULL, 1515036972);
+INSERT INTO `camp_member` VALUES (374, 13, 'AKcross训练营', 334, '郑兆彤', '', 1, 0, 1, '', 1515037011, NULL, 1515037011);
+INSERT INTO `camp_member` VALUES (375, 13, 'AKcross训练营', 335, '方晋弛', '', 1, 0, 1, '', 1515037403, NULL, 1515037403);
+INSERT INTO `camp_member` VALUES (376, 13, 'AKcross训练营', 336, '蒋家轩', '', 1, 0, 1, '', 1515037430, NULL, 1515037430);
+INSERT INTO `camp_member` VALUES (377, 13, 'AKcross训练营', 337, '叶绍楷 ', '', 1, 0, 1, '', 1515037457, NULL, 1515037457);
+INSERT INTO `camp_member` VALUES (378, 13, 'AKcross训练营', 338, '卢新元', '', 1, 0, 1, '', 1515037509, NULL, 1520740304);
+INSERT INTO `camp_member` VALUES (379, 13, 'AKcross训练营', 339, '余浩锋', '', 1, 0, 1, '', 1515037534, NULL, 1516623913);
+INSERT INTO `camp_member` VALUES (380, 13, 'AKcross训练营', 340, '张鸿宇', '', 1, 0, 1, '', 1515037552, NULL, 1522036434);
+INSERT INTO `camp_member` VALUES (381, 13, 'AKcross训练营', 341, '张正堃', '', 1, 0, 1, '', 1515037574, NULL, 1521361616);
+INSERT INTO `camp_member` VALUES (382, 13, 'AKcross训练营', 342, '孙硕', '', 1, 0, 1, '', 1515037598, NULL, 1515037598);
+INSERT INTO `camp_member` VALUES (383, 13, 'AKcross训练营', 343, '谢振威', '', 1, 0, 1, '', 1515037619, NULL, 1515037619);
+INSERT INTO `camp_member` VALUES (384, 13, 'AKcross训练营', 344, '汪昊辰', '', 1, 0, 1, '', 1515037667, NULL, 1515037667);
+INSERT INTO `camp_member` VALUES (385, 13, 'AKcross训练营', 345, '唐浩益', '', 1, 0, 1, '', 1515037688, NULL, 1522044470);
+INSERT INTO `camp_member` VALUES (386, 13, 'AKcross训练营', 369, '林城佑', '', 1, 0, 1, '', 1515038415, NULL, 1517202307);
+INSERT INTO `camp_member` VALUES (387, 9, '大热篮球俱乐部', 369, '林城佑', '', 1, 0, 1, '', 1515038453, NULL, 1517202468);
+INSERT INTO `camp_member` VALUES (388, 15, '钟声训练营', 346, '黄逸山', '', 1, 0, 1, '', 1515050306, NULL, 1515050306);
+INSERT INTO `camp_member` VALUES (389, 15, '钟声训练营', 347, '吴子竞', '', 1, 0, 1, '', 1515050332, NULL, 1515050332);
+INSERT INTO `camp_member` VALUES (390, 15, '钟声训练营', 348, '周桐圳', '', 1, 0, 1, '', 1515050348, NULL, 1515050348);
+INSERT INTO `camp_member` VALUES (391, 15, '钟声训练营', 349, '李宗杰', '', 1, 0, 1, '', 1515050368, NULL, 1515050368);
+INSERT INTO `camp_member` VALUES (392, 15, '钟声训练营', 350, '黄子轩', '', 1, 0, 1, '', 1515050387, NULL, 1515050387);
+INSERT INTO `camp_member` VALUES (393, 15, '钟声训练营', 351, '郑楷涛', '', 1, 0, 1, '', 1515050403, NULL, 1515050403);
+INSERT INTO `camp_member` VALUES (394, 15, '钟声训练营', 97, '周浩楠、周宇希、周凯炀', '', 1, 0, 1, '2018年1月4日系统插入', 1515037598, 0, 1515037598);
+INSERT INTO `camp_member` VALUES (395, 15, '钟声训练营', 37, 'Jim', '', 1, 0, 1, '', 1515050506, NULL, 1515050506);
+INSERT INTO `camp_member` VALUES (396, 15, '钟声训练营', 352, '郭鑫烨', '', 1, 0, 1, '', 1515050606, NULL, 1515050606);
+INSERT INTO `camp_member` VALUES (397, 15, '钟声训练营', 353, '龙永熙', '', 1, 0, 1, '', 1515050626, NULL, 1515050626);
+INSERT INTO `camp_member` VALUES (398, 15, '钟声训练营', 354, '陈皇宇', '', 1, 0, 1, '', 1515050650, NULL, 1515050650);
+INSERT INTO `camp_member` VALUES (399, 15, '钟声训练营', 355, '王胜杰', '', 1, 0, 1, '', 1515050817, NULL, 1515050817);
+INSERT INTO `camp_member` VALUES (400, 15, '钟声训练营', 356, '李绅楠', '', 1, 0, 1, '', 1515050967, NULL, 1515050967);
+INSERT INTO `camp_member` VALUES (401, 15, '钟声训练营', 357, '张帅杰', '', 1, 0, 1, '', 1515051007, NULL, 1515051007);
+INSERT INTO `camp_member` VALUES (402, 15, '钟声训练营', 358, '夏宏昆', '', 1, 0, 1, '', 1515051027, NULL, 1515051027);
+INSERT INTO `camp_member` VALUES (403, 15, '钟声训练营', 359, '徐正庭', '', 1, 0, 1, '', 1515051062, NULL, 1515051062);
+INSERT INTO `camp_member` VALUES (404, 15, '钟声训练营', 360, '彭鑫', '', 1, 0, 1, '', 1515051085, NULL, 1515051085);
+INSERT INTO `camp_member` VALUES (405, 15, '钟声训练营', 361, '孙雨晴', '', 1, 0, 1, '', 1515051101, NULL, 1515051101);
+INSERT INTO `camp_member` VALUES (406, 15, '钟声训练营', 362, '凌成', '', 1, 0, 1, '', 1515051122, NULL, 1515051122);
+INSERT INTO `camp_member` VALUES (407, 15, '钟声训练营', 363, '廖澍堃', '', 1, 0, 1, '', 1515051141, NULL, 1515051141);
+INSERT INTO `camp_member` VALUES (408, 15, '钟声训练营', 364, '熊昊鹏', '', 1, 0, 1, '', 1515051182, NULL, 1515051182);
+INSERT INTO `camp_member` VALUES (409, 15, '钟声训练营', 365, '李弈帆', '', 1, 0, 1, '', 1515051201, NULL, 1515051201);
+INSERT INTO `camp_member` VALUES (410, 15, '钟声训练营', 366, '曹銍轩', '', 1, 0, 1, '', 1515051240, NULL, 1515051240);
+INSERT INTO `camp_member` VALUES (411, 15, '钟声训练营', 367, '谢诺', '', 1, 0, 1, '', 1515051273, NULL, 1515051273);
+INSERT INTO `camp_member` VALUES (412, 15, '钟声训练营', 38, '1234567', '', 1, 0, 1, '', 1515051391, NULL, 1515051391);
+INSERT INTO `camp_member` VALUES (413, 15, '钟声训练营', 41, '吴杰熹', '', 1, 0, 1, '', 1515051436, NULL, 1515051436);
+INSERT INTO `camp_member` VALUES (414, 15, '钟声训练营', 44, '廖文浩', '', 1, 0, 1, '', 1515051713, NULL, 1515051713);
+INSERT INTO `camp_member` VALUES (415, 15, '钟声训练营', 45, '莫子涵', '', 1, 0, 1, '', 1515051787, NULL, 1515051787);
+INSERT INTO `camp_member` VALUES (416, 9, '大热篮球俱乐部', 92, '薛子豪', '', 1, 0, 1, '2018年1月4日系统插入', 1515051802, NULL, 0);
+INSERT INTO `camp_member` VALUES (417, 15, '钟声训练营', 93, '张致远', '', 1, 0, 1, '2018年1月4日系统插入', 1515051802, NULL, 1515054288);
+INSERT INTO `camp_member` VALUES (418, 15, '钟声训练营', 94, '王秉政', '', 1, 0, 1, '2018年1月4日系统插入', 1515051802, NULL, 1515054427);
+INSERT INTO `camp_member` VALUES (419, 15, '钟声训练营', 95, '邓俊伟', '', 1, 0, 1, '2018年1月4日系统插入', 1515051802, NULL, 1515051802);
+INSERT INTO `camp_member` VALUES (420, 15, '钟声训练营', 96, '朱喆熙', '', 1, 0, 1, '2018年1月4日系统插入', 1515051802, NULL, 1515051802);
+INSERT INTO `camp_member` VALUES (421, 15, '钟声训练营', 85, '2892997867', '', 1, 0, 1, '', 1515052684, NULL, 1515052684);
+INSERT INTO `camp_member` VALUES (422, 15, '钟声训练营', 90, 'lixiaofang', '', 1, 0, 1, '', 1515052801, NULL, 1515052801);
+INSERT INTO `camp_member` VALUES (423, 15, '钟声训练营', 99, '白睿皓', '', 1, 0, 1, '', 1515053548, NULL, 1515053548);
+INSERT INTO `camp_member` VALUES (424, 15, '钟声训练营', 40, 'M00101556', '', 1, 0, 1, '', 1515053675, NULL, 1515053675);
+INSERT INTO `camp_member` VALUES (425, 9, '大热篮球俱乐部', 370, '周劲希', '', 1, 0, 1, '', 1515127099, NULL, 1515402263);
+INSERT INTO `camp_member` VALUES (426, 17, 'FIT', 320, 'l朱民皓', '', 1, 0, 1, '', 1515132076, NULL, 1515132076);
+INSERT INTO `camp_member` VALUES (427, 15, '钟声训练营', 372, '杨睿杨馨', '', 1, 0, 1, '', 1515143286, NULL, 1515143299);
+INSERT INTO `camp_member` VALUES (428, 15, '钟声训练营', 373, '莫钧淇', '', 1, 0, 1, '', 1515143328, NULL, 1515143328);
+INSERT INTO `camp_member` VALUES (429, 15, '钟声训练营', 374, '向浚哲', '', 1, 0, 1, '', 1515143350, NULL, 1515143350);
+INSERT INTO `camp_member` VALUES (430, 15, '钟声训练营', 375, '曾子言曾子瑜', '', 1, 0, 1, '', 1515143383, NULL, 1515143541);
+INSERT INTO `camp_member` VALUES (431, 15, '钟声训练营', 376, '凌梓轩', '', 1, 0, 1, '', 1515143574, NULL, 1515143574);
+INSERT INTO `camp_member` VALUES (432, 15, '钟声训练营', 377, '谢一航', '', 1, 0, 1, '', 1515143595, NULL, 1515143595);
+INSERT INTO `camp_member` VALUES (433, 15, '钟声训练营', 378, '谢梓珊', '', 1, 0, 1, '', 1515143613, NULL, 1515143613);
+INSERT INTO `camp_member` VALUES (434, 15, '钟声训练营', 47, '郑梓深', '', 1, 0, 1, '', 1515143660, NULL, 1515143660);
+INSERT INTO `camp_member` VALUES (435, 15, '钟声训练营', 68, 'M00101482', '', 1, 0, 1, '', 1515143681, NULL, 1515143681);
+INSERT INTO `camp_member` VALUES (436, 9, '大热篮球俱乐部', 381, '曼曼红', '', 1, 0, 1, '', 1515145318, NULL, 1515145318);
+INSERT INTO `camp_member` VALUES (437, 35, '顶峰篮球训练营', 385, '任杰', '创建训练营', 4, 0, 1, '', 1515150518, NULL, 1515150518);
+INSERT INTO `camp_member` VALUES (438, 9, '大热篮球俱乐部', 388, '张丽芬', '', 1, 0, 1, '', 1515158675, NULL, 1515158675);
+INSERT INTO `camp_member` VALUES (439, 9, '大热篮球俱乐部', 389, '张笑宇', '', 1, 0, 1, '', 1515214193, NULL, 1515214193);
+INSERT INTO `camp_member` VALUES (440, 33, 'B—Ball 篮球训练营', 391, 'shandy', '', 1, 0, 1, '', 1515325383, NULL, 1515325383);
+INSERT INTO `camp_member` VALUES (441, 33, 'B—Ball 篮球训练营', 393, 'CK', '', 1, 0, 1, '', 1515330397, NULL, 1515330397);
+INSERT INTO `camp_member` VALUES (442, 9, '大热篮球俱乐部', 398, '刘昊', '', 1, 0, 1, '', 1515398371, NULL, 1517046678);
+INSERT INTO `camp_member` VALUES (443, 9, '大热篮球俱乐部', 397, '杨宇昊', '', 1, 0, 1, '', 1515398888, NULL, 1515398888);
+INSERT INTO `camp_member` VALUES (444, 9, '大热篮球俱乐部', 396, '孙胤麒', '', 1, 0, 1, '', 1515398914, NULL, 1521253826);
+INSERT INTO `camp_member` VALUES (445, 9, '大热篮球俱乐部', 395, '周宇乐', '', 1, 0, 1, '', 1515398939, NULL, 1515398939);
+INSERT INTO `camp_member` VALUES (446, 9, '大热篮球俱乐部', 394, '熊英凯', '', 1, 0, 1, '', 1515398956, NULL, 1515398956);
+INSERT INTO `camp_member` VALUES (447, 9, '大热篮球俱乐部', 383, '许凯瑞', '', 1, 0, 1, '', 1515398984, NULL, 1521253784);
+INSERT INTO `camp_member` VALUES (448, 9, '大热篮球俱乐部', 330, '郑宏轩', '', 1, 0, 1, '', 1515399023, NULL, 1520239794);
+INSERT INTO `camp_member` VALUES (449, 15, '钟声训练营', 414, '邝治嘉', '', 1, 0, 1, '', 1515485673, NULL, 1515485673);
+INSERT INTO `camp_member` VALUES (450, 15, '钟声训练营', 415, '喻梓轩', '', 1, 0, 1, '', 1515486557, NULL, 1515486557);
+INSERT INTO `camp_member` VALUES (451, 36, 'RUN体能训练营', 431, '林润', '创建训练营', 4, 0, 1, '', 1516115357, NULL, 1516115357);
+INSERT INTO `camp_member` VALUES (452, 33, 'B—Ball 篮球训练营', 427, 'BINGOZ', '', 1, 0, 1, '', 1516162367, NULL, 1516162367);
+INSERT INTO `camp_member` VALUES (453, 15, '钟声训练营', 433, '15692453726', '', 1, 0, 1, '', 1516169536, NULL, 1516169568);
+INSERT INTO `camp_member` VALUES (454, 19, '17体适能', 1, 'HoChen', '通过一下', 3, 0, 1, '', 1516257194, NULL, 1516257213);
+INSERT INTO `camp_member` VALUES (455, 13, 'AKcross训练营', 439, 'Icy', '', 1, 0, 1, '', 1516269041, NULL, 1516269041);
+INSERT INTO `camp_member` VALUES (456, 9, '大热篮球俱乐部', 21, 'Bingo', '姗姗来迟', 3, 0, 1, '', 1516437808, NULL, 1520570693);
+INSERT INTO `camp_member` VALUES (457, 9, '大热篮球俱乐部', 454, '余鲁文', '', 1, 0, 1, '', 1516605758, NULL, 1516605758);
+INSERT INTO `camp_member` VALUES (458, 19, '17体适能', 185, 'luoruibao', '哈哈哈', 3, 0, 1, '', 1516697107, NULL, 1516697154);
+INSERT INTO `camp_member` VALUES (459, 19, '17体适能', 455, 'RacHeL', '', -1, 0, 1, '', 1516717030, NULL, 1516717030);
+INSERT INTO `camp_member` VALUES (460, 37, '展梦体育', 456, '汪楚丰', '创建训练营', 4, 0, 1, '', 1516775444, NULL, 1516775444);
+INSERT INTO `camp_member` VALUES (461, 9, '大热篮球俱乐部', 457, '朱星懿', '', 1, 0, 1, '', 1516872943, NULL, 1516872943);
+INSERT INTO `camp_member` VALUES (462, 9, '大热篮球俱乐部', 458, '范烨', '', 1, 0, 1, '', 1516873277, NULL, 1516873277);
+INSERT INTO `camp_member` VALUES (463, 9, '大热篮球俱乐部', 459, '何明鸿', '', 1, 0, 1, '', 1516952532, NULL, 1519716387);
+INSERT INTO `camp_member` VALUES (464, 9, '大热篮球俱乐部', 460, '何雨辰', '', 1, 0, 1, '', 1516952621, NULL, 1516952621);
+INSERT INTO `camp_member` VALUES (465, 9, '大热篮球俱乐部', 461, '程嘉一', '', 1, 0, 1, '', 1516954464, NULL, 1516954464);
+INSERT INTO `camp_member` VALUES (466, 9, '大热篮球俱乐部', 462, '苏奕航', '', 1, 0, 1, '', 1516954646, NULL, 1516954646);
+INSERT INTO `camp_member` VALUES (467, 13, 'AKcross训练营', 100, 'Clement Lee', '', 1, 0, 1, '', 1516963816, NULL, 1516963816);
+INSERT INTO `camp_member` VALUES (468, 9, '大热篮球俱乐部', 463, '陈钧喆', '', 1, 0, 1, '', 1516966373, NULL, 1516966373);
+INSERT INTO `camp_member` VALUES (469, 9, '大热篮球俱乐部', 465, '卢皓文', '', 1, 0, 1, '', 1517024910, NULL, 1522025756);
+INSERT INTO `camp_member` VALUES (470, 9, '大热篮球俱乐部', 466, '张轩铭', '', 1, 0, 1, '', 1517199571, NULL, 1517199571);
+INSERT INTO `camp_member` VALUES (471, 9, '大热篮球俱乐部', 467, '杨璨南', '', 1, 0, 1, '', 1517294320, NULL, 1517294320);
+INSERT INTO `camp_member` VALUES (472, 9, '大热篮球俱乐部', 468, '徐乐天', '', 1, 0, 1, '', 1517294499, NULL, 1517294499);
+INSERT INTO `camp_member` VALUES (473, 9, '大热篮球俱乐部', 12, 'willng', '', 1, 0, 1, '', 1517294645, NULL, 1517294645);
+INSERT INTO `camp_member` VALUES (474, 9, '大热篮球俱乐部', 469, '石井泽', '', 1, 0, 1, '', 1517294896, NULL, 1517294896);
+INSERT INTO `camp_member` VALUES (475, 9, '大热篮球俱乐部', 470, '高杨钊', '', 1, 0, 1, '', 1517294974, NULL, 1517294974);
+INSERT INTO `camp_member` VALUES (476, 9, '大热篮球俱乐部', 472, '郭雨锜', '', 1, 0, 1, '', 1517480763, NULL, 1519428812);
+INSERT INTO `camp_member` VALUES (477, 9, '大热篮球俱乐部', 473, '李烨', '', 1, 0, 1, '', 1517482218, NULL, 1517482218);
+INSERT INTO `camp_member` VALUES (478, 9, '大热篮球俱乐部', 474, '笑待生活', '', -1, 0, 1, '', 1517494361, NULL, 1517494361);
+INSERT INTO `camp_member` VALUES (479, 9, '大热篮球俱乐部', 475, '刘颖', '', -1, 0, 1, '', 1517494394, NULL, 1517494394);
+INSERT INTO `camp_member` VALUES (480, 9, '大热篮球俱乐部', 5, '+*', '', -1, 0, 1, '', 1517495280, NULL, 1517495280);
+INSERT INTO `camp_member` VALUES (481, 9, '大热篮球俱乐部', 440, '风情小子', '', -1, 0, 1, '', 1517495521, NULL, 1517495521);
+INSERT INTO `camp_member` VALUES (482, 9, '大热篮球俱乐部', 441, '大芝', '', -1, 0, 1, '', 1517495758, NULL, 1517495758);
+INSERT INTO `camp_member` VALUES (483, 9, '大热篮球俱乐部', 476, '5aaaaa', '', -1, 0, 1, '', 1517496084, NULL, 1517496084);
+INSERT INTO `camp_member` VALUES (484, 9, '大热篮球俱乐部', 477, '帅气的蝈蝈', '', -1, 0, 1, '', 1517496152, NULL, 1517496152);
+INSERT INTO `camp_member` VALUES (485, 9, '大热篮球俱乐部', 4, 'weilin666', '', -1, 0, 1, '', 1517497410, NULL, 1517497410);
+INSERT INTO `camp_member` VALUES (486, 9, '大热篮球俱乐部', 478, '珊珊', '', -1, 0, 1, '', 1517500053, NULL, 1517500053);
+INSERT INTO `camp_member` VALUES (488, 9, '大热篮球俱乐部', 7, 'wayen_z', '', -1, 0, 1, '', 1517500821, NULL, 1517500821);
+INSERT INTO `camp_member` VALUES (489, 9, '大热篮球俱乐部', 442, '番番最标致', '', -1, 0, 1, '', 1517500835, NULL, 1517500835);
+INSERT INTO `camp_member` VALUES (490, 9, '大热篮球俱乐部', 185, 'luoruibao', '', -1, 0, 1, '', 1517514505, NULL, 1517514505);
+INSERT INTO `camp_member` VALUES (491, 9, '大热篮球俱乐部', 9, 'GaoYan', '', -1, 0, 1, '', 1517515307, NULL, 1517515307);
+INSERT INTO `camp_member` VALUES (492, 9, '大热篮球俱乐部', 479, '叶志坚', '', -1, 0, 1, '', 1517523693, NULL, 1517523693);
+INSERT INTO `camp_member` VALUES (493, 9, '大热篮球俱乐部', 481, '香复', '', -1, 0, 1, '', 1517533506, NULL, 1517533506);
+INSERT INTO `camp_member` VALUES (494, 9, '大热篮球俱乐部', 482, '幼稚园杀手', '', -1, 0, 1, '', 1517539020, NULL, 1517539020);
+INSERT INTO `camp_member` VALUES (495, 9, '大热篮球俱乐部', 169, '雨', '', -1, 0, 1, '', 1517539334, NULL, 1517539334);
+INSERT INTO `camp_member` VALUES (496, 9, '大热篮球俱乐部', 483, '钱宥丞', '', 1, 0, 1, '', 1517540288, NULL, 1517540288);
+INSERT INTO `camp_member` VALUES (497, 9, '大热篮球俱乐部', 484, '张松海', '', 1, 0, 1, '', 1517540418, NULL, 1517540418);
+INSERT INTO `camp_member` VALUES (498, 9, '大热篮球俱乐部', 485, '凌奕', '', 1, 0, 1, '', 1517541991, NULL, 1517541991);
+INSERT INTO `camp_member` VALUES (499, 9, '大热篮球俱乐部', 320, 'l朱民皓', '', -1, 0, 1, '', 1517542224, NULL, 1517542224);
+INSERT INTO `camp_member` VALUES (500, 9, '大热篮球俱乐部', 13, 'Greeny', '', -1, 0, 1, '', 1517551435, NULL, 1517551435);
+INSERT INTO `camp_member` VALUES (501, 9, '大热篮球俱乐部', 486, '鹿鸣', '', -1, 0, 1, '', 1517671222, NULL, 1517671222);
+INSERT INTO `camp_member` VALUES (502, 9, '大热篮球俱乐部', 487, 'banana', '', -1, 0, 1, '', 1517724144, NULL, 1517724144);
+INSERT INTO `camp_member` VALUES (503, 16, '热风学校', 24, 'Hot777', '', 2, 0, -1, '', 1519280223, NULL, 1519280426);
+INSERT INTO `camp_member` VALUES (504, 16, '热风学校', 24, 'Hot777', '', 2, 0, 1, '', 1519280513, NULL, 1519280513);
+INSERT INTO `camp_member` VALUES (505, 31, 'woo篮球兴趣训练营', 1, 'HoChen', '', 1, 0, 1, '', 1519308403, NULL, 1519308403);
+INSERT INTO `camp_member` VALUES (508, 4, '准行者训练营', 8, 'woo123', '', 2, 0, 1, '', 1519357801, NULL, 1519357801);
+INSERT INTO `camp_member` VALUES (509, 9, '大热篮球俱乐部', 505, '傅晓泷', '', 1, 0, 1, '', 1519542905, NULL, 1519542905);
+INSERT INTO `camp_member` VALUES (510, 33, 'B—Ball 篮球训练营', 14, 'MirandaXian', '其他是什么 测试请通过', -1, 0, 0, '', 1519617275, NULL, 1519617275);
+INSERT INTO `camp_member` VALUES (511, 9, '大热篮球俱乐部', 420, '刘刘刘海涛', '求职兼职教练', 2, 0, 0, '', 1519658609, NULL, 1519658609);
+INSERT INTO `camp_member` VALUES (512, 9, '大热篮球俱乐部', 506, '向蓓', '', 1, 0, 1, '', 1519717248, NULL, 1519717248);
+INSERT INTO `camp_member` VALUES (513, 17, 'FIT', 21, 'Bingo', '', 2, 0, 1, '', 1519720493, NULL, 1519720493);
+INSERT INTO `camp_member` VALUES (514, 38, '大热篮球前海分部', 3, '张文清', '创建训练营', 4, 0, -1, '20180306 16:53控制台注销训练营', 1519972414, 1520326396, 1519972414);
+INSERT INTO `camp_member` VALUES (515, 13, 'AKcross训练营', 508, 'Kafai', '', 1, 0, 1, '', 1520060950, NULL, 1520060950);
+INSERT INTO `camp_member` VALUES (516, 13, 'AKcross训练营', 509, 'lovecheck', '', 1, 0, 1, '', 1520080713, NULL, 1520080713);
+INSERT INTO `camp_member` VALUES (517, 9, '大热篮球俱乐部', 510, 'JasonHuang', '', 1, 0, 1, '', 1520135179, NULL, 1520135179);
+INSERT INTO `camp_member` VALUES (518, 9, '大热篮球俱乐部', 513, 'Dongxinyu', '', 1, 0, 1, '', 1520305644, NULL, 1520305644);
+INSERT INTO `camp_member` VALUES (519, 39, '伟霖训练营', 4, '刘伟霖', '创建训练营', 4, 0, -1, '20180306 16:51控制台注销训练营', 1520326172, 1520326286, 1520326172);
+INSERT INTO `camp_member` VALUES (520, 34, 'BALON篮球训练营', 3, 'Hot Basketball 1', '把', 3, 0, 1, '', 1520407915, NULL, 1520407954);
+INSERT INTO `camp_member` VALUES (521, 9, '大热篮球俱乐部', 514, 'LL', '', 1, 0, 1, '', 1520653089, NULL, 1520653089);
+INSERT INTO `camp_member` VALUES (522, 9, '大热篮球俱乐部', 515, '唐钰钧', '', 1, 0, 1, '', 1520912032, NULL, 1520912032);
+INSERT INTO `camp_member` VALUES (523, 9, '大热篮球俱乐部', 516, '郑翰', '', 2, 0, 1, '', 1521012137, NULL, 1521012137);
+INSERT INTO `camp_member` VALUES (524, 13, 'AKcross训练营', 519, '陶承希', '', 1, 0, 1, '', 1521282850, NULL, 1521282850);
+INSERT INTO `camp_member` VALUES (525, 9, '大热篮球俱乐部', 520, '翼翼', '', 1, 0, 1, '', 1521354187, NULL, 1521354187);
+INSERT INTO `camp_member` VALUES (526, 9, '大热篮球俱乐部', 521, 'Hank', '', 1, 0, 1, '', 1521355079, NULL, 1521355079);
+INSERT INTO `camp_member` VALUES (527, 9, '大热篮球俱乐部', 524, '姜毅', '', 1, 0, 1, '', 1521516345, NULL, 1521516345);
+INSERT INTO `camp_member` VALUES (528, 9, '大热篮球俱乐部', 525, '兰俊', '', 1, 0, 1, '', 1521523247, NULL, 1521523247);
+INSERT INTO `camp_member` VALUES (529, 9, '大热篮球俱乐部', 386, '徐瑞阳', '', 1, 0, 1, '', 1522044102, NULL, 1522044102);
 
-INSERT INTO `camp_member` (`id`, `camp_id`, `camp`, `member_id`, `member`, `remarks`, `type`, `status`, `system_remarks`, `create_time`, `delete_time`, `update_time`) VALUES
-(1, 1, '大热体适能中心', 2, '大热篮球2', '创建训练营', 4, 1, '', 1506412380, NULL, 1506412380),
-(2, 2, '大热前海训练营', 3, '大热篮球1', '创建训练营', 4, 1, '', 1506412380, NULL, 1506412380),
-(3, 3, '猴赛雷训练营', 1, '陈侯', '创建训练营', 4, 1, '', 1506412381, NULL, 1506412381),
-(4, 1, '大热体适能中心', 1, 'HoChen', '你好', -1, -1, '20171107侯哥删除关联', 1506414072, NULL, 0),
-(5, 2, '大热前海训练营', 2, 'Hot-basketball2', '粉丝', -1, 1, '', 1506414094, NULL, 0),
-(6, 1, '大热体适能中心', 3, 'Hot Basketball 1', 'ho t', -1, 1, '', 1506414141, NULL, 0),
-(7, 3, '猴赛雷训练营', 4, 'weilin666', '加入做教练', 2, 1, '', 1506414192, NULL, 1507630647),
-(8, 2, '大热前海训练营', 4, 'weilin666', '加入做教练', 2, 1, '', 1506414206, NULL, 1506414379),
-(9, 1, '大热体适能中心', 4, 'weilin666', '加入教练', 2, 1, '', 1506414220, NULL, 1506414603),
-(10, 3, '猴赛雷训练营', 5, '123abc', '江河湖海', 2, -1, '', 1506414545, NULL, 0),
-(11, 2, '大热前海训练营', 5, '123abc', '嘉兴', 2, 1, '', 1506414561, NULL, 0),
-(12, 1, '大热体适能中心', 5, '123abc', '嘉兴', 2, 1, '', 1506414573, NULL, 0),
-(13, 4, '准行者训练营', 6, '陈烈准', '创建训练营', 4, 1, '', 1506415619, NULL, 1506415619),
-(15, 4, '准行者训练营', 1, 'HoChen', '我', 1, -1, '20171107侯哥删除关联', 1506502597, NULL, 1510100359),
-(16, 5, '荣光训练营', 7, '张伟荣', '创建训练营', 4, 1, '', 1506565273, NULL, 1506565273),
-(17, 4, '准行者训练营', 8, 'woo123', '我要成为管理员', 3, 1, '', 1506566640, NULL, 1510911996),
-(18, 2, '大热前海训练营', 6, 'legend', '', 1, 1, '', 1506569500, NULL, 1506569500),
-(20, 2, '大热前海训练营', 1, 'HoChen', '我', 3, -1, '20171107侯哥删除关联', 1506655861, NULL, 0),
-(25, 9, '大热篮球俱乐部', 2, '大热篮球', '创建训练营', 4, 1, '', 1506676445, NULL, 1506676445),
-(29, 4, '准行者训练营', 7, 'wayen_z', '我要成为粉丝', 2, -1, '', 1506754252, NULL, 1509092961),
-(31, 3, '猴赛雷训练营', 11, 'hot111', 'Hi', 2, 0, '', 1507350804, NULL, 0),
-(32, 3, '猴赛雷训练营', 13, 'Greeny', '', 1, 1, '', 1507355231, NULL, 1507355231),
-(33, 2, '大热前海训练营', 8, 'woo123', '', 1, 1, '', 1507518508, NULL, 1507518508),
-(34, 1, '大热体适能中心', 8, 'woo123', '', 1, 1, '', 1507538155, NULL, 1507538155),
-(35, 4, '准行者训练营', 8, 'woo123', '', 1, 1, '', 1507539336, NULL, 1510911996),
-(36, 3, '猴赛雷训练营', 8, 'woo123', '', 1, 1, '', 1507540817, NULL, 1507540817),
-(37, 3, '猴赛雷训练营', 4, 'weilin666', '买了课程', 1, 1, '', 1506414192, NULL, 1507796249),
-(38, 9, '大热篮球俱乐部', 15, '13537781797', '', 1, 1, '', 1507728831, NULL, 1507728831),
-(39, 9, '大热篮球俱乐部', 3, 'Hot Basketball 1', '冯冯冯', 3, 1, '', 1507778591, NULL, 1508469017),
-(40, 4, '准行者训练营', 5, '123abc', '', 1, 1, '', 1507880299, NULL, 1507880299),
-(41, 5, '荣光训练营', 4, 'weilin666', '测试推送', 1, 1, '', 1507890574, NULL, 1512640656),
-(42, 5, '荣光训练营', 4, 'weilin666', '手动改数据的', 1, 1, '', 1507947074, NULL, 1512640656),
-(43, 13, 'AKcross训练营', 18, '安凯翔', '创建训练营', 4, 1, '', 1507951263, NULL, 1507951263),
-(44, 14, 'Ball  is  life', 17, '董硕同', '创建训练营', 4, 1, '', 1507951319, NULL, 1507951319),
-(45, 3, '猴赛雷训练营', 24, 'Hot777', 'Yo ', 2, 1, '', 1507972576, NULL, 1507972674),
-(46, 15, '钟声训练营', 19, '钟声', '创建训练营', 4, 1, '', 1508037092, NULL, 1508037092),
-(47, 16, '热风学校', 11, '陈永仁', '创建训练营', 4, 1, '', 1508037396, NULL, 1508037396),
-(48, 16, '热风学校', 1, 'HoChen', '我', 3, 1, '', 1508040916, NULL, 1508040916),
-(49, 9, '大热篮球俱乐部', 6, 'legend', '准哥加入，查看数据', 3, 1, '', 1508055043, NULL, 1508055043),
-(51, 9, '大热篮球俱乐部', 23, '钟欣志', '', 1, 1, '系统插入2017年10月18日17:34:40', 1508141658, NULL, 0),
-(52, 9, '大热篮球俱乐部', 25, '罗翔宇', '', 1, 1, '系统插入2017年10月18日17:34:43', 1508141658, NULL, 0),
-(53, 4, '准行者训练营', 33, 'yanyan', '', 1, 1, '', 1508206653, NULL, 1508206653),
-(54, 2, '大热前海训练营', 22, '邓赖迪', '', 1, 1, '', 1508242058, NULL, 1508242058),
-(55, 15, '钟声训练营', 26, '陈承铭', '', 1, 1, '系统插入2017年10月18日17:30:21', 1508318976, NULL, 0),
-(58, 3, '猴赛雷训练营', 5, '123abc', '', 1, 1, '', 1508396332, NULL, 1508396332),
-(59, 4, '准行者训练营', 4, 'weilin666', '加入做教务\n', 3, -1, '', 1508399193, NULL, 1510986601),
-(60, 15, '钟声训练营', 2, 'Hot-basketball2', 'ttt', 3, -1, '', 1508469074, NULL, 1508859524),
-(61, 3, '猴赛雷训练营', 6, 'legend', '', 1, 1, '', 1508489474, NULL, 1510047890),
-(62, 15, '钟声训练营', 43, '陈润宏', '', 1, 1, '', 1508554705, NULL, 1508554705),
-(63, 15, '钟声训练营', 42, '李润弘', '', 1, 1, '', 1508554790, NULL, 1508554790),
-(64, 15, '钟声训练营', 48, '郑肖杰', '', 1, 1, '', 1508639992, NULL, 1508639992),
-(65, 15, '钟声训练营', 49, '黄浩', '', 1, 1, '', 1508658061, NULL, 1508658061),
-(66, 15, '钟声训练营', 52, '吴师隽', '', 1, 1, '', 1508661867, NULL, 1508661867),
-(67, 15, '钟声训练营', 55, '唐轩衡', '', 1, 1, '', 1508676524, NULL, 1508676524),
-(68, 15, '钟声训练营', 56, '郑皓畅', '', 1, 1, '', 1508723298, NULL, 1508723298),
-(69, 15, '钟声训练营', 59, '陈高翔', '', 1, 1, '', 1508723330, NULL, 1508723330),
-(70, 15, '钟声训练营', 51, '战奕名', '', 1, 1, '', 1508724644, NULL, 1508724644),
-(71, 15, '钟声训练营', 46, '李语辰', '', 1, 1, '', 1508725788, NULL, 1508725788),
-(72, 15, '钟声训练营', 50, '张毓楠', '', 1, 1, '', 1508726077, NULL, 1508726077),
-(73, 15, '钟声训练营', 60, '王钰龙', '', 1, 1, '', 1508726145, NULL, 1508726145),
-(74, 15, '钟声训练营', 62, '刘宇恒', '', 1, 1, '', 1508729344, NULL, 1508729344),
-(75, 15, '钟声训练营', 63, 'leonhuang', '', 1, 1, '', 1508730455, NULL, 1508730455),
-(76, 15, '钟声训练营', 66, '20101119', '', 1, 1, '', 1508732408, NULL, 1508732408),
-(77, 15, '钟声训练营', 67, 'gaojun', '', 1, 1, '', 1508735155, NULL, 1508735155),
-(78, 15, '钟声训练营', 61, '万宇宸', '', 1, 1, '', 1508737749, NULL, 1508737749),
-(79, 15, '钟声训练营', 73, 'SZQIUJB', '', 1, 1, '', 1508766198, NULL, 1508766198),
-(80, 15, '钟声训练营', 74, '13823181560', '', 1, 1, '', 1508766363, NULL, 1508766363),
-(81, 15, '钟声训练营', 58, '饶滨', '', 1, 1, '', 1508770994, NULL, 1508770994),
-(82, 13, 'AKcross训练营', 2, 'Hot-basketball2', '哗啦啦啦啦', 3, 1, '', 1508829675, NULL, 1508829726),
-(83, 13, 'AKcross训练营', 79, 'Youboy806', '', 1, 1, '', 1508831427, NULL, 1508831427),
-(84, 9, '大热篮球俱乐部', 78, '张雅璐', '恭喜发财', 3, 1, '', 1508831833, NULL, 1508923164),
-(85, 2, '大热前海训练营', 78, '张雅璐', '情比金坚', 2, 0, '', 1508833047, NULL, 1508833047),
-(86, 9, '大热篮球俱乐部', 19, '钟声', '钟声', 2, 1, '', 1508849680, NULL, 1508854111),
-(87, 9, '大热篮球俱乐部', 80, 'kiko', '', 1, 1, '', 1508849732, NULL, 1508849732),
-(88, 15, '钟声训练营', 82, '13927482132', '', 1, 1, '', 1508850520, NULL, 1508850520),
-(89, 9, '大热篮球俱乐部', 18, '18566201712', 'jjjj', 2, 1, '', 1508917693, NULL, 1508919856),
-(90, 5, '荣光训练营', 6, 'legend', '', 1, 1, '', 1508985553, NULL, 1513827377),
-(91, 15, '钟声训练营', 86, '姚定希', '', 1, 1, '', 1508986357, NULL, 1508986357),
-(92, 15, '钟声训练营', 83, '梁懿', '', 1, 1, '', 1508986589, NULL, 1508986589),
-(93, 15, '钟声训练营', 76, 'cjwcyc', '', 1, 1, '', 1508989728, NULL, 1508989728),
-(94, 5, '荣光训练营', 8, 'woo123', '', 1, 1, '', 1508992655, NULL, 1511581096),
-(95, 15, '钟声训练营', 81, 'rebeccazhangly', '', 1, 1, '', 1509001967, NULL, 1509001967),
-(96, 15, '钟声训练营', 84, '余永康', '', 1, 1, '', 1509006277, NULL, 1509006277),
-(97, 15, '钟声训练营', 36, 'Gavin.zhuang', '申请助教', 2, 1, '', 1509007513, NULL, 1509007968),
-(98, 15, '钟声训练营', 39, '饶宏宇', '', 1, 1, '', 1509008231, NULL, 1509008231),
-(99, 15, '钟声训练营', 87, '朱涛', '', 1, 1, '', 1509009392, NULL, 1509009392),
-(100, 15, '钟声训练营', 65, '蒋清奕', '', 1, 1, '系统插入2017年10月27日10:43:48', 1508774400, NULL, 1508774400),
-(101, 15, '钟声训练营', 75, 'Jerry', '', 1, 1, '', 1509079444, NULL, 1509079444),
-(102, 15, '钟声训练营', 89, 'Li hong', '', 1, 0, '系统插入时间2017年10月27日14:11:16', 1508774400, NULL, 1508947200),
-(103, 15, '钟声训练营', 91, '小苹果', '', 1, 1, '', 1509086650, NULL, 1509086650),
-(104, 9, '大热篮球俱乐部', 14, 'MirandaXian', 'v', 3, 1, '', 1509432610, NULL, 1509432626),
-(105, 2, '大热前海训练营', 17, 'Bruce.Dong', '来了', 2, 1, '', 1509444658, NULL, 1509446504),
-(106, 9, '大热篮球俱乐部', 17, 'Bruce.Dong', '啊', 2, 1, '', 1509444728, NULL, 1509444740),
-(107, 17, 'FIT', 16, '林泽铭', '创建训练营', 4, 1, '', 1509449155, NULL, 1509449155),
-(108, 9, '大热篮球俱乐部', 36, 'Gavin.zhuang', '申请加入', 2, 1, '', 1509504493, NULL, 1509504512),
-(109, 15, '钟声训练营', 102, '张广涵', '', 1, 1, '系统插入:2017年11月3日14:30:45', 1509683448, NULL, 1509683448),
-(110, 9, '大热篮球俱乐部', 101, 'LIANG', '', 1, 1, '系统插入:2017年11月3日14:30:45', 1509683448, NULL, 1509683448),
-(111, 15, '钟声训练营', 103, '腾月', '', 1, 1, '系统插入,时间2017年11月3日16:30:42', 1509697785, NULL, 1509697785),
-(112, 15, '钟声训练营', 104, '赵俊豪', '', 1, 1, '', 1509703640, NULL, 1509703640),
-(113, 9, '大热篮球俱乐部', 105, '30988232', '', 1, 1, '', 1509720686, NULL, 1509720686),
-(114, 9, '大热篮球俱乐部', 106, 'hou1298280', '', 1, 1, '', 1509782830, NULL, 1509782830),
-(115, 9, '大热篮球俱乐部', 16, 'andy.lin', '教练', 2, 1, '', 1509782999, NULL, 1509783014),
-(116, 9, '大热篮球俱乐部', 107, 'HANA', '', 1, 1, '', 1509783164, NULL, 1509783164),
-(117, 9, '大热篮球俱乐部', 108, '061683', '', 1, 1, '', 1509783379, NULL, 1509783379),
-(118, 9, '大热篮球俱乐部', 109, 'lily', '', 1, 1, '', 1509784749, NULL, 1509784749),
-(119, 9, '大热篮球俱乐部', 110, '关乐耀', '', 1, 1, '', 1509784965, NULL, 1510903112),
-(120, 9, '大热篮球俱乐部', 111, '张益凯', '', 1, 1, '', 1509786985, NULL, 1509786985),
-(121, 9, '大热篮球俱乐部', 112, 'chenjiahang', '', 1, 1, '', 1509787853, NULL, 1509787853),
-(122, 9, '大热篮球俱乐部', 113, '王浩丁', '', 1, 1, '', 1509844432, NULL, 1509844432),
-(123, 9, '大热篮球俱乐部', 114, '颜若宸', '', 1, 1, '', 1509845658, NULL, 1509845658),
-(124, 9, '大热篮球俱乐部', 115, '熊天华', '', 1, 1, '', 1509856196, NULL, 1509856196),
-(125, 9, '大热篮球俱乐部', 27, 'coachj', '无', 2, 1, '', 1509868622, NULL, 1509869423),
-(126, 9, '大热篮球俱乐部', 116, '13670022780', '', 1, 1, '', 1509871789, NULL, 1509871789),
-(127, 9, '大热篮球俱乐部', 117, '王少华', '', 1, 1, '', 1509943670, NULL, 1510191105),
-(128, 9, '大热篮球俱乐部', 118, '黄子杰', '', 1, 1, '', 1509943739, NULL, 1509943739),
-(129, 9, '大热篮球俱乐部', 119, '13662248558', '', 1, 1, '', 1509970166, NULL, 1509970166),
-(130, 9, '大热篮球俱乐部', 120, '6222355892320034', '', 1, 1, '', 1509985530, NULL, 1509985530),
-(131, 9, '大热篮球俱乐部', 1, 'HoChen', '通过一下', 3, 1, '20171107手动通过教务申请', 1510020895, NULL, 1510020895),
-(133, 4, '准行者训练营', 121, 'jason', '', 1, 1, '', 1510044582, NULL, 1510044582),
-(134, 4, '准行者训练营', 122, '1234', '', 1, 1, '', 1510044746, NULL, 1510044746),
-(135, 9, '大热篮球俱乐部', 123, '065385', '', 1, 1, '', 1510059638, NULL, 1510059638),
-(136, 5, '荣光训练营', 6, 'legend', '申请管理员', 1, 0, '', 1510062298, NULL, 1513827377),
-(137, 9, '大热篮球俱乐部', 126, '6222024000065498186', '', 1, 1, '', 1510116547, NULL, 1510369090),
-(138, 9, '大热篮球俱乐部', 124, '黄俊豪', '', 1, 1, '', 1510117401, NULL, 1510117401),
-(139, 18, '劉嘉興', 5, '劉嘉興', '创建训练营', 4, 1, '', 1510382967, NULL, 1510382967),
-(140, 13, 'AKcross训练营', 4, 'weilin666', '', 1, 1, '', 1510388218, NULL, 1510388893),
-(141, 9, '大热篮球俱乐部', 128, '军歌', '', 1, 1, '', 1510388668, NULL, 1510388668),
-(142, 9, '大热篮球俱乐部', 125, '13825243733', '', 1, 1, '系统插入时间2017年11月11日16:27:45', 1510388877, NULL, 1510388877),
-(143, 9, '大热篮球俱乐部', 129, '红茶????', '', 1, 1, '', 1510393607, NULL, 1510393607),
-(144, 9, '大热篮球俱乐部', 130, '锦华', '', 1, 1, '', 1510671523, NULL, 1510671523),
-(145, 9, '大热篮球俱乐部', 135, 'bemyself', '', 1, 1, '', 1510819362, NULL, 1510819362),
-(146, 9, '大热篮球俱乐部', 142, '卢盛良', '', 1, 1, '', 1510825439, NULL, 1513844623),
-(147, 9, '大热篮球俱乐部', 146, '言覃多多', '', 1, 1, '', 1510828278, NULL, 1513760258),
-(148, 9, '大热篮球俱乐部', 148, 'wiya', '', 1, 1, '', 1510841933, NULL, 1513841887),
-(149, 9, '大热篮球俱乐部', 149, 'fanghk', '', 1, 1, '', 1510876936, NULL, 1513841811),
-(150, 4, '准行者训练营', 8, 'woo123', '测试招募', 1, -2, '', 1510885750, NULL, 1510911996),
-(151, 9, '大热篮球俱乐部', 150, '中国太保惠霞', '', 1, 1, '', 1510889749, NULL, 1513843712),
-(152, 9, '大热篮球俱乐部', 140, '袁梓钦YZQ', '', 1, 1, '', 1510890307, NULL, 1510890307),
-(153, 9, '大热篮球俱乐部', 141, '鲁秋娟¹⁵⁹²⁰⁰⁸⁵⁹⁶⁰', '', 1, 1, '', 1510890324, NULL, 1510902957),
-(154, 9, '大热篮球俱乐部', 139, '杨灿13662559960', '', 1, 1, '', 1510890344, NULL, 1510890344),
-(155, 9, '大热篮球俱乐部', 133, '晨曦', '', 1, 1, '', 1510890357, NULL, 1510890357),
-(156, 9, '大热篮球俱乐部', 147, '静', '', 1, 1, '', 1510890372, NULL, 1510890372),
-(157, 9, '大热篮球俱乐部', 143, '谢睿轩Ryan', '', 1, 1, '', 1510890389, NULL, 1510890389),
-(158, 9, '大热篮球俱乐部', 144, '丹佛儿', '', 1, 1, '', 1510890406, NULL, 1510890406),
-(159, 9, '大热篮球俱乐部', 134, '刘欣洋', '', 1, 1, '', 1510891561, NULL, 1510891561),
-(160, 9, '大热篮球俱乐部', 145, 'Taily', '', 1, 1, '', 1510892291, NULL, 1513816560),
-(161, 9, '大热篮球俱乐部', 153, 'Yrb801129', '', 1, 1, '', 1510919368, NULL, 1510919369),
-(162, 9, '大热篮球俱乐部', 159, 'Lisa Lee(李建平)', '', 1, 1, '', 1510996699, NULL, 1510996700),
-(163, 13, 'AKcross训练营', 166, '雪', '', 1, 1, '', 1511073367, NULL, 1511089434),
-(164, 9, '大热篮球俱乐部', 172, 'luojiuyu', '', 1, 1, '', 1511228103, NULL, 1511228105),
-(165, 9, '大热篮球俱乐部', 151, '欧阳宇航的外公', '', 1, 1, '', 1511247036, NULL, 1513842242),
-(166, 9, '大热篮球俱乐部', 156, 'victor', '', 1, 1, '', 1511247071, NULL, 1511247072),
-(167, 9, '大热篮球俱乐部', 136, '18923856665', '', 1, 1, '', 1511247150, NULL, 1513843090),
-(168, 9, '大热篮球俱乐部', 137, '吴靖宇wjy', '', 1, 1, '', 1511247811, NULL, 1511247812),
-(169, 9, '大热篮球俱乐部', 168, 'huangzq', '', 1, 1, '', 1511247853, NULL, 1513845982),
-(170, 9, '大热篮球俱乐部', 160, '张春丽＆', '', 1, 1, '', 1511247962, NULL, 1511536625),
-(171, 9, '大热篮球俱乐部', 162, '龙船????唐力', '', 1, 1, '', 1511247988, NULL, 1513844464),
-(172, 9, '大热篮球俱乐部', 163, 'yolanda传奇', '', 1, 1, '', 1511248038, NULL, 1513844295),
-(173, 9, '大热篮球俱乐部', 164, 'zhouyinmu', '', 1, 1, '', 1511248068, NULL, 1513844349),
-(174, 9, '大热篮球俱乐部', 165, '飘', '', 1, 1, '', 1511248133, NULL, 1513844519),
-(175, 9, '大热篮球俱乐部', 161, '浪花', '', 1, 1, '', 1511248207, NULL, 1513844060),
-(176, 9, '大热篮球俱乐部', 131, 'Dorothy', '', 1, 1, '', 1511248240, NULL, 1513844667),
-(177, 9, '大热篮球俱乐部', 152, 'Jack123', '', 1, 1, '', 1511248283, NULL, 1513844716),
-(178, 9, '大热篮球俱乐部', 157, '19782174', '', 1, 1, '', 1511248707, NULL, 1513844016),
-(179, 9, '大热篮球俱乐部', 175, '休闲的人²⁰¹⁷', '', 1, 1, '', 1511335243, NULL, 1513848869),
-(180, 9, '大热篮球俱乐部', 173, '????✨Mandy*????', '', 1, 1, '', 1511335795, NULL, 1511335795),
-(181, 9, '大热篮球俱乐部', 138, '听海', '', 1, 1, '', 1511336015, NULL, 1513842974),
-(182, 9, '大热篮球俱乐部', 174, 'hcyhcy', '', 1, 1, '', 1511336112, NULL, 1513843902),
-(183, 9, '大热篮球俱乐部', 176, 'ൠ杨ྉ子ྉൠ', '', 1, 1, '', 1511339255, NULL, 1511339255),
-(184, 9, '大热篮球俱乐部', 177, '黄之麓666', '', 1, 1, '', 1511339402, NULL, 1513844188),
-(185, 9, '大热篮球俱乐部', 178, 'liwentao', '', 1, 1, '', 1511342456, NULL, 1511342457),
-(186, 9, '大热篮球俱乐部', 171, 'Lynch', '', 1, 1, '', 1511343443, NULL, 1513843279),
-(187, 15, '钟声训练营', 27, 'coachj', '黄sir', 2, 1, '', 1511416016, NULL, 1511416061),
-(188, 9, '大热篮球俱乐部', 158, '风格独特见解', '', 1, 1, '', 1511579302, NULL, 1511579304),
-(189, 13, 'AKcross训练营', 180, '戒驕戒躁', '你好', 1, 0, '', 1511591584, NULL, 1511591584),
-(190, 9, '大热篮球俱乐部', 182, '蒙致远mengzhiyuan', '', 1, 1, '', 1511678308, NULL, 1511678308),
-(191, 9, '大热篮球俱乐部', 183, '艾望承', '', 1, 1, '', 1511921783, NULL, 1511921783),
-(192, 13, 'AKcross训练营', 186, '师蓉', '', 1, 1, '', 1511929149, NULL, 1511929149),
-(193, 13, 'AKcross训练营', 190, '娟娟', '', 1, 1, '', 1511943480, NULL, 1511943480),
-(194, 13, 'AKcross训练营', 191, '昕恩', '', 1, 1, '', 1511945507, NULL, 1511945507),
-(195, 9, '大热篮球俱乐部', 184, '涵叔', '龙岗课程', 2, 1, '', 1511947853, NULL, 1511947898),
-(196, 13, 'AKcross训练营', 192, '梁妹子', '', 1, 1, '', 1511957794, NULL, 1511957794),
-(197, 9, '大热篮球俱乐部', 201, '13603032922', '', 1, 1, '', 1512095904, NULL, 1512095904),
-(198, 9, '大热篮球俱乐部', 207, '杨熙', '', 1, 1, '', 1512270106, NULL, 1512270106),
-(201, 13, 'AKcross训练营', 211, '刘子豪', '', 1, 1, '', 1512734994, NULL, 1512734994),
-(202, 13, 'AKcross训练营', 212, '孟想', '', 1, 1, '', 1512887691, NULL, 1512887691),
-(205, 9, '大热篮球俱乐部', 214, '洪新铠', '', 1, 1, '', 1513053397, NULL, 1513324647),
-(206, 13, 'AKcross训练营', 215, '何锦宸', '', 1, 1, '', 1513059123, NULL, 1513059123),
-(209, 19, '17体适能', 12, '吴光蔚', '创建训练营', 4, 1, '', 1513146153, NULL, 1513146153),
-(210, 19, '17体适能', 18, '18566201712', '＋', 2, 1, '', 1513147619, NULL, 1513147627),
-(211, 19, '17体适能', 16, 'andy.lin', '…', 2, 1, '', 1513150350, NULL, 1513150372),
-(213, 2, '大热前海训练营', 2, 'Hot-basketball2', '不', 2, 1, '', 1513220405, NULL, 1513220959),
-(219, 4, '准行者训练营', 1, 'HoChen', '', 2, -1, '', 1513237699, NULL, 1513239930),
-(224, 3, '猴赛雷训练营', 227, 'BINGOZ', 'Bingo', 3, 1, '', 1513249267, NULL, 1513249771),
-(225, 29, '深圳市南山区桃源街道篮球协会', 228, '杨超林', '创建训练营', 4, 1, '', 1513324275, NULL, 1513324275),
-(226, 30, '大热篮球测试', 229, '张文清', '创建训练营', 4, 1, '', 1513393651, NULL, 1513393651),
-(227, 9, '大热篮球俱乐部', 230, '蒋成栋', '', 1, 1, '', 1513399087, NULL, 1513843219),
-(228, 9, '大热篮球俱乐部', 231, '可心', '', 1, 1, '', 1513412668, NULL, 1513843151),
-(229, 9, '大热篮球俱乐部', 232, '王剑平', '', 1, 1, '', 1513495704, NULL, 1513495704),
-(230, 9, '大热篮球俱乐部', 233, '蓝天白云', '', 1, 1, '', 1513553778, NULL, 1513553778),
-(231, 13, 'AKcross训练营', 234, '郑伟军', '', 1, 1, '', 1513565032, NULL, 1513565032),
-(232, 9, '大热篮球俱乐部', 235, '谭晟中谭正中', '', 1, 1, '', 1513567576, NULL, 1513668761),
-(233, 9, '大热篮球俱乐部', 155, 'TAN谭天笑', '', 1, 1, '', 1513570637, NULL, 1513570637),
-(234, 13, 'AKcross训练营', 236, '李红', '', 1, 1, '', 1513582724, NULL, 1513582724),
-(235, 9, '大热篮球俱乐部', 237, '三吉木易', '', 1, 1, '', 1513583423, NULL, 1513583423),
-(236, 9, '大热篮球俱乐部', 238, '王珑桥', '', 1, 1, '', 1513585395, NULL, 1513585395),
-(237, 13, 'AKcross训练营', 239, '赵小莉', '', 1, 1, '', 1513585638, NULL, 1513585638),
-(238, 13, 'AKcross训练营', 240, '周香香', '', 1, 1, '', 1513585828, NULL, 1513585828),
-(239, 13, 'AKcross训练营', 3, 'Hot Basketball 1', '我', 3, 1, '', 1513586198, NULL, 1513586209),
-(240, 9, '大热篮球俱乐部', 154, '小福和小小福和小小小福', '', 1, 1, '', 1513586377, NULL, 1513586377),
-(241, 9, '大热篮球俱乐部', 241, '朱俊亦', '', 1, 1, '', 1513587751, NULL, 1513587751),
-(242, 9, '大热篮球俱乐部', 242, '何思源', '', 1, 1, '', 1513589993, NULL, 1513589993),
-(243, 9, '大热篮球俱乐部', 132, 'Eva', '', 1, 1, '', 1513590932, NULL, 1513590932),
-(244, 9, '大热篮球俱乐部', 243, '卢星丞', '', 1, 1, '', 1513591407, NULL, 1513591407),
-(245, 9, '大热篮球俱乐部', 244, '强亦宸', '', 1, 1, '', 1513592024, NULL, 1513646977),
-(246, 9, '大热篮球俱乐部', 245, '杨鑫财', '', 1, 1, '', 1513592467, NULL, 1513592467),
-(247, 9, '大热篮球俱乐部', 246, '万博宇', '', 1, 1, '', 1513664592, NULL, 1513664592),
-(248, 9, '大热篮球俱乐部', 229, 'BINGOZ', '我', 3, 1, '', 1513664640, NULL, 1513664665),
-(249, 9, '大热篮球俱乐部', 247, '邱智鸿', '', 1, 1, '', 1513664663, NULL, 1513664691),
-(250, 9, '大热篮球俱乐部', 248, '王炫程', '', 1, 1, '', 1513664789, NULL, 1513664789),
-(251, 9, '大热篮球俱乐部', 249, '刘家琦', '', 1, 1, '', 1513664823, NULL, 1513664823),
-(252, 9, '大热篮球俱乐部', 250, '张文瑄', '', 1, 1, '', 1513664857, NULL, 1513664857),
-(253, 9, '大热篮球俱乐部', 251, '薛若鸿', '', 1, 1, '', 1513664874, NULL, 1513664874),
-(254, 9, '大热篮球俱乐部', 252, '严振轩', '', 1, 1, '', 1513664911, NULL, 1513664911),
-(255, 9, '大热篮球俱乐部', 253, '郭皓晗', '', 1, 1, '', 1513664988, NULL, 1513664988),
-(256, 9, '大热篮球俱乐部', 254, '周学谦', '', 1, 1, '', 1513665046, NULL, 1513665046),
-(257, 9, '大热篮球俱乐部', 255, '冯镇壕', '', 1, 1, '', 1513665184, NULL, 1513665184),
-(258, 9, '大热篮球俱乐部', 256, '周一泉', '', 1, 1, '', 1513665213, NULL, 1513665213),
-(259, 9, '大热篮球俱乐部', 257, '潘乐航', '', 1, 1, '', 1513665244, NULL, 1513665244),
-(260, 9, '大热篮球俱乐部', 258, '汪星辰', '', 1, 1, '', 1513665270, NULL, 1513665270),
-(261, 9, '大热篮球俱乐部', 259, '马明道', '', 1, 1, '', 1513665326, NULL, 1513665326),
-(262, 29, '深圳市南山区桃源街道篮球协会', 18, 'AK', '安教练', 2, 1, '', 1513740522, NULL, 1513762283),
-(263, 17, 'FIT', 18, 'AK', '安凯', 2, 1, '', 1513740565, NULL, 1513740645),
-(264, 14, 'Ball  is  life', 18, 'AK', '安凯', 2, 1, '', 1513740615, NULL, 1513741249),
-(265, 13, 'AKcross训练营', 16, 'andy.lin', '…', 2, 0, '', 1513740678, NULL, 1513740678),
-(266, 13, 'AKcross训练营', 17, 'Bruce.Dong', '啊', 2, 0, '', 1513741308, NULL, 1513741308),
-(267, 17, 'FIT', 17, 'Bruce.Dong', '啊', 2, 1, '', 1513741327, NULL, 1513741422),
-(268, 31, 'woo篮球兴趣训练营', 8, '吴丽文', '创建训练营', 4, 1, '', 1513741459, NULL, 1513741459),
-(269, 31, 'woo篮球兴趣训练营', 18, 'AK', '安教练', 2, 1, '', 1513742502, NULL, 1513742520),
-(270, 31, 'woo篮球兴趣训练营', 17, 'Bruce.Dong', 'a', 2, 1, '', 1513742774, NULL, 1513742816),
-(272, 31, 'woo篮球兴趣训练营', 12, 'willng', '光头', 1, 0, '', 1513743160, NULL, 1513745162),
-(273, 31, 'woo篮球兴趣训练营', 21, 'Bingo', '我我', 1, 0, '', 1513743223, NULL, 1513744678),
-(274, 31, 'woo篮球兴趣训练营', 9, 'GaoYan', '学生', 1, 0, '', 1513743369, NULL, 1513743469),
-(275, 31, 'woo篮球兴趣训练营', 5, '+*', '劉嘉興', 1, 0, '', 1513744036, NULL, 1513746435),
-(276, 31, 'woo篮球兴趣训练营', 14, 'MirandaXian', '', 1, 1, '', 1513744412, NULL, 1513744412),
-(277, 31, 'woo篮球兴趣训练营', 16, 'andy.lin', '…', 1, 0, '', 1513744493, NULL, 1513744493),
-(278, 32, '燕子Happy篮球训练营', 9, '高艳', '创建训练营', 4, 1, '', 1513744809, NULL, 1513744809),
-(281, 31, 'woo篮球兴趣训练营', 4, 'weilin666', '作粉丝', -1, 1, '', 1513757680, NULL, 1513757680),
-(283, 31, 'woo篮球兴趣训练营', 6, 'legend', '', -1, 1, '', 1513758021, NULL, 1513758021),
-(284, 9, '大热篮球俱乐部', 188, 'M00100895', '', 1, 1, '', 1513765513, NULL, 1513765513),
-(285, 13, 'AKcross训练营', 260, '杜宇轩', '', 1, 1, '', 1513768032, NULL, 1513768032),
-(286, 9, '大热篮球俱乐部', 286, '康正浩', '', 1, 1, '', 1513837922, NULL, 1513837922),
-(287, 9, '大热篮球俱乐部', 285, '崔展豪', '', 1, 1, '', 1513837954, NULL, 1513837954),
-(288, 9, '大热篮球俱乐部', 284, '洪旭林', '', 1, 1, '', 1513837976, NULL, 1513837976),
-(289, 9, '大热篮球俱乐部', 283, '石原炜', '', 1, 1, '', 1513837999, NULL, 1513837999),
-(290, 9, '大热篮球俱乐部', 282, '王北鲲', '', 1, 1, '', 1513838039, NULL, 1513838039),
-(291, 9, '大热篮球俱乐部', 281, '唐佳诺', '', 1, 1, '', 1513838064, NULL, 1513838064),
-(292, 9, '大热篮球俱乐部', 280, '刘炜文', '', 1, 1, '', 1513838082, NULL, 1513838082),
-(293, 9, '大热篮球俱乐部', 279, '罗仕杰', '', 1, 1, '', 1513838112, NULL, 1513838112),
-(294, 9, '大热篮球俱乐部', 278, '王廖聪', '', 1, 1, '', 1513838139, NULL, 1513838139),
-(295, 9, '大热篮球俱乐部', 277, '郭栩源', '', 1, 1, '', 1513838228, NULL, 1513838228),
-(296, 9, '大热篮球俱乐部', 276, '张益畅', '', 1, 1, '', 1513838258, NULL, 1513838258),
-(297, 9, '大热篮球俱乐部', 275, '彭梓睿', '', 1, 1, '', 1513838283, NULL, 1513838283),
-(298, 9, '大热篮球俱乐部', 274, '任志诚', '', 1, 1, '', 1513838302, NULL, 1513838302),
-(299, 9, '大热篮球俱乐部', 273, '郑新浩', '', 1, 1, '', 1513838324, NULL, 1513838324),
-(300, 9, '大热篮球俱乐部', 272, '郭子阅', '', 1, 1, '', 1513838839, NULL, 1513838839),
-(301, 9, '大热篮球俱乐部', 271, '刘阳', '', 1, 1, '', 1513838878, NULL, 1513838878),
-(302, 9, '大热篮球俱乐部', 270, '冯啟桓', '', 1, 1, '', 1513838978, NULL, 1513838978),
-(303, 9, '大热篮球俱乐部', 269, '杨欣霈', '', 1, 1, '', 1513838996, NULL, 1513838996),
-(304, 9, '大热篮球俱乐部', 268, '汪子杰', '', 1, 1, '', 1513839010, NULL, 1513839010),
-(305, 9, '大热篮球俱乐部', 267, ' 李承彧', '', 1, 1, '', 1513839027, NULL, 1513839027),
-(306, 9, '大热篮球俱乐部', 266, '谈朔显', '', 1, 1, '', 1513839068, NULL, 1513839068),
-(307, 9, '大热篮球俱乐部', 265, '罗宁', '', 1, 1, '', 1513839092, NULL, 1513839092),
-(308, 9, '大热篮球俱乐部', 264, '花梓鹏', '', 1, 1, '', 1513839135, NULL, 1513839135),
-(309, 9, '大热篮球俱乐部', 263, '李俊晔', '', 1, 1, '', 1513839158, NULL, 1513839158),
-(310, 9, '大热篮球俱乐部', 262, '陈江函', '', 1, 1, '', 1513839187, NULL, 1513839187),
-(311, 9, '大热篮球俱乐部', 261, '阮烨才', '', 1, 1, '', 1513839217, NULL, 1513839217),
-(312, 13, 'AKcross训练营', 287, '吴浩睿', '', 1, 1, '', 1513840442, NULL, 1513840442),
-(313, 9, '大热篮球俱乐部', 302, '叶子枫', '', 1, 1, '', 1513840741, NULL, 1513840741),
-(314, 9, '大热篮球俱乐部', 301, '龚湖宸', '', 1, 1, '', 1513840764, NULL, 1513840764),
-(315, 9, '大热篮球俱乐部', 300, '程翰哲', '', 1, 1, '', 1513840786, NULL, 1513840786),
-(316, 9, '大热篮球俱乐部', 299, '周煜轩', '', 1, 1, '', 1513840803, NULL, 1513840803),
-(317, 9, '大热篮球俱乐部', 298, ' 戴溪亭', '', 1, 1, '', 1513840826, NULL, 1513840826),
-(318, 9, '大热篮球俱乐部', 297, '张圣泽', '', 1, 1, '', 1513840852, NULL, 1513840852),
-(319, 9, '大热篮球俱乐部', 296, '雷卓凡', '', 1, 1, '', 1513840872, NULL, 1513840872),
-(320, 9, '大热篮球俱乐部', 295, '秦铭远', '', 1, 1, '', 1513841204, NULL, 1513841204),
-(321, 9, '大热篮球俱乐部', 294, '严俊朗', '', 1, 1, '', 1513841441, NULL, 1513841441),
-(322, 9, '大热篮球俱乐部', 293, '许辰镝', '', 1, 1, '', 1513841528, NULL, 1513841528),
-(323, 9, '大热篮球俱乐部', 292, '张皓然', '', 1, 1, '', 1513841558, NULL, 1513841558),
-(324, 9, '大热篮球俱乐部', 291, '蒙卓朗', '', 1, 1, '', 1513841573, NULL, 1513841573),
-(325, 9, '大热篮球俱乐部', 290, '杜沛霖', '', 1, 1, '', 1513841596, NULL, 1513841596),
-(326, 9, '大热篮球俱乐部', 289, '欧阳舒轩', '', 1, 1, '', 1513841619, NULL, 1513841619),
-(327, 9, '大热篮球俱乐部', 288, '李卓逸', '', 1, 1, '', 1513841640, NULL, 1513841640),
-(328, 9, '大热篮球俱乐部', 170, 'snowy', '', 1, 1, '', 1513841728, NULL, 1513841728),
-(329, 9, '大热篮球俱乐部', 303, '李兆堂', '', 1, 1, '', 1513841956, NULL, 1513841956),
-(330, 9, '大热篮球俱乐部', 306, '侯朝歌', '', 1, 1, '', 1513848609, NULL, 1513848609),
-(331, 9, '大热篮球俱乐部', 305, '辛禹霏', '', 1, 1, '', 1513848637, NULL, 1513848637),
-(332, 9, '大热篮球俱乐部', 304, '张诗婷', '', 1, 1, '', 1513848653, NULL, 1513848653);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `camp_member`
---
-ALTER TABLE `camp_member`
-  ADD PRIMARY KEY (`id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `camp_member`
---
-ALTER TABLE `camp_member`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=333;COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+SET FOREIGN_KEY_CHECKS = 1;

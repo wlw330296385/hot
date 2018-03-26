@@ -17,7 +17,7 @@ class Guider extends Base
 
 
 	public function choose(){
-		$campList = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1,'type'=>['gt',2]])->select();
+		$campList = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1,'type'=>['egt',2]])->select();
 		
 		if(request()->isPost()){
 			$key = input('post.key');
