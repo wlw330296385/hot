@@ -371,9 +371,10 @@
                             //服务器返回响应，根据响应结果，分析是否登录成功；
                             console.log(data);
                             if (data.code == 200) {
-                                mui.toast("提交成功,待审核");
+                                //mui.toast("提交成功,待审核");
+                                mui.alert('提交成功，请等待训练营审核');
                                 mui('#yqpopover').popover('toggle');
-                                mui.post("{:url('api/message/campjoinaudit')}", { id: data.insid }, function (res) {
+                                mui.post("{:url('api/message/campjoinaudit')}", { id: data.data }, function (res) {
                                     console.log(res);
                                 }, 'json');
                             } else if (data.code != 200 && data.code != 100) {
@@ -384,7 +385,8 @@
                                     }
                                 });
                             } else {
-                                mui.toast(data.msg);
+                                //mui.toast(data.msg);
+                                mui.alert(data.msg);
                             }
                         },
                         error: function (xhr, type, errorThrown) {
