@@ -665,4 +665,11 @@ class StatisticsCamp extends Backend{
         //查询条件：camp_id，member_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campCoachSalary');
     }
+
+
+    // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
+    public function campIndex(){
+        //查询条件：camp_id，member_id，monthstart，monthend
+        return $this->fetch('StatisticsCamp/campIndex');
+    }
 }
