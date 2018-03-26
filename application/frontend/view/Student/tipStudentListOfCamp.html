@@ -35,7 +35,9 @@
         <div class="mui-input-row mui-search">
             <input type="search" class="mui-input-clear keyword" placeholder="请输入学生名称">
         </div>
-
+        {notempty name="$campMemberLevel"}
+        <input type="hidden" name="coachlevel" value="{$campMemberLevel}">
+        {/notempty}
         <div id="tab-pullRefresh" class="mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view list tipStudent"></ul>
@@ -113,6 +115,7 @@
                     toTipStudent(page, gType, keyword);//具体取数据的方法
                 }, 100);
             }
+
         });
 
         var isTip = true;
@@ -157,6 +160,7 @@
         var toTipStudent = function (page, gType, keyword) {
             var url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}?page=" + page + "&keyword=" + keyword;
             var campID = "{$camp_id}";
+            var coachLevel = "{$campMemberLevel}";
             mui.ajax({
                 url: url,
                 data: {
@@ -174,7 +178,12 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
-                            newli += '<li class="mui-table-view-cell listli"><div class="fr"><button type="button" class="mui-btn mui-btn-outlined sendTip" data-member_id = "' + data.data.data[i].member_id + '" data-total_schedule="' + data.data.data[i].total_schedule + '" data-rest_schedule="' + data.data.data[i].rest_schedule + '"  data-lesson="' + data.data.data[i].lesson + '" >发送提醒</button></div><strong>' + data.data.data[i].student.student + '</strong> 剩余 ' + data.data.data[i].rest_schedule + ' 课时<p>' + data.data.data[i].lesson + '</p></li>'
+                            newli += '<li class="mui-table-view-cell listli"><div class="fr">';
+                            // 除了兼职教练不能发送提醒
+                            if (coachLevel != 1) {
+                                newli += '<button type="button" class="mui-btn mui-btn-outlined sendTip" data-member_id = "' + data.data.data[i].member_id + '" data-total_schedule="' + data.data.data[i].total_schedule + '" data-rest_schedule="' + data.data.data[i].rest_schedule + '"  data-lesson="' + data.data.data[i].lesson + '" >发送提醒</button>';
+                            }
+                            newli += '</div><strong>' + data.data.data[i].student.student + '</strong> 剩余 ' + data.data.data[i].rest_schedule + ' 课时<p>' + data.data.data[i].lesson + '</p></li>'
                         }
                     }
                     if (gType == 1) {

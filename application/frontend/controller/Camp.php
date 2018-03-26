@@ -212,7 +212,13 @@ class Camp extends Base{
     public function powerCamp(){
         $camp_id = input('param.camp_id');
         $member_id = $this->memberInfo['id'];
+        // 获取会员在训练营角色
         $power = $this->CampService->isPower($camp_id,$member_id);
+        // 若是教练 获取教练权限
+        $level = 0;
+        if($power==2) {
+            $level = $this->CampService->getCampMemberLevel($camp_id,$member_id);
+        }
         $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         // 班级总数
         $gradeCount = db('grade')->where(['camp_id'=>$camp_id])->where('delete_time', null)->count();
@@ -231,7 +237,9 @@ class Camp extends Base{
         $totalStudent = count($totalStudentList);
         //购买次数
         $totalBill = db('bill')->where(['camp_id'=>$camp_id,'is_pay'=>1])->where('delete_time', null)->count();
+
         $this->assign('power',$power);
+        $this->assign('level', $level);
         $this->assign('totalStudent',$totalStudent);//全部学生
         $this->assign('totalBill',$totalBill);//购买次数
         $this->assign('totalScheduleStudent',$totalScheduleStudent);//上课人次
@@ -344,7 +352,6 @@ class Camp extends Base{
             ->where($map)
             ->order('camp_member.id desc')
             ->select();
-//        dump($list);
 
         $this->assign('coachlist', $list);
         $this->assign('camp_id', $camp_id);

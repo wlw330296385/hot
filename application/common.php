@@ -184,6 +184,20 @@ function getCampPower($camp_id, $member_id) {
     return $powertype ? $powertype : 0;
 }
 
+/** 获取会员在训练营的身份角色权限
+ * @param $camp_id
+ * @param $member_id
+ * @return int
+ */
+function getCampMemberLevel($camp_id, $member_id) {
+    // type=2教练，区分level兼职教练1，全职教练2
+    $campMember = db('camp_member')->where(['camp_id' => $camp_id, 'member_id' => $member_id, 'status' => 1])->whereNull('delete_time')->find();
+    if ($campMember['type'] == 2) {
+        return $campMember['level'] ?  $campMember['level'] : 0;
+    }
+    return 0;
+}
+
 // 获取会员表的openid字段
 function getMemberOpenid($memberid) {
     $memberS = new \app\service\MemberService();
