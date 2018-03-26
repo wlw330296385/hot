@@ -1,5 +1,6 @@
 <?php 
 namespace app\frontend\controller;
+use app\service\CampService;
 use app\service\StudentService;
 use app\frontend\controller\Base;
 use think\Db;
@@ -184,6 +185,13 @@ class Student extends Base
 	public function tipStudentListOfCamp(){
 		$camp_id = input('param.camp_id');
         $this->assign('camp_id',$camp_id);
+        // 获取训练营角色、教练权限等级
+        $campPower = getCampPower($camp_id, $this->memberInfo['id']);
+        $campMemberLevel = 0;
+        if ($campPower==2) {
+            $campMemberLevel = getCampMemberLevel($camp_id, $this->memberInfo['id']);
+        }
+        $this->assign('campMemberLevel', $campMemberLevel);
 		return view('Student/tipStudentListOfCamp');
 	}
 		
