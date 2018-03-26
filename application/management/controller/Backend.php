@@ -8,10 +8,12 @@ use app\management\controller\Base;
 class Backend extends Base
 {
 	public $power;
+	public $camp_member;
 	function _initialize()
 	{
 		parent::_initialize();
 
+        $this->camp_member = session('camp_member');
 		// 获取权限和菜单
 		$power = cache("power_{$this->memberInfo['id']}");
 		if($power){
@@ -26,7 +28,8 @@ class Backend extends Base
 		// 获取面包屑
 		$_location = $this->getLocation();
 		$menuList = cache("menuList_{$this->memberInfo['id']}");
-		$this->assign('camp_member',session('camp_member'));
+		// dump($menuList);die;
+		$this->assign('camp_member',$this->camp_member);
 		$this->assign('_sidebar_menus',$menuList);
 		$this->assign('_location',$_location);
 	}

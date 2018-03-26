@@ -16,7 +16,6 @@ class Login extends Controller
 	}
 
 	public function login(){
-		// dump(cache('power_8'));
 		if (cookie('member_id')) {
             $this->error('你已经登录，无需重复登录', url('Guider/choose'));
         }
@@ -41,7 +40,7 @@ class Login extends Controller
 					// $this->error("账号密码错误,错误6次需要更改密码,已错{$lock}次");
 					$this->error("账号密码错误");
 				}else{
-					$this->error("账号密码错误次数太多,已被锁定");
+					$this->error("账号密码错误次数太多");
 				}
 				
 			}
@@ -66,7 +65,7 @@ class Login extends Controller
         // Cache::rm('group_id_menu_auth_'.$group_id); 
         // Cache::clear(); 
         Session::delete('memberInfo');
-        cookie('mmeber_id', null);
+        cookie('member_id', null);
         //$this->success('退出成功', url('Login/index'));
         $this->redirect('Login/login');
     }

@@ -32,8 +32,6 @@ class Member extends Backend{
 			
 		
 
-		//$memberList = $this->MemberService->getMemberListByPage($map);
-		// dump($memberList->toArray());die;
 		// 模板变量赋值
         $model = new \app\model\Member();
 		$memberList = $model->with('student')->where($map)->order('id desc')->paginate(10)->each(function($item, $key) {
@@ -108,5 +106,61 @@ class Member extends Backend{
 		}
 
 		return	$this->fetch('member/createMember');
+	}
+
+
+
+
+	public function addReferer(){
+
+		$field = '请选择搜索关键词';
+		$map = [];
+		$member_id = input('param.member_id');
+		$field = input('param.field');
+		$keyword = input('param.keyword');
+		if($keyword==''){
+			$map = [];
+			$field = '请选择搜索关键词';
+		}else{
+			if($field){
+				$map = [$field=>['like',"%$keyword%"]];
+			}else{
+				$field = '请选择搜索关键词';
+				$map = function($query) use ($keyword){
+					$query->where(['member|telephone|nickname|hot_id'=>['like',"%$keyword%"]]);
+				};
+			}
+		}
+
+		$model = new \app\model\Member();
+		$memberList = $model->where($map)->order('id desc')->paginate(10);
+
+		if(request()->isPost()){
+			$telephone = input('post.telephone');
+			$memberInfo = db('member')->where(['id'=>$member_id])->find();
+			if(!$memberInfo) {
+				$this->error('操作错误');
+			}
+			if($memberInfo['pid']<>0){
+				$this->error('改用户已存在推荐人,不允许修改');
+			}
+			$PmemberInfo = db('member')->where(['telephone'=>$telephone])->find();
+			if(!$PmemberInfo) {
+				$this->error('不存在该推荐人');
+			}
+
+			$result = db('member')->where(['id'=>$member_id])->update(['pid'=>$PmemberInfo['id']]);
+			if($result){
+				echo "<script>alert('操作成功');var index = parent.layer.getFrameIndex(window.name); parent.layer.close(index);</script>";
+			}else{
+				$this->error('操作失败');
+			}
+		}
+
+
+		$this->assign('field',$field);
+		$this->assign('member_id', $member_id);
+		$this->assign('memberList', $memberList);
+		return	$this->fetch('member/addReferer');
 	}
 }

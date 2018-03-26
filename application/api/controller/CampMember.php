@@ -136,7 +136,7 @@ class CampMember extends Base
                         'create_time' => time(), 'update_time' => time()
                     ]);
                 }
-                return json(['code' => 200, 'msg' => '申请成功', 'insid' => $campMemberId]);
+                return json(['code' => 200, 'msg' => '申请成功', 'data' => $campMemberId]);
             } else {
                 return json(['code' => 100, 'msg' => '申请失败']);
             }
@@ -155,19 +155,33 @@ class CampMember extends Base
             if (!$id || !$status) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-            $campMemberInfo = db('camp_member')->where(['id' => $id, 'status' => 0])->find();
+            // 查询camp_member数据
+            $campMemberInfo = db('camp_member')->where(['id' => $id])->find();
             if (!$campMemberInfo) {
                 return json(['code' => 100, 'msg' => '不存在该申请']);
             }
+            // 检查会员在训练营身份角色
             $isPower = $this->CampService->isPower($campMemberInfo['camp_id'], $this->memberInfo['id']);
             if ($isPower < 2) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
+            // 申请已操作提示
             if ($campMemberInfo['status'] != 0) {
                 return json(['code' => 100, 'msg' => '该申请已操作，无须重复操作']);
             }
-
-            $result = db('camp_member')->where(['id' => $id])->update(['status' => $status, 'update_time' => time()]);
+            // 更新的数据内容
+            $data = [
+                'status' => $status,
+                'update_time' => time()
+            ];
+            // 同意教练申请设为兼职教练type=2 level=1 status=1
+            if ($status==1) {
+                if ($campMemberInfo['type'] == 2) {
+                    $data['level'] = 1;
+                }
+            }
+            // 更新camp_member数据
+            $result = db('camp_member')->where(['id' => $id])->update($data);
             if ($result) {
                 return json(['code' => 200, 'msg' => __lang('MSG_200')]);
             } else {
@@ -245,7 +259,7 @@ class CampMember extends Base
             $map['camp_id'] = $camp_id;
             $map['camp_member.status'] = $status;
             $map['camp_member.type'] = ['in', '2,4'];
-            $list = Db::view('camp_member', ['id' => 'campmemberid', 'camp_id'])
+            $list = Db::view('camp_member', ['id' => 'campmemberid', 'camp_id', 'level', 'type'])
                 ->view('coach', '*', 'coach.member_id=camp_member.member_id')
                 ->where($map)
                 ->select();
