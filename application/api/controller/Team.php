@@ -1411,7 +1411,6 @@ class Team extends Base
                 $lastMatch[$k]['reg_number'] = count($matchMembers);
                 $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
-
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastMatch]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
