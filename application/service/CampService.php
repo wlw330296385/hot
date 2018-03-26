@@ -159,15 +159,27 @@ class CampService {
     }
 
     /**
-     * 返回权限
+     * 获取会员在训练营角色
      */
     public function isPower($camp_id,$member_id){
         $is_power = db('camp_member')
                     ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
-                    // ->where(function ($query) {
-                            // $query->where('type', 2)->whereor('type', 3)->whereor('type',4);})
+                    ->whereNull('delete_time')
                     ->value('type');
         return $is_power?$is_power:0;
+    }
+
+    /** 获取会员在训练营角色权限等级
+     * @param $camp_id
+     * @param $member_id
+     * @return int
+     */
+    public function getCampMemberLevel($camp_id, $member_id) {
+        $level = db('camp_member')
+            ->where(['member_id'=>$member_id,'camp_id'=>$camp_id,'status'=>1])
+            ->whereNull('delete_time')
+            ->value('level');
+        return $level ? $level : 0;
     }
 
     // 获取训练营资质证明

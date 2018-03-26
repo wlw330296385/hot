@@ -98,12 +98,21 @@ class Schedule extends Base
 		}
 		$updateSchedule = 0;
 
+        // 兼职教练 不可见内容标识
+        $hideDisplay = 0;
 		// 已结算课时不能编辑
         if ($scheduleInfo['is_settle'] != 1) {
             // 判断权限
             $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-            if($isPower>=2){
+            if($isPower>2){
                 $updateSchedule = 1;
+            } else if ($isPower == 2) {
+                // 兼职教练 不可见编辑入口
+                $level = getCampMemberLevel($scheduleInfo['camp_id'],$this->memberInfo['id']);
+                if ($level == 1) {
+                    $hideDisplay =1;
+                    $updateSchedule = 1;
+                }
             }
         }
 
@@ -114,12 +123,14 @@ class Schedule extends Base
 		}else{
 		    $scheduleInfo['exerciseList'] = [];
 		}
+
         
 		$this->assign('updateSchedule',$updateSchedule);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
 		$this->assign('commentList',$commentList);
+        $this->assign('hideDisplay', $hideDisplay);
 		return view('Schedule/scheduleInfo');
 	}
 
@@ -131,9 +142,16 @@ class Schedule extends Base
 		$grade_id = input('param.grade_id');
 		$is_power = $this->ScheduleService->isPower($camp_id,$this->memberInfo['id']);
 		if($is_power <2){
-			$this->error('您没有权限录课');die;
+			$this->error('您没有权限录课');
 		}
-
+		// 兼职教练 不可见内容标识
+        $hideDisplay = 0;
+        if ($is_power == 2) {
+		    $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $hideDisplay =1;
+            }
+        }
 		// 教练列表
 		$map['camp_id'] = $camp_id;
         $map['camp_member.status'] = 1;
@@ -176,6 +194,7 @@ class Schedule extends Base
 		$this->assign('campid', $camp_id);
 		$this->assign('studentList', $studentList);
 		$this->assign('expstudentList', $expstudentList);
+		$this->assign('hideDisplay', $hideDisplay);
 		return view('Schedule/recordSchedule');
 	}
 
@@ -195,8 +214,15 @@ class Schedule extends Base
         }
 
         $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+        $hideDisplay = 0;
         if($isPower<2){
             $this->error('你没有权限修改课时');
+        } else if ($isPower == 2) {
+            // 兼职教练不可见内容标识
+            $level = getCampMemberLevel($scheduleInfo['camp_id'],$this->memberInfo['id']);
+            if ($level == 1 ) {
+                $hideDisplay = 1;
+            }
         }
 
  		$studentList = [];
@@ -230,6 +256,7 @@ class Schedule extends Base
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
+        $this->assign('hideDisplay', $hideDisplay);
 		return view('Schedule/updateSchedule');
 	}
 

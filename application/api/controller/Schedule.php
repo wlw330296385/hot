@@ -286,10 +286,22 @@ class Schedule extends Base
             if (!$schedule) {
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }
+            // 获取会员在训练营角色
+            $power = getCampPower($schedule['camp_id'], $this->memberInfo['id']);
+            if ($power < 2) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
+            }
+            // 兼职教练不能审课
+            if ($power == 2) {
+                $level = getCampMemberLevel($schedule['camp_id'], $this->memberInfo['id']);
+                if ($level == 1) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
+                }
+            }
 
-            /*if ($schedule['status'] != -1) {
+            if ($schedule['status'] != -1) {
                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-            }*/
+            }
 
             if ($action == 'editstatus') {
                 // 审核课时

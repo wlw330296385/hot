@@ -274,8 +274,16 @@ class Lesson extends Base{
     	$camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        // 获取会员在训练营角色
         if($is_power<2){
             $this->error('您没有权限');
+        }
+        // 兼职教练不能操作
+        if ($is_power == 2) {
+            $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $this->error('您没有权限');
+            }
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 教练列表
@@ -310,9 +318,18 @@ class Lesson extends Base{
         $camp_id = input('param.camp_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        // 获取会员在训练营角色
         if($is_power<2){
             $this->error('您没有权限');
         }
+        // 兼职教练不能操作
+        if ($is_power == 2) {
+            $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $this->error('您没有权限');
+            }
+        }
+
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
@@ -336,6 +353,13 @@ class Lesson extends Base{
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
         if($is_power<2){
             $this->error('您没有权限');
+        }
+        // 兼职教练不能操作
+        if ($is_power == 2) {
+            $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $this->error('您没有权限');
+            }
         }
 
         // 课程列表
