@@ -360,87 +360,102 @@ class CampMember extends Base
         }
     }
 
-    /** 解除训练营-人员关联 2017/09/27
+    /** 操作训练营-人员关联 2017/09/27
      * $id: input('campmemberid') camp_member表主键
      * @return array|\think\response\Json
      */
     public function removerelationship()
     {
         try {
-            $id = input('campmemberid');
-            $model = new \app\model\CampMember();
-            $campmember = $model->where(['id' => $id])->find();
-            if ($campmember->getData('type') == 4 && $campmember->member_id == $this->memberInfo['id']) {
-                return json(['code' => 100, 'msg' => '你是营主不能删除自己']);
+            // 请求参数验证
+            $id = input('post.campmemberid');
+            $action = input('post.action');
+            if (!$id || !$action) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-
-            $campS = new CampService();
-            // 操作权限
-            $power = $campS->isPower($campmember['camp_id'], $this->memberInfo['id']);
+            // 获取camp_member数据
+            $model = new \app\model\CampMember();
+            $campMember = $model->get($id);
+            if (!$campMember) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            // 获取原始数据
+            $campMemberData = $campMember->getData();
+            $campMember = $campMember->toArray();
+            // 获取会员在训练营角色，营主才能操作
+            $power = getCampPower($campMemberData['camp_id'], $this->memberInfo['id']);
             if ($power != 4) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403').'，只有营主才能操作']);
             }
-
-            // 删教练 检查是否在营有班级
-            if ($campmember->getData('type') == 2) {
-                $coachS = new CoachService();
-                $coach = $coachS->getCoachInfo(['member_id' => $campmember['member_id']]);
-                $grade = $coachS->ingradelist($coach['id'], $campmember['camp_id']);
-                if ($grade) {
-                    return json(['code' => 100, 'msg' => '该教练有班级记录,请先修改班级记录主教练/助教练']);
+            $messageSevice = new MessageService();
+            $messageData = [];
+            $resUpdateCampMebmer = false;
+            // 根据action参数 识别业务操作 level:改变角色等级，del移除人员出训练营
+            switch ($action) {
+                case 'level' : {
+                    // 改变角色等级
+                    if ($campMemberData['type'] == 2) {
+                        // 教练角色 改变兼职教练/正职教练：现在是兼职改为正职，反之现在是正职改为兼职
+                        if ($campMemberData['level'] == 1) {
+                            $newLevel=2;
+                            $levelText = '高级教练';
+                        } else {
+                            $newLevel=1;
+                            $levelText = '普通教练';
+                        }
+                        // 更新camp_member数据
+                        $resUpdateCampMebmer = $model->save(['level' => $newLevel], ['id' => $campMemberData['id']]);
+                        $messageData = [
+                            'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更',
+                            'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更，现为：'.$levelText,
+                            'keyword1' => '训练营教练权限变更',
+                            'keyword2' => $levelText,
+                            'keyword3' => date('Y年m月d日 H:i', time()),
+                            'remark' => '点击进入查看更多',
+                            'url' => url('frontend/camp/campinfo', ['camp_id' => $campMember['camp_id']], '', true)
+                        ];
+                    }
+                    break;
                 }
-                $lesson = $coachS->inlessonlist($coach['id'], $campmember['camp_id']);
-                if ($lesson) {
-                    return json(['code' => 100, 'msg' => '该教练有课程记录,请先修改课程记录主教练/助教练']);
+                default: {
+                    // 移除
+                    // 营主不能移除自己
+                    if ($campMemberData['type'] == 4 && $campMemberData['member_id'] == $this->memberInfo['id']) {
+                        return json(['code' => 100, 'msg' => '你是营主不能删除自己']);
+                    }
+                    // 删教练 检查教练在营内有无班级
+                    if ($campMember['type'] == 2) {
+                        $coachS = new CoachService();
+                        $coach = $coachS->getCoachInfo(['member_id' => $campMemberData['member_id']]);
+                        $grade = $coachS->ingradelist($coach['id'], $campMemberData['camp_id']);
+                        if ($grade) {
+                            return json(['code' => 100, 'msg' => '该教练有班级记录,请先修改班级记录主教练/助教练']);
+                        }
+                        $lesson = $coachS->inlessonlist($coach['id'], $campMemberData['camp_id']);
+                        if ($lesson) {
+                            return json(['code' => 100, 'msg' => '该教练有课程记录,请先修改课程记录主教练/助教练']);
+                        }
+                    }
+                    // 移除人员 更新camp_member数据
+                    $resUpdateCampMebmer = $model->save(['status' => -1], ['id' => $campMemberData['id']]);
+                    $messageData = [
+                        'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
+                        'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
+                        'keyword1' => '训练营教练身份',
+                        'keyword2' => '被移除',
+                        'keyword3' => date('Y年m月d日 H:i', time()),
+                        'remark' => '点击进入查看更多',
+                        'url' => url('frontend/camp/campinfo', ['camp_id' => $campMember['camp_id']], '', true)
+                    ];
                 }
             }
-
-            $campmember->status = -1;
-            $result = $campmember->save();
-            if ($result) {
-                $memberopenid = getMemberOpenid($campmember['member_id']);
-                // 发送模板消息
-                $sendTemplateData = [
-                    'touser' => $memberopenid,
-                    'template_id' => 'anBmKL68Y99ZhX3SVNyyX6hrtzhlDW3RrB-vB6_GmqM',
-                    'url' => url('frontend/index/index', '', '', true),
-                    'data' => [
-                        'first' => ['value' => '您好, 您所在的' . $campmember['camp'] . '的' . $campmember['type'] . '身份被移除了'],
-                        'keyword1' => ['value' => $campmember['member']],
-                        'keyword2' => ['value' => '训练营营主或管理员移除'],
-                        'keyword3' => ['value' => date('Y年m月d日 H时i分')]
-                    ]
-                ];
-                $wechatS = new WechatService();
-                $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
-                $log_sendTemplateData = [
-                    'wxopenid' => $memberopenid,
-                    'member_id' => $campmember['member_id'],
-                    'url' => $sendTemplateData['url'],
-                    'content' => serialize($sendTemplateData),
-                    'create_time' => time()
-                ];
-                if ($sendTemplateResult) {
-                    $log_sendTemplateData['status'] = 1;
-                } else {
-                    $log_sendTemplateData['status'] = 0;
-                }
-                db('log_sendtemplatemsg')->insert($log_sendTemplateData);
-
-                // 发送站内消息
-                $modelMessageMember = new MessageMember();
-                $modelMessageMember->save([
-                    'title' => $sendTemplateData['data']['first']['value'],
-                    'content' => $sendTemplateData['data']['first']['value'],
-                    'member_id' => $campmember['member_id'],
-                    'status' => 1,
-                    'url' => $sendTemplateData['url']
-                ]);
-
-                $response = json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $result]);
-            } else {
+            if (!$resUpdateCampMebmer) {
                 $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
+            // 更新camp_member数据成功 发送通知给该会员
+            $messageSevice->sendMessageToMember($campMember['member_id'], $messageData, config('wxTemplateID.informationChange'));
+            // 返回成功响应结果
+            $response = json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $resUpdateCampMebmer]);
             return $response;
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

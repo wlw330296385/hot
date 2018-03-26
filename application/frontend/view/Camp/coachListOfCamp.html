@@ -94,12 +94,20 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/' + campID;
                             var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-grey" data-level="' + data.data[i].level + '">设为正职</span><span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '">删除</span></div>';
+                            newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled">';
+                            if (data.data[i].type==2) {
+                                if (data.data[i].level == 2) {
+                                    newli += '<span class="mui-btn mui-btn-grey" data-level="' + data.data[i].level + '" data-id="' + data.data[i].campmemberid + '" data-action="level">设为普通教练</span>';
+                                } else if (data.data[i].level == 1) {
+                                    newli += '<span class="mui-btn mui-btn-grey" data-level="' + data.data[i].level + '" data-id="' + data.data[i].campmemberid + '" data-action="level">设为高级教练</span>';
+                                }
+                            }
+                            newli += '<span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '" data-action="del">删除</span></div>';
                             newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p>';
                             if (data.data[i].level == 2) {
-                                newli += '<p>正职教练</p>';
+                                newli += '<p>高级教练</p>';
                             } else if (data.data[i].level == 1) {
-                                newli += '<p>兼职教练</p>';
+                                newli += '<p>普通教练</p>';
                             }
                             newli += '</div><div class="price-frame">'
                             if (star == 0) {
@@ -133,14 +141,14 @@
             var txt = elem.innerHTML;
             var url = "{:url('api/campMember/removerelationship')}";
             var campmemberid = $(this).attr("data-id");
-            var level = $(this).attr("data-level");
+            var action = elem.getAttribute('data-action');
             mui.confirm('确认将该教练' + txt + '?', '提示', btnArray, function (e) {
                 if (e.index == 0) {
                     mui.ajax({
                         url: url,
                         data: {
                             campmemberid: campmemberid,
-                            level: level
+                            action: action
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -150,7 +158,16 @@
                             console.log(data);
                             if (data.code == 200) {
                                 console.log(data);
-                                li.parentNode.removeChild(li);
+                                // 删除操作 移除节点元素，否则弹出提示
+                                if (action =='del') {
+                                    li.parentNode.removeChild(li);
+                                } else {
+                                    mui.alert(data.msg);
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+
                                 /*$("ul.coach").empty();
                                 if(newli==''){
                                     newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'

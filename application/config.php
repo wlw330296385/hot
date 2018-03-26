@@ -31,7 +31,6 @@ return [
         'memberQuit' => 'b2DC63QQokA8WwfoaUb-FgUuyMOaiPBdzxH7Gm0-1hs',//成员退出
         'successRefund' => 'MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ',//申请退款成功
         'successCheck' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',//审核通过
-        //'errorCheck' => '   z03wxEVbhiEnXChfnBKEYhpYpCvIMLEPq0912RGgrQg',//未通过教练认证通知
         'sendSchedule' => '_ld4qtOLJA1vl-oh0FxCliMK1tbGD0nOTq7Z4OmeFCE', //发送课时通知
         'checkPend' => 'eq30-P4InOr-gndRqTdK8xAgpsMWdh3BWO1AArdxoeI', // 待审批事项通知
         'eventJoin' =>'rgF4hfyPKVxeP9HSOSbmzf7iqITPB_Bo5UgGyc9j36s',//付费活动报名成功
@@ -43,7 +42,8 @@ return [
         'refereeTask' => '9XyZ3Mb70gR8HmE0N6y_9TESECJYyi3r4kA_c45d_EU', // 裁判任务通知
         'receviceInvitaion' => '68DeWPCsdhaPuLJfPCPwPhrjhxo3m2ZUqa7b9j8XIfg', // 邀请已接受通知
         'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒,
-        'matchResult' => 'R5jFmx4b5mTSXyRXyls3AAGO0vGgy7tbTMJ6GcEdotI' // 比赛结果通知
+        'matchResult' => 'R5jFmx4b5mTSXyRXyls3AAGO0vGgy7tbTMJ6GcEdotI', // 比赛结果通知
+        'informationChange' => 'b_aj8CaXc3P4d03RpCtQbLCUBLeowrj-z1SVo2uXr5M', //信息变更提醒
     ],
 
     // 七牛云
