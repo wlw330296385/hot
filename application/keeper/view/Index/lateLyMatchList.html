@@ -47,7 +47,6 @@
                 var gType = 1;//代表下拉刷新
                 toList(page, gType);//具体取数据的方法
             }
-
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -94,11 +93,12 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/lastmatch','','',true)}";
+                var url = "{:url('api/team/lastmatchlist','','',true)}";
                 var member_id = "{$memberInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
+                        page:page,
                         member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据

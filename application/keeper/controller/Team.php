@@ -583,6 +583,8 @@ class Team extends Base {
     public function claimfinishedmatch() {
         // 比赛id
         $matchId = input('match_id', 0);
+        // 要认领的比赛战绩id
+        $recordId = input('record_id', 0);
         // service
         $matchService = new MatchService();
         $teamS = new TeamService();
@@ -591,8 +593,12 @@ class Team extends Base {
         // 获取要认领的比赛战绩数据
         $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id']]);
 
+
         // 比赛战绩是属于球队的话，插入球队认领的比赛战绩数据
         if ($matchRecordInfo) {
+            if ($this->team_id != $matchRecordInfo['away_team_id']) {
+                $this->error('球队信息不匹配，不能访问');
+            }
             // 比赛双方球队比分信息数据位置对换
             $claimRecordData = [
                 'match_id' => $matchInfo['id'],
@@ -660,7 +666,8 @@ class Team extends Base {
             'matchInfo' => $matchInfo,
             'teamrole' => $teamrole,
             'refereeList' => $refereeList,
-            'countTeamMember' => $countTeamMember
+            'countTeamMember' => $countTeamMember,
+            'recordId' => $recordId
         ]);
     }
 

@@ -16,17 +16,6 @@
             <div class="col-sm-12">
               <div class="form-group">
                 <!-- /.input group -->
-                <label>教练：</label>
-                <div class="input-group" data-toggle="modal" data-target="#coachModal">
-                  <input type="text" name="coach" class="form-control pull-right" placeholder="选择教练员" value="">
-                  <input type="hidden" name="member_id" value="">
-                  <div class="input-group-addon">
-                    <i class="fa fa-angle-down"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <!-- /.input group -->
                 <label>统计时间：</label>
                 <div class="input-group">
                   <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
@@ -60,7 +49,6 @@
                     <th>所属训练营</th>
                     <th>结算时间</th>
                     <th>课时信息</th>
-                    <th>操作</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -85,9 +73,7 @@
                       echo $v['student'].' ';
                       }
                       ?><br>
-                      课时工资（供参考）：{$vol.coach_salary}                                        </td>
-                    <td>
-                      <a href="/admin/schedule/detail/id/493" class="btn btn-xs btn-info"><i class="fa fa-inbox"> 查看课时详情</i></a>
+                      课时工资（供参考）：{$vol.coach_salary}
                     </td>
                   </tr>
                   {/volist}
@@ -110,46 +96,6 @@
 
 
 
-
-<!-- Modal : Coach -->
-<div class="modal fade" id="coachModal" tabindex="-1" role="dialog" aria-labelledby="coachModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="coachModalLabel">请选择教练员</h4>
-      </div>
-      <div class="modal-body">
-        <div class="input-group input-group-sm">
-          <input type="text" name="coachKeyword" class="form-control coachKeyword" placeholder="请输入教练员名称 ...">
-          <span class="input-group-btn">
-                      <button type="button" id="searchCoachBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
-                    </span>
-        </div>
-        <div class="tableScroll">
-          <table id="coachList" class="table table-bordered table-striped dataTable">
-            <thead>
-            <tr role="row">
-              <th>教练员名称</th>
-              <th>所属地区</th>
-              <th>详情</th>
-              <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr role="row" class="nodata"><td colspan="4">请先选择训练营获取教练员</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 {/block}
 
 
@@ -162,8 +108,8 @@
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-    var currCoachName = localStorage.getItem('currCoachName');
-    var currMemberID = localStorage.getItem('currMemberID');
+    var currCoachName = '{$camp_member.member}';
+    var currMemberID = '{$camp_member.member_id}';
     var currDateYM = localStorage.getItem('currDateYM');
 
     $(function () {
@@ -186,8 +132,6 @@
         }
 
         //判断是否有指定训练营和教练员的本地存储
-        $("input[name=member_id]").val(currMemberID);
-        $("input[name=coach]").val(currCoachName);
         $("input[name=dateYM]").val(currDateYM);
 
         //隔行变色
@@ -213,91 +157,29 @@
             todayBtn: true
         });
 
-        //搜索教练员
-        $("#searchCoachBtn").on("click", function () {
-            var keyword = $(".coachKeyword").val();
-            var camp_id = $('input[name="camp_id"]').val();
-            if(keyword==""||camp_id==""){
-                alert("请先选择训练营，再输入教练员名称！");
-            }else{
-                //搜索教练员列表查询
-                toCoachList(keyword);
-            }
-        })
-
-
-        $("#coachList tbody").on("click",".btn", function () {
-            var member_id = $(this).attr("data-member_id");
-            var coach = $(this).attr("data-coach");
-            $("input[name=member_id]").val(member_id);
-            $("input[name=coach]").val(coach);
-            $('#coachModal').modal('hide');
-        })
 
         //查询统计
         $("#goSearch").on("click", function () {
-            var coach = $("input[name=coach]").val();
-            var member_id = $("input[name=member_id]").val();
             var getYM = $("input[name=dateYM]").val();
-            if(member_id==""){
-                alert("请选择教练员！");
+            if(getYM==""){
+                alert("请选择年月份！");
                 return false;
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCoachName',coach);
-            localStorage.setItem('currMemberID',member_id);
             //拆分日期
             var arrYM = getYM.split('-');
             var getLastDate = new Date(arrYM[0],arrYM[1],0);
             var beginDate = arrYM[0]+arrYM[1]+'01';
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Coach/coachSallary/')}"+"/member_id/"+member_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            window.location.href="{:url('/management/Statistics_Coach/coachSallary/')}"+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
 
     })
 
 
-    //接口获取数据并追加到页面：平台教练员
-    var toCoachList = function (keyword) {
-        console.log(keyword)
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/coach/searchCoachListAllApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                status: 1,
-                page:1,
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[i].coach + '" data-member_id="' + data.data[i].member_id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#coachList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#coachList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
 
 </script>
 {/block}

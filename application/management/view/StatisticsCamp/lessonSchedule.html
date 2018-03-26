@@ -18,16 +18,6 @@
 					<div class="row hotTbHeader">
 						<div class="col-sm-12">
 							<div class="form-group">
-								<label>训练营：</label>
-								<div class="input-group" data-toggle="modal" data-target="#campModal">
-									<input type="text" name="camp" class="form-control pull-right" placeholder="选择训练营" value="">
-									<input type="hidden" name="camp_id" value="">
-									<div class="input-group-addon">
-										<i class="fa fa-angle-down"></i>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
 								<!-- /.input group -->
 								<label>课程：</label>
 								<div class="input-group" data-toggle="modal" data-target="#lessonModal">
@@ -154,47 +144,6 @@
 
 
 
-
-
-<!-- Modal : Camp -->
-<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
-			</div>
-			<div class="modal-body">
-				<div class="input-group input-group-sm">
-					<input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称 ...">
-					<span class="input-group-btn">
-                      <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
-                    </span>
-				</div>
-				<div class="tableScroll">
-					<table id="campList" class="table table-bordered table-striped dataTable">
-						<thead>
-						<tr role="row">
-							<th>训练营名称</th>
-							<th>所属地区</th>
-							<th>详情</th>
-							<th>操作</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr role="row" class="nodata"><td colspan="4">请搜索训练营</td></tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" id="clearCamp">清除所选训练营</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <!-- Modal : Lesson -->
 <div class="modal fade" id="lessonModal" tabindex="-1" role="dialog" aria-labelledby="lessonModalLabel">
 	<div class="modal-dialog" role="document">
@@ -291,8 +240,6 @@
     var currCoachName = localStorage.getItem('currCoachName');
     var currMemberID = localStorage.getItem('currMemberID');
     var currDateYM = localStorage.getItem('currDateYM');
-    var currCampName = localStorage.getItem('currCampName');
-    var currCampID = localStorage.getItem('currCampID');
     var currLessonName = localStorage.getItem('currLessonName');
     var currLessonID = localStorage.getItem('currLessonID');
 
@@ -334,21 +281,11 @@
         $("input[name=lesson_id]").val(currLessonID);
         $("input[name=lesson]").val(currLessonName);
         $("input[name=dateYM]").val(currDateYM);
-        if(currCampID!=''&&currCampID!=null){
-            $("input[name=camp_id]").val(currCampID);
-            $("input[name=camp]").val(currCampName);
-            $(".campKeyword").val(currCampName);
-            $(".campName").text(currCampName);
-            toCampCoachList(currCampID);
-            toCampLessonList(currCampID);
-            $("#onCampTips").show();
-        }
+        toCampCoachList('{$camp_member.camp_id}');
+        toCampLessonList('{$camp_member.camp_id}');
 
         //=========================== 初始化数据 ==============================//
 
-
-        //平台后续换成分页版（地区代理商无需分页）
-        toCampList('');
 
         //选择年月
         $('#dateYM').datepicker({
@@ -360,74 +297,37 @@
         });
 
 
-        //搜索训练营
-        $("#searchCampBtn").on("click", function () {
-            var keyword = $(".campKeyword").val();
-            if(keyword==""){
-                alert("请输入训练营名称！");
-            }else{
-                toCampList(keyword);
-            }
-        });
 
         //搜索教练员
         $("#searchCoachBtn").on("click", function () {
             var keyword = $(".coachKeyword").val();
-            var camp_id = $('input[name="camp_id"]').val();
             if(keyword==""){
                 alert("请输入教练员名称！");
             }else{
-                //判断是否有campid选择不同api
-                if(camp_id==""){
-                    toCoachList(keyword);
-                }else{
-                    //当前训练营的教练员列表查询
-                    $("#coachList tbody tr").removeClass("text-yellow");
-                    $("#coachList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
-                    $("#coachList .text-yellow").each(function (i) {
-                        $("#coachList tbody tr:first-child").before($(this));
-                    });
-                }
+                //当前训练营的教练员列表查询
+                $("#coachList tbody tr").removeClass("text-yellow");
+                $("#coachList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
+                $("#coachList .text-yellow").each(function (i) {
+                    $("#coachList tbody tr:first-child").before($(this));
+                });
             }
         });
 
         //搜索课程
         $("#searchLessonBtn").on("click", function () {
             var keyword = $(".lessonKeyword").val();
-            var camp_id = $('input[name="camp_id"]').val();
             if(keyword==""){
                 alert("请输入课程名称！");
             }else{
-                //判断是否有campid选择不同api
-                if(camp_id==""){
-                    toLessonList(keyword);
-                }else{
-                    //当前训练营的教练员列表查询
-                    $("#lessonList tbody tr").removeClass("text-yellow");
-                    $("#lessonList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
-                    $("#lessonList .text-yellow").each(function (i) {
-                        $("#lessonList tbody tr:first-child").before($(this));
-                    });
-                }
+                //当前训练营的教练员列表查询
+                $("#lessonList tbody tr").removeClass("text-yellow");
+                $("#lessonList tbody tr td:first-child:contains('"+keyword+"')").parent().addClass("text-yellow");
+                $("#lessonList .text-yellow").each(function (i) {
+                    $("#lessonList tbody tr:first-child").before($(this));
+                });
             }
         });
 
-
-        $("#campList tbody").on("click",".btn", function () {
-            var camp_id = $(this).attr("data-id");
-            var camp = $(this).attr("data-camp");
-            $("input[name=camp_id]").val(camp_id);
-            $("input[name=camp]").val(camp);
-            $("input[name=member_id]").val('');
-            $("input[name=coach]").val('');
-            $("#coachModalLabel").text("请选择"+camp+"教练员");
-            toCampCoachList(camp_id);
-            $("input[name=lesson_id]").val('');
-            $("input[name=lesson]").val('');
-            $("#lessonModalLabel").text("请选择"+camp+"课程");
-            toCampLessonList(camp_id);
-            $('#campModal').modal('hide');
-        });
 
         $("#coachList tbody").on("click",".btn", function () {
             var member_id = $(this).attr("data-member_id");
@@ -447,21 +347,16 @@
 
         //查询统计
         $("#goSearch").on("click", function () {
-            var camp = $("input[name=camp]").val();
-            var camp_id = $("input[name=camp_id]").val();
             var coach = $("input[name=coach]").val();
             var member_id = $("input[name=member_id]").val();
             var lesson = $("input[name=lesson]").val();
             var lesson_id = $("input[name=lesson_id]").val();
             var getYM = $("input[name=dateYM]").val();
-            if(member_id==""&&lesson_id==""&&camp_id==""){
-                alert("至少选择训练营、教练员、课程其中一项");
+            if(member_id==""&&lesson_id==""){
+                alert("至少选择教练员、课程其中一项");
                 return false;
             }
             var linkPram = "";
-            if(camp_id!=""){
-                linkPram = linkPram+"camp_id/"+camp_id+"/";
-			}
             if(member_id!=""){
                 linkPram = linkPram+"member_id/"+member_id+"/";
             }
@@ -470,8 +365,6 @@
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCampName',camp);
-            localStorage.setItem('currCampID',camp_id);
             localStorage.setItem('currCoachName',coach);
             localStorage.setItem('currMemberID',member_id);
             localStorage.setItem('currLessonName',lesson);
@@ -482,16 +375,10 @@
             var beginDate = arrYM[0]+arrYM[1]+'01';
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
 
-            window.location.href="{:url('/admin/Statistics_Camp/lessonSchedule/')}"+linkPram+"monthstart/"+beginDate+"/monthend/"+endDate;
+            window.location.href="{:url('/management/Statistics_Camp/lessonSchedule/')}"+linkPram+"monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
 
-
-        //清除查询表单值
-        $("#clearCamp").on("click", function () {
-            clearCampInput();
-            $('#campModal').modal('hide');
-        });
         $("#clearLesson").on("click", function () {
             clearLessonInput();
             $('#lessonModal').modal('hide');
@@ -499,12 +386,6 @@
         $("#clearCoach").on("click", function () {
             clearCoachInput();
             $('#coachModal').modal('hide');
-        });
-        $('input[name="camp"]').on("blur", function () {
-            var getVal = $(this).val();
-            if(getVal==""){
-                clearCampInput();
-            }
         });
         $('input[name="coach"]').on("blur", function () {
             var getVal = $(this).val();
@@ -522,16 +403,6 @@
     })
 
     //清除查询表单函数
-    var clearCampInput = function () {
-        $('input[name="camp"]').val('');
-        $('input[name="camp_id"]').val('');
-        localStorage.removeItem('currCampName');
-        localStorage.removeItem('currCampID');
-        $("#coachModalLabel").text("请选择教练员");
-        $("#coachList tbody").empty().html('<tr role="row" class="nodata"><td colspan="4">请搜索教练员</td></tr>');
-        $("#lessonModalLabel").text("请选择课程");
-        $("#lessonList tbody").empty().html('<tr role="row" class="nodata"><td colspan="5">请搜索课程</td></tr>');
-    };
     var clearCoachInput = function () {
         $("input[name=member_id]").val('');
         $("input[name=coach]").val('');
@@ -546,83 +417,6 @@
     };
 
 
-
-
-    //接口获取数据并追加到页面
-    var toCampList = function (keyword) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                status: 1,
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#campList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
-
-    //接口获取数据并追加到页面：平台教练员
-    var toCoachList = function (keyword) {
-        console.log(keyword)
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/coach/searchCoachListAllApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                status: 1,
-                page:1,
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[i].coach + '" data-member_id="' + data.data[i].member_id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#coachList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#coachList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
 
     //接口获取数据并追加到页面：训练营教练员
     var toCampCoachList = function (camp_id) {
@@ -658,42 +452,6 @@
         });
     };
 
-
-    //接口获取数据并追加到页面：平台教练员
-    var toLessonList = function (keyword) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/lesson/getLessonListNoPageApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].lesson + '</td><td>' + data.data[i].status + '</td><td>' + data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#lessonList tbody").html('<tr role="row" class="nodata"><td colspan="5">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#lessonList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
 
     //接口获取数据并追加到页面：训练营教练员
     var toCampLessonList = function (camp_id) {

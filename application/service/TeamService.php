@@ -1039,7 +1039,7 @@ class TeamService
         if(!empty($condition)) {
             // 检查有无符合条件数据
             $rows = $model->where($condition)->select();
-            if ($rows) {
+            if (!$rows->isEmpty()) {
                 // 更新数据
                 $res = $model->allowField(true)->save($data, $condition);
                 if ($res || ($res === 0)) {
