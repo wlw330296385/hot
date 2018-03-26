@@ -127,7 +127,7 @@ class Member extends Backend{
 			}else{
 				$field = '请选择搜索关键词';
 				$map = function($query) use ($keyword){
-					$query->where(['member'=>['like',"%$keyword%"]])->whereOr(['telephone'=>['like',"%$keyword%"]])->whereOr(['nickname'=>['like',"%$keyword%"]])->whereOr(['hot_id'=>['like',"%$keyword%"]]);
+					$query->where(['member|telephone|nickname|hot_id'=>['like',"%$keyword%"]]);
 				};
 			}
 		}
@@ -136,7 +136,7 @@ class Member extends Backend{
 		$memberList = $model->where($map)->order('id desc')->paginate(10);
 
 		if(request()->isPost()){
-			$hot_id = input('post.hot_id');
+			$telephone = input('post.telephone');
 			$memberInfo = db('member')->where(['id'=>$member_id])->find();
 			if(!$memberInfo) {
 				$this->error('操作错误');
@@ -144,7 +144,7 @@ class Member extends Backend{
 			if($memberInfo['pid']<>0){
 				$this->error('改用户已存在推荐人,不允许修改');
 			}
-			$PmemberInfo = db('member')->where(['hot_id'=>$hot_id])->find();
+			$PmemberInfo = db('member')->where(['telephone'=>$telephone])->find();
 			if(!$PmemberInfo) {
 				$this->error('不存在该推荐人');
 			}

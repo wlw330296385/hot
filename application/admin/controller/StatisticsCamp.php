@@ -594,8 +594,16 @@ class StatisticsCamp extends Backend{
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $goods_type = input('param.goods_type',1);
-        $status = input('param.status',1);
-        $list = db('bill')->where(['camp_id'=>$camp_id,'goods_type'=>$goods_type,'create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->select();
+        $status = input('param.status');
+        $keyword = input('param.keyword');
+        $map = ['camp_id'=>$camp_id,'goods_type'=>$goods_type,'create_time'=>['between',[$month_start,$month_end]]];
+        if($keyword){
+            $map['member|student|goods'] = ['like',"%$keyword%"];
+        }
+        if($status){
+            $map['status'] = $status;
+        }
+        $list = db('bill')->where($map)->where('delete_time',null)->select();
         //查询条件：camp_id，goods_type，monthstart，monthend
         // dump($list);
         $this->assign('list',$list);
