@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--自定义多色图标icon.js-->
@@ -61,6 +62,18 @@
 
         .lineHeight20 {
             line-height: 20px !important;
+        }
+
+        .leagueNav {
+            background-color: #fff;
+            margin-bottom: 4px;
+            padding: 11px 0;
+        }
+
+        .showTitle {
+            white-space: normal;
+            max-height: 40px;
+            line-height: 20px;
         }
     </style>
 </head>
@@ -127,10 +140,10 @@
                 </li>
             </ul>
 
-            <div class="nav-list mb">
+            <!-- <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <a href="{:url('member/mygrade')}">
+                        <a href="{:url('match/leagueGulations')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-class"></use>
                             </svg>
@@ -138,7 +151,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <a href="{:url('/keeper/Team/myteam')}">
+                        <a href="{:url('match/leagueSchedule')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-team"></use>
                             </svg>
@@ -146,15 +159,17 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <div class="goConfirm">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-mine-Album"></use>
-                            </svg>
-                            <div class="mui-media-body">战绩</div>
-                        </div>
+                        <a href="{:url('match/leagueRecord')}">
+                            <div class="goConfirm">
+                                <svg class="coloricon" aria-hidden="true">
+                                    <use xlink:href="#icon-mine-Album"></use>
+                                </svg>
+                                <div class="mui-media-body">战绩</div>
+                            </div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <a href="{:url('member/followlist')}">
+                        <a href="{:url('match/leagueData')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-attention"></use>
                             </svg>
@@ -162,49 +177,26 @@
                         </a>
                     </li>
                 </ul>
-            </div>
-            <!-- <div class="changeTab">
-                <div id="segmentedControl" class="mui-segmented-control" style="background:#fff !important;color:#000 !important;">
-                    <a class="mui-control-item mui-active" href="#item1">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-mine-class"></use>
-                        </svg>
-                        <div class="mui-media-body">章程</div>
-                    </a>
-                    <a class="mui-control-item" href="#item2">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-mine-class"></use>
-                        </svg>
-                        <div class="mui-media-body">章程</div>
-                    </a>
-                    <a class="mui-control-item" href="#item3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-mine-class"></use>
-                        </svg>
-                        <div class="mui-media-body">章程</div>
-                    </a>
-                    <a class="mui-control-item" href="#item4">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-mine-class"></use>
-                        </svg>
-                        <div class="mui-media-body">章程</div>
-                    </a>
-                </div>
-            </div>
-            <div class="item-list">
-                <div id="item1" class="mui-control-content mui-active">
-                    的点点滴滴多
-                </div>
-                <div id="item2" class="mui-control-content">
-                    阿萨德钢丝管
-                </div>
-                <div id="item3" class="mui-control-content">
-                    噶撒大哥啥的噶电视柜
-                </div>
-                <div id="item4" class="mui-control-content">
-                    sssssss
-                </div>
             </div> -->
+
+            <nav class="mui-bar-tab leagueNav">
+                <a class="mui-tab-item" href="{:url('match/leagueGulations')}">
+                    <span class="mui-icon mui-icon-home"></span>
+                    <span class="mui-tab-label">章程</span>
+                </a>
+                <a class="mui-tab-item" href="{:url('match/leagueSchedule')}">
+                    <span class="mui-icon mui-icon-email"></span>
+                    <span class="mui-tab-label">赛程</span>
+                </a>
+                <a class="mui-tab-item" href="{:url('match/leagueRecord')}">
+                    <span class="mui-icon mui-icon-contact"></span>
+                    <span class="mui-tab-label">战绩</span>
+                </a>
+                <a class="mui-tab-item" href="{:url('match/leagueData')}">
+                    <span class="mui-icon mui-icon-gear"></span>
+                    <span class="mui-tab-label">数据</span>
+                </a>
+            </nav>
 
             <!--比赛动态-->
             <div class="page-header border-b">
@@ -219,24 +211,26 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="/keeper/team/teaminfo/team_id/9" class="mui-navigate-right">
                         <img class="mui-media-object mui-pull-left" src="/uploads/images/team/2018/02/thumb_5a77fcf8e6b94.png" style="width:90px !important; height:60px !important">
-                        <h5>
-                            <strong class="textOverFlow">2018深圳宝安城市学院社区篮球</strong>
-                        </h5>
-                        <div class="mui-media-body lineHeight20">
-                            <p class="mui-ellipsis ">2018/12/12-2018/12/18</p>
-                            <p class="mui-ellipsis ">阅读：255&nbsp;点赞：196</p>
+                        <div class="showTitle">
+                            <strong>2018深圳宝安城市学院社区篮球篮球篮球篮球篮球</strong>
+                        </div>
+                        <div class="mui-media-body" style="width:65% !important">
+                            <p>2018-12-12 &nbsp;
+                                <font class="fr">阅读：255&nbsp;点赞：196</font>
+                            </p>
                         </div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="/keeper/team/teaminfo/team_id/9" class="mui-navigate-right">
                         <img class="mui-media-object mui-pull-left" src="/uploads/images/team/2018/02/thumb_5a77fcf8e6b94.png" style="width:90px !important; height:60px !important">
-                        <h5>
-                            <strong class="textOverFlow">2018深圳宝安城市学院社区篮球</strong>
-                        </h5>
-                        <div class="mui-media-body lineHeight20">
-                            <p class="mui-ellipsis ">2018/12/12-2018/12/18</p>
-                            <p class="mui-ellipsis ">阅读：255&nbsp;点赞：196</p>
+                        <div class="showTitle">
+                            <strong>2018深圳宝安城市学院社区篮球篮球篮球</strong>
+                        </div>
+                        <div class="mui-media-body" style="width:65% !important">
+                            <p>2018-12-12 &nbsp;
+                                <font class="fr">阅读：255&nbsp;点赞：196</font>
+                            </p>
                         </div>
                     </a>
                 </li>
@@ -310,6 +304,10 @@
                 indicators: true //是否显示滚动条
             });
         })(mui);
+        // a标签跳转
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
         $(function () {
             var count = 1;
             // 判断是否登陆
