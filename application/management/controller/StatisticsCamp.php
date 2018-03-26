@@ -87,8 +87,8 @@ class StatisticsCamp extends Camp{
     // 资金账目
     public function campBill(){
         $camp_id = $this->camp_member['camp_id'];
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
+        $monthStart = input('param.monthstart');
+        $monthEnd = input('param.monthend');
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $income = [];
@@ -101,8 +101,7 @@ class StatisticsCamp extends Camp{
         $list_income2 = [];
         // 活动订单收入 
         $income2 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
-        
-        if($this->campInfo['rebate_type'] == 1 && $camp_id){
+        if($this->campInfo['rebate_type'] == 1 && $month_end){
             //课时收入
             $income3 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // echo db('income')->getlastsql();
@@ -167,17 +166,18 @@ class StatisticsCamp extends Camp{
             $this->assign('list_1',$list_1);//提现   
             $this->assign('list1',$list1);//赠课
             return view('StatisticsCamp/campBill');
-        }elseif ($this->campInfo['rebate_type'] == 1 && !$camp_id) {
+        }elseif ($this->campInfo['rebate_type'] == 1 && !$month_end) {
             $this->assign('list4',$list4);//课时收入
             $this->assign('list3',$list3);//课时收入
             $this->assign('list2',$list2);//活动收入
             $this->assign('list_1',$list_1);//提现   
             $this->assign('list1',$list1);//赠课
             return view('StatisticsCamp/campBill');
-        }elseif ($this->campInfo['rebate_type'] == 2 && $camp_id) {
+        }elseif ($this->campInfo['rebate_type'] == 2 && $month_end) {
+
             $list1 = []; $list2 = []; $list3 = []; $list4 = []; $list_1 = []; $list_income1 = []; $list_income2 = [];
             // 课程订单收入
-            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 赠课支出
             $output1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时退费
@@ -252,7 +252,7 @@ class StatisticsCamp extends Camp{
             $this->assign('list_income1',$list_income1);
             $this->assign('list_income2',$list_income2);
             return view('StatisticsCamp/orgzBill');
-        }elseif ($this->campInfo['rebate_type'] == 1 && !$camp_id) {
+        }elseif ($this->campInfo['rebate_type'] == 1 && !$month_end) {
 
             $this->assign('list1',$list1);
             $this->assign('list2',$list2);

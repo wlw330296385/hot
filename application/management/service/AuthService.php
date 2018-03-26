@@ -15,7 +15,7 @@ class AuthService {
 	        $data['lastlogin_at'] = time();
 	        $data['lastlogin_ip'] = request()->ip();
 	        $data['lastlogin_ua'] = request()->header('user-agent');
-	        $Member->save($data);
+	        $Member->save($data,['id'=>$memberInfo['id']]);
 			cookie('member_id',$memberInfo['id'],$keeptime);
 			session('memberInfo',$memberInfo);
 			return true;
