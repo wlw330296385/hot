@@ -73,7 +73,7 @@
                 </div>
                 <div class="box-body">
                     <div class="chart">
-                        <canvas id="turnoverMonth" style="height: 250px; width: 666px;" width="666" height="250"></canvas>
+                        <canvas id="turnoverMonth" style="height: 400px; width: 600px;" width="600" height="400"></canvas>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -87,7 +87,7 @@
                 </div>
                 <div class="box-body">
                     <div class="chart">
-                        <canvas id="turnoverYear" style="height: 250px; width: 666px;" width="666" height="250"></canvas>
+                        <canvas id="turnoverYear" style="height: 400px; width: 600px;" width="600" height="400"></canvas>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -104,7 +104,7 @@
                 </div>
                 <div class="box-body">
                     <div class="chart">
-                        <canvas id="canvasLocation"></canvas>
+                        <canvas id="canvasLocation" style="height: 400px; width: 600px;" width="600" height="400"></canvas>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -126,230 +126,174 @@
 
 {block name='js'}
 
-<script src="/static/plugins/chart.js/Chart.bundle.js"></script>
-<script src="/static/plugins/chart.js/utils.js"></script>
+<script src="/static/plugins/echart/echarts.simple.min.js"></script>
 
-<script>
+<script type="text/javascript">
+
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
-    var type = 'linear';
+    // 基于准备好的dom，初始化echarts实例
+    var turnoverMonth = echarts.init(document.getElementById('turnoverMonth'));
 
-    var tMonthConfig = {
-        type: 'line',
-        data: {
-            labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-            datasets: [{
-                label: '培训收入',
-                backgroundColor: window.chartColors.red,
-                borderColor: window.chartColors.red,
-                fill: false,
-                data: [
-                    10000,
-                    20000,
-                    30000,
-                    20000,
-                    30000,
-                    40000,
-                    50000,
-                    30000,
-                    20000,
-                    30000,
-                    40000,
-                    50000
-                ],
-            }, {
-                label: '活动收入',
-                backgroundColor: window.chartColors.blue,
-                borderColor: window.chartColors.blue,
-                fill: false,
-                data: [
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000,
-                    10000
-                ],
-            }]
+    // 指定图表的配置项和数据
+    optionTM = {
+        title: {
+            text: '2018年3月营业额折线图'
         },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: '2018年 3月 营业额'
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                }],
-                yAxes: [{
-                    display: true,
-                    type: type
-                }]
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['培训','活动']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
             }
-        }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20','21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name:'培训购买',
+                type:'line',
+                stack: '总量',
+                data:[10000, 20000, 30000, 20000, 30500, 20000, 20000, 20000, 20400, 30000, 40000, 20000, 10000, 20000, 30000, 20000, 50000, 30000, 20000, 30000, 20000, 10000, 10000, 20000, 20000, 10000, 20000, 30000, 20000, 30000, 30000]
+            },
+            {
+                name:'活动购买',
+                type:'line',
+                stack: '总量',
+                data:[10000, 20000, 30000, 20000, 50000, 30000, 20000, 30000, 20000, 10000, 10000, 20000, 20000, 10000, 20000, 30000, 20000, 30000, 30000, 30500, 20000, 20000, 20000, 20400, 30000, 40000, 20000, 10000, 20000, 30000, 20000]
+            }
+        ]
     };
+
+    // 使用刚指定的配置项和数据显示图表。
+    turnoverMonth.setOption(optionTM);
+
+
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本年）
 
+    // 基于准备好的dom，初始化echarts实例
+    var turnoverYear = echarts.init(document.getElementById('turnoverYear'));
 
-    var tYearConfig = {
-        type: 'line',
-        data: {
-            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20','21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'],
-            datasets: [{
-                label: '培训收入',
-                backgroundColor: window.chartColors.red,
-                borderColor: window.chartColors.red,
-                fill: false,
-                data: [
-                    10000,
-                    20000,
-                    30000,
-                    20000,
-                    30500,
-                    20000,
-                    20000,
-                    20000,
-                    20400,
-                    30000,
-                    40000,
-                    20000,
-                    10000,
-                    20000,
-                    30000,
-                    20000,
-                    50000,
-                    30000,
-                    20000,
-                    30000,
-                    20000,
-                    10000,
-                    10000,
-                    20000,
-                    20000,
-                    10000,
-                    20000,
-                    30000,
-                    20000,
-                    30000,
-                    30000
-                ],
-            }, {
-                label: '活动收入',
-                backgroundColor: window.chartColors.blue,
-                borderColor: window.chartColors.blue,
-                fill: false,
-                data: [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    5000,
-                    0
-                ],
-            }]
+    // 指定图表的配置项和数据
+    optionTY = {
+        title: {
+            text: '2018 营业额折线图'
         },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: '2018 营业额'
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                }],
-                yAxes: [{
-                    display: true,
-                    type: type
-                }]
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['培训','活动']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
             }
-        }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name:'培训购买',
+                type:'line',
+                stack: '总量',
+                data:[10000, 20000, 30000, 30000, 20000, 10000, 10000, 20000, 30000, 40000, 50000, 60000, 70000]
+            },
+            {
+                name:'活动购买',
+                type:'line',
+                stack: '总量',
+                data:[10000, 10000, 10000, 10000, 10000, 20000, 20000, 10000, 10000, 10000, 10000, 10000, 10000]
+            }
+        ]
     };
+
+    // 使用刚指定的配置项和数据显示图表。
+    turnoverYear.setOption(optionTY);
 
 
     /////////////////////////////////////////////////////////////////////////////////////// 学员分布
 
-    var locationConfig = {
-        type: 'pie',
-        data: {
-            datasets: [{
-                data: [
-                    131,
-                    34,
-                    56,
-                    45,
-                    23,
-                ],
-                backgroundColor: [
-                    window.chartColors.red,
-                    window.chartColors.orange,
-                    window.chartColors.yellow,
-                    window.chartColors.green,
-                    window.chartColors.blue,
-                ],
-                label: 'Dataset 1'
-            }],
-            labels: [
-                '前海北头',
-                '鼎泰风华',
-                '南山小学',
-                '南外二小',
-                '松坪小学'
-            ]
+
+    // 基于准备好的dom，初始化echarts实例
+    var canvasLocation = echarts.init(document.getElementById('canvasLocation'));
+
+    // 指定图表的配置项和数据
+    optionLCT = {
+        title : {
+            text: '学生训练点分布',
+            subtext: '5个训练点',
+            x:'center'
         },
-        options: {
-            responsive: true
-        }
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['前海北头','鼎泰风华','南山小学','南外二小','松坪小学']
+        },
+        series : [
+            {
+                name: '学生分布',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                    {value:335, name:'前海北头'},
+                    {value:310, name:'鼎泰风华'},
+                    {value:234, name:'南山小学'},
+                    {value:135, name:'南外二小'},
+                    {value:1548, name:'松坪小学'}
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
     };
 
-    /////////////////////////////////////////////////////////////////////////////////////
+    // 使用刚指定的配置项和数据显示图表。
+    canvasLocation.setOption(optionLCT);
 
-    window.onload = function() {
-
-        var ctxTMonth = document.getElementById('turnoverMonth').getContext('2d');
-        window.myLine = new Chart(ctxTMonth, tMonthConfig);
-
-        var ctxTYear = document.getElementById('turnoverYear').getContext('2d');
-        window.myLine = new Chart(ctxTYear, tYearConfig);
-
-        var ctxLocation = document.getElementById('canvasLocation').getContext('2d');
-        window.myPie = new Chart(ctxLocation, locationConfig);
-    };
 
 
 </script>
+
+
 
 {/block}
