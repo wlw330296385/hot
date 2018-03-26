@@ -255,6 +255,7 @@
                 <label>系统邀请人数</label>
                 <input type="text" name="referee_count" value="{$matchInfo.referee_count}" class="data" placeholder="请填写系统邀请的人数">
             </div>
+            <!-- 系统邀请裁判名单 -->
             <div class="mui-input-row refereeCount hide h-auto">
                 <a href="#refereeAp" class="mui-navigate-right setRefereeAp">
                     <label>裁判名单</label>
@@ -273,11 +274,12 @@
                         <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
                             data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
 
-                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}" class="data">
+                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}">
                     <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
                 </a>
             </div>
 
+            <!-- 自行邀请裁判名单 -->
             <div class="mui-input-row refereeRow hide h-auto">
                 <a href="#refereeDom" class="mui-navigate-right setReferee">
                     <label>裁判名单</label>
@@ -296,8 +298,9 @@
                         <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
                             data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
 
-                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}" class="data">
+                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}">
                     <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
+                    <input type="hidden" name="referee_count" value="" class="data">
                 </a>
             </div>
 
@@ -1080,8 +1083,9 @@
                         refereeMember += referee + ','
                         refereeMember_id += referee_id + ','
                         $(".referee").text(refereeMember.substring(0, refereeMember.length - 1));
-                        $("input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
-                        $("input[name=referee_cost]").val(refereeSum);
+                        $(".refereeRow input[name=referee_id]").val(refereeMember_id.substring(0, refereeMember_id.length - 1));
+                        $(".refereeRow input[name=referee_cost]").val(refereeSum);
+                        $(".refereeRow input[name=referee_count]").val(refereeName.length);
                         hideList += '<input type="hidden" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '" data-id="' + applyId + '" data-status="' + status + '">';
                         hideListDefault += '<input type="hidden" data-referee="' + referee + '" data-referee_id="' + referee_id + '" data-referee_cost="' + referee_cost + '" data-id="' + applyId + '" data-status="' + status + '">';
                         mui("#refereeDom").popover("hide");
@@ -1164,7 +1168,7 @@
                 });
                 $(".refereeApList").find("input[name=checkbox-referee]:checked").each(function () {
                     var refereeName = $(".refereeApList").find("input[name=checkbox-referee]:checked");
-                    var refereeCount = $("input[name=referee_count]").val();
+                
                     if (refereeName.length <= refereeCount) {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
@@ -1535,21 +1539,24 @@
                 //上面遍历过不存在就添加到最终变动活动人员列表中
                 if (idDelID == "Yes") {
                     var member_id = $(this).attr("data-member_id");
+                    var name = $(this).attr("data-name");
+                    var tmid = $(this).attr("data-tmid");
+                    id = $(this).attr('data-id');
                     HomeMemberListDel.push({ member_id: member_id, name: name, tmid: tmid, id: id, status: -1 });
                 }
                 console.log(HomeMemberListDel)
             });
             ////////////////////////在已选列表中删除了的人员/////////////////////////////////////////
-            var refereeCount = $(".refereeCount input[name=referee_count]").val();
-            if (!(/^[0-3]*$/).test(refereeCount)) {
+            var referee_count = $(".refereeCount input[name=referee_count]").val();
+            if (!(/^[0-3]*$/).test(referee_count)) {
                 mui.toast("裁判人数请填写数字且不能大于3人");
                 return false;
             }
-
+            
             var referee_type = $("#refereeSlecct").children("option:selected").val();
-            var referee_count = $(".refereeCount input[name=referee_count]").val();
             if (referee_type == 1) {
                 $(".refereeRow input[name=referee_cost]").removeClass('data');
+                $(".refereeRow input[name=referee_count]").removeClass('data');
                 if (referee_count == '' || referee_count == 0) {
                     mui.toast("请填写邀请人数");
                     return false;
@@ -1625,7 +1632,7 @@
 
 
             } else if (referee_type == 2) {
-                $("input[name=referee_count]").val('');
+                $(".refereeCount input[name=referee_count]").val('');
                 $(".refereeCount input[name=referee_cost]").removeClass('data');
                 // 提交裁判员出席数组
                 referee_str = [];

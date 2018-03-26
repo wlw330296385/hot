@@ -121,5 +121,10 @@ class Match extends Base {
     public function leagueRecord() {
         return view('Match/leagueRecord');
     }
+
+    // 联赛战绩
+    public function leagueData() {
+        return view('Match/leagueData');
+    }
     
 }
