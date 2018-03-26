@@ -43,8 +43,8 @@ class Base extends Controller {
             return $res;
         } else {
             $res = [
-                'camp_id' => 15,
-                'camp' =>'钟声训练营', 
+                'camp_id' => 9,
+                'camp' =>'大热训练营', 
             ];
             return $res;
         }
