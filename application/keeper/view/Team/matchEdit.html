@@ -1357,7 +1357,7 @@
                 changeIndexHome();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" data-id="' + $(this).attr('data-id') + '" type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" data-id="' + $(this).attr('data-id') + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" ></div>';
                     $("#hideStList").append(str);
                 })
                 totalNum = $("#inactiveList .checkboxCont").length;
@@ -1370,9 +1370,9 @@
                 $("input[name='checkbox-member']").prop("checked", false);
                 //然后遍历出对应所选
                 $(".stdList").each(function (i) {
-                    var member_id = $(this).attr("data-member_id");
+                    var tmid = $(this).attr("data-tmid");
                     $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
-                        return $(this).attr("data-member_id") == member_id
+                        return $(this).attr("data-tmid") == tmid
                     }).prop("checked", true);
                 });
             });
@@ -1525,12 +1525,12 @@
             var idDelID = ""
             //去除活动人员
             $("#hideStListIni input[name=member]").each(function (i) {
-                var dsid = $(this).attr("data-id");
+                var dsid = $(this).attr("data-tmid");
                 //默认为要去除的活动人员
                 idDelID = "Yes";
                 //该人员遍历新编辑的活动人员表判断是否存在
                 $("#hideStList input[name=member]").each(function () {
-                    if (dsid == $(this).attr("data-id")) {
+                    if (dsid == $(this).attr("data-tmid")) {
                         idDelID = "No";
                         return false;
                     }
@@ -1925,8 +1925,8 @@
                         HomeMemberList = [];//报名人员列表数组
                         $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="' + data.data[i].team_member_id + '" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + ' data-tmid="' + data.data[i].team_member_id + '"></div>'
-                            HomeMemberList.push({ name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, id: data.data[i].id, tmid: data.data[i].team_member_id });
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="' + data.data[i].team_member_id + '" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-tmid="' + data.data[i].team_member_id + '"></div>'
+                            HomeMemberList.push({ name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, tmid: data.data[i].team_member_id });
                         };
                         console.log(HomeMemberList)
 
