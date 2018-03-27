@@ -284,19 +284,34 @@ class StatisticsCamp extends Backend{
         $list3 = [];//课时收入
         $income2 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods_id,goods,camp,price,f_id,camp_id")
         ->where(['camp_id'=>$camp_id,'type'=>2])
-        // ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        ->where(['create_time'=>['between',[$month_start,$month_end]]])
         ->where('delete_time',null)
         ->group('goods_id')->select();
         $list2 = $income2;
+        // $totalEventList = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
+        //     ->where(['camp_id'=>$camp_id,'type'=>2])
+        //     ->where('delete_time',null)
+        //     ->find();
+            // dump($totalEventList);
         if($this->campInfo['rebate_type'] == 1){
             $income3 = db('income')->field("sum(income) as s_income,sum(schedule_income) as s_schedule_income,count('id') as c_id,sum(students) as s_students,lesson,goods,camp,camp_id,lesson_id")
             ->where(['camp_id'=>$camp_id,'type'=>3])
             ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
-            ->group('lesson_id')->select();  
+            ->group('lesson_id')->select(); 
+
+            $totalLessonList = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(students) as s_total,goods,goods_id,camp,price,f_id,camp_id")
+            ->where(['camp_id'=>$camp_id,'type'=>3])
+            ->where('delete_time',null)
+            ->find();
+
+            
+
             $list3 = $income3;
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);
+            // $this->assign('totalEventList',$totalEventList);
+            // $this->assign('totalLessonList',$totalLessonList);
             return view('StatisticsCamp/campIncome'); 
         }else{
             $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
@@ -304,7 +319,15 @@ class StatisticsCamp extends Backend{
             ->where(['create_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
             ->group('lesson_id')->select();
+
+            // $totalLessonList = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
+            // ->where(['camp_id'=>$camp_id,'type'=>1])
+            // ->where('delete_time',null)
+            // ->find();
+
             $list1 = $income1;
+            // $this->assign('totalEventList',$totalEventList);
+            // $this->assign('totalLessonList',$totalLessonList);
             $this->assign('list2',$list2);
             $this->assign('list1',$list1);
             return view('StatisticsCamp/orgzIncome');
@@ -343,7 +366,20 @@ class StatisticsCamp extends Backend{
         ->where('delete_time',null)
         ->group('goods_id')->select();
         
+        // $totalEvent = db('bill')
+        // ->where(['camp_id'=>$camp_id,'goods_type'=>2,'is_pay'=>1])
+        // ->where('delete_time',null)
+        // ->sum('balance_pay');
+        
+        // $totalLesson = db('bill')
+        // ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        // ->where('delete_time',null)
+        // ->sum('balance_pay');
 
+        
+
+        // $this->assign('totalEvent',$totalEvent?$totalEvent:0);
+        // $this->assign('totalLesson',$totalLesson?$totalLesson:0);
         $this->assign('lessonBill',$lessonBill);
         $this->assign('eventBill',$eventBill);
         return view('StatisticsCamp/campTurnover');
