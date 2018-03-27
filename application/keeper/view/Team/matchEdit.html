@@ -1167,8 +1167,8 @@
                     }
                 });
                 $(".refereeApList").find("input[name=checkbox-referee]:checked").each(function () {
+                    var refereeCount = $(".refereeCount input[name=referee_count]").val();
                     var refereeName = $(".refereeApList").find("input[name=checkbox-referee]:checked");
-                
                     if (refereeName.length <= refereeCount) {
                         var referee = $(this).attr("data-referee");
                         var referee_id = $(this).attr("data-referee_id");
@@ -1516,8 +1516,7 @@
                 member_id = $(this).attr("data-member_id");
                 name = $(this).attr("data-name");
                 tmid = $(this).attr("data-tmid");
-                id = $(this).attr('data-id');
-                HomeMemberList.push({ member: member, member_id: member_id, name: name, tmid: tmid, id: id });
+                HomeMemberList.push({ member: member, member_id: member_id, name: name, tmid: tmid });
             });
             console.log(HomeMemberList)
             ////////////////////////最终选择的活动人员/////////////////////////////////////////
@@ -1541,8 +1540,7 @@
                     var member_id = $(this).attr("data-member_id");
                     var name = $(this).attr("data-name");
                     var tmid = $(this).attr("data-tmid");
-                    id = $(this).attr('data-id');
-                    HomeMemberListDel.push({ member_id: member_id, name: name, tmid: tmid, id: id, status: -1 });
+                    HomeMemberListDel.push({ member_id: member_id, name: name, tmid: tmid, status: -1 });
                 }
                 console.log(HomeMemberListDel)
             });
@@ -1552,7 +1550,7 @@
                 mui.toast("裁判人数请填写数字且不能大于3人");
                 return false;
             }
-            
+
             var referee_type = $("#refereeSlecct").children("option:selected").val();
             if (referee_type == 1) {
                 $(".refereeRow input[name=referee_cost]").removeClass('data');
@@ -1733,17 +1731,17 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 if ($("input[name=is_finished]").val() == 1) {
-                    var btnArry = ['保存','保存并发送']
+                    var btnArry = ['保存', '保存并发送']
                     mui.confirm('比赛记录可发送给客队，如果客队认领了此场比赛记录，则双方可积分，积分规则：胜队积两分，负队积一分，没有认领,则不计分！', '录入成功', btnArry, function (e) {
                         if (e.index == 1) {
                             // 此处为保存并且发送的触发事件
                             var sendUrl = "{:url('api/match/sendteamclaimfinishmatch')}";
-                            var recordId =  $("input[name='record[id]']").val();
+                            var recordId = $("input[name='record[id]']").val();
                             var matchId = $("input[name=id]").val();
                             mui.post(sendUrl, {
-                                id : recordId,
-                                match_id : matchId
-                            }, function(res) {
+                                id: recordId,
+                                match_id: matchId
+                            }, function (res) {
                                 mui.alert('比赛编辑成功', function () {
                                     var goUrl = "{:url('team/matchlistOfTeam')}" + '/team_id/' + "{$team_id}";
                                     window.top.location.href = goUrl;
