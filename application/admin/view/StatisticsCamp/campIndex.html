@@ -10,7 +10,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">总收益</span>
-				<span class="info-box-number">28960<small></small></span>
+				<span class="info-box-number">28960<small>营业额</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -72,9 +72,7 @@
 					<h3 class="box-title">学员分布（训练点） </h3>
 				</div>
 				<div class="box-body">
-					<div class="hotChart">
-						<canvas id="canvasLocation" width="550" height="500"></canvas>
-					</div>
+					<div id="canvasLocation" style="height: 400px"></div>
 				</div>
 				<!-- /.box-body -->
 			</div>
@@ -87,9 +85,7 @@
 					<h3 class="box-title">课程购买（占比） </h3>
 				</div>
 				<div class="box-body">
-					<div class="hotChart">
-						<canvas id="canvasLesson" width="550" height="500"></canvas>
-					</div>
+					<div id="canvasLesson" style="height: 400px"></div>
 				</div>
 				<!-- /.box-body -->
 			</div>
@@ -105,8 +101,7 @@
 					<h3 class="box-title">营业额折线图（本月）</h3>
 				</div>
 				<div class="box-body">
-					<div class="hotChart" id="turnoverMonth" style="height: 400px">
-					</div>
+					<div id="turnoverMonth" style="height: 400px"></div>
 				</div>
 				<!-- /.box-body -->
 			</div>
@@ -123,9 +118,7 @@
 					<h3 class="box-title">营业额折线图（本年）</h3>
 				</div>
 				<div class="box-body">
-					<div class="hotChart">
-						<canvas id="turnoverYear" width="550" height="500"></canvas>
-					</div>
+					<div id="turnoverYear" style="height: 400px"></div>
 				</div>
 				<!-- /.box-body -->
 			</div>
@@ -266,11 +259,7 @@
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
     var domTM = document.getElementById("turnoverMonth");
-    var turnoverMonth = echarts.init(domTM);
-
-
-    // 基于准备好的dom，初始化echarts实例
-//    var turnoverMonth = echarts.init(document.getElementById('turnoverMonth'),'hot');
+    var turnoverMonth = echarts.init(domTM,"hot");
 
     // 指定图表的配置项和数据
     optionTM = {
@@ -317,8 +306,9 @@
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本年）
 
-    // 基于准备好的dom，初始化echarts实例
-    var turnoverYear = echarts.init(document.getElementById('turnoverYear'),'hot');
+
+    var domTY = document.getElementById("turnoverYear");
+    var turnoverYear = echarts.init(domTY,"hot");
 
     // 指定图表的配置项和数据
     optionTY = {
@@ -347,12 +337,12 @@
         },
         series: [
             {
-                name:'培训购买',
+                name:'培训',
                 type:'line',
                 data:[10000, 20000, 30000, 30000, 20000, 100000, 10000, 20000, 30000, 40000, 50000, 60000, 70000]
             },
             {
-                name:'活动购买',
+                name:'活动',
                 type:'line',
                 data:[10000, 10000, 10000, 10000, 10000, 20000, 20000, 10000, 10000, 10000, 10000, 10000, 10000]
             }
@@ -366,8 +356,8 @@
     /////////////////////////////////////////////////////////////////////////////////////// 学员分布
 
 
-    // 基于准备好的dom，初始化echarts实例
-    var canvasLocation = echarts.init(document.getElementById('canvasLocation'),'hot');
+    var domLC = document.getElementById("canvasLocation");
+    var canvasLocation = echarts.init(domLC,"hot");
 
     // 指定图表的配置项和数据
     optionLCT = {
@@ -389,7 +379,7 @@
             {
                 name: '学生分布',
                 type: 'pie',
-                radius : '55%',
+                radius : '65%',
                 center: ['50%', '50%'],
                 data:[
                     {value:335, name:'前海北头'},
@@ -414,9 +404,8 @@
 
     /////////////////////////////////////////////////////////////////////////////////////// 学员分布
 
-
-    // 基于准备好的dom，初始化echarts实例
-    var canvasLesson = echarts.init(document.getElementById('canvasLesson'),'hot');
+    var domLS = document.getElementById("canvasLesson");
+    var canvasLesson = echarts.init(domLS,"hot");
 
     // 指定图表的配置项和数据
     optionLS = {
@@ -438,7 +427,7 @@
             {
                 name: '学生分布',
                 type: 'pie',
-                radius: ['50%', '70%'],
+                radius: ['45%', '65%'],
                 avoidLabelOverlap: false,
                 label: {
                     normal: {
