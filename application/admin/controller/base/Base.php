@@ -19,16 +19,8 @@ class Base extends Controller {
         $site = $SystemS->getSite();
         $this->site = $site;
 
-        // 当前查看训练营
-        $curcamp = $this->getCurCamp();
-        $this->cur_camp = $curcamp;
-        $this->assign('curcamp', $curcamp);
-        // 列出所选训练营
-        $campM = new Camp();
-        $camplist = $campM->where(['status' => 1])->order('id desc')->select()->toArray();
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
-        $this->assign('camplist', $camplist);
 
 
     }

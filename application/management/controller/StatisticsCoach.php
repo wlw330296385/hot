@@ -1,6 +1,6 @@
 <?php 
-namespace app\admin\controller;
-use app\admin\controller\base\Coach;
+namespace app\management\controller;
+use app\management\controller\Coach;
 
 class StatisticsCoach extends Coach{
 
@@ -14,20 +14,21 @@ class StatisticsCoach extends Coach{
     // 资金账目
     public function coachBill(){
         $member_id = $this->camp_member['member_id']; 
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
+        $monthStart = input('param.monthstart');
+        $monthEnd = input('param.monthend');
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $salaryin = [];
         $list1 = [];
         $list2 = [];
         $s_rebate = 0;
-        $yearmonth = input('param.yearmonth',(date('Ym')-1));
-        if($member_id){
+        if($monthEnd){
+            $yearmonth = input('param.yearmonth',(date('Ym')-1));
+
             $map['create_time'] = ['between',[$month_start,$month_end]];
             $map['member_id'] = $member_id;
             $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days')->select();
-   
+
             
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
                 $list1[$i] = ['s_salary'=>0,'s_push_salary'=>0];
@@ -53,8 +54,10 @@ class StatisticsCoach extends Coach{
             }
 
             $s_rebate = db('rebate')->where(['member_id'=>$member_id,'datemonth'=>$yearmonth])->sum('salary');
-            
         }
+            
+            
+        
         // dump($list2);
         // dump($list1);die;
         $this->assign('list2',$list2);

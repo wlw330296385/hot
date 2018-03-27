@@ -52,6 +52,7 @@ class Guider extends Base
 				cache("power_{$this->memberInfo['id']}",2);
 				// 训练营信息
 				session('camp_member',$camp);
+				// dump($powerList);die;
 			}
 			header("Location:".url('Index/index'));
 		}

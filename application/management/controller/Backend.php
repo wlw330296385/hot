@@ -21,7 +21,7 @@ class Backend extends Base
 		}else{
 			$this->error('权限不足','Login/login');
 		}
-		
+
 		if(!$this->checkAuth($power)){
 			$this->error('权限不足,不可访问此页面');
 		}
@@ -42,6 +42,7 @@ class Backend extends Base
  		$a = request()->action();
  		$url_value = strtolower("$c/$a");
  		$powerList = cache("powerList_{$this->memberInfo['id']}"); 
+
  		foreach ($powerList as $key => $value) {
  			if($url_value == strtolower($value['url_value'])){
  				
