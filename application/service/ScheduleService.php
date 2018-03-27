@@ -282,11 +282,15 @@ class ScheduleService
                 $lessonMember = $modelLessonMember->where($lessonMemberWhere)->find();
             }
             if (!$lessonMember) {
-                return ['code' => 100, 'msg' => $student['student'] . '无剩余课时，请修改课时信息'];
+                return ['code' => 100, 'msg' => '学员'.$student['student'] . '无剩余课时，请修改课时信息'];
             } else {
                 $lessonMember = $lessonMember->toArray();
                 $restschedule = $lessonMember['rest_schedule'];
-                //dump($restschedule);
+                // 某个学员无剩余课时 抛出提示
+                if (!$restschedule || $restschedule <= 0) {
+                    return ['code' => 100, 'msg' => '学员'.$student['student'] . '已无剩余课时，请修改课时信息'];
+                    break;
+                }
                 // 比较学员剩余课时与当前未结算课时数
                 $noSettleScheduleCount = $modelSchedule->where([
                     'camp_id' => $schedule['camp_id'],
@@ -296,14 +300,9 @@ class ScheduleService
                 ])->count();
                 if ($noSettleScheduleCount || $noSettleScheduleCount > 0) {
                     if ($noSettleScheduleCount > $restschedule) {
-                        return ['code' => 100, 'msg' => $student['student'] . '剩余课时不足，请修改课时信息'];
+                        return ['code' => 100, 'msg' => '学员'.$student['student'] . '剩余课时不足，请修改课时信息'];
                         break;
                     }
-                }
-                // 某个学员无剩余课时 抛出提示
-                if (!$restschedule || $restschedule <= 0) {
-                    return ['code' => 100, 'msg' => $student['student'] . '已无剩余课时，请修改课时信息'];
-                    break;
                 }
             }
          }
