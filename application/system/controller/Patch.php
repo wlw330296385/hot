@@ -640,4 +640,71 @@ class Patch extends Controller {
             dump($e->getMessage());
         }
     }
+
+    // 搜索课时结算产生的数据
+    public function searchscheduledata() {
+        $where['can_settle_date'] = '20180314';
+        // 查询符合条件的课时记录，遍历纠正学员剩余课时数、已上课时数
+        $schedules = db('schedule')->where($where)->select();
+        foreach ($schedules as $schedule) {
+            // 课时学员名单
+            $studentArr = unserialize($schedule['student_str']);
+            //dump($studentArr);
+            if (!empty ($studentArr)) {
+                $saveAllLessonMemberData = $saveAllStudentData= [];
+                foreach ($studentArr as $k => $student) {
+                    // 获取学员的课程-学员关系
+                    if (isset($student['lmid'])) {
+                        // 拼课学员
+                        $lessonMember = db('lesson_member')->where([
+                            'id' => $student['lmid']
+                        ])->find();
+                    } else  {
+                        // 本班学员
+                        $lessonMember = db('lesson_member')
+                            ->where([
+                                'student_id' => $student['student_id'],
+                                'student' => $student['student'],
+                                'camp_id' => $schedule['camp_id'],
+                                'lesson_id' => $schedule['lesson_id']
+                            ])
+                            ->whereNull('delete_time')
+                            ->find();
+                    }
+                    //dump($lessonMember);
+
+                    // 获取学员的课时数
+                    $scheduleMemberCount = db('schedule_member')
+                        ->where([
+                            'camp_id' => $schedule['camp_id'],
+                            'user_id' => $student['student_id']
+                        ])
+                        ->whereNull('delete_time')
+                        ->count();
+                    $scheduleMemberCount = $scheduleMemberCount ? $scheduleMemberCount : 0;
+                    //dump($scheduleMemberCount);
+
+                    $saveAllLessonMemberData[$k] = [
+                        'id' => $lessonMember['id'],
+                        'rest_schedule' => $lessonMember['total_schedule'] - $scheduleMemberCount
+                    ];
+                    $saveAllStudentData[$k] = [
+                        'id' => $student['student_id'],
+                        'finished_schedule' => $scheduleMemberCount
+                    ];
+                }
+                //dump($saveAllLessonMemberData);
+                //dump($saveAllStudentData);
+                // 批量更新学员的剩余课时数、已上课时数
+                $modelLessonMember = new LessonMember();
+                $modelStudent = new Student();
+                if (!empty($saveAllLessonMemberData)) {
+                    //$modelLessonMember->saveAll($saveAllLessonMemberData);
+                }
+                if (!empty($saveAllStudentData)) {
+                    //$modelStudent->saveAll($saveAllStudentData);
+                }
+            }
+        }
+    }
 }
