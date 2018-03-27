@@ -27,9 +27,9 @@ class StatisticsCoach extends Coach{
 
             $map['create_time'] = ['between',[$month_start,$month_end]];
             $map['member_id'] = $member_id;
-            $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days')->select();
+            $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days desc')->select();
 
-            
+            dump($salaryinList);die;
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
                 $list1[$i] = ['s_salary'=>0,'s_push_salary'=>0];
                 $list2[$i] = ['s_salary'=>0];
