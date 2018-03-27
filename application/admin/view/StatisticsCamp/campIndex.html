@@ -105,8 +105,7 @@
 					<h3 class="box-title">营业额折线图（本月）</h3>
 				</div>
 				<div class="box-body">
-					<div class="hotChart">
-						<canvas id="turnoverMonth" width="550" height="500"></canvas>
+					<div class="hotChart" id="domTM">
 					</div>
 				</div>
 				<!-- /.box-body -->
@@ -266,13 +265,17 @@
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
+    var domTM = document.getElementById("domTM");
+    var turnoverMonth = echarts.init(domTM);
+
+
     // 基于准备好的dom，初始化echarts实例
-    var turnoverMonth = echarts.init(document.getElementById('turnoverMonth'),'hot');
+//    var turnoverMonth = echarts.init(document.getElementById('turnoverMonth'),'hot');
 
     // 指定图表的配置项和数据
     optionTM = {
         title: {
-            text: '2018年3月营业额折线图'
+            text: '2018年3月'
         },
         tooltip: {
             trigger: 'axis'
@@ -309,7 +312,7 @@
     };
 
     // 使用刚指定的配置项和数据显示图表。
-    turnoverMonth.setOption(optionTM);
+    turnoverMonth.setOption(optionTM,true);
 
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本年）
