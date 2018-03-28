@@ -151,42 +151,9 @@ class ScheduleService
     }
 
     // 更新课时数据为已申状态
-    public function saveScheduleMember($schedule_id)
+    public function saveScheduleMember($schedule, $students)
     {
-        $schedule = db('schedule')->where('id', $schedule_id)->find();
-        if (!$schedule) {
-            return ['code' => 100, 'msg' => '课时' . __lang('MSG_404')];
-        }
-        $res = false;
-
         // 保存schedule_member数据
-        $students = unserialize($schedule['student_str']);
-        // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时工资（课时学员*课程单价）
-        /*$campInfo = db('camp')->where('id',$schedule['camp_id'])->whereNull('delete_time')->find();
-        if ($campInfo['rebate_type'] == 1) {
-            // 课时工资
-            $numScheduleStudent = count(unserialize($schedule['student_str']));
-            $lessonCost = db('lesson')->where('id', $schedule['lesson_id'])->value('cost');
-            $scheduleIncome = $lessonCost * $numScheduleStudent;
-            //dump($scheduleIncome);
-            // 平台抽取金额：课时工资*抽取比例（注意训练营有单独的比例）
-            if ($campInfo['schedule_rebate']) {
-                $scheduleRebate = (1 - $campInfo['schedule_rebate']);
-            } else {
-                $SystemS = new SystemService();
-                $setting = $SystemS::getSite();
-                $scheduleRebate = (1 - $setting['sysrebate']);
-            }
-
-        }*/
-
-
-
-        // 检查课时相关学员剩余课时
-        $checkStudentRestscheduleResult = $this->checkstudentRestschedule($students, $schedule);
-        if ($checkStudentRestscheduleResult['code'] == 100) {
-            return $checkStudentRestscheduleResult;
-        }
         $model = new ScheduleMember();
 
         // 记录学员
@@ -194,7 +161,7 @@ class ScheduleService
         foreach ($students as $student) {
             // 保存学员信息组合
             $datatmp = [
-                'schedule_id' => $schedule_id,
+                'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
                 'camp' => $schedule['camp'],
@@ -234,7 +201,7 @@ class ScheduleService
         $coachDatalist = [];
         if ($schedule['coach_id']) {
             $datatmp = [
-                'schedule_id' => $schedule_id,
+                'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
                 'camp' => $schedule['camp'],
@@ -257,10 +224,14 @@ class ScheduleService
             foreach ($assistantIdArray as $key => $val) {
                 if ($val) {
                     $datatmp = [
-                        'schedule_id' => $schedule_id,
+                        'schedule_id' => $schedule['id'],
                         'schedule' => $schedule['grade'],
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
                         'user_id' => $val,
                         'user' => $assistantArray[$key],
                         'type' => 2,
@@ -279,7 +250,7 @@ class ScheduleService
 
         // 更新课时数据为已申状态
         $canSettleDate = date('Ymd', strtotime('+2 day'));
-        $update = db('schedule')->where('id', $schedule_id)->update(['status' => 1,'can_settle_date' => $canSettleDate,'update_time' => time()]);
+        $update = db('schedule')->where('id', $schedule['id'])->update(['status' => 1,'can_settle_date' => $canSettleDate,'update_time' => time()]);
         if (!$update) {
             return ['code' => 100, 'msg' => '课时记录更新' . __lang('MSG_400')];
         } else {
@@ -288,7 +259,7 @@ class ScheduleService
     }
 
     // 检查课时相关学员剩余课时是否还有
-    protected function checkstudentRestschedule($students, $schedule)
+    public function checkstudentRestschedule($schedule, $students)
     {
         $modelLessonMember = new LessonMember();
         $modelSchedule = new Schedule();
@@ -328,14 +299,14 @@ class ScheduleService
                     'status' => -1,
                 ])->count();
                 // 学员所在课时未结算课时数（学员所在未结算课时数+学员所在未审核课时数）与学员剩余课时数比较
-                if ( ($noSettleCheckedScheduleCount+$noSettleCheckedScheduleCount) > $restschedule) {
+                if ( $noSettleCheckedScheduleCount >= $restschedule) {
                     return ['code' => 100, 'msg' => '学员'.$student['student'] . '剩余课时不足，请修改课时信息'];
                     break;
                 }
             }
         }
         // 课时所有学员剩余课时数返回code=200
-        return ['code' => 200, 'msg' => __lang('MSG_201')];
+        return ['code' => 200, 'msg' => __lang('MSG_200')];
     }
 
     /** 课时相关学员剩余课时-1

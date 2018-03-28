@@ -47,6 +47,19 @@
 							</div>
 							<div class="form-group">
 								<!-- /.input group -->
+								<label>订单状态：</label>
+								<div class="input-group radius4">
+									<select name="status" class="form-control radius4" style="border:none !important;">
+										<option value=""></option>
+										<option value="0">未支付</option>
+										<option value="1">已支付</option>
+										<option value="-1">申请退款</option>
+										<option value="-2">已退款</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
 								<label>查询时间：</label>
 								<div class="input-group">
 									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
@@ -184,6 +197,7 @@
     var currCampID = localStorage.getItem('currCampID');
     var currGoodTypeID = localStorage.getItem('currGoodTypeID');
     var currKeyword = localStorage.getItem('currKeyword');
+    var currStatus = localStorage.getItem('currStatus');
 
     $(function () {
 
@@ -236,6 +250,9 @@
         if(currGoodTypeID!=''&&currGoodTypeID!=null){
             $('select[name="goods_type"]').find('option[value="'+currGoodTypeID+'"]').prop("selected", true);
         }
+        if(currStatus!=''&&currStatus!=null){
+            $('select[name="status"]').find('option[value="'+currStatus+'"]').prop("selected", true);
+        }
 
         //=========================== 初始化数据 ==============================//
 
@@ -277,6 +294,7 @@
             var camp = $("input[name=camp]").val();
             var camp_id = $("input[name=camp_id]").val();
             var goods_type = $("select[name=goods_type]").val();
+            var status = $("select[name=status]").val();
             var getYM = $("input[name=dateYM]").val();
             var keyword = $("input[name=keyword]").val();
             var linkPram = '';
@@ -289,6 +307,9 @@
             if(goods_type!=""){
                 linkPram = linkPram+"goods_type/"+goods_type+"/";
             }
+            if(status!=""){
+                linkPram = linkPram+"status/"+status+"/";
+            }
             if(keyword!=""&&keyword!=null){
                 linkPram = linkPram+"keyword/"+keyword+"/";
             }
@@ -297,6 +318,7 @@
             localStorage.setItem('currCampName',camp);
             localStorage.setItem('currCampID',camp_id);
             localStorage.setItem('currGoodTypeID',goods_type);
+            localStorage.setItem('currStatus',status);
             localStorage.setItem('currKeyword',keyword);
 
             //拆分日期
