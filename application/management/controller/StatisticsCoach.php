@@ -25,11 +25,10 @@ class StatisticsCoach extends Coach{
         if($monthEnd){
             $yearmonth = input('param.yearmonth',(date('Ym')-1));
 
-            $map['create_time'] = ['between',[$month_start,$month_end]];
+            $map['schedule_time'] = ['between',[$month_start,$month_end]];
             $map['member_id'] = $member_id;
-            $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days desc')->select();
-
-            dump($salaryinList);die;
+            $salaryinList = db('salary_in')->field("*,sum(salary) as s_salary,sum(push_salary) as s_push_salary,from_unixtime(schedule_time,'%Y%m%d') as days")->where($map)->group('days')->order('days desc')->select();
+            echo db('salary_in')->getlastsql();
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
                 $list1[$i] = ['s_salary'=>0,'s_push_salary'=>0];
                 $list2[$i] = ['s_salary'=>0];
@@ -43,7 +42,12 @@ class StatisticsCoach extends Coach{
                 }
             }
 
-            $salaryoutList = db('salary_out')->field("*,sum(salary) as s_salary,from_unixtime(create_time,'%Y%m%d') as days")->where($map)->group('days')->order('days')->select();
+
+            $salaryoutList = db('salary_out')->field("*,sum(salary) as s_salary,from_unixtime(create_time,'%Y%m%d') as days")
+            ->where(['create_time'=>['between',[$month_start,$month_end]],'member_id'=>$member_id])
+            ->group('days')
+            ->order('days')
+            ->select();
 
             foreach ($list2 as $key => &$value) {
                 foreach ($salaryoutList as $k => $val) {
@@ -69,7 +73,7 @@ class StatisticsCoach extends Coach{
 
     // 收益统计
     public function coachIncome(){
-        $member_id = input('member_id');
+        $member_id = $this->camp_member['member_id']; 
         $c_id = 0;
         $s_salary = 0;
         $s_students = 0;
@@ -126,7 +130,7 @@ class StatisticsCoach extends Coach{
 
     // 个人（教练）工资列表（列出教练员当月的工资）//准哥写的，待丽文检查
     public function coachSalary(){
-        $member_id = input('member_id',0);
+        $member_id = $this->camp_member['member_id']; 
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
@@ -138,7 +142,7 @@ class StatisticsCoach extends Coach{
             ->where('salary_in.delete_time',null)
             ->order('salary_in.id desc')
             ->select();
-        // echo db('salary_in')->getlastsql();
+        echo db('salary_in')->getlastsql();
         // dump($list);
         $this->assign('list',$list);
 
@@ -147,7 +151,7 @@ class StatisticsCoach extends Coach{
 
     // 个人（教练）提现列表  //准哥写的，待丽文检查
     public function coachWithdraw(){
-        $member_id = input('member_id',0);
+        $member_id = $this->camp_member['member_id']; 
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);

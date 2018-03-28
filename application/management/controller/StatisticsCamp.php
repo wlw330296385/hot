@@ -303,8 +303,8 @@ class StatisticsCamp extends Camp{
             $list3 = $income3;
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);
-            $this->assign('totalEventList',$totalEventList);
-            $this->assign('totalLessonList',$totalLessonList);
+            // $this->assign('totalEventList',$totalEventList);
+            // $this->assign('totalLessonList',$totalLessonList);
             return view('StatisticsCamp/campIncome'); 
         }else{
             $income1 = db('income')->field("sum(income) as s_income,count('id') as c_id,sum(total) as s_total,goods,goods_id,camp,price,f_id,camp_id")
@@ -492,9 +492,7 @@ class StatisticsCamp extends Camp{
         $camp_id = input('param.camp_id');
         $keyword = input('param.keyword');
         $member_id = input('param.member_id');
-        if($camp_id){
-            $map['salary_in.camp_id'] = $camp_id;
-        }
+        $map['salary_in.camp_id'] = $this->camp_member['camp_id'];
         if($keyword){
             $map['salary_in.lesson'] = ['like'=>"%$keyword%"];
         }
