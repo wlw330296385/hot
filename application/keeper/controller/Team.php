@@ -407,7 +407,8 @@ class Team extends Base {
         $modelMatchRefereeApply = new MatchRefereeApply();
         $refereeList = $modelMatchRefereeApply->where([
             'match_id' => $matchRecordInfo['match_id'],
-            'match_record_id' => $matchRecordInfo['id']
+            'match_record_id' => $matchRecordInfo['id'],
+            'status' => ['neq', 3]
         ])->select();
 
 
@@ -560,7 +561,8 @@ class Team extends Base {
             $modelMatchRefereeApply = new MatchRefereeApply();
             $refereeList = $modelMatchRefereeApply->where([
                 'match_id' => $matchRecordInfo['match_id'],
-                'match_record_id' => $matchRecordInfo['id']
+                'match_record_id' => $matchRecordInfo['id'],
+                'status' => ['neq', 3]
             ])->select();
         }
         
