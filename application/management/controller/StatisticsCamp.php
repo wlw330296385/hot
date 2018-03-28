@@ -635,7 +635,8 @@ class StatisticsCamp extends Camp{
         if($status){
             $map['status'] = $status;
         }
-        $list = db('bill')->where($map)->where('delete_time',null)->select();
+        $Bill = new \app\management\model\Bill;
+        $list = $Bill->where($map)->where('delete_time',null)->select();
         $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campBillList');
     }
