@@ -43,15 +43,15 @@ class Crontabwoo extends Controller {
             // 结算主教+助教收入，剩余给营主
             // 上级会员收入提成(90%*5%,90%*3%)
             $map['status'] = 1;
-            $map['is_settle'] = 0;
+            // $map['is_settle'] = 0;
             // 当前时间日期
-            $nowDate = date('Ymd', time());
+            // $nowDate = date('Ymd', time());
             $map['camp_id'] = $campInfo['id'];
-            $map['can_settle_date'] = $nowDate;
+            // $map['can_settle_date'] = $nowDate;
             $map['rebate_type'] = 1;
-            $map['questions'] = 0;
+            //$map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
-                foreach ($schedules as $key=> $schedule) {
+                foreach ($schedules   as $key=> $schedule) {
 
                     // 训练营的支出 = (教练薪资+人头提成)
                     $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
@@ -265,13 +265,13 @@ class Crontabwoo extends Controller {
             //list($start, $end) = Time::yesterday();
             //$map['update_time'] = ['between', [$start, $end]];
             $map['status'] = 1;
-            $map['is_settle'] = 0;
+            // $map['is_settle'] = 0;
             // 当前时间日期
             $nowDate = date('Ymd', time());
             $map['camp_id'] = $campInfo['id'];
-            $map['can_settle_date'] = $nowDate;
-            $map['questions'] = 0;
-            $map['rebate_type'] = 2;
+            // $map['can_settle_date'] = $nowDate;
+            // $map['questions'] = 0;
+            // $map['rebate_type'] = 2;
             db('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
                 foreach ($schedules as $key => $schedule) {
                     // 训练营的支出 = (教练薪资+人头提成)
