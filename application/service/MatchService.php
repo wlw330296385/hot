@@ -13,13 +13,13 @@ use think\Db;
 
 class MatchService {
     // 保存比赛数据
-    public function saveMatch($data) {
+    public function saveMatch($data, $valScence='add') {
         $model = new Match();
         $validate = validate('MatchVal');
         // 根据提交的参数有无id 识别执行更新/插入数据
         if (isset($data['id'])) {
             // 验证数据
-            if (!$validate->scene('edit')->check($data)) {
+            if (!$validate->scene($valScence)->check($data)) {
                 return ['code' => 100, 'msg' => $validate->getError()];
             }
             // 更新数据
@@ -32,7 +32,7 @@ class MatchService {
             }
         } else {
             // 验证数据
-            if (!$validate->scene('add')->check($data)) {
+            if (!$validate->scene($valScence)->check($data)) {
                 return ['code' => 100, 'msg' => $validate->getError()];
             }
             // 插入数据
@@ -120,12 +120,6 @@ class MatchService {
     public function deleteMatch($id) {
         // match表记录软删除
         $res = Match::destroy($id);
-        // match_record比赛战绩表相关数据 软删除
-        db('match_record')->where('match_id', $id)->update(['delete_time' => time()]);
-        // match_referee_apply裁判申请比赛表相关数据 软删除
-        db('match_referee_apply')->where('match_id', $id)->update(['delete_time' => time()]);
-        // match_referee比赛裁判表相关数据 软删除
-        db('match_referee')->where('match_id', $id)->update(['delete_time' => time()]);
         return $res;
     }
 
