@@ -526,24 +526,24 @@ class StatisticsCamp extends Camp{
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
-        //总购买课时
-        $totalBuy = db('bill')
-        ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
-        // ->where(['create_time'=>['between',[$month_start,$month_end]]])
-        ->where('delete_time',null)
-        ->sum('total');
-        // 总赠送课时
-        $totalGift = db('schedule_gift_student')
-        ->where(['camp_id'=>$camp_id,'status'=>1])
-        // ->where(['create_time'=>['between',[$month_start,$month_end]]])
-        ->where('delete_time',null)
-        ->sum('gift_schedule');
-        //总已上课时
-        $totalSchedule = db('schedule_member')
-        ->where(['camp_id'=>$camp_id,'status'=>1,'type'=>1])
-        // ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
-        ->where('delete_time',null)
-        ->count('id');
+        // //总购买课时
+        // $totalBuy = db('bill')
+        // ->where(['camp_id'=>$camp_id,'goods_type'=>1,'is_pay'=>1])
+        // // ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        // ->where('delete_time',null)
+        // ->sum('total');
+        // // 总赠送课时
+        // $totalGift = db('schedule_gift_student')
+        // ->where(['camp_id'=>$camp_id,'status'=>1])
+        // // ->where(['create_time'=>['between',[$month_start,$month_end]]])
+        // ->where('delete_time',null)
+        // ->sum('gift_schedule');
+        // //总已上课时
+        // $totalSchedule = db('schedule_member')
+        // ->where(['camp_id'=>$camp_id,'status'=>1,'type'=>1])
+        // // ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
+        // ->where('delete_time',null)
+        // ->count('id');
 
         $lessonList = db('lesson')->where(['camp_id'=>$camp_id])->select();
         $refundScheduleList = [];
@@ -557,11 +557,12 @@ class StatisticsCamp extends Camp{
             ->where('delete_time',null)
             ->group('goods_id')
             ->find();
-            // dump($bill_2);die;
             if($bill_2){
+                $refundScheduleList[$val['lesson']] = ['s_totalRefund'=>number_format($bill_2['s_totalRefund'],0)];
                 $totalRefundSchedule = $bill_2['s_totalRefund'];
             }else{
                 $$totalRefundSchedule = 0;
+                $refundScheduleList[$val['lesson']] = ['s_totalRefund'=>0];
             }
             // 课时列表
             $bill1 = db('bill')
@@ -611,10 +612,10 @@ class StatisticsCamp extends Camp{
         $this->assign('buyList',$buyList);
         $this->assign('totalScheduleList',$totalScheduleList);
         $this->assign('refundScheduleList',$refundScheduleList);
-        $this->assign('totalBuy',$totalBuy?$totalBuy:0);
-        $this->assign('totalGift',$totalGift?$totalGift:0);
-        $this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
-        $this->assign('totalRefundSchedule',$totalRefundSchedule?$totalRefundSchedule:0);
+        // $this->assign('totalBuy',$totalBuy?$totalBuy:0);
+        // $this->assign('totalGift',$totalGift?$totalGift:0);
+        // $this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
+        // $this->assign('totalRefundSchedule',$totalRefundSchedule?$totalRefundSchedule:0);
         return view('StatisticsCamp/campScheduleStatistics');
     }
 
