@@ -122,9 +122,14 @@ class Match extends Base {
         return view('Match/leagueRecord');
     }
 
-    // 联赛战绩
+    // 联赛数据
     public function leagueData() {
         return view('Match/leagueData');
+    }
+
+    // 联赛比赛动态列表
+    public function leagueDynamicList() {
+        return view('Match/leagueDynamicList');
     }
     
 }

@@ -110,7 +110,7 @@
 											<small>计算规则：[ 主教练底薪{$vol.coach_salary}+助教底薪{$vol.assistant_salary}x助教人数 + 教练人数(1+{$total_assistant})x人头基数{$vol.salary_base}x学生总数{$vol.students}]</small>
 										</td>
 										<td>{$vol.cost*$vol.students*$vol.schedule_rebate}</td>
-										<td>{$vol.schedule_income}</td>
+										<td>{$vol.schedule_income-$vol.cost*$vol.students*$vol.schedule_rebate}</td>
 									</tr>
 									{/volist}
 
@@ -358,10 +358,10 @@
             }
             var linkPram = "";
             if(member_id!=""){
-                linkPram = linkPram+"member_id/"+member_id+"/";
+                linkPram = linkPram+"/member_id/"+member_id+"/";
             }
             if(lesson_id!=""){
-                linkPram = linkPram+"lesson_id/"+lesson_id+"/";
+                linkPram = linkPram+"/lesson_id/"+lesson_id+"/";
             }
             //设置本地存储
             localStorage.setItem('currDateYM',getYM);
