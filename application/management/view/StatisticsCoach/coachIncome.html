@@ -29,7 +29,7 @@
                                 <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
                             </div>
                             <h3 class="totalRight">
-                                <span><small>本月总收益：</small><strong class="text-yellow monthIn">{$s_push_salary+$s_salary+$s_rebate}</strong></span>
+                                <span><small>本月总收益：</small><strong class="text-yellow monthIn"></strong></span>
                             </h3>
                         </div>
                     </div>
@@ -45,10 +45,10 @@
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
         <h3 class="totalRight pull-right">
-            <span><small>课时收益：</small><strong class="text-yellow">{$s_push_salary+$s_salary}</strong></span>
-            <span><small>总课次：</small><strong class="text-yellow">{$c_id}</strong></span>
-            <span><small>总人次：</small><strong class="text-yellow">{$s_students}</strong></span>
-            <span><small>返利收益：</small><strong class="text-yellow">{$s_rebate}</strong></span>
+            <span><small>课时收益：</small><strong class="text-yellow sShouruTotal"></strong></span>
+            <span><small>总课次：</small><strong class="text-yellow sKeciTotal"></strong></span>
+            <span><small>总人次：</small><strong class="text-yellow sRenciTotal"></strong></span>
+            <span><small>返利收益：</small><strong class="text-yellow bShouruTotal"></strong></span>
         </h3>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#scheduleCount" data-toggle="tab">课时收益</a></li>
@@ -81,9 +81,9 @@
                                 <tr role="row" class="odd">
                                     <td class="sorting_1">{$vol.camp}</td>
                                     <td>{$vol.lesson}</td>
-                                    <td>{$vol.c_id}</td>
-                                    <td>{$vol.s_students}</td>
-                                    <td>{$vol.s_salary+$vol.s_push_salary}</td>
+                                    <td class="sKeci">{$vol.c_id}</td>
+                                    <td class="sRenci">{$vol.s_students}</td>
+                                    <td class="sShouru">{$vol.s_salary+$vol.s_push_salary}</td>
                                     <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 {/volist}
@@ -107,9 +107,9 @@
                                 <thead>
                                 <tr role="row">
                                     <th>层级</th>
+                                    <th>返利金额</th>
                                     <th class="sorting_asc">被推荐人</th>
                                     <th>被推荐人收入</th>
-                                    <th>返利金额</th>
                                     <th>返利积分</th>
                                     <th>操作</th>
                                 </tr>
@@ -119,8 +119,8 @@
                                 {volist name="rebateList" id="vol"}
                                 <tr role="row" class="odd">
                                     <td>{$vol.tier}</td>
+                                    <td class="bShouru">{$vol.salary*($vol.tier/0.05)}</td>
                                     <td class="sorting_1">{$vol.s_member}</td>
-                                    <td>{$vol.salary*($vol.tier/0.05)}</td>
                                     <td>{$vol.salary}</td>
                                     <td>{$vol.score}</td>
                                     <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
@@ -180,6 +180,33 @@
 
         //判断是否有指定训练营和教练员的本地存储
         $("input[name=dateYM]").val(currDateYM);
+
+
+
+        //遍历需要统计的数据列，并赋值到对应位置
+        var sKeci=0;
+        $(".sKeci").each(function () {
+            sKeci = sKeci + parseInt($(this).text());
+        });
+        var sRenci=0;
+        $(".sRenci").each(function () {
+            sRenci = sRenci + parseInt($(this).text());
+        });
+        var sShouru=0;
+        $(".sShouru").each(function () {
+            sShouru = sShouru + parseFloat($(this).text());
+        });
+        var bShouru=0;
+        $(".bShouru").each(function () {
+            bShouru = bShouru + parseFloat($(this).text());
+        });
+
+        $(".sKeciTotal").text(sKeci);
+        $(".sRenciTotal").text(sRenci);
+        $(".sShouruTotal").text(sShouru.toFixed(2));
+        $(".bShouruTotal").text(bShouru.toFixed(2));
+        var mIn = parseFloat(sShouru)+parseFloat(bShouru);
+        $(".monthIn").text(mIn.toFixed(2));
 
         //=========================== 初始化数据 ==============================//
 
