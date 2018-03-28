@@ -190,6 +190,43 @@
     </div>
     <!-- /.row -->
 
+    <div class="row">
+        <div class="col-md-6">
+
+            <!-- LINE CHART -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">学员总人数折线图（本年）</h3>
+                </div>
+                <div class="box-body">
+                    <div id="studentAll" style="height: 400px"></div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+
+        </div>
+        <!-- /.col (LEFT) -->
+        <div class="col-md-6">
+
+            <!-- LINE CHART -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">学员训练点分布折线图（本年）</h3>
+                </div>
+                <div class="box-body">
+                    <div id="studentLocation" style="height: 400px"></div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col (RIGHT) -->
+    </div>
+    <!-- /.row -->
+
     <div>
     </div>
 
@@ -209,6 +246,9 @@
 
 <script type="text/javascript">
 
+    var date=new Date;
+    var currYear=date.getFullYear();
+    var currMonth=date.getMonth()+1;
 
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
@@ -270,7 +310,7 @@
     // 指定图表的配置项和数据
     optionTY = {
         title: {
-            text: '2018 营业额折线图'
+            text: currYear+' 营业额折线图'
         },
         tooltip: {
             trigger: 'axis'
@@ -427,11 +467,115 @@
     canvasLesson.setOption(optionLS);
 
 
+    /////////////////////////////////////////////////////////////////////////////////////// 学员折线图（本年）
+
+
+    var domSA = document.getElementById("studentAll");
+    var studentAll = echarts.init(domSA,"hot");
+
+    // 指定图表的配置项和数据
+    optionSA = {
+        title: {
+            text: currYear
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['学员']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name:'学员',
+                type:'line',
+                data:[100, 200, 300, 300, 200, 150, 100, 240, 300, 400, 350, 600, 200]
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    studentAll.setOption(optionSA);
+
+
+    /////////////////////////////////////////////////////////////////////////////////////// 学员分布流动折线图（本年）
+
+
+    var domSL = document.getElementById("studentLocation");
+    var studentLocation = echarts.init(domSL,"hot");
+
+    // 指定图表的配置项和数据
+    optionSL = {
+        title: {
+            text: currYear
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['前海北头','鼎泰风华','南山小学','南外二小','松坪小学']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name:'前海北头',
+                type:'line',
+                data:[10, 20, 30, 30, 20, 10, 10, 20, 30, 40, 30, 60, 20]
+            },
+            {
+                name:'鼎泰风华',
+                type:'line',
+                data:[100, 200, 300, 300, 200, 150, 100, 240, 300, 400, 350, 600, 200]
+            },
+            {
+                name:'南山小学',
+                type:'line',
+                data:[54, 23, 43, 54, 43, 54, 43, 43, 56, 54, 54, 45, 45]
+            },
+            {
+                name:'南外二小',
+                type:'line',
+                data:[30, 24, 30, 30, 20, 50, 10, 24, 30, 40, 30, 60, 20]
+            },
+            {
+                name:'松坪小学',
+                type:'line',
+                data:[20, 20, 30, 30, 20, 80, 10, 20, 34, 40, 50, 50, 20]
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    studentLocation.setOption(optionSL);
+
 
 </script>
-
-
-
 
 
 {/block}
