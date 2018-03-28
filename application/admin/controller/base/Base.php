@@ -18,7 +18,7 @@ class Base extends Controller {
         $SystemS = new SystemService();
         $site = $SystemS->getSite();
         $this->site = $site;
-
+        $this->cur_camp = $this->getCurCamp();
         $this->assign('site', $site);
         $this->assign('admin', session('admin') );
 

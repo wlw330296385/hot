@@ -36,7 +36,7 @@ class Index extends Backend
 		$totalSchedule = db('schedule')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->count('id');
 
 
-
+		
 		// 月营业额总量曲线图
 		$billList = db('bill')->field("sum(balance_pay) as s_balance_pay,from_unixtime(create_time,'%Y%m%d') as days,goods_type")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('create_time','m')->group('days')->select();
 		$list = Time::month();
