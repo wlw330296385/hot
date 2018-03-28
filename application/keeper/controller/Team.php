@@ -400,9 +400,15 @@ class Team extends Base {
         
         // 裁判列表
         $refereeList= [];
-        if (!empty($matchInfo['referee_str'])) {
+        /*if (!empty($matchInfo['referee_str'])) {
             $refereeList = json_decode($matchInfo['referee_str'], true);
-        }
+        }*/
+        // 获取已同意的裁判比赛申请|邀请的裁判名单
+        $modelMatchRefereeApply = new MatchRefereeApply();
+        $refereeList = $modelMatchRefereeApply->where([
+            'match_id' => $matchRecordInfo['match_id'],
+            'match_record_id' => $matchRecordInfo['id']
+        ])->select();
 
 
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
@@ -547,16 +553,15 @@ class Team extends Base {
                 $matchInfo['record'] = $matchRecordInfo;
             }
             // 裁判列表
-            if (!empty($matchInfo['referee_str'])) {
-                //$refereeList = json_decode($matchInfo['referee_str'], true);
-                // 获取已同意的裁判比赛申请|邀请的裁判名单
-                $modelMatchRefereeApply = new MatchRefereeApply();
-                $refereeList = $modelMatchRefereeApply->where([
-                    'match_id' => $matchRecordInfo['match_id'],
-                    'match_record_id' => $matchRecordInfo['id'],
-                    'status' => 2
-                ])->select();
-            }
+            /*if (!empty($matchInfo['referee_str'])) {
+                $refereeList = json_decode($matchInfo['referee_str'], true);
+            }*/
+            // 获取已同意的裁判比赛申请|邀请的裁判名单
+            $modelMatchRefereeApply = new MatchRefereeApply();
+            $refereeList = $modelMatchRefereeApply->where([
+                'match_id' => $matchRecordInfo['match_id'],
+                'match_record_id' => $matchRecordInfo['id']
+            ])->select();
         }
         
         $this->assign('match_id', $match_id);
