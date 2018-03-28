@@ -30,10 +30,14 @@
             fill: currentColor;
             overflow: hidden;
         }
-        
+
         .goConfirm .mui-media-body {
             height: 24px !important;
             line-height: 24px !important;
+        }
+
+        .logRegOperation {
+            padding: 2px 6px !important;
         }
     </style>
 </head>
@@ -42,13 +46,15 @@
 
 
     <!--首页-->
-    <div class="mui-content">
+    <div class="mui-content mt55">
         <!--定位、搜索触发-->
         <header id="header" class="mui-bar mui-bar-nav search1">
             <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
                 <span class="address" id="cityResult3">大热市</span>
             </div>
-            <div class="mui-pull-left"><input type="search" id="search-input" placeholder="搜课程/活动/球场等"></div>
+            <div class="mui-pull-left">
+                <input type="search" id="search-input" placeholder="搜课程/活动/球场等">
+            </div>
             <span class="mui-icon mui-icon-search searchicon" id="search-Btn"></span>
         </header>
 
@@ -85,7 +91,7 @@
             </div>
 
             <!--图文导航-->
-            <div class="nav-list">
+            <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('lesson/lessonList')}">
@@ -116,7 +122,7 @@
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-court"></use>
                             </svg>
-                            <div class="mui-media-body">球场</div>
+                            <div class="mui-media-body">校区</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
@@ -132,7 +138,7 @@
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-camp"></use>
                             </svg>
-                            <div class="mui-media-body">训练营</div>
+                            <div class="mui-media-body">新闻</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
@@ -140,7 +146,7 @@
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-recruit"></use>
                             </svg>
-                            <div class="mui-media-body">招募</div>
+                            <div class="mui-media-body">班级</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
@@ -170,25 +176,57 @@
                 </ul>
             </div>
 
-            <!--热门课程-->
-            <div class=show-list>
-
-                <div class="page-header">
-                    <span class="course">热门课程</span>
-                    <span class="more"><a href="{:url('lesson/lessonList')}" class="mui-navigate-right">更多</a></span>
-                </div>
-
-                <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-lesson">
-
-                </ul>
-
+            <!-- 最新消息 -->
+            <div class="page-header whitebg mb">
+                <span class="course noticeSlide">欢迎荣光机构入驻篮球管家</span>
+                <span class="fr f14">
+                    <button type="button" class="mui-btn logRegOperation">登陆</button>
+                    <button type="button" class="mui-btn logRegOperation">注册</button>
+                </span>
             </div>
 
+            <!-- 广告图 -->
             <div class="show-list hot-ads">
                 <img src="/static/frontend/images/ads1.jpg" />
             </div>
 
-            
+            <!-- 最新新闻 -->
+            <div class="page-header whitebg border-b">
+                <span class="course">最新新闻</span>
+                <span class="more">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newList"></ul>
+
+            <!--最近训练-->
+            <div class="page-header border-b">
+                <span class="course">最近训练</span>
+                <span class="more">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newMatch"></ul>
+
+            <!--最近赛事-->
+            <div class="page-header border-b">
+                <span class="course">最近赛事</span>
+                <span class="more">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newMatch"></ul>
+
+            <!--最近活动-->
+            <div class="page-header border-b">
+                <span class="course">最近活动</span>
+                <span class="more pdr15">
+                    <a href="" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newEvent"></ul>
+
+
         </div>
     </div>
 
@@ -199,9 +237,12 @@
             <header id="header-search" class="mui-bar mui-bar-nav search1" style="position: relative !important;">
                 <div class="mui-pull-left mui-icon mui-icon-back" id="close-search"></div>
                 <div class="mui-pull-left searchType">
-                    搜<span>课程</span>
+                    搜
+                    <span>课程</span>
                 </div>
-                <div class="mui-pull-left"><input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字"></div>
+                <div class="mui-pull-left">
+                    <input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字">
+                </div>
                 <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
             </header>
             <div class="search">
@@ -215,15 +256,33 @@
                 <div class="hot-search">
                     <h4>热门搜索</h4>
                     <ul class="hot-search-frame">
-                        <li s-keyword="" s-table=""><span>幼儿课程</span></li>
-                        <li s-keyword="" s-table=""><span>基础课程</span></li>
-                        <li s-keyword="" s-table=""><span>强化课程</span></li>
-                        <li s-keyword="" s-table=""><span>初中课程</span></li>
-                        <li s-keyword="" s-table=""><span>室内球场</span></li>
-                        <li s-keyword="" s-table=""><span>室外球场</span></li>
-                        <li s-keyword="" s-table=""><span>特色课程</span></li>
-                        <li s-keyword="" s-table=""><span>男教练</span></li>
-                        <li s-keyword="" s-table=""><span>女教练</span></li>
+                        <li s-keyword="" s-table="">
+                            <span>幼儿课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>基础课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>强化课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>初中课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室内球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>室外球场</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>特色课程</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>男教练</span>
+                        </li>
+                        <li s-keyword="" s-table="">
+                            <span>女教练</span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -270,10 +329,10 @@
                     localStorage.currentCity = _getParam(items[1], 'text');
                     localStorage.currentProvince = _getParam(items[0], 'text');
                     localStorage.currentAreas = areas;
-                    //获取热门课程
-                    toLessonList(localStorage.currentCity, localStorage.currentProvince);
-                    //获取热门训练营
-                    toCampList(localStorage.currentCity, localStorage.currentProvince);
+                    // //获取热门课程
+                    // toLessonList(localStorage.currentCity, localStorage.currentProvince);
+                    // //获取热门训练营
+                    // toCampList(localStorage.currentCity, localStorage.currentProvince);
                 });
             }, false);
         });
@@ -291,7 +350,6 @@
 
     $(function () {
 
-
         //未开发提示
         $(".goConfirm").click(function () {
             mui.toast('暂未开放，敬请期待');
@@ -307,16 +365,16 @@
         var sProvince = getLocationTB['province'];
         $(".address").text(sCity);
 
-        //获取热门课程
-        toLessonList(sCity, sProvince);
-        //获取热门训练营
-        toCampList(sCity, sProvince);
+        // //获取热门课程
+        // toLessonList(sCity, sProvince);
+        // //获取热门训练营
+        // toCampList(sCity, sProvince);
 
         //提示框
         if ("{$memberInfo['id']}" == 0) {
-            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
-                if (e.index===1) {
-                    window.location.href="{$fasturl}";
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
                 }
             });
         }
@@ -337,6 +395,66 @@
             }
         })
 
+
+
+        //比赛报名功能
+        $(document).on('tap', '.signupMatchBtn', function () {
+            //判断是否登陆会员
+            var match_id = matchid;
+            mui.ajax("{:url('api/match/joinmatch')}", {
+                data: {
+                    match_id: matchid,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.alert('报名成功', '确定');
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+        //活动报名功能
+        $(document).on('tap', '.signupEventBtn', function () {
+            //判断是否登陆会员
+            var event_id = eventid;
+            mui.ajax("{:url('api/team/jointeamevent')}", {
+                data: {
+                    event_id: eventid,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.alert('报名成功', '确定');
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+        toNewList(); // 最近新闻
+        toLastTrainList(); //最近训练
+        toLastMatchList(); //最近比赛
+        toLastEventList(); //最近活动
     })
 
 
@@ -383,48 +501,237 @@
     }
 
 
-    //获取热门课程并追加到页面
-    var toLessonList = function (sCity, sProvince) {
-        console.log(sCity)
-        var url = "{:url('api/lesson/getHotLessonListApi','','',true)}";
-        mui.ajax({
-            url: url,
+    var member_id = "{$memberInfo.id}"
+    var camp_id = "{$o_id}"
+    //获取最近一条新闻
+    function toNewList() {
+        mui.ajax("{:url('api/referee/refereelastmatch')}", {
             data: {
-                camp_id:"{$o_id}",
-                province: sProvince,
-                city: sCity,
-                status: 1,
+                page: 1,
+                referee_id: 2
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
             headers: { 'Content-Type': 'application/json' },
-            //processData:false,
             success: function (data) {
+                console.log(data)
+                var div = '';
                 if (data.code == 200) {
-                    var newli = '';
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
-                        newli = newli + '<li class="mui-table-view-cell mui-media mui-col-xs-6"><a href="' + urls + '"><div class="img4x3" style="background-image:url(' + data.data[i].cover + ')"></div><div class="mui-media-body typename">' + data.data[i].lesson + '</div><div class="frame"><span class="typename-num">已报名：' + data.data[i].students + '</span><span class="typename-money">￥' + data.data[i].cost + '</span></div></a></li>'
-
+                    // 将时间戳转成日期格式
+                    for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                        var url = "{:url('team/eventinfo')}"
+                        div += '<li class="mui-table-view-cell listli"><a href="' + url + '"><div class="mui-media-body wd" style="line-height:20px">' + data.data[i].match.name + '</div>'
+                        div += '<p class="fr f12">2018-03-20</p></a></li>'
                     }
-                    if (newli == '') {
-                        newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-                    }
-                    $("ul#hot-lesson").html(newli);
-
-                } else {
-                    newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
-                    $("ul#hot-lesson").html(newli);
-                    //mui.toast('数据获取失败,请稍候再试');
+                    $(".newList").empty().append(div);
                 }
-
+                if (data.code == 100) {
+                    $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                }
             },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
             }
         });
     };
+
+    var matchid = ''
+    //获取最近一条训练
+    function toLastTrainList() {
+        mui.ajax("{:url('api/team/lastmatch')}", {
+            data: {
+                camp_id:camp_id,
+                member_id: member_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var div = '';
+                if (data.code == 200) {
+                    // 将时间戳转成日期格式
+                    var Tmonth = gettimem(data.data[0].match_timestamp * 1000);
+                    var Tday = gettimed(data.data[0].match_timestamp * 1000);
+                    var Ttime = gettimeh(data.data[0].match_timestamp * 1000);
+                    matchid = data.data[0].id
+                    var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].match_id;
+                    div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                    if (data.data[0].match_time == 0) {
+                        div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
+                    } else {
+                        div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                    }
+                    div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match + '</h5><div class="divFrame">';
+                    div += '<p>发起人：' + data.data[0].home_team + '</p>';
+                    div += '<p>比赛地点：' + data.data[0].court + '</p><p>比赛类型：' + data.data[0].type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                    if (data.data[0].is_finished_num == 1) {
+                        div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                    } else {
+                        div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                    }
+                    div += ' </div></div></li>';
+                    // 人员头像版块
+                    div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                    for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                        div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                    }
+                    div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                    $(".newMatch").empty().append(div);
+                }
+                if (data.code == 100) {
+                    $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有训练数据，赶紧去创建训练吧</p></li>');
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    };
+
+    var matchid = ''
+    //获取最近一条比赛
+    function toLastMatchList() {
+        mui.ajax("{:url('api/team/lastmatch')}", {
+            data: {
+                camp_id:camp_id,
+                member_id: member_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var div = '';
+                if (data.code == 200) {
+                    // 将时间戳转成日期格式
+                    var Tmonth = gettimem(data.data[0].match_timestamp * 1000);
+                    var Tday = gettimed(data.data[0].match_timestamp * 1000);
+                    var Ttime = gettimeh(data.data[0].match_timestamp * 1000);
+                    matchid = data.data[0].id
+                    var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].match_id;
+                    div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                    if (data.data[0].match_time == 0) {
+                        div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
+                    } else {
+                        div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                    }
+                    div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match + '</h5><div class="divFrame">';
+                    div += '<p>发起人：' + data.data[0].home_team + '</p>';
+                    div += '<p>比赛地点：' + data.data[0].court + '</p><p>比赛类型：' + data.data[0].type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                    if (data.data[0].is_finished_num == 1) {
+                        div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                    } else {
+                        div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                    }
+                    div += ' </div></div></li>';
+                    // 人员头像版块
+                    div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                    for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                        div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                    }
+                    div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                    $(".newMatch").empty().append(div);
+                }
+                if (data.code == 100) {
+                    $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    };
+
+    var eventid = ''
+    //获取最近一条活动
+    function toLastEventList() {
+        mui.ajax("{:url('api/team/lastevent')}", {
+            data: {
+                camp_id: camp_id,
+                member_id: member_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var div = '';
+                if (data.code == 200) {
+                    // 将时间戳转成日期格式
+                    var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
+                    var Tday = gettimed(data.data[0].start_time_stamp * 1000);
+                    var Ttime = gettimeh(data.data[0].start_time_stamp * 1000);
+                    eventid = data.data[0].id
+                    var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                    div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                    div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
+                    div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                    if (data.data[0].is_finished_num == 1) {
+                        div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                    } else {
+                        div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                    }
+                    div += ' </div></div></li>';
+                    // 人员头像版块
+                    div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                    for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                        div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                    }
+                    div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                    $(".newEvent").empty().append(div);
+                }
+                if (data.code == 100) {
+                    $(".newEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    };
+
+
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    function gettimem(m) {
+        var _time = new Date(m);
+        var month = _time.getMonth() + 1;
+        return p(month);
+    }
+    function gettimed(d) {
+        var _time = new Date(d);
+        var day = _time.getDate();
+        return p(day);
+    }
+    function gettimeh(h) {
+        var _time = new Date(h);
+        var hours = _time.getHours();
+        var minutes = _time.getMinutes();
+        return p(hours) + ":" + p(minutes);
+    }
+    // 将时间戳转成日期格式
+    function gettimeM(M) {
+        var _time = new Date(M);
+        var month = _time.getMonth() + 1;
+        var day = _time.getDate();
+        return p(month) + "月" + p(day) + "日"
+    }
+    function gettimeY(Y) {
+        var _time = new Date(Y);
+        var year = _time.getFullYear();
+        return p(year) + "年";
+    }
 
 
 </script>
