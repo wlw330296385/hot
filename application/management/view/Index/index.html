@@ -214,6 +214,7 @@
 
     let eventBill = JSON.parse('{$eventBill}');
     let lessonBill = JSON.parse('{$lessonBill}');
+    let gradeCourtData = JSON.parse('{$gradeCourtData}');
 
     var domTM = document.getElementById("turnoverMonth");
     var turnoverMonth = echarts.init(domTM,"hot");
@@ -315,7 +316,7 @@
 
     var domLC = document.getElementById("canvasLocation");
     var canvasLocation = echarts.init(domLC,"hot");
-
+    console.log(gradeCourtData.legend)
     // 指定图表的配置项和数据
     optionLCT = {
         title : {
@@ -330,7 +331,7 @@
         legend: {
             orient: 'vertical',
             left: 'left',
-            data: ['前海北头','鼎泰风华','南山小学','南外二小','松坪小学']
+            data: gradeCourtData.legend
         },
         series : [
             {
@@ -338,13 +339,7 @@
                 type: 'pie',
                 radius : '65%',
                 center: ['50%', '50%'],
-                data:[
-                    {value:335, name:'前海北头'},
-                    {value:310, name:'鼎泰风华'},
-                    {value:234, name:'南山小学'},
-                    {value:135, name:'南外二小'},
-                    {value:1548, name:'松坪小学'}
-                ],
+                data:gradeCourtData.series,
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
