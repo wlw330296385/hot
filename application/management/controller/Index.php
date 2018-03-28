@@ -15,14 +15,16 @@ class Index extends Backend
 	}
 
 	public function index(){
-		// 教学分布点
-		$list1 = db('grade')->field('sum(students) as s_students,court')->where(['camp_id'=>$this->camp_member['camp_id']])->select();
-		// 一年的营业额
-		$list2 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m') as month")->where(['camp_id'=>$this->camp_member['camp_id']])->whereTime('create_time','y')->group('month')->select();
-		// 一个月的营业额
-		$list2 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$this->camp_member['camp_id']])->whereTime('create_time','m')->group('days')->select();
 
-		// 总收益
+		$campInfo = db('camp')->where(['id'=>$this->camp_member['camp_id']])->find();
+
+		// 一个月的收益
+		$monthIncome = db('income')->where(['camp_id'=>$this->camp_member['camp_id']])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
+		if($campInfo['rebate_type'] == 2){
+			$monthOutput = db('output')->where(['camp_id'=>$this->camp_member['camp_id'],''])->whereTime('create_time','m')->where('delete_time',null)->sum('output');
+			$monthOutput = $monthOutput?$monthOutput:0;
+			$monthIncome = $monthIncome - $monthOutput;
+		}		// 总收益
 		$totalIncome = db('income')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->sum('income');
 		// 赠课总人数
 		$totalGift = db('schedule_giftrecord')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->sum('student_num');
@@ -44,8 +46,6 @@ class Index extends Backend
 			$eventBill[] = 0;
 		}
 
-		// dump($lessonBill);die;
-		// dump($billList);
 		foreach ($billList as $key => $value) {
 			$kk = $value['days'] - $dateStart;
 			if($value['goods_type'] == 1){
@@ -60,6 +60,7 @@ class Index extends Backend
 
 		$this->assign('lessonBill',json_encode($lessonBill));
 		$this->assign('eventBill',json_encode($eventBill));
+		$this->assign('monthIncome',$monthIncome);
 		$this->assign('totalIncome',$totalIncome);
 		$this->assign('totalGift',$totalGift);
 		$this->assign('totalStudents',$totalStudents);
