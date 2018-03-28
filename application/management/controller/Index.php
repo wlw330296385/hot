@@ -37,7 +37,7 @@ class Index extends Backend
 
 
 
-		// 培训购买总量曲线图
+		// 月营业额总量曲线图
 		$billList = db('bill')->field("sum(balance_pay) as s_balance_pay,from_unixtime(create_time,'%Y%m%d') as days,goods_type")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('create_time','m')->group('days')->select();
 		$list = Time::month();
 		$lessonBill = [];
@@ -71,7 +71,43 @@ class Index extends Backend
 			$gradeCourtData['legend'][] = $value['court'];
 			$gradeCourtData['series'][] = ['value'=>$value['s_students'],'name'=>$value['court']];
 		}
+
+
+		// 课程购买饼图
+		$lessonBuy = db('bill')->field("sum(total) as s_total,goods,goods_id")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1,'goods_type'=>1])->group('goods_id')->select();
+		$lessonBuyData = [];
+		foreach ($lessonBuy as $key => $value) {
+			$lessonBuyData['legend'][] = $value['goods'];
+			$lessonBuyData['series'][] = ['value'=>$value['s_total'],'name'=>$value['goods']];
+		}
+
+
+		// 年营业额折线图
+		$billMonthList = db('bill')->field("sum(balance_pay) as s_balance_pay,from_unixtime(create_time,'%Y%m') as month,goods_type")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('create_time','y')->group('month')->select();
+		$list = Time::year();
+		$lessonBillYear = [];
+		$eventBillYear = [];
+
+		$dateStartMonth = date('Ym',$list[0]);
+		$dateEndMonth = date('Ym',$list[1]);
+		for ($i=$dateStartMonth; $i <= $dateEndMonth ; $i++) { 
+			$lessonBillYear[] = 0;
+			$eventBillYear[] = 0;
+		}
+
+		foreach ($billMonthList as $key => $value) {
+			$kk = $value['month'] - $dateStartMonth;
+			if($value['goods_type'] == 1){
+				$lessonBillYear[$kk] = $value['s_balance_pay'];
+
+			}elseif ($value['goods_type'] == 2) {
+				$eventBillYear[$kk] = $value['s_balance_pay'];
+			}
+		}
+		$this->assign('lessonBuyData',json_encode($lessonBuyData,true));
 		$this->assign('gradeCourtData',json_encode($gradeCourtData,true));
+		$this->assign('lessonBillYear',json_encode($lessonBillYear));
+		$this->assign('eventBillYear',json_encode($eventBillYear));
 		$this->assign('lessonBill',json_encode($lessonBill));
 		$this->assign('eventBill',json_encode($eventBill));
 		$this->assign('monthIncome',$monthIncome);

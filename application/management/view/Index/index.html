@@ -214,8 +214,10 @@
 
     let eventBill = JSON.parse('{$eventBill}');
     let lessonBill = JSON.parse('{$lessonBill}');
+    let eventBillYear = JSON.parse('{$eventBillYear}');
+    let lessonBillYear = JSON.parse('{$lessonBillYear}');
     let gradeCourtData = JSON.parse('{$gradeCourtData}');
-
+    let lessonBuyData = JSON.parse('{$lessonBuyData}');
     var domTM = document.getElementById("turnoverMonth");
     var turnoverMonth = echarts.init(domTM,"hot");
 
@@ -267,11 +269,11 @@
 
     var domTY = document.getElementById("turnoverYear");
     var turnoverYear = echarts.init(domTY,"hot");
-
+    console.log(lessonBillYear)
     // 指定图表的配置项和数据
     optionTY = {
         title: {
-            text: '2018 营业额折线图'
+            text: "{:date('Y',time())} 年营业额折线图"
         },
         tooltip: {
             trigger: 'axis'
@@ -297,12 +299,12 @@
             {
                 name:'培训',
                 type:'line',
-                data:[10000, 20000, 30000, 30000, 20000, 100000, 10000, 20000, 30000, 40000, 50000, 60000, 70000]
+                data:lessonBillYear
             },
             {
                 name:'活动',
                 type:'line',
-                data:[10000, 10000, 10000, 10000, 10000, 20000, 20000, 10000, 10000, 10000, 10000, 10000, 10000]
+                data:eventBillYear
             }
         ]
     };
@@ -321,7 +323,7 @@
     optionLCT = {
         title : {
             text: '学生训练点分布',
-            subtext: '5个训练点',
+            subtext: gradeCourtData.legend.length+'个训练点',
             x:'center'
         },
         tooltip : {
@@ -358,12 +360,12 @@
 
     var domLS = document.getElementById("canvasLesson");
     var canvasLesson = echarts.init(domLS,"hot");
-
+    console.log(lessonBuyData)
     // 指定图表的配置项和数据
     optionLS = {
         title : {
             text: '课程购买饼图',
-            subtext: '5个课程',
+            subtext: lessonBuyData.legend.length+'个课程',
             x:'center'
         },
         tooltip : {
@@ -373,7 +375,7 @@
         legend: {
             orient: 'vertical',
             left: 'left',
-            data: ['北头室外课程','鼎泰小学基础班','南小课后班','南外大课间','大热常规班']
+            data: lessonBuyData.legend
         },
         series : [
             {
@@ -399,13 +401,7 @@
                         show: false
                     }
                 },
-                data:[
-                    {value:335, name:'北头室外课程'},
-                    {value:310, name:'鼎泰小学基础班'},
-                    {value:234, name:'南小课后班'},
-                    {value:135, name:'南外大课间'},
-                    {value:1548, name:'大热常规班'}
-                ],
+                data:lessonBuyData.series,
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
