@@ -139,8 +139,7 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <!-- map -->
                     <div class="mui-input-row h-auto" id="mapFrame">
-                        <div id="map">
-                            <div>{:token()}</div>
+                        <div id="map">                        
                             <div id="container"></div>
                             <span class="mui-icon mui-icon-location"></span>
                             <div id="tip">
@@ -410,6 +409,7 @@
                 var remarks = $(".remarks").val();
                 var camp_id = "{$campInfo['id']}";
                 var camp = "{$campInfo['camp']}";
+                var token = $('input[name=__token__]').val();
                 console.log(covers)
 
                 if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$|^400[0-9]{7}/).test(contract)) {
@@ -454,7 +454,7 @@
                         camp: camp,
                         lng: lng,
                         lat: lat,
-                        __token__: "{$Request.token}"
+                        __token__ : token
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
