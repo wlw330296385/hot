@@ -1,8 +1,8 @@
 <?php 
 namespace app\management\controller;
-use app\management\controller\backend;
+use app\management\controller\Backend;
 
-class Member extends backend{
+class Member extends Backend{
 
 	public function _initialize(){
 		parent::_initialize();
