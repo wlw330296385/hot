@@ -598,7 +598,11 @@ class Team extends Base {
         // 获取比赛数据
         $matchInfo = $matchService->getMatch(['id' => $matchId]);
         // 获取要认领的比赛战绩数据
-        $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id']]);
+        $matchRecordInfo = $matchService->getMatchRecord([
+            'match_id' => $matchInfo['id'],
+            'claim_team_id' => 0,
+            'claim_record_id' => 0
+        ]);
         $recordId = $matchRecordInfo['id'];
 
         // 比赛战绩是属于球队的话，插入球队认领的比赛战绩数据
