@@ -108,7 +108,7 @@ class Article extends Base{
             $this->error('权限不足');
         }
         $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
-
+            
         if(!$articleInfo){
             $this->error('找不到文章信息');
         }

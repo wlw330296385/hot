@@ -32,20 +32,17 @@
 
     <div class="mui-content">
 
-        <div class="location-frame">
+        <!-- <div class="location-frame">
             <span class="fl organization">篮球管家</span>
             <span class="fr category">平台操作手册</span>
-        </div>
+        </div> -->
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
                 <ul class="mui-table-view article">
                 </ul>
             </div>
         </div>
-
-        <input type="hidden" name="articleID" class="articleID" />
-
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -140,17 +137,17 @@
                     toList(page, gType, organ_type, organ_id, category);//具体取数据的方法
                 }, 100);
             }
-
+    
             //接口获取数据并追加到页面
             var toList = function (page, gType, organ_type, organ_id, category) {
                 //搜索关键字不能完全为空，否则查询为空
+                var organization_id = "{$o_id}"
                 var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
-                        organization_type:organ_type,
-                        organization_id:organ_id,
-                        category:category,
+                        organization_type:2,
+                        organization_id:organization_id,
                         keyword:keyword,
                         page:page,
                         status: 1
@@ -166,7 +163,7 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length-1; i++) {
                                 let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
-                                newli += ` <li class="mui-table-view-cell mui-media">
+                                newli += ` <li class="mui-table-view-cell border-b">
                                                 <a href="${urls}">
                                                     <img class="mui-media-object mui-pull-left" src="${data.data.data[i].covers}">
                                                     <div class="mui-media-body">
