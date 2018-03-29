@@ -33,27 +33,14 @@
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="organization_id" value="5" class="data">
-        <input type="hidden" name="organization" value="荣光训练营" class="data">
-
+        <input type="hidden" name="organization_id" value="{$o_id}" class="data">
+        <input type="hidden" name="organization" value="{$oInfo.camp}" class="data">
+        <input type="hidden" name="organization_type" value="2" class="data">
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
                 <label>标题</label>
                 <input type="text" name="title" class="data" value="" placeholder="请输入文章标题">
-            </div>
-
-            <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>文章类型</label>
-                    <span class="select-row">
-                        <select id="organization_type" class="data" name="organization_type">
-                            <option value="">请选择</option>
-                            <option value="2">训练营文章</option>
-                            <option value="3">球队文章</option>
-                        </select>
-                    </span>
-                </div>
             </div>
 
             <div class="mui-input-row">
@@ -63,7 +50,7 @@
 
             <div class="mui-input-row h-auto">
                 <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                    <label>活动封面</label>
+                    <label>文章封面</label>
                     <img id="preview_1" class="upload-preview" alt="">
                     <input type="hidden" name="covers" value="" class="data">
                 </a>
@@ -153,7 +140,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '文章发布成功', '确定', function () {
-                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/organization_id/' + "5";
+                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "3";
                     window.top.location.href = goUrl;
                 })
             } else {
