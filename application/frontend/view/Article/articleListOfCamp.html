@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>训练营活动列表</title>
+    <title>文章列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,13 +15,13 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav for-tab">
+    <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powerCamp',['camp_id' => $organization_id])}"></a>
-                <a class="mui-control-item mui-active" href="#onlineEventList">上架</a>
-                <a class="mui-control-item" href="#offlineEventList">下架</a>
-                <a class="mui-control-item" href="{:url('event/createEvent',['organization_id' => $organization_id])}">添加</a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powercamp')}"></a>
+                <a class="mui-control-item mui-active" href="#onlineArticleList">上架</a>
+                <a class="mui-control-item" href="#offlineArticleList">下架</a>
+                <a class="mui-control-item" href="{:url('article/createArticle/camp_id/3')}">添加</a>
             </div>
         </div>
     </header>
@@ -29,14 +29,14 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <div id="onlineEventList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div id="onlineArticleList" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event1 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b article1 OA_task_event"></ul>
                 </div>
             </div>
-            <div id="offlineEventList" class="mui-scroll-wrapper mui-control-content">
+            <div id="offlineArticleList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b event2 OA_task_event"></ul>
+                    <ul class="mui-table-view detalis-list list border-b article-1 OA_task_event"></ul>
                 </div>
             </div>
         </div>
@@ -62,9 +62,8 @@
         //初始化全局变量
         var onCount = 1;
         var offCount = 1;
-        // var outCount = 1;
 
-        mui('#onlineEventList').pullRefresh({
+        mui('#onlineArticleList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -84,7 +83,7 @@
             }
         });
 
-        mui('#offlineEventList').pullRefresh({
+        mui('#offlineArticleList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -110,7 +109,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineEventList', page, gType, 1);//具体取数据的方法
+                toList('onlineArticleList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -120,7 +119,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlineEventList', page, gType, 1);//具体取数据的方法
+                toList('onlinArticleList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -130,7 +129,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+                toList('offlineArticleList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -140,7 +139,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineEventList', page, gType, 2);//具体取数据的方法
+                toList('offlineArticleList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -149,12 +148,12 @@
     //接口获取数据并追加到页面
     var toList = function (wList, page, gType, status, is_max) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/event/getEventListByPageApi',['organization_id'=>$eventInfo['organization_id']])}" + '/?page=' + page;
-        var organizationID = "{$organization_id}";
+        var url = "{:url('api/article/getArticleListByPageApi')}" + '/?page=' + page;
+        // var organizationID = "{organization_id}";
         mui.ajax({
             url: url,
             data: {
-                organization_id: organizationID,
+                organization_id: 5,
                 status: status,
                 is_max: is_max
             },
@@ -162,53 +161,35 @@
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
             headers: { 'Content-Type': 'application/json' },
-            //processData:false,
             success: function (data) {
+                console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-
-                        var time = gettime();
-                        console.log(time)
-                        console.log(data.data.data[i].ends)
-                        var urls = "{:url('event/eventInfoOfCamp')}" + '/event_id/' + data.data.data[i].id + '/organization_id/' + organizationID;
-
+                        var urls = "{:url('article/articleInfo')}" + '/article_id/' + data.data.data[i].id + '/organization_id/' + 5;
                         newli += '<li class="mui-table-view-cell mui-media listli">'
                         if (status == 1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                        } else if (status == 2) {
+                        } else if (status == -1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:55%">' + data.data.data[i].event + '';
-                        if (data.data.data[i].is_max == "已满人") {
-                            newli += '<font class="tipCorner bgred">满人</font>';
-                        }
-                        if (data.data.data[i].ends < time) {
-                            newli += '<font class="tipCorner bggray">过期</font>';
-                        }
-                        newli += '<p class="mui-ellipsis">' + data.data.data[i].event_type + '</p></div><div class="price-frame mui-text-center">'
-                        if (data.data.data[i].is_free == 2) {
-                            newli += '<p class="price">￥<strong>' + data.data.data[i].price + '</strong></p>';
-                        } else {
-                            newli += '<p class="price" style="color:#59b200;font-size:14px;">免费</p>';
-                        }
-                        newli += '<p class="address">' + data.data.data[i].area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data.data[i].is_overdue + '">';
-                        newli += '</li>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '"><div class="mui-media-body" style="width:77%">' + data.data.data[i].title + '';
+                        newli += '<p class="mui-ellipsis">' + data.data.data[i].abstract + '</p></div></li>'
 
                     }
                 }
 
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.event" + status).empty().append(newli);
+                    $("ul.article" + status).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.event" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.article" + status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.event" + status).append(newli);
+                    $("ul.article" + status).append(newli);
                 }
 
                 if (newli != '') {
@@ -226,7 +207,7 @@
     };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_event').on('tap', '.mui-btn', function (event) {
+    $('.OA_task_event').on('tap', '.mui-btn', function (article) {
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
@@ -235,8 +216,7 @@
         var action = elem.getAttribute('data-action');
         mui.confirm('确认该活动' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                //li.parentNode.removeChild(li);
-                var apiurl = "{:url('api/event/removeevent')}";
+                var apiurl = "{:url('api/article/removearticle')}";
                 mui.ajax(apiurl, {
                     data: {
                         eventid: eventid,
@@ -265,22 +245,6 @@
             }
         });
     });
-
-    //创建补0函数
-    function p(s) {
-        return s < 10 ? '0' + s : s;
-    }
-    //获取时间
-    function gettime() {
-        // 获取当前时间
-        var d = new Date()
-        var minutes = d.getMinutes()
-        var hours = d.getHours()
-        var day = d.getDate()
-        var month = d.getMonth() + 1
-        var year = d.getFullYear()
-        return year + '-' + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
-    }
 
 </script>
 

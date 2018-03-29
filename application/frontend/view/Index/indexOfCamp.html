@@ -158,7 +158,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('camp/campList')}">
+                        <a href="{:url('article/articleList')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-camp"></use>
                             </svg>
@@ -217,7 +217,7 @@
             <div class="page-header whitebg border-b">
                 <span class="course">最新新闻</span>
                 <span class="more">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('article/articleList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newList"></ul>
@@ -226,7 +226,7 @@
             <div class="page-header border-b">
                 <span class="course">最近训练</span>
                 <span class="more">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastScheduleList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newTrain"></ul>
@@ -235,7 +235,7 @@
             <div class="page-header border-b">
                 <span class="course">最近赛事</span>
                 <span class="more">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastMatchList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newMatch"></ul>
@@ -244,7 +244,7 @@
             <div class="page-header border-b">
                 <span class="course">最近活动</span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastEventList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newEvent"></ul>
@@ -587,12 +587,37 @@
 
     var member_id = "{$memberInfo.id}"
     var camp_id = "{$o_id}"
+
+    //初始化全局变量
+    var newCount = 1;
+
+    //下拉刷新具体业务实现
+    function pulldownRefresh() {
+        setTimeout(function () {
+            newCount = 1;//刷新并显示第一页
+            var page = newCount;
+            var gType = 1;//代表下拉刷新
+            toNewList(page);//具体取数据的方法
+        }, 100);
+    }
+    //上拉加载具体业务实现
+    function pullupRefresh() {
+        setTimeout(function () {
+            newCount++;//翻下一页
+            var page = newCount;
+            var gType = 2;//代表上拉加载
+            toNewList(page);//具体取数据的方法
+        }, 100);
+    }
     //获取最近一条新闻
-    function toNewList() {
-        mui.ajax("{:url('api/referee/refereelastmatch')}", {
+    function toNewList(page) {
+        mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
             data: {
-                page: 1,
-                referee_id: 2
+                organization_type: 1,
+                organization_id: 0,
+                category: 1,
+                page: page,
+                status: 1
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -603,10 +628,10 @@
                 var div = '';
                 if (data.code == 200) {
                     // 将时间戳转成日期格式
-                    for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                    for (var i = 0; i <= data.data.data.slice(0, 5).length - 1; i++) {
                         var url = "{:url('team/eventinfo')}"
-                        div += '<li class="mui-table-view-cell listli"><a href="' + url + '"><div class="mui-media-body wd" style="line-height:20px">' + data.data[i].match.name + '</div>'
-                        div += '<p class="fr f12">2018-03-20</p></a></li>'
+                        div += '<li class="mui-table-view-cell listli"><a href="' + url + '"><div class="mui-media-body wd66" style="line-height:20px">' + data.data.data[i].title + '</div>'
+                        div += '<p class="fr f12">' + data.data.data[i].update_time + '</p></a></li>'
                     }
                     $(".newList").empty().append(div);
                 }
