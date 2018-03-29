@@ -1,8 +1,8 @@
 <?php 
 namespace app\management\controller;
-use app\management\controller\Backend;
+use app\management\controller\Camp;
 
-class Member extends Backend{
+class Member extends Camp{
 
 	public function _initialize(){
 		parent::_initialize();
@@ -10,9 +10,9 @@ class Member extends Backend{
 
     public function memberList(){
 
-    	
 
-    	
+
+
         return view('Member/memberList');
     }
     
