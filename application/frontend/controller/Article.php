@@ -84,11 +84,18 @@ class Article extends Base{
 
     // 发布文章
     public function createArticle(){
-        $camp_id = input('param.camp_id');
-        $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
-        if($isPower<3){
-            $this->error('权限不足');
+        $o_id = input('param.o_id');
+        $o_type = input('param.o_type');
+        if($o_type==1){
+            $oInfo = db('camp')->where(['id'=>$o_id])->find();
+            $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
+            if($isPower<3){
+                $this->error('权限不足');
+            }
         }
+        
+
+        $this->assign('oInfo',$oInfo);
         return view('Article/createArticle');
     }
 
