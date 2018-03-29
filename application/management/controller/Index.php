@@ -65,7 +65,7 @@ class Index extends Backend
 
 
 		// 教学点分布
-		$gradeCourt = db('grade')->field('sum(students) as s_students,court')->where(['status'=>1])->group('court_id')->select();
+		$gradeCourt = db('grade')->field('sum(students) as s_students,court')->where(['status'=>1,'camp_id'=>$this->camp_member['camp_id']])->group('court_id')->select();
 		$gradeCourtData = [];
 		foreach ($gradeCourt as $key => $value) {
 			$gradeCourtData['legend'][] = $value['court'];

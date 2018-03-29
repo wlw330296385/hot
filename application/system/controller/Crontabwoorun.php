@@ -110,7 +110,6 @@ class Crontabwoo extends Controller {
                                 'f_id'=>$schedule['id'],
                                 'remarks'=>$schedule['lesson_time'],
                             ];
-                    echo 12;
                     $this->insertMemberFinance($MemberFinanceData1,0,1);
                     // 助教薪资
                     $totalAssistantSalary = 0;
@@ -156,9 +155,8 @@ class Crontabwoo extends Controller {
                                 'remarks'=>$schedule['lesson_time'],
                             ];
                         }
-                        echo 13;
+                        dump($incomeAssistant);
                         $this->insertSalaryIn($incomeAssistant,1,1);
-                        echo 14;
                         $this->insertMemberFinance($MemberFinanceData2,1,1);
                     }
 
@@ -186,7 +184,6 @@ class Crontabwoo extends Controller {
                         'schedule_rebate'=>(1-$campScheduleRebate),
                         'system_remarks' => '',
                     ];
-                    echo 15;
                     $this->insertIncome($incomeCamp,0,1);
                     // 保存训练营财务支出信息
 
@@ -240,7 +237,6 @@ class Crontabwoo extends Controller {
                         'datetime' => $schedule['lesson_time']
 
                     ];
-                    echo 16;
                     $this->insertcampfinance($dataCampFinance,0,1);
                     // 结算增加到camp表的balancc;
                     db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance',$incomeCampSalary)->update();
@@ -332,7 +328,6 @@ class Crontabwoo extends Controller {
                         $this->insertMemberFinance($MemberFinanceData,0,2);
                     }
                     
-                    echo 2;
                     // 助教薪资
                     $totalAssistantSalary = 0;
                     if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {

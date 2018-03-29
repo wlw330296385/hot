@@ -482,7 +482,7 @@ class StatisticsCamp extends Camp{
     }
 
 
-    // 课时详情
+    // 课时结算表
     public function lessonSchedule(){
         $lesson_id = input('param.lesson_id');
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
@@ -508,12 +508,13 @@ class StatisticsCamp extends Camp{
             ->where($map)
             ->join('schedule','schedule.id = salary_in.schedule_id')
             ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->group('schedule_id')
             ->select();
+
         }else{
             $scheduleList = [];
         }
         
-        // dump($scheduleList);die;
         $this->assign('scheduleList',$scheduleList);
 
         return view('StatisticsCamp/lessonSchedule');

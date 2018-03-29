@@ -55,4 +55,36 @@ class Monthlytask extends Base{
     	}
     	
     }
+
+
+
+
+    public function monthlyCourtStudent(){
+    	try{
+    		$campList = db('camp')->where('delete_time',null)->select();
+    		$CourtStudentData = [];
+    		foreach ($campList as $key => $value) {
+    			$gradeCourt = db('grade')->field('sum(students) as s_students,court,court_id')->where(['status'=>1,'camp_id'=>$value['id']])->group('court_id')->select();
+    			foreach ($gradeCourt as $k => $val) {
+    				$CourtStudentData[] = [
+    					'camp'=>$value['camp'],
+    					'camp_id'=>$value['id'],
+    					'court'=>$val['court'],
+    					'court_id'=>$val['court_id'],
+    					'students'=>$val['s_students'],
+    					'date_str'=>date('Ym')
+    				]
+    			}
+    		}
+    		
+    		$monthlyCourtStudent = new \app\model\monthlyCourtStudent;
+	    	$monthlyCourtStudent->saveAll($CourtStudentData);
+	    	$data = ['crontab'=>'每月学员训练点分布'];
+            $this->record($data);
+    	}catch(Exception $e){
+    		$data = ['crontab'=>'每月学员训练点分布','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+    	}
+    }
 }
