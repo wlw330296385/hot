@@ -72,6 +72,7 @@
 										<th>剩余课时</th>
 										<th>类型</th>
 										<th>状态</th>
+										<th>查看详情</th>
 										<th>催费提醒</th>
 									</tr>
 									</thead>
@@ -84,7 +85,8 @@
 										<td>{rest_schedule}</td>
 										<td>{type}</td>
 										<td>{status}</td>
-										<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 发送续费提醒</a></td>
+										<td><a href="#" class="btn btn-xs btn-info sInfo" data-student_id="41"><i class="fa fa-inbox"></i> 查看详情</a></td>
+										<td><a href="#" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i> 发送续费提醒</a></td>
 									</tr>
 									</tbody>
 								</table>
@@ -105,6 +107,23 @@
 
 
 
+<!-- Modal : 学员档案 -->
+<div class="modal fade" id="studentInfoModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="coachModalLabel">学员档案</h4>
+			</div>
+			<div class="modal-body">
+				<iframe id="studentInfoframe" width="100%" height="500" frameborder="0"></iframe>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 {/block}
@@ -178,13 +197,18 @@
             localStorage.setItem('currKeyword',keyword);
 
 
-            window.location.href="{:url('management/member/memberlist')}"+linkPram;
+            window.location.href="{:url('management/Student/studentList')}"+linkPram;
         })
 
 
+        $(".sInfo").click(function(){
+            var getSID = $(this).attr("data-student_id");
+            var frameSrc = "{:url('management/Student/studentInfo')}"+"/student_id/"+getSID+"/camp_id/9";
+            $("#studentInfoframe").attr("src", frameSrc);
+            $('#studentInfoModal').modal({ show: true, backdrop: 'static' });
+        });
 
     })
-
 
 </script>
 
