@@ -17,7 +17,7 @@ class Student extends Backend{
 		$type = input('param.type')?input('param.type'):1;
 	
 		// 学生信息
-		$studentInfo = $this->studentService->getStudentInfo(['id'=>$student_id]);
+		$studentInfo = $this->StudentService->getStudentInfo(['id'=>$student_id]);
 		if($studentInfo['member_id'] <> ($this->memberInfo['id'])){
 			// 获取当前用户身份
 	        $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
