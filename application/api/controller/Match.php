@@ -630,7 +630,7 @@ class Match extends Base
                     $matchRecordMember2 = $matchS->getMatchRecordMember(['match_id' => $match['id'], 'match_record_id' => $recordData['id'], 'member_id' => $member['member_id'], 'team_member_id' => $member['tmid']]);
                     if ($matchRecordMember2) {
                         // 更新match_record_member
-                        $homeMember[$k]['id'] = $matchRecordMember2['id'];
+                        $memberArr[$k]['id'] = $matchRecordMember2['id'];
                     }
                     $memberArr[$k]['match'] = $matchName;
                     $memberArr[$k]['status'] = -1;
