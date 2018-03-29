@@ -2,7 +2,6 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\BannerService;
-use app\service\LessonService;
 use app\service\MemberService;
 use app\service\WechatService;
 use think\Cookie;
@@ -11,7 +10,6 @@ class Index extends Base{
 	protected $LessonService;
 	public function _initialize(){
 		parent::_initialize();
-		$this->LessonService = new LessonService;
 		Cookie::set('steward_type', 1);
         $module = request()->module();
         $homeurl = url($module.'/index/index');

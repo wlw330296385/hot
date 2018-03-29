@@ -9,16 +9,15 @@ use app\service\MemberService;
 use app\model\SalaryIn;
 use app\model\Output;
 use app\model\CampFinance;
-use think\Controller;
 use think\Db;
-use think\Exception;
+use app\system\controller\Base;
 
-
-class Crontabwoo extends Controller {
+class Crontabwoo extends Base {
     public $setting;
 
 
     public function _initialize() {
+        parent::_initialize();
     }
 
 
@@ -36,7 +35,7 @@ class Crontabwoo extends Controller {
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
     private function schedulesalaryin1($campInfo) {
-        // try {
+        try {
             // 获取可结算课时数据列表
             // 赠课记录，有赠课记录先抵扣
             // 91分 9进入运算 1平台收取
@@ -110,7 +109,6 @@ class Crontabwoo extends Controller {
                                 'f_id'=>$schedule['id'],
                                 'remarks'=>$schedule['lesson_time'],
                             ];
-                    echo 12;
                     $this->insertMemberFinance($MemberFinanceData1,0,1);
                     // 助教薪资
                     $totalAssistantSalary = 0;
@@ -156,9 +154,7 @@ class Crontabwoo extends Controller {
                                 'remarks'=>$schedule['lesson_time'],
                             ];
                         }
-                        echo 13;
                         $this->insertSalaryIn($incomeAssistant,1,1);
-                        echo 14;
                         $this->insertMemberFinance($MemberFinanceData2,1,1);
                     }
 
@@ -249,11 +245,17 @@ class Crontabwoo extends Controller {
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
                     // 课时工资收入结算 end
                 }
+
             });
-        // } catch (Exception $e) {
-        //     // 记录日志：错误信息
-        //     trace($e->getMessage(), 'error');
-        // }
+    
+            $data = ['crontab'=>'每日结算[课时版]'];  
+            $this->record($data);  
+        } catch (Exception $e) {
+            // 记录日志：错误信息
+            $data = ['crontab'=>'每日结算[课时版]','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
     }
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
@@ -426,10 +428,14 @@ class Crontabwoo extends Controller {
 // 课时工资收入结算 end --------------------------------------
                 }
             });
-        // } catch (Exception $e) {
-        //     // 记录日志：错误信息
-        //     trace($e->getMessage(), 'error');
-        // }
+            $data = ['crontab'=>'每日结算[营业额版]'];  
+            $this->record($data);  
+        } catch (Exception $e) {
+            // 记录日志：错误信息
+            $data = ['crontab'=>'每日结算[营业额版]','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data); 
+            trace($e->getMessage(), 'error');
+        }
     }
 
     // 结算上一个月收入 会员分成
@@ -450,10 +456,14 @@ class Crontabwoo extends Controller {
                 }
             }
             DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+
+            $data = ['crontab'=>'每月会员分成'];
+            $this->record($data); 
         }catch (Exception $e) {
             // 记录日志：错误信息
+            $data = ['crontab'=>'每月会员分成','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data); 
             throw new Exception("Error Processing Request", 1);
-            
             trace($e->getMessage(), 'error');
         }
     }

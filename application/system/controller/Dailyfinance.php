@@ -1,18 +1,26 @@
 <?php
 namespace app\system\controller;
-use think\Exception;
-use think\Controller;
+use app\system\controller\Base;
 
-class Dailyfinance extends Controller{
+class Dailyfinance extends Base{
  
     public function _initialize() {
-
+        parent::_initialize();
     }
 
     // 凌晨0:00跑
     public function weeTask(){
-        $this->getMemberFinanceWee();
-        $this->getCampFinanceWee();
+        try{
+            $this->getMemberFinanceWee();
+            $this->getCampFinanceWee();
+            $data = ['crontab'=>'每日训练营余额1'];
+            $this->record($data);
+        }catch(Exception $e){
+            $data = ['crontab'=>'每日训练营余额1','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+        
     }
 
     private function getMemberFinanceWee(){
@@ -48,8 +56,17 @@ class Dailyfinance extends Controller{
 
     // 夜晚23:59跑
     public function midnightTask(){
-        $this->getMemberFinanceMidnight();
-        $this->getCampFinanceMidnight();
+        try{
+            $this->getMemberFinanceMidnight();
+            $this->getCampFinanceMidnight();
+            $data = ['crontab'=>'每日训练营余额2'];
+            $this->record($data);
+        }catch(Exception $e){
+            $data = ['crontab'=>'每日训练营余额2','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+        
     }
 
     private function getMemberFinanceMidnight(){
