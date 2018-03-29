@@ -88,7 +88,7 @@ class Article extends Base{
         $o_type = input('param.o_type');
         if($o_type==1){
             $oInfo = db('camp')->where(['id'=>$o_id])->find();
-            $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
+            $isPower = $this->ArticleService->isPower($o_id,$this->memberInfo['id']);
             if($isPower<3){
                 $this->error('权限不足');
             }
