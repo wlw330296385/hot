@@ -356,17 +356,31 @@ class Match extends Base
             $homeScore = $post['record']['home_score'];
             $awayTeamId = $post['record']['away_team_id'];
             $awayScore = $post['record']['away_score'];
-            // 提交is_finished=1 即比赛完成（match记录完成状态is_finished）
-            if (isset($post['is_finished'])) {
-                if ($post['is_finished'] == 1) {
-                    if (empty($post['record']['away_team_id']) && empty($post['record']['away_team'])) {
-                        return json(['code' => 100, 'msg' => '请填写客队信息']);
+            // 提交is_finished=1 即比赛完成 验证数据
+            if (isset($post['is_finished']) && $post['is_finished'] == 1) {
+                if (empty($post['record']['away_team_id']) && empty($post['record']['away_team'])) {
+                    return json(['code' => 100, 'msg' => '请填写客队信息']);
+                }
+                $isFinished = 1;
+                $post['finished_time'] = $matchTimeStamp;
+
+                // 自行安排裁判 需要邀请的裁判都同意
+                if ($post['referee_type'] == 2) {
+                    if (isset($post['refereeChange_str']) && $post['refereeChange_str'] != '[]') {
+                        $refereeStr = json_decode($post['referee_str'], true);
+                        if (!empty($refereeStr)) {
+                            foreach ($refereeStr as $val) {
+                                // 查询裁判-比赛申请记录
+                                $refereeApplyInvitation = $matchS->getMatchRerfereeApply(['id' => $val['id']]);
+                                if ($refereeApplyInvitation['status'] != 2) {
+                                    return json(['code' => 100, 'msg' => '邀请的裁判未同意比赛执裁邀请']);
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    $isFinished = 1;
-                    $post['finished_time'] = $matchTimeStamp;
                 }
             }
-
             // 组合match_record保存数据
             $recordData = $post['record'];
             $recordData['match_time'] = $matchTimeStamp;
@@ -420,6 +434,8 @@ class Match extends Base
                             // 设为”已撤销“
                             $applyStatusTo = 3;
                         }
+                        // 比赛完成 裁判出勤比赛制裁
+                        $refereeIsAttend = ($isFinished == 1) ? 2 : 1;
                         // 查询裁判信息详细数据
                         $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeApply['referee_id']]);
                         // 查询裁判有无裁判-比赛制裁关系数据
@@ -439,7 +455,7 @@ class Match extends Base
                             'member' => $refereeInfo['member']['member'],
                             'referee_type' => 1,
                             'appearance_fee' => $refereeInfo['appearance_fee'],
-                            'is_attend' => 1, // 比赛完成 裁判出勤比赛制裁
+                            'is_attend' => $refereeIsAttend,
                             'status' => ($applyStatusTo == 3) ? -1 : 1, // 撤销裁判-比赛申请数据
                         ];
                         if ($matchReferee) {
