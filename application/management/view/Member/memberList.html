@@ -1,0 +1,193 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+{/block}
+{block name="page-content"}
+
+<!----------------------------------- 训练营订单列表 ： 开始-------------------------------------------->
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<!--<div class="box-header">-->
+			<!--<h3 class="box-title">教练员收益统计</h3>-->
+			<!--</div>-->
+			<!-- /.box-header -->
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>关键字：</label>
+								<div class="input-group radius4">
+									<input type="text" name="keyword" class="form-control pull-right radius4" placeholder="学生名/课程名/班级名" style="border:none !important;">
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>状态：</label>
+								<div class="input-group radius4">
+									<select name="status" class="form-control radius4" style="border:none !important;">
+										<option value=""></option>
+										<option value="0">正常</option>
+										<option value="4">毕业</option>
+										<option value="-1">离营</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>类型：</label>
+								<div class="input-group radius4">
+									<select name="type" class="form-control radius4" style="border:none !important;">
+										<option value=""></option>
+										<option value="1">正式生</option>
+										<option value="2">体验生</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>学员总数：</small><strong class="text-yellow sAllCount"></strong></span>
+								<span><small>学员报课总数：</small><strong class="text-yellow sLessonCount"></strong></span>
+							</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="box-body">
+
+								<table id="billList" class="table table-bordered table-striped dataTable" role="grid"
+									   aria-describedby="example1_info">
+									<thead>
+									<tr>
+										<th>学生ID</th>
+										<th>姓名</th>
+										<th>总交费</th>
+										<th>已上课时</th>
+										<th>剩余课时</th>
+										<th>类型</th>
+										<th>状态</th>
+										<th>催费提醒</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td>{student_id}</td>
+										<td>{student}</td>
+										<td>{tuition}</td>
+										<td>{total_schedule}</td>
+										<td>{rest_schedule}</td>
+										<td>{type}</td>
+										<td>{status}</td>
+										<td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 发送续费提醒</a></td>
+									</tr>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- /.col -->
+</div>
+
+<!----------------------------------- 训练营订单列表 ： 结束-------------------------------------------->
+
+
+
+
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script>
+
+    var currStatus = localStorage.getItem('currStatus');
+    var currType = localStorage.getItem('currType');
+    var currKeyword = localStorage.getItem('currKeyword');
+
+    $(function () {
+
+        $(".content-header h1").html('<i class="fa fa-fw fa-th-large"></i> 训练营学员列表');
+
+        $('#billList').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : true
+        });
+
+        //=========================== 初始化数据 ==============================//
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:even").addClass("even");
+
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=keyword]").val(currKeyword);
+        if(currType!=''&&currType!=null){
+            $('select[name="type"]').find('option[value="'+currType+'"]').prop("selected", true);
+        }
+        if(currStatus!=''&&currStatus!=null){
+            $('select[name="status"]').find('option[value="'+currStatus+'"]').prop("selected", true);
+        }
+
+        //=========================== 初始化数据 ==============================//
+
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var type = $("select[name=type]").val();
+            var status = $("select[name=status]").val();
+            var keyword = $("input[name=keyword]").val();
+            var linkPram = '';
+            if(type==""&&status==""&&keyword==""){
+                alert("请填写或选择其中一项！");
+                return false;
+            }
+
+            if(type!=""&&type!=null){
+                linkPram = linkPram+"/type/"+type+"/";
+            }
+            if(status!=""){
+                linkPram = linkPram+"/status/"+status+"/";
+            }
+            if(keyword!=""&&keyword!=null){
+                linkPram = linkPram+"/keyword/"+keyword+"/";
+            }
+
+            //设置本地存储
+            localStorage.setItem('currType',type);
+            localStorage.setItem('currStatus',status);
+            localStorage.setItem('currKeyword',keyword);
+
+
+            window.location.href="{:url('management/member/memberlist')}"+linkPram;
+        })
+
+
+
+    })
+
+
+</script>
+
+{/block}
+
+

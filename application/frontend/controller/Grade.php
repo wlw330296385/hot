@@ -170,6 +170,32 @@ class Grade extends Base{
         return view('Grade/gradeList');
     }
 
+    
+    // 机构班级列表
+    public function gradeListOfOrganization(){
+        $member_id = $this->memberInfo['id'];
+        $camp_id = input('param.camp_id');
+        $gradeList = Db::view('grade','grade,id,students,gradecate,status')
+                    ->view('grade_member','grade_id,camp_id,member_id','grade_member.grade_id=grade.id')
+                    ->where(['grade_member.status'=>1])
+                    ->where(['grade_member.camp_id'=>$camp_id])
+                    ->where(['grade.camp_id'=>$camp_id])
+                    ->where('grade.delete_time',null)
+                    ->order('grade_member.id desc')
+                    ->select();
+        $countMyGrade = 0;
+        foreach ($gradeList as $key => $value) {
+                       if($value['member_id'] == $member_id){
+                        $countMyGrade++;
+                       }
+                    }            
+        $count = count($gradeList);
+        $this->assign('countMyGrade',$countMyGrade);
+        $this->assign('gradeList',$gradeList);
+        $this->assign('count',$count);
+        return view('Grade/gradeListOfOrganization');
+    }
+
 
     // 有权限的班级列表
     public function gradeListOfCamp(){

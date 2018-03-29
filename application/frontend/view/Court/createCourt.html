@@ -139,8 +139,7 @@
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <!-- map -->
                     <div class="mui-input-row h-auto" id="mapFrame">
-                        <div id="map">
-                            <div>{:token()}</div>
+                        <div id="map">                        
                             <div id="container"></div>
                             <span class="mui-icon mui-icon-location"></span>
                             <div id="tip">
@@ -149,6 +148,7 @@
                             <!--<input type="button" class="bgblue" id="mapConfirm" value="确认" />-->
                         </div>
                     </div>
+                    
                     <div class="mui-input-row h-auto">
                         <label>场地定位</label>
                         <span class="getFromMap">请查询或点选地图获取定位</span>
@@ -200,12 +200,12 @@
                     </div>
 
                     <div class="mui-input-row">
-                            <label>场地类型</label>
-                            <span>
-                                <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室内" /> 室内
-                                <input type="radio" class="outdoors" name="outdoors" value="2" data-name="室外" /> 室外
-                                <input type="radio" class="outdoors" name="outdoors" value="3" data-name="室内|室外" /> 室内|室外
-                            </span>
+                        <label>场地类型</label>
+                        <span>
+                            <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室内" /> 室内
+                            <input type="radio" class="outdoors" name="outdoors" value="2" data-name="室外" /> 室外
+                            <input type="radio" class="outdoors" name="outdoors" value="3" data-name="室内|室外" /> 室内|室外
+                        </span>
                     </div>
 
                     <div class="mui-input-row h-auto">
@@ -304,9 +304,9 @@
                 console.log(e.poi)
                 console.log(e.poi.location.lng)
                 console.log(e.poi.location.lat)
-                if(e.poi.location.lng==undefined||e.poi.location.lat==undefined||e.poi.location.lng===''||e.poi.location.lat===''){
+                if (e.poi.location.lng == undefined || e.poi.location.lat == undefined || e.poi.location.lng === '' || e.poi.location.lat === '') {
                     mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
-                }else{
+                } else {
                     lng = e.poi.location.lng;
                     lat = e.poi.location.lat;
                     $(".getFromMap").val(e.poi.name);
@@ -409,6 +409,7 @@
                 var remarks = $(".remarks").val();
                 var camp_id = "{$campInfo['id']}";
                 var camp = "{$campInfo['camp']}";
+                var token = $('input[name=__token__]').val();
                 console.log(covers)
 
                 if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$|^400[0-9]{7}/).test(contract)) {
@@ -428,7 +429,7 @@
                     return false;
                 };
 
-                if(lng==undefined||lat==undefined||lng===''||lat===''){
+                if (lng == undefined || lat == undefined || lng === '' || lat === '') {
                     mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
                     return false;
                 }
@@ -453,6 +454,7 @@
                         camp: camp,
                         lng: lng,
                         lat: lat,
+                        __token__ : token
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -469,6 +471,7 @@
                             mui.toast(data.msg);
                             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                                 if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
                                 }
                             }, 'json');
                         }
