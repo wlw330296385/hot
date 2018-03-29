@@ -1,8 +1,8 @@
 <?php 
 namespace app\management\controller;
-use app\management\controller\Camp;
+use app\management\controller\backend;
 
-class Member extends Camp{
+class Member extends backend{
 
 	public function _initialize(){
 		parent::_initialize();
