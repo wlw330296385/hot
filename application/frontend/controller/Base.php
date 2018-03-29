@@ -24,16 +24,16 @@ class Base extends \app\common\controller\Frontend {
 
 
 	protected function footMenu(){
-        $o_type = cookie('o_type');
-        $o_id = cookie('o_id'); 
+        $o_id = input('param.o_id');
+        $o_type = input('param.o_type');       
         if(!$o_type && !$o_id){
-            $this->o_id = input('param.o_id',0);
-            $this->o_type = input('param.o_type',0);
-            cookie('o_id',$this->o_id);
-            cookie('o_type',$this->o_type);
+            $o_type = cookie('o_type');
+            $o_id = cookie('o_id'); 
         }else{
             $this->o_id = $o_id;
             $this->o_type = $o_type;
+            cookie('o_id',$this->o_id);
+            cookie('o_type',$this->o_type);
         }
 
         /*define('CONTROLLER_NAME',Request::instance()->controller());
