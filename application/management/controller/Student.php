@@ -13,7 +13,7 @@ class Student extends Backend{
 
     public function StudentInfo(){
     	$student_id = input('param.student_id');
-		$camp_id = input('param.camp_id');
+		$camp_id = $this->camp_member['camp_id'];
 		$type = input('param.type')?input('param.type'):1;
 	
 		// 学生信息
