@@ -5,9 +5,10 @@ use app\service\CampService;
 use app\service\StudentService;
 use think\Db;
 class Student extends Backend{
-
+	public $StudentService;
 	public function _initialize(){
 		parent::_initialize();
+		$this->StudentService = new StudentService;
 	}
 
     public function StudentInfo(){
