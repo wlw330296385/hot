@@ -84,11 +84,28 @@ class Article extends Base{
 
     // 发布文章
     public function createArticle(){
+        $camp_id = input('param.camp_id');
+        $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
+        if($isPower<3){
+            $this->error('权限不足');
+        }
         return view('Article/createArticle');
     }
 
     // 编辑文章
     public function updateArticle(){
+        $article_id = input('param.article_id');
+        $camp_id = input('param.camp_id');
+        $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
+        if($isPower<3){
+            $this->error('权限不足');
+        }
+        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
+
+        if(!$articleInfo){
+            $this->error('找不到文章信息');
+        }
+        $this->assign('articleInfo',$articleInfo);
         return view('Article/updateArticle');
     }
    
