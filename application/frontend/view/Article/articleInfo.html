@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>图文详情</title>
+    <title>文章详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -12,55 +12,68 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
+        /* 底部按钮点击去除背景颜色 */
 
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
-
-        .mui-card-content-inner img {
-            width:100%;
+        .operation .opli a.mui-active {
+            background-color: inherit
         }
     </style>
 </head>
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav">
+    <header class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">{$articleInfo.title}</h1>
     </header>
+
     <!--文章详情页-->
     <div class="mui-content">
 
-        <div class="mui-card">
-            <div class="mui-card-header img16x9" style="background-image:url('{$articleInfo.covers}')"></div>
-            <div class="mui-card-content">
-                <div class="mui-card-content-inner">
-                    <p>{$articleInfo.abstract}</p>
-                    <p>{$articleInfo.content}</p>
-                </div>
+        <div class="list mt55">
+            <div class="img4x3" style="background-image:url('{$articleInfo.covers}')"></div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <h4 style="line-height:27px;">{$articleInfo.title}</h4>
+                    <p class="f12">{$articleInfo.update_time}</p>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>文章类型</label>
+                    <span>{$articleInfo.organization_type}</span>
+                </li>
+            </ul>
+
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">摘要</span>
             </div>
-            <div class="mui-card-footer">
-                <a class="mui-card-link">{$articleInfo.organization}</a>
-                <a class="mui-card-link">{$articleInfo.update_time}</a>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    {$articleInfo.abstract}
+                </li>
+            </ul>
+
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">内容</span>
             </div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    {$articleInfo.content}
+                </li>
+            </ul>
+
         </div>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen">
+                <a href="{:url('article/updateArticle',['camp_id'=>3])}">编辑文章</a>
+            </li>
+        </ul>
+
     </div>
 
-    
-
-
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script>
-    
-</script>
-
+    <script src="/static/frontend/js/mui.min.js"></script>
 </body>
 
 </html>

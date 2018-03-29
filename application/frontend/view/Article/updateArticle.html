@@ -64,9 +64,9 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">{$eventInfo.organization}</h1>
-        <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
-        <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+        <h1 class="mui-title">{articleInfo.organization}</h1>
+        <input type="hidden" name="organization" value="{articleInfo.organization}" class="data">
+        <input type="hidden" name="organization_id" value="{articleInfo.organization_id}" class="data">
         <input type="hidden" name="organization_type" value="1" class="data">
     </header>
 
@@ -78,30 +78,8 @@
             <form action="" class="mui-input-group mt55">
 
                 <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>活动对象</label>
-                        <span class="select-row">
-                            <select id="eventObject" class="data target_type" name="target_type" disabled="disabled">
-                                <option value="1">公开</option>
-                                <option value="2">营内</option>
-                                <option value="3">班内</option>
-                            </select>
-                        </span>
-                        <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
-                    </div>
-                </div>
-
-                <div class="mui-input-row target-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
-                    <a href="#target" class="mui-navigate-right">
-                        <label>具体对象</label>
-                        <span class="targetCont" name="target">{$eventInfo.target}</span>
-                        <input type="hidden" name="target_id" class="target_id" value="{$eventInfo.target_id}">
-                    </a>
-                </div>
-
-                <div class="mui-input-row">
                     <label>活动主题</label>
-                    <input type="text" name="event" class="data" value="{$eventInfo.event}" placeholder="请输入活动主题">
+                    <input type="text" name="event" class="data" value="" placeholder="请输入活动主题">
                 </div>
 
                 <div class="mui-input-row">
@@ -121,97 +99,11 @@
                     </div>
                 </div>
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>是否收费</label>
-                        <span class="select-row">
-                            <select id="eventPrice" class="data" name="is_free">
-                                <option value="1">免费</option>
-                                <option value="2" style="display: none">收费</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
-                <!--<div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">-->
-                <!--<label>活动单价</label>-->
-                <!--<input type="text" name="price" class="" value="{$eventInfo.price}" placeholder="请填写活动单价">-->
-                <!--</div>-->
-
-                <div class="mui-input-row price-input-row {eq name='eventInfo.is_free' value='2'}show{else/}hide{/eq}">
-                    <a href="#cost" class="mui-navigate-right">
-                        <label class="wd36">费用结算人</label>
-                        <span class="finance " name="finance">{$eventInfo.finance}</span>
-                        <input type="hidden" name="finance_id" class="finance_id" value="">
-                    </a>
-                </div>
-
-                <div class="mui-input-row h-auto">
-                    <a href="#eventDom" class="mui-navigate-right">
-                        <label>活动套餐</label>
-                        <span class="eventDom wd60 hdDoms" style="line-height: 37px;">{volist name="$eventInfo.doms" id="vol"} {$vol.name}({$vol.price}),{/volist}</span>
-                    </a>
-                </div>
-
-                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
-                    <div class="mui-navigate-right">
-                        <label>开始时间</label>
-                        <span id="resultStart" class="ui-alert domData" name="starts">{$eventInfo.starts}</span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
-                    <div class="mui-navigate-right">
-                        <label>结束时间</label>
-                        <span id="resultEnd" class="ui-alert domData" name="ends">{$eventInfo.ends}</span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row" id='showCityPicker3'>
-                    <div class="mui-navigate-right">
-                        <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>活动地点</label>
-                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
-                </div>
-
-                <div class="mui-input-row h-auto">
-                    <label class="wd36">最少参与人数</label>
-                    <div class="mui-numbox">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="min" value="{$eventInfo.min}">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
-                </div>
-
-                <div class="mui-input-row h-auto">
-                    <label class="wd36">最多参与人数</label>
-                    <div class="mui-numbox">
-                        <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                        <input class="mui-input-numbox data" type="number" name="max" value="{$eventInfo.max}">
-                        <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>联系人</label>
-                    <input type="text" name="contact" class="data" value="{$eventInfo.contact}" placeholder="请输入联系人">
-                </div>
-
-                <div class="mui-input-row">
-                    <label>联系电话</label>
-                    <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
-                </div>
-
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$eventInfo.cover}">
-                        <input type="hidden" name="cover" value='{$eventInfo.cover}' class="data">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{articleInfo.cover}">
+                        <input type="hidden" name="cover" value='{articleInfo.cover}' class="data">
                     </a>
                 </div>
 
@@ -220,7 +112,7 @@
                 </div>
                 <div class="mui-input-row h-auto" style="margin-bottom: 10px">
                     <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                    <div class="introBox">{$eventInfo.event_des}</div>
+                    <div class="introBox">{articleInfo.event_des}</div>
                 </div>
 
                 <!-- 操作按钮 -->
@@ -275,7 +167,7 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form class="mui-input-group">
-                    {volist name='$eventInfo.doms' id="vol"}
+                    {volist name='articleInfo.doms' id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
                         <i class="cancel-dom mui-icon mui-icon-close"></i>
                         <input type="text" name="event-dom" class="wd58 fl" value="{$vol.name}" placeholder="请填写种类名称">
@@ -406,8 +298,8 @@
                 });
 
                 // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{$eventInfo.province}"));
-                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{$eventInfo.city}"));
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince(cityData3, "{articleInfo.province}"));
+                // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{articleInfo.city}"));
                 // cityPicker3.pickers[2].setSelectedIndex(2);
 
                 // for (i = 0; i < cityData3.length; i++) {
@@ -531,15 +423,15 @@
             });
 
             // 设置活动对象默认值
-            $('#eventObject option[value="{$eventInfo.target_type}"]').prop("selected", true);
+            $('#eventObject option[value="{articleInfo.target_type}"]').prop("selected", true);
             // 设置活动类型默认值
-            $('#eventType option[value="{$eventInfo.event_type}"]').prop("selected", true);
+            $('#eventType option[value="{articleInfo.event_type}"]').prop("selected", true);
             // 设置收费默认值
-            $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
+            $('#eventPrice option[value="{articleInfo.is_free}"]').prop("selected", true);
 
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").on("change", '', '', function () {
-                var initial = "{$eventInfo.target_type}";
+                var initial = "{articleInfo.target_type}";
                 var selection = $(this).find("option:selected").val();
                 if (selection < initial) {
                     mui.alert("不能选择上级对象");
@@ -752,7 +644,7 @@
 
         //判断是否收费显示data
         function isFree() {
-            var is_free = "{$eventInfo.is_free}";
+            var is_free = "{articleInfo.is_free}";
             if (is_free == 1) {
                 $("input[name='price']").removeClass("data");
                 $(".costCont").removeClass("domData");
@@ -799,7 +691,7 @@
 
             //            console.log(eventDomArr)
             //            return false;
-            var url = "{:url('api/event/updateEventApi')}" + '/event_id/{$eventInfo.id}';
+            var url = "{:url('api/event/updateEventApi')}" + '/event_id/{articleInfo.id}';
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '活动修改成功', '确定', function () {
@@ -816,7 +708,7 @@
         //自定义获取训练营班级列表
         var toCampGradeList = function () {
             var url = "{:url('api/grade/getGradeListApi','','',true)}";
-            var campID = "{$eventInfo.organization_id}";
+            var campID = "{articleInfo.organization_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -853,7 +745,7 @@
         //自定义获取训练营身份列表没分页
         var toCampMemberList = function () {
             var url = "{:url('api/camp_member/getCampMemberListNoPageApi','','',true)}";
-            var campID = "{$eventInfo.organization_id}";
+            var campID = "{articleInfo.organization_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -892,7 +784,7 @@
         //训练营下学生身份列表接口获取数据并追加到页面
         var toStudentList = function (keyword, wStudents, page) {
             var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
-            var campID = "{$eventInfo.organization_id}";
+            var campID = "{articleInfo.organization_id}";
             var typeID = "1";
             var wStudentsList = "ul.campMemberStudent";
             var currPage = ".currPage";

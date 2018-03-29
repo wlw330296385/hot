@@ -77,6 +77,19 @@ class Article extends Base{
 		return view('Article/articleList');
     }
 
+    // 文章管理列表
+    public function articleListofcamp(){
+		return view('Article/articleListofcamp');
+    }
 
+    // 发布文章
+    public function createArticle(){
+        return view('Article/createArticle');
+    }
+
+    // 编辑文章
+    public function updateArticle(){
+        return view('Article/updateArticle');
+    }
    
 }
