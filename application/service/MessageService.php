@@ -242,6 +242,7 @@ class MessageService
                 'url' => $sendTemplateData['url'],
                 'member_id' => $receiver['member_id'],
                 'create_time' => time(),
+                'update_time' => time(),
                 'status' => 1
             ]);
         }
@@ -287,22 +288,47 @@ class MessageService
             'url' => $sendTemplateData['url'],
             'member_id' => $member_id,
             'create_time' => time(),
+            'update_time' => time(),
             'status' => 1
         ]);
     }
 
     /** 发送站内信息和模板消息给一个会员 2017-12-8
      * @param $member_id 接收信息的会员id
-     * @param $data 消息内容
+     * @param array $data 消息内容
      * $data = ['title' 'content', 'url', 'keyword1', 'keyword2', 'keyword3', 'remark']
      * @param $template_id 公众号模板消息id 应用config config('wxTemplateID.')
-     * @return
+     * @param int $sendInterval 产生发送消息时间间隔(秒) 0:忽略时间间隔
+     * @return array|bool
      */
-    public function sendMessageToMember($member_id, $data=[], $template_id) {
+    public function sendMessageToMember($member_id, $data=[], $template_id, $sendInterval=0) {
         if (!$member_id) {
             return ['code' => 100, 'msg' => __lang('MSG_402')];
         }
         $res = false;
+        // 产生发送消息时间间隔
+        if ($sendInterval) {
+            // 查询消息数据中最近有无同样的消息内容
+            $messageMember = db('message_member')
+                ->where([
+                'steward_type' => $data['steward_type'],
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'member_id' => $member_id,
+                'url' => $data['url']
+                ])
+                ->whereNull('delete_time')
+                ->order('id desc')
+                ->find();
+            // 查有数据记录，与当前时间比较是否大于产生发送消息时间间隔（$sendInterval），并且信息未读。不产生消息推送
+            if ($messageMember
+                && $messageMember['status'] == 1
+                && (time()-$messageMember['create_time']) < $sendInterval
+            ) {
+                // 跳出
+                return ;
+            }
+        }
         $wechatS = new WechatService();
         $memberopenid = getMemberOpenid($member_id);
         $sendTemplateData = [
@@ -325,7 +351,8 @@ class MessageService
             'member_id' => $member_id,
             'url' => $sendTemplateData['url'],
             'content' => serialize($sendTemplateData),
-            'create_time' => time()
+            'create_time' => time(),
+            'update_time' => time()
         ];
         if ($sendTemplateResult) {
             $log_sendTemplateData['status'] = 1;
@@ -340,6 +367,7 @@ class MessageService
             'url' => $data['url'],
             'member_id' => $member_id,
             'create_time' => time(),
+            'update_time' => time(),
             'status' => 1,
             'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
         ]);
@@ -377,14 +405,14 @@ class MessageService
             if (isset($data['keyword3'])) {
                 $sendTemplateData['data']['keyword3'] = [ 'value' => $data['keyword3'] ];
             }
-//            dump($sendTemplateData);
             $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
             $log_sendTemplateData = [
                 'wxopenid' => $sendTemplateData['touser'],
                 'member_id' => $val['id'],
                 'url' => $sendTemplateData['url'],
                 'content' => serialize($sendTemplateData),
-                'create_time' => time()
+                'create_time' => time(),
+                'update_time' => time()
             ];
             if ($sendTemplateResult) {
                 $log_sendTemplateData['status'] = 1;
@@ -399,6 +427,7 @@ class MessageService
                 'url' => $sendTemplateData['url'],
                 'member_id' => $val['id'],
                 'create_time' => time(),
+                'update_time' => time(),
                 'status' => 1,
                 'steward_type' => isset($data['steward_type']) ? $data['steward_type'] : 1
             ]);

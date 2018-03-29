@@ -623,7 +623,7 @@ class Referee extends Base{
                     'remark' => '点击查看',
                     'steward_type' => 2
                 ];
-                $messageService->sendMessageToMember($matchInfo['member_id'], $messageData, config('wxTemplateID.checkPend'));
+                $messageService->sendMessageToMember($matchInfo['member_id'], $messageData, config('wxTemplateID.checkPend'),3600);
             }
             return json($res);
         } catch (Exception $e) {
@@ -737,7 +737,7 @@ class Referee extends Base{
                 ];
             }
             // 发送通知给邀请人
-            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
+            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID,3600);
 
             return json($resSaveApply);
         } catch(Exception $e){
@@ -855,7 +855,7 @@ class Referee extends Base{
                 ];
             }
             // 发送通知给邀请人
-            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID);
+            $messageService->sendMessageToMember($applyInfo['member_id'], $messageData, $wxTemplateID, 3600);
 
             return json($resSaveApply);
         } catch(Exception $e){
