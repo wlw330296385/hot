@@ -599,7 +599,7 @@ class Team extends Base {
         $matchInfo = $matchService->getMatch(['id' => $matchId]);
         // 获取要认领的比赛战绩数据
         $matchRecordInfo = $matchService->getMatchRecord(['match_id' => $matchInfo['id']]);
-
+        $recordId = $matchRecordInfo['id'];
 
         // 比赛战绩是属于球队的话，插入球队认领的比赛战绩数据
         if ($matchRecordInfo) {
@@ -634,15 +634,21 @@ class Team extends Base {
             // 查询有无已有数据
             $hasClaimRecord = $matchService->getMatchRecord([
                 'match_id' => $matchInfo['id'],
+                'team_id' => $this->team_id,
                 'claim_team_id' => $this->team_id,
-                'claim_record_id' => $matchRecordInfo['id']
+                'claim_record_id' => $matchRecordInfo['id'],
             ]);
             if ($hasClaimRecord) {
                 $claimRecordData['id'] = $hasClaimRecord['id'];
                 $claimRecordData['claim_status'] = ($hasClaimRecord['claim_status'] == 1) ? 1 : 0;
             }
             $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
+
+            // 页面输出的比赛战绩数据组合
             $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
+            if (!empty($matchInfo['record']['album'])) {
+                $matchInfo['record']['album'] = json_decode($matchInfo['record']['album'], true);
+            }
         }
 
         // 进入认领编辑页按钮显示判断
