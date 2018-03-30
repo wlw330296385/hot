@@ -1378,7 +1378,7 @@ class Team extends Base
             }
             // 未完成比赛优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastMatch = $matchS->matchRecordListAll($map, $orderby);
+            $lastMatch = $matchS->matchRecordList($map, $page,$orderby);
             // 球队无比赛记录
             if (!$lastMatch) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1631,7 +1631,7 @@ class Team extends Base
             }
             // 未完成的记录优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastEvent = $teamS->teamEventListAll($map,$orderby);
+            $lastEvent = $teamS->teamEventList($map,$page,$orderby);
             // 球队无活动记录
             if (!$lastEvent) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
