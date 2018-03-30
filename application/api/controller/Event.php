@@ -349,4 +349,49 @@ class Event extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+    public function getHotEventList(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $province = input('param.province');
+            $page = input('param.page')?input('param.page'):1;
+            $order = input('param.order',['status'=>'asc','is_max'=>'asc','id'=>'desc']);
+            $city = input('param.city');
+            $area = input('param.area');
+            $map['province']=$province;
+            $map['city']=$city;
+            $map['area']=$area;
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['event'] = ['LIKE','%'.$keyword.'%'];
+            }
+
+            if( isset($map['order']) ){
+                unset($map['order']);
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+            if( isset($map['page']) ){
+                unset($map['page']);
+            }
+            $result = $this->EventService->getEventList($map,$page,$order);
+            if($result){
+               return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'ok']);
+            }
+        }catch(Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }

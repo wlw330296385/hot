@@ -367,7 +367,7 @@ class Lesson extends Base{
             
             if($result){
                 shuffle($result);
-                if( count($result)<4 ){
+                if( count($result)<4 && isset($map['camp_id']) ){
                     $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
                     
                     $result = array_merge($result,$res);
