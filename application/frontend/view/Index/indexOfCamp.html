@@ -226,7 +226,7 @@
             <div class="page-header border-b">
                 <span class="course">最近训练</span>
                 <span class="more">
-                    <a href="{:url('index/lastScheduleList')}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastLyScheduleList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newTrain"></ul>
@@ -235,7 +235,7 @@
             <div class="page-header border-b">
                 <span class="course">最近赛事</span>
                 <span class="more">
-                    <a href="{:url('index/lastMatchList')}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastLyMatchList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newMatch"></ul>
@@ -244,7 +244,7 @@
             <div class="page-header border-b">
                 <span class="course">最近活动</span>
                 <span class="more pdr15">
-                    <a href="{:url('index/lastEventList')}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastLyEventList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newEvent"></ul>
@@ -540,6 +540,10 @@
         }, 500);
     }
 
+
+    var member_id = "{$memberInfo.id}"
+    var camp_id = "{$o_id}"
+
     //获取热门课程并追加到页面
     var toLessonList = function (sCity, sProvince) {
         console.log(sCity)
@@ -585,9 +589,6 @@
         });
     };
 
-    var member_id = "{$memberInfo.id}"
-    var camp_id = "{$o_id}"
-
     //初始化全局变量
     var newCount = 1;
 
@@ -611,11 +612,10 @@
     }
     //获取最近一条新闻
     function toNewList(page) {
-        var organization_id = "{$o_id}"
         mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
             data: {
                 organization_type: 2,
-                organization_id: organization_id,
+                organization_id: camp_id,
                 page: page,
                 status: 1
             },
@@ -629,7 +629,7 @@
                 if (data.code == 200) {
                     // 将时间戳转成日期格式
                     for (var i = 0; i <= data.data.data.slice(0, 5).length - 1; i++) {
-                        var url = "{:url('team/eventinfo')}"
+                        var url = "{:url('article/articleInfo')}/" + "article_id/" + data.data.data[i].id;
                         div += '<li class="mui-table-view-cell listli"><a href="' + url + '"><div class="mui-media-body wd66" style="line-height:20px">' + data.data.data[i].title + '</div>'
                         div += '<p class="fr f12">' + data.data.data[i].update_time + '</p></a></li>'
                     }
@@ -655,7 +655,7 @@
             count = 1;//刷新并显示第一页
             var page = count;
             var gType = 1;//代表下拉刷新
-            toLastTrainList(page);//具体取数据的方法
+            toLastTrainList(page,gType);//具体取数据的方法
         }, 100);
     }
     //上拉加载具体业务实现
@@ -664,18 +664,19 @@
             count++;//翻下一页
             var page = count;
             var gType = 2;//代表上拉加载
-            toLastTrainList(page);//具体取数据的方法
+            toLastTrainList(page,gType);//具体取数据的方法
         }, 100);
     }
 
     //获取最近一条训练
-    function toLastTrainList(page) {
-        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;;
+    function toLastTrainList(page,gType) {
+        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}";
         mui.ajax({
             url: url,
             data: {
+                page:page,
                 camp_id: camp_id,
-                member_id: member_id,
+                // member_id:member_id,
                 status: 1,
             },
             dataType: 'json',//服务器返回json格式数据
@@ -684,7 +685,6 @@
             headers: { 'Content-Type': 'application/json' },
             success: function (data) {
                 console.log(data)
-
                 var newli = '';
                 if (data.code == 200) {
                     var lesson_time = data.data.data[0].lesson_time;
@@ -714,8 +714,8 @@
     function toLastMatchList() {
         mui.ajax("{:url('api/team/lastmatch')}", {
             data: {
-                // camp_id:camp_id,
-                member_id: member_id
+                camp_id: camp_id,
+                member_id: member_id,
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -770,8 +770,8 @@
     function toLastEventList() {
         mui.ajax("{:url('api/team/lastevent')}", {
             data: {
-                // camp_id: camp_id,
-                member_id: member_id
+                camp_id: camp_id,
+                member_id: member_id,
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型

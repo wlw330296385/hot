@@ -18,7 +18,7 @@
     <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powercamp')}"></a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/powercamp',['camp_id'=>$o_id])}"></a>
                 <a class="mui-control-item mui-active" href="#onlineArticleList">上架</a>
                 <a class="mui-control-item" href="#offlineArticleList">下架</a>
                 <a class="mui-control-item" href="{:url('article/createArticle',['o_id'=>$o_id,'o_type'=>$o_type])}">添加</a>
@@ -119,7 +119,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlinArticleList', page, gType, 1);//具体取数据的方法
+                toList('onlineArticleList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -146,16 +146,15 @@
     })
 
     //接口获取数据并追加到页面
-    var toList = function (wList, page, gType, status, is_max) {
+    var toList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/article/getArticleListByPageApi')}" + '/?page=' + page;
-        // var organizationID = "{organization_id}";
+        var organization_id = "{$o_id}";
         mui.ajax({
             url: url,
             data: {
-                organization_id: 5,
+                organization_id: organization_id,
                 status: status,
-                is_max: is_max
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -166,7 +165,7 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('article/articleInfo')}" + '/article_id/' + data.data.data[i].id + '/organization_id/' + 5;
+                        var urls = "{:url('article/articleInfo')}" + '/article_id/' + data.data.data[i].id + '/organization_id/' + "{$o_id}";
                         newli += '<li class="mui-table-view-cell mui-media listli">'
                         if (status == 1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';

@@ -91,11 +91,12 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
+            var camp_id = "{$o_id}";
             var url = "{:url('api/grade/getGradeListByPageApi','','',true)}/?page=" + page;
             mui.ajax({
                 url: url,
                 data: {
-                    camp_id: 5
+                    camp_id: camp_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -108,7 +109,7 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
-                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].logo + '"><div class="mui-media-body wd52">' + data.data.data[i].grade + '<p class="mui-ellipsis">' +  data.data.data[i].lesson + '</p></div><div class="price-frame"><p class="price"><strong>' + data.data.data[i].students + '</strong>/人</p><p class="address">' + data.data.data[i].court + '</p></div></a></li>'
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].logo + '"><div class="mui-media-body wd60 newline">' + data.data.data[i].grade + '<p class="mui-ellipsis">' +  data.data.data[i].lesson + '</p></div><div class="price-frame"><p class="price"><strong>' + data.data.data[i].students + '</strong>/人</p><p class="address">' + data.data.data[i].area + '</p></div></a></li>'
                         }
                     }
                     if (gType == 1) {
