@@ -95,13 +95,12 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/lasteventlist','','',true)}";
+                var url = "{:url('api/team/lastcampteamevent','','',true)}" + '/?page=' + page;
                 var member_id = "{$memberInfo.id}"
                 var camp_id = "{$o_id}"
                 mui.ajax({
                     url: url,
                     data: {
-                        page:page,
                         member_id: member_id,
                         camp_id:camp_id
                     },
@@ -114,9 +113,9 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/eventinfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + data.data[i].team_id;
+                                var urls = "{:url('keeper/team/eventinfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + data.data[i].team_id;
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data[i].event + '';
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].home_team_logo + '"><div class="mui-media-body wd58">' + data.data[i].event + '';
                                 if (data.data[i].is_finished_num == 1) {
                                     newli += '<font class="tipCorner bgorange">完成</font>';
                                 }

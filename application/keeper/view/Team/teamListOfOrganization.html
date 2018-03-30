@@ -46,20 +46,6 @@
                     <option value="">全部区域</option>
                 </select>
             </span>
-            <span class="location-choise">
-                <select id="teamType" class="data" name="type">
-                    <option value="">全部类型</option>
-                    {if cookie('module') == 'keeper'}
-                    <option value="3" selected>业余组织</option>
-                    <option value="2">企事业单位</option>
-                    {/if}
-                    <option value="1">训练营</option>
-                    <option value="4">大学生</option>
-                    <option value="5">高中生</option>
-                    <option value="6">初中生</option>
-                    <option value="7">小学生</option>
-                </select>
-            </span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
@@ -90,7 +76,6 @@
         $(function () {
             //初始化全局变量
             var count = 1;
-            var sTeamType = '';
             var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
@@ -122,12 +107,6 @@
                 keyword = $(".keyword").val();
                 searchToList();
             })
-
-            //选择球队类型下拉
-            $("#teamType").on("change", function () {
-                sTeamType = $(this).find("option:checked").val();
-                searchToList();
-            });
 
             //选择地区下拉
             $("#areaSelect").on("change", function () {
@@ -189,7 +168,7 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/searchteamlist','','',true)}";
-                var camp_id = "{camp_id}";
+                var camp_id = "{$o_id}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -198,9 +177,8 @@
                         city: sCity,
                         area: sArea,
                         keyword: keyword,
-                        type:sTeamType,
                         status: 1,
-                        camp_id:2
+                        camp_id:camp_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
