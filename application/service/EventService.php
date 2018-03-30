@@ -32,6 +32,23 @@ class EventService {
             return $result;
         }
     }
+    // 获取所有活动和报名人员
+    public function getEventWithEventMemberList($map=[],$page = 1,$order='',$paginate = 10) {
+        $result = Event::with('eventMember')->where($map)->order(['start'=>'desc','end'=>'asc'])->page($page,$paginate)->select();
+
+        if($result){
+            $res = $result->toArray();
+            foreach ($res as $key => &$value) {
+                $value['doms'] = json_decode($value['dom'],true);
+                $value['event_times'] = date('Y-m-d H:i',$value['event_time']);
+                $value['ends'] = date('Y-m-d H:i',$value['end']);
+                $value['starts'] = date('Y-m-d H:i',$value['start']);
+            }
+            return $res;
+        }else{
+            return $result;
+        }
+    }
 
     // 分页获取活动
     public function getEventListByPage($map=[], $order='',$paginate=10){

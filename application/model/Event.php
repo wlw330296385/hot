@@ -32,5 +32,8 @@ class Event extends Model{
         return $status[$value];
     }
 
+    public function eventMember(){
+        return $this->hasMany('event_member','event_id');
+    }
     
 }

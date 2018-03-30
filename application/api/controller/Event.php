@@ -383,7 +383,7 @@ class Event extends Base{
             if( isset($map['page']) ){
                 unset($map['page']);
             }
-            $result = $this->EventService->getEventList($map,$page,$order);
+            $result = $this->EventService->getEventWithEventMemberList($map,$page,$order);
             if($result){
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
