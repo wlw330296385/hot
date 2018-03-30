@@ -372,10 +372,11 @@ class Lesson extends Base{
                     
                     $result = array_merge($result,$res);
                 }
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取成功','data'=>$result]);
             }
             
-            
-            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
