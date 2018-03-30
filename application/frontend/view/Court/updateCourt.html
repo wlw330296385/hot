@@ -138,11 +138,10 @@
     <div class="mui-content pt">
         <div class="register">
             <form action="" class="mui-input-group">
-
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                 <!-- map -->
                 <div class="mui-input-row h-auto" id="mapFrame">
                     <div id="map">
-                        <div>{:token()}</div>
                         <div id="container"></div>
                         <span class="mui-icon mui-icon-location"></span>
                         <div id="tip">
@@ -415,6 +414,7 @@
                 var half_rent = $(".half_rent").val();
                 var full_rent = $(".full_rent").val();
                 var remarks = $(".remarks").val();
+                var token = $('input[name=__token__]').val();
 
 
                 if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$|^400[0-9]{7}/).test(contract)) {
@@ -459,6 +459,7 @@
                             "covers": covers,
                             "lng": lng,
                             "lat": lat,
+                            __token__ : token
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -472,7 +473,12 @@
                                     window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$CourtInfo.camp_id])}";
                                 });
                             } else {
-                                mui.toast(data.msg)
+                                mui.toast(data.msg);
+                                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                    if (data.code === 200) {
+                                        $('input[name=__token__]').val(data.data);
+                                    }
+                                }, 'json');
                             }
                         },
                         error: function (xhr, type, errorThrown) {
