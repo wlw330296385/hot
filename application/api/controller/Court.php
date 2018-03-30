@@ -146,8 +146,6 @@ class Court extends Base{
         if($result){
             return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
         }else{
-            // 不知道为什么判断成功失败都写一样
-            // return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
             return json(['code'=>100,'msg'=>__lang('MSG_401')]);
         }
     }
@@ -158,8 +156,6 @@ class Court extends Base{
         if($result){
             return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
         }else{
-            // 不知道为什么判断成功失败都写一样
-            // return json(['code'=>200,'msg'=>"OK",'data'=>$result]);
             return json(['code'=>100,'msg'=>__lang('MSG_401')]);
         }
     }
