@@ -134,4 +134,19 @@ class Index extends Base{
             $this->redirect('frontend/index/index');
         }
     }
+
+
+    // 最近训练
+    public function lastLyScheduleList(){
+        return view('Index/lastLyScheduleList');
+    }
+    // 最近比赛
+    public function lastLyMatchList(){
+        return view('Index/lastLyMatchList');
+    }
+    // 最近活动
+    public function lastLyEventList(){
+        return view('Index/lastLyEventList');
+    }
+
 }
