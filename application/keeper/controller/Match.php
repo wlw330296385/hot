@@ -40,6 +40,11 @@ class Match extends Base {
         return view('Match/friendlylist');
     }
 
+    // 约战列表 (机构版)
+    public function friendlylistOfOrganization() {
+        return view('Match/friendlylistOfOrganization');
+    }
+
     // 约战比赛详情
     public function friendlyinfo() {
         $id = input('match_id');

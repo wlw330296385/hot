@@ -270,6 +270,13 @@ class Event extends Base{
         return view('Event/eventList');
     }
 
+    // 活动列表（机构版）
+    public function eventListOfOrganization() {
+        $target_type = input('param.target_type/d', 1);
+        $this->assign('target_type', $target_type);
+        return view('Event/eventListOfOrganization');
+    }
+
     public function eventListOfCamp() {
         $organization_id = input('param.organization_id');
 

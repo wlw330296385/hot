@@ -32,6 +32,11 @@ class Team extends Base {
         return view('Team/teamList');
     }
 
+    // 球队列表 (机构版)
+    public function teamListOfOrganization() {
+        return view('Team/teamListOfOrganization');
+    }
+
     // 创建球队
     public function createteam() {
         return view('Team/createTeam');
