@@ -27,15 +27,18 @@ class Base extends \app\common\controller\Frontend {
         $o_id = input('param.o_id');
         $o_type = input('param.o_type');       
         if(!$o_type && !$o_id){
+            
             $o_type = cookie('o_type');
             $o_id = cookie('o_id'); 
+            $this->o_id = $o_id;
+            $this->o_type = $o_type;
         }else{
+            
             $this->o_id = $o_id;
             $this->o_type = $o_type;
             cookie('o_id',$this->o_id);
             cookie('o_type',$this->o_type);
         }
-
         /*define('CONTROLLER_NAME',Request::instance()->controller());
         define('MODULE_NAME',Request::instance()->module());
         define('ACTION_NAME',Request::instance()->action());*/

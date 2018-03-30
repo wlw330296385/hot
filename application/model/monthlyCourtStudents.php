@@ -2,6 +2,6 @@
 namespace app\model;
 use think\Model;
 
-class monthlyCourtStudent extends Model {
+class monthlyCourtStudents extends Model {
 
 }

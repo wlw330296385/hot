@@ -73,11 +73,11 @@ class Monthlytask extends Base{
     					'court_id'=>$val['court_id'],
     					'students'=>$val['s_students'],
     					'date_str'=>date('Ym')
-    				]
+    				];
     			}
     		}
     		
-    		$monthlyCourtStudent = new \app\model\monthlyCourtStudent;
+    		$monthlyCourtStudent = new \app\model\monthlyCourtStudents;
 	    	$monthlyCourtStudent->saveAll($CourtStudentData);
 	    	$data = ['crontab'=>'每月学员训练点分布'];
             $this->record($data);
