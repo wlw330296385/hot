@@ -148,5 +148,9 @@ class Index extends Base{
     public function lastLyEventList(){
         return view('Index/lastLyEventList');
     }
+    // 训练营最近活动
+    public function lastLyCampEventList(){
+        return view('Index/lastLyCampEventList');
+    }
 
 }
