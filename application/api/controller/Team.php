@@ -1345,6 +1345,7 @@ class Team extends Base
     public function lastcampteammatch() {
         try {
             $map = input('param.');
+            $page = input('param.page', 1);
             // serivce
             $matchS = new MatchService();
             $teamS = new TeamService();
@@ -1372,6 +1373,9 @@ class Team extends Base
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.status', 1);
             // 查询条件组合end
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
             // 未完成比赛优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
             $lastMatch = $matchS->matchRecordListAll($map, $orderby);
@@ -1597,6 +1601,7 @@ class Team extends Base
         try {
             $teamS = new TeamService();
             $map = input('param.');
+            $page = input('param.page',1);
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
@@ -1621,6 +1626,9 @@ class Team extends Base
             // 默认查询上架活动(status=1)
             $map['status'] = input('param.staus', 1);
             // 查询条件组合end
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
             // 未完成的记录优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
             $lastEvent = $teamS->teamEventListAll($map,$orderby);
