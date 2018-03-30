@@ -50,6 +50,14 @@ class Court extends Base{
         return view('Court/courtList');
     }
 
+    // 场地列表 （机构版）
+    public function courtListOfOrganization(){
+        $camp_id = input('param.camp_id')?input('param.camp_id'):0;
+        $courtList = $this->CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        $this->assign('courtList',$courtList);
+        return view('Court/courtListOfOrganization');
+    }
+
     public function updateCourt(){   	
     	$court_id = input('param.court_id');
         $CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);

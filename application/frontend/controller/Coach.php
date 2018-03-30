@@ -157,8 +157,15 @@ class Coach extends Base{
         $this->assign('coachList',$coachList);
         return view('Coach/coachList');
     }
-
-   
+    
+    // 教练列表（机构版）
+    public function coachListOfOrganization(){
+        // $map = input();
+        // $coachList = $this->coachService->getCoachList($map);
+        $coachList = [];
+        $this->assign('coachList',$coachList);
+        return view('Coach/coachListOfOrganization');
+    }
 
 
     public function searchCoachListApi(){

@@ -118,7 +118,7 @@
             <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('lesson/lessonList')}">
+                        <a href="{:url('lesson/lessonListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-course"></use>
                             </svg>
@@ -126,7 +126,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('event/eventList')}">
+                        <a href="{:url('event/eventListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-activity"></use>
                             </svg>
@@ -142,7 +142,7 @@
                         </div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('court/courtList')}">
+                        <a href="{:url('court/courtListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-court"></use>
                             </svg>
@@ -150,7 +150,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('/keeper/match/friendlylist')}">
+                        <a href="{:url('/keeper/match/friendlylistOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-VS"></use>
                             </svg>
@@ -174,7 +174,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('/keeper/Team/teamlist')}">
+                        <a href="{:url('/keeper/Team/teamlistOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-team"></use>
                             </svg>
@@ -182,7 +182,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('coach/coachList')}">
+                        <a href="{:url('coach/coachListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-coach"></use>
                             </svg>
@@ -249,6 +249,14 @@
             </div>
             <ul class="mui-table-view list mainInfo newEvent"></ul>
 
+            <!--训练营活动-->
+            <div class="page-header border-b">
+                <span class="course">训练营活动</span>
+                <span class="more pdr15">
+                    <a href="{:url('index/lastLyEventList')}" class="mui-navigate-right">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newCampEvent"></ul>
 
             <!--热门课程-->
             <div class="show-list mt mb">
@@ -495,6 +503,7 @@
         toLastTrainList(); //最近训练
         toLastMatchList(); //最近比赛
         toLastEventList(); //最近活动
+        toCampEventList(); //训练营活动
     })
 
 
@@ -610,7 +619,7 @@
             toNewList(page);//具体取数据的方法
         }, 100);
     }
-    
+
     //获取最近一条新闻
     function toNewList(page) {
         mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
@@ -656,7 +665,7 @@
             count = 1;//刷新并显示第一页
             var page = count;
             var gType = 1;//代表下拉刷新
-            toLastTrainList(page,gType);//具体取数据的方法
+            toLastTrainList(page, gType);//具体取数据的方法
         }, 100);
     }
     //上拉加载具体业务实现
@@ -665,17 +674,17 @@
             count++;//翻下一页
             var page = count;
             var gType = 2;//代表上拉加载
-            toLastTrainList(page,gType);//具体取数据的方法
+            toLastTrainList(page, gType);//具体取数据的方法
         }, 100);
     }
 
     //获取最近一条训练
-    function toLastTrainList(page,gType) {
+    function toLastTrainList(page, gType) {
         var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}";
         mui.ajax({
             url: url,
             data: {
-                page:page,
+                page: page,
                 camp_id: camp_id,
                 // member_id:member_id,
                 status: 1,
@@ -688,17 +697,21 @@
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
-                    var lesson_time = data.data.data[0].lesson_time;
-                    var date = new Date();
-                    var Tmonth = date.getMonth(lesson_time) + 1;
-                    var Tday = date.getDate(lesson_time);
-                    var Ttime = date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
-                    var urls = "{:url('schedule/scheduleInfo')}/" + "schedule_id/" + data.data.data[0].id + "/camp_id/" + data.data.data[0].camp_id;
-                    newli += ' <a href="' + urls + '"><li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
-                    newli += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
-                    newli += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data.data[0].grade + '</h5><div class="divFrame"><p>教练：' + data.data.data[0].coach + '</p>';
-                    newli += '<p>比赛地点：' + data.data.data[0].court + '</p><p>所属课程：' + data.data.data[0].lesson + '</p></div><div class=opFrame></div></div></li>';
-                    $(".newTrain").empty().append(newli);
+                    if (data.data.data == '') {
+                        return false;
+                    } else {
+                        var lesson_time = data.data.data[0].lesson_time;
+                        var date = new Date();
+                        var Tmonth = date.getMonth(lesson_time) + 1;
+                        var Tday = date.getDate(lesson_time);
+                        var Ttime = date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
+                        var urls = "{:url('schedule/scheduleInfo')}/" + "schedule_id/" + data.data.data[0].id + "/camp_id/" + data.data.data[0].camp_id;
+                        newli += ' <a href="' + urls + '"><li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
+                        newli += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                        newli += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data.data[0].grade + '</h5><div class="divFrame"><p>教练：' + data.data.data[0].coach + '</p>';
+                        newli += '<p>比赛地点：' + data.data.data[0].court + '</p><p>所属课程：' + data.data.data[0].lesson + '</p></div><div class=opFrame></div></div></li>';
+                        $(".newTrain").empty().append(newli);
+                    }
                 } else {
                     $(".newTrain").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有已完成的课时数据哦</p></li>');
                 }
@@ -815,7 +828,56 @@
             }
         });
     };
-
+    //获取最近一条活动
+    function toCampEventList() {
+        mui.ajax("{:url('api/event/getHotEventList')}", {
+            data: {
+                organization_id: camp_id,
+                member_id: member_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var div = '';
+                if (data.code == 200) {
+                    // 将时间戳转成日期格式
+                    var event_time = data.data[0].event_times;
+                    var date = new Date();
+                    var Tmonth = date.getMonth(event_time) + 1;
+                    var Tday = date.getDate(event_time);
+                    var Ttime = date.getHours(event_time) + ":" + date.getMinutes(event_time);
+                    event_id = data.data[0].id
+                    var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                    div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                    div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
+                    div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
+                    if (data.data[0].is_finished_num == 1) {
+                        div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                    } else {
+                        div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                    }
+                    div += ' </div></div></li>';
+                    // 人员头像版块
+                    div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
+                    // for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
+                    //     div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
+                    // }
+                    div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].participator + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
+                    $(".newCampEvent").empty().append(div);
+                }
+                if (data.code == 100) {
+                    $(".newCampEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    };
 
     //创建补0函数
     function p(s) {

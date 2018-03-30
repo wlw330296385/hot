@@ -92,6 +92,23 @@ class Lesson extends Base{
         return view('Lesson/lessonList');
     }
 
+    // 课程列表（机构版）
+    public function lessonListOfOrganization(){
+        $camp_id = input('param.camp_id');
+        $map = [];
+        if($camp_id){
+            $map['camp_id'] = $camp_id;
+        }
+        $lessonList = $this->LessonService->getLessonList($map);
+        // // 课程类型
+        $GradeService = new \app\service\GradeService;
+        $gradecateList = $GradeService->getGradeCategory();
+
+        $this->assign('gradecateList',$gradecateList);  
+        $this->assign('lessonList',$lessonList);
+        return view('Lesson/lessonListOfOrganization');
+    }
+
     // 购买课程
     // public function buyLesson(){
     //     $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
