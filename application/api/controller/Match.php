@@ -2708,7 +2708,10 @@ class Match extends Base
                     }
                 }
             }
-
+            // 传入训练营id
+            if (input('?param.camp_id')) {
+                $map['c.camp_id'] = input('camp_id');
+            }
 
             $result = db('match')->field("`match`.*,c.avg_height,c.logo,c.match_win,c.match_num,round(c.match_win/c.match_num) as sl,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `match`.court_lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`match`.court_lat*pi()/180)*pow(sin(($lng *pi()/180 - `match`.court_lng*pi()/180)/2),2))) as distance")->where($map)->join('__TEAM__ c', 'match.team_id = c.id')->page($page)->order($orderby)->select();
 
