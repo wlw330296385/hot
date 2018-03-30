@@ -12,22 +12,33 @@ class Base extends Frontend {
 	public $systemSetting;
 	public $memberInfo;
     public $steward_type; // 管家版本
+    public $o_id;
+    public $o_type;
 	public function _initialize(){
         parent::_initialize();
         $this->steward_type =2;
-
         if ( !Cookie::has('mid') ) {
             $this->nologin();
         }
-
-
         $this->footMenu();
 
 	}
 
-
-
 	protected function footMenu(){
+        $o_id = input('param.o_id');
+        $o_type = input('param.o_type');
+        if(!$o_type && !$o_id){
+            $o_type = cookie('o_type');
+            $o_id = cookie('o_id');
+            $this->o_id = $o_id;
+            $this->o_type = $o_type;
+        }else{
+
+            $this->o_id = $o_id;
+            $this->o_type = $o_type;
+            cookie('o_id',$this->o_id);
+            cookie('o_type',$this->o_type);
+        }
 		$request = Request::instance();
         $indexAction = 'index';
         $module = (Cookie::has('module')) ? Cookie::get('module') : $request->module();
@@ -68,6 +79,8 @@ class Base extends Frontend {
                 'module' => $module
 			],
 		];
+        $this->assign('o_id',$this->o_id);
+        $this->assign('o_type',$this->o_type);
 		$this->assign('controller', $request->controller());
 		$this->assign('footMenu',$footMenu);
 	}
