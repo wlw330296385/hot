@@ -5,8 +5,6 @@
 	<meta charset="utf-8">
 	<title>学员档案</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<!--标准mui.css-->
 	<link rel="stylesheet" href="/static/frontend/css/mui.min.css">
 	<!--自定义style.css-->
@@ -17,7 +15,7 @@
 		}
 
 		.mui-control-content {
-			top: 170px !important;
+			top: 125px !important;
 			width: 100% !important;
 		}
 
@@ -30,7 +28,7 @@
 <body>
 
 <header id="header" class="mui-bar mui-bar-nav subheader">
-	<ul class="mui-table-view list detalis-list" style="margin-top: 44px;">
+	<ul class="mui-table-view list detalis-list">
 		<li class="mui-table-view-cell mui-media listli list-wide">
 			<a href="javascript:;">
 				<img class="mui-media-object mui-pull-left coachicon" src="{$studentInfo['student_avatar']}">
@@ -48,10 +46,10 @@
 	</ul>
 	<div class="camp-lesson-list">
 		<div id="segmentedControl" class="mui-segmented-control mb">
-			<a class="mui-control-item mui-active" href="#item1">档案</a>
-			<a class="mui-control-item" href="#item2">班级</a>
-			<a class="mui-control-item" href="#item3">课量</a>
-			<a class="mui-control-item" href="#item4">订单</a>
+			<a class="mui-control-item mui-active" data-tab="item1" href="#">档案</a>
+			<a class="mui-control-item" data-tab="item2" href="#">班级</a>
+			<a class="mui-control-item" data-tab="item3" href="#">课量</a>
+			<a class="mui-control-item" data-tab="item4" href="#">订单</a>
 		</div>
 	</div>
 </header>
@@ -234,6 +232,17 @@
     });
 
     $(function () {
+
+
+        $(".mui-control-item").on("click", function () {
+            var getTab = "#"+$(this).attr("data-tab");
+            $(".mui-control-item").removeClass("mui-active");
+            $(this).addClass("mui-active");
+
+            $(".mui-control-content").removeClass("mui-active");
+            $(getTab).addClass("mui-active");
+        });
+
 
         //初始化全局变量
         var gCount = 1;

@@ -84,7 +84,7 @@
                                     <td class="sKeci">{$vol.c_id}</td>
                                     <td class="sRenci">{$vol.s_students}</td>
                                     <td class="sShouru">{$vol.s_salary+$vol.s_push_salary}</td>
-                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
+                                    <td><a href="#" class="btn btn-xs btn-info" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" linkTo="/management/Statistics_Coach/coachSalary/lesson_id/{$vol.lesson_id}/"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 {/volist}
                                 </tbody>
@@ -111,7 +111,6 @@
                                     <th class="sorting_asc">被推荐人</th>
                                     <th>被推荐人收入</th>
                                     <th>返利积分</th>
-                                    <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -123,7 +122,6 @@
                                     <td class="sorting_1">{$vol.s_member}</td>
                                     <td>{$vol.salary}</td>
                                     <td>{$vol.score}</td>
-                                    <td><a href="#" class="btn btn-xs btn-info"><i class="fa fa-inbox"></i> 查看详情</a></td>
                                 </tr>
                                 {/volist}
                                 </tbody>
@@ -135,14 +133,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
 
 
 
@@ -247,6 +237,18 @@
             window.location.href="{:url('management/StatisticsCoach/coachincome')}"+"/monthstart/"+beginDate+"/monthend/"+endDate+"/yearmonth/"+arrYM[0]+arrYM[1];;
         })
 
+        //点击链接到详情页面
+        $("#scheduleList a.btn").on("click", function () {
+            var getLink = $(this).attr("linkTo");
+            var getYM = $("input[name=dateYM]").val();
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.open(getLink+"/monthstart/"+beginDate+"/monthend/"+endDate);
+        })
 
     })
 
