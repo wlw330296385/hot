@@ -14,7 +14,7 @@ use think\Db;
 use think\Exception;
 
 
-class Crontabwoo extends Controller {
+class Crontabwoorun extends Controller {
     public $setting;
 
 
@@ -31,7 +31,7 @@ class Crontabwoo extends Controller {
                 $this->schedulesalaryin2($value);
             }
         }
-
+        // $this->schedulesalaryin1(['id'=>15]);
     }
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
@@ -46,10 +46,11 @@ class Crontabwoo extends Controller {
             // $map['is_settle'] = 0;
             // 当前时间日期
             // $nowDate = date('Ymd', time());
-            $map['camp_id'] = $campInfo['id'];
+            
             // $map['can_settle_date'] = $nowDate;
+            $map['camp_id'] = $campInfo['id'];
             $map['rebate_type'] = 1;
-            //$map['questions'] = 0;
+            $map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
                 foreach ($schedules   as $key=> $schedule) {
 
@@ -114,7 +115,8 @@ class Crontabwoo extends Controller {
                     // 助教薪资
                     $totalAssistantSalary = 0;
                     $incomeAssistant = [];
-                    if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
+                    if (!empty($schedule['assistant_id']) && ($schedule['assistant_salary']>0 || $schedule['salary_base']>0)) {
+                        dump('进入助教薪资');
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
                         $totalCoachSalary += $schedule['assistant_salary'];
                         $totalCoachSalary += $pushSalary;
@@ -288,7 +290,6 @@ class Crontabwoo extends Controller {
                     $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
                     if($coachMember){
-                        echo 1.1;
                         // 主教练薪资
                         $incomeCoach = [
                             'salary' => $schedule['coach_salary'],

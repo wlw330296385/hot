@@ -58,10 +58,16 @@ class Article extends Base{
         $article_id = input('param.article_id');
 
         $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
-
+        // 判断权限
+        $isPower = $this->ArticleService->isPower($articleInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower<3){
+            $this->error('您没有权限');
+        }
         if(!$articleInfo){
             $this->error('找不到文章信息');
         }
+
+        $this->assign('isPower',$isPower);
         $this->assign('articleInfo',$articleInfo);
         return view('Article/articleInfo');
     }

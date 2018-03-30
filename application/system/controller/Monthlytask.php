@@ -59,7 +59,7 @@ class Monthlytask extends Base{
 
 
 
-    public function monthlyCourtStudent(){
+    public function monthlyCourtStudents(){
     	try{
     		$campList = db('camp')->where('delete_time',null)->select();
     		$CourtStudentData = [];

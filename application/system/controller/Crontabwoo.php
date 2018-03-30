@@ -113,7 +113,7 @@ class Crontabwoo extends Base {
                     // 助教薪资
                     $totalAssistantSalary = 0;
                     $incomeAssistant = [];
-                    if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
+                    if (!empty($schedule['assistant_id']) && ($schedule['assistant_salary']>0 || $schedule['salary_base']>0)) {
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
                         $totalCoachSalary += $schedule['assistant_salary'];
                         $totalCoachSalary += $pushSalary;
@@ -182,7 +182,6 @@ class Crontabwoo extends Base {
                         'schedule_rebate'=>(1-$campScheduleRebate),
                         'system_remarks' => '',
                     ];
-                    echo 15;
                     $this->insertIncome($incomeCamp,0,1);
                     // 保存训练营财务支出信息
 
@@ -236,7 +235,6 @@ class Crontabwoo extends Base {
                         'datetime' => $schedule['lesson_time']
 
                     ];
-                    echo 16;
                     $this->insertcampfinance($dataCampFinance,0,1);
                     // 结算增加到camp表的balancc;
                     db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance',$incomeCampSalary)->update();
@@ -260,12 +258,8 @@ class Crontabwoo extends Base {
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
     private function schedulesalaryin2($campInfo) {
-        // try {
-            // 获取可结算课时数据列表            
-            // 91分 9进入运算 1平台收取
-            // 结算主教+助教收入，剩余给营主
-            //list($start, $end) = Time::yesterday();
-            //$map['update_time'] = ['between', [$start, $end]];
+        try {
+            // 获取可结算课时数据列表   
             $map['status'] = 1;
             $map['is_settle'] = 0;
             // 当前时间日期
@@ -294,7 +288,6 @@ class Crontabwoo extends Base {
                     $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
                     if($coachMember){
-                        echo 1.1;
                         // 主教练薪资
                         $incomeCoach = [
                             'salary' => $schedule['coach_salary'],
@@ -334,10 +327,9 @@ class Crontabwoo extends Base {
                         $this->insertMemberFinance($MemberFinanceData,0,2);
                     }
                     
-                    echo 2;
                     // 助教薪资
                     $totalAssistantSalary = 0;
-                    if (!empty($schedule['assistant_id']) && $schedule['assistant_salary']) {
+                    if (!empty($schedule['assistant_id']) && ($schedule['assistant_salary']>0 || $schedule['salary_base']>0)) {
                         
                         $MemberFinanceData = [];
                         $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
