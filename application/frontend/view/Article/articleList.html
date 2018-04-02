@@ -141,7 +141,7 @@
             }
 
             //接口获取数据并追加到页面
-            var toList = function (wList, page, gType, organ_type, organ_id,) {
+            var toList = function (wList, page, gType, organ_type, organ_id, ) {
                 //搜索关键字不能完全为空，否则查询为空
                 var organization_id = "{$o_id}"
                 var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
@@ -159,19 +159,12 @@
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
+                        console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
-                                newli += ` <li class="mui-table-view-cell border-b">
-                                                <a href="${urls}">
-                                                    <img class="mui-media-object mui-pull-left" src="${data.data.data[i].covers}">
-                                                    <div class="mui-media-body">
-                                                        ${data.data.data[i].title}
-                                                        <p class='mui-ellipsis'>${data.data.data[i].abstract}</p>
-                                                    </div>
-                                                </a>
-                                            </li>`;
+                                newli += '<li class="mui-table-view-cell border-b"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].covers + '"><div class="mui-media-body">' + data.data.data[i].title + '<p class="mui-ellipsis">' + data.data.data[i].abstract + '</p></div> </a></li>';
                             }
                         }
                         if (gType == 1) {
@@ -180,7 +173,7 @@
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.article").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.article").html('<li class="nodata border-b"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉刷新 gType==2

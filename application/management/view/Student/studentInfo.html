@@ -83,8 +83,7 @@
 		</div>
 
 		<!--班级-->
-		<div id="item2" class="mui-scroll-wrapper mui-control-content">
-			<div class="mui-scroll">
+		<div id="item2" class="mui-control-content">
 				<ul class="mui-table-view mui-text-center">
 					<li class="mui-table-view-cell border-b">
 						<ul class="mui-row table">
@@ -95,13 +94,10 @@
 				</ul>
 				<ul class="mui-table-view detalis-list list mui-text-center grade">
 				</ul>
-			</div>
 		</div>
 
 		<!--课量-->
-		<div id="item3" class="mui-scroll-wrapper mui-control-content">
-			<div class="mui-scroll">
-
+		<div id="item3" class="mui-control-content">
 				<div class="nav-list">
 					<ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
 						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -134,12 +130,10 @@
 				</div>
 
 				<ul class="mui-table-view detalis-list list mui-text-center schedule "></ul>
-			</div>
 		</div>
 
 		<!--订单-->
-		<div id="item4" class="mui-scroll-wrapper mui-control-content">
-			<div class="mui-scroll">
+		<div id="item4" class="mui-control-content">
 				<div class="nav-list">
 					<ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
 						<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -179,7 +173,6 @@
 				</div>
 
 				<ul class="mui-table-view detalis-list list bill mui-text-center"></ul>
-			</div>
 		</div>
 	</div>
 
@@ -198,38 +191,6 @@
     });
 
 
-    jQuery(function ($) {
-        $('#leaveapply').on('click', '', function () {
-            mui.confirm('如有未完成课程请与训练营沟通', '确定要提交离营申请吗？', ['取消', '确定'], function (e) {
-                if (e.index == 1) {
-                    mui.ajax("{:url('api/student/applyleavecamp')}", {
-                        data: {
-                            student_id: "{$studentInfo.id}",
-                            camp_id: "{$camp_id}"
-                        },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            if (data.code === 200) {
-                                mui.alert('申请发送成功');
-                                mui.get("{:url('api/message/applyleavecamp')}", { 'id': data.data }, function (res) {
-
-                                });
-                            } else {
-                                mui.alert(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            //异常处理；
-                            console.log(type);
-                        }
-                    });
-                }
-            });
-        });
-    });
 
     $(function () {
 
@@ -248,65 +209,69 @@
         var gCount = 1;
         var sCount = 1;
 
-        mui('#item2').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshG
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshG
-            }
-        });
+        toGradeList('item2', 1, 1);
+        toScheduleList('item3', 1, 1);//具体取数据的方法
+        toBillList('item4', 1, 1);
 
-        mui('#item3').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshS
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshS
-            }
-        });
-
-        mui('#item4').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshB
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshB
-            }
-        });
+//        mui('#item2').pullRefresh({
+//            down: {
+//                //下拉刷新
+//                height: 50,//可选.默认50.触发下拉刷新拖动距离
+//                auto: true,//可选,默认false.自动下拉刷新一次
+//                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+//                callback: pulldownRefreshG
+//            },
+//            up: {
+//                //上拉加载
+//                height: 150,//可选.默认50.触发上拉加载拖动距离
+//                //auto:true,//可选,默认false.自动上拉加载一次
+//                contentrefresh: '正在加载...',
+//                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+//                callback: pullupRefreshG
+//            }
+//        });
+//
+//        mui('#item3').pullRefresh({
+//            down: {
+//                //下拉刷新
+//                height: 50,//可选.默认50.触发下拉刷新拖动距离
+//                auto: true,//可选,默认false.自动下拉刷新一次
+//                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+//                callback: pulldownRefreshS
+//            },
+//            up: {
+//                //上拉加载
+//                height: 150,//可选.默认50.触发上拉加载拖动距离
+//                //auto:true,//可选,默认false.自动上拉加载一次
+//                contentrefresh: '正在加载...',
+//                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+//                callback: pullupRefreshS
+//            }
+//        });
+//
+//        mui('#item4').pullRefresh({
+//            down: {
+//                //下拉刷新
+//                height: 50,//可选.默认50.触发下拉刷新拖动距离
+//                auto: true,//可选,默认false.自动下拉刷新一次
+//                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+//                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+//                callback: pulldownRefreshB
+//            },
+//            up: {
+//                //上拉加载
+//                height: 150,//可选.默认50.触发上拉加载拖动距离
+//                //auto:true,//可选,默认false.自动上拉加载一次
+//                contentrefresh: '正在加载...',
+//                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+//                callback: pullupRefreshB
+//            }
+//        });
 
         //下拉刷新具体业务实现（班级）
         function pulldownRefreshG() {

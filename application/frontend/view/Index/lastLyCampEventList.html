@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>最近赛事列表</title>
+    <title>训练营最近活动列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -16,13 +16,13 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">最近赛事列表</h1>
+        <h1 class="mui-title">最近活动列表</h1>
     </header>
 
     <div class="mui-content">
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b match">
+                <ul class="mui-table-view detalis-list list border-b event">
                 </ul>
             </div>
         </div>
@@ -47,6 +47,7 @@
                 var gType = 1;//代表下拉刷新
                 toList(page, gType);//具体取数据的方法
             }
+
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -90,17 +91,18 @@
                 }, 100);
             }
 
+
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/lastcampteammatch','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/event/getHotEventList','','',true)}" + '/?page=' + page;
                 var member_id = "{$memberInfo.id}"
                 var camp_id = "{$o_id}"
                 mui.ajax({
                     url: url,
                     data: {
+                        organization_id: camp_id,
                         member_id: member_id,
-                        camp_id:camp_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -111,32 +113,32 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('keeper/team/matchinfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + data.data[i].team_id;
+                                var urls = "{:url('keeper/team/eventinfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + data.data[i].team_id;
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].home_team_logo + '"><div class="mui-media-body wd60">' + data.data[i].match + '';
-                                if (data.data[i].is_finished == "已完成") {
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].home_team_logo + '"><div class="mui-media-body wd58">' + data.data[i].event + '';
+                                if (data.data[i].is_finished_num == 1) {
                                     newli += '<font class="tipCorner bgorange">完成</font>';
                                 }
-                                if (data.data[i].match_time == 0) {
+                                if (data.data[i].start_time == 0) {
                                     newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                                 } else {
-                                    newli += '<p class="mui-ellipsis">' + data.data[i].match_time + '</p>'
+                                    newli += '<p class="mui-ellipsis">' + data.data[i].start_time + '</p>'
                                 }
-                                newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].type + '</a></div>'
+                                newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].event_type + '</a></div>'
                                 newli += '</li>';
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.match").empty().append(newli);
+                            $("ul.event").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.match").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.match").append(newli);
+                            $("ul.event").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

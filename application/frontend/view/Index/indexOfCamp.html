@@ -128,7 +128,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('event/eventListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-activity"></use>
+                                <use xlink:href="#icon-home-Collection"></use>
                             </svg>
                             <div class="mui-media-body">活动</div>
                         </a>
@@ -144,13 +144,13 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('court/courtListOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-court"></use>
+                                <use xlink:href="#icon-home-campus"></use>
                             </svg>
                             <div class="mui-media-body">校区</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('/keeper/match/friendlylistOfOrganization')}">
+                        <a href="{:url('/keeper/Match/friendlylistOfOrganization')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-VS"></use>
                             </svg>
@@ -160,7 +160,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('article/articleList',['o_id'=>$o_id,'o_type'=>$o_type])}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-camp"></use>
+                                <use xlink:href="#icon-home-news"></use>
                             </svg>
                             <div class="mui-media-body">新闻</div>
                         </a>
@@ -168,7 +168,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('grade/gradeListoforganization')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-recruit"></use>
+                                <use xlink:href="#icon-home-activity"></use>
                             </svg>
                             <div class="mui-media-body">班级</div>
                         </a>
@@ -253,7 +253,7 @@
             <div class="page-header border-b">
                 <span class="course">训练营活动</span>
                 <span class="more pdr15">
-                    <a href="{:url('index/lastLyEventList')}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lastLyCampEventList')}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view list mainInfo newCampEvent"></ul>
@@ -263,7 +263,7 @@
                 <div class="page-header border-b">
                     <span class="course">热门课程</span>
                     <span class="more">
-                        <a href="{:url('lesson/lessonList')}" class="mui-navigate-right">更多</a>
+                        <a href="{:url('lesson/lessonListOfOrganization')}" class="mui-navigate-right">更多</a>
                     </span>
                 </div>
                 <ul class="mui-table-view mui-grid-view show-list-cont" id="hot-lesson"></ul>
@@ -726,7 +726,7 @@
     var matchid = ''
     //获取最近一条比赛
     function toLastMatchList() {
-        mui.ajax("{:url('api/team/lastmatch')}", {
+        mui.ajax("{:url('api/team/lastcampteammatch')}", {
             data: {
                 camp_id: camp_id,
                 member_id: member_id,
@@ -744,7 +744,7 @@
                     var Tday = gettimed(data.data[0].match_timestamp * 1000);
                     var Ttime = gettimeh(data.data[0].match_timestamp * 1000);
                     matchid = data.data[0].id
-                    var url = "{:url('team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].match_id;
+                    var url = "{:url('keeper/team/matchinfo')}" + '/team_id/' + data.data[0].team_id + '/match_id/' + data.data[0].match_id;
                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
                     if (data.data[0].match_time == 0) {
                         div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
@@ -782,7 +782,7 @@
     var eventid = ''
     //获取最近一条活动
     function toLastEventList() {
-        mui.ajax("{:url('api/team/lastevent')}", {
+        mui.ajax("{:url('api/team/lastcampteamevent')}", {
             data: {
                 camp_id: camp_id,
                 member_id: member_id,
@@ -800,7 +800,7 @@
                     var Tday = gettimed(data.data[0].start_time_stamp * 1000);
                     var Ttime = gettimeh(data.data[0].start_time_stamp * 1000);
                     eventid = data.data[0].id
-                    var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                    var url = "{:url('keeper/team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
                     div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
                     div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
@@ -850,21 +850,21 @@
                     var Tday = date.getDate(event_time);
                     var Ttime = date.getHours(event_time) + ":" + date.getMinutes(event_time);
                     event_id = data.data[0].id
-                    var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
+                    var url = "{:url('event/eventinfo')}" + '/event_id/' + data.data[0].id;
                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
                     div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
                     div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                     if (data.data[0].is_finished_num == 1) {
                         div += '<button class="mui-btn opbtn bggray">已结束</button>';
                     } else {
-                        div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                        div += '<button class="mui-btn opbtn bggreen ">参加</button>';
                     }
                     div += ' </div></div></li>';
                     // 人员头像版块
                     div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
-                    // for (var j = 0; j <= data.data[0].memberlist.length - 1; j++) {
-                    //     div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
-                    // }
+                    for (var j = 0; j <= data.data[0].event_member.length - 1; j++) {
+                        div += '<img src="' + data.data[0].event_member[j].avatar + '" alt="">';
+                    }
                     div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].participator + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
                     $(".newCampEvent").empty().append(div);
                 }
