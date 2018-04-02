@@ -240,9 +240,9 @@
             </div>
             <ul class="mui-table-view list mainInfo newMatch"></ul>
 
-            <!--最近活动-->
+            <!--球队活动-->
             <div class="page-header border-b">
-                <span class="course">最近活动</span>
+                <span class="course">球队活动</span>
                 <span class="more pdr15">
                     <a href="{:url('index/lastLyEventList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -444,8 +444,6 @@
             }
         })
 
-
-
         //比赛报名功能
         $(document).on('tap', '.signupMatchBtn', function () {
             //判断是否登陆会员
@@ -639,13 +637,13 @@
                 if (data.code == 200) {
                     // 将时间戳转成日期格式
                     for (var i = 0; i <= data.data.data.slice(0, 5).length - 1; i++) {
-                        var url = "{:url('article/articleInfo')}/" + "article_id/" + data.data.data[i].id;
+                        var url = "{:url('article/articleInfo')}/" + "id/" + data.data.data[i].id;
                         div += '<li class="mui-table-view-cell listli"><a href="' + url + '"><div class="mui-media-body wd66" style="line-height:20px">' + data.data.data[i].title + '</div>'
                         div += '<p class="fr f12">' + data.data.data[i].update_time + '</p></a></li>'
                     }
                     $(".newList").empty().append(div);
                     if (div == '') {
-                        $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有新闻数据，赶紧去创建新闻吧</p></li>');
+                        $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有新闻数据哦</p></li>');
                     }
                 }
             },
@@ -686,7 +684,6 @@
             data: {
                 page: page,
                 camp_id: camp_id,
-                // member_id:member_id,
                 status: 1,
             },
             dataType: 'json',//服务器返回json格式数据
@@ -702,9 +699,30 @@
                     } else {
                         var lesson_time = data.data.data[0].lesson_time;
                         var date = new Date();
-                        var Tmonth = date.getMonth(lesson_time) + 1;
-                        var Tday = date.getDate(lesson_time);
-                        var Ttime = date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
+                        var monthNum = date.getMonth(lesson_time) + 1;;
+                        if (monthNum < 10) {
+                            var Tmonth = "0" + monthNum;
+                        } else {
+                            var Tmonth = monthNum;
+                        }
+                        var dayNum = date.getDate(lesson_time);
+                        if (dayNum < 10) {
+                            var Tday = "0" + dayNum;
+                        } else {
+                            var Tday = dayNum;
+                        }
+                        var hoursNum = date.getHours(lesson_time)
+                        var minutesNum = date.getMinutes(lesson_time)
+                        if (hoursNum < 10) {
+                            var Ttime = "0" + date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
+                        } else if (minutesNum < 10) {
+                            var Ttime = date.getHours(lesson_time) + ":" + "0" + date.getMinutes(lesson_time);
+                        } else if (hoursNum < 10 && minutesNum < 10) {
+                            var Ttime = "0" + date.getHours(lesson_time) + ":" + "0" + date.getMinutes(lesson_time);
+                        } else {
+                            var Ttime = date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
+                        }
+
                         var urls = "{:url('schedule/scheduleInfo')}/" + "schedule_id/" + data.data.data[0].id + "/camp_id/" + data.data.data[0].camp_id;
                         newli += ' <a href="' + urls + '"><li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
                         newli += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
@@ -780,7 +798,7 @@
     };
 
     var eventid = ''
-    //获取最近一条活动
+    //球队活动
     function toLastEventList() {
         mui.ajax("{:url('api/team/lastcampteamevent')}", {
             data: {
@@ -828,7 +846,7 @@
             }
         });
     };
-    //获取最近一条活动
+    //训练营活动
     function toCampEventList() {
         mui.ajax("{:url('api/event/getHotEventList')}", {
             data: {
@@ -846,9 +864,29 @@
                     // 将时间戳转成日期格式
                     var event_time = data.data[0].event_times;
                     var date = new Date();
-                    var Tmonth = date.getMonth(event_time) + 1;
-                    var Tday = date.getDate(event_time);
-                    var Ttime = date.getHours(event_time) + ":" + date.getMinutes(event_time);
+                    var monthNum = date.getMonth(event_time) + 1;;
+                    if (monthNum < 10) {
+                        var Tmonth = "0" + monthNum;
+                    } else {
+                        var Tmonth = monthNum;
+                    }
+                    var dayNum = date.getDate(event_time);
+                    if (dayNum < 10) {
+                        var Tday = "0" + dayNum;
+                    } else {
+                        var Tday = dayNum;
+                    }
+                    var hoursNum = date.getHours(event_time)
+                    var minutesNum = date.getMinutes(event_time)
+                    if (hoursNum < 10) {
+                        var Ttime = "0" + date.getHours(event_time) + ":" + date.getMinutes(event_time);
+                    } else if (minutesNum < 10) {
+                        var Ttime = date.getHours(event_time) + ":" + "0" + date.getMinutes(event_time);
+                    } else if (hoursNum < 10 && minutesNum < 10) {
+                        var Ttime = "0" + date.getHours(event_time) + ":" + "0" + date.getMinutes(event_time);
+                    } else {
+                        var Ttime = date.getHours(event_time) + ":" + date.getMinutes(event_time);
+                    }
                     event_id = data.data[0].id
                     var url = "{:url('event/eventinfo')}" + '/event_id/' + data.data[0].id;
                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
