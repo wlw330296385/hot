@@ -113,16 +113,16 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('keeper/team/eventinfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + data.data[i].team_id;
+                                var urls = "{:url('event/eventinfo')}" + '/event_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].home_team_logo + '"><div class="mui-media-body wd58">' + data.data[i].event + '';
-                                if (data.data[i].is_finished_num == 1) {
-                                    newli += '<font class="tipCorner bgorange">完成</font>';
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd58">' + data.data[i].event + '';
+                                if (data.data[i].is_max == 1) {
+                                    newli += '<font class="tipCorner bgred">满人</font>';
                                 }
-                                if (data.data[i].start_time == 0) {
+                                if (data.data[i].starts == 0) {
                                     newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                                 } else {
-                                    newli += '<p class="mui-ellipsis">' + data.data[i].start_time + '</p>'
+                                    newli += '<p class="mui-ellipsis">' + data.data[i].starts + '</p>'
                                 }
                                 newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].event_type + '</a></div>'
                                 newli += '</li>';

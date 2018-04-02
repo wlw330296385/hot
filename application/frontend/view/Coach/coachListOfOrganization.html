@@ -30,7 +30,7 @@
 
 
     <div class="mui-content">
-        <div class="location-frame">
+        <!-- <div class="location-frame">
             <span class="location"></span>
             <span class="location-choise">
                 <select id="areaSelect">
@@ -44,9 +44,9 @@
                     <option value="2">女</option>
                 </select>
             </span>
-        </div>
+        </div> -->
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b coach">
                 </ul>
@@ -68,47 +68,19 @@
         window.top.location.href = this.href;
     });
 
-
     $(function () {
 
         //初始化全局变量
         var count = 1;
-        var sSex = '';
-        var sArea = '';
         var keyword = wooApi.GetQueryString('keyword');
         $('.keyword').val(keyword);
 
-        //获取定位省市区
-        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-        var sCity = getLocationTB['city'];
-        var sProvince = getLocationTB['province'];
-        var allArea = getLocationTB['areas'];
-
-        $('.location').text(sCity);
-
-        //生成区域选择下拉菜单
-        var arrArea = allArea.split(',');
-        var selectArea = '';
-        $.each(arrArea, function (i, areaName) {
-            selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
-        });
-        $('#areaSelect').append(selectArea);
         //搜索教练
         $("#searchBtn").on("click", function () {
             keyword = $(".keyword").val();
             searchToList();
         })
-        //选择性别下拉
-        $("#sexSelect").on("change", function () {
-            sSex = $(this).val();
-            //alert(sSex);
-            searchToList();
-        });
-        //选择地区下拉
-        $("#areaSelect").on("change", function () {
-            sArea = $(this).val();
-            searchToList();
-        });
+
         //搜索、下拉刷选后触发
         function searchToList() {
             count = 1;//显示第一页
@@ -131,14 +103,7 @@
                     contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                     callback: pulldownRefresh
                 },
-                up: {
-                    //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefresh
-                }
+
             }
         });
         //下拉刷新具体业务实现
@@ -150,31 +115,24 @@
                 toList(page, gType);//具体取数据的方法
             }, 100);
         }
-        //上拉加载具体业务实现
-        function pullupRefresh() {
-            setTimeout(function () {
-                count++;//翻下一页
-                var page = count;
-                var gType = 2;//代表上拉加载
-                toList(page, gType);//具体取数据的方法
-            }, 100);
-        }
+
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/camp_member/getCoachListApi','','',true)}" + '/?page=' + page;
+            var url = "{:url('api/camp_member/getCoachListApi','','',true)}";
             var camp_id = "{$o_id}"
             mui.ajax({
                 url: url,
                 data: {
                     status: 1,
-                    camp_id: camp_id
+                    camp_id: camp_id,
+                    keyword: keyword,
+                    is_open: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                //processData:false,
                 success: function (data) {
                     console.log(data)
                     var newli = '';
@@ -182,7 +140,7 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
                             var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd52">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄: ' + data.data[i].coach_year + '&nbsp;&nbsp; 课量: ' + data.data[i].schedule_flow + '&nbsp;&nbsp; 学员: ' + data.data[i].student_flow + '</p></div><div class="price-frame">'
+                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄: ' + data.data[i].coach_year + '&nbsp;&nbsp; 等级: ' + data.data[i].level + '</p></div><div class="price-frame">'
                             if (star == 0) {
                                 newli += '<div class="icons mui-inline"><i class="coloryellow f10 pdr5">3.0</i> <i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
                             } else {
@@ -199,15 +157,13 @@
                         if (newli == '') {
                             $("ul.coach").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                         }
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.coach").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
                     } else {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                     }
+
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
@@ -215,8 +171,6 @@
                 }
             });
         };
-
-
     })
 
 </script>
