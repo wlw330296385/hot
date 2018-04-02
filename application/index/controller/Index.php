@@ -16,7 +16,8 @@ class Index extends Controller{
     }
 
     public function index(){
-        phpinfo();
+        $this->redirect('frontend/Index/index',['o_id'=>0,'o_type'=>0]);
+        // phpinfo();
     }
     
 

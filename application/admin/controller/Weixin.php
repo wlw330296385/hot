@@ -25,12 +25,12 @@ class Weixin extends Backend {
                     [
                         'type' => 'view',
                         'name' => '培训管家/学员',
-                        'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex', '', '', true))
+                        'url' => $WechatS->oauthRedirect(url('frontend/index/wxindex',['o_id'=>0,'o_type'=>0], '', true))
                     ],
                     [
                         'type' => 'view',
                         'name' => '球队管家/球员',
-                        'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex', '', '', true))
+                        'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex',['o_id'=>0,'o_type'=>0], '', true))
                     ]
                     // 两栏简单版 end
 
@@ -77,10 +77,11 @@ class Weixin extends Backend {
                     // 两栏完整版 end
                 ]
             ];
-            //dump($menuData);
+            // dump($menuData);die;
             $res = $WechatS->setmenu($menuData);
 
             if ( $res ) {
+                // dump($menuData);
                 $this->success(__lang('MSG_200'), 'weixin/menu');
             } else {
                 $this->error(__lang('MSG_400'));
@@ -96,8 +97,7 @@ class Weixin extends Backend {
         $menu = $weObj->getMenu();
         dump($menu);*/
 
-        $breadcrumb = ['title' => '菜单管理', 'ptitle' => '微信管理'];
-        $this->assign('breadcrumb', $breadcrumb);
+
         return view('weixin/menu');
     }
 }

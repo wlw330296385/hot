@@ -91,7 +91,7 @@ class Index extends Base{
                 cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
-                $this->redirect('frontend/Index/index');
+                $this->redirect('frontend/Index/index',['o_id'=>0,'o_type'=>0]);
             } else {
                 $member = [
                     'id' => 0,
@@ -128,10 +128,10 @@ class Index extends Base{
                 cookie('openid', $userinfo['openid']);
                 cookie('member', md5($member['id'].$member['member'].config('salekey')) );
                 session('memberInfo', $member, 'think');
-                $this->redirect('frontend/Index/index');
+                $this->redirect('frontend/Index/index',['o_id'=>0,'o_type'=>0]);
             }
         } else {
-            $this->redirect('frontend/index/index');
+            $this->redirect('frontend/index/index',['o_id'=>0,'o_type'=>0]);
         }
     }
 
