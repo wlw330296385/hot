@@ -54,9 +54,10 @@ class Index extends Backend
 		$totalBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->sum('balance_pay');
 		//本月营业额
 		$monthBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('pay_time','m')->sum('balance_pay');
-
+		// 在学会员
+		$monthCampStudents = db('monthly_students')->where(['camp_id'=>$this->camp_member['camp_id'],'date_str'=>date('Ym')])->find();
 		
-
+		dump($monthCampStudents);
 
 
 
@@ -159,8 +160,9 @@ class Index extends Backend
 
 		$this->assign('monthBill',$monthBill?$monthBill:0);
 		$this->assign('totalBill',$totalBill?$totalBill:0);
-		$this->assign('monthIncome',$monthIncome?$monthIncome:0);
-		$this->assign('totalIncome',$totalIncome?$monthIncome:0);
+		$this->assign('monthIncome',$monthIncome?$monthIncome:0);	
+		$this->assign('totalIncome',$totalIncome?$totalIncome:0);
+		$this->assign('monthCampStudents',$monthCampStudents?$monthCampStudents:0);
 		$this->assign('totalGift',$totalGift?$totalGift:0);
 		$this->assign('totalStudents',$totalStudents?$totalStudents:0);
 		$this->assign('monthStudents',$monthStudents?$monthStudents:0);

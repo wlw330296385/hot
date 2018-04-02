@@ -742,7 +742,7 @@ class Camp extends Base{
         $this->assign('monthBill',$monthBill?$monthBill:0);
         $this->assign('totalBill',$totalBill?$totalBill:0);
         $this->assign('monthIncome',$monthIncome?$monthIncome:0);
-        $this->assign('totalIncome',$totalIncome?$monthIncome:0);
+        $this->assign('totalIncome',$totalIncome?$totalIncome:0);
         $this->assign('totalGift',$totalGift?$totalGift:0);
         $this->assign('totalStudents',$totalStudents?$totalStudents:0);
         $this->assign('monthStudents',$monthStudents?$monthStudents:0);
