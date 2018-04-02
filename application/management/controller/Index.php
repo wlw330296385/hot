@@ -55,7 +55,7 @@ class Index extends Backend
 		//本月营业额
 		$monthBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('pay_time','m')->sum('balance_pay');
 		// 在学会员
-		$monthCampStudents = db('monthly_students')->where(['camp_id'=>$this->camp_member['camp_id'],'date_str'=>date('Ym')])->find();
+		$monthCampStudents = db('monthly_students')->where(['camp_id'=>$this->camp_member['camp_id']])->limit(2)->select();
 		
 		dump($monthCampStudents);
 
