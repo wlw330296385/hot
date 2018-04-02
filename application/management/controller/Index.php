@@ -30,16 +30,26 @@ class Index extends Backend
 		$totalIncome = db('income')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->sum('income');
 		// 赠课总人数
 		$totalGift = db('schedule_giftrecord')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->sum('student_num');
-		// 上课总人次
-		$totalStudents = db('schedule')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->sum('students');
+		
+		
 		//总已上课量
 		$totalSchedule = 0;
 		$totalScheduleList = db('schedule')->where(['camp_id'=>$this->camp_member['camp_id']])->where('delete_time',null)->select();
 		$totalSchedule = count($totalScheduleList);
+		// 上课总人次
+		$totalStudents = 0;
+		foreach ($totalScheduleList as $key => $value) {
+			$totalStudents+=$value['students'];
+		}
 		//本月已上课量
 		$monthSchedule = 0;
 		$monthScheduleList = db('schedule')->where(['camp_id'=>$this->camp_member['camp_id']])->whereTime('lesson_time','m')->where('delete_time',null)->select();
 		$monthSchedule = count($monthScheduleList);
+		// 本月上课总人次
+		$monthStudents = 0;
+		foreach ($monthScheduleList as $key => $value) {
+			$totalStudents+=$value['students'];
+		}
 		// 总营业额
 		$totalBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->sum('balance_pay');
 		//本月营业额
@@ -153,6 +163,7 @@ class Index extends Backend
 		$this->assign('totalIncome',$totalIncome?$monthIncome:0);
 		$this->assign('totalGift',$totalGift?$totalGift:0);
 		$this->assign('totalStudents',$totalStudents?$totalStudents:0);
+		$this->assign('monthStudents',$monthStudents?$monthStudents:0);
 		$this->assign('monthSchedule',$monthSchedule?$monthSchedule:0);
 		$this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
 		return view('Index/index');
