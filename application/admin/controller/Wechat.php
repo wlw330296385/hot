@@ -15,10 +15,7 @@ class Wechat extends Backend {
             // 参考dev/wexin/setmenu
         }
         $menu = $WechatS->getmenu();
-        //dump($menu);
-
-        $breadcrumb = ['title' => '菜单管理', 'ptitle' => '微信管理'];
-        $this->assign('breadcrumb', $breadcrumb);
+        dump($menu);
         return view();
     }
 }
