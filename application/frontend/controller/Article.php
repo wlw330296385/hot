@@ -26,7 +26,7 @@ class Article extends Base{
         }
        
         // 判断权限
-        $isPower = $this->ArticleService->isPower($articleInfo['camp_id'],$this->memberInfo['id']);
+        $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
         $this->assign('power',$isPower);
         $this->assign('articleInfo',$articleInfo);
         return view('Article/articleInfoOfCamp');
@@ -41,7 +41,7 @@ class Article extends Base{
             $this->error('找不到文章信息');
         }
         // 判断权限
-        $isPower = $this->ArticleService->isPower($articleInfo['camp_id'],$this->memberInfo['id']);
+        $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
         if($isPower<3){
             $this->error('您没有权限');
         }
@@ -59,7 +59,7 @@ class Article extends Base{
 
         $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
         // 判断权限
-        $isPower = $this->ArticleService->isPower($articleInfo['camp_id'],$this->memberInfo['id']);
+        $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
         if($isPower<3){
             $this->error('您没有权限');
         }
@@ -84,8 +84,10 @@ class Article extends Base{
     }
 
     // 文章管理列表
-    public function articleListofcamp(){
-		return view('Article/articleListofcamp');
+    public function articleListOfCamp(){
+
+
+		return view('Article/articleListOfCamp');
     }
 
     // 发布文章
@@ -109,11 +111,11 @@ class Article extends Base{
     public function updateArticle(){
         $article_id = input('param.article_id');
         $camp_id = input('param.camp_id');
-        $isPower = $this->ArticleService->isPower($camp_id,$this->memberInfo['id']);
+        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
+        $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
         if($isPower<3){
             $this->error('权限不足');
         }
-        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
             
         if(!$articleInfo){
             $this->error('找不到文章信息');

@@ -54,9 +54,26 @@ class Index extends Backend
 		$totalBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->sum('balance_pay');
 		//本月营业额
 		$monthBill = db('bill')->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('pay_time','m')->sum('balance_pay');
-
+		// 在学会员
+		$monthCampStudents = db('monthly_students')->where(['camp_id'=>$this->camp_member['camp_id']])->limit(2)->select();
+		// 本月新增会员
+		$monthNewStudents = 0;
+		//本月离营学员
+		$monthofflineStudents = 0;
+		//在学会员
+		$onlineStudents = 0;
+		if (count($monthCampStudents) == 2) {
+			$monthNewStudents = $monthCampStudents[0]['online_students'] - $monthCampStudents[1]['online_students'];
+			$monthofflineStudents = $monthCampStudents[0]['offline_students'] - $monthCampStudents[1]['offline_students'];
+			$onlineStudents = $monthCampStudents[0]['onlesson_students'];
+		}elseif (count($monthCampStudents) == 1){
+			$monthNewStudents = $monthCampStudents[0]['online_students'];
+			$monthofflineStudents = $monthCampStudents[0]['offline_students'];
+			$onlineStudents = $monthCampStudents[0]['onlesson_students'];
+		}
 		
 
+	
 
 
 
@@ -159,13 +176,20 @@ class Index extends Backend
 
 		$this->assign('monthBill',$monthBill?$monthBill:0);
 		$this->assign('totalBill',$totalBill?$totalBill:0);
-		$this->assign('monthIncome',$monthIncome?$monthIncome:0);
-		$this->assign('totalIncome',$totalIncome?$monthIncome:0);
+		$this->assign('monthIncome',$monthIncome?$monthIncome:0);	
+		$this->assign('totalIncome',$totalIncome?$totalIncome:0);
+		$this->assign('monthCampStudents',$monthCampStudents?$monthCampStudents:0);
 		$this->assign('totalGift',$totalGift?$totalGift:0);
 		$this->assign('totalStudents',$totalStudents?$totalStudents:0);
 		$this->assign('monthStudents',$monthStudents?$monthStudents:0);
 		$this->assign('monthSchedule',$monthSchedule?$monthSchedule:0);
 		$this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
+
+
+		$this->assign('monthNewStudents',$monthNewStudents?$monthNewStudents:0);
+		$this->assign('monthofflineStudents',$monthofflineStudents?$monthofflineStudents:0);
+		$this->assign('onlineStudents',$onlineStudents?$onlineStudents:0);
+		$this->assign('campInfo',$campInfo);
 		return view('Index/index');
 	}
 

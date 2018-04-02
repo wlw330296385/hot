@@ -375,13 +375,13 @@ class Event extends Base{
                 $map['event'] = ['LIKE','%'.$keyword.'%'];
             }
 
-            if( isset($map['order']) ){
+            if( isset($map['order'])){
                 unset($map['order']);
             }
-            if( isset($map['keyword']) ){
+            if( isset($map['keyword'])){
                 unset($map['keyword']);
             }
-            if( isset($map['page']) ){
+            if( isset($map['page'])){
                 unset($map['page']);
             }
             $result = $this->EventService->getEventWithEventMemberList($map,$page,$order);

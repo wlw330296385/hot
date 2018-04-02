@@ -13,6 +13,13 @@ class Monthlytask extends Base{
     	try{
     		$campList = db('camp')->where('delete_time',null)->select();
 	    	$data = [];
+            $m = date('m',time());
+            if($m == 01){
+                $date_str = (date('Y',time())-1)*100+12;
+            }else{
+                $date_str = date('Ym',time())-1;
+            }
+            
 	    	foreach ($campList as $key => $value) {
 	    		$online_students = 0;
 	    		$offline_students = 0;
@@ -34,6 +41,7 @@ class Monthlytask extends Base{
 	    			}
 	    			$online_students = $onlesson_students+$offlesson_students;
 	    		}
+
 	    		$data[] = [
 	    			'camp'=>$value['camp'],
 	    			'camp_id'=>$value['id'],
@@ -41,7 +49,7 @@ class Monthlytask extends Base{
 	    			'offline_students'=>$offline_students,
 	    			'onlesson_students'=>$onlesson_students,
 	    			'offlesson_students'=>$offlesson_students,
-	    			'date_str'=>date('Ym',time()),
+	    			'date_str'=>$date_str,
 	    		];
 	    	}
 	    	$MonthlyStudents = new \app\model\MonthlyStudents;
@@ -61,6 +69,12 @@ class Monthlytask extends Base{
 
     public function monthlyCourtStudents(){
     	try{
+            $m = date('m',time());
+            if($m == 01){
+                $date_str = (date('Y',time())-1)*100+12;
+            }else{
+                $date_str = date('Ym',time())-1;
+            }
     		$campList = db('camp')->where('delete_time',null)->select();
     		$CourtStudentData = [];
     		foreach ($campList as $key => $value) {
@@ -72,7 +86,7 @@ class Monthlytask extends Base{
     					'court'=>$val['court'],
     					'court_id'=>$val['court_id'],
     					'students'=>$val['s_students'],
-    					'date_str'=>date('Ym')
+    					'date_str'=>$date_str,
     				];
     			}
     		}
