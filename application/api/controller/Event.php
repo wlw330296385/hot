@@ -290,6 +290,7 @@ class Event extends Base{
                         $value['contact'] = $data['contact'];
                         $value['linkman'] = $data['linkman'];
                         $value['remarks'] = $data['remarks'];
+                        $value['avatar'] = $this->memberInfo['avatar'];
                     }
                     $result = $this->EventService->saveAllMmeber($memberData);
                     return json($result);

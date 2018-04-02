@@ -39,12 +39,12 @@ class Index extends Backend
 		
 		// 月营业额总量曲线图
 		$billList = db('bill')->field("sum(balance_pay) as s_balance_pay,from_unixtime(create_time,'%Y%m%d') as days,goods_type")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('create_time','m')->group('days')->select();
-		$list = Time::month();
+		$month = Time::month();
 		$lessonBill = [];
 		$eventBill = [];
 
-		$dateStart = date('Ymd',$list[0]);
-		$dateEnd = date('Ymd',$list[1]);
+		$dateStart = date('Ymd',$month[0]);
+		$dateEnd = date('Ymd',$month[1]);
 		for ($i=$dateStart; $i <= $dateEnd ; $i++) { 
 			$lessonBill[] = 0;
 			$eventBill[] = 0;
@@ -84,12 +84,12 @@ class Index extends Backend
 
 		// 年营业额折线图
 		$billMonthList = db('bill')->field("sum(balance_pay) as s_balance_pay,from_unixtime(create_time,'%Y%m') as month,goods_type")->where(['camp_id'=>$this->camp_member['camp_id'],'is_pay'=>1])->whereTime('create_time','y')->group('month')->select();
-		$list = Time::year();
+		$month = Time::year();
 		$lessonBillYear = [];
 		$eventBillYear = [];
 
-		$dateStartMonth = date('Ym',$list[0]);
-		$dateEndMonth = date('Ym',$list[1]);
+		$dateStartMonth = date('Ym',$month[0]);
+		$dateEndMonth = date('Ym',$month[1]);
 		for ($i=$dateStartMonth; $i <= $dateEndMonth ; $i++) { 
 			$lessonBillYear[] = 0;
 			$eventBillYear[] = 0;
@@ -104,6 +104,29 @@ class Index extends Backend
 				$eventBillYear[$kk] = $value['s_balance_pay'];
 			}
 		}
+
+
+
+		// 学员总人数折线图(年)	
+		$year = Time::year();
+		$yearStart = date('Ym',$year[0]);
+		$yearEnd = date('Ym',$year[1]);
+		$monthlyStudentsData = [0,0,0,0,0,0,0,0,0,0,0,0];
+		$monthly_students = db('monthly_students')->where(['camp_id'=>$this->camp_member['camp_id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->column('online_students');
+		foreach ($monthly_students as $key => $value) {
+			$monthlyStudentsData[$key] = $value;
+		}
+
+
+		$monthlyCourtStudentsData = [];
+		$monthly_court_students = db('monthly_court_students')->where(['camp_id'=>$this->camp_member['camp_id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->select();
+		foreach ($monthly_court_students as $key => $value) {
+			$monthlyCourtStudentsData[$key] = $value;
+		}
+		
+		
+		$this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData));
+		$this->assign('monthlyStudentsData',json_encode($monthlyStudentsData));
 		$this->assign('lessonBuyData',json_encode($lessonBuyData,true));
 		$this->assign('gradeCourtData',json_encode($gradeCourtData,true));
 		$this->assign('lessonBillYear',json_encode($lessonBillYear));
