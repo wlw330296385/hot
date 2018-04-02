@@ -1349,6 +1349,8 @@ class Team extends Base
             // serivce
             $matchS = new MatchService();
             $teamS = new TeamService();
+            // 默认查询上架比赛(status=1)
+            $map['status'] = input('param.status', 1);
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
@@ -1365,13 +1367,16 @@ class Team extends Base
                                 unset($map['camp_id']);
                             }
                         }
-                        $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                        if ( !empty($teamIds) ) {
+                            $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                        } else {
+                            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                        }
                     }
                 }
                 unset($map['member_id']);
             }
-            // 默认查询上架比赛(status=1)
-            $map['status'] = input('param.status', 1);
+
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1602,6 +1607,8 @@ class Team extends Base
             $teamS = new TeamService();
             $map = input('param.');
             $page = input('param.page',1);
+            // 默认查询上架活动(status=1)
+            $map['status'] = input('param.staus', 1);
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
@@ -1618,13 +1625,16 @@ class Team extends Base
                                 unset($map['camp_id']);
                             }
                         }
-                        $map['team_id'] = ['in', $teamIds];
+                        if ( !empty($teamIds) ) {
+                            $map['team_id'] = ['in', $teamIds];
+                        } else {
+                            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                        }
                     }
                 }
                 unset($map['member_id']);
             }
-            // 默认查询上架活动(status=1)
-            $map['status'] = input('param.staus', 1);
+
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
