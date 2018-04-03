@@ -19,7 +19,7 @@ class Article extends Base{
     public function articleInfoOfCamp(){
         $article_id = input('param.article_id');
        
-        $articleInfo = $this->ArticleService->getArticle(['id'=>$article_id]);
+        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
         
         if(!$articleInfo){
             $this->error('找不到文章信息');
@@ -28,6 +28,7 @@ class Article extends Base{
         // 判断权限
         $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
         $this->assign('power',$isPower);
+
         $this->assign('articleInfo',$articleInfo);
         return view('Article/articleInfoOfCamp');
     }
@@ -35,8 +36,8 @@ class Article extends Base{
     // 训练营修改会员文章
     public function updateArticleInfoOfCamp(){
         $article_id = input('param.article_id');
-       
-        $articleInfo = $this->ArticleService->getArticle(['id'=>$article_id]);
+        
+        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
          if(!$articleInfo){
             $this->error('找不到文章信息');
         }
@@ -79,17 +80,16 @@ class Article extends Base{
     public function articleList(){
     	$map = input('post.');
         $articleList = $this->ArticleService->getArticleList($map);
+
+
         $this->assign('articleList',$articleList);
 		return view('Article/articleList');
     }
 
-    // 新闻列表（机构版）
-    public function articleListOfOrganization(){
-		return view('Article/articleListOfOrganization');
-    }
 
     // 文章管理列表
     public function articleListOfCamp(){
+
 		return view('Article/articleListOfCamp');
     }
 

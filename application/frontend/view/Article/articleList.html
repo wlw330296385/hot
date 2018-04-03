@@ -138,17 +138,27 @@
             //接口获取数据并追加到页面
             var toList = function (wList, page, gType, organ_type, organ_id, ) {
                 //搜索关键字不能完全为空，否则查询为空
-                var organization_id = "{$o_id}"
-                var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
-                mui.ajax({
-                    url: url,
+                var organization_id = "{$o_id}";
+                let data = {};
+                if(organization_id>0){
                     data: {
+                        organization_id:organization_id,
                         organization_type: 2,
-                        organization_id: organization_id,
                         keyword: keyword,
                         page: page,
                         status: 1
                     },
+                }else{
+                    data: {
+                        keyword: keyword,
+                        page: page,
+                        status: 1
+                    }
+                }
+                var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
+                mui.ajax({
+                    url: url,
+                    data:data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
