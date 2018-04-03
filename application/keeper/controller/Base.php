@@ -16,11 +16,11 @@ class Base extends Frontend {
 	public function _initialize(){
         parent::_initialize();
         $this->steward_type =2;
-        if ( !Cookie::has('mid') ) {
+        $sessionMember = session('memberInfo', '', 'think');
+        if ( !Cookie::has('mid') || $sessionMember['id'] === 0 ) {
             $this->nologin();
         }
         $this->footMenu();
-
 	}
 
 	protected function footMenu(){
