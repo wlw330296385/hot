@@ -338,12 +338,15 @@
                             var result = wooApi.asyncF("{:url('api/camp/createCampCommentApi')}", objData);
                             if (result) {
                                 mui.toast(result.msg);
+                                $(".comment-list").empty();
+                                toCommentList();
                                 mui('#pjpopover').popover('toggle');
                                 pulldownRefresh();
-                                $(".moreComment").show(); d
+                                $(".moreComment").show();
                             }
                         } else {
                             mui.toast("本训练营会员才能评论，欢迎加入！");
+                            mui('#pjpopover').popover('toggle');
                         }
                     },
                     error: function (xhr, type, errorThrown) {

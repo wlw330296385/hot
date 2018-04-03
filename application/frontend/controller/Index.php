@@ -18,8 +18,9 @@ class Index extends Base{
 	}
 
     public function index() {
+
 	    $o_id = input('o_id', 0);
-	    $o_type = input('o_type', 1);
+	    $o_type = input('o_type', 0);
         $this->o_id = $o_id;
         $this->o_type = $o_type;
         cookie('o_id', $o_id);
@@ -95,12 +96,12 @@ class Index extends Base{
     // 微信授权回调
     public function wxindex() {
         $o_id = input('o_id', 0);
-        $o_type = input('o_type', 1);
+        $o_type = input('o_type', 0);
         $this->o_id = $o_id;
         $this->o_type = $o_type;
         cookie('o_id', $o_id);
         cookie('o_type', $o_type);
-        
+
         $WechatS = new WechatService;
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
