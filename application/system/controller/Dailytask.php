@@ -2,23 +2,18 @@
 namespace app\system\controller;
 use app\system\controller\Base;
 
-class Monthlytask extends Base{
+class Dailytask extends Base{
  
     public function _initialize(){
     	parent::_initialize();
     }
 
    //每月最后一天最后一分钟执行,如2018年3月29日23:59:00 ->每月1号00:00:00
-    public function monthlyStudents(){
+    public function dailyStudents(){
     	try{
     		$campList = db('camp')->where('delete_time',null)->select();
 	    	$data = [];
-            $m = date('m',time());
-            if($m == 01){
-                $date_str = (date('Y',time())-1)*100+12;
-            }else{
-                $date_str = date('Ym',time())-1;
-            }
+            $date_str = date('Ymd',time());
             
 	    	foreach ($campList as $key => $value) {
 	    		$online_students = 0;
@@ -54,10 +49,10 @@ class Monthlytask extends Base{
 	    	}
 	    	$MonthlyStudents = new \app\model\MonthlyStudents;
 	    	$MonthlyStudents->saveAll($data);
-	    	$data = ['crontab'=>'每月学生流动'];
+	    	$data = ['crontab'=>'每日学生流动'];
             $this->record($data);
     	}catch(Exception $e){
-    		$data = ['crontab'=>'每月学生流动','status'=>0,'callback_str'=>$e->getMessage()];
+    		$data = ['crontab'=>'每日学生流动','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data);
             trace($e->getMessage(), 'error');
     	}

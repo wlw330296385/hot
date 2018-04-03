@@ -1,15 +1,16 @@
 <?php 
 namespace app\frontend\controller;
+use app\service\CampService;
 use think\Controller;
 use app\service\SystemService;
 use app\service\MemberService;
 use think\Cookie;
 use think\Request;
 use app\service\WechatService;
+use app\common\controller\Frontend;
 
-class Base extends \app\common\controller\Frontend {
+class Base extends Frontend {
 	public $systemSetting;
-	public $memberInfo;
     public $o_id;
     public $o_type;
     public $steward_type;
@@ -27,13 +28,11 @@ class Base extends \app\common\controller\Frontend {
         $o_id = input('param.o_id');
         $o_type = input('param.o_type');       
         if(!$o_type && !$o_id){
-            
             $o_type = cookie('o_type');
             $o_id = cookie('o_id'); 
             $this->o_id = $o_id;
             $this->o_type = $o_type;
         }else{
-            
             $this->o_id = $o_id;
             $this->o_type = $o_type;
             cookie('o_id',$this->o_id);
@@ -86,6 +85,13 @@ class Base extends \app\common\controller\Frontend {
                 'module' => $module
 			],
 		];
+
+		// 机构版获取训练营信息
+		if ($this->o_id && $this->o_type==1) {
+		    $campS = new CampService();
+		    $campInfo = $campS->getCampInfo(['id' => $this->o_id, 'status' => 1]);
+		    $this->assign('orgCampInfo', $campInfo);
+        }
         $this->assign('o_id',$this->o_id);
         $this->assign('o_type',$this->o_type);
         $this->assign('controller', $request->controller());
@@ -133,12 +139,13 @@ class Base extends \app\common\controller\Frontend {
             cookie('mid', 0);
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
-            if (session('memberInfo', '', 'think')) {
-            	$url = cookie('url');
-            	cookie('url',null);
+            $this->memberInfo = session('memberInfo', '', 'think');
+            $url = cookie('url');
+            if (!empty($url)) {
+                cookie('url',null);
                 $this->redirect( $url );
             } else {
-                $this->redirect('frontend/Index/index');
+                $this->redirect( 'frontend/index/index' );
             }
         }
 	}

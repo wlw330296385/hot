@@ -115,13 +115,17 @@ class Court extends Base{
             $pe = $page*10;
             $ps = ($page-1)*10;
             $orderby = input('param.orderby','distance asc');
+            $camp_id = input('param.camp_id');
             $map = ['status'=>1];
+            if($camp_id){
+                $map['camp_id'] = $camp_id;
+            }
+            
             // $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(lat*pi()/180)*pow(sin((? *pi()/180 - lng*pi()/180)/2),2))) as distance from court where status=1 order by ? limit ?,?',
             // [$lat,$lat,$lng,$orderby,$ps,$pe]
             // );
             $result = db('court')->field("`court`.*,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `court`.lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`court`.lat*pi()/180)*pow(sin(($lng *pi()/180 - `court`.lng*pi()/180)/2),2))) as distance")->where($map)->page($page)->order($orderby)->select();
-            
-            
+
             if($result){
                 foreach ($result as $key => $value) {
                     if($value['cover']){

@@ -10,7 +10,6 @@ use app\service\WechatService;
 
 class Base extends Frontend {
 	public $systemSetting;
-	public $memberInfo;
     public $steward_type; // 管家版本
     public $o_id;
     public $o_type;
