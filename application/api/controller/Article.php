@@ -100,9 +100,9 @@ class Article extends Base{
             $map = input('post.');
             $result = $this->ArticleService->getCommentList($map);
             if($result){
-                return ['msg' => '获取成功', 'code' => 200, 'data' => $result];
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
             }else{
-                return ['msg'=>'操作失败', 'code' => 100];
+                return json(['msg'=>'获取失败', 'code' => 100]);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -112,11 +112,11 @@ class Article extends Base{
     public function getCommentListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->ArticleService->getCommentList($map);
+            $result = $this->ArticleService->getCommentListByPage($map);
             if($result){
-                return ['msg' => '获取成功', 'code' => 200, 'data' => $result];
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
             }else{
-                return ['msg'=>'操作失败', 'code' => 100];
+                return json(['msg'=>'获取失败', 'code' => 100]);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);

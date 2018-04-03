@@ -121,9 +121,10 @@ class ArticleService {
 
 
 
-    public function getCommentList($map,$paginate= 10,$order = 'hot asc'){
+    public function getCommentList($map,$paginate= 10,$order = 'id desc'){
         $result = $this->ArticleCommentModel->where($map)->order($order)->page($paginate)->select();
         if($result){ 
+
             return $result->toArray();    
         }else{
             return $result;
@@ -131,7 +132,7 @@ class ArticleService {
     }
 
 
-    public function getCommentListByPage($map,$paginate= 10,$order = 'hot asc'){
+    public function getCommentListByPage($map,$paginate= 10,$order = 'id desc'){
         $result = $this->ArticleCommentModel->where($map)->order($order)->paginate($paginate);
         if($result){ 
             return $result->toArray();    
