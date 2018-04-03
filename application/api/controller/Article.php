@@ -65,14 +65,14 @@ class Article extends Base{
      }
  
     public function createArticleApi(){
-         try{
-             $data = input('post.');
-             $data['member_id'] = $this->memberInfo['id'];
-             $data['member'] = $this->memberInfo['member'];
-             $result = $this->ArticleService->createArticle($data);
-             return json($result);   
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $result = $this->ArticleService->createArticle($data);
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -84,13 +84,42 @@ class Article extends Base{
             $data['avatar'] = $this->memberInfo['avatar'];
             $comment_id = input('param.comment_id');
             if($comment_id){
-                $result = $this->ArticleService->createComment($data);
-            }else{
                 $result = $this->ArticleService->updateComment($data,['id'=>$comment_id]);
+            }else{
+                $result = $this->ArticleService->createComment($data);
             }
             return json($result);   
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }   
+    }
+
+    // 获取评论列表
+    public function getCommentListApi(){
+        try{
+            $map = input('post.');
+            $result = $this->ArticleService->getCommentList($map);
+            if($result){
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
+            }else{
+                return json(['msg'=>'获取失败', 'code' => 100]);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        } 
+    }
+    // 获取评论列表byPage
+    public function getCommentListByPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->ArticleService->getCommentListByPage($map);
+            if($result){
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
+            }else{
+                return json(['msg'=>'获取失败', 'code' => 100]);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        } 
     }
 }
