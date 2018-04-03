@@ -69,9 +69,27 @@ class Article extends Base{
              $data = input('post.');
              $data['member_id'] = $this->memberInfo['id'];
              $data['member'] = $this->memberInfo['member'];
-            $result = $this->ArticleService->createArticle($data);
+             $result = $this->ArticleService->createArticle($data);
              return json($result);   
          }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    public function commentApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+            $comment_id = input('param.comment_id');
+            if($comment_id){
+                $result = $this->ArticleService->createComment($data);
+            }else{
+                $result = $this->ArticleService->updateComment($data,['id'=>$comment_id]);
+            }
+            return json($result);   
+        }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }

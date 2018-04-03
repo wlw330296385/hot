@@ -362,13 +362,12 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
-          
             $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
             
             if($result){
                 shuffle($result);
                 if( count($result)<4 && isset($map['camp_id']) ){
-                    $res = $this->LessonService->getLessonList(['status'=>1],1,'id desc',(4-count($result)));
+                    $res = $this->LessonService->getLessonList(['status'=>1,'isprivate'=>0],1,['hot'=>'asc','id'=>'desc'],(4-count($result)));
                     
                     $result = array_merge($result,$res);
                 }
@@ -384,7 +383,6 @@ class Lesson extends Base{
 
     // 2017-11-22 会员是否能购买课程
     public function canbuylesson() {
-        // try catch 抛出异常
         try {
             // 获取lesson id 查询课程数据是否为私密课程
             $lesson_id = input('param.lesson_id');

@@ -415,9 +415,9 @@ class Crontabwoo extends Base {
                     
                     db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
                     // 更新课时数据
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' => $schedule['create_time'],'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
+                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' =>  time(),'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
                     db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
-// 课时工资收入结算 end --------------------------------------
+                    // 课时工资收入结算 end --------------------------------------
                 }
             });
             $data = ['crontab'=>'每日结算[营业额版]'];  

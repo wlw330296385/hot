@@ -2,7 +2,7 @@
 namespace app\model;
 use think\Model;
 use traits\model\SoftDelete;
-class CampComment extends Model{
+class ArticleComment extends Model{
 	use SoftDelete;
     protected $deleteTime = 'delete_time';
     protected $autoWriteTimestamp = true;

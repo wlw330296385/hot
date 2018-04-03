@@ -3,12 +3,16 @@
 namespace app\service;
 
 use app\model\Article;
+use app\model\ArticleComment;
 use think\Db;
 use app\common\validate\ArticleVal;
 class ArticleService {
     private $ArticleModel;
+    private $ArticleCommentModel;
     public function __construct(){
         $this->ArticleModel = new Article;
+
+        $this->ArticleCommentModel = new ArticleComment;
     }
 
 
@@ -89,6 +93,25 @@ class ArticleService {
         return $is_power?$is_power:0;
     }
 
+    // 新建评论
+    public function createComment($data){
+        $result = $this->ArticleCommentModel->save($data);
+        if($result){
+            return ['msg' => '操作成功', 'code' => 200, 'data' => $this->ArticleCommentModel->id];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
 
+
+    // 修改评论
+    public function updateComment($data,$map){
+        $result = $this->ArticleCommentModel->save($data,$map);
+        if($result){
+            return ['msg' => '操作成功', 'code' => 200];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
 }
 
