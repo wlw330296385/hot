@@ -122,4 +122,23 @@ class Article extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         } 
     }
+
+
+    public function likes(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $likes_id = input('param.likes_id');
+            if($likes_id){
+                $result = $this->ArticleService->updateLikes($data,['id'=>$comment_id]);
+            }else{
+                $result = $this->ArticleService->createLikes($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }
