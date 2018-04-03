@@ -67,8 +67,15 @@ class Article extends Base{
         // 判断权限
         $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
 
-        
+        //收藏列表
+        $isCollect = $this->ArticleService->getCollectInfo(['article_id'=>$article_id,'member_id'=>$this->memberInfo['id']]);
+
+        $isLikes = $this->ArticleService->getLikesInfo(['article_id'=>$article_id,'member_id'=>$this->memberInfo['id']]);
+
+
         $this->assign('isPower',$isPower);
+        $this->assign('isLikes',$isLikes);
+        $this->assign('isCollect',$isCollect);
         $this->assign('articleInfo',$articleInfo);
         return view('Article/articleInfo');
     }

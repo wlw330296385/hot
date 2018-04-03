@@ -157,6 +157,16 @@ class ArticleService {
         }
     }
 
+    // 获取点赞
+    public function getLikesInfo($map){
+        $result = $this->ArticleLikesModel->where($map)->find();
+        if($result){ 
+            return $result->toArray();
+        }else{
+            return $result;
+        }
+    }
+
     // 新建点赞
     public function createLikes($data){
         $result = $this->ArticleLikesModel->save($data);
@@ -183,12 +193,22 @@ class ArticleService {
     }
 
 
+    // 获取点赞
+    public function getCollectInfo($map){
+        $result = $this->ArticleCollectModel->where($map)->find();
+        if($result){ 
+            return $result->toArray();
+        }else{
+            return $result;
+        }
+    }
+
     // 新建收藏
     public function createCollect($data){
         $result = $this->ArticleCollectModel->save($data);
         if($result){
             $this->incArticle(['id'=>$data['article_id']],'collects');    
-            return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleLikesModel->id];
+            return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleCollectModel->id];
         }else{
             return ['msg'=>'点赞失败', 'code' => 100];
         }

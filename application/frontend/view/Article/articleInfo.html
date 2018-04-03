@@ -34,7 +34,15 @@
                         <p style="line-height:20px;margin:0;">{$articleInfo.update_time}</p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
+                        {if $isCollect}
+                        {eq name="isCollect.status" value='1' }
+                        <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">已收藏</button>
+                        {else /}
+                        <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
+                        {/eq}
+                        {else /}
+                        <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
+                        {/if}
                         <span>
                             <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
                             <font class="thumbup_count">0</font>
@@ -155,6 +163,47 @@
                 });
 
             });
+
+
+        //收藏功能
+            $(".collect").on('tap', function () {
+                var article = "{$articleInfo.title}";
+                var article_id = "{$articleInfo.id}";
+                mui.ajax("{:url('api/article/collectApi')}", {
+                    data: {
+                        article: article,
+                        article_id: article_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            text();
+                            mui.toast('收藏成功，感谢你的评价！');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+
+            });
+
+            function text(){
+               if($(".collect").text()=='已收藏'){
+                    $(".collect").text('收藏')
+               }else{
+                    $(".collect").text('已收藏')
+               }
+            }
+
+
         })
 
         var count = 1;
@@ -215,6 +264,16 @@
                 
             });
         };
+
+
+
+
+
+        
+
+
+
+
     </script>
 </body>
 

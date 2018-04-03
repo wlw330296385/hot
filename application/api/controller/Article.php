@@ -130,9 +130,14 @@ class Article extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $likes_id = input('param.likes_id');
-            if($likes_id){
-                $result = $this->ArticleService->updateLikes($data,['id'=>$likes_id]);
+            
+            $likesInfo = $this->ArticleService->getLikesInfo(['likes_id'=>$data['likes_id'],'member_id'=>$data['member_id']]);
+            if($likesInfo){
+                if($likesInfo['status'] == 1){
+                    $result = $this->ArticleService->updateLikes(['status'=>-1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                }else{
+                    $result = $this->ArticleService->updateLikes(['status'=>1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                }
             }else{
                 $result = $this->ArticleService->createLikes($data);
             }
@@ -149,9 +154,14 @@ class Article extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $collect_id = input('param.collect_id');
-            if($likes_id){
-                $result = $this->ArticleService->updateCollect($data,['id'=>$collect_id]);
+            
+            $collectInfo = $this->ArticleService->getCollectInfo(['article_id'=>$data['article_id'],'member_id'=>$data['member_id']]);
+            if($collectInfo){
+                if($collectInfo['status'] == 1){
+                    $result = $this->ArticleService->updateCollect(['status'=>-1,'article_id'=>$data['article_id']],['id'=>$collectInfo['id']]);
+                }else{
+                    $result = $this->ArticleService->updateCollect(['status'=>1,'article_id'=>$data['article_id']],['id'=>$collectInfo['id']]);
+                }
             }else{
                 $result = $this->ArticleService->createCollect($data);
             }
