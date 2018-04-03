@@ -109,6 +109,8 @@ class Member extends Base{
                 'remarks' => 0,
                 'hot_id' => 00000000,
             ];
+            cookie('mid', $member['id']);
+            cookie('openid', null);
             cookie('member', $member);
             $result = session('memberInfo', $member, 'think');
             return json(['code' => 200, 'msg' => '注销成功']);
