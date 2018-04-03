@@ -640,21 +640,13 @@
 
     //获取最近一条训练
     function toLastTrainList() {
-        var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}";
-        // var user_id = "";
-        // var type = "{$}";
-        // var coach_id = "{$coachInfo.id}";
-        // if (type == 1) {
-        //     user_id = coach_id
-        // } else if (type == 2) {
-        //     user_id = student_id
-        // } else {
-
-        // }
+        var page = 1
+        var url = "{:url('api/schedule_member/getScheduleMemberListWithScheduleByPageApi','','',true)}" + '/?page=' + page;
         mui.ajax({
             url: url,
             data: {
                 camp_id: camp_id,
+                member_id:member_id,
                 status: 1,
             },
             dataType: 'json',//服务器返回json格式数据
