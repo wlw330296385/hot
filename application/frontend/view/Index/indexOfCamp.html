@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>篮球管家</title>
+    <title>{$orgCampInfo.camp}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -171,7 +171,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
                         <a href="{:url('grade/gradeListoforganization')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-activity"></use>
+                                <use xlink:href="#icon-home-class"></use>
                             </svg>
                             <div class="mui-media-body">班级</div>
                         </a>
@@ -202,7 +202,6 @@
                     </li>
                 </ul>
             </div>
-
             <!-- 最新消息 -->
             <div class="page-header whitebg mb">
                 <span class="course">欢迎荣光机构入驻篮球管家</span>
@@ -307,32 +306,32 @@
                 <div class="hot-search">
                     <h4>热门搜索</h4>
                     <ul class="hot-search-frame">
-                        <li s-keyword="" s-table="">
-                            <span>幼儿课程</span>
+                        <li s-keyword="154" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>兴趣班</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>基础课程</span>
+                        <li s-keyword="155" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>篮球基础</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>强化课程</span>
+                        <li s-keyword="156" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>篮球综合</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>初中课程</span>
+                        <li s-keyword="157" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>篮球强化</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>室内球场</span>
+                        <li s-keyword="83" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>初中基础</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>室外球场</span>
+                        <li s-keyword="84" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>初中综合</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>特色课程</span>
+                        <li s-keyword="165" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>花式篮球</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>男教练</span>
+                        <li s-keyword="166" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>专项训练</span>
                         </li>
-                        <li s-keyword="" s-table="">
-                            <span>女教练</span>
+                        <li s-keyword="161" s-table="/frontend/lesson/lessonListOfOrganization/">
+                            <span>成人私教</span>
                         </li>
                     </ul>
                 </div>
@@ -357,37 +356,37 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    (function ($, doc) {
-        $.init();
-        $.ready(function () {
-            var _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[1], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                    var areas = getAreas(_getParam(items[0], 'text'), _getParam(items[1], 'text'));
-                    localStorage.currentArea = _getParam(items[2], 'text');
-                    localStorage.currentCity = _getParam(items[1], 'text');
-                    localStorage.currentProvince = _getParam(items[0], 'text');
-                    localStorage.currentAreas = areas;
-                    // //获取热门课程
-                    toLessonList(localStorage.currentCity, localStorage.currentProvince);
-                    // //获取热门训练营
-                    // toCampList(localStorage.currentCity, localStorage.currentProvince);
-                });
-            }, false);
-        });
-    })(mui, document);
+//    (function ($, doc) {
+//        $.init();
+//        $.ready(function () {
+//            var _getParam = function (obj, param) {
+//                return obj[param] || '';
+//            };
+//            ///级联示例
+//            var cityPicker3 = new $.PopPicker({
+//                layer: 3
+//            });
+//            cityPicker3.setData(cityData3);
+//            var showCityPickerButton = doc.getElementById('showCityPicker3');
+//            var cityResult3 = doc.getElementById('cityResult3');
+//            showCityPickerButton.addEventListener('tap', function (event) {
+//                cityPicker3.show(function (items) {
+//                    cityResult3.innerText = _getParam(items[1], 'text');
+//                    //返回 false 可以阻止选择框的关闭
+//                    //return false;
+//                    var areas = getAreas(_getParam(items[0], 'text'), _getParam(items[1], 'text'));
+//                    localStorage.currentArea = _getParam(items[2], 'text');
+//                    localStorage.currentCity = _getParam(items[1], 'text');
+//                    localStorage.currentProvince = _getParam(items[0], 'text');
+//                    localStorage.currentAreas = areas;
+//                    // //获取热门课程
+//                    toLessonList(localStorage.currentCity, localStorage.currentProvince);
+//                    // //获取热门训练营
+//                    // toCampList(localStorage.currentCity, localStorage.currentProvince);
+//                });
+//            }, false);
+//        });
+//    })(mui, document);
 
     //轮播
     var slider = mui("#slider");
@@ -411,15 +410,12 @@
         //localStorage.clear();
 
         //获取定位省市区
-        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var getLocationTB = getCampLocationApi("{$orgCampInfo.province}","{$orgCampInfo.city}","{$orgCampInfo.area}");
         var sCity = getLocationTB['city'];
-        var sProvince = getLocationTB['province'];
         $(".address").text(sCity);
 
         // //获取热门课程
-        toLessonList(sCity, sProvince);
-        // //获取热门训练营
-        // toCampList(sCity, sProvince);
+        toLessonList();
 
         //提示框
         if ("{$memberInfo['id']}" == 0) {
@@ -444,7 +440,18 @@
                 var searchUrl = getType + '?keyword=' + sKeyword;
                 window.top.location.href = searchUrl;
             }
+        });
+
+
+        //热门搜索
+        $(".hot-search ul li").click(function () {
+            var gradecate_id = $(this).attr("s-keyword");
+            var sUrl = $(this).attr("s-table");
+            var searchUrl = sUrl + '?gradecate_id=' + gradecate_id;
+            window.top.location.href = searchUrl;
         })
+
+
 
         //比赛报名功能
         $(document).on('tap', '.signupMatchBtn', function () {
@@ -555,14 +562,11 @@
     var camp_id = "{$o_id}"
 
     //获取热门课程并追加到页面
-    var toLessonList = function (sCity, sProvince) {
-        console.log(sCity)
+    var toLessonList = function () {
         var url = "{:url('api/lesson/getHotLessonListApi','','',true)}";
         mui.ajax({
             url: url,
             data: {
-                province: sProvince,
-                city: sCity,
                 status: 1,
                 hot: 1,
                 camp_id: camp_id,
