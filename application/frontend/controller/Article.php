@@ -63,7 +63,7 @@ class Article extends Base{
             $this->error('找不到文章信息');
         }
         //点击率+1;
-        $this->ArticleService->incComments(['id'=>$article_id],'hit');
+        $this->ArticleService->incArticle(['id'=>$article_id],'hit');
         // 判断权限
         $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
 
