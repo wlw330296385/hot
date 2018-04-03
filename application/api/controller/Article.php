@@ -84,9 +84,9 @@ class Article extends Base{
             $data['avatar'] = $this->memberInfo['avatar'];
             $comment_id = input('param.comment_id');
             if($comment_id){
-                $result = $this->ArticleService->createComment($data);
-            }else{
                 $result = $this->ArticleService->updateComment($data,['id'=>$comment_id]);
+            }else{
+                $result = $this->ArticleService->createComment($data);
             }
             return json($result);   
         }catch (Exception $e){
@@ -98,7 +98,7 @@ class Article extends Base{
     public function getCommentListApi(){
         try{
             $map = input('post.');
-            $result = $this->ArticleService->getCommentList($data);
+            $result = $this->ArticleService->getCommentList($map);
             if($result){
                 return ['msg' => '获取成功', 'code' => 200, 'data' => $result];
             }else{
@@ -112,7 +112,7 @@ class Article extends Base{
     public function getCommentListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->ArticleService->getCommentList($data);
+            $result = $this->ArticleService->getCommentList($map);
             if($result){
                 return ['msg' => '获取成功', 'code' => 200, 'data' => $result];
             }else{
