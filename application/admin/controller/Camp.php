@@ -250,4 +250,15 @@ class Camp extends Backend {
             $this->error(__lang('MSG_400'));
         }
     }
+
+    // 输出机构版首页微信授权链接
+    public function wxindex() {
+        // 微信授权链接地址
+        $id = input('id', 0);
+        $WechatS = new WechatService();
+        $url = $WechatS->oauthRedirect(url('frontend/index/indexofcamp',['o_id'=> $id,'o_type'=>1], '', true));
+        return view('camp/wxindex', [
+            'url' => $url
+        ]);
+    }
 }

@@ -18,7 +18,12 @@ class Index extends Base{
 	}
 
     public function index() {
-
+	    $o_id = input('o_id', 0);
+	    $o_type = input('o_type', 1);
+        $this->o_id = $o_id;
+        $this->o_type = $o_type;
+        cookie('o_id', $o_id);
+        cookie('o_type', $o_type);
         //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
         // 培训管家banner
         $bannerService = new BannerService();
@@ -60,12 +65,26 @@ class Index extends Base{
         return view('Index/index');
     }
 
+    // 机构版首页
     public function indexOfCamp(){
-        
-        $bannerList = db('banner')->where(['organization_id'=>$this->o_id,'organization_type'=>$this->o_type,'status'=>1])->order('ord asc')->limit(3)->select();
+	    // 重定义homeurl
+        cookie('homeurl', request()->url());
+        // banner图
+        $bannerList = db('banner')->where([
+            'organization_id'=>$this->o_id,
+            'organization_type'=>$this->o_type,
+            'status'=>1,
+            'steward_type' => cookie('steward_type')
+        ])->order('ord asc')->limit(3)->select();
+
         // 如果banner不够三张
         if( count($bannerList)<2 ){
-            $res = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1])->order('ord asc')->limit((3-count($bannerList)))->select();
+            $res = db('banner')->where([
+                'organization_id'=>0,
+                'organization_type'=>0,
+                'status'=>1,
+                'steward_type' => cookie('steward_type')
+            ])->order('ord asc')->limit((3-count($bannerList)))->select();
             $bannerList = array_merge($bannerList,$res);
         }
 
@@ -75,6 +94,13 @@ class Index extends Base{
 
     // 微信授权回调
     public function wxindex() {
+        $o_id = input('o_id', 0);
+        $o_type = input('o_type', 1);
+        $this->o_id = $o_id;
+        $this->o_type = $o_type;
+        cookie('o_id', $o_id);
+        cookie('o_type', $o_type);
+        
         $WechatS = new WechatService;
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();

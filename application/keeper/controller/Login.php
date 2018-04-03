@@ -51,8 +51,7 @@ class Login extends Controller{
             $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
             //$avatar = $memberS->downwxavatar($userinfo);
             // 查询有无member数据
-            $dbMember = db('member');
-            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->whereNotNull('delete_time')->find();
+            $isMember = $memberS->getMemberInfo(['openid' => $userinfo['openid']]);
             if ($isMember) {
 
                 unset($isMember['password']);
