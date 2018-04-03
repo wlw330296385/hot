@@ -118,5 +118,26 @@ class ArticleService {
     public function incComments($map,$field){
         $this->ArticleModel->where($map)->setInc($field);
     }
+
+
+
+    public function getCommentList($map,$paginate= 10,$order = 'hot asc'){
+        $result = $this->ArticleCommentModel->where($map)->order($order)->page($paginate)->select();
+        if($result){ 
+            return $result->toArray();    
+        }else{
+            return $result;
+        }
+    }
+
+
+    public function getCommentListByPage($map,$paginate= 10,$order = 'hot asc'){
+        $result = $this->ArticleCommentModel->where($map)->order($order)->paginate($paginate);
+        if($result){ 
+            return $result->toArray();    
+        }else{
+            return $result;
+        }
+    }
 }
 

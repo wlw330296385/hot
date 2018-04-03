@@ -135,7 +135,7 @@ class Court extends Base{
                 }
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
-                return json(['code'=>100,'msg'=>'ok']);
+                return json(['code'=>100,'msg'=>'失败']);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
