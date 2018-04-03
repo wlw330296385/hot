@@ -4,15 +4,21 @@ namespace app\service;
 
 use app\model\Article;
 use app\model\ArticleComment;
+use app\model\ArticleLikes;
+use app\model\ArticleCollect;
 use think\Db;
 use app\common\validate\ArticleVal;
+use app\common\validate\ArticleCommentVal;
 class ArticleService {
     private $ArticleModel;
     private $ArticleCommentModel;
+    private $ArticleLikesModel;
+    private $ArticleCollectModel;
     public function __construct(){
         $this->ArticleModel = new Article;
-
+        $this->ArticleLikesModel = new ArticleLikes;
         $this->ArticleCommentModel = new ArticleComment;
+        $this->ArticleCollectModel = new ArticleCollect;
     }
 
 
@@ -26,7 +32,6 @@ class ArticleService {
     // 分页获取文章
     public function getArticleListByPage($map=[], $order='',$paginate=10){
         $result = Article::where($map)->order($order)->paginate($paginate);
-        
         return $result;
     }
 
@@ -68,7 +73,6 @@ class ArticleService {
     // 新增文章
     public function createArticle($data){
         
-        
         $validate = validate('ArticleVal');
         if(!$validate->scene('add')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
@@ -95,9 +99,13 @@ class ArticleService {
 
     // 新建评论
     public function createComment($data){
+        $validate = validate('ArticleCommentVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
         $result = $this->ArticleCommentModel->save($data);
         if($result){
-            $this->incComments(['id'=>$data['article_id']],'comments');    
+            $this->incArticle(['id'=>$data['article_id']],'comments');    
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->ArticleCommentModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
@@ -107,6 +115,10 @@ class ArticleService {
 
     // 修改评论
     public function updateComment($data,$map){
+        $validate = validate('ArticleCommentVal');
+        if(!$validate->check($data)){
+            return ['msg' => $validate->getError(), 'code' => 200];
+        }
         $result = $this->ArticleCommentModel->save($data,$map);
         if($result){
             return ['msg' => '操作成功', 'code' => 200];
@@ -115,11 +127,15 @@ class ArticleService {
         }
     }
 
-    public function incComments($map,$field){
+    // 文章字段加加减减
+    public function incArticle($map,$field){
         $this->ArticleModel->where($map)->setInc($field);
     }
 
-
+    // 文章字段加加减减
+    public function decArticle($map,$field){
+        $this->ArticleModel->where($map)->setDec($field);
+    }
 
     public function getCommentList($map,$paginate= 10,$order = 'id desc'){
         $result = $this->ArticleCommentModel->where($map)->order($order)->page($paginate)->select();
@@ -138,6 +154,57 @@ class ArticleService {
             return $result->toArray();    
         }else{
             return $result;
+        }
+    }
+
+    // 新建点赞
+    public function createLikes($data){
+        $result = $this->ArticleLikesModel->save($data);
+        if($result){
+            $this->incArticle(['id'=>$data['article_id']],'likes');    
+            return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleLikesModel->id];
+        }else{
+            return ['msg'=>'点赞失败', 'code' => 100];
+        }
+    }
+
+
+    // 修改点赞
+    public function updateLikes($data,$map){
+        $result = $this->ArticleLikesModel->save($data,$map);
+        if($result){
+            if($data['status'] == -1){
+                $this->decArticle(['id'=>$data['article_id']],'likes');  
+            }
+            return ['msg' => '操作成功', 'code' => 200];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
+
+
+    // 新建收藏
+    public function createCollect($data){
+        $result = $this->ArticleCollectModel->save($data);
+        if($result){
+            $this->incArticle(['id'=>$data['article_id']],'collects');    
+            return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleLikesModel->id];
+        }else{
+            return ['msg'=>'点赞失败', 'code' => 100];
+        }
+    }
+
+
+    // 修改收藏
+    public function updateCollect($data,$map){
+        $result = $this->ArticleCollectModel->save($data,$map);
+        if($result){
+            if($data['status'] == -1){
+                $this->decArticle(['id'=>$data['article_id']],'collects');  
+            }
+            return ['msg' => '操作成功', 'code' => 200];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
         }
     }
 }

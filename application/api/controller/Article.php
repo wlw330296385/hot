@@ -30,7 +30,7 @@ class Article extends Base{
          try{
             $map = input('post.');
             $keyword = input('param.keyword');
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''&&$keyword){
                 $map['title'] = ['LIKE','%'.$keyword.'%'];
             }
             if( isset($map['keyword']) ){
@@ -112,6 +112,7 @@ class Article extends Base{
     public function getCommentListByPageApi(){
         try{
             $map = input('post.');
+
             $result = $this->ArticleService->getCommentListByPage($map);
             if($result){
                 return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
@@ -121,5 +122,42 @@ class Article extends Base{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         } 
+    }
+
+
+    public function likesApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $likes_id = input('param.likes_id');
+            if($likes_id){
+                $result = $this->ArticleService->updateLikes($data,['id'=>$likes_id]);
+            }else{
+                $result = $this->ArticleService->createLikes($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    public function collectApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $collect_id = input('param.collect_id');
+            if($likes_id){
+                $result = $this->ArticleService->updateCollect($data,['id'=>$collect_id]);
+            }else{
+                $result = $this->ArticleService->createCollect($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
     }
 }

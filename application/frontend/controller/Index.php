@@ -88,7 +88,11 @@ class Index extends Base{
             ])->order('ord asc')->limit((3-count($bannerList)))->select();
             $bannerList = array_merge($bannerList,$res);
         }
-
+        // 获取身份
+        $coachInfo = db('coach')->where(['status'=>1,'member_id'=>$this->memberInfo['id']])->find();
+        $studentList = db('student')->where(['status'=>1,'member_id'=>$this->memberInfo['id']])->select();
+        $this->assign('studentList',$studentList);
+        $this->assign('coachInfo',$coachInfo);
         $this->assign('bannerList',$bannerList);
         return view('Index/indexOfCamp');
     }
