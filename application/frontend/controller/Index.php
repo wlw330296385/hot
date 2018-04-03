@@ -18,6 +18,12 @@ class Index extends Base{
 	}
 
     public function index() {
+	    $o_id = input('o_id', 0);
+	    $o_type = input('o_type', 1);
+        $this->o_id = $o_id;
+        $this->o_type = $o_type;
+        cookie('o_id', $o_id);
+        cookie('o_type', $o_type);
         //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
         // 培训管家banner
         $bannerService = new BannerService();
@@ -88,6 +94,13 @@ class Index extends Base{
 
     // 微信授权回调
     public function wxindex() {
+        $o_id = input('o_id', 0);
+        $o_type = input('o_type', 1);
+        $this->o_id = $o_id;
+        $this->o_type = $o_type;
+        cookie('o_id', $o_id);
+        cookie('o_type', $o_type);
+        
         $WechatS = new WechatService;
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
