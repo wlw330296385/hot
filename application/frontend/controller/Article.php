@@ -83,10 +83,13 @@ class Article extends Base{
 		return view('Article/articleList');
     }
 
+    // 新闻列表（机构版）
+    public function articleListOfOrganization(){
+		return view('Article/articleListOfOrganization');
+    }
+
     // 文章管理列表
     public function articleListOfCamp(){
-
-        
 		return view('Article/articleListOfCamp');
     }
 

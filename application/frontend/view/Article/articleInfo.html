@@ -30,7 +30,7 @@
                 <li class=" listli" style="overflow:hidden;">
                     <div class="mui-media-body wd66" style="line-height:20px;">
                         <h4>{$articleInfo.title}</h4>
-                        <p style="line-height:20px;margin:0;">作者：张先生</p>
+                        <p style="line-height:20px;margin:0;">作者：{$articleInfo.author}</p>
                         <p style="line-height:20px;margin:0;">{$articleInfo.update_time}</p>
                     </div>
                     <div class="price-frame" style="padding:0">
@@ -60,6 +60,15 @@
                     {$articleInfo.content}
                 </li>
             </ul>
+
+            <!-- 新闻评论 -->
+            <div class="page-header border-b">
+                <span class="course wd52">评论</span>
+                <span class="more f14">评论
+                    <span class="comment_count">0</span>
+                </span>
+            </div>
+            <ul class="mui-table-view comment-list"></ul>
 
         </div>
 
@@ -101,7 +110,112 @@
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function () {
+            toCommentList(); //获取评论列表
+            //评论功能
+            $(".commentBtn").on('tap', function () {
+                var article = "{$articleInfo.title}";
+                var article_id = "{$articleInfo.id}";
+                var comment = $(".comment").val();
+                var avatar = "{$memberInfo.avatar}";
+                if (comment == '') {
+                    mui.toast("评价内容不能为空哦");
+                    return false;
+                }
 
+                mui.ajax("{:url('api/article/commentApi')}", {
+                    data: {
+                        article: article,
+                        article_id: article_id,
+                        comment: comment,
+                        avatar: avatar,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+
+            });
+        })
+
+        var count = 1;
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //获取评论列表
+        function toCommentList(page, gType) {
+            var url = "{:url('api/article/getCommentListByPageApi','','',true)}/?page=" + page;
+            var article_id = "{$articleInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    article_id: article_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".comment_count").text(data.data.data.length);
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p>' + data.data.data[i].comment + '</p></li>'
+                        }
+                        if(newli == ''){
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        }
+                    } 
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+                
+            });
+        };
+    </script>
 </body>
 
 </html>
