@@ -17,7 +17,7 @@ class Base extends Frontend {
         parent::_initialize();
         $this->steward_type =2;
         $sessionMember = session('memberInfo', '', 'think');
-        if ( !Cookie::has('mid') || $sessionMember['id'] === 0 ) {
+        if ( !Cookie::has('mid') || empty($sessionMember)) {
             $this->nologin();
         }
         $this->footMenu();
