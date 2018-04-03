@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>个人资料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback-page.css" />
+    <style>
+        .mui-views,
+        .mui-view,
+        .mui-pages,
+        .mui-page,
+        .mui-page-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #efeff4;
+        }
+
+        .mui-pages {
+            top: 46px;
+            height: auto;
+        }
+
+        .mui-scroll-wrapper,
+        .mui-scroll {
+            background-color: #efeff4;
+        }
+
+        .mui-page.mui-transitioning {
+            -webkit-transition: -webkit-transform 300ms ease;
+            transition: transform 300ms ease;
+        }
+
+        .mui-page-left {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+
+        .mui-ios .mui-page-left {
+            -webkit-transform: translate3d(-20%, 0, 0);
+            transform: translate3d(-20%, 0, 0);
+        }
+
+
+        .mui-navbar {
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 10;
+            height: 44px;
+            background-color: #f7f7f8;
+        }
+
+        .mui-navbar .mui-bar {
+            position: absolute;
+            background: transparent;
+            text-align: center;
+        }
+
+        .mui-android .mui-navbar-inner.mui-navbar-left {
+            opacity: 0;
+        }
+
+        .mui-ios .mui-navbar-left .mui-left,
+        .mui-ios .mui-navbar-left .mui-center,
+        .mui-ios .mui-navbar-left .mui-right {
+            opacity: 0;
+        }
+
+        .mui-navbar .mui-btn-nav {
+            -webkit-transition: none;
+            transition: none;
+            -webkit-transition-duration: .0s;
+            transition-duration: .0s;
+        }
+
+        .mui-navbar .mui-bar .mui-title {
+            margin-left: 0 !important;
+        }
+
+        .mui-page-shadow {
+            position: absolute;
+            right: 100%;
+            top: 0;
+            width: 16px;
+            height: 100%;
+            z-index: -1;
+            content: '';
+        }
+
+        .mui-page-shadow {
+            background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+            background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+        }
+
+        .mui-navbar-inner.mui-transitioning,
+        .mui-navbar-inner .mui-transitioning {
+            -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+            transition: opacity 300ms ease, transform 300ms ease;
+        }
+
+        .mui-page {
+            display: none;
+        }
+
+        .mui-pages .mui-page {
+            display: block;
+        }
+
+        .mui-table-view span.mui-pull-right {
+            color: #999;
+        }
+
+        .mui-table-view-divider {
+            background-color: #efeff4;
+            font-size: 14px;
+        }
+
+        .mui-table-view-divider:before,
+        .mui-table-view-divider:after {
+            height: 0;
+        }
+
+        .mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        /*·····*/
+
+        .tipspan {
+            font-size: 14px;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            height: 41px;
+        }
+
+        .success {
+            padding: 20px 0;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .success img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .success span {
+            float: right;
+            line-height: 40px;
+        }
+
+        .forgetPW {
+            float: right;
+            font-size: 14px;
+            padding: 5px 15px;
+        }
+
+        .tip {
+            padding: 0 15px;
+        }
+
+        .tip .tipp {
+            margin-bottom: 0
+        }
+    </style>
+</head>
+
+<body class="mui-fullscreen">
+    <!--页面主结构开始-->
+    <div id="app" class="mui-views">
+        <div class="mui-view">
+            <div class="mui-navbar">
+            </div>
+            <div class="mui-pages">
+            </div>
+        </div>
+    </div>
+    <!--页面主结构结束-->
+
+    <!--单页面开始-->
+    <div id="setting" class="mui-page">
+        <!--页面标题栏开始-->
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn mui-btn-link mui-btn-nav mui-pull-left ">
+                <span class="mui-icon mui-icon-left-nav stepback"></span>
+            </button>
+            <h1 class="mui-center mui-title">客服中心</h1>
+        </div>
+        <!--页面标题栏结束-->
+
+        <!--页面主内容区开始-->
+        <div class="mui-page-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="list">
+                        <ul class="mui-table-view mb">
+                            <li class="mui-table-view-cell listli">
+                                营业时间
+                                <span>AM 9:30-PM 18:30</span>
+                                <span>星期一至星期五</span>
+                            </li>
+                            <li class="mui-table-view-cell listli">
+                                公司地址
+                                <span>深圳市 南山区 桂庙路西 南山阳光问题中心一层 B111</span>
+                            </li>
+                            <li class="mui-table-view-cell listli">
+                                公司电话
+                                <span>15820474733</span>
+                            </li>
+                        </ul>
+                        <ul class="mui-table-view">
+                            <li class="mui-table-view-cell listli">
+                                <a href="#feedback" class="mui-navigate-right">投诉与建议</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--页面主内容区结束-->
+    </div>
+    <!--单页面结束-->
+
+
+    <div id="feedback" class="mui-page feedback">
+        <div class="mui-navbar-inner mui-bar mui-bar-nav">
+            <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                <span class="mui-icon mui-icon-left-nav"></span>
+            </button>
+            <h1 class="mui-center mui-title">问题反馈</h1>
+        </div>
+        <div class="mui-page-content">
+            <p>问题和意见</p>
+            <div class="row mui-input-row">
+                <textarea id='question' class="mui-input-clear question" placeholder="请详细描述你的问题和意见..."></textarea>
+            </div>
+            <!-- <p>图片(选填,提供问题截图)</p> -->
+            <!-- <div id='image-list' class="row image-list">
+            </div> -->
+            <p>QQ/邮箱</p>
+            <div class="mui-input-row">
+                <input id='contact' type="text" class="mui-input-clear  contact" placeholder="(选填,方便我们联系你 )" />
+            </div>
+            <button id='submit' type="button" class="mui-btn mui-btn-green">提交</button>
+        </div>
+        <p>此示例基于环信 “WebIM SDK” + 环信 “移动客服” 实现，在环信 “移动客服面板” 能够查阅反馈信息。</p>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js "></script>
+    <script src="/static/frontend/js/mui.view.js "></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        mui.init();
+        //初始化单页view
+        var viewApi = mui('#app').view({
+            defaultPage: '#setting'
+        });
+        var view = viewApi.view;
+        (function ($) {
+            //处理view的后退与webview后退
+            var oldBack = $.back;
+            $.back = function () {
+                if (viewApi.canBack()) { //如果view可以后退，则执行view的后退
+                    viewApi.back();
+                } else { //执行webview后退
+                    oldBack();
+                }
+            };
+        })(mui);
+    </script>
+
+</body>
+
+</html>

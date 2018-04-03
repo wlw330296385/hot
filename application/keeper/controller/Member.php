@@ -279,4 +279,8 @@ class Member extends Base{
         return view('Member/bandWx');
     }
 
+    public function customer(){
+        return view('Member/customer');
+    }
+
 }
