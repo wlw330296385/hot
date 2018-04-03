@@ -595,12 +595,13 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.toast('评价成功，感谢你的评价！', function () {
-                                location.reload();
-                            });
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
                             mui('#fbcomment').popover('toggle');
                         } else {
                             mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
