@@ -13,7 +13,7 @@ class Article extends Model {
     //                         ];
 
 	public function getCategoryAttr($value){
-		$status = [0=>'其他',1=>'平台手册',2=>'其他',3=>'其他'];
+		$status = [0=>'其他',1=>'平台手册',2=>'单独页面',3=>'其他'];
         return $status[$value];
 	}
 }
