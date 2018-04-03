@@ -3,23 +3,16 @@
 
 <head>
     <meta charset="utf-8">
-    <title>文章列表</title>
+    <title>新闻列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .mui-table-view .mui-media-body {
-            font-size: 14px;
-        }
-
-        .mui-table-view .mui-media-body p {
-            font-size: 12px;
-        }
-    </style>
 </head>
 
 <body class=whitebg>
@@ -27,27 +20,26 @@
     <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">
-            <input type="search" class="mui-input-clear keyword" placeholder="请输入标题关键字">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入新闻标题搜索">
         </h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
-
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
-                <ul class="mui-table-view article">
+                <ul class="mui-table-view detalis-list list border-b article">
                 </ul>
             </div>
         </div>
+
     </div>
+
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
+
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
@@ -56,40 +48,30 @@
 
             //初始化全局变量
             var count = 1;
-            var keyword = wooApi.GetQueryString('keyword');
+            var keyword = '';
             $('.keyword').val(keyword);
 
-            var organ_type = wooApi.GetQueryString('organ_type');
-            var organ_id = wooApi.GetQueryString('organ_id');
-            var organ_name = wooApi.GetQueryString('organ_name');
-            var category = wooApi.GetQueryString('category');
-            //判断如果没传参默认为篮球管家的平台操作手册
-            if (organ_type == "" || organ_type == null) { organ_type = "1" }
-            if (organ_id == "" || organ_id == null) { organ_id = "0" }
-            if (organ_name == "" || organ_name == null) { organ_name = "篮球管家" }
-            if (category == "" || category == null) { category = 1 }
-
-            if (keyword == null) { keyword = "" }
-
-            // $(".organization").text(organ_name);
-            // if(category==1){
-            //     $(".category").text("平台操作手册");
-            // }else{
-            //     $(".category").text("管家新闻");
-            // }
-
-            //搜索文章
+            //搜索教练
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
                 searchToList();
             })
-
+            //选择性别下拉
+            $("#lessonType").on("change", function () {
+                sLessonType = $(this).find("option:checked").attr("data-gradecate_id");
+                searchToList();
+            });
+            //选择地区下拉
+            $("#areaSelect").on("change", function () {
+                sArea = $(this).val();
+                searchToList();
+            });
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
                 var page = count;
                 var gType = 1;//代表下拉刷新
-                toList(page, gType, organ_type, organ_id, category);//具体取数据的方法
+                toList(page, gType);//具体取数据的方法
             }
 
             mui.init({
@@ -122,7 +104,7 @@
                     count = 1;//刷新并显示第一页
                     var page = count;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType, organ_type, organ_id);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
@@ -131,34 +113,33 @@
                     count++;//翻下一页
                     var page = count;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType, organ_type, organ_id);//具体取数据的方法
+                    toList(page, gType);//具体取数据的方法
                 }, 100);
             }
 
             //接口获取数据并追加到页面
-            var toList = function (wList, page, gType, organ_type, organ_id, ) {
+            var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var organization_id = "{$o_id}";
-                let data = {};
-                if(organization_id>0){
-                    data: {
-                        organization_id:organization_id,
+                var url = "{:url('api/article/getArticleListByPageApi','','',true)}" + '/?page=' + page;
+                var organization_id = "{$o_id}"
+                var data = {};
+                if (organization_id > 0) {
+                    data = {
                         organization_type: 2,
+                        organization_id: organization_id,
                         keyword: keyword,
-                        page: page,
                         status: 1
-                    },
-                }else{
-                    data: {
+                    }
+                } else {
+                    data = {
+                        organization_type: 1,
                         keyword: keyword,
-                        page: page,
                         status: 1
                     }
                 }
-                var url = "{:url('api/article/getArticleListByPageApi','','',true)}";
                 mui.ajax({
                     url: url,
-                    data:data,
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -169,19 +150,21 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
-                                newli += '<li class="mui-table-view-cell border-b"><a href="' + urls + '"><img class="mui-media-object mui-pull-left proportion4x3" src="' + data.data.data[i].covers + '"><div class="mui-media-body">' + data.data.data[i].title + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div> </a></li>';
+                                newli += '<li class="mui-table-view-cell listli"><a href="' + urls + '"><img class="mui-pull-left proportion4x3" src="' + data.data.data[i].covers + '"><div class="mui-media-body wd52">' + data.data.data[i].title + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>';
+                                newli += '<div class="price-frame"><p class="colororange f12">评论：' + data.data.data[i].comments + '</p><p class="colororange f12">点赞：' + data.data.data[i].likes + '</p></div>'
+                                newli += '</a></li>';
                             }
                         }
                         if (gType == 1) {
-                            //上拉加载
+                            //上拉刷新
                             $("ul.article").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.article").html('<li class="nodata border-b"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.article").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
-                            //下拉刷新 gType==2
+                            //下拉加载 gType==2
                             $("ul.article").append(newli);
                         }
                         if (newli != '') {
@@ -197,6 +180,7 @@
                     }
                 });
             };
+
 
         })
     </script>

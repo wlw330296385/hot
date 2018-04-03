@@ -97,13 +97,20 @@
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/event/getHotEventList','','',true)}" + '/?page=' + page;
                 var member_id = "{$memberInfo.id}"
-                var camp_id = "{$o_id}"
-                mui.ajax({
-                    url: url,
-                    data: {
+                var organization_id = "{$o_id}";
+                if (organization_id > 0) {
+                    data = {
                         organization_id: camp_id,
                         member_id: member_id,
-                    },
+                    }
+                } else {
+                    data = {
+                        member_id: member_id,
+                    }
+                }
+                mui.ajax({
+                    url: url,
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
