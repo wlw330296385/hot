@@ -110,8 +110,14 @@ class Member extends Base{
                 'hot_id' => 00000000,
             ];
             cookie('mid', $member['id']);
-            cookie('openid', null);
             cookie('member', $member);
+            cookie('openid', null);
+            cookie('homeurl', null);
+            cookie('url', null);
+            cookie('module', null);
+            cookie('visit_history', null);
+            cookie('o_id', null);
+            cookie('o_type', null);
             $result = session('memberInfo', $member, 'think');
             return json(['code' => 200, 'msg' => '注销成功']);
         } catch (Exception $e) {
