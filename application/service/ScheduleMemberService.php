@@ -18,9 +18,26 @@ class ScheduleMemberService{
 
     }
 
+    public function getScheduleMemberListWithSchedule($map){
+        $result = $this->scheduleMemberModel->with('schedule')->where($map)->select();
+        if($result){
+            $res = $result->toArray();
+            return $res;
+        }
+        return $result;     
+
+    }
 
  	public function getScheduleMemberListByPage($map,$paginate = 10){
         $result = $this->scheduleMemberModel->where($map)->paginate($paginate);
+        if($result){
+            return $result->toArray();
+        }
+        return $result;
+    }
+
+    public function getScheduleMemberListWithScheduleByPage($map,$paginate = 10){
+        $result = $this->scheduleMemberModel->with('schedule')->where($map)->paginate($paginate);
         if($result){
             return $result->toArray();
         }

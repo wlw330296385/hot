@@ -191,6 +191,23 @@ class Index extends Controller{
 
     }
 
+
+    public function scheduleMemberid(){
+        $list = db('schedule_member')->select();
+        dump($list);
+        foreach ($list as $key => $value) {
+            if($value['type'] == 1){
+                $member = db('student')->where(['id'=>$value['user_id']])->find();
+                db('schedule_member')->where(['id'=>$value['id']])->update(['member_id'=>$member['member_id'],'member'=>$member['member']]);
+            }
+
+            if($value['type'] == 2){
+                $member = db('coach')->where(['id'=>$value['user_id']])->find();
+                db('schedule_member')->where(['id'=>$value['id']])->update(['member_id'=>$member['member_id']]);
+            }
+        }
+    }
+
     public function spu(){
         $a = [
             ['name'=>'包车','price'=>5200],

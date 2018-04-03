@@ -773,6 +773,6 @@ class Camp extends Base{
         $this->assign('monthNewStudents',$monthNewStudents?$monthNewStudents:0);
         $this->assign('monthofflineStudents',$monthofflineStudents?$monthofflineStudents:0);
         $this->assign('onlineStudents',$onlineStudents?$onlineStudents:0);
-        return view('camp/campStatistics');
+        return view('Camp/campStatistics');
     }
 }

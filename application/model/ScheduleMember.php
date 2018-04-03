@@ -27,4 +27,8 @@ class ScheduleMember extends Model {
     	return $this->hasOne('grade','id','grade_id',[],'LEFT JOIN');
     }
 
+    // 关联班级
+    public function schedule(){
+        return $this->hasOne('schedule','id','schedule_id',[],'LEFT JOIN');
+    }
 }
