@@ -5,6 +5,7 @@ namespace app\service;
 use app\model\Article;
 use app\model\ArticleComment;
 use app\model\ArticleLikes;
+use app\model\ArticleCollect;
 use think\Db;
 use app\common\validate\ArticleVal;
 use app\common\validate\ArticleCommentVal;
@@ -12,10 +13,12 @@ class ArticleService {
     private $ArticleModel;
     private $ArticleCommentModel;
     private $ArticleLikesModel;
+    private $ArticleCollectModel;
     public function __construct(){
         $this->ArticleModel = new Article;
         $this->ArticleLikesModel = new ArticleLikes;
         $this->ArticleCommentModel = new ArticleComment;
+        $this->ArticleCollectModel = new ArticleCollect;
     }
 
 
@@ -172,6 +175,32 @@ class ArticleService {
         if($result){
             if($data['status'] == -1){
                 $this->decArticle(['id'=>$data['article_id']],'likes');  
+            }
+            return ['msg' => '操作成功', 'code' => 200];
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+    }
+
+
+    // 新建收藏
+    public function createCollect($data){
+        $result = $this->ArticleCollectModel->save($data);
+        if($result){
+            $this->incArticle(['id'=>$data['article_id']],'collects');    
+            return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleLikesModel->id];
+        }else{
+            return ['msg'=>'点赞失败', 'code' => 100];
+        }
+    }
+
+
+    // 修改收藏
+    public function updateCollect($data,$map){
+        $result = $this->ArticleCollectModel->save($data,$map);
+        if($result){
+            if($data['status'] == -1){
+                $this->decArticle(['id'=>$data['article_id']],'collects');  
             }
             return ['msg' => '操作成功', 'code' => 200];
         }else{

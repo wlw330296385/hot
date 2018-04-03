@@ -125,14 +125,14 @@ class Article extends Base{
     }
 
 
-    public function likes(){
+    public function likesApi(){
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $likes_id = input('param.likes_id');
             if($likes_id){
-                $result = $this->ArticleService->updateLikes($data,['id'=>$comment_id]);
+                $result = $this->ArticleService->updateLikes($data,['id'=>$likes_id]);
             }else{
                 $result = $this->ArticleService->createLikes($data);
             }
@@ -142,4 +142,22 @@ class Article extends Base{
         }
     }
 
+
+
+    public function collectApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $collect_id = input('param.collect_id');
+            if($likes_id){
+                $result = $this->ArticleService->updateCollect($data,['id'=>$collect_id]);
+            }else{
+                $result = $this->ArticleService->createCollect($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
