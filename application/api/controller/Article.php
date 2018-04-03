@@ -90,7 +90,7 @@ class Article extends Base{
             }
             return json($result);   
         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }   
     }
 }

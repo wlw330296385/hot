@@ -97,6 +97,7 @@ class ArticleService {
     public function createComment($data){
         $result = $this->ArticleCommentModel->save($data);
         if($result){
+            $this->incComments(['id'=>$data['article_id']],'comments');    
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->ArticleCommentModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
@@ -112,6 +113,10 @@ class ArticleService {
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }
+    }
+
+    public function incComments($map,$field){
+        $this->ArticleModel->where($map)->setInc($field);
     }
 }
 
