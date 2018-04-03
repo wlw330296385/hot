@@ -81,7 +81,7 @@ class Member extends Base{
             $member = [
                 'id' => 0,
                 'openid' => '',
-                'member' => 'youke',
+                'member' => '游客',
                 'nickname' => '游客',
                 'avatar' => config('default_image.member_avatar'),
                 'hp' => 0,
@@ -109,7 +109,7 @@ class Member extends Base{
                 'remarks' => 0,
                 'hot_id' => 00000000,
             ];
-            cookie('mid', $member['id']);
+            cookie('mid', null);
             cookie('member', $member);
             cookie('openid', null);
             cookie('homeurl', null);

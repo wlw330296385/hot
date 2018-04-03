@@ -140,13 +140,13 @@ class Base extends Frontend {
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
             $this->memberInfo = session('memberInfo', '', 'think');
-            if (cookie('url')) {
+            //if (cookie('url')) {
                 $url = cookie('url');
                 cookie('url',null);
                 $this->redirect( $url );
-            } else {
-                $this->redirect( 'frontend/index/index' );
-            }
+//            } else {
+//                $this->redirect( 'frontend/index/index' );
+//            }
         }
 	}
 
