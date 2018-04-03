@@ -86,7 +86,7 @@ class Article extends Base{
     // 文章管理列表
     public function articleListOfCamp(){
 
-
+        
 		return view('Article/articleListOfCamp');
     }
 
