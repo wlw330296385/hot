@@ -30,7 +30,7 @@ class Article extends Base{
          try{
             $map = input('post.');
             $keyword = input('param.keyword');
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''&&$keyword){
                 $map['title'] = ['LIKE','%'.$keyword.'%'];
             }
             if( isset($map['keyword']) ){
@@ -112,6 +112,7 @@ class Article extends Base{
     public function getCommentListByPageApi(){
         try{
             $map = input('post.');
+
             $result = $this->ArticleService->getCommentListByPage($map);
             if($result){
                 return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);

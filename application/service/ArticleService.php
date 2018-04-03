@@ -102,7 +102,7 @@ class ArticleService {
         }
         $result = $this->ArticleCommentModel->save($data);
         if($result){
-            $this->incComments(['id'=>$data['article_id']],'comments');    
+            $this->incArticle(['id'=>$data['article_id']],'comments');    
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->ArticleCommentModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
@@ -125,11 +125,14 @@ class ArticleService {
     }
 
     // 文章字段加加减减
-    public function incComments($map,$field){
+    public function incArticle($map,$field){
         $this->ArticleModel->where($map)->setInc($field);
     }
 
-
+    // 文章字段加加减减
+    public function decArticle($map,$field){
+        $this->ArticleModel->where($map)->setDec($field);
+    }
 
     public function getCommentList($map,$paginate= 10,$order = 'id desc'){
         $result = $this->ArticleCommentModel->where($map)->order($order)->page($paginate)->select();
@@ -155,7 +158,7 @@ class ArticleService {
     public function createLikes($data){
         $result = $this->ArticleLikesModel->save($data);
         if($result){
-            $this->incComments(['id'=>$data['article_id']],'comments');    
+            $this->incArticle(['id'=>$data['article_id']],'likes');    
             return ['msg' => '点赞成功', 'code' => 200, 'data' => $this->ArticleLikesModel->id];
         }else{
             return ['msg'=>'点赞失败', 'code' => 100];
@@ -167,6 +170,9 @@ class ArticleService {
     public function updateLikes($data,$map){
         $result = $this->ArticleLikesModel->save($data,$map);
         if($result){
+            if($data['status'] == -1){
+                $this->decArticle(['id'=>$data['article_id']],'likes');  
+            }
             return ['msg' => '操作成功', 'code' => 200];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
