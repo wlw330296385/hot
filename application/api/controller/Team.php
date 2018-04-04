@@ -1301,8 +1301,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
@@ -1354,8 +1356,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
@@ -1424,8 +1428,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
@@ -1521,8 +1527,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
@@ -1564,8 +1572,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
@@ -1612,8 +1622,10 @@ class Team extends Base
             // 参数：会员member_id 查询会员所在球队
             if (input('?param.member_id')) {
                 // 获取会员所在球队集合
-                $member_id = input('param.member_id');
-                if ($member_id > 0) {
+                $member_id = input('param.member_id', 0, 'intval');
+                if ($member_id == 0) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+                } else {
                     $memberInTeam = $teamS->myTeamAll($member_id);
                     if ($memberInTeam) {
                         $teamIds = [];
