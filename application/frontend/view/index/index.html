@@ -10,6 +10,8 @@
     <meta name="x5-orientation" content="portrait">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+        <!--icon扩展样式icons-extra.css-->
+        <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--顶部下滑菜单 menu-wrapper.css-->
@@ -575,7 +577,7 @@
         function toNewList(page) {
             mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
                 data: {
-                    organization_type :2,
+                    organization_type: 1,
                     status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -588,8 +590,8 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.slice(0, 3).length - 1; i++) {
                             let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
-                            div += '<li class="mui-table-view-cell listli"><a href="' + urls + '"><img class="mui-pull-left proportion4x3" src="' + data.data.data[i].covers + '"><div class="mui-media-body wd52">' + data.data.data[i].title + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>';
-                            div += '<div class="price-frame"><p class="colororange f12">评论：' + data.data.data[i].comments + '</p><p class="colororange f12">点赞：' + data.data.data[i].likes + '</p></div>'
+                            div += '<li class="mui-table-view-cell listli"><a href="' + urls + '"><img class="mui-pull-left proportion4x3" src="' + data.data.data[i].covers + '"><div style="line-height:26px;"><strong>' + data.data.data[i].title + '</strong>';
+                            div += '<p class="mui-ellipsis f12">' + data.data.data[i].create_time + '<span class="wd45"><font style="margin-right: 8px !important;"><i class="mui-icon-extra mui-icon-extra-comment f14"></i>&nbsp;' + data.data.data[i].comments + '</font><font><i class="mui-icon-extra mui-icon-extra-like f14"></i>&nbsp;' + data.data.data[i].likes + '</span></span></p></div>';
                             div += '</a></li>';
                         }
                         $(".newList").empty().append(div);
@@ -607,7 +609,8 @@
 
         //获取最近一条训练
         function toLastTrainList() {
-            var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}";
+            var page = 1
+            var url = "{:url('api/schedule_member/getScheduleMemberListWithScheduleByPageApi','','',true)}" + '/?page=' + page;
             mui.ajax({
                 url: url,
                 data: {
@@ -622,7 +625,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         if (data.data.data == '') {
-                            return false;
+                            $(".newTrain").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有已完成的课时数据哦</p></li>');
                         } else {
                             var lesson_time = data.data.data[0].lesson_time;
                             var date = new Date();
@@ -649,16 +652,13 @@
                             } else {
                                 var Ttime = date.getHours(lesson_time) + ":" + date.getMinutes(lesson_time);
                             }
-
                             var urls = "{:url('schedule/scheduleInfo')}/" + "schedule_id/" + data.data.data[0].id + "/camp_id/" + data.data.data[0].camp_id;
                             newli += ' <a href="' + urls + '"><li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center">';
                             newli += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
-                            newli += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data.data[0].grade + '</h5><div class="divFrame"><p>教练：' + data.data.data[0].coach + '</p>';
-                            newli += '<p>比赛地点：' + data.data.data[0].court + '</p><p>所属课程：' + data.data.data[0].lesson + '</p></div><div class=opFrame></div></div></li>';
+                            newli += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data.data[0].schedule.grade + '</h5><div class="divFrame"><p>教练：' + data.data.data[0].schedule.coach + '</p>';
+                            newli += '<p>上课地点：' + data.data.data[0].schedule.court + '</p><p>所属课程：' + data.data.data[0].schedule.lesson + '</p></div><div class=opFrame></div></div></li>';
                             $(".newTrain").empty().append(newli);
                         }
-                    } else {
-                        $(".newTrain").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有已完成的课时数据哦</p></li>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
