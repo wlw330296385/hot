@@ -216,7 +216,9 @@
 
             <!-- 最新新闻 -->
             <div class="page-header  border-b">
-                <span class="course">最近新闻</span>
+                <span class="course">最近新闻
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more">
                     <a href="{:url('article/articleList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -225,7 +227,9 @@
 
             <!--最近训练-->
             <div class="page-header border-b">
-                <span class="course">最近训练</span>
+                <span class="course">最近训练
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more">
                     <a href="{:url('index/lastLyScheduleList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -234,7 +238,9 @@
 
             <!--最近赛事-->
             <div class="page-header border-b">
-                <span class="course">最近赛事</span>
+                <span class="course">最近赛事
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more">
                     <a href="{:url('index/lastLyMatchList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -243,7 +249,9 @@
 
             <!--球队活动-->
             <div class="page-header border-b">
-                <span class="course">球队活动</span>
+                <span class="course">球队活动
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more">
                     <a href="{:url('index/lastLyEventList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -252,7 +260,9 @@
 
             <!--训练营活动-->
             <div class="page-header border-b">
-                <span class="course">训练营活动</span>
+                <span class="course">训练营活动
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more">
                     <a href="{:url('index/lastLyCampEventList')}" class="mui-navigate-right">更多</a>
                 </span>
@@ -262,7 +272,9 @@
             <!--热门课程-->
             <div class="show-list mt mb">
                 <div class="page-header border-b">
-                    <span class="course">热门课程</span>
+                    <span class="course">热门课程
+                        <span class="noDataTip"></span>
+                    </span>
                     <span class="more">
                         <a href="{:url('lesson/lessonListOfOrganization')}" class="mui-navigate-right">更多</a>
                     </span>
@@ -589,8 +601,9 @@
                     $("ul#hot-lesson").html(newli);
 
                 } else {
-                    newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
-                    $("ul#hot-lesson").html(newli);
+                    // newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
+                    // $("ul#hot-lesson").html(newli);
+                    $("ul#hot-lesson").prev().find(".noDataTip").append("（暂无数据）");
                 }
 
             },
@@ -604,7 +617,7 @@
     function toNewList() {
         mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
             data: {
-                category:3,
+                category: 3,
                 organization_type: 2,
                 organization_id: camp_id,
                 status: 1
@@ -626,7 +639,8 @@
                     }
                     $(".newList").empty().append(div);
                     if (div == '') {
-                        $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有新闻数据哦</p></li>');
+                        // $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有新闻数据哦</p></li>');
+                        $(".newList").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 }
             },
@@ -657,7 +671,8 @@
                 var newli = '';
                 if (data.code == 200) {
                     if (data.data.data == '') {
-                        $(".newTrain").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有已完成的课时数据哦</p></li>');
+                        // $(".newTrain").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有已完成的课时数据哦</p></li>');
+                        $(".newTrain").prev().find(".noDataTip").append("（暂无数据）");
                     } else {
                         var lesson_time = data.data.data[0].lesson_time;
                         var date = new Date();
@@ -746,7 +761,8 @@
                     $(".newMatch").empty().append(div);
                 }
                 if (data.code == 100) {
-                    $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                    // $(".newMatch").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有比赛数据，赶紧去创建比赛吧</p></li>');
+                    $(".newMatch").prev().find(".noDataTip").append("（暂无数据）");
                 }
             },
             error: function (xhr, type, errorThrown) {
@@ -796,7 +812,8 @@
                     $(".newEvent").empty().append(div);
                 }
                 if (data.code == 100) {
-                    $(".newEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                    // $(".newEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                    $(".newEvent").prev().find(".noDataTip").append("（暂无数据）");
                 }
             },
             error: function (xhr, type, errorThrown) {
@@ -807,7 +824,7 @@
     };
 
     //训练营活动
-    // var camp_event_id = '';
+
     function toCampEventList() {
         mui.ajax("{:url('api/event/getHotEventList')}", {
             data: {
@@ -848,17 +865,12 @@
                     } else {
                         var Ttime = date.getHours(event_time) + ":" + date.getMinutes(event_time);
                     }
-                    // camp_event_id = data.data[0].id
+
                     var url = "{:url('event/eventinfo')}" + '/event_id/' + data.data[0].id;
                     div += ' <li class="mui-table-view-cell mui-media listli liFrame"><a href="' + url + '"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
                     div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
                     div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div>';
-                    // div += '<div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
-                    // if (data.data[0].is_finished_num == 1) {
-                    //     div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                    // } else {
-                    //     div += '<button class="mui-btn opbtn bggreen signupCampEventBtn">参加</button>';
-                    // }
+
                     div += ' </div></div></a></li>';
                     // 人员头像版块
                     div += '<li class="mui-table-view-cell listli liImgFrame"><div class="imgShow fl overflow-x imgShowEvent" style="padding:0 !important">';
@@ -869,7 +881,8 @@
                     $(".newCampEvent").empty().append(div);
                 }
                 if (data.code == 100) {
-                    $(".newCampEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                    // $(".newCampEvent").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有活动数据，赶紧去创建活动吧</p></li>');
+                    $(".newCampEvent").prev().find(".noDataTip").append("（暂无数据）");
                 }
             },
             error: function (xhr, type, errorThrown) {
