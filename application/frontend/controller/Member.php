@@ -279,6 +279,7 @@ class Member extends Base{
         return view('Member/bandWx');
     }
 
+    // 收藏列表
     public function collectList(){
         return view('Member/collectList');
     }
