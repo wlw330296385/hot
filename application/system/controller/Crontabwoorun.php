@@ -157,7 +157,6 @@ class Crontabwoorun extends Controller {
                                 'remarks'=>$schedule['lesson_time'],
                             ];
                         }
-                        dump($incomeAssistant);
                         $this->insertSalaryIn($incomeAssistant,1,1);
                         $this->insertMemberFinance($MemberFinanceData2,1,1);
                     }
@@ -203,7 +202,7 @@ class Crontabwoorun extends Controller {
                         'remarks'   =>'课时教练总薪资支出',
                         'schedule_time'=>$schedule['lesson_time'],
                         'rebate_type' => $campInfo['rebate_type'],
-                        'create_time'=>$schedule['create_time'],
+                        'create_time'=>$schedule['lesson_time'],
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
                     ];
@@ -221,7 +220,7 @@ class Crontabwoorun extends Controller {
                          'rebate_type' => $campInfo['rebate_type'],
                         'status'    =>1,
                         'remarks'   =>'平台分成',
-                        'create_time'=>$schedule['create_time'],
+                        'create_time'=>$schedule['lesson_time'],
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
                     ];

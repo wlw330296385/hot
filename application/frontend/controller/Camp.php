@@ -602,16 +602,36 @@ class Camp extends Base{
         $Time = new \think\helper\Time;
         $campInfo = db('camp')->where(['id'=>$campInfo['id']])->find();
 
-        // 一个月的收益
-        $monthIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
-        if($campInfo['rebate_type'] == 2){
-            $monthOutput = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-                'not in',[-1,-2,3])->whereTime('create_time','m')->where('delete_time',null)->sum('output');
-            $monthOutput = $monthOutput?$monthOutput:0;
-            $monthIncome = $monthIncome - $monthOutput;
+        if($campInfo['rebate_type'] == 2){//营业额版
+            // 一个月的收益
+            $monthIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
+            $monthOutput1 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
+                'not in',[-1,-2])->whereTime('create_time','m')->where('delete_time',null)->sum('output');
+            $monthOutput2 = 0;
+            // $monthOutput2 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
+            //  3)->whereTime('schedule_time','m')->where('delete_time',null)->sum('output');
+            $monthOutput1 = $monthOutput1?$monthOutput1:0;
+            // $monthOutput2 = $monthOutput2?$monthOutput2:0;
+            $monthIncome = $monthIncome - $monthOutput1-$monthOutput2;
+            // 总收益
+            $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('income');
+            // 总支出
+            $totalOuput = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
+                'not in',[-1,-2])->where('delete_time',null)->sum('output');
+            $totalOuput = $totalOuput?$totalOuput:0;
+            $totalIncome = $totalIncome - $totalOuput;
+        }else{//课时版
+            // 一个月的收益
+            $monthIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->whereTime('schedule_time','m')->where('delete_time',null)->sum('income');
+            // 总收益
+            $totalIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->where('delete_time',null)->sum('income');
         }   
-        // 总收益
-        $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('income');
+        
+        
+
+
+
+        
         // 赠课总人数
         $totalGift = db('schedule_giftrecord')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('student_num');
         
