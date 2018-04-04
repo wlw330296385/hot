@@ -3,216 +3,305 @@
 
 <head>
     <meta charset="utf-8">
-    <title>组织注册</title>
+    <title>注册联赛组织</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        /* 球衣颜色 */
+
+        i.tip {
+            height: 0;
+            color: red;
+            float: right;
+            font-size: 22px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <header class="mui-bar mui-bar-nav subheader header1">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">注册组织信息</h1>
-    </header>
+<header class="mui-bar mui-bar-nav subheader header1">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">注册联赛组织</h1>
+</header>
 
-    <div class="mui-content">
+<div class="mui-content">
 
-        <form action="" class="mui-input-group">
-
-            <div class="mui-input-row organizationname">
-                <label>组织名称</label>
-                <input type="text" class="input organization" placeholder="请输入组织名称">
-            </div>
-
-            <div class="mui-input-row">
-                <label>组织类型</label>
-                <span class="select-arrow">
-                    <select class="pbselect type">
-                        <option>请选择机构/教练/其他</option>
-                        <option value="1">机构</option>
-                        <option value="0">教练</option>
-                        <option value="2">其他</option>
-                    </select>
-                </span>
-            </div>
-
-            <div class="mui-input-row">
-                <label>创建者姓名</label>
-                <input type="text" class="input realname" placeholder="请输入负责人真实姓名">
-            </div>
-
-            <div class="mui-input-row">
-                <label>手机号码</label>
-                <input id="telephone" type="text" value="{$memberInfo.telephone}"  class="input organization_telephone" placeholder="请输入手机号码">
-            </div>
-
-            <div class="mui-input-row">
-                <label>短信验证码</label>
-                <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)">
-                <input id="code" type="text" class="input verifcation" placeholder="输入验证码" style="width: 40%;">
-            </div>
-
-        </form>
-
-        <div class="tip-box">
-            <input name="iagree" type="checkbox" />&nbsp;
-            <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
+    <form action="" class="mui-input-group">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <div class="mui-input-row organizationname">
+            <label>组织名称</label>
+            <input type="text" class="input organization data" name="name" placeholder="请输入组织名称">
         </div>
 
-        <div class="tjbtn">
-            <button type="button" class="mui-btn btn organization-step1">注册</button>
+        <div class="mui-input-row">
+            <label>组织类型</label>
+            <span class="select-arrow">
+                <select class="pbselect type data" name="type">
+                    <option>请选择机构/个人/其他</option>
+                    <option value="1">机构</option>
+                    <option value="2">个人</option>
+                    <option value="0">其他</option>
+                </select>
+            </span>
+        </div>
+        <div class="mui-input-row">
+            <label>机构单位</label>
+            <input type="text" class="input data" name="company" placeholder="请输入机构单位">
+        </div>
+        <div class="mui-input-row">
+            <label>负责人姓名</label>
+            <input type="text" class="input data" name="realname" placeholder="请输入负责人真实姓名">
         </div>
 
+        <div class="mui-input-row">
+            <label>联系电话</label>
+            <input type="text" class="input data" name="contact_tel" placeholder="请输入联系电话">
+        </div>
+
+        <div class="mui-input-row" id='showCityPicker3'>
+            <a href="#" class="mui-navigate-right">
+                <div class="mui-navigate-right">
+                    <label>所属地区
+                        <i class="tip">*</i>
+                    </label>
+                    <span id="cityResult3" class="ui-alert"></span>
+                    <input type="hidden" name="province" value="" class="data" id="province">
+                    <input type="hidden" name="city" value="" class="data" id="city">
+                    <input type="hidden" name="area" value="" class="data" id="area">
+                </div>
+            </a>
+        </div>
+        <div class="mui-input-row">
+            <label>具体地址
+                <i class="tip">*</i>
+            </label>
+            <input type="text" name="address" value="" class="data" placeholder="请输入具体地址">
+        </div>
+        <div class="mui-input-row h-auto" id="logoframe">
+            <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <label>
+                    <b>组织徽标</b>
+                </label>
+                <img id="preview_1" class="logostyle mtnone bggray upload-preview" alt="">
+                <input type="hidden" name="logo" value='' class="data">
+            </a>
+        </div>
+
+        <div class="mui-input-row h-auto">
+            <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                <label>组织封面</label>
+                <img id="preview_2" class="upload-preview" alt="">
+                <input type="hidden" name="cover" value='' class="data">
+            </a>
+        </div>
+
+        <div class="mui-input-row h-auto">
+            <label>宣言</label>
+            <textarea rows="3" name="descri" class="data descri" placeholder="请填写宣言"></textarea>
+        </div>
+
+        <div class="page-header" style="background: #efeff4;">
+            <span class="course">简介</span>
+        </div>
+        <div class="mui-input-row tuwenEditor">
+            <textarea name="introduce" class="data introduce" style="display: none"></textarea>
+            <div class="introBox"></div>
+            <div class="mui-row mui-text-center mui-row-operation">
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame up pd">上移</a>
+                    <a class="frame down pd">下移</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame titleClass">添加标题</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame textClass">添加正文</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame imageClass">
+                        <div id="uploader-demo">
+                            <div id="fileList" class="uploader-list"></div>
+                            <div class="filePickerTwo">选择图片</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="tip-box">
+        <input name="iagree" type="checkbox"/>&nbsp;
+        <a href="#userAgreement">已阅读并同意篮球管家用户协议（点击查看）</a>
     </div>
 
-    <div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
-        <div class="page-header">
+    <div class="tjbtn">
+        <button type="button" class="mui-btn btn" onclick="submitAction()">注册</button>
+    </div>
+
+</div>
+
+<div id="userAgreement" class="mui-popover mui-popover-action mui-popover-bottom whitebg">
+    <div class="page-header">
             <span class="course">
                 <strong>篮球管家服务平台与用户共同确认：</strong>
             </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll"></div>
-        </div>
     </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll"></div>
+    </div>
+</div>
 
-    <script src="/static/frontend/js/mui.min.js"></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/smsCode.js"></script>
-    <script>
-        //初始化
-        mui.init({
-            swipeBack: true //启用右滑关闭功能
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/libs/webuploader.min.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'match_org'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    (function ($, doc) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
         });
+        // 关闭弹出菜单
+        $("body").on('tap', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
 
-        (function ($, doc) {
-            $(".mui-scroll-wrapper").scroll({
-                //bounce: false,//滚动条是否有弹力默认是true
-                indicators: true //是否显示滚动条,默认是true
+    })(mui, document);
+
+    //选择器
+    var getProvince = '';
+    var getCity = '';
+    var getArea = '';
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
             });
-            // 关闭弹出菜单
-            $("body").on('tap', '.mui-backdrop', function () {
-                mui(".mui-popover.mui-active").popover("toggle");
-            })
 
-        })(mui, document);
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
 
-        // 发送短信验证码
-        function sendCode(obj) {
-            telephone = document.getElementById('telephone').value;
-            var telephoneReg = /^1[34578]\d{9}$/;
-            if (!telephoneReg.test(telephone)) {
-                mui.toast('请输入正确的手机格式');
-                flag = false;
-            } else {
-                console.log(telephone);
-                var result = smsCode.getMobileCodeApi(obj, telephone, "{:url('api/sms/getMobileCodeApi','','',true)}");
-                console.log(result);
-                if (result.code == 200) {
-                    flag = true;
-                    mui.toast(result.msg);
-                } else {
-                    flag = false;
-                    mui.toast(result.msg);
-                }
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
+                    document.getElementById('province').value = getProvince;
+                    document.getElementById('city').value = getCity;
+                    document.getElementById('area').value = getArea;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+
+    $(function () {
+
+        //获取用户协议内容，放置弹出框中
+        mui.ajax("{:url('frontend/member/userAgreement')}", {
+            data: {},
+            dataType: 'html',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            success: function (data) {
+                console.log(data);
+                $("#userAgreement .mui-scroll").append(data);
+
+            },
+            error: function (xhr, type, errorThrown) {
+                console.log(type);
             }
-        };
-
-        $(function () {
-
-            //获取用户协议内容，放置弹出框中
-            mui.ajax("{:url('frontend/member/userAgreement')}", {
-                data: {},
-                dataType: 'html',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    $("#userAgreement .mui-scroll").append(data);
-
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
-
-            // 注册 step1
-            $('.organization-step1').click(function () {
-                var organizationname = $('.organization').val();
-                var organizationtype = $('.type').val();
-                var creator = $('.realname').val();
-                var organization_telephone = $('.organization_telephone').val();
-                var smsverify = $('.verifcation').val();
-
-                if (organizationname == "") {
-                    mui.toast('请填写组织名称');
-                    return false;
-                } else if (isNaN(organizationtype) === true) {
-                    mui.toast('请选择组织类型');
-                    return false;
-                } else if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(creator)) {
-                    mui.toast('请填写创建者姓名');
-                    return false;
-                } else if (!$('input[name=iagree]').is(':checked')) {
-                    mui.toast("请阅读并同意篮球管家用户协议，谢谢");
-                    return false;
-                };
-
-                if (!$(".mui-input-row").hasClass("hide")) {
-                    if (!(/^1[34578]\d{9}$/).test(organization_telephone)) {
-                        mui.toast("请输入正确的手机格式");
-                        return false;
-                    }
-                    if (!(/^\d{6,6}$/).test(smsverify)) {
-                        mui.toast('请填写正确的验证码');
-                        return false;
-                    } else {
-                        telephone = document.getElementById('telephone').value;
-                        var result = smsCode.validateSmsCodeApi(telephone, smsverify, "{:url('api/sms/validatesmscodeapi')}");
-                        if (result.code == 200) {
-                            creatorganization(organizationname, organizationtype, creator);
-                        } else {
-                            mui.toast(result.msg);
-                        }
-                    }
-                } else {
-                    creatorganization(organizationname, organizationtype, creator);
-                }
-
-            });
         });
+    });
 
-        function creatorganization(organizationname, organizationtype, creator) {
-            mui.ajax("{:url('api/organization/createCamp')}", {
-                data: {
-                    organizationname: organizationname,
-                    organizationtype: organizationtype,
-                    creator: creator,
-                },
-                dataType: 'json',
-                type: 'post',
-                timeout: 10000,
-                headers: { 'Content-Type': 'application/json' },
-                success: function (res) {
-                    if (res.code == 200) {
-                        mui.toast(res.msg + ',请继续完善组织');
-                        setTimeout(location.href = "{:url('organization/createorganization', '', '', true)}/step/2/organization_id/" + res.data, 3000);
-                    } else {
-                        mui.toast(res.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
+    // 提交
+    function submitAction(){
+        if (!$('input[name=iagree]').is(':checked')) {
+            mui.toast("请阅读并同意篮球管家用户协议，谢谢");
+            return false;
         }
-    </script>
-</body>
 
+        //图文编辑状态转换浏览状态
+        tuwenToView()
+        //获取最终含简单html标签的图文内容
+        var introHtml = $(".introBox").html();
+        $(".introduce").val(introHtml);
+
+        // 提交数据
+        var data = wooApi.getInputData('input', 'data');
+        datas = wooApi.getInputData('select', 'data', data);
+        // 获取其他标签值
+        arrData = wooApi.getDomData('domData', datas);
+        var objData = wooApi.arrTOobj(arrData);
+        var introduce = $('textarea.introduce').val();
+        var descri = $('textarea.descri').val();
+        objData.introduce = introduce;
+        objData.descri = descri;
+        console.log(objData);
+        var url = "{:url('api/league/creatematchorg')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+        console.log(ajaxResult);
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '联赛组织注册成功', '确定', function () {
+
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '注册失败');
+            tuwenToEdit(); //图文转换成可编辑状态
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
+    }
+</script>
+</body>
 </html>
