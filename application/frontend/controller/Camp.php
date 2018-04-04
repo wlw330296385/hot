@@ -622,7 +622,7 @@ class Camp extends Base{
             $yearOutput2 = 0;
             // $monthOutput2 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
             //  3)->whereTime('schedule_time','m')->where('delete_time',null)->sum('output');
-            $yearOutput1 = $yearOutput1?$yearhOutput1:0;
+            $yearOutput1 = $yearOutput1?$yearOutput1:0;
             // $monthOutput2 = $monthOutput2?$monthOutput2:0;
             $yearIncome = $yearIncome - $yearOutput1-$yearOutput2;
 
