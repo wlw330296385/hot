@@ -36,11 +36,11 @@
                                 <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
                             </div>
                             <h3 class="totalRight">
-                                <span><small>总购买课时：</small><strong class="text-yellow"></strong></span>
-                                <span><small>总赠送课时：</small><strong class="text-yellow monthOut"></strong></span>
-                                <span><small>总已上课时：</small><strong class="text-yellow monthXF"></strong></span>
-                                <span><small>总退费课时：</small><strong class="text-yellow monthTX"></strong></span>
-                                <span><small>总剩余课时（应该是未上的课时）：</small><strong class="text-yellow monthTX"></strong></span>
+                                <span><small>合计购买：</small><strong class="text-yellow monthBill"></strong></span>
+                                <span><small>合计赠送：</small><strong class="text-yellow monthGift"></strong></span>
+                                <span><small>合计退费：</small><strong class="text-yellow monthRefund"></strong></span>
+                                <span><small>合计已上课：</small><strong class="text-yellow monthSchedule"></strong></span>
+                                <!--<span><small>总剩余课时（应该是未上的课时）：</small><strong class="text-yellow monthTX"></strong></span>-->
                             </h3>
                         </div>
                     </div>
@@ -52,9 +52,9 @@
                                     <th>课程</th>
                                     <th>单价</th>
                                     <th>购买课时</th>
-                                    <th>已上课时</th>
-                                    <th>退费课时</th>
                                     <th>赠送课时</th>
+                                    <th>退费课时</th>
+                                    <th>已上课时</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,10 +85,10 @@
                                     </td>
                                     <td>
                                         <ul class="dataCol-1 colCount">
-                                            {volist name='totalScheduleList' id='vol'}
-                                            <li>{$vol.s_students}</li>
+                                            {volist name='giftList' id='vol'}
+                                            <li>{$vol.s_gift_schedule}</li>
                                             {/volist}
-                                            <li class="colTotal" id="schedule">-</li>
+                                            <li class="colTotal" id="gift">-</li>
                                         </ul>
                                     </td>
                                     <td>
@@ -101,10 +101,10 @@
                                     </td>
                                     <td>
                                         <ul class="dataCol-1 colCount">
-                                            {volist name='giftList' id='vol'}
-                                            <li>{$vol.s_gift_schedule}</li>
+                                            {volist name='totalScheduleList' id='vol'}
+                                            <li>{$vol.s_students}</li>
                                             {/volist}
-                                            <li class="colTotal" id="gift">-</li>
+                                            <li class="colTotal" id="schedule">-</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -173,6 +173,10 @@
             $(this).find("li.colTotal").text(liNum);
         });
 
+        $(".monthBill").text($("#bill").text());
+        $(".monthGift").text($("#gift").text());
+        $(".monthSchedule").text($("#schedule").text());
+        $(".monthRefund").text($("#refund").text());
 
         //=========================== 初始化数据 ==============================//
 
