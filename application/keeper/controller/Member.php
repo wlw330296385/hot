@@ -289,4 +289,9 @@ class Member extends Base{
         return view('member/collectList');
     }
 
+    // 收藏列表
+    public function memberCenter(){
+        return view('member/memberCenter');
+    }
+
 }
