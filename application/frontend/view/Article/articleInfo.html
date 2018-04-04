@@ -34,13 +34,11 @@
                         <p style="line-height:20px;margin:0;">{$articleInfo.update_time}</p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        {if $isCollect}
-                        {eq name="isCollect.status" value='1' }
+                        {if $isCollect} {eq name="isCollect.status" value='1' }
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">已收藏</button>
                         {else /}
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
-                        {/eq}
-                        {else /}
+                        {/eq} {else /}
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
                         {/if}
                         <span>
@@ -164,8 +162,7 @@
 
             });
 
-
-        //收藏功能
+            //收藏功能
             $(".collect").on('tap', function () {
                 var article = "{$articleInfo.title}";
                 var article_id = "{$articleInfo.id}";
@@ -195,15 +192,43 @@
 
             });
 
-            function text(){
-               if($(".collect").text()=='已收藏'){
+            function text() {
+                if ($(".collect").text() == '已收藏') {
                     $(".collect").text('收藏')
-               }else{
+                } else {
                     $(".collect").text('已收藏')
-               }
+                }
             }
 
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var article = "{$articleInfo.title}";
+                var article_id = "{$articleInfo.id}";
+                mui.ajax("{:url('api/article/likesApi')}", {
+                    data: {
+                        article: article,
+                        article_id: article_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbsup").css("color", "red");
+                            // $(".thumbup_count").text();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
 
+            });
         })
 
         var count = 1;
@@ -246,10 +271,10 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p>' + data.data.data[i].comment + '</p></li>'
                         }
-                        if(newli == ''){
+                        if (newli == '') {
                             $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
                         }
-                    } 
+                    }
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
@@ -261,18 +286,9 @@
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                 }
-                
+
             });
         };
-
-
-
-
-
-        
-
-
-
 
     </script>
 </body>

@@ -251,16 +251,16 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                        <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                            <label>合照封面</label>
-                            <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
-                            <input type="hidden" name="logo" value='{$gradeInfo.logo}' class="data">
-                        </a>
-                    </div>
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>合照封面</label>
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <input type="hidden" name="logo" value='{$gradeInfo.logo}' class="data">
+                    </a>
+                </div>
                 <div class="page-header" style="background: #efeff4;">
-                        <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
-                        <span class="f12">说明：合照封面，建议上传班级合影，将作为列表展示图和详情封面。</span>
-                    </div>
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+                    <span class="f12">说明：合照封面，建议上传班级合影，将作为列表缩略图和详情封面。</span>
+                </div>
 
             </form>
 
@@ -1001,17 +1001,6 @@
                 if ($('input[name="grade"]').val() == "") {
                     noPass += "班级名称必须填写！！"
                 }
-                
-                var coach_salary = $('input[name="coach_salary"]').val();
-                var coach_salaryIni = "{$gradeInfo.coach_salary}";
-                var assistant_salary = $('input[name="assistant_salary"]').val();
-                var assistant_salaryIni = "{$gradeInfo.assistant_salary}";
-                var salary_base = $('input[name="salary_base"]').val();
-                var salary_baseIni = "{$gradeInfo.salary_base}";
-                if (coach_salary != coach_salaryIni || assistant_salary != assistant_salaryIni || salary_base != salary_baseIni) {
-                    mui.alert("修改主教底薪，助教底薪或者提成基数三者的任何一项，未审课时的数值也会跟着改变!");
-                    return false;
-                }
 
                 if (noPass != "") {
                     mui.toast(noPass);
@@ -1079,9 +1068,44 @@
 
                         }
                     });
+                    var coach_salary = $('input[name="coach_salary"]').val();
+                    var coach_salaryIni = "{$gradeInfo.coach_salary}";
+                    var assistant_salary = $('input[name="assistant_salary"]').val();
+                    var assistant_salaryIni = "{$gradeInfo.assistant_salary}";
+                    var salary_base = $('input[name="salary_base"]').val();
+                    var salary_baseIni = "{$gradeInfo.salary_base}";
+                    var btnArray = ['取消', '确定'];
+                    if (coach_salary != coach_salaryIni || assistant_salary != assistant_salaryIni || salary_base != salary_baseIni) {
+                        mui.confirm("修改主教底薪，助教底薪或者提成基数三者的任何一项，未审课时的数值也会跟着改变!", '', btnArray, function (e) {
+                            if (e.index == 1) {
+                                var data = wooApi.getInputData('input', 'data');
+                                datas = wooApi.getInputData('select', 'data', data);
+                                // 获取其他标签值
+                                arrData = wooApi.getDomData('domData', datas);
+                                var objData = wooApi.arrTOobj(arrData);
+                                // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+                                objData.studentData = JSON.stringify(studentList);
+                                console.log(studentList);
+                                console.log(objData);
+                                // return;
+                                var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
+                                var ajaxResult = wooApi.asyncF(url, objData);
+                                console.log(ajaxResult);
+                                if (ajaxResult.code == 200) {
+                                    mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                                        window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                                    })
+                                } else {
+                                    mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
 
+                                    })
+                                }
+                            } else {
+                                return false;
+                            }
+                        });
+                    }
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
                     // 获取其他标签值
@@ -1104,6 +1128,7 @@
 
                         })
                     }
+
                 }
             })
 

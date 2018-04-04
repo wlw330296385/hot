@@ -95,14 +95,24 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/schedule/getScheduleListByPageApi','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/schedule_member/getScheduleMemberListWithScheduleByPageApi','','',true)}" + '/?page=' + page;
                 var camp_id = "{$o_id}";
+                var member_id = "{$memberInfo.id}";
+                var data = {};
+                if (camp_id > 0) {
+                    data = {
+                        camp_id: camp_id,
+                        member_id: member_id,
+                        status: 1,
+                    }
+                } else {
+                    data = {
+                        status: 1,
+                    }
+                }
                 mui.ajax({
                     url: url,
-                    data: {
-                        camp_id: camp_id,
-                        status: 1,
-                    },
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -113,7 +123,7 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id;
-                                newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd60 newline">' + data.data.data[i].grade + '<p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div><div class="price-frame"><p class="price"><strong>' + data.data.data[i].students + '</strong>/人</p><p class="address">' + data.data.data[i].area + '</p></div></a></li>'
+                                newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><div class="mui-media-body wd60 newline">' + data.data.data[i].schedule.grade + '<p class="mui-ellipsis">' + data.data.data[i].schedule.lesson + '</p></div><div class="price-frame"><p class="price"><strong>' + data.data.data[i].schedule.students + '</strong>/人</p><p class="address">' + data.data.data[i].schedule.area + '</p></div></a></li>'
                             }
                         }
                         if (gType == 1) {

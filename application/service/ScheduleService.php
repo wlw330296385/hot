@@ -155,11 +155,12 @@ class ScheduleService
     {
         // 保存schedule_member数据
         $model = new ScheduleMember();
-
         // 记录学员
         $studentDatalist = [];
         foreach ($students as $student) {
             // 保存学员信息组合
+            // 获取学员详细信息
+            $studentInfo = db('student')->where('id', $student['student_id'])->whereNull('delete_time')->find();
             $datatmp = [
                 'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
@@ -169,6 +170,8 @@ class ScheduleService
                 'grade' => $schedule['grade'],
                 'user_id' => $student['student_id'],
                 'user' => $student['student'],
+                'member_id' => $studentInfo['member_id'],
+                'member' => $studentInfo['member'],
                 'type' => 1,
                 'status' => 0,
                 'schedule_time' => $schedule['lesson_time']
@@ -191,7 +194,6 @@ class ScheduleService
             array_push($studentDatalist, $datatmp);
             unset($datatmp);
         }
-
          $savestudentResult = $model->saveAll($studentDatalist);
          if (!$savestudentResult) {
              return ['code' => 100, 'msg' => '记录学员课时数据异常，请重试'];
@@ -200,6 +202,8 @@ class ScheduleService
         // 记录教练
         $coachDatalist = [];
         if ($schedule['coach_id']) {
+            // 获取教练详细信息
+            $coachInfo = db('coach')->where('id', $schedule['coach_id'])->whereNull('delete_time')->find();
             $datatmp = [
                 'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
@@ -211,6 +215,8 @@ class ScheduleService
                 'grade' => $schedule['grade'],
                 'user_id' => $schedule['coach_id'],
                 'user' => $schedule['coach'],
+                'member_id' => $coachInfo['member_id'],
+                'member' => db('member')->where('id', $coachInfo['member_id'])->value('member'),
                 'type' => 2,
                 'status' => 0,
                 'schedule_time' => $schedule['lesson_time']
@@ -223,6 +229,8 @@ class ScheduleService
         if (!empty($assistantIdArray)) {
             foreach ($assistantIdArray as $key => $val) {
                 if ($val) {
+                    // 获取教练详细信息
+                    $coachInfo2 = db('coach')->where('id', $val)->whereNull('delete_time')->find();
                     $datatmp = [
                         'schedule_id' => $schedule['id'],
                         'schedule' => $schedule['grade'],
@@ -234,6 +242,8 @@ class ScheduleService
                         'grade' => $schedule['grade'],
                         'user_id' => $val,
                         'user' => $assistantArray[$key],
+                        'member_id' => $coachInfo2['member_id'],
+                        'member' => db('member')->where('id', $coachInfo2['member_id'])->value('member'),
                         'type' => 2,
                         'status' => 1,
                         'schedule_time' => $schedule['lesson_time']

@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\CampService;
+use app\service\LessonService;
 use app\service\ScheduleService;
 use think\Db;
 /**
@@ -168,6 +169,10 @@ class Schedule extends Base
 		$GradeService = new \app\service\GradeService;		
 		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
 
+		// 班级课程信息
+        $lessonService = new LessonService();
+        $lessonInfo = $lessonService->getLessonInfo(['id' => $gradeInfo['lesson_id']]);
+
 		// 教案
 		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
@@ -195,6 +200,7 @@ class Schedule extends Base
 		$this->assign('studentList', $studentList);
 		$this->assign('expstudentList', $expstudentList);
 		$this->assign('hideDisplay', $hideDisplay);
+		$this->assign('lessonInfo', $lessonInfo);
 		return view('Schedule/recordSchedule');
 	}
 
