@@ -59,7 +59,7 @@
                                 <use xlink:href="#icon-mine-class"></use>
                             </svg>
                             <div class="mui-media-body">任务</div>
-                            </a>
+                        </div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
                         <div class="goConfirm">
@@ -70,7 +70,7 @@
                         </div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <a href="">
+                        <a href="{:url('member/collectlist')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-Album"></use>
                             </svg>
@@ -78,145 +78,145 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <div class="goConfirm">
+                        <a href="{:url('member/followlist')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-attention"></use>
                             </svg>
                             <div class="mui-media-body">关注</div>
-                        </div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <div class="goConfirm">
+                        <a href="{:url('member/invitation')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-invite"></use>
                             </svg>
                             <div class="mui-media-body">邀请</div>
-                        </div>
+                        </a>
                     </li>
                 </ul>
-                </div>
+            </div>
 
-                <!--最新消息-->
-                <div class="page-header mb" style="background-color: #FFF;">
-                    <a href="">
-                        <span class="course wd83">最新消息：陈某某报名周二的球队比赛</span>
-                        <span class="more">更多</span>
+            <!--最新消息-->
+            <div class="page-header mb" style="background-color: #FFF;">
+                <a href="">
+                    <span class="course wd83">最新消息：陈某某报名周二的球队比赛</span>
+                    <span class="more">更多</span>
+                </a>
+            </div>
+
+            {notempty name="$refereeInfo"}
+            <!--裁判员-->
+            <ul class="mui-table-view list">
+                <li class="mui-table-view-cell listli">
+                    <a href="{:url('referee/refereeManage', ['referee_id' => $refereeInfo['id']])}">
+                        <img src="{$refereeInfo.portraits}" class="img24">裁判员管理
+                        <span class="mui-navigate-right wd36" style="padding-right:15px !important;">{$refereeInfo.status}</span>
                     </a>
+                </li>
+            </ul>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('referee/applyList', ['referee_id' => $refereeInfo['id'], 'type' => 1])}">
+                        <span class="icon iconfont icon-training-camp"></span>
+                        <div class="mui-media-body">接单列表</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('referee/applyList', ['referee_id' => $refereeInfo['id'], 'type' => 2])}">
+                        <span class="icon iconfont icon-training-course"></span>
+                        <div class="mui-media-body">受邀列表</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('referee/judgingList', ['referee_id' => $refereeInfo['id']])}">
+                        <span class="icon iconfont icon-training-course"></span>
+                        <div class="mui-media-body">执裁列表</div>
+                    </a>
+                </li>
+            </ul>
+            {/notempty}
+
+            <div class="myteam mb">
+                {volist name="myTeamList" id="vol"}
+                <div class="mb">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli">
+                            <a href="{:url('team/teamManage',['team_id'=>$vol['team_id']])}">
+                                <img src="{$vol.team.logo}" class="img24">{$vol.team.name}
+                                <span class="mui-navigate-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="{:url('team/teamInfo',['team_id'=>$vol['team_id']])}">
+                                <span class="icon iconfont icon-training-camp"></span>
+                                <div class="mui-media-body">球队主页</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="{:url('team/matchList',['team_id'=>$vol['team_id']])}">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">最新比赛</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="{:url('team/eventList',['team_id'=>$vol['team_id']])}">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">最新活动</div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+                {/volist}
+            </div>
 
-                {notempty name="$refereeInfo"}
-                <!--裁判员-->
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli">
-                        <a href="{:url('referee/refereeManage', ['referee_id' => $refereeInfo['id']])}">
-                            <img src="{$refereeInfo.portraits}" class="img24">裁判员管理
-                            <span class="mui-navigate-right wd36" style="padding-right:15px !important;">{$refereeInfo.status}</span>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="{:url('referee/applyList', ['referee_id' => $refereeInfo['id'], 'type' => 1])}">
-                            <span class="icon iconfont icon-training-camp"></span>
-                            <div class="mui-media-body">接单列表</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="{:url('referee/applyList', ['referee_id' => $refereeInfo['id'], 'type' => 2])}">
-                            <span class="icon iconfont icon-training-course"></span>
-                            <div class="mui-media-body">受邀列表</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="{:url('referee/judgingList', ['referee_id' => $refereeInfo['id']])}">
-                            <span class="icon iconfont icon-training-course"></span>
-                            <div class="mui-media-body">执裁列表</div>
-                        </a>
-                    </li>
-                </ul>
-                {/notempty}
+            <div class="hints mui-text-center hide whitebg">
+                <p>你还没加入任何球队哦</p>
+                <p>赶紧来查找或创建你的球队吧！</p>
+            </div>
 
-                <div class="myteam mb">
-                    {volist name="myTeamList" id="vol"}
-                    <div class="mb">
-                        <ul class="mui-table-view list">
-                            <li class="mui-table-view-cell listli">
-                                <a href="{:url('team/teamManage',['team_id'=>$vol['team_id']])}">
-                                    <img src="{$vol.team.logo}" class="img24">{$vol.team.name}
-                                    <span class="mui-navigate-right"></span>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2">
-                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                                <a href="{:url('team/teamInfo',['team_id'=>$vol['team_id']])}">
-                                    <span class="icon iconfont icon-training-camp"></span>
-                                    <div class="mui-media-body">球队主页</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                                <a href="{:url('team/matchList',['team_id'=>$vol['team_id']])}">
-                                    <span class="icon iconfont icon-training-course"></span>
-                                    <div class="mui-media-body">最新比赛</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                                <a href="{:url('team/eventList',['team_id'=>$vol['team_id']])}">
-                                    <span class="icon iconfont icon-training-course"></span>
-                                    <div class="mui-media-body">最新活动</div>
-                                </a>
-                            </li>
-                        </ul>
+            <div class="success-frame success-frame2">
+                <div class="mui-row mui-text-center">
+                    <div class="mui-col-xs-6 mui-col-sm-6">
+                        <a href="{:url('team/teamlist')}">
+                            <button type="button" class="mui-btn f16" style="padding:6px 30px">查找球队</button>
+                        </a>
                     </div>
-                    {/volist}
-                </div>
-
-                <div class="hints mui-text-center hide whitebg">
-                    <p>你还没加入任何球队哦</p>
-                    <p>赶紧来查找或创建你的球队吧！</p>
-                </div>
-
-                <div class="success-frame success-frame2">
-                    <div class="mui-row mui-text-center">
-                        <div class="mui-col-xs-6 mui-col-sm-6">
-                            <a href="{:url('team/teamlist')}">
-                                <button type="button" class="mui-btn f16" style="padding:6px 30px">查找球队</button>
-                            </a>
-                        </div>
-                        <div class="mui-col-xs-6 mui-col-sm-6">
-                            <a href="{:url('team/createteam')}">
-                                <button type="button" class="mui-btn f16" style="padding:6px 30px">创建球队</button>
-                            </a>
-                        </div>
+                    <div class="mui-col-xs-6 mui-col-sm-6">
+                        <a href="{:url('team/createteam')}">
+                            <button type="button" class="mui-btn f16" style="padding:6px 30px">创建球队</button>
+                        </a>
                     </div>
                 </div>
-
             </div>
 
         </div>
-        {layout name="Layout/footer"}
-        <script src="/static/frontend/js/mui.min.js"></script>
-        <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-        <script>
-            //初始化
-            mui.init({
-                swipeBack: true //启用右滑关闭功能
+
+    </div>
+    {layout name="Layout/footer"}
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+
+            //未开发提示
+            $(".goConfirm").click(function () {
+                mui.toast('暂未开放，敬请期待');
             });
 
-            $(function () {
+            var html = $.trim($(".myteam").html())
+            if (html == '') {
+                $(".hints").show();
+            }
+        });
 
-                //未开发提示
-                $(".goConfirm").click(function () {
-                    mui.toast('暂未开放，敬请期待');
-                });
-
-                var html = $.trim($(".myteam").html())
-                if (html == '') {
-                    $(".hints").show();
-                }
-            });
-
-        </script>
+    </script>
 </body>
 
 </html>
