@@ -602,6 +602,7 @@ class Camp extends Base{
         $Time = new \think\helper\Time;
         $campInfo = db('camp')->where(['id'=>$campInfo['id']])->find();
 
+
         if($campInfo['rebate_type'] == 2){//营业额版
             // 一个月的收益
             $monthIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
@@ -613,6 +614,19 @@ class Camp extends Base{
             $monthOutput1 = $monthOutput1?$monthOutput1:0;
             // $monthOutput2 = $monthOutput2?$monthOutput2:0;
             $monthIncome = $monthIncome - $monthOutput1-$monthOutput2;
+
+            // 年收益
+            $yearIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','y')->where('delete_time',null)->sum('income');
+            $yearOutput1 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
+                'not in',[-1,-2])->whereTime('create_time','y')->where('delete_time',null)->sum('output');
+            $yearOutput2 = 0;
+            // $monthOutput2 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
+            //  3)->whereTime('schedule_time','m')->where('delete_time',null)->sum('output');
+            $yearOutput1 = $yearOutput1?$yearhOutput1:0;
+            // $monthOutput2 = $monthOutput2?$monthOutput2:0;
+            $yearIncome = $yearIncome - $yearOutput1-$yearOutput2;
+
+
             // 总收益
             $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('income');
             // 总支出
@@ -623,15 +637,20 @@ class Camp extends Base{
         }else{//课时版
             // 一个月的收益
             $monthIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->whereTime('schedule_time','m')->where('delete_time',null)->sum('income');
+
+            // 一年的总收益
+            $yearIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->whereTime('schedule_time','y')->where('delete_time',null)->sum('income');
+
             // 总收益
             $totalIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->where('delete_time',null)->sum('income');
         }   
         
-        
+
+        // 年
 
 
 
-        
+
         // 赠课总人数
         $totalGift = db('schedule_giftrecord')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('student_num');
         
@@ -652,27 +671,50 @@ class Camp extends Base{
         // 本月上课总人次
         $monthStudents = 0;
         foreach ($monthScheduleList as $key => $value) {
-            $totalStudents+=$value['students'];
+            $monthStudents+=$value['students'];
         }
+
+        //本年已上课量
+        $yearSchedule = 0;
+        $yearScheduleList = db('schedule')->where(['camp_id'=>$campInfo['id']])->whereTime('lesson_time','y')->where('delete_time',null)->select();
+        $yearSchedule = count($yearScheduleList);
+        // 本n年上课总人次
+        $yearStudents = 0;
+        foreach ($yearScheduleList as $key => $value) {
+            $yearStudents+=$value['students'];
+        }
+
         // 总营业额
         $totalBill = db('bill')->where(['camp_id'=>$campInfo['id'],'is_pay'=>1])->sum('balance_pay');
         //本月营业额
         $monthBill = db('bill')->where(['camp_id'=>$campInfo['id'],'is_pay'=>1])->whereTime('pay_time','m')->sum('balance_pay');
-        // 在学会员
+        //本年营业额
+        $yearBill = db('bill')->where(['camp_id'=>$campInfo['id'],'is_pay'=>1])->whereTime('pay_time','y')->sum('balance_pay');
+        // 月在学会员
         $monthCampStudents = db('monthly_students')->where(['camp_id'=>$campInfo['id']])->limit(2)->select();
+        //年教学会员
+        $y = date('Y',time());
+        $y1 = $y*100+1;
+        $yearCampStudents = db('monthly_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>$y1])->find();
         // 本月新增会员
         $monthNewStudents = 0;
+        $yearNewStudents = 0;
         //本月离营学员
         $monthofflineStudents = 0;
+        $yearofflineStudents = 0;
         //在学会员
         $onlineStudents = 0;
-        if (count($monthCampStudents) == 2) {
+        if (count($monthCampStudents) >1) {
             $monthNewStudents = $monthCampStudents[0]['online_students'] - $monthCampStudents[1]['online_students'];
             $monthofflineStudents = $monthCampStudents[0]['offline_students'] - $monthCampStudents[1]['offline_students'];
+            if($yearCampStudents){
+                $yearNewStudents = $monthCampStudents[0]['online_students'] - $yearCampStudents['online_students'];
+                $yearofflineStudents = $monthCampStudents[0]['offline_students'] - $yearCampStudents['offline_students'];
+            }
             $onlineStudents = $monthCampStudents[0]['onlesson_students'];
         }elseif (count($monthCampStudents) == 1){
-            $monthNewStudents = $monthCampStudents[0]['online_students'];
-            $monthofflineStudents = $monthCampStudents[0]['offline_students'];
+            $monthNewStudents = $yearNewStudents = $monthCampStudents[0]['online_students'];
+            $monthofflineStudents = $yearofflineStudents = $monthCampStudents[0]['offline_students'];
             $onlineStudents = $monthCampStudents[0]['onlesson_students'];
         }
         
@@ -779,20 +821,32 @@ class Camp extends Base{
         $this->assign('eventBill',json_encode($eventBill));
 
         $this->assign('monthBill',$monthBill?$monthBill:0);
+        $this->assign('yearBill',$yearBill?$yearBill:0);
         $this->assign('totalBill',$totalBill?$totalBill:0);
-        $this->assign('monthIncome',$monthIncome?$monthIncome:0);   
+
+        $this->assign('monthIncome',$monthIncome?$monthIncome:0);
+        $this->assign('yearIncome',$yearIncome?$yearIncome:0);   
         $this->assign('totalIncome',$totalIncome?$totalIncome:0);
-        $this->assign('monthCampStudents',$monthCampStudents?$monthCampStudents:0);
+
         $this->assign('totalGift',$totalGift?$totalGift:0);
+
         $this->assign('totalStudents',$totalStudents?$totalStudents:0);
         $this->assign('monthStudents',$monthStudents?$monthStudents:0);
         $this->assign('monthSchedule',$monthSchedule?$monthSchedule:0);
         $this->assign('totalSchedule',$totalSchedule?$totalSchedule:0);
+        $this->assign('yearStudents',$yearStudents?$yearStudents:0);
+        $this->assign('yearSchedule',$yearSchedule?$yearSchedule:0);
 
 
         $this->assign('monthNewStudents',$monthNewStudents?$monthNewStudents:0);
         $this->assign('monthofflineStudents',$monthofflineStudents?$monthofflineStudents:0);
         $this->assign('onlineStudents',$onlineStudents?$onlineStudents:0);
+
+        $this->assign('yearNewStudents',$yearNewStudents?$yearNewStudents:0);
+        $this->assign('yearofflineStudents',$yearofflineStudents?$yearofflineStudents:0);
+
+
+
         return view('Camp/campStatistics');
     }
 }
