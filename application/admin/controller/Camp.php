@@ -69,10 +69,10 @@ class Camp extends Backend {
 
             $Auth = new AuthService();
             if ( $execute || ($execute === 0) ) {
-                $Auth->record("训练营id:{$id} 修改信息 成功 data:{json_encode($request)}");
+                $Auth->record("训练营id:{$id} 修改信息 成功 data:".json_encode($request));
                 $this->success(__lang('MSG_200'), 'camp/index');
             } else {
-                $Auth->record("训练营id:{$id} 修改信息 失败 data:{json_encode($request)}");
+                $Auth->record("训练营id:{$id} 修改信息 失败 data:".json_encode($request));
                 $this->error(__lang('MSG_400'));
             }
         }
