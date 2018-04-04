@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{$campInfo['camp']}</title>
+    <title>统计图表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,130 +15,181 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .nav-list .colororange { font-size: 16px !important }
+        small { font-size: 60%; }
+    </style>
 </head>
 
 <body class="whitebg">
 
-<div class="mui-content">
+<div class="mui-content mt55">
 
-    <div id="tabbar" class="mui-control-content mui-active coach">
         <!--操作模块-->
-        <div class="img4x3" style="background-image: url({$campInfo['banner']})">
-            <!--<ul class="mui-table-view mui-grid-view mui-grid-9">-->
-                <!--<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">-->
-                    <!--<a href="#">-->
-                        <!--<img class="coachicon" src="{$memberInfo['avatar']}">-->
-                        <!--<div class="f16">{$memberInfo['member']}</div>-->
-                    <!--</a>-->
-                <!--</li>-->
-            <!--</ul>-->
-            <!--<p class="coachid f12">ID:{$memberInfo['hot_id']}</p>-->
-        </div>
+        <div class="img4x3" style="background-image: url({$campInfo['banner']})"></div>
         <!--图文导航-->
-        <div class="page-header">
-            <a href="{:url('camp/index')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow"
-               style="color: #737373;font-size: 21px"></a>
-            <span class="more"> {$campInfo['camp']}统计及图表</span>
+        <div class="page-header mui-text-center">
+            <a href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
+            <b class="f14">{$campInfo['camp']}统计概览</b>
         </div>
         <div class="nav-list">
-            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame" style="margin-bottom: 7px;">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月营业额</span>
-                        <div class="mui-media-body colororange">￥{$monthBill}</div>
+            <div style="padding: 10px 10px;">
+                <div id="segmentedControl" class="mui-segmented-control mui-segmented-control-negative">
+                    <a class="mui-control-item mui-active" href="#item1">
+                        本月
                     </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月收益</span>
-                        <div class="mui-media-body colororange">￥{$monthIncome}</div>
+                    <a class="mui-control-item" href="#item2">
+                        本年
                     </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月已上课量</span>
-                        <div class="mui-media-body colororange">{$monthSchedule} <small>节</small></div>
+                    <a class="mui-control-item" href="#item3">
+                        全部
                     </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月上课人流量</span>
-                        <div class="mui-media-body colororange">{$monthStudents} <small>人次</small></div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月新增会员</span>
-                        <div class="mui-media-body colororange">{$monthNewStudents} <small>人</small></div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>本月离营学员</span>
-                        <div class="mui-media-body colororange">{$monthofflineStudents} <small>人</small></div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>总收益</span>
-                        <div class="mui-media-body colororange">￥{$totalIncome}</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>总营业额</span>
-                        <div class="mui-media-body colororange">￥{$totalBill}</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>在学会员</span>
-                        <div class="mui-media-body colororange">{$onlineStudents} <small>人</small></div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>历史学员</span>
-                        <div class="mui-media-body colororange">{$campInfo['total_member']} <small>人</small></div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>总已上课量</span>
-                        <div class="mui-media-body colororange">{$totalSchedule} <small>节</small></div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="#">
-                        <span>总上课人流量</span>
-                        <div class="mui-media-body colororange">{$totalStudents} <small>人</small></div>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
+            <div id="item1" class="mui-control-content mui-active">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>月营业额</span>
+                            <div class="mui-media-body colororange">{$monthBill} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>已上课量</span>
+                            <div class="mui-media-body colororange">{$monthSchedule} <small>节</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>新增会员</span>
+                            <div class="mui-media-body colororange">{$monthNewStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>收益金额</span>
+                            <div class="mui-media-body colororange">{$monthIncome} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>上课人次</span>
+                            <div class="mui-media-body colororange">{$monthStudents} <small>人次</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>离营学员</span>
+                            <div class="mui-media-body colororange">{$monthofflineStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="item2" class="mui-control-content">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>年营业额</span>
+                            <div class="mui-media-body colororange">{$monthBill} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>已上课量</span>
+                            <div class="mui-media-body colororange">{$monthSchedule} <small>节</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>新增会员</span>
+                            <div class="mui-media-body colororange">{$monthNewStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>收益金额</span>
+                            <div class="mui-media-body colororange">{$monthIncome} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>上课人次</span>
+                            <div class="mui-media-body colororange">{$monthStudents} <small>人次</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>离营学员</span>
+                            <div class="mui-media-body colororange">{$monthofflineStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="item3" class="mui-control-content">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>总营业额</span>
+                            <div class="mui-media-body colororange">{$totalBill} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>总上课量</span>
+                            <div class="mui-media-body colororange">{$totalSchedule} <small>节</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>活跃学员</span>
+                            <div class="mui-media-body colororange">{$onlineStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>收益金额</span>
+                            <div class="mui-media-body colororange">{$totalIncome} <small>元</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>上课人次</span>
+                            <div class="mui-media-body colororange">{$totalStudents} <small>人</small></div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="#">
+                            <span>全部学员</span>
+                            <div class="mui-media-body colororange">{$campInfo['total_member']} <small>人</small></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
 
         <!--图表模块-->
-        <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin-bottom: 7px;">
+        <div class="page-header mui-text-center">
+            <b class="f14">本月（{:date('Y',time())}-{:date('m',time())}）营业额折线图</b>
+        </div>
+        <div id="turnoverMonth" style="height: 320px; padding: 10px; background-color: #FFF;"></div>
 
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
-                <div id="turnoverMonth" style="height: 400px"></div>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
-                <div id="turnoverYear" style="height: 400px"></div>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
-                <div id="studentAll" style="height: 400px"></div>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
-                <div id="studentLocation" style="height: 400px"></div>
-            </li>
-        </ul>
+        <div class="page-header mui-text-center">
+            <b class="f14">本年（{:date('Y',time())}）营业额折线图</b>
+        </div>
+        <div id="turnoverYear" style="height: 320px; padding: 10px; background-color: #FFF;"></div>
 
+        <div class="page-header mui-text-center">
+            <b class="f14">训练点学员分布</b>
+        </div>
+        <div id="canvasLocation" style="height: 450px; padding: 10px; background-color: #FFF;"></div>
 
-    </div>
+        <div class="page-header mui-text-center">
+            <b class="f14">课程购买占比</b>
+        </div>
+        <div id="canvasLesson" style="height: 450px; padding: 10px; background-color: #FFF;"></div>
+
 
 
 
@@ -147,6 +198,7 @@
 {layout name="Layout/footer"}
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
@@ -169,6 +221,7 @@
         arrDate.push(i)
     }
 
+
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
 
@@ -184,7 +237,7 @@
     // 指定图表的配置项和数据
     optionTM = {
         title: {
-            text: currYear+'年'+currMonth+'月'
+            text: ''
         },
         tooltip: {
             trigger: 'axis'
@@ -229,11 +282,10 @@
 
     var domTY = document.getElementById("turnoverYear");
     var turnoverYear = echarts.init(domTY,"hot");
-    console.log(lessonBillYear)
     // 指定图表的配置项和数据
     optionTY = {
         title: {
-            text: "{:date('Y',time())} 年营业额折线图"
+            text: ""
         },
         tooltip: {
             trigger: 'axis'
@@ -282,7 +334,7 @@
     // 指定图表的配置项和数据
     optionLCT = {
         title : {
-            text: '学生训练点分布',
+            text: '',
             subtext: gradeCourtData.legend.length+'个训练点',
             x:'center'
         },
@@ -300,7 +352,7 @@
                 name: '学生分布',
                 type: 'pie',
                 radius : '65%',
-                center: ['50%', '50%'],
+                center: ['50%', '60%'],
                 data:gradeCourtData.series,
                 itemStyle: {
                     emphasis: {
@@ -324,7 +376,7 @@
     // 指定图表的配置项和数据
     optionLS = {
         title : {
-            text: '课程购买饼图',
+            text: '',
             subtext: lessonBuyData.legend.length+'个课程',
             x:'center'
         },
@@ -342,6 +394,7 @@
                 name: '学生分布',
                 type: 'pie',
                 radius: ['45%', '65%'],
+                center: ['50%', '60%'],
                 avoidLabelOverlap: false,
                 label: {
                     normal: {
