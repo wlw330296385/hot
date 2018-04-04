@@ -97,6 +97,11 @@ class Article extends Base{
     // 文章管理列表
     public function articleListOfCamp(){
 
+        $camp_id = input('param.camp_id');
+
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        
+        $this->assign('campInfo',$campInfo);
 		return view('Article/articleListOfCamp');
     }
 

@@ -33,10 +33,11 @@
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="organization_id" value="{$o_id}" class="data">
-        <input type="hidden" name="organization" value="{$oInfo.camp}" class="data">
+        <input type="hidden" name="organization_id" value="{$campInfo.id}" class="data">
+        <input type="hidden" name="organization" value="{$campInfo.camp}" class="data">
         <input type="hidden" name="organization_type" value="2" class="data">
-        
+        <input type="hidden" name="category" value="3" class="data">
+
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
@@ -60,6 +61,18 @@
                     <img id="preview_1" class="upload-preview" alt="">
                     <input type="hidden" name="covers" value="" class="data">
                 </a>
+            </div>
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>是否公开</label>
+                    <span class="select-row">
+                        <select id="isStatus" class="data" name="status">
+                            <option value="-1">默认不公开</option>
+                            <option value="1">公开</option>
+                        </select>
+                    </span>
+                </div>
             </div>
 
             <div class="page-header" style="background: #efeff4;">
@@ -146,7 +159,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '文章发布成功', '确定', function () {
-                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "3";
+                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "{$campInfo.id}";
                     window.top.location.href = goUrl;
                 })
             } else {
