@@ -248,16 +248,16 @@
         <div class="mui-page-content">
             <p>问题和意见</p>
             <div class="row mui-input-row">
-                <textarea id='question' class="mui-input-clear question" placeholder="请详细描述你的问题和意见..."></textarea>
+                <textarea class="mui-input-clear content" placeholder="请详细描述你的问题和意见..."></textarea>
             </div>
             <!-- <p>图片(选填,提供问题截图)</p> -->
             <!-- <div id='image-list' class="row image-list">
             </div> -->
             <p>QQ/邮箱</p>
             <div class="mui-input-row">
-                <input id='contact' type="text" class="mui-input-clear  contact" placeholder="(选填,方便我们联系你 )" />
+                <input type="text" class="mui-input-clear contact" placeholder="(选填,方便我们联系你 )" />
             </div>
-            <button id='submit' type="button" class="mui-btn bggreen">提交</button>
+            <button type="button" class="mui-btn bggreen submitBtn">提交</button>
         </div>
     </div>
 
@@ -282,6 +282,45 @@
                 }
             };
         })(mui);
+
+        $(function () {
+            // 问题反馈
+            $(".submitBtn").on("tap", '', function () {
+                var member = "{$memberInfo.member}";
+                var member_id = "{$memberInfo.id}";
+                var member_avatar = "{$memberInfo.avatar}";
+                var content = $(".content").val();
+                var contact = $(".contact").val();
+                mui.ajax("{:url('api/feedback/addfeedback')}", {
+                    data: {
+                        member: member,
+                        member_id: member_id,
+                        member_avatar: member_avatar,
+                        content: content,
+                        contact: contact
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("您的问题我们已经接收，感谢您的反馈！");
+                            window.setTimeout("viewApi.back()", 3000);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+        })
+
     </script>
 
 </body>
