@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql
+ Source Server         : 32
  Source Server Type    : MySQL
- Source Server Version : 50553
- Source Host           : localhost:3306
+ Source Server Version : 100126
+ Source Host           : 127.0.0.1:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 50553
+ Target Server Version : 100126
  File Encoding         : 65001
 
- Date: 03/04/2018 17:28:35
+ Date: 04/04/2018 10:56:04
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,7 @@ CREATE TABLE `monthly_court_students`  (
   `update_time` int(11) NOT NULL,
   `delete_time` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '每月学员训练点分布' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '每月学员训练点分布' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of monthly_court_students
@@ -50,5 +50,17 @@ INSERT INTO `monthly_court_students` VALUES (9, '大热前海训练中心', 1, 9
 INSERT INTO `monthly_court_students` VALUES (10, '龙岗公安分局训练场', 11, 9, '大热篮球俱乐部', 23, '201803', 1522320871, 1522320871, NULL);
 INSERT INTO `monthly_court_students` VALUES (11, '前海北头运动场', 3, 9, '大热篮球俱乐部', 129, '201803', 1522320871, 1522320871, NULL);
 INSERT INTO `monthly_court_students` VALUES (12, '荣光训练场', 10, 5, '荣光训练营', 1, '201803', 1522320871, 1522320871, NULL);
+INSERT INTO `monthly_court_students` VALUES (13, '南山天台兰球场', 12, 15, '钟声训练营', 12, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (14, '松坪小学', 15, 15, '钟声训练营', 28, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (15, '福田体育公园兰球场', 13, 15, '钟声训练营', 10, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (16, '前海小学', 14, 15, '钟声训练营', 53, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (17, '塘朗球场', 20, 13, 'AKcross训练营', 34, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (18, '南外文华球场', 19, 13, 'AKcross训练营', 16, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (19, '丽山文体中心篮球场', 16, 9, '大热篮球俱乐部', 13, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (20, '待定', -1, 9, '大热篮球俱乐部', 4, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (21, '大热前海训练中心', 1, 9, '大热篮球俱乐部', 20, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (22, '龙岗公安分局训练场', 11, 9, '大热篮球俱乐部', 23, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (23, '前海北头运动场', 3, 9, '大热篮球俱乐部', 129, '201804', 1522522806, 1522522806, NULL);
+INSERT INTO `monthly_court_students` VALUES (24, '荣光训练场', 10, 5, '荣光训练营', 1, '201804', 1522522806, 1522522806, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

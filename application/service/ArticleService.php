@@ -185,6 +185,8 @@ class ArticleService {
         if($result){
             if($data['status'] == -1){
                 $this->decArticle(['id'=>$data['article_id']],'likes');  
+            }else{
+                $this->incArticle(['id'=>$data['article_id']],'likes');   
             }
             return ['msg' => '操作成功', 'code' => 200];
         }else{
@@ -221,6 +223,8 @@ class ArticleService {
         if($result){
             if($data['status'] == -1){
                 $this->decArticle(['id'=>$data['article_id']],'collects');  
+            }else{
+                $this->incArticle(['id'=>$data['article_id']],'collects');   
             }
             return ['msg' => '操作成功', 'code' => 200];
         }else{

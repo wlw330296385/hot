@@ -13,6 +13,34 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--icon扩展样式icons-extra.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <style>
+        @media screen and (min-width: 320px) {
+            .headerLeft {
+                width: 66% !important;
+            }
+            .headerLeft h4 {
+                line-height: 26px;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .headerLeft {
+                width: 71% !important;
+            }
+            .headerLeft h4 {
+                line-height: 26px;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .headerLeft {
+                width: 75% !important;
+            }
+            .headerLeft h4 {
+                line-height: 26px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -27,13 +55,13 @@
         <div class="list mt55">
             <div class="img4x3" style="background-image:url('{$articleInfo.covers}')"></div>
             <ul class="mui-table-view mb">
-                <li class=" listli" style="overflow:hidden;">
-                    <div class="mui-media-body wd66" style="line-height:20px;">
+                <li class="listli" style="overflow:hidden;">
+                    <div class="mui-media-body headerLeft">
                         <h4>{$articleInfo.title}</h4>
                         <p style="line-height:20px;margin:0;">作者：{$articleInfo.author}</p>
                         <p style="line-height:20px;margin:0;">{$articleInfo.update_time}</p>
                     </div>
-                    <div class="price-frame" style="padding:0">
+                    <div class="price-frame">
                         {if $isCollect} {eq name="isCollect.status" value='1' }
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">已收藏</button>
                         {else /}
@@ -42,8 +70,11 @@
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
                         {/if}
                         <span>
-                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
-                            <font class="thumbup_count">0</font>
+                            {if $isLikes} {eq name="isLikes.status" value='1' }
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color" style="color:red"></i>&nbsp; {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/eq} {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/if}
+                            <font class="thumbup_count">{$articleInfo.likes}</font>
                         </span>
                     </div>
                 </li>
@@ -81,11 +112,11 @@
         <!--底部操作-->
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('index/indexOfCamp')}">
+                <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli ">
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli aaaa">
                 分享
             </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
@@ -93,7 +124,6 @@
                     发表评论
                 </a>
             </li>
-
         </ul>
 
     </div>
@@ -119,6 +149,7 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
         $(function () {
+
             toCommentList(); //获取评论列表
             //评论功能
             $(".commentBtn").on('tap', function () {
@@ -178,8 +209,13 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            text();
-                            mui.toast('收藏成功，感谢你的评价！');
+                            if ($(".collect").text() == '已收藏') {
+                                $(".collect").text('收藏')
+                                mui.toast('取消收藏');
+                            } else {
+                                $(".collect").text('已收藏')
+                                mui.toast('收藏成功');
+                            }
                         } else {
                             mui.toast(data.msg);
                         }
@@ -189,16 +225,7 @@
                         console.log(type);
                     }
                 });
-
             });
-
-            function text() {
-                if ($(".collect").text() == '已收藏') {
-                    $(".collect").text('收藏')
-                } else {
-                    $(".collect").text('已收藏')
-                }
-            }
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
@@ -216,8 +243,17 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            $(".thumbsup").css("color", "red");
-                            // $(".thumbup_count").text();
+                            var add = $(".thumbup_count").text();
+                            var reduce = $(".thumbup_count").text();
+                            add++;
+                            reduce--;
+                            if (document.getElementById("color").style.color == "red") {
+                                $(".thumbsup").css("color", "gray");
+                                $(".thumbup_count").text(reduce);
+                            } else {
+                                $(".thumbsup").css("color", "red");
+                                $(".thumbup_count").text(add);
+                            }
                         } else {
                             mui.toast(data.msg);
                         }
