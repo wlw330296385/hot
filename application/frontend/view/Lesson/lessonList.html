@@ -70,22 +70,33 @@
         window.top.location.href = this.href;
     });
 
+    //初始化全局变量
+    var count = 1;
+    var sLessonType='';
+    var sArea='';
+    var sArea='';
+    var sArea='';
+    var gradecateID = '';
+    var keyword = '';
+    var campID = '';
+    var campName = '';
+    var sCity = '';
+    var sProvince = '';
+    var allArea = '';
+
     $(function () {
 
-        //初始化全局变量
-        var count = 1;
-        var sLessonType='';
-        var sArea='';
-        var keyword=wooApi.GetQueryString('keyword');
+        campID = wooApi.GetQueryString('camp_id');
+        campName = wooApi.GetQueryString('camp_name');
+        keyword = wooApi.GetQueryString('keyword');
+        gradecateID = wooApi.GetQueryString('gradecate_id');
         $('.keyword').val(keyword);
-        var campID=wooApi.GetQueryString('camp_id');
-        var campName=wooApi.GetQueryString('camp_name');
 
         //获取定位省市区
         var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-        var sCity = getLocationTB['city'];
-        var sProvince = getLocationTB['province'];
-        var allArea = getLocationTB['areas'];
+        sCity = getLocationTB['city'];
+        sProvince = getLocationTB['province'];
+        allArea = getLocationTB['areas'];
         $('.location').text(sCity);
         if(campName!=''&&campName!=null){
             $('.location').text(campName);
@@ -117,6 +128,13 @@
             sArea = $(this).val();
             searchToList();
         });
+        //判断是否有传gradecate_id，如有对其进行检索
+        if(gradecateID!=''&&gradecateID!=null){
+            $('#lessonType').find('option[value="'+gradecateID+'"]').prop("selected", true);
+            sLessonType = gradecateID;
+            searchToList();
+        }
+
         //搜索、下拉刷选后触发
         function searchToList() {
             count = 1;//显示第一页
@@ -167,63 +185,64 @@
                 toList(page,gType,campID);//具体取数据的方法
             }, 100);
         }
-        //接口获取数据并追加到页面
-        var toList = function(page,gType,campID) {
-            //搜索关键字不能完全为空，否则查询为空
-            var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
-            mui.ajax({
-                url:url,
-                data: {
-                    page: page,
-                    status:1,
-                    province: sProvince,
-                    city: sCity,
-                    area: sArea,
-                    gradecate_id: sLessonType,
-                    camp_id: campID,
-                    keyword: keyword,
-                    isprivate:0
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                //processData:false,
-                success: function (data) {
-                    var newli='';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
-                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="proportion4x3 mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd58 newline">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate_setion + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥<strong>' + data.data[i].cost + '</strong></p><p class="address">' + data.data[i].area + '</p></div></a></li>'
-                        }
-                    }
-                    if(gType==1){
-                        //上拉刷新
-                        $("ul.lesson").empty().append(newli);
-                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                        mui('#refreshContainer').pullRefresh().refresh(true);
-                        if(newli==''){
-                            $("ul.lesson").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                        }
-                    }else{
-                        //下拉加载 gType==2
-                        $("ul.lesson").append(newli);
-                    }
-                    if(newli!=''){
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                    }else{
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-
-                },
-                error: function(xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                }
-            });
-        };
-
 
     })
+
+    //接口获取数据并追加到页面
+    var toList = function(page,gType,campID) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/lesson/searchLessonApi','','',true)}";
+        mui.ajax({
+            url:url,
+            data: {
+                page: page,
+                status:1,
+                province: sProvince,
+                city: sCity,
+                area: sArea,
+                gradecate_id: sLessonType,
+                camp_id: campID,
+                keyword: keyword,
+                isprivate:0
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                var newli='';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
+                        newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="proportion4x3 mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd58 newline">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate_setion + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥<strong>' + data.data[i].cost + '</strong></p><p class="address">' + data.data[i].area + '</p></div></a></li>'
+                    }
+                }
+                if(gType==1){
+                    //上拉刷新
+                    $("ul.lesson").empty().append(newli);
+                    mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                    mui('#refreshContainer').pullRefresh().refresh(true);
+                    if(newli==''){
+                        $("ul.lesson").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    }
+                }else{
+                    //下拉加载 gType==2
+                    $("ul.lesson").append(newli);
+                }
+                if(newli!=''){
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                }else{
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
 </script>
 </html>

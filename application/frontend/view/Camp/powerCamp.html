@@ -17,29 +17,19 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class="whitebg">
+<body>
 
-    <div class="mui-content">
+    <div class="mui-content mt55">
 
-        <div id="tabbar" class="mui-control-content mui-active coach">
             <!--操作模块-->
             <div class="img4x3" style="background-image: url({$campInfo['banner']})">
-                <!--<ul class="mui-table-view mui-grid-view mui-grid-9">-->
-                <!--<li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">-->
-                <!--<a href="#">-->
-                <!--<img class="coachicon" src="{$memberInfo['avatar']}">-->
-                <!--<div class="f16">{$memberInfo['member']}</div>-->
-                <!--</a>-->
-                <!--</li>-->
-                <!--</ul>-->
-                <!--<p class="coachid f12">ID:{$memberInfo['hot_id']}</p>-->
             </div>
             <!--图文导航-->
             <div class="page-header">
                 <a href="{:url('camp/index')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
                 <span class="more"> {$campInfo['camp']}管理</span>
             </div>
-            <div class="nav-list">
+            <div class="nav-list" style="margin-bottom: 7px;">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="#">
@@ -86,7 +76,7 @@
             </div>
 
             <!--操作模块-->
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin-bottom: 7px;">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
 
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="{:url('student/tipStudentListOfCamp',['camp_id'=>$campInfo['id']])}">
@@ -190,13 +180,22 @@
             </ul>
 
 
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module" style="margin-bottom: 7px;">
-                {egt name="power" value="3"}
+            {egt name="power" value="3"}
+            <div class="page-header mui-text-center">
+                <b class="f14">营主及管理员版块</b>
+            </div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
                 <!--管理员、营主可操作-->
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="{:url('financial/statistics',['camp_id'=>$campInfo['id']])}">
+                    <a href="{:url('camp/campStatistics',['camp_id'=>$campInfo['id']])}">
                         <span class="icon iconfont icon-training-finance"></span>
-                        <div class="mui-media-body">财务</div>
+                        <div class="mui-media-body">统计图表</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <a href="{:url('financial/statistics',['camp_id'=>$campInfo['id']])}">
+                        <span class="icon iconfont icon-training-wage"></span>
+                        <div class="mui-media-body">财务概览</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -231,13 +230,13 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="{:url('Article/articleListOfCamp',['o_id'=>$o_id,'o_type'=>$o_type])}">
+                    <a href="{:url('Article/articleListOfCamp',['camp_id'=>$campInfo['id']])}">
                         <span class="icon iconfont icon-training-article"></span>
                         <div class="mui-media-body">文章</div>
                     </a>
                 </li>
 
-                {/egt} {eq name="power" value="4"}
+                {eq name="power" value="4"}
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="{:url('camp/campSetting',['camp_id'=>$campInfo['id']])}">
                         <span class="icon iconfont icon-training-Set"></span>
@@ -252,9 +251,12 @@
                 </li>
                 {/eq}
             </ul>
+            {/egt}
 
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module">
-
+            <div class="page-header mui-text-center">
+                <b class="f14">训练营公开版块</b>
+            </div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="{:url('event/eventOfOpen',['organization_id'=>$campInfo['id'],'target_type'=>1])}">
                         <span class="icon iconfont icon-training-publicA"></span>
@@ -295,7 +297,6 @@
 
 
 
-    </div>
     {layout name="Layout/footer"}
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
