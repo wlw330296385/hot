@@ -131,7 +131,7 @@ class Article extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             
-            $likesInfo = $this->ArticleService->getLikesInfo(['likes_id'=>$data['likes_id'],'member_id'=>$data['member_id']]);
+            $likesInfo = $this->ArticleService->getLikesInfo(['article_id'=>$data['article_id'],'member_id'=>$data['member_id']]);
             if($likesInfo){
                 if($likesInfo['status'] == 1){
                     $result = $this->ArticleService->updateLikes(['status'=>-1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
