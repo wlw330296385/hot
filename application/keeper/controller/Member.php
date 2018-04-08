@@ -286,7 +286,12 @@ class Member extends Base{
 
     // 收藏列表
     public function collectList(){
-        return view('member/collectList');
+        return view('Member/collectList');
+    }
+
+    // 收藏列表
+    public function memberCenter(){
+        return view('Member/memberCenter');
     }
 
 }

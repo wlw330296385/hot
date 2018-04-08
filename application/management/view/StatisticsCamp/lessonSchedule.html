@@ -352,10 +352,6 @@
             var lesson = $("input[name=lesson]").val();
             var lesson_id = $("input[name=lesson_id]").val();
             var getYM = $("input[name=dateYM]").val();
-            if(member_id==""&&lesson_id==""){
-                alert("至少选择教练员、课程其中一项");
-                return false;
-            }
             var linkPram = "";
             if(member_id!=""){
                 linkPram = linkPram+"/member_id/"+member_id;
@@ -421,10 +417,12 @@
     //接口获取数据并追加到页面：训练营教练员
     var toCampCoachList = function (camp_id) {
         //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/camp_member/getCoachOfCampListAllApi','','',true)}"+"?camp_id="+camp_id;
+        var url = "{:url('api/camp_member/getCoachListApi','','',true)}";
         $.ajax({
             url: url,
-            data: {},
+            data: {
+                camp_id: camp_id
+			},
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
@@ -470,7 +468,6 @@
             success: function (data) {
                 var newli = '';
                 if (data.code == 200) {
-                    console.log("sds")
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
                         newli += '<tr role="row" class="odd"><td>' + data.data[i].lesson + '</td><td>' + data.data[i].status + '</td><td>' + data.data[i].camp + '</td><td><a href="' + urls + '">查看</a></td><td><span class="btn btn-xs btn-info" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].id + '">确定</span></td></tr>';
