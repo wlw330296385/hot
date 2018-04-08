@@ -281,8 +281,9 @@ class Schedule extends Base
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
 
-            $scheduleS = new ScheduleService();
-            $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+            // $scheduleS = new ScheduleService();
+            // $schedule = $scheduleS->getScheduleInfo(['id' => $scheduleid]);
+            $schedule = db('schedule')->where(['id' => $scheduleid])->find();
             if (!$schedule) {
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }

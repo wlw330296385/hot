@@ -646,9 +646,6 @@ class Camp extends Base{
         }   
         
 
-        // 年
-
-
 
 
         // 赠课总人数

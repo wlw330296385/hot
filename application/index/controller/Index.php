@@ -10,9 +10,19 @@ class Index extends Controller{
         // $this->success('??????什么情况','frontend/index/index');
     }
 
-    public function counttest(){
-        db('log_wxpay')->count('*');
-        echo db('log_wxpay')->getlastsql();
+    // 剩余课时掰回
+    public function aaa(){
+        $list = db('schedule')->where(['can_settle_date'=>'20180405'])->column('student_str');
+
+        foreach ($list as $key => &$value) {
+            $value = unserialize($value);
+            foreach ($value as $k => &$val) {
+               $lesson_id = db('grade_member')->where(['id'=>$val['id']])->value('lesson_id');
+               $val['lesson_id'] = $lesson_id;
+               // db('lesson_member')->where(['lesson_id'=>$lesson_id,'student_id'=>$val['student_id']])->inc('rest_schedule')->update();
+            }
+        }
+        dump($list);
     }
 
     public function index(){
