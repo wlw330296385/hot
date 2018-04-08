@@ -61,7 +61,14 @@ class CertService {
     // 保存证件
     public function saveCert($request) {
         $model = new Cert();
-        $map['camp_id'] = $request['camp_id'];
+        // 有camp_id
+        if ( array_key_exists('camp_id', $request) ) {
+            $map['camp_id'] = $request['camp_id'];
+        }
+        // 有match_org_id
+        if ( array_key_exists('match_org_id', $request) ) {
+            $map['match_org_id'] = $request['match_org_id'];
+        }
         $map['member_id'] = $request['member_id'];
         $map['cert_type'] = $request['cert_type'];
         $find = $model->where($map)->find();
