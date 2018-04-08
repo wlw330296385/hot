@@ -141,8 +141,8 @@ class Grade extends Base{
         $CampService = new \app\service\CampService;
         $isPower = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
         // 班级同学
-        $students = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);
-        $this->assign('students',$students);
+        $studentList = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);
+        $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
         $this->assign('isPower',$isPower);
         return view('Grade/gradeInfoOfCamp');
