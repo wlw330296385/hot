@@ -121,13 +121,11 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        $(function () {
-
-        });
+        
 
         // 提交
         function submitAction(){
+            var org_id = "{$matchOrgInfo.id}";
             // 提交数据
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -140,7 +138,7 @@
             console.log(ajaxResult);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '联赛组织注册成功', '确定', function () {
-                    window.location.href = "{:url('keeper/match/createorgsuccess')}/id/"+ajaxResult.data;
+                    window.location.href = "{:url('keeper/match/createorgsuccess')}/org_id/"+org_id;
                 })
             } else {
                 mui.alert(ajaxResult.msg, '注册失败');
