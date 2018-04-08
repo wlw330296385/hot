@@ -173,7 +173,7 @@ class ScheduleService
                 'member_id' => $studentInfo['member_id'],
                 'member' => $studentInfo['member'],
                 'type' => 1,
-                'status' => 0,
+                'status' => 1,
                 'schedule_time' => $schedule['lesson_time']
             ];
 
@@ -218,7 +218,7 @@ class ScheduleService
                 'member_id' => $coachInfo['member_id'],
                 'member' => db('member')->where('id', $coachInfo['member_id'])->value('member'),
                 'type' => 2,
-                'status' => 0,
+                'status' => 1,
                 'schedule_time' => $schedule['lesson_time']
             ];
             array_push($coachDatalist, $datatmp);
