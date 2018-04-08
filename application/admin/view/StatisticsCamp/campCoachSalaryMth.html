@@ -62,7 +62,7 @@
                   <tr>
                     <td>{$vol.realname}</td>
                     <td class="sIn">{$vol.s_salary}</td>
-                    <td>{$vol.s_push_salary}</td>
+                    <td class="pIn">{$vol.s_push_salary}</td>
                     <td>{$vol.camp}</td>
                     <td>
                       <button class="btn btn-xs btn-info" data-coach="xxx" data-member_id="{$vol.member_id}" linkTo="/admin/Statistics_Camp/campCoachSalary/">查看工资详情</button>
@@ -178,10 +178,14 @@
 
         //遍历需要统计的数据列，并赋值到对应位置
         var sInCount = 0;
+        var pInCount = 0;
         $(".sIn").each(function () {
             sInCount = sInCount + parseInt($(this).text());
         });
-        $(".monthIn").text(sInCount);
+        $(".pIn").each(function () {
+            pInCount = pInCount + parseInt($(this).text());
+        });
+        $(".monthIn").text(sInCount+pInCount);
 
 
         //=========================== 初始化数据 ==============================//

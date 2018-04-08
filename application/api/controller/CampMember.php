@@ -244,7 +244,7 @@ class CampMember extends Base
     }
 
 
-    // 获取有教练身份的训练营员工（没分页、可模糊查询）
+    // 获取有教练身份的训练营员工（没分页、可模糊查询）（含有教练员身份的营主legend）
     public function getCoachListApi()
     {
         try {
@@ -719,7 +719,7 @@ class CampMember extends Base
 
 
 
-    // 搜索训练营的教练(一页全部)
+    // 搜索训练营的教练(一页全部)  (不含有教练员身份的营主，考虑弃用legend)
     public function getCoachOfCampListAllApi(){
         try{
             $camp_id = input('param.camp_id');
