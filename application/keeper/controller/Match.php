@@ -3,6 +3,8 @@
 namespace app\keeper\controller;
 
 
+use app\service\CertService;
+use app\service\LeagueService;
 use app\service\MatchService;
 use app\service\TeamService;
 use app\service\RefereeService;
@@ -20,9 +22,13 @@ class Match extends Base {
 
     // 创建比赛
     public function creatematch() {
-        // 从球队模块进入页面 带team_id处理
-        $homeTeamId = input('team_id', 0);
-        $this->assign('homeTeamId', $homeTeamId);
+        // 联赛组织id
+        $orgId = input('org_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        if ($orgId) {
+            $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
+            $this->assign('matchOrgInfo', $matchOrgInfo);
+        }
         return view('Match/createMatch');
     }
 
@@ -77,19 +83,44 @@ class Match extends Base {
         return view('Match/friendlyinfo');
     }
 
-    // 联赛组织创建1
-    public function createOrganization1() {
-        return view('Match/createOrganization1');
+    // 联赛组织创建
+    public function createOrganization() {
+        // 视图页
+        $step = input('step', 1, 'intval');
+        $view = 'Match/createOrganization'.$step;
+
+        // 有联赛组织
+        $id = input('id', 0, 'intval');
+        $leagueS = new LeagueService();
+        if ($id) {
+            $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
+            $this->assign('matchOrgInfo', $matchOrgInfo);
+        }
+
+        // 认证信息
+        // 身份证
+        $certS = new CertService();
+        $certs = $certS->getCertList(['member_id' => $this->memberInfo['id']]);
+        $idCard = [];
+        if (!empty($certs['data'])) {
+            foreach ($certs['data'] as $cert) {
+                if ($cert['cert_type'] == 1 && $cert['camp_id'] == 0) {
+                    $idCard[] = $cert;
+                }
+            }
+        }
+
+        return view($view, [
+            'idcard' => $idCard
+        ]);
     }
 
-    // 联赛组织创建2
-    public function createOrganization2() {
-        return view('Match/createOrganization2');
-    }
-
-    // 联赛组织创建3
-    public function createOrganization3() {
-        return view('Match/createOrganization3');
+    // 注册联赛组织成功页
+    public function createorgsuccess() {
+        $orgId = input('org_id', 0, 'intval');
+        return view('match/createOrgSuccess', [
+            'org_id' => $orgId
+        ]);
     }
 
     // 联赛组织编辑1

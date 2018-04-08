@@ -299,11 +299,11 @@ class Schedule extends Base
                 }
             }
 
-            if ($schedule['status'] != -1) {
-                return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-            }
 
             if ($action == 'editstatus') {
+                if ($schedule['status'] != -1) {
+                    return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
+                }
                 // 审核课时
                 // 课时学员名单
                 $students = unserialize($schedule['student_str']);
@@ -347,8 +347,8 @@ class Schedule extends Base
                 $res = $scheduleS->saveScheduleMember($schedule, $students);
                 return json($res);
             } else {
-                if ($schedule['status'] == 1) {
-                    return ['code' => 100, 'msg' => '该课时记录已审核，不能删除'];
+                if ($schedule['is_settle'] == 1) {
+                    return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
                 }
                 $res = $scheduleS->delSchedule($scheduleid);
                 if ($res) {

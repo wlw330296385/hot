@@ -16,120 +16,86 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
-    <style>
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
-
-        .hotimg {
-            width: 45px !important;
-            height: 45px !important;
-            float: initial !important;
-            display: block;
-        }
-    </style>
 </head>
 
 <body>
-
-    <header class="mui-bar mui-bar-nav subheader header2">
+    <header class="mui-bar mui-bar-nav subheader header3">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">完善组织信息</h1>
     </header>
-
     <div class="mui-content register">
 
         <form action="" class="mui-input-group">
-
-            <div class="mui-input-row">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <div class="mui-input-row ">
                 <label>组织名称</label>
-                <span></span>
-                <input type="hidden" name="organizationid" value="">
+                <span>{$matchOrgInfo.name}</span>
+                <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right organizationlogo filePicker" onclick="add_id(1)">
-                    <label>组织LOGO</label>
+                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <label>营业执照</label>
                     <img id="preview_1" class="coachicon icon01 upload-preview">
-                    <input type="hidden" name="logo" value="">
+                    <input type="hidden" name="cert" value="" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right organizationbanner filePicker" onclick="add_id(2)">
-                    <label>组织封面</label>
-                    <img id="preview_2" class="coachicon icon01 banner upload-preview">
-                    <input type="hidden" name="banner" value="">
+                <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <label>法人身份证</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview">
+                    <input type="hidden" name="fr_idcard" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row">
-                <label>所属公司</label>
-                <input type="text" name="company" class="input company" placeholder="非机构可不填">
+                <label class="wd45">法人身份证号</label>
+                <input type="text" class="input fr_idno wd52 data" name="fr_idno" placeholder="请输入身份证号码">
             </div>
 
-            <div class="mui-input-row">
-                <label>总部地址</label>
-                <input type="text" class="input" name="location" placeholder="非机构可不填">
-            </div>
-
-            <div class="mui-input-row" id='showCityPicker3'>
-                <a href="#" class="mui-navigate-right">
-                    <label>所属地区</label>
-                    <span id="cityResult3" class="ui-alert location" style="color:#737373"></span>
+            {empty name="idcard"}
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                    <label>创建者身份证</label>
+                    <img id="preview_3" class="coachicon icon01 upload-preview">
+                    <input type="hidden" name="cjz_idcard" class="data">
                 </a>
-                <input id="location-input" type="hidden" name="locationStr" value="">
             </div>
-
             <div class="mui-input-row">
-                <label>联系电话</label>
-                <input type="tel" class="input organization_telephone" placeholder="请填写你的联系电话">
+                <label class="wd45">创建者身份证号</label>
+                <input type="text" class="input data" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%">
             </div>
+            {/empty}
 
             <div class="mui-input-row h-auto">
-                <label>组织宣言</label>
-                <textarea rows="5" name="organization_description" class="organization_description" placeholder="组织宣言"></textarea>
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>其他证明</label>
+                    <img id="preview_4" class="coachicon icon01 upload-preview">
+                    <input type="hidden" name="other_cert" class="data">
+                </a>
             </div>
 
-            <div class="page-header" style="background: #efeff4;">
-                <span class="course">组织图文介绍</span>
+            <div class="mui-input-row">
+                <label class="wd45">银行</label>
+                <input type="text" class="input wd52 data" name="bank" placeholder="请输入银行">
             </div>
-
-            <div class="mui-input-row tuwenEditor">
-                <textarea name="introduction" class="data introduction" style="display: none"></textarea>
-                <div class="introBox"></div>
-                <div class="mui-row mui-text-center mui-row-operation">
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame up pd">上移</a>
-                        <a class="frame down pd">下移</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame titleClass">添加标题</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame textClass">添加正文</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame imageClass">
-                            <div id="uploader-demo">
-                                <div id="fileList" class="uploader-list"></div>
-                                <div class="filePickerTwo">选择图片</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+            <div class="mui-input-row">
+                <label class="wd45">银行卡号</label>
+                <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入银行卡号">
             </div>
-
-            <div class="page-header" style="background: #efeff4;">
-                <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
-                <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+            <div class="mui-input-row">
+                <label class="wd45">持卡人</label>
+                <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入持卡人">
             </div>
-
+            <div class="mui-input-row  border-b">
+                <label class="wd45">银行卡联系电话</label>
+                <input type="text" class="input wd52 data" name="bankcard_telephone" placeholder="请输入银行卡联系电话">
+            </div>
         </form>
 
-        <div class="tjbtn">
-            <button type="button" class="mui-btn btn organization-step2">完善组织信息</button>
+        <div class="tjbtn mt25">
+            <button type="button" class="mui-btn btn" onclick="submitAction();">完善认证信息</button>
         </div>
 
         <p class="pass mb44">
@@ -143,121 +109,49 @@
     <!--选择器-->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'organization'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
-        //地区选择器
-        (function ($, doc) {
-            $.init();
-            $.ready(function () {
-                var _getParam = function (obj, param) {
-                    return obj[param] || '';
-                };
-                ///级联示例
-                var cityPicker3 = new $.PopPicker({
-                    layer: 3
-                });
-                cityPicker3.setData(cityData3);
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
-
-                var showCityPickerButton = doc.getElementById('showCityPicker3');
-                var cityResult3 = doc.getElementById('cityResult3');
-                var locationvalue = doc.getElementById('location-input');
-                showCityPickerButton.addEventListener('tap', function (event) {
-                    cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
-                    });
-                }, false);
-            });
-        })(mui, document);
-
-
         $(function () {
 
-            // 注册 step2
-            $('.organization-step2').click(function () {
-
-                //图文编辑状态转换浏览状态
-                tuwenToView()
-
-                //获取最终含简单html标签的图文内容
-                var introHtml = $(".introBox").html();
-                /////////////////////////////////////////////////////////////////
-
-                var organizationid = $('input[name=organizationid]').val();
-                var logo = $('input[name=logo]').val();
-                var banner = $('input[name=banner]').val();
-                var company = $('input[name=company]').val();
-                var location_input = $('input[name=location]').val();
-                var locationStr = $('input[name=locationStr]').val();
-                var organization_telephone = $('.organization_telephone').val();
-                var organization_description = $('.organization_description').val();
-
-                if (logo == "") {
-                    mui.toast('请上传组织Logo');
-                    return false;
-                } else if (banner == "") {
-                    mui.toast('请上传组织封面');
-                    return false;
-                } else if (locationStr == "") {
-                    mui.toast('请选择所属地区');
-                    return false;
-                } else if (!(/^1[34578]\d{9}$/).test(organization_telephone)) {
-                    mui.toast("请输入正确的手机格式");
-                    return false;
-                } else if (introHtml == "" || organization_description == "") {
-                    mui.toast("请填写组织宣言和简介");
-                    return false;
-                };
-
-                mui.ajax("{:url('api/organization/updateorganization')}", {
-                    data: {
-                        organization_id: organizationid,
-                        logo: logo,
-                        banner: banner,
-                        company: company,
-                        location: location_input,
-                        locationStr: locationStr,
-                        intro: introHtml,
-                        organization_description: organization_description,
-                        organization_telephone: organization_telephone
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    timeout: 10000,
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (res) {
-                        if (res.code == 200) {
-                            mui.toast(res.msg + ',请完善组织资质证明');
-                            setTimeout(window.location.href = "{:url('organization/createorganization', '', '', true)}/step/3/organization_id/" + res.data, 3000);
-                        } else {
-                            //图文转换成可编辑状态
-                            tuwenToEdit()
-                            mui.toast(res.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        console.log(type);
-                    }
-                });
-            });
-
         });
+
+        // 提交
+        function submitAction(){
+            // 提交数据
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            console.log(objData);
+            var url = "{:url('api/league/editmatchorg')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '联赛组织注册成功', '确定', function () {
+                    window.location.href = "{:url('keeper/match/createorgsuccess')}/id/"+ajaxResult.data;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '注册失败');
+                tuwenToEdit(); //图文转换成可编辑状态
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        }
     </script>
 </body>
 
