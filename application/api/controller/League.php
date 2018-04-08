@@ -3,6 +3,7 @@
 namespace app\api\controller;
 use app\service\CertService;
 use app\service\LeagueService;
+use app\service\MatchService;
 use think\Exception;
 
 class League extends Base
@@ -117,5 +118,46 @@ class League extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
         return json($resUpdateMatchOrg);
+    }
+
+    // 创建联赛信息
+    public function creatematch() {
+        // 接收输入变量
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_avatar'] = $this->memberInfo['avatar'];
+        if ( array_key_exists('match_time', $data) ) {
+            $data['match_time'] = strtotime($data['match_time']);
+        }
+        $matchS = new MatchService();
+        try {
+            // 保存联赛信息
+            $res = $matchS->saveMatch($data, 'add');
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        return json($res);
+    }
+
+    // 编辑联赛信息
+    public function updatematch() {
+        // 检测会员登录
+        if ($this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+        }
+        // 接收输入变量
+        $data = input('post.');
+        if ( array_key_exists('match_time', $data) ) {
+            $data['match_time'] = strtotime($data['match_time']);
+        }
+        $matchS = new MatchService();
+        try {
+            // 保存联赛信息
+            $res = $matchS->saveMatch($data, 'edit');
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        return json($res);
     }
 }
