@@ -111,7 +111,7 @@ class Match extends Base {
         }
 
         return view($view, [
-            'idcard' => $idCard
+            'idCard' => $idCard
         ]);
     }
 
@@ -123,14 +123,35 @@ class Match extends Base {
         ]);
     }
 
-    // 联赛组织编辑1
-    public function organizationSetting1() {
-        return view('Match/organizationSetting1');
-    }
+    // 联赛组织编辑
+    public function organizationSetting() {
+        // 视图页
+        $step = input('step', 1, 'intval');
+        $view = 'Match/organizationSetting'.$step;
 
-    // 联赛组织编辑2
-    public function organizationSetting2() {
-        return view('Match/organizationSetting2');
+        // 有联赛组织
+        $id = input('id', 0, 'intval');
+        $leagueS = new LeagueService();
+        if (!$id) {
+           $this->error(__lang('MSG_402'));
+        }
+        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
+        if (!$matchOrgInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+
+        // 认证信息
+        $certS = new CertService();
+        $certs = $certS->getCertList(['match_org_id' => $id, 'camp_id' => 0]);
+        $idCard = $frIdCard = $cert = $otherCert= [];
+
+        return view($view, [
+            'matchOrgInfo'=> $matchOrgInfo,
+            'idCard' => $idCard,
+            'frIdCard' => $frIdCard,
+            'cert' => $cert,
+            'otherCert' => $otherCert
+        ]);
     }
 
     // 联赛列表

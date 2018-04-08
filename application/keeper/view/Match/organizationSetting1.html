@@ -10,10 +10,10 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
@@ -33,240 +33,229 @@
 
 <body>
 
-    <header class="mui-bar mui-bar-nav" style="padding: 0">
-        <div class="camp-lesson-list">
-            <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
-                <a class="mui-control-item mui-active" href="{:url('match/organizationSetting1')}">基本信息</a>
-                <a class="mui-control-item" href="{:url('match/organizationSetting2')}">认证信息</a>
-            </div>
+<header class="mui-bar mui-bar-nav" style="padding: 0">
+    <div class="camp-lesson-list">
+        <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
+            <a class="mui-control-item mui-active"
+               href="{:url('match/organizationSetting', ['step' => 1, 'id' => $matchOrgInfo.id])}">基本信息</a>
+            <a class="mui-control-item"
+               href="{:url('match/organizationSetting', ['step' => 2, 'id' => $matchOrgInfo.id])}">认证信息</a>
         </div>
-    </header>
+    </div>
+</header>
 
-    <div class="mui-content">
+<div class="mui-content">
 
-        <form action="" class="mui-input-group">
+    <form action="" class="mui-input-group">
 
-            <div class="mui-input-row">
-                <label>组织名称</label>
-                <span></span>
-                <input type="hidden" name="campid" value="">
-            </div>
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}"/>
+        <div class="mui-input-row organizationname">
+            <label>组织名称</label>
+            <input type="text" class="input organization data" name="name" placeholder="请输入组织名称" value="{$matchOrgInfo.name}">
+            <input type="hidden" class="data" name="id" value="{$matchOrgInfo.id}">
+        </div>
 
-            <div class="mui-input-row h-auto">
-                <a href="javascript:void(0)" class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
-                    <label>组织LOGO</label>
-                    <img id="preview_1" class="icon01 logo upload-preview" src="">
-                    <input type="hidden" name="logo" value="">
-                </a>
-            </div>
+        <div class="mui-input-row">
+            <label>组织类型</label>
+            <span class="select-arrow">
+                <select class="pbselect type data" name="type" id="orgType">
+                    <option>请选择机构/个人/其他</option>
+                    <option value="1">机构</option>
+                    <option value="2">个人</option>
+                    <option value="0">其他</option>
+                </select>
+            </span>
+        </div>
+        <div class="mui-input-row">
+            <label>机构单位</label>
+            <input type="text" class="input data" name="company" placeholder="请输入机构单位" value="{$matchOrgInfo.company}">
+        </div>
+        <div class="mui-input-row">
+            <label>负责人姓名</label>
+            <input type="text" class="input data" name="realname" placeholder="请输入负责人真实姓名" value="{$matchOrgInfo.realname}">
+        </div>
 
-            <div class="mui-input-row h-auto">
-                <a href="javascript:void(0)" class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
-                    <label>组织封面</label>
-                    <img id="preview_2" class="icon01 banner upload-preview" src="">
-                    <input type="hidden" name="banner" value="">
-                </a>
-            </div>
+        <div class="mui-input-row">
+            <label>联系电话</label>
+            <input type="text" class="input data" name="contact_tel" placeholder="请输入联系电话" value="{$matchOrgInfo.contact_tel}">
+        </div>
 
-            <div class="mui-input-row">
-                <label>联系电话</label>
-                <input type="tel" class="input camp_telephone" value="" placeholder="请填写联系电话">
-            </div>
+        <div class="mui-input-row" id='showCityPicker3'>
+            <a href="#" class="mui-navigate-right">
+                <div class="mui-navigate-right">
+                    <label>所属地区
+                        <i class="tip">*</i>
+                    </label>
+                    <span id="cityResult3" class="ui-alert">{$matchOrgInfo.province} {$matchOrgInfo.city} {$matchOrgInfo.area}</span>
+                    <input type="hidden" name="province" value="{$matchOrgInfo.province}" class="data" id="province">
+                    <input type="hidden" name="city" value="{$matchOrgInfo.city}" class="data" id="city">
+                    <input type="hidden" name="area" value="{$matchOrgInfo.area}" class="data" id="area">
+                </div>
+            </a>
+        </div>
+        <div class="mui-input-row">
+            <label>具体地址
+                <i class="tip">*</i>
+            </label>
+            <input type="text" name="address" value="{$matchOrgInfo.address}" class="data" placeholder="请输入具体地址">
+        </div>
+        <div class="mui-input-row h-auto" id="logoframe">
+            <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <label>
+                    <b>组织徽标</b>
+                </label>
+                <img id="preview_1" class="logostyle mtnone bggray upload-preview" alt="" src="{$matchOrgInfo.logo}">
+                <input type="hidden" name="logo" value="{$matchOrgInfo.logo}" class="data">
+            </a>
+        </div>
 
-            <div class="mui-input-row">
-                <label>所属公司</label>
-                <input type="text" name="company" class="company" value="" placeholder="非机构可不填">
-            </div>
+        <div class="mui-input-row h-auto">
+            <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                <label>组织封面</label>
+                <img id="preview_2" class="upload-preview" alt="" src="{$matchOrgInfo.cover}">
+                <input type="hidden" name="cover" value="{$matchOrgInfo.cover}" class="data">
+            </a>
+        </div>
 
-            <div class="mui-input-row">
-                <label>总部地址</label>
-                <input type="text" name="location" value="" placeholder="非机构可不填">
-            </div>
+        <div class="mui-input-row h-auto">
+            <label>组织宣言</label>
+            <textarea rows="3" name="descri" class="data descri" placeholder="请填写宣言">{$matchOrgInfo.descri}</textarea>
+        </div>
 
-            <div class="mui-input-row" id='showCityPicker3'>
-                <a href="#" class="mui-navigate-right">
-                    <label>所属地区</label>
-                    <span id="cityResult3" class="ui-alert location" style="color:#737373"></span>
-                </a>
-                <input id="location-input" type="hidden" name="locationStr" value="">
-            </div>
-
-            <div class="mui-input-row h-auto">
-                <label>组织宣言</label>
-                <textarea rows="5" name="camp_description" class="camp_description" placeholder="组织宣言"></textarea>
-            </div>
-
-            <div class="page-header" style="background: #efeff4;">
-                <span class="course">组织图文介绍</span>
-            </div>
-
-            <div class="mui-input-row tuwenEditor">
-                <textarea name="introduction" class="data introduction" style="display: none"></textarea>
-                <div class="introBox"></div>
-                <div class="mui-row mui-text-center mui-row-operation">
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame up pd">上移</a>
-                        <a class="frame down pd">下移</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame titleClass">添加标题</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame textClass">添加正文</a>
-                    </div>
-                    <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                        <a class="frame imageClass">
-                            <div id="uploader-demo">
-                                <div id="fileList" class="uploader-list"></div>
-                                <div class="filePickerTwo">选择图片</div>
-                            </div>
-                        </a>
-                    </div>
+        <div class="page-header" style="background: #efeff4;">
+            <span class="course">组织图文介绍</span>
+        </div>
+        <div class="mui-input-row tuwenEditor">
+            <textarea name="introduce" class="data introduce" style="display: none">{$matchOrgInfo.introduce}</textarea>
+            <div class="introBox">{$matchOrgInfo.introduce}</div>
+            <div class="mui-row mui-text-center mui-row-operation">
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame up pd">上移</a>
+                    <a class="frame down pd">下移</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame titleClass">添加标题</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame textClass">添加正文</a>
+                </div>
+                <div class="mui-col-xs-3 mui-col-sm-3 muicol">
+                    <a class="frame imageClass">
+                        <div id="uploader-demo">
+                            <div id="fileList" class="uploader-list"></div>
+                            <div class="filePickerTwo">选择图片</div>
+                        </div>
+                    </a>
                 </div>
             </div>
-
-            <div class="page-header" style="background: #efeff4;">
-                <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
-                <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
-            </div>
-
-        </form>
-
-        <div class="tjbtn mb44">
-            <button type="button" class="mui-btn btn" id="submit-form1">提交修改</button>
         </div>
 
+        <div class="page-header" style="background: #efeff4;">
+            <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+            <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
+        </div>
+
+    </form>
+
+    <div class="tjbtn mb44">
+        <button type="button" class="mui-btn btn" onclick="submitAction();">提交修改</button>
     </div>
 
-    <script src="/static/frontend/js/mui.min.js"></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!--选择器-->
-    <script src="/static/frontend/js/mui.picker.min.js"></script>
-    <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'organization'])}";
+</div>
 
-    </script>
-    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
-    <script>
-        //初始化
-        mui.init({
-            swipeBack: true //启用右滑关闭功能
-        });
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!--选择器-->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script>
+    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'match_org'])}";
+</script>
+<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+<script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
 
-        mui("body").on("tap", "a.mui-control-item", function () {
-            window.top.location.href = this.href;
-        });
+    mui("body").on("tap", "a.mui-control-item", function () {
+        window.top.location.href = this.href;
+    });
 
-        //选择器
-        (function ($, doc) {
-            $.init();
-            $.ready(function () {
-                var _getParam = function (obj, param) {
-                    return obj[param] || '';
-                };
-                ///级联示例
-                var cityPicker3 = new $.PopPicker({
-                    layer: 3
-                });
-                cityPicker3.setData(cityData3);
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
-
-                var showCityPickerButton = doc.getElementById('showCityPicker3');
-                var cityResult3 = doc.getElementById('cityResult3');
-                var locationvalue = doc.getElementById('location-input');
-                showCityPickerButton.addEventListener('tap', function (event) {
-                    cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
-                        //返回 false 可以阻止选择框的关闭
-                        //return false;
-                    });
-                }, false);
+    //选择器
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            ///级联示例
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
             });
-        })(mui, document);
+            cityPicker3.setData(cityData3);
+            // 设置默认值
+            cityPicker3.pickers[0].setSelectedIndex(18);
+            cityPicker3.pickers[1].setSelectedIndex(2);
+            cityPicker3.pickers[2].setSelectedIndex(2);
 
-        $(function () {
-
-
-            $('#submit-form1').click(function () {
-
-
-                //图文编辑状态转换浏览状态
-                tuwenToView()
-
-                //获取最终含简单html标签的图文内容
-                var introHtml = $(".introBox").html();
-                /////////////////////////////////////////////////////////////////
-
-                var campid = $('input[name=campid]').val();
-                var logo = $('input[name=logo]').val();
-                var banner = $('input[name=banner]').val();
-                var company = $('input[name=company]').val();
-                var location_input = $('input[name=location]').val();
-                var locationStr = $('input[name=locationStr]').val();
-                var camp_telephone = $('.camp_telephone').val();
-                var camp_description = $('.camp_description').val();
-
-                if (logo == "") {
-                    mui.toast('请上传组织Logo');
-                    return false;
-                } else if (banner == "") {
-                    mui.toast('请上传组织封面');
-                    return false;
-                } else if (locationStr == "") {
-                    mui.toast('请选择所属地区');
-                    return false;
-                } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
-                    mui.toast("请输入正确的手机格式");
-                    return false;
-                } else if (introHtml == "" || camp_description == "") {
-                    mui.toast("请填写组织宣言和简介");
-                    return false;
-                };
-
-                mui.ajax("{:url('api/camp/updatecamp')}", {
-                    data: {
-                        camp_id: campid,
-                        logo: logo,
-                        banner: banner,
-                        company: company,
-                        location: location_input,
-                        locationStr: locationStr,
-                        intro: introHtml,
-                        camp_description: camp_description,
-                        camp_telephone: camp_telephone
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    timeout: 10000,
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (res) {
-                        if (res.code == 200) {
-                            mui.alert("修改成功", function () {
-                                window.location.href = "{:url('camp/campsetting')}";
-                            });
-                        } else {
-                            //图文转换成可编辑状态
-                            tuwenToEdit()
-                            mui.toast(res.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        console.log(type);
-                    }
+            var showCityPickerButton = doc.getElementById('showCityPicker3');
+            var cityResult3 = doc.getElementById('cityResult3');
+            var locationvalue = doc.getElementById('location-input');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    getProvince = _getParam(items[0], 'text');
+                    getCity = _getParam(items[1], 'text');
+                    getArea = _getParam(items[2], 'text');
+                    document.getElementById('province').value = getProvince;
+                    document.getElementById('city').value = getCity;
+                    document.getElementById('area').value = getArea;
                 });
-            });
+            }, false);
         });
+    })(mui, document);
 
-    </script>
+    $(function () {
+        // 组织类型选择
+        $('#orgType option[value="{$matchOrgInfo.type}"]').prop("selected", true);
+    });
+
+    function submitAction(){
+        var org_id = "{$matchOrgInfo.id}";
+        // 提交数据
+        var data = wooApi.getInputData('input', 'data');
+        datas = wooApi.getInputData('select', 'data', data);
+        // 获取其他标签值
+        arrData = wooApi.getDomData('domData', datas);
+        var objData = wooApi.arrTOobj(arrData);
+        console.log(objData);
+        var url = "{:url('api/league/editmatchorg')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+        console.log(ajaxResult);
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '联赛组织修改成功', '确定', function () {
+                window.location.href = "{:url('keeper/index/index')}";
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '修改失败');
+            tuwenToEdit(); //图文转换成可编辑状态
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
+    }
+</script>
 </body>
 
 </html>
