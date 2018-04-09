@@ -157,16 +157,41 @@ class Match extends Base {
         // 联赛组织id
         $orgId = input('org_id', 0, 'intval');
         $leagueS = new LeagueService();
-        if ($orgId) {
-            $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
-            $this->assign('matchOrgInfo', $matchOrgInfo);
+        if (!$orgId) {
+            $this->error('请选择联赛组织');
         }
-        return view('Match/createLeagueMatch');
+        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
+        return view('Match/createLeagueMatch', [
+            'matchOrgInfo' => $matchOrgInfo
+        ]);
     }
 
+    // 修改联赛信息
     public function leaguematchedit() {
+        $leagueId = input('league_id', 0, 'intval');
+        if (!$leagueId) {
+            $this->error('请选择联赛');
+        }
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+        return view('Match/leagueMatchEdit', [
+            'matchInfo' => $matchInfo
+        ]);
+    }
 
-        return view('Match/leagueMatchEdit');
+    // 联赛管理
+    public function leagueManage() {
+        $leagueId = input('league_id', 0, 'intval');
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+        return view('Match/leagueManage', [
+            'matchInfo' => $matchInfo
+        ]);
+    }
+
+    // 我的联赛
+    public function myLeague() {
+        return view('Match/myLeague');
     }
 
     // 联赛主页

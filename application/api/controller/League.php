@@ -126,13 +126,19 @@ class League extends Base
         $data['member_id'] = $this->memberInfo['id'];
         $data['member'] = $this->memberInfo['member'];
         $data['member_avatar'] = $this->memberInfo['avatar'];
-        if ( array_key_exists('match_time', $data) ) {
-            $data['match_time'] = strtotime($data['match_time']);
+        // 时间字段格式转化
+        if ( array_key_exists('start_time', $data) ) {
+            $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
         }
+        if ( array_key_exists('ent_time', $data) ) {
+            $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
+        }
+        // 创建联赛 status=0 待审核
+        $data['status'] = 0;
         $matchS = new MatchService();
         try {
             // 保存联赛信息
-            $res = $matchS->saveMatch($data, 'add');
+            $res = $matchS->saveMatch($data, 'league_add');
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -147,13 +153,16 @@ class League extends Base
         }
         // 接收输入变量
         $data = input('post.');
-        if ( array_key_exists('match_time', $data) ) {
-            $data['match_time'] = strtotime($data['match_time']);
+        if ( array_key_exists('start_time', $data) ) {
+            $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
+        }
+        if ( array_key_exists('ent_time', $data) ) {
+            $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
         }
         $matchS = new MatchService();
         try {
             // 保存联赛信息
-            $res = $matchS->saveMatch($data, 'edit');
+            $res = $matchS->saveMatch($data, 'league_edit');
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

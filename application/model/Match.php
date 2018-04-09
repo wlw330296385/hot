@@ -27,7 +27,12 @@ class Match extends Model {
     
     // type（活动类型）获取器
     public function getTypeAttr($value) {
-        $type = [ 1 => '练习赛', 2 => '友谊赛', 3=> '积分赛', 4=>'公开赛' ];
+        $type = [
+            // 球队比赛
+            1 => '练习赛', 2 => '友谊赛', 3=> '积分赛', 4=>'公开赛',
+            // 联赛
+            5 => '邀请赛', 6=>'公开赛', 7 => '企业联赛', 8 => '机关联赛', 9 => '校园联赛'
+        ];
         return $type[$value];
     }
 
@@ -45,7 +50,7 @@ class Match extends Model {
 
     // status 获取器
     public function getStatusAttr($value) {
-        $status = [1=> '公开', -1 => '不公开'];
+        $status = [1=> '公开', -1 => '不公开', 0=>'未审核'];
         return $status[$value];
     }
 
