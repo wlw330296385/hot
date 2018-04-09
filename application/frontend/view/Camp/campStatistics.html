@@ -173,22 +173,22 @@
         <div class="page-header mui-text-center">
             <b class="f14">{:date('Y',time())}-{:date('m',time())} 营业额折线图</b>
         </div>
-        <div id="turnoverMonth" style="height: 320px; padding: 10px; background-color: #FFF;"></div>
+        <div id="turnoverMonth" style="min-height: 320px; width:100%; padding: 10px; background-color: #FFF;"></div>
 
         <div class="page-header mui-text-center">
             <b class="f14">{:date('Y',time())} 营业额折线图</b>
         </div>
-        <div id="turnoverYear" style="height: 320px; padding: 10px; background-color: #FFF;"></div>
+        <div id="turnoverYear" style="min-height: 320px; width:100%; padding: 10px; background-color: #FFF;"></div>
 
         <div class="page-header mui-text-center">
             <b class="f14">训练点学员分布</b>
         </div>
-        <div id="canvasLocation" style="height: 450px; padding: 10px; background-color: #FFF;"></div>
+        <div id="canvasLocation" style="min-height: 450px; width:100%; padding: 10px; background-color: #FFF;"></div>
 
         <div class="page-header mui-text-center">
             <b class="f14">课程购买占比</b>
         </div>
-        <div id="canvasLesson" style="height: 450px; padding: 10px; background-color: #FFF;"></div>
+        <div id="canvasLesson" style="min-height: 450px; width:100%; padding: 10px; background-color: #FFF;"></div>
 
 
 
@@ -221,228 +221,228 @@
         arrDate.push(i)
     }
 
+    $(function () {
 
-    /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
+
+        /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
 
-    let eventBill = JSON.parse('{$eventBill}');
-    let lessonBill = JSON.parse('{$lessonBill}');
-    let eventBillYear = JSON.parse('{$eventBillYear}');
-    let lessonBillYear = JSON.parse('{$lessonBillYear}');
-    let gradeCourtData = JSON.parse('{$gradeCourtData}');
-    let lessonBuyData = JSON.parse('{$lessonBuyData}');
-    var domTM = document.getElementById("turnoverMonth");
-    var turnoverMonth = echarts.init(domTM,"hot");
+        let eventBill = JSON.parse('{$eventBill}');
+        let lessonBill = JSON.parse('{$lessonBill}');
+        let eventBillYear = JSON.parse('{$eventBillYear}');
+        let lessonBillYear = JSON.parse('{$lessonBillYear}');
+        let gradeCourtData = JSON.parse('{$gradeCourtData}');
+        let lessonBuyData = JSON.parse('{$lessonBuyData}');
+        var domTM = document.getElementById("turnoverMonth");
+        var turnoverMonth = echarts.init(domTM, "hot");
 
-    // 指定图表的配置项和数据
-    optionTM = {
-        title: {
-            text: ''
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data:['培训','活动']
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: arrDate
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                name:'培训',
-                type:'line',
-                data:lessonBill
+        // 指定图表的配置项和数据
+        optionTM = {
+            title: {
+                text: ''
             },
-            {
-                name:'活动',
-                type:'line',
-                data:eventBill
-            }
-        ]
-    };
-
-    // 使用刚指定的配置项和数据显示图表。
-    turnoverMonth.setOption(optionTM,true);
-
-
-    /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本年）
-
-
-    var domTY = document.getElementById("turnoverYear");
-    var turnoverYear = echarts.init(domTY,"hot");
-    // 指定图表的配置项和数据
-    optionTY = {
-        title: {
-            text: ""
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            data:['培训','活动']
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                name:'培训',
-                type:'line',
-                data:lessonBillYear
+            tooltip: {
+                trigger: 'axis'
             },
-            {
-                name:'活动',
-                type:'line',
-                data:eventBillYear
-            }
-        ]
-    };
-
-    // 使用刚指定的配置项和数据显示图表。
-    turnoverYear.setOption(optionTY);
-
-
-    /////////////////////////////////////////////////////////////////////////////////////// 学员分布
-
-
-    var domLC = document.getElementById("canvasLocation");
-    var canvasLocation = echarts.init(domLC,"hot");
-    console.log(gradeCourtData.legend)
-    // 指定图表的配置项和数据
-    optionLCT = {
-        title : {
-            text: '',
-            subtext: gradeCourtData.legend.length+'个训练点',
-            x:'right'
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            left: 'left',
-            data: gradeCourtData.legend
-        },
-        series : [
-            {
-                name: '学生分布',
-                type: 'pie',
-                radius : '65%',
-                center: ['50%', '60%'],
-                data:gradeCourtData.series,
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
+            legend: {
+                data: ['培训', '活动']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: arrDate
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '培训',
+                    type: 'line',
+                    data: lessonBill
+                },
+                {
+                    name: '活动',
+                    type: 'line',
+                    data: eventBill
                 }
-            }
-        ]
-    };
+            ]
+        };
 
-    // 使用刚指定的配置项和数据显示图表。
-    canvasLocation.setOption(optionLCT);
+        // 使用刚指定的配置项和数据显示图表。
+        turnoverMonth.setOption(optionTM, true);
 
-    /////////////////////////////////////////////////////////////////////////////////////// 学员分布
 
-    var domLS = document.getElementById("canvasLesson");
-    var canvasLesson = echarts.init(domLS,"hot");
-    console.log(lessonBuyData)
-    // 指定图表的配置项和数据
-    optionLS = {
-        title : {
-            text: '',
-            subtext: lessonBuyData.legend.length+'个课程',
-            x:'right'
-        },
-        tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            left: 'left',
-            data: lessonBuyData.legend
-        },
-        series : [
-            {
-                name: '学生分布',
-                type: 'pie',
-                radius: ['45%', '65%'],
-                center: ['50%', '60%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '20',
-                            fontWeight: 'bold'
+        /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本年）
+
+
+        var domTY = document.getElementById("turnoverYear");
+        var turnoverYear = echarts.init(domTY, "hot");
+        // 指定图表的配置项和数据
+        optionTY = {
+            title: {
+                text: ""
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['培训', '活动']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '培训',
+                    type: 'line',
+                    data: lessonBillYear
+                },
+                {
+                    name: '活动',
+                    type: 'line',
+                    data: eventBillYear
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        turnoverYear.setOption(optionTY);
+
+
+        /////////////////////////////////////////////////////////////////////////////////////// 学员分布
+
+
+        var domLC = document.getElementById("canvasLocation");
+        var canvasLocation = echarts.init(domLC, "hot");
+        console.log(gradeCourtData.legend)
+        // 指定图表的配置项和数据
+        optionLCT = {
+            title: {
+                text: '',
+                subtext: gradeCourtData.legend.length + '个训练点',
+                x: 'right'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: gradeCourtData.legend
+            },
+            series: [
+                {
+                    name: '学生分布',
+                    type: 'pie',
+                    radius: '65%',
+                    center: ['50%', '60%'],
+                    data: gradeCourtData.series,
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
                         }
                     }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data:lessonBuyData.series,
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        canvasLocation.setOption(optionLCT);
+
+        /////////////////////////////////////////////////////////////////////////////////////// 学员分布
+
+        var domLS = document.getElementById("canvasLesson");
+        var canvasLesson = echarts.init(domLS, "hot");
+        console.log(lessonBuyData)
+        // 指定图表的配置项和数据
+        optionLS = {
+            title: {
+                text: '',
+                subtext: lessonBuyData.legend.length + '个课程',
+                x: 'right'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: lessonBuyData.legend
+            },
+            series: [
+                {
+                    name: '学生分布',
+                    type: 'pie',
+                    radius: ['45%', '65%'],
+                    center: ['50%', '60%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: lessonBuyData.series,
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
                     }
                 }
-            }
-        ]
-    };
+            ]
+        };
 
 
-    // 使用刚指定的配置项和数据显示图表。
-    canvasLesson.setOption(optionLS);
+        // 使用刚指定的配置项和数据显示图表。
+        canvasLesson.setOption(optionLS);
 
+        //自适应宽高
+        window.addEventListener("resize", function () {
+            turnoverMonth.resize();
+            turnoverYear.resize();
+            canvasLocation.resize();
+            canvasLesson.resize();
 
+        });
 
-    //自适应宽高
-//    var myChartContainer = function () {
-//        domLS.style.width = window.innerWidth+'px';
-//        domLS.style.height = window.innerHeight+'px';
-//    };
-//    myChartContainer();
-//    //浏览器大小改变时重置大小
-//    window.onresize = function () {
-//        myChartContainer();
-//        domLS.resize();
-//    };
+    })
+
 
 </script>
 </html>
