@@ -159,9 +159,7 @@ class ScheduleService
         $studentDatalist = [];
         foreach ($students as $student) {
             // 保存学员信息组合
-            // 获取学员详细信息
-            $studentInfo = db('student')->where('id', $student['student_id'])->whereNull('delete_time')->find();
-            $datatmp = [
+            $studentDatalist[] = [
                 'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
@@ -170,41 +168,27 @@ class ScheduleService
                 'grade' => $schedule['grade'],
                 'user_id' => $student['student_id'],
                 'user' => $student['student'],
-                'member_id' => $studentInfo['member_id'],
-                'member' => $studentInfo['member'],
+                'member_id' => $student['member_id'],
+                'member' => $student['member'],
+                'lesson_id'=>$schedule['lesson_id'],
+                'lesson'=>$schedule['lesson'],
                 'type' => 1,
                 'status' => 1,
-                'schedule_time' => $schedule['lesson_time']
+                'schedule_time' => $schedule['lesson_time'],
+                'is_transfer' => $student['is_transfer'],
             ];
-
-            // schedule_member 课时信息区分保存：课时本班级学员已schedule lesson字段/拼课时学员根据schedule student_str结构中lmid获取lesson_member中lesson字段
-            if (isset($student['lmid'])) {
-                // 拼课时的学员lesson_member数据
-                $lessonmember = db('lesson_member')->where('id', $student['lmid'])->find();
-                $datatmp['lesson'] = $lessonmember['lesson'];
-                $datatmp['lesson_id'] = $lessonmember['lesson_id'];
-                $datatmp['is_transfer'] = 1;
-            } else {
-                // 课时本班级学员
-                $datatmp['lesson_id'] = $schedule['lesson_id'];
-                $datatmp['lesson'] = $schedule['lesson'];
-                $datatmp['is_transfer'] = 0;
-            }
-
-            array_push($studentDatalist, $datatmp);
-            unset($datatmp);
         }
-         $savestudentResult = $model->saveAll($studentDatalist);
-         if (!$savestudentResult) {
-             return ['code' => 100, 'msg' => '记录学员课时数据异常，请重试'];
-         }
+        $savestudentResult = $model->saveAll($studentDatalist);
+        if (!$savestudentResult) {
+            return ['code' => 100, 'msg' => '记录学员课时数据异常，请重试'];
+        }
 
         // 记录教练
         $coachDatalist = [];
         if ($schedule['coach_id']) {
             // 获取教练详细信息
             $coachInfo = db('coach')->where('id', $schedule['coach_id'])->whereNull('delete_time')->find();
-            $datatmp = [
+            $coachDatalist[] = [
                 'schedule_id' => $schedule['id'],
                 'schedule' => $schedule['grade'],
                 'camp_id' => $schedule['camp_id'],
@@ -216,41 +200,33 @@ class ScheduleService
                 'user_id' => $schedule['coach_id'],
                 'user' => $schedule['coach'],
                 'member_id' => $coachInfo['member_id'],
-                'member' => db('member')->where('id', $coachInfo['member_id'])->value('member'),
+                'member' => $coachInfo['member'],
                 'type' => 2,
                 'status' => 1,
                 'schedule_time' => $schedule['lesson_time']
             ];
-            array_push($coachDatalist, $datatmp);
-            unset($datatmp);
         }
-        $assistantIdArray = unserialize($schedule['assistant_id']);
-        $assistantArray = unserialize($schedule['assistant']);
-        if (!empty($assistantIdArray)) {
-            foreach ($assistantIdArray as $key => $val) {
-                if ($val) {
-                    // 获取教练详细信息
-                    $coachInfo2 = db('coach')->where('id', $val)->whereNull('delete_time')->find();
-                    $datatmp = [
-                        'schedule_id' => $schedule['id'],
-                        'schedule' => $schedule['grade'],
-                        'camp_id' => $schedule['camp_id'],
-                        'camp' => $schedule['camp'],
-                        'lesson_id' => $schedule['lesson_id'],
-                        'lesson' => $schedule['lesson'],
-                        'grade_id' => $schedule['grade_id'],
-                        'grade' => $schedule['grade'],
-                        'user_id' => $val,
-                        'user' => $assistantArray[$key],
-                        'member_id' => $coachInfo2['member_id'],
-                        'member' => db('member')->where('id', $coachInfo2['member_id'])->value('member'),
-                        'type' => 2,
-                        'status' => 1,
-                        'schedule_time' => $schedule['lesson_time']
-                    ];
-                    array_push($coachDatalist, $datatmp);
-                    unset($datatmp);
-                }
+        $assistantIDs = unserialize($schedule['assistant_id']);
+        $coachList = db('coach')->where(['id'=>['in',$assistantIDs]])->select();
+        if (!empty($coachList)) {
+            foreach ($coachList as $key => $val) {
+                $coachDatalist[] = [
+                    'schedule_id' => $schedule['id'],
+                    'schedule' => $schedule['grade'],
+                    'camp_id' => $schedule['camp_id'],
+                    'camp' => $schedule['camp'],
+                    'lesson_id' => $schedule['lesson_id'],
+                    'lesson' => $schedule['lesson'],
+                    'grade_id' => $schedule['grade_id'],
+                    'grade' => $schedule['grade'],
+                    'user_id' => $val['id'],
+                    'user' => $val['caoch'],
+                    'member_id' => $coachInfo2['member_id'],
+                    'member' => $coachInfo2['member'],
+                    'type' => 2,
+                    'status' => 1,
+                    'schedule_time' => $schedule['lesson_time']
+                ];
             }
         }
         $savecoachResult = $model->saveAll($coachDatalist);

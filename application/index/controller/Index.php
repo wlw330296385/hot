@@ -61,8 +61,11 @@ class Index extends Controller{
 
     }
 
-    public function arrayDiff(){
-        
+    public function coachmember(){
+        $Coach = new \app\model\Coach;
+        $list = db('coach')->field('coach.id,member.member')->join('member','coach.member_id = member.id')->select();
+        dump($list);
+        $Coach->saveAll($list);        
     }
 
     public function scheduletime(){

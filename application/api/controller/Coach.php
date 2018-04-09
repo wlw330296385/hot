@@ -170,13 +170,11 @@ class Coach extends Base{
 
     public function createCoachApi(){
         try{
-            $data['coach'] = input('post.coach');
-            $data['member_id'] = $this->memberInfo['id'];
-            $member_id = input('post.member_id');
             // 教练数据
             $coachdata = [
                 'coach' => input('post.coach'),
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'];
+                'member' => $this->memberInfo['member'],
                 'coach_year' => input('post.coach_year'),
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
@@ -198,7 +196,9 @@ class Coach extends Base{
             // 实名数据
             $realnamedata = [
                 'camp_id' => 0,
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'],
+
+                'member' => $this->memberInfo['member'],
                 'cert_no' => input('post.idno'),
                 'cert_type' => 1,
                 'photo_positive' => input('post.photo_positive'),
@@ -207,7 +207,9 @@ class Coach extends Base{
             // 资质证书
             $certdata = [
                 'camp_id' => 0,
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'],
+
+                'member' => $this->memberInfo['member'],
                 'cert_no' => 0,
                 'cert_type' => 3,
                 'photo_positive' => input('post.cert')
@@ -236,7 +238,8 @@ class Coach extends Base{
             // 教练数据
             $coachdata = [
                 'coach' => input('post.coach'),
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'],
+                'member' => $this->memberInfo['member'],
                 'coach_year' => input('post.coach_year'),
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
@@ -258,7 +261,9 @@ class Coach extends Base{
             // 实名数据
             $realnamedata = [
                 'camp_id' => 0,
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'],
+
+                'member' => $this->memberInfo['member'],
                 'cert_no' => input('post.idno'),
                 'cert_type' => 1,
                 'photo_positive' => input('post.photo_positive'),
@@ -267,7 +272,9 @@ class Coach extends Base{
             // 资质证书
             $certdata = [
                 'camp_id' => 0,
-                'member_id' => $member_id,
+                'member_id' => $this->memberInfo['id'],
+
+                'member' => $this->memberInfo['member'],
                 'cert_no' => "",
                 'cert_type' => 3,
                 'photo_positive' => input('post.cert')
