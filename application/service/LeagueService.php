@@ -59,4 +59,36 @@ class LeagueService
         }
         return $res->toArray();
     }
+
+    // 获取联赛组织证件图
+    public function getOrgCert($org_id) {
+        $certlist = db('cert')->where(['match_org_id' => $org_id])->select();
+        $certArr = [
+            'cert' => '',
+            'fr' => ['cert_no' => '', 'photo_positive' => ''],
+            'other' => ''
+        ];
+        if ($certlist) {
+            foreach ($certlist as $val) {
+                switch ( $val['cert_type'] ) {
+                    // 法人
+                    case 1: {
+                        $certArr['fr']['cert_no'] = $val['cert_no'];
+                        $certArr['fr']['photo_positive'] = $val['photo_positive'];
+                        break;
+                    }
+                    // 营业执照
+                    case 4: {
+                        $certArr['cert'] = $val['photo_positive'];
+                        break;
+                    }
+                    // 其他证明
+                    default: {
+                        $certArr['other'] = $val['photo_positive'];
+                    }
+                }
+            }
+        }
+        return $certArr;
+    }
 }
