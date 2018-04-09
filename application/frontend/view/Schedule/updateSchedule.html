@@ -167,7 +167,7 @@
                             <input name="student" class="stdList" data-id="{$vol.id}" data-gmid="{$vol.gmid}" data-student_id="{$vol.student_id}" value="{$vol.student}"
                                    data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
                             {else/}
-                            <input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}"
+                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.member}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}"  value="{$vol.student}"
                                    data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
                             {/if}
                         </div>
@@ -185,8 +185,8 @@
                         <div class="mui-input-row mui-checkbox checkboxCont">
                             <label class="number">{$key+1}</label>
                             <font>{$vol.student}</font>
-                            <input name="student" class="stdList" data-id="{$vol.id}" data-student_id="{$vol.student_id}" value="{$vol.student}" data-student="{$vol.student}"
-                                data-type="{$vol.type}" type="checkbox" checked="checked">
+                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.member}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}"  value="{$vol.student}"
+                                   data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
                         </div>
                         {/foreach}
                     </div>
@@ -841,11 +841,17 @@
             // 选择添加学员点击事件
             $(".addStudentList").on('tap', '.student', function () {
                 var id = $(this).find("span").attr("data-id");
-                var lmid = $(this).find("span").attr("data-lmid");
+                var lesson = $(this).find("span").attr("data-lesson");
+                var lesson_id = $(this).find("span").attr("data-lesson_id");
+                var camp = $(this).find("span").attr("data-camp");
+                var camp_id = $(this).find("span").attr("data-camp_id");
                 var student = $(this).find("span").attr("data-student");
                 var student_id = $(this).find("span").attr("data-student_id");
+                var member = $(this).find("span").attr("data-member");
+                var member_id = $(this).find("span").attr("data-member_id");
+                var lid = $(this).find("span").attr("data-lid");
                 var student_type = $(this).find("span").attr("data-type");
-                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + student + '</font><input name="student" value="' + student_id + '" data-id="' + id + '" data-lmid="' + lmid + '" data-student="' + student + '" data-student_id="' + student_id + '" data-type="' + student_type + '" type="checkbox" checked="checked" class="stdList eachList" ></div>';
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + student + '</font><input name="student" value="' + student_id + '" data-id="' + id + '" data-lesson="' + lesson + '"  data-lesson_id="' + lesson_id + '" data-camp="' + camp + '"  data-camp_id="' + camp_id + '"  data-student="' + student + '" data-student_id="' + student_id + '" data-member="' + member + '"  data-member_id="' + member_id + '" data-lid="' + lid + '" data-type="' + student_type + '" type="checkbox" checked="checked" class="stdList eachList" ></div>';
 
                 //遍历上课学员列表中是否存在此学员
                 var isExist = false;
@@ -1099,16 +1105,23 @@
                 var expstudentList = [];//体验生列表数组
                 //然后遍历出对应所选
                 $("input.stdList[type=checkbox]:checked").each(function () {
-                    var student_type = $(this).attr("data-type");
                     var id = $(this).attr("data-id");
-                    var lmid = $(this).attr("data-lmid");
-                    var gmid = $(this).attr("data-gmid");
-                    var student_id = $(this).attr("data-student_id");
+                    var lesson = $(this).attr("data-lesson");
+                    var lesson_id = $(this).attr("data-lesson_id");
+                    var camp = $(this).attr("data-camp");
+                    var camp_id = $(this).attr("data-camp_id");
                     var student = $(this).attr("data-student");
-                    if (student_type == "正式生") {
-                        studentList.push({ student: student, student_id: student_id, id: id, lmid: lmid, gmid: gmid, type: student_type });
+                    var student_id = $(this).attr("data-student_id");
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    var lid = $(this).attr("data-lid");
+                    var grade = $(".grade").text();
+                    var grade_id = $("input[name=grade_id]").val();
+                    var type = $(this).attr("data-type");
+                    if (type == "正式生") {
+                        studentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id, lid, grade, grade_id, type });
                     } else {
-                        expstudentList.push({ student: student, student_id: student_id, id: id, lmid: lmid, type: student_type });
+                        expstudentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id, lid, grade, grade_id, type });
                     };
                 });
                 console.log(studentList)
@@ -1226,7 +1239,7 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             tys = '';
                             if (data.data.data[i].type == "2") { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row student"><label>' + data.data.data[i].student + tys + '</label><span data-id="' + data.data.data[i].id + '" data-lmid="' + data.data.data[i].id + '" data-student_id="' + data.data.data[i].student_id + '" data-student="' + data.data.data[i].student + '" data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
+                            div = div + '<div class="mui-input-row student"><label>' + data.data.data[i].student + tys + '</label><span data-id="' + data.data.data[i].id + '" data-lesson="' + data.data.data[i].lesson + '" data-lesson_id="' + data.data.data[i].lesson_id + '" data-camp="' + data.data.data[i].camp + '" data-camp_id="' + data.data.data[i].camp_id + '" data-student="' + data.data.data[i].student + '" data-student_id="' + data.data.data[i].student_id + '" data-member="' + data.data.data[i].member + '" data-member_id="' + data.data.data[i].member_id + '" data-lid="' + data.data.data[i].lid + '"  data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
