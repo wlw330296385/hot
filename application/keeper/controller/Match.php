@@ -99,16 +99,12 @@ class Match extends Base {
 
         // 认证信息
         // 身份证
-        $certS = new CertService();
-        $certs = $certS->getCertList(['member_id' => $this->memberInfo['id']]);
-        $idCard = [];
-        if (!empty($certs['data'])) {
-            foreach ($certs['data'] as $cert) {
-                if ($cert['cert_type'] == 1 && $cert['camp_id'] == 0) {
-                    $idCard[] = $cert;
-                }
-            }
-        }
+        $idCard = db('cert')->where([
+            'cert_type' => 1,
+            'member_id' => $this->memberInfo['id'],
+            'camp_id' => 0,
+            'match_org_id' => 0
+        ])->find();
 
         return view($view, [
             'idCard' => $idCard
@@ -140,17 +136,21 @@ class Match extends Base {
             $this->error(__lang('MSG_404'));
         }
 
-        // 认证信息
+        // 证件信息
         $certS = new CertService();
-        $certs = $certS->getCertList(['match_org_id' => $id, 'camp_id' => 0]);
-        $idCard = $frIdCard = $cert = $otherCert= [];
+        $orgCert = $leagueS->getOrgCert($id);
+        // 创建人身份证
+        $idCard = db('cert')->where([
+            'cert_type' => 1,
+            'member_id' => $matchOrgInfo['creater_member_id'],
+            'camp_id' => 0,
+            'match_org_id' => 0
+        ])->find();
 
         return view($view, [
             'matchOrgInfo'=> $matchOrgInfo,
-            'idCard' => $idCard,
-            'frIdCard' => $frIdCard,
-            'cert' => $cert,
-            'otherCert' => $otherCert
+            'orgCert' => $orgCert,
+            'idCard' => $idCard
         ]);
     }
 

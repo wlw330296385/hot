@@ -89,7 +89,6 @@ class League extends Base
             // 创建人
             if ( input('?post.cjz_idno') || input('?post.cjz_idcard') ) {
                 $cert3 = $certS->saveCert([
-                    'match_org_id' => $id,
                     'member_id' => $this->memberInfo['id'],
                     'cert_type' => 1,
                     'cert_no' => input('post.cjz_idno'),
