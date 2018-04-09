@@ -221,10 +221,14 @@
 
 
         $("#moreSchedule").on("click", function () {
-            pullupRefreshS();
+            if(!$(this).hasClass("noData")){
+                pullupRefreshS();
+			}
         });
         $("#moreBill").on("click", function () {
-            pullupRefreshB();
+            if(!$(this).hasClass("noData")){
+                pullupRefreshB();
+            }
         });
 
 
@@ -300,16 +304,16 @@
                     mui.toast('数据获取失败,请稍候再试');
                 }
 
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
+                //无分页无需下面这段
+//                if (newli != '') {
+//                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+//                } else {
+//                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+//                }
 
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
             }
         });
     };
@@ -344,8 +348,6 @@
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.schedule").empty().append(newli);
-                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                        mui('#' + wList).pullRefresh().refresh(true);
                         if (newli == '') {
                             $("ul.schedule").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
@@ -353,15 +355,14 @@
                         //下拉加载 gType==2
                         $("ul.schedule").append(newli);
                     }
+                    if (data.data.data.length < 10) {
+                        $("#moreSchedule").addClass("noData");
+                        $("#moreSchedule").text("没有更多数据了");
+                    }
                 } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
 
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
 
             },
             error: function (xhr, type, errerThrown) {
@@ -398,8 +399,6 @@
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.bill").empty().append(newli);
-                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                        mui('#' + wList).pullRefresh().refresh(true);
                         if (newli == '') {
                             $("ul.bill").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
@@ -407,15 +406,15 @@
                         //下拉加载 gType==2
                         $("ul.bill").append(newli);
                     }
+
+                    if (data.data.data.length < 10) {
+                        $("#moreBill").addClass("noData");
+                        $("#moreBill").text("没有更多数据了");
+                    }
                 } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
 
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
 
             },
             error: function (xhr, type, errerThrown) {
