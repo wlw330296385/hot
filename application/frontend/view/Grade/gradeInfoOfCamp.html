@@ -16,7 +16,7 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-transparent ">
-        <a class="mui-pull-left" id="returnGradeList" href="">
+        <a href="{:url('grade/gradelistofcamp',['grade_id'=>$gradeInfo['id'],'camp_id'=>$gradeInfo['camp_id']])}" class="mui-pull-left">
             <span class="mui-icon mui-icon-left-nav"></span>
         </a>
     </header>
@@ -33,12 +33,9 @@
                             <font class="state">[ {$gradeInfo.status} ]</font>
                             <p>{$gradeInfo.students} 名学员</p>
                         </div>
-                        {eq name="updateGrade" value='1'}
-                        <div class="price-frame" style="padding-top:16px;">
+                        <div class="price-frame isPower hide" style="padding-top:16px;">
                             <span>编辑</span>
-
                         </div>
-                        {/eq}
                     </a>
                 </li>
             </ul>
@@ -167,11 +164,9 @@
         });
         $(function () {
 
-            var o_id = "{$o_id}";
-            if (o_id != 0) {
-                $("#returnGradeList").attr("href", "{:url('grade/gradeListOfOrganization',['camp_id'=>$o_id])}");
-            } else {
-                $("#returnGradeList").attr("href", "{:url('grade/gradeListOfCamp',['camp_id'=>$gradeInfo['camp_id']])}");
+            var isPower = "{$isPower}";
+            if (isPower > 1) {
+                $(".isPower").show();
             }
 
             //组合周期和时间

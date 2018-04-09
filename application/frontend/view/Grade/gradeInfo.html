@@ -16,7 +16,7 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" id="returnGradeList"></a>
         <h1 class="mui-title">
             <font>({$gradeInfo.lesson})</font>{$gradeInfo.camp}</h1>
     </header>
@@ -24,7 +24,7 @@
     <div class="mui-content">
 
         <div class="camp-list camp-lesson-list grade-list">
-
+                <div class="img4x3" style="background-image:url('{$gradeInfo.logo}')"></div>
             <ul class="mui-table-view list mb">
                 <li class="mui-table-view-cell mui-media listli">
                     <div class="mui-media-body wd">
@@ -139,6 +139,14 @@
                 weekTime += wk[i] + "（" + ts[i] + "）"
             }
             $("#weektime").text(weekTime);
+
+
+            var o_id = "{$o_id}";
+            if (o_id != 0) {
+                $("#returnGradeList").attr("href", "{:url('grade/gradeListOfOrganization',['camp_id'=>$o_id])}");
+            } else {
+                $("#returnGradeList").removeAttr("href");
+            }
         })
     </script>
 </body>

@@ -244,6 +244,7 @@
         //初始化全局变量
         var gCount = 1;
         var sCount = 1;
+        var bCount = 1;
 
         mui('#item2').pullRefresh({
             down: {
@@ -346,8 +347,8 @@
         //下拉刷新具体业务实现（订单）
         function pulldownRefreshB() {
             setTimeout(function () {
-                sCount = 1;//刷新并显示第一页
-                var page = sCount;
+                bCount = 1;//刷新并显示第一页
+                var page = bCount;
                 var gType = 1;//代表下拉刷新
                 toBillList('item4', page, gType);//具体取数据的方法
             }, 100);
@@ -355,8 +356,8 @@
         //上拉加载具体业务实现（订单）
         function pullupRefreshB() {
             setTimeout(function () {
-                sCount++;//翻下一页
-                var page = sCount;
+                bCount++;//翻下一页
+                var page = bCount;
                 var gType = 2;//代表上拉加载
                 toBillList('item4', page, gType);//具体取数据的方法
             }, 100);
@@ -395,7 +396,7 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('grade/gradeInfoOfCamp')}" + '/grade_id/' + data.data[i].grade_id + '/camp_id/' + data.data[i].camp_id;
+                        var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].grade_id + '/camp_id/' + data.data[i].camp_id;
                         newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6">' + data.data[i].grade + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data[i].lesson + '</li></ul></li></a>';
                     }
                     if (gType == 1) {

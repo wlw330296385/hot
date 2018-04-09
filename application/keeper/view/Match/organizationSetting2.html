@@ -20,8 +20,8 @@
     <header class="mui-bar mui-bar-nav" style="padding: 0">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
-                <a class="mui-control-item" href="{:url('match/organizationSetting1')}">基本信息</a>
-                <a class="mui-control-item mui-active" href="{:url('match/organizationSetting2')}">认证信息</a>
+                <a class="mui-control-item " href="{:url('match/organizationSetting', ['step' => 1, 'id' => $matchOrgInfo.id])}">基本信息</a>
+                <a class="mui-control-item mui-active" href="{:url('match/organizationSetting', ['step' => 2, 'id' => $matchOrgInfo.id])}">认证信息</a>
             </div>
         </div>
     </header>
@@ -30,52 +30,70 @@
 
         <form action="" class="mui-input-group">
 
-            <div class="mui-input-row">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <div class="mui-input-row ">
                 <label>组织名称</label>
-                <span></span>
-                <input type="hidden" name="campid" value="">
+                <span>{$matchOrgInfo.name}</span>
+                <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
             </div>
 
             <div class="mui-input-row h-auto">
                 <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                     <label>营业执照</label>
-                    <img id="preview_1" class="icon01 upload-preview" src="">
-                    <input type="hidden" name="cert" value="">
+                    <img id="preview_1" class="coachicon icon01 upload-preview" src="{$cert.photo_positive}">
+                    <input type="hidden" name="cert" value="{$cert.photo_positive}" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row h-auto">
                 <a class="mui-navigate-right filePicker" onclick="add_id(2)">
-                    <label>负责人身份证</label>
-                    <img id="preview_2" class="icon01 upload-preview" src="">
-                    <input type="hidden" name="fr_idcard" value="">
+                    <label>法人身份证</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview" src="{$frIdCard.photo_positive}">
+                    <input type="hidden" name="fr_idcard" class="data" src="{$frIdCard.photo_positive}">
                 </a>
             </div>
 
             <div class="mui-input-row">
-                <label class="wd45">负责人身份证号</label>
-                <input type="text" class="fridno wd52" value="" placeholder="请输入身份证号码">
+                <label class="wd45">法人身份证号</label>
+                <input type="text" class="input fr_idno wd52 data" name="fr_idno" placeholder="请输入身份证号码" value="{$frIdCard.cert_no}">
             </div>
 
             <div class="mui-input-row h-auto">
                 <a class="mui-navigate-right filePicker" onclick="add_id(3)">
                     <label>创建者身份证</label>
-                    <img id="preview_3" class="icon01 upload-preview" src="">
-                    <input type="hidden" name="cjz_idcard" value="">
+                    <img id="preview_3" class="coachicon icon01 upload-preview" src="{$idCard.photo_positive}">
+                    <input type="hidden" name="cjz_idcard" class="data" value="{$idCard.photo_positive}">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">创建者身份证号</label>
+                <input type="text" class="input data" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%" value="{$idCard.cert_no}">
+            </div>
+
+
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>其他证明</label>
+                    <img id="preview_4" class="coachicon icon01 upload-preview" src="{$otherCert.photo_positive}">
+                    <input type="hidden" name="other_cert" class="data" value="{$otherCert.photo_positive}">
                 </a>
             </div>
 
             <div class="mui-input-row">
-                <label class="wd45">创建者身份证号</label>
-                <input type="text" class="cjzidno" value="" placeholder="请输入创建者身份证号码" style="width: 55%">
+                <label class="wd45">银行</label>
+                <input type="text" class="input wd52 data" name="bank" placeholder="请输入银行" value="{$matchOrgInfo.bank}">
             </div>
-
-            <div class="mui-input-row border-b h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
-                    <label>其他证明</label>
-                    <img id="preview_4" class="icon01 upload-preview" src="">
-                    <input type="hidden" name="other_cert" value="">
-                </a>
+            <div class="mui-input-row">
+                <label class="wd45">银行卡号</label>
+                <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入银行卡号" value="{$matchOrgInfo.bankcard_no}">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">持卡人</label>
+                <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入持卡人" value="{$matchOrgInfo.bankcard_name}">
+            </div>
+            <div class="mui-input-row  border-b">
+                <label class="wd45">银行卡联系电话</label>
+                <input type="text" class="input wd52 data" name="bankcard_telephone" placeholder="请输入银行卡联系电话" value="{$matchOrgInfo.bankcard_telephone}">
             </div>
 
         </form>
