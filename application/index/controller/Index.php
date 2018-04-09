@@ -11,7 +11,7 @@ class Index extends Controller{
     }
 
     // 剩余课时掰回
-    public function aaa(){
+    public function restSchedule(){
         $list = db('schedule')->where(['can_settle_date'=>'20180405'])->column('student_str');
 
         foreach ($list as $key => &$value) {
@@ -61,7 +61,10 @@ class Index extends Controller{
 
     }
 
- 
+    public function arrayDiff(){
+        
+    }
+
     public function scheduletime(){
         $list1 = db('income')->field('income.id,income.f_id,schedule.students,schedule.lesson_time as schedule_time,schedule.schedule_income')->join('schedule','income.f_id = schedule.id')->where(['income.type'=>3])->select();
         $income = new \app\model\Income;
