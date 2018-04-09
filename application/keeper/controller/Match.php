@@ -22,13 +22,6 @@ class Match extends Base {
 
     // 创建比赛
     public function creatematch() {
-        // 联赛组织id
-        $orgId = input('org_id', 0, 'intval');
-        $leagueS = new LeagueService();
-        if ($orgId) {
-            $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
-            $this->assign('matchOrgInfo', $matchOrgInfo);
-        }
         return view('Match/createMatch');
     }
 
@@ -157,6 +150,23 @@ class Match extends Base {
     // 联赛列表
     public function leagueList() {
         return view('Match/leagueList');
+    }
+
+    // 创建联赛信息
+    public function createleaguematch() {
+        // 联赛组织id
+        $orgId = input('org_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        if ($orgId) {
+            $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
+            $this->assign('matchOrgInfo', $matchOrgInfo);
+        }
+        return view('Match/createLeagueMatch');
+    }
+
+    public function leaguematchedit() {
+
+        return view('Match/leagueMatchEdit');
     }
 
     // 联赛主页
