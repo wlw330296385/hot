@@ -169,6 +169,11 @@ class Match extends Base {
         return view('Match/leagueMatchEdit');
     }
 
+    // 联赛管理
+    public function leagueManage() {
+        return view('Match/leagueManage');
+    }
+
     // 联赛主页
     public function leagueInfo() {
         return view('Match/leagueInfo');
@@ -197,6 +202,11 @@ class Match extends Base {
     // 联赛比赛动态列表
     public function leagueDynamicList() {
         return view('Match/leagueDynamicList');
+    }
+
+     // 我的联赛
+     public function myLeague() {
+        return view('Match/myLeague');
     }
     
 }
