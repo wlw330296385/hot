@@ -1,0 +1,108 @@
+{extend name="layout/common"/}
+{block name="css"}
+<style>
+    .img-md {
+        float: none;
+    }
+</style>
+{/block}
+{block name="page-content"}
+<div class="row">
+    <div class="col-md-7 col-sm-7">
+        <div class="box no-border">
+            <form role="form" action="" method="post" enctype="multipart/form-data">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="">标题</label>
+                        <input type="text" class="form-control" placeholder="请输入标题" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="">分类</label>
+                        <select class="form-control" name="category">
+                            <option value="1">平台使用指南</option>
+                            <option value="2">单独页面</option>
+                            <option value="3">新闻</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">摘要</label>
+                        <input type="text" class="form-control" placeholder="请输入摘要" name="abstract">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">封面图</label>
+                        <div class="box-header">
+
+
+                            <div class="col-sm-12 col-md-12">
+                                <a class="btn-banner" href="#" title="点击替换图片">
+                                    <img class="img-thumbnail" id="uploader-preview1" src="">
+                                    <div class="row">
+                                        <div id="filePicker1">选择上传</div>
+                                    </div>
+                                    <input id="uploader-input1" type="hidden" name="covers" value="">
+                                </a>
+                            </div>
+                            <!-- <div class="col-sm-2 col-md-2"></div> -->
+                            <small>文章封面图</small>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="box box-info">
+
+                            <div class="box-header">
+                                <h3 class="box-title">内容
+                                    <small>文章图文内容</small>
+                                </h3>
+                            </div>
+                            <script type="text/plain" id="content" name="content" style="width:800px;"></script>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>是否上架</label>
+                        <select name="status">
+                            <option value="-1" selected="selected">下架</option>
+                            <option value="1">上架</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">热门程度</label>
+                        <input type="number" class="form-control" placeholder="数字越大越热门" name="hot">
+                    </div>
+                    <div class="form-group">
+                        <label for="">点击率</label>
+                        <input type="number" class="form-control" placeholder="" disabled="disabled" name="hit"
+                               value="0">
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">提 交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/uploadImg',['dir'=>'article'])}";
+</script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+<script type="text/javascript" charset="utf-8"
+        src="/static/UEditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8"
+        src="/static/UEditor/ueditor.all.js"></script>
+
+<script type="text/javascript">
+var ue_info = UE.getEditor("content");
+</script>
+{/block}

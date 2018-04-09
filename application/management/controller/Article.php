@@ -1,7 +1,7 @@
 <?php
-namespace app\admin\controller;
+namespace app\management\controller;
 
-use app\admin\controller\base\Backend;
+use app\management\controller\base\Backend;
 use app\service\ArticleService;
 class Article extends Backend {
     private $ArticleListService; 
@@ -47,11 +47,11 @@ class Article extends Backend {
     public function createArticle(){
         if(request()->isPost()){
             $data = input('post.');
-            $data['member_id']=$this->admin['id'];
-            $data['member'] = $this->admin['username'];
+            $data['member_id']=$this->management['id'];
+            $data['member'] = $this->management['username'];
             $result = $this->ArticleService->createArticle($data);
             if($result['code'] == 200){
-                $this->success($result['msg'],'/admin/Article/articleList');
+                $this->success($result['msg'],'/management/Article/articleList');
             }else{
                 $this->error($result['msg']);
             }
@@ -71,11 +71,11 @@ class Article extends Backend {
             $data = input('post.');
             $id = $data['id'];
 
-            $data['member_id']=$this->admin['id'];
-            $data['member'] = $this->admin['username'];
+            $data['member_id']=$this->management['id'];
+            $data['member'] = $this->management['username'];
             $result = $this->ArticleService->updateArticle($data,['id'=>$id]);
             if($result['code'] == 200){
-                $this->success($result['msg'],url('admin/Article/articleInfo',['article_id'=>$article_id]));
+                $this->success($result['msg'],url('management/Article/articleInfo',['article_id'=>$article_id]));
             }else{
                 $this->error($result['msg']);
             }
