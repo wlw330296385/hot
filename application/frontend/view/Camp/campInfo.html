@@ -31,9 +31,10 @@
             font-size: 10px;
             color: #cccccc;
         }
-         /* 底部按钮点击去除背景颜色 */
 
-         .operation .opli a.mui-active {
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
             background-color: inherit
         }
     </style>
@@ -117,6 +118,17 @@
             <p class="dropdown moreLesson">
                 <a href="{:url('lesson/lessonList')}?camp_id={$campInfo['id']}">更多课程...</a>
             </p>
+
+            <!-- 最新新闻 -->
+            <div class="page-header  border-b">
+                <span class="course">最近新闻
+                    <span class="noDataTip"></span>
+                </span>
+                <span class="more">
+                    <a href="{:url('article/articleList')}" class="mui-navigate-right pdr15">更多</a>
+                </span>
+            </div>
+            <ul class="mui-table-view list mainInfo newList"></ul>
 
 
             <div class="page-header" style="background: #efeff4;">
@@ -437,6 +449,8 @@
             toCoachList('', '');
             //页面打开时获取一次最新评论信息
             pulldownRefresh();
+
+            toNewList(); // 最近新闻
         });
 
         // 判断当前的关注状态
@@ -567,6 +581,44 @@
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取最近一条新闻
+        function toNewList() {
+            var organization_id = "{$o_id}"
+            mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
+                data: {
+                    organization_id:organization_id,
+                    category: 3,
+                    organization_type: 2,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.slice(0, 3).length - 1; i++) {
+                            let urls = "{:url('article/articleInfo')}" + "/article_id/" + data.data.data[i].id;
+                            div += '<li class="mui-table-view-cell listli"><a href="' + urls + '"><img class="mui-pull-left proportion4x3" src="' + data.data.data[i].covers + '"><div style="line-height:26px;"><strong>' + data.data.data[i].title + '</strong>';
+                            div += '<p class="mui-ellipsis f12">' + data.data.data[i].create_time + '<span class="wd45"><font style="margin-right: 8px !important;"><i class="mui-icon-extra mui-icon-extra-comment f14"></i>&nbsp;' + data.data.data[i].comments + '</font><font><i class="mui-icon-extra mui-icon-extra-like f14"></i>&nbsp;' + data.data.data[i].likes + '</span></span></p></div>';
+                            div += '</a></li>';
+                        }
+                        $(".newList").empty().append(div);
+                        if (div == '') {
+                            // $(".newList").empty().append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有新闻数据哦</p></li>');
+                            $(".newList").prev().find(".noDataTip").append("（暂无数据）");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
                 }
             });
         };

@@ -42,7 +42,8 @@
         <div class="register">
             <form action="" class="mui-input-group">
                 <input type="hidden" name="coachid" value="{$coachInfo.id}">
-                <input type="hidden" name="memberid" value="{$coachInfo.member_id}"> {if $coachInfo.status=1}
+                <input type="hidden" name="memberid" value="{$coachInfo.member_id}">
+                <input type="hidden" name="member" value="{$coachInfo.member}"> {if $coachInfo.status=1}
                 <div class="mui-input-row">
                     <label>真实姓名</label>
                     <input type="text" name="coach_name" class="input coach_name" readonly="readonly" placeholder="请输入真实姓名" value="{notempty name='coachInfo.coach'}{$coachInfo.coach}{/notempty}">
@@ -251,6 +252,7 @@
                 var introHtml = $(".introBox").html();
 
                 var coachid = $('input[name=coachid]').val();
+                var member = $('input[name=member]').val();
                 var memberid = $('input[name=memberid]').val();
                 var coach_name = $('.coach_name').val();
                 var coach_year = $(".coach_year").val();
@@ -287,6 +289,7 @@
                 mui.ajax("{:url('api/coach/updateCoachApi')}", {
                     data: {
                         coachid: coachid,
+                        member:member,
                         member_id: memberid,
                         coach: coach_name,
                         coach_year: coach_year,
