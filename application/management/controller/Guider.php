@@ -28,7 +28,7 @@ class Guider extends Base
 			if($camp['type'] == '4'){
 				//权限和菜单
 				cache("power_{$this->memberInfo['id']}",4);
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',4],'module'=>'management','online_hide'=>0])->order(['sort asc','id asc'])->select();
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',4],'module'=>'management','online_hide'=>1])->order(['sort asc','id asc'])->select();
 				$menuList = getTree($powerList,0);
 				cache("powerList_".$this->memberInfo['id'],$powerList);
 				cache("menuList_".$this->memberInfo['id'],$menuList);
@@ -36,7 +36,7 @@ class Guider extends Base
 				session('camp_member',$camp);
 			}elseif($camp['type'] == '3'){
 				//权限和菜单
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',3],'module'=>'management','online_hide'=>0])->order(['sort asc','id asc'])->select();
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',3],'module'=>'management','online_hide'=>1])->order(['sort asc','id asc'])->select();
 				$menuList = getTree($powerList,0);
 				cache("powerList_".$this->memberInfo['id'],$powerList);
 				cache("menuList_".$this->memberInfo['id'],$menuList);
@@ -45,14 +45,13 @@ class Guider extends Base
 				session('camp_member',$camp);
 			}elseif($camp['type'] == '2'){
 				//权限和菜单
-				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>2,'power'=>['elt',2],'module'=>'management','online_hide'=>0])->order(['sort asc','id asc'])->select();
+				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>2,'power'=>['elt',2],'module'=>'management','online_hide'=>1])->order(['sort asc','id asc'])->select();
 				$menuList = getTree($powerList,0);
 				cache("powerList_".$this->memberInfo['id'],$powerList);
 				cache("menuList_".$this->memberInfo['id'],$menuList);
 				cache("power_{$this->memberInfo['id']}",2);
 				// 训练营信息
 				session('camp_member',$camp);
-				// dump($powerList);die;
 			}
 			header("Location:".url('Index/index'));
 		}

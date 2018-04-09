@@ -206,33 +206,36 @@ class ScheduleService
                 'schedule_time' => $schedule['lesson_time']
             ];
         }
-        $assistantIDs = unserialize($schedule['assistant_id']);
-        $coachList = db('coach')->where(['id'=>['in',$assistantIDs]])->select();
-        if (!empty($coachList)) {
-            foreach ($coachList as $key => $val) {
-                $coachDatalist[] = [
-                    'schedule_id' => $schedule['id'],
-                    'schedule' => $schedule['grade'],
-                    'camp_id' => $schedule['camp_id'],
-                    'camp' => $schedule['camp'],
-                    'lesson_id' => $schedule['lesson_id'],
-                    'lesson' => $schedule['lesson'],
-                    'grade_id' => $schedule['grade_id'],
-                    'grade' => $schedule['grade'],
-                    'user_id' => $val['id'],
-                    'user' => $val['caoch'],
-                    'member_id' => $coachInfo2['member_id'],
-                    'member' => $coachInfo2['member'],
-                    'type' => 2,
-                    'status' => 1,
-                    'schedule_time' => $schedule['lesson_time']
-                ];
+        if($schedule['assistant_id']){
+            $assistantIDs = unserialize($schedule['assistant_id']);
+            $coachList = db('coach')->where(['id'=>['in',$assistantIDs]])->select();
+            if (!empty($coachList)) {
+                foreach ($coachList as $key => $val) {
+                    $coachDatalist[] = [
+                        'schedule_id' => $schedule['id'],
+                        'schedule' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'user_id' => $val['id'],
+                        'user' => $val['caoch'],
+                        'member_id' => $coachInfo2['member_id'],
+                        'member' => $coachInfo2['member'],
+                        'type' => 2,
+                        'status' => 1,
+                        'schedule_time' => $schedule['lesson_time']
+                    ];
+                }
+            }
+            $savecoachResult = $model->saveAll($coachDatalist);
+            if (!$savecoachResult) {
+                return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
             }
         }
-        $savecoachResult = $model->saveAll($coachDatalist);
-        if (!$savecoachResult) {
-            return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
-        }
+        
 
         // 更新课时数据为已申状态
         $canSettleDate = date('Ymd', strtotime('+2 day'));
