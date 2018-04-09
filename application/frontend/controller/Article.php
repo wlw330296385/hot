@@ -93,6 +93,16 @@ class Article extends Base{
 		return view('Article/articleList');
     }
 
+    // 获取操作指南列表
+    public function articleListOfSystem(){
+    	$map = input('post.');
+        $articleList = $this->ArticleService->getArticleList($map);
+
+
+        $this->assign('articleList',$articleList);
+		return view('Article/articleListOfSystem');
+    }
+
 
     // 文章管理列表
     public function articleListOfCamp(){
