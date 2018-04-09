@@ -78,17 +78,6 @@ class ScheduleService
         if (!isset($data['status'])) {
             $data['status'] = -1;
         }
-        /*$validate = validate('ScheduleVal');
-        if (!$validate->check($data)) {
-            return ['msg' => $validate->getError(), 'code' => 100];
-        }
-        $result = $model->allowField(true)->save($data);
-        if ($result === false) {
-            return ['msg' => $this->scheduleModel->getError(), 'code' => 100];
-        } else {
-            db('camp')->where(['id'=>$data['camp_id']])->setInc('total_schedule');
-            return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
-        }*/
         $model = new Schedule();
         // 验证数据
         $validate = validate('ScheduleVal');

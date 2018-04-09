@@ -248,7 +248,6 @@ class Schedule extends Base
 		}else{
 		    $scheduleInfo['exerciseList'] = [];
 		}
-
 		// 教案
 		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$scheduleInfo['plan_id']]);
@@ -258,6 +257,16 @@ class Schedule extends Base
 		    $planInfo['exerciseList'] = [];
 		}
 
+        // 课时改为未审核状态
+        if($scheduleInfo['status'] == 1){
+            $result = db('schedule')->where(['id'=>$schedule_id])->update(['status'=>-1]);
+            $res = db('schedule_member')->where(['schedule_id'=>$schedule_id])->delete();
+            if(!$res){
+                $this->error('出现错误,请重试');
+            }
+        }
+        
+        
 		$this->assign('planInfo',$planInfo);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
