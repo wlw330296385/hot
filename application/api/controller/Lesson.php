@@ -362,12 +362,12 @@ class Lesson extends Base{
                     unset($map[$key]);
                 }
             }
-            $result = $this->LessonService->getLessonList($map,1,'hot desc',4);
+            $result = $this->LessonService->getLessonList($map,1,['hot'=>'asc','students'=>'asc'],4);
             
             if($result){
                 shuffle($result);
-                if( count($result)<4 && isset($map['camp_id']) ){
-                    $res = $this->LessonService->getLessonList(['status'=>1,'isprivate'=>0],1,['hot'=>'asc','id'=>'desc'],(4-count($result)));
+                if( count($result)<4 && !isset($map['camp_id']) ){
+                    $res = $this->LessonService->getLessonList(['status'=>1,'isprivate'=>0],1,['hot'=>'asc','students'=>'asc'],(4-count($result)));
                     
                     $result = array_merge($result,$res);
                 }
@@ -375,7 +375,6 @@ class Lesson extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'获取成功','data'=>$result]);
             }
-            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }

@@ -418,15 +418,18 @@
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var scheduleid = elem.parentNode.getAttribute('data-id');
+        var schedule_id = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
         mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                var apiurl = "{:url('api/schedule/removeschedule')}";
+                if(txt == 'del'){
+                    var apiurl = "{:url('api/schedule/delScheduleApi')}";
+                }else{
+                    var apiurl = "{:url('api/schedule/recordScheduleApi')}";
+                }
                 mui.ajax(apiurl, {
                     data: {
-                        scheduleid: scheduleid,
-                        action: action
+                        schedule_id: schedule_id,
                     },
                     dataType: 'json',
                     type: 'post',

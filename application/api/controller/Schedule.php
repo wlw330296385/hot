@@ -27,10 +27,10 @@ class Schedule extends Base
     {
         try {
             $lesson_id = input('param.lesson_id');
-            $lesson_time = input('param.lesson_time');
+            $lesson_time_date = input('param.lesson_time_date');
             $grade_id = input('param.grade_id');
             $camp_id = input('param.camp_id');
-            $lesson_time = strtotime($lesson_time);
+            $lesson_time = strtotime($lesson_time_date);
             //前后2个小时
             $start_time = $lesson_time - 7200;
             $end_time = $lesson_time + 7200;
@@ -144,7 +144,7 @@ class Schedule extends Base
     }
 
     // 删除课程
-    public function delSchedule(){
+    public function delScheduleApi(){
         try {
             $schedule_id = input('param.schedule_id');
             // 获取会员在训练营角色
@@ -188,7 +188,7 @@ class Schedule extends Base
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
 
-            
+
             // 训练时间不能大于当前时间
             if ($data['lesson_time'] > time()) {
                 return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);
