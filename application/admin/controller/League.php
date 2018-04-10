@@ -94,7 +94,7 @@ class League extends Backend
                 'content' => '您注册的联赛'. $matchInfo['name']. $checkstr,
                 'keyword1' => $checkstr,
                 'keyword2' => $datetime,
-                'url' => url('keeper/match/leagueManage', ['id' => $matchInfo['id']], '', true),
+                'url' => url('keeper/match/leagueManage', ['league_id' => $matchInfo['id']], '', true),
                 'remark' => '点击进入'
             ];
             $messageS->sendMessageToMember($matchInfo['member_id'], $message, config('wxTemplateID.successCheck'));
