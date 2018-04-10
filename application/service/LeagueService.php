@@ -4,6 +4,7 @@ namespace app\service;
 
 
 use app\model\MatchOrg;
+use app\model\MatchOrgMember;
 
 class LeagueService
 {
@@ -90,5 +91,52 @@ class LeagueService
             }
         }
         return $certArr;
+    }
+
+    // 获取会员所在联赛组织列表
+    public function getMemberInMatchOrgs($memberId) {
+        $model = new MatchOrgMember();
+        $res = $model->where([
+            'member_id' => $memberId,
+            'status' => 1
+        ])->select();
+
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 保存联赛组织-会员关系数据
+    public function saveMatchOrgMember($data, $condition=[]) {
+        $model = new MatchOrgMember();
+        // 带更新条件更新数据
+        if ( !empty($condition) ) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 直接更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res ) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 }

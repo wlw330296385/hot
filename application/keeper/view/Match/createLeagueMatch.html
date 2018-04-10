@@ -48,8 +48,23 @@
         <form action="" class="mui-input-group mt55">
             <div class="mui-input-row">
                 <label>联赛组织</label>
-                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛名称" disabled>
+                {if condition="$orgId"}
+                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
                 <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data">
+                {else/}
+                <div class="mui-navigate-right">
+                    <span class="select-row">
+                        <select class="data select-matchOrg">
+                            <option value="0">请选择</option>
+                            {volist name="matchOrgList" id="vo"}
+                            <option value="{$vo.match_org_id}">{$vo.match_org}</option>
+                            {/volist}
+                        </select>
+                    </span>
+                </div>
+                <input type="hidden" name="match_org" value="" class="data">
+                <input type="hidden" name="match_org_id" value="" class="data">
+                {/if}
             </div>
             <div class="mui-input-row h-auto">
                 <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
@@ -247,6 +262,17 @@
         });
     })(mui, document);
 
+    // 联赛组织选择框
+    $('.select-matchOrg').change(function() {
+        var matchOrgId = $(this).find('option:selected').val();
+        var matchOrg = $(this).find('option:selected').text();
+        if (matchOrgId == 0) {
+            matchOrg = '';
+        }
+        $('input[name=match_org_id]').val(matchOrgId);
+        $('input[name=match_org]').val(matchOrg);
+    });
+
     // 获取数据并进行提交
     function submitAction() {
         var data = wooApi.getInputData('input', 'data');
@@ -257,7 +283,7 @@
         var url = "{:url('api/league/creatematch')}";
         var ajaxResult = wooApi.asyncF(url, objData);
         if (ajaxResult.code == 200) {
-            mui.alert(ajaxResult.msg, '联赛创建成功，请等待审核', '确定', function () {
+            mui.alert('联赛创建成功，请等待审核', '确定', function () {
                 var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
                 window.top.location.href = goUrl;
             })

@@ -11,6 +11,7 @@ class MatchVal extends Validate {
         'cover' => 'require',
         'name' => 'require',
         'member_id' => 'require|gt:0',
+        'match_org' => 'require',
         'type' => 'require',
         'province' => 'require',
         'city' => 'require',
@@ -31,6 +32,7 @@ class MatchVal extends Validate {
         'name.require' => '请输入比赛名称',
         'member_id.require' => '请先注册会员或重新登录平台',
         'member_id.gt' => '请先注册会员或重新登录平台',
+        'match_org.require' => '请输入联赛组织',
         'type.require' => '请选择比赛类型',
         'member_id.token' => '请不要重复点击提交',
         'province.require' => '请选择地区',
@@ -53,7 +55,7 @@ class MatchVal extends Validate {
         'edit' => [ 'type', 'province', 'city', 'area' ],
         'status' => ['id', 'status'],
         // 联赛
-        'league_add' => [ 'name', 'cover', 'member_id', 'type', 'province', 'city', 'area', 'format', 'teams_max', 'entry_fees', 'deposit', 'start_time', 'end_time', 'charge_name'],
-        'league_edit' => [ 'name', 'cover', 'member_id', 'type', 'province', 'city', 'area', 'format', 'teams_max', 'entry_fees', 'deposit', 'start_time', 'end_time', 'charge_name'],
+        'league_add' => [ 'name', 'cover', 'match_org', 'member_id', 'type', 'province', 'city', 'area', 'format', 'teams_max', 'entry_fees', 'deposit', 'start_time', 'end_time', 'charge_name'],
+        'league_edit' => [ 'name', 'cover', 'match_org', 'member_id', 'type', 'province', 'city', 'area', 'format', 'teams_max', 'entry_fees', 'deposit', 'start_time', 'end_time', 'charge_name'],
     ];
 }
