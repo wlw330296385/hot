@@ -130,7 +130,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
-                <a href="{:url('match/createLeagueMatch')}" class="">创建联赛</a>
+                <a href="#" class="create-league" data-hasorg="{$hasMatchOrg}">创建联赛</a>
             </li>
         </ul>
 
@@ -199,6 +199,20 @@
                 var gType = 1;//代表下拉刷新
                 toList(page, gType);//具体取数据的方法
             }
+
+            // 创建联赛 提示无联赛组织询问框
+            $('.create-league').on('tap', function() {
+                var hasOrg = $(this).attr('data-hasorg');
+                if (hasOrg == 0) {
+                    mui.confirm('您无联赛组织是否创建？', '提示', ['取消', '创建联赛组织'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{:url('match/createorganization')}";
+                        }
+                    });
+                } else {
+                    window.location.href = "{:url('match/createLeagueMatch')}";
+                }
+            });
 
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
