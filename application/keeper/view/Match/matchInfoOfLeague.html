@@ -14,49 +14,162 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .intro {
-            padding: 0 !important;
-        }
-
-        .intro img {
-            padding: 0px 15px;
+        .teamLogo {
             width: 100%;
-            height: auto;
+            border-radius: 50%;
         }
 
-        .operationDiv {
-            position: relative;
+        @media screen and (min-width: 320px) {
+            .teamLogo {
+                height: 5.4rem;
+            }
         }
 
-        .operationDiv .delbtn {
+        @media screen and (min-width: 375px) {
+            .teamLogo {
+                height: 6.6rem;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .teamLogo {
+                height: 7.4rem;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .teamLogo {
+                height: 14.8rem;
+            }
+        }
+    </style>
+    <style type="text/css">
+        .mui-preview-image.mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        .mui-preview-header,
+        .mui-preview-footer {
             position: absolute;
-            right: 15px;
-            top: 10px;
-            line-height: initial !important;
-            font-size: 18px !important;
+            width: 100%;
+            left: 0;
+            z-index: 10;
         }
 
-        .operationDiv h5 {
-            padding: 10px 15px;
-            height: 40px;
-            line-height: 21px;
-            color: #000;
-            margin: 0;
-            font-weight: bold
+        .mui-preview-header {
+            height: 44px;
+            top: 0;
         }
 
-        .operationDiv p {
-            padding: 10px 15px;
-            margin: 0;
-            color: #000;
+        .mui-preview-footer {
+            height: 50px;
+            bottom: 0px;
         }
 
-        .nohave {
-            margin: 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-top: none;
+        .mui-preview-header .mui-preview-indicator {
+            display: block;
+            line-height: 50px;
+            color: #fff;
             text-align: center;
+            margin: 15px auto 4;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .mui-preview-image {
+            display: none;
+            -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+        }
+
+        .mui-preview-image.mui-preview-in {
+            -webkit-animation-name: fadeIn;
+            animation-name: fadeIn;
+        }
+
+        .mui-preview-image.mui-preview-out {
+            background: none;
+            -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+        }
+
+        .mui-preview-image.mui-preview-out .mui-preview-header,
+        .mui-preview-image.mui-preview-out .mui-preview-footer {
+            display: none;
+        }
+
+        .mui-zoom-scroller {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .mui-preview-image img.mui-transitioning {
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* 底部按钮点击去除背景颜色 */
+
+        .operation .opli a.mui-active {
+            background-color: inherit
         }
     </style>
 </head>
@@ -68,135 +181,185 @@
     </header>
 
     <div class="mui-content">
-        <div class="list coach mt55">
+        <div class="list coach">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="/static/frontend/images/ads1.jpg" style="width: 100%;height: 80px;">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
+                            <img src="{matchInfo.record.home_team_logo}" class="teamLogo">
                         </div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">
+                        <div class="mui-col-sm-3 mui-col-xs-3" style="padding: 12% 0;">
                             <h3>VS</h3>
-                            <p>友谊赛</p>
                         </div>
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                            <img src="{matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
+                        </div>
+                    </div>
+                    <div class="mui-row">
+                        <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
+                            <strong class="f16 colororange">sss</strong>
+                        </div>
+                        <div class="mui-col-sm-3 mui-col-xs-3"></div>
                         <div class="mui-col-sm-4 mui-col-xs-4">
-                            <img src="/static/frontend/images/ads1.jpg" style="width: 100%;height: 80px;">
+                            <strong class="f16 colororange away_team">ss</strong>
                         </div>
                     </div>
-                    <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">F-18</div>
-                        <div class="mui-col-sm-4 mui-col-xs-4"></div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">Steam</div>
-                    </div>
-                    <div class="mui-row">
-                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">100</h2>
-                        <div class="mui-col-sm-4 mui-col-xs-4"></div>
-                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">97</h2>
+                    <div class="mui-row score">
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred" style="margin-left:13px">2</h2>
+                        <div class="mui-col-sm-3 mui-col-xs-3"></div>
+                        <h2 class="mui-col-sm-4 mui-col-xs-4 colorred">2</h2>
                     </div>
                 </li>
             </ul>
+
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
-                    <label>对手</label>
-                    <span></span>
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
+                    <span class="away_team">{matchInfo.record.away_team}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>地点</label>
-                    <span></span>
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                    <span class="match_time">{matchInfo.match_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>地区</label>
-                    <span></span>
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                    <span>{matchInfo.province} {matchInfo.city} {matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
-                    <label>时间</label>
-                    <span></span>
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <span>{matchInfo.court}</span>
                 </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
+                    <span>{matchInfo.court_cost}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
+                    <span class="wd60 courtCostBear">{matchInfo.court_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
+                    <span class="refereeType">{matchInfo.referee_type}</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeCount">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
+                    <span class="wd60">{matchInfo.referee_count}/人</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeName">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
+                    <span class="wd60 refereeList"></span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                    <span class="wd60 refereeCostBear">{matchInfo.referee_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{matchInfo.type}</span>
+                </li>
+
             </ul>
 
-
-            <div class="page-header whitebg border-b">
-                <span class="course wd52">评论</span>
-                <span class="more">评论
-                    <small class="comment_count">3</small>&nbsp;|&nbsp;
-                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
-                    <samll class="thumbup_count">1</samll>
-                </span>
+            <div class="mui-table-view detalis-list list mainInfo mb">
+                <div class="page-header">
+                    <!-- <span class="icon iconfont icon-activity-personnel colororange"></span> -->
+                    <span class="course">参赛人员 出勤率
+                        <b class="colororange rate">0%</b>
+                    </span>
+                    <span class="more f14">
+                        <a href="{:url('team/matchSignupList')}" class="mui-navigate-right">
+                            <b class="colororange signup_num">0</b>/
+                        </a>
+                    </span>
+                </div>
+                <div class="imgShow overflow-x"></div>
             </div>
-            <ul class="mui-table-view comment-list">
-                <li class="mui-table-view-cell listli border-b">
-                    <div class="mui-pull-right">2017-12-22 15:03</div>
-                    <img class="mui-pull-left coachicon" src="https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJsb6yF8nF3I5eGmQT8zoRicAaF9QjfTbHwBofiaa5tIHUpRqMicicth5SW0I4L6pTbr6UDbGnqSZWPpQ/0">wayen_z
-                    <p>评价【评价】</p>
-                </li>
-            </ul>
 
-            <!--底部操作-->
-            <ul class="mui-table-view operation mt status1">
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
-            </ul>
+            <div class="page-header whitebg">
+                <span class="course">比赛花絮</span>
+            </div>
 
-            <ul class="mui-table-view operation mt status2" style="display:none">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bgred signupBtn">
-                    报名参加
-                </li>
-            </ul>
-
-            <ul class="mui-table-view operation mt status3" style="display:none">
-                <a href="#fbcomment">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgblue">
-                        发表评论
-                    </li>
-                </a>
-                <a href="">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bggreen">
-                        编辑/录入
-                    </li>
-                </a>
-            </ul>
-
-            <ul class="mui-table-view operation mt status4">
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 opli bgred signupBtn">
-                    报名参加
-                </li> -->
-                <a href="{:url('match/matchEditOfLeague')}">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12 opli bggreen">
-                        编辑/录入
-                    </li>
-                </a>
-            </ul>
+            {notempty name="matchInfo.record.album"}
+            <div class="mui-content-padded">
+                <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
+                    {volist name="matchInfo.record.album" id="vol"}
+                    <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                    {/volist}
+                </div>
+            </div>
+            {else/}
+            <p class="nohave">还没有上传花絮图哦</p>
+            {/notempty}
 
         </div>
 
+        <div class="page-header whitebg border-b ">
+            <span class="course wd52">评论</span>
+            <span class="more f14">评论
+                <span class="comment_count">0</span>&nbsp;|&nbsp;
+                <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
+                <span class="thumbup_count">0</span>
+            </span>
+        </div>
+        <ul class="mui-table-view comment-list mt55"></ul>
+
+        <!-- 底部操作 -->
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{$homeurl}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee" style="display:none">申请执裁</li>
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status1" style="display:none">参加</li>
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgblue status2" >
+                <a href="#fbcomment">发表评论</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen status3">
+                <a href="{:url('team/matchEdit')}">编辑/录入 </a>
+            </li>
+        </ul>
+
     </div>
 
+    </div>
 
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
             <ul class="mui-table-view operation">
                 <h5>
-                    <span class="type"></span>
+                    <span class="type">评价一下</span>
                     <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
-                <li class="mui-table-view-cell listli">
-                    <textarea rows="4" class="comment" placeholder="为这个活动做做评价吧。"></textarea>
+                <li class="listli">
+                    <textarea rows="4" class="comment" placeholder="为这个比赛做做评价吧。"></textarea>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli commentBtn">提交申请</li>
+                <li class="mui-col-xs-12 opli commentBtn">发表</li>
             </ul>
         </div>
     </div>
 
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/mui.zoom.js"></script>
+    <script src="/static/frontend/js/mui.previewimage.js"></script>
     <script>
+        mui.previewImage();
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
@@ -207,28 +370,26 @@
             window.top.location.href = this.href;
         });
 
-        //轮播
-        var slider = mui("#slider");
-        slider.slider({
-            interval: 5000
-        });
-
-        var count = 1;
-
         $(function () {
 
-            initialEds(); //活动详情为空的提示
-            ststuShow() //判断身份显示操作按钮
+            var count = 1;
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
+            toSignUpList(); // 报名/参赛人员
 
-            //报名功能
-            $(".signupBtn").on('click', function () {
-                //判断是否登陆会员
-                var event_id = "";
-                mui.ajax("{:url('api/team/jointeamevent')}", {
+            // 去逗号
+            var refereeList = $(".refereeList").text()
+            $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
+
+            // 申请执裁
+            $(".apply-referee").on("tap", function () {
+                var match_id = "{matchInfo.id}";
+                var match_record_id = "{matchInfo.record.id}";
+                mui.ajax("{:url('api/referee/applymatchreferee')}", {
                     data: {
-                        event_id: event_id,
+                        match_id: match_id,
+                        match_record_id: match_record_id,
+                        referee_id: referee_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -237,7 +398,37 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('报名成功', '确定');
+                            mui.toast("你已提交申请，请耐心等待回复");
+                        }
+                        else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //报名功能
+            $(".signupBtn").on('tap', function () {
+                //判断是否登陆会员
+                var match_id = "{matchInfo.id}";
+                mui.ajax("{:url('api/match/joinmatch')}", {
+                    data: {
+                        match_id: match_id,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('报名成功', function () {
+                                location.reload();
+                            });
                         } else {
                             mui.toast(data.msg);
                         }
@@ -250,9 +441,8 @@
             });
 
             //评论功能
-            $(".commentBtn").on('click', function () {
-                var commented = "";
-                var commented_id = "";
+            $(".commentBtn").on('tap', function () {
+                var commented_id = "{matchInfo.id}";
                 var comment = $(".comment").val();
 
                 if (comment == '') {
@@ -262,9 +452,8 @@
 
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 3,
                         comment: comment
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -274,10 +463,13 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('评价成功，感谢你的评价！', '确定');
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
                             mui('#fbcomment').popover('toggle');
                         } else {
                             mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -288,14 +480,12 @@
             });
 
             //点赞功能
-            $(".thumbsup").on('click', function () {
-                var commented = ;
-                var commented_id = "";
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{matchInfo.id}";
                 mui.ajax("{:url('api/team/dianzan')}", {
                     data: {
-                        commented: commented,
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 3,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -316,17 +506,17 @@
                     }
                 });
             });
-        })
+
+          
+        });
 
         // 点赞状态
         function isthumbsup() {
-            var commented = "";
-            var commented_id = "";
+            var commented_id = "{matchInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
-                    commented: commented,
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 3,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -335,6 +525,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
                         if (data.thumbsup == 1) {
                             $(".thumbsup").css("color", "red");
                         } else {
@@ -349,39 +540,6 @@
                     console.log(type);
                 }
             });
-        }
-
-        // 默认的样式
-        function initialEds() {
-            if ($(".intro").text() == '') {
-                $(".intro").append("<p class='nohave'>还没有活动详情描述哦</p>")
-            }
-        }
-
-        // 判断身份显示操作按钮
-        function ststuShow() {
-            // 获取当前时间
-            var d = new Date()
-            var minutes = d.getMinutes()
-            var hours = d.getHours()
-            var day = d.getDate()
-            var month = d.getMonth() + 1
-            var year = d.getFullYear()
-            var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes;
-            var teamrole = "";
-            var end_time = "";
-
-            if (teamrole > 0 && time > end_time) {
-                $(".status3").show();
-            } else if (teamrole > 0 && time < end_time) {
-                $(".status4").show();
-            }
-
-            if (teamrole < 0 && time < end_time) {
-                $(".status2").show();
-            } else if (teamrole < 0 && time > end_time) {
-                $(".status1").show();
-            }
         }
 
         //下拉刷新具体业务实现
@@ -405,12 +563,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "";
+            var commented_id = "{matchInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 3,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -421,7 +579,6 @@
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
-                        $(".thumbup_count").text(data.thumbup_count);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
@@ -439,6 +596,44 @@
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取已经报名的活动人员列表
+        function toSignUpList() {
+            var url = "{:url('api/match/recordmemberlist')}";
+            var match_id = "{matchInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: match_id,
+                    status: 1,
+                    // is_apply: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        $(".imgShow").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            $(".signup_num").text(data.data.length);
+                            // 出勤率
+                            $(".rate").text(parseInt(rateNum) + "%");
+                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                        };
+                        $(".imgShow").append(inactiveDiv);
+                    }
+                    if (data.code == 100) {
+                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
                 }
             });
         };
