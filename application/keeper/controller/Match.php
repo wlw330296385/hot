@@ -237,5 +237,25 @@ class Match extends Base {
     public function teamListOfLeague() {
         return view('Match/teamListOfLeague');
     }
+
+    // 联赛比赛
+    public function matchListOfLeague() {
+        return view('Match/matchListOfLeague');
+    }
+
+    // 联赛创建比赛
+    public function createMatchOfLeague() {
+        return view('Match/createMatchOfLeague');
+    }
+
+    // 联赛比赛详情
+    public function matchInfoOfLeague() {
+        return view('Match/matchInfoOfLeague');
+    }
+
+    // 联赛编辑比赛
+    public function matchEditOfLeague() {
+        return view('Match/matchEditOfLeague');
+    }
     
 }
