@@ -26,7 +26,13 @@
     </header>
 
     <div class="mui-content">
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
+
+        <div class="location-frame">
+            <span class="fl organization">篮球管家</span>
+            <span class="fr category">平台操作手册</span>
+        </div>
+
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 88px">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b article">
                 </ul>
@@ -38,6 +44,8 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
     <script>
 
         mui(".mui-content").on("tap", "a", function () {
@@ -50,6 +58,27 @@
             var count = 1;
             var keyword = '';
             $('.keyword').val(keyword);
+            var data = {}
+            var organ_type = wooApi.GetQueryString('organ_type');
+            var organ_id = wooApi.GetQueryString('organ_id');
+            var organ_name = wooApi.GetQueryString('organ_name');
+            var category = wooApi.GetQueryString('category');
+            if (organ_id == "" || organ_id == null) { organ_id == 0 }
+
+            //判断如果没传参默认为篮球管家的平台操作手册
+            if (organ_type == "" || organ_type == null) { organ_type = "1" }
+            if (organ_name == "" || organ_name == null) { organ_name = "篮球管家" }
+            if (category == "" || category == null) { category = 1 }
+
+            if (keyword == null) { keyword = "" }
+
+            $(".organization").text(organ_name);
+            // $(".category").text("平台操作手册");
+            if (category == 1) {
+                $(".category").text("操作手册");
+            } else if (category == 3) {
+                $(".category").text("新闻");
+            }
 
             //搜索教练
             $("#searchBtn").on("click", function () {
@@ -122,26 +151,15 @@
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/article/getArticleListByPageApi','','',true)}" + '/?page=' + page;
                 var organization_id = "{$o_id}"
-                var data = {};
-                if (organization_id > 0) {
-                    data = {
-                        category:3,
-                        organization_type: 2,
-                        organization_id: organization_id,
-                        keyword: keyword,
-                        status: 1
-                    }
-                } else {
-                    data = {
-                        category:3,
-                        organization_type: 2,
-                        keyword: keyword,
-                        status: 1
-                    }
-                }
                 mui.ajax({
                     url: url,
-                    data: data,
+                    data: {
+                        organization_type: organ_type,
+                        organization_id: organ_id,
+                        category: category,
+                        keyword: keyword,
+                        status: 1
+                    },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
