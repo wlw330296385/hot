@@ -3,6 +3,7 @@
 namespace app\service;
 
 
+use app\model\Match;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 
@@ -138,5 +139,20 @@ class LeagueService
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 获取联赛信息带有联赛组织
+    public function getMatchWithOrg($map) {
+        $model = new Match();
+        $res = $model->with('matchOrg')->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        // 原始数据
+        $getData = $res->getData();
+        $result = $res->toArray();
+        // 组合原始数据
+        $result['status_num'] = $getData['status'];
+        return $result;
     }
 }

@@ -54,5 +54,8 @@ class Match extends Model {
         return $status[$value];
     }
 
-
+    // 一对一关联联赛组织
+    public function matchOrg() {
+        return $this->belongsTo('matchOrg');
+    }
 }
