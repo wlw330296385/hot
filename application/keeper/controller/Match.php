@@ -107,7 +107,7 @@ class Match extends Base {
     // 注册联赛组织成功页
     public function createorgsuccess() {
         $orgId = input('org_id', 0, 'intval');
-        return view('match/createOrgSuccess', [
+        return view('Match/createOrgSuccess', [
             'org_id' => $orgId
         ]);
     }

@@ -33,8 +33,8 @@ class MatchOrgVal extends Validate
         'province.require' => '请选择所属地区',
         'city.require' => '请选择所属地区',
         'area.require' => '请选择所属地区',
-        'logo.require' => '请上传球队logo图',
-        'cover.require' => '请上传球队封面图',
+        'logo.require' => '请上传徽标',
+        'cover.require' => '请上传封面图',
         'descri.max' => '简介不能超过100个字'
     ];
 
