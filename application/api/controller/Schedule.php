@@ -84,21 +84,20 @@ class Schedule extends Base
             if (!$schedule_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-            $isPower = $this->recordSchedulePowerApi();
+            $schedule = db('schedule')->where(['id' => $schedule_id])->find();
+            $isPower = $this->ScheduleService->isPower($schedule['camp_id'],$this->memberInfo['id']);
             if ($isPower < 3) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403')]);
             }
-            // $schedule = $this->ScheduleService->getScheduleInfo(['id' => $scheduleid]);
-            $schedule = db('schedule')->where(['id' => $scheduleid])->find();
-
             if ($schedule['status'] != -1) {
                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
             }
+            $campInfo = db('camp')->where('id',$schedule['camp_id'])->whereNull('delete_time')->find();
             // 课时学员名单
             $students = unserialize($schedule['student_str']);
             // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时收入金额（课时学员*课程单价）
             if ($campInfo['rebate_type'] == 1) {
-                $campInfo = db('camp')->where('id',$schedule['camp_id'])->whereNull('delete_time')->find();
+                
                 // 课时工资
                 $numScheduleStudent = count($students);
                 $lessonCost = db('lesson')->where('id', $schedule['lesson_id'])->value('cost');
@@ -159,7 +158,7 @@ class Schedule extends Base
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',不能操作']);
                 }
             }
-            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $scheduleid]);
+            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $schedule_id]);
             if ($schedule['is_settle'] == 1) {
                 return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
             }
@@ -349,12 +348,12 @@ class Schedule extends Base
     public function removeschedule()
     {
         try {
-            $scheduleid = input('scheduleid');
+            $schedule_id = input('schedule_id');
             $action = input('action');
-            if (!$scheduleid || !$action) {
+            if (!$schedule_id || !$action) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
-            $schedule = db('schedule')->where(['id' => $scheduleid])->find();
+            $schedule = db('schedule')->where(['id' => $schedule_id])->find();
             if (!$schedule) {
                 return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
             }
@@ -422,7 +421,7 @@ class Schedule extends Base
                 if ($schedule['is_settle'] == 1) {
                     return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
                 }
-                $res = $this->ScheduleService->delSchedule($scheduleid);
+                $res = $this->ScheduleService->delSchedule($schedule_id);
                 if ($res) {
                     $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                 } else {
@@ -439,13 +438,13 @@ class Schedule extends Base
     public function sendschedule()
     {
         try {
-            $scheduleid = input('scheduleid');
+            $schedule_id = input('schedule_id');
             $this->ScheduleService = new ScheduleService();
             // 获取课时学员数据
-            $this->ScheduleServicetudents = $this->ScheduleService->getScheduleStudentMemberList($scheduleid);
+            $this->ScheduleServicetudents = $this->ScheduleService->getScheduleStudentMemberList($schedule_id);
 
             // 获取课时数据
-            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $scheduleid]);
+            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $schedule_id]);
 
             // 推送消息组合
             // 推送消息接收会员member_ids集合
