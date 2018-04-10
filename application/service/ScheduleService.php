@@ -219,13 +219,13 @@ class ScheduleService
                     ];
                 }
             }
-            $savecoachResult = $model->saveAll($coachDatalist);
             
-            if (!$savecoachResult) {
-                return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
-            }
         }
-        
+
+        $savecoachResult = $model->saveAll($coachDatalist);
+        if (!$savecoachResult) {
+            return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
+        }
 
         // 更新课时数据为已申状态
         $canSettleDate = date('Ymd', strtotime('+2 day'));
