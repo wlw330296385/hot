@@ -149,7 +149,13 @@ class Match extends Base {
 
     // 联赛列表
     public function leagueList() {
-        return view('Match/leagueList');
+        $leagueS = new LeagueService();
+        $matchOrgList = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
+        // 会员有无联赛组织标识
+        $hasMatchOrg = ($matchOrgList) ? 1 : 0;
+        return view('Match/leagueList', [
+            'hasMatchOrg' => $hasMatchOrg
+        ]);
     }
 
     // 创建联赛信息
@@ -158,12 +164,8 @@ class Match extends Base {
         // 传入联赛组织id
         $orgId = input('org_id', 0, 'intval');
         if (!$orgId) {
-            //$this->error('请选择联赛组织');
             // 获取会员所在联赛组织，若无组织数据 跳转至创建联赛组织
             $matchOrgList = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
-            if (!$matchOrgList) {
-                $this->error('请先创建联赛组织', 'match/createorganization');
-            }
             $this->assign('matchOrgList', $matchOrgList);
         } else {
             $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
