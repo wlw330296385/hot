@@ -210,9 +210,9 @@ class ScheduleService
                         'grade_id' => $schedule['grade_id'],
                         'grade' => $schedule['grade'],
                         'user_id' => $val['id'],
-                        'user' => $val['caoch'],
-                        'member_id' => $coachInfo2['member_id'],
-                        'member' => $coachInfo2['member'],
+                        'user' => $val['coach'],
+                        'member_id' => $val['member_id'],
+                        'member' => $val['member'],
                         'type' => 2,
                         'status' => 1,
                         'schedule_time' => $schedule['lesson_time']
@@ -220,6 +220,7 @@ class ScheduleService
                 }
             }
             $savecoachResult = $model->saveAll($coachDatalist);
+            
             if (!$savecoachResult) {
                 return ['code' => 100, 'msg' => '记录教练数据异常，请重试'];
             }

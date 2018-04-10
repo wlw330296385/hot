@@ -133,7 +133,7 @@ class Schedule extends Base
                 return json($checkStudentRestscheduleResult);
             }
             //写入学生课时数据
-            $res = $this->ScheduleService->saveScheduleMember($schedule, $students);
+            $res = $this->ScheduleService->saveScheduleMember($schedule,$students);
   
             return json($res);
         } catch (Exception $e) {
@@ -146,6 +146,7 @@ class Schedule extends Base
     public function delScheduleApi(){
         try {
             $schedule_id = input('param.schedule_id');
+            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $schedule_id]);
             // 获取会员在训练营角色
             $power = getCampPower($schedule['camp_id'], $this->memberInfo['id']);
             if ($power < 2) {
@@ -158,7 +159,7 @@ class Schedule extends Base
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',不能操作']);
                 }
             }
-            $schedule = $this->ScheduleService->getScheduleInfo(['id' => $schedule_id]);
+            
             if ($schedule['is_settle'] == 1) {
                 return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
             }
