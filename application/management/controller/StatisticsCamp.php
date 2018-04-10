@@ -698,4 +698,17 @@ class StatisticsCamp extends Camp{
         //查询条件：camp_id，member_id，monthstart，monthend
         return $this->fetch('StatisticsCamp/campCoachSalary');
     }
+
+
+    // 退费列表
+    public function refundList(){
+
+        return $this->fetch('StatisticsCamp/refundList');
+    }
+
+    // 退费处理
+    public function refundDeal(){
+
+        return $this->fetch('StatisticsCamp/refundDeal');
+    }
 }
