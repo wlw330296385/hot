@@ -28,6 +28,18 @@ class League extends Base
         $leagueService = new LeagueService();
         try {
             $res = $leagueService->createMatchOrg($data);
+            // 创建联赛组织成功 保存组织负责人数据
+            if ($res['code'] == 200) {
+                $matchOrgId = $res['data'];
+                $leagueService->saveMatchOrgMember([
+                    'match_org_id' => $matchOrgId,
+                    'match_org' => $data['name'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'type' => 10,
+                    'status' => 1
+                ]);
+            }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -127,12 +139,25 @@ class League extends Base
         $data['member'] = $this->memberInfo['member'];
         $data['member_avatar'] = $this->memberInfo['avatar'];
         // 时间字段格式转化
+        $newTime = time();
         if ( array_key_exists('start_time', $data) ) {
             $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
+            if ( $data['start_time'] != 0 && $newTime > $data['start_time'] ) {
+                return json(['code' => 100, 'msg' => '开始时间必须大于当前时间']);
+            }
         }
-        if ( array_key_exists('ent_time', $data) ) {
+        if ( array_key_exists('end_time', $data) ) {
             $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
+            if ( $data['end_time'] != 0 && $newTime > $data['end_time'] ) {
+                return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
+            }
         }
+        if ( isset($data['start_time']) && isset($data['end_time']) ) {
+            if ($data['end_time'] <= $data['start_time']) {
+                return json(['code' => 100, 'msg' => '结束时间必须大于开始时间']);
+            }
+        }
+
         // 创建联赛 status=0 待审核
         $data['status'] = 0;
         $matchS = new MatchService();
@@ -153,12 +178,25 @@ class League extends Base
         }
         // 接收输入变量
         $data = input('post.');
+        $newTime = time();
         if ( array_key_exists('start_time', $data) ) {
             $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
+            if ( $data['start_time'] != 0 && $newTime > $data['start_time'] ) {
+                return json(['code' => 100, 'msg' => '开始时间必须大于当前时间']);
+            }
         }
-        if ( array_key_exists('ent_time', $data) ) {
+        if ( array_key_exists('end_time', $data) ) {
             $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
+            if ( $data['end_time'] != 0 && $newTime > $data['end_time'] ) {
+                return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
+            }
         }
+        if ( isset($data['start_time']) && isset($data['end_time']) ) {
+            if ($data['end_time'] <= $data['start_time']) {
+                return json(['code' => 100, 'msg' => '结束时间必须大于开始时间']);
+            }
+        }
+
         $matchS = new MatchService();
         try {
             // 保存联赛信息
