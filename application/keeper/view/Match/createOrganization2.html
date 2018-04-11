@@ -119,12 +119,12 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
+        var org_id = "{$matchOrgInfo.id}";
         $(".pass").on("tap", function () {
             var btnArray = ['跳过', '继续完善'];
             mui.confirm("只有组织审核通过，创建的联赛才可以被公开哦！","", btnArray, function (e) {
                 if (e.index == 0) {
-                    window.location.href = "{:url('match/createorgsuccess')}"
+                    window.location.href = "{:url('match/createorgsuccess')}/org_id/" + org_id;
                 }
             })
         })
@@ -168,7 +168,6 @@
                 return false;
             };
 
-            var org_id = "{$matchOrgInfo.id}";
             // 提交数据
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);

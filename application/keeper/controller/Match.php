@@ -84,7 +84,7 @@ class Match extends Base {
         $view = 'Match/createOrganization'.$step;
 
         // 有联赛组织
-        $id = input('id', 0, 'intval');
+        $id = input('org_id', 0, 'intval');
         $leagueS = new LeagueService();
         if ($id) {
             $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
@@ -120,19 +120,19 @@ class Match extends Base {
         $view = 'Match/organizationSetting'.$step;
 
         // 有联赛组织
-        $id = input('id', 0, 'intval');
+        $orgId = input('org_id', 0, 'intval');
         $leagueS = new LeagueService();
-        if (!$id) {
+        if (!$orgId) {
            $this->error(__lang('MSG_402'));
         }
-        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
+        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
         if (!$matchOrgInfo) {
             $this->error(__lang('MSG_404'));
         }
 
         // 证件信息
         $certS = new CertService();
-        $orgCert = $leagueS->getOrgCert($id);
+        $orgCert = $leagueS->getOrgCert($orgId);
         // 创建人身份证
         $idCard = db('cert')->where([
             'cert_type' => 1,
