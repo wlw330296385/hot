@@ -3,6 +3,7 @@
 namespace app\keeper\controller;
 
 
+use app\model\Plan;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
@@ -185,29 +186,53 @@ class Match extends Base {
         }
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+        if (!$matchInfo) {
+            $this->error('无此联赛信息');
+        }
+
         return view('Match/leagueMatchEdit', [
-            'matchInfo' => $matchInfo
+            'leagueInfo' => $matchInfo
         ]);
     }
 
     // 联赛管理
     public function leagueManage() {
+        // 获取联赛详情数据
         $leagueId = input('league_id', 0, 'intval');
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+
         return view('Match/leagueManage', [
-            'matchInfo' => $matchInfo
+            'leagueInfo' => $matchInfo
         ]);
     }
 
     // 我的联赛
     public function myLeague() {
-        return view('Match/myLeague');
+        $id = input('org_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 获取联赛组织详情
+        $leagueOrg = $leagueS->getMatchOrg(['id' =>$id]);
+        // 获取该联赛组织的联赛列表
+        $leagueList = $matchS->matchListAll(['match_org_id' => $id]);
+
+        return view('Match/myLeague', [
+            'orgInfo' => $leagueOrg,
+            'leagueList' => $leagueList
+        ]);
     }
 
     // 联赛主页
     public function leagueInfo() {
-        return view('Match/leagueInfo');
+        $matchS = new MatchService();
+        // 获取联赛详情数据
+        $id = input('league_id', 0, 'intval');
+        $leagueInfo = $matchS->getMatch(['id' => $id]);
+
+        return view('Match/leagueInfo', [
+            'leagueInfo' => $leagueInfo
+        ]);
     }
 
     // 联赛章程

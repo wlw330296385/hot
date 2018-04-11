@@ -37,7 +37,7 @@
 
         <div id="tabbar" class="mui-control-content mui-active coach">
             <!--操作模块-->
-            <div class="img4x3" style="background-image: url()"></div>
+            <div class="img4x3" style="background-image: url({$orgInfo.cover})"></div>
 
             <div class="page-header">
                 <a href="{:url('team/myteam')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
@@ -46,7 +46,7 @@
 
             <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module mb" style="margin:0px;">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="{:url('match/organizationSetting', ['step' => 1, 'id' => "1"])}">
+                    <a href="{:url('match/organizationSetting', ['id' => $orgInfo.id])}">
                         <span class="icon iconfont icon-training-activity"></span>
                         <div class="mui-media-body">组织设置</div>
                     </a>
@@ -85,17 +85,18 @@
 
 
             <!--联赛-->
+            {volist name="leagueList" id="vo"}
             <ul class="mui-table-view list">
                 <li class="mui-table-view-cell listli">
-                    <a href="{:url('match/leagueManage')}">
-                        <img src="" class="img24">联赛名称
+                    <a href="{:url('match/leagueManage', ['league_id' => $vo.id])}">
+                        <img src="{$vo.cover}" class="img24">{$vo.name}
                         <span class="mui-navigate-right"></span>
                     </a>
                 </li>
             </ul>
             <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="">
+                    <a href="{:url('match/leagueinfo', ['league_id' => $vo.id])}">
                         <span class="icon iconfont icon-training-camp"></span>
                         <div class="mui-media-body">联赛主页</div>
                     </a>
@@ -113,6 +114,7 @@
                     </a>
                 </li>
             </ul>
+            {/volist}
 
             <!-- <div class="hints mui-text-center hide whitebg">
                 <p>你还没加入任何球队哦</p>
