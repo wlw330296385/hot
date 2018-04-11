@@ -297,9 +297,11 @@ class Team extends Base
             $dataApply = [
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
+                'member_avatar' => $this->memberInfo['avatar'],
                 'organization_type' => 2,
                 'organization' => $teamInfo['name'],
                 'organization_id' => $teamInfo['id'],
+                'organization_image' => $teamInfo['logo'],
                 'type' => 1,
                 'apply_type' => 1,
                 'remarks' => $data['remarks'],
@@ -878,10 +880,13 @@ class Team extends Base
                         'organization_type' => 2,
                         'organization_id' => $teamInfo['id'],
                         'organization' => $teamInfo['name'],
+                        'organization_image' => $teamInfo['logo'],
                         'inviter' => $this->memberInfo['member'],
                         'inviter_id' => $this->memberInfo['id'],
+                        'inviter_avatar' => $this->memberInfo['avatar'],
                         'member' => $memberInfo['member'],
                         'member_id' => $memberInfo['id'],
+                        'member_avatar' => $memberInfo['avatar'],
                         'remarks' => '球队-'.$teamInfo['name'].'邀请您加入',
                         'status' => 1
                     ];
