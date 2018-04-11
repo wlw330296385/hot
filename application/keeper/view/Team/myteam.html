@@ -14,11 +14,11 @@
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style type="text/css">
-        .hints {
+        .hintsTip {
             padding-top: 30px;
         }
 
-        .hints p {
+        .hintsTip p {
             margin: 0;
         }
 
@@ -143,38 +143,45 @@
             <div class="page-header">
                 <span class="course">组织</span>
             </div>
-            {notempty name="myMatchOrgList"}
-            <!--组织-->
-            {volist name="myMatchOrgList" id="vo"}
-            <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli">
-                    <a href="{:url('match/myLeague')}">
-                        <img src="{$vo.match_org_logo}" class="img24">{$vo.match_org}</a>
-                    <span class="mui-navigate-right wd36"></span>
-                </li>
-            </ul>
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="">
-                        <span class="icon iconfont icon-training-camp"></span>
-                        <div class="mui-media-body">组织设置</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="">
-                        <span class="icon iconfont icon-training-course"></span>
-                        <div class="mui-media-body">联赛</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="">
-                        <span class="icon iconfont icon-training-course"></span>
-                        <div class="mui-media-body">人员</div>
-                    </a>
-                </li>
-            </ul>
-            {/volist}
-            {/notempty}
+            <div class="myOrganization mb">
+                {notempty name="myMatchOrgList"}
+                <!--组织-->
+                {volist name="myMatchOrgList" id="vo"}
+                <div class="mb">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli">
+                            <a href="{:url('match/myLeague')}">
+                                <img src="{$vo.match_org_logo}" class="img24">{$vo.match_org}</a>
+                            <span class="mui-navigate-right wd36"></span>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="">
+                                <span class="icon iconfont icon-training-camp"></span>
+                                <div class="mui-media-body">组织设置</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">联赛</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="">
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">人员</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {/volist} {/notempty}
+            </div>
+            <div class="hintsO hintsTip mui-text-center hide whitebg">
+                <p>你还没组织哦</p>
+                <p>赶紧来查找或创建你的组织吧！</p>
+            </div>
 
             <div class="success-frame success-frame2" style="padding-bottom:30px !important;">
                 <div class="mui-row mui-text-center">
@@ -229,7 +236,7 @@
                 {/volist}
             </div>
 
-            <div class="hints mui-text-center hide whitebg">
+            <div class="hintsT hintsTip mui-text-center hide whitebg">
                 <p>你还没加入任何球队哦</p>
                 <p>赶紧来查找或创建你的球队吧！</p>
             </div>
@@ -268,9 +275,13 @@
                 mui.toast('暂未开放，敬请期待');
             });
 
-            var html = $.trim($(".myteam").html())
-            if (html == '') {
-                $(".hints").show();
+            var htmlT = $.trim($(".myteam").html());
+            var htmlO =$.trim($(".myOrganization").html());
+            if (htmlT == '') {
+                $(".hintsT").show();
+            }
+            if (htmlO == '') {
+                $(".hintsO").show();
             }
         });
 

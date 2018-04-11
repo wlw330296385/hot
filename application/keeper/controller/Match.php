@@ -259,5 +259,10 @@ class Match extends Base {
     public function matchEditOfLeague() {
         return view('Match/matchEditOfLeague');
     }
+
+    // 报名联赛
+    public function signUpLeague() {
+        return view('Match/signUpLeague');
+    }
     
 }
