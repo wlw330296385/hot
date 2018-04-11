@@ -107,7 +107,7 @@ class Match extends Base {
     // 注册联赛组织成功页
     public function createorgsuccess() {
         $orgId = input('org_id', 0, 'intval');
-        return view('match/createOrgSuccess', [
+        return view('Match/createOrgSuccess', [
             'org_id' => $orgId
         ]);
     }
@@ -149,7 +149,13 @@ class Match extends Base {
 
     // 联赛列表
     public function leagueList() {
-        return view('Match/leagueList');
+        $leagueS = new LeagueService();
+        $matchOrgList = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
+        // 会员有无联赛组织标识
+        $hasMatchOrg = ($matchOrgList) ? 1 : 0;
+        return view('Match/leagueList', [
+            'hasMatchOrg' => $hasMatchOrg
+        ]);
     }
 
     // 创建联赛信息
@@ -158,12 +164,8 @@ class Match extends Base {
         // 传入联赛组织id
         $orgId = input('org_id', 0, 'intval');
         if (!$orgId) {
-            //$this->error('请选择联赛组织');
             // 获取会员所在联赛组织，若无组织数据 跳转至创建联赛组织
             $matchOrgList = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
-            if (!$matchOrgList) {
-                $this->error('请先创建联赛组织', 'match/createorganization');
-            }
             $this->assign('matchOrgList', $matchOrgList);
         } else {
             $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
@@ -236,6 +238,26 @@ class Match extends Base {
     // 联赛球队
     public function teamListOfLeague() {
         return view('Match/teamListOfLeague');
+    }
+
+    // 联赛比赛
+    public function matchListOfLeague() {
+        return view('Match/matchListOfLeague');
+    }
+
+    // 联赛创建比赛
+    public function createMatchOfLeague() {
+        return view('Match/createMatchOfLeague');
+    }
+
+    // 联赛比赛详情
+    public function matchInfoOfLeague() {
+        return view('Match/matchInfoOfLeague');
+    }
+
+    // 联赛编辑比赛
+    public function matchEditOfLeague() {
+        return view('Match/matchEditOfLeague');
     }
     
 }

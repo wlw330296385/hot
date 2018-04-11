@@ -4,6 +4,7 @@ namespace app\keeper\controller;
 
 
 use app\model\MatchRefereeApply;
+use app\service\LeagueService;
 use app\service\MatchService;
 use app\service\RefereeService;
 use app\service\TeamService;
@@ -119,8 +120,13 @@ class Team extends Base {
         $refereeS = new RefereeService();
         $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
 
+        // 获取会员所在联赛组织
+        $leagueS = new LeagueService();
+        $myMatchOrgs = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
+
         $this->assign('myTeamList', $myTeamList);
         $this->assign('refereeInfo', $refereeInfo);
+        $this->assign('myMatchOrgList', $myMatchOrgs);
         return view('Team/myteam');
     }
 

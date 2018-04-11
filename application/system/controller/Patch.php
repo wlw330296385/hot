@@ -3,6 +3,7 @@
 namespace app\system\controller;
 
 
+use app\model\Apply;
 use app\model\Bill;
 use app\model\CampFinance;
 use app\model\Follow;
@@ -705,6 +706,36 @@ class Patch extends Controller {
                     //$modelStudent->saveAll($saveAllStudentData);
                 }
             }
+        }
+    }
+
+    // 补全apply表的头像信息
+    public function patchapplyavatar() {
+        try {
+            db('apply')->chunk(50, function($applys) {
+                foreach ($applys as $apply) {
+                    //dump($apply);
+                    // 申请人|邀请人 会员信息
+                    $memberAvatar = db('member')->where('id', $apply['member_id'])->value('avatar');
+                    // 区别organization_type 1训练营|2球队
+                    $orgImage = '';
+                    if ($apply['organization_type'] == 1) {
+                        $orgImage = db('camp')->where('id', $apply['organization_id'])->value('logo');
+                    } else if ($apply['organization_type'] == 2) {
+                        $orgImage = db('team')->where('id', $apply['organization_id'])->value('logo');
+                    }
+                    $updateData = [
+                        'id' => $apply['id'],
+                        'member_avatar' => ($apply['member_id'] > 0) ? $memberAvatar : '',
+                        'organization_image' => $orgImage,
+                        'inviter_avatar' => ($apply['inviter_id'] > 0) ? db('member')->where('id', $apply['inviter_id'])->value('avatar') : ''
+                    ];
+                    //dump($updateData);
+                    db('apply')->update($updateData);
+                }
+            });
+        } catch (Exception $e) {
+            dump($e->getMessage());
         }
     }
 }

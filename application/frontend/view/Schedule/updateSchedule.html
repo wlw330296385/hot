@@ -141,7 +141,7 @@
                     <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
-                            <img id="preview_3" {notempty name="scheduleInfo.cover"}src="{$scheduleInfo.cover}"{/notempty} >
+                            <img id="preview_3" {notempty name="scheduleInfo.cover" }src="{$scheduleInfo.cover}" {/notempty}>
                             <input type="hidden" class="cover" name="portraits" value="">
                         </a>
                     </div>
@@ -160,8 +160,10 @@
                         <div class="mui-input-row mui-checkbox checkboxCont">
                             <label class="number">{$key+1}</label>
                             <font>{$vol.student}</font>
-                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.member}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}"  value="{$vol.student}"
-                                   data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
+                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}"
+                                data-camp_id="{$vol.camp_id}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}"
+                                data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}" value="{$vol.student}"
+                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
                         </div>
                         {/foreach}
                     </div>
@@ -177,8 +179,10 @@
                         <div class="mui-input-row mui-checkbox checkboxCont">
                             <label class="number">{$key+1}</label>
                             <font>{$vol.student}</font>
-                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.member}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}"  value="{$vol.student}"
-                                   data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
+                            <input name="student" class="stdList" data-id="{$vol.id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}" data-camp="{$vol.camp}"
+                                data-camp_id="{$vol.member}" data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-lid="{$vol.lesson_id}"
+                                data-student_id="{$vol.student_id}" data-student="{$vol.student}" data-type="{$vol.type}" value="{$vol.student}"
+                                data-student="{$vol.student}" data-type="{$vol.type}" type="checkbox" checked="checked">
                         </div>
                         {/foreach}
                     </div>
@@ -1110,9 +1114,9 @@
                     var grade_id = $("input[name=grade_id]").val();
                     var type = $(this).attr("data-type");
                     if (type == "正式生") {
-                        studentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id,grade, grade_id, type,is_transfer:1 });
+                        studentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id, grade, grade_id, type, is_transfer: 1 });
                     } else {
-                        expstudentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id,grade, grade_id, type,is_transfer:1 });
+                        expstudentList.push({ id, lesson, lesson_id, camp, camp_id, student, student_id, member, member_id, grade, grade_id, type, is_transfer: 1 });
                     };
                 });
                 console.log(studentList)
@@ -1153,7 +1157,7 @@
                         'plan': plan,
                         'plan_id': plan_id,
                         'exercise': JSON.stringify(exercise_str),
-                        cost : cost
+                        cost: cost
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型

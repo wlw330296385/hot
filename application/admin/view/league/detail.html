@@ -33,9 +33,30 @@
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
+                        <div class="col-sm-2 control-label">赛制</div>
+                        <div class="col-sm-5">
+                            {$matchInfo.format}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-sm-2 control-label">联赛创建人</div>
                         <div class="col-sm-5">
                             {$matchInfo.member}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">联赛开始时间</div>
+                        <div class="col-sm-5">
+                            {$matchInfo.start_time}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">联赛结束时间</div>
+                        <div class="col-sm-5">
+                            {$matchInfo.end_time}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -54,98 +75,32 @@
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">训练营会员上限</div>
+                        <div class="col-sm-2 control-label">参赛球队数上限</div>
                         <div class="col-sm-5">
-                            {$camp.max_member} (0为不限)
+                            {$matchInfo.teams_max} (0为不限)
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">总教练数</div>
+                        <div class="col-sm-2 control-label">参赛费用</div>
                         <div class="col-sm-5">
-                            {$camp.total_coach}
+                            {$matchInfo.entry_fees}（元）
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">活跃教练数</div>
+                        <div class="col-sm-2 control-label">参赛保证金</div>
                         <div class="col-sm-5">
-                            {$camp.act_coach}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">总会员数</div>
-                        <div class="col-sm-5">
-                            {$camp.total_member}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">活跃会员数</div>
-                        <div class="col-sm-5">
-                            {$camp.act_member}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">总课程数</div>
-                        <div class="col-sm-5">
-                            {$camp.total_lessons}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">已完成课程数</div>
-                        <div class="col-sm-5">
-                            {$camp.finished_lessons}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">评分</div>
-                        <div class="col-sm-5">
-                            {$camp.star}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">当前班级数</div>
-                        <div class="col-sm-5">
-                            {$camp.total_grade}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">现有班级数</div>
-                        <div class="col-sm-5">
-                            {$camp.act_grade}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">训练点数量</div>
-                        <div class="col-sm-5">
-                            {$camp.camp_base}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">LOGO</div>
-                        <div class="col-sm-5">
-                            {empty name="camp.logo"}暂无
-                            {else/}
-                            <img src="{$camp.logo}" class="img-thumbnail" alt="logo">
-                            {/empty}
+                            {$matchInfo.deposit}（元）
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">封面图</div>
                         <div class="col-sm-5">
-                            {empty name="camp.banner"}暂无
+                            {empty name="matchInfo.cover"}暂无
                             {else/}
-                            <img src="{$camp.banner}" class="img-thumbnail" alt="logo">
+                            <img src="{$matchInfo.cover}" class="img-thumbnail" alt="logo">
                             {/empty}
                         </div>
                         <div class="col-sm-5"></div>
@@ -153,26 +108,28 @@
                     <div class="form-group">
                         <div class="col-sm-2 control-label">个人备注</div>
                         <div class="col-sm-5">
-                            {$camp.remarks}
+                            {$matchInfo.remarks}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">联赛审核状态</div>
+                        <div class="col-sm-5">
+                            {$matchInfo.status}
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">联赛注册时间</div>
+                        <div class="col-sm-5">
+                            {$matchInfo.create_time}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">平台备注</div>
                         <div class="col-sm-5">
-                            <textarea  class="form-control" name="system_remarks" rows="3">{$camp.system_remarks}</textarea>
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">状态</div>
-                        <div class="col-sm-5">
-                            {switch name="camp.status"}
-                            {case value="1"}正常{/case}
-                            {case value="2"}关闭{/case}
-                            {case value="3"}审核不通过{/case}
-                            {default/}待审核
-                            {/switch}
+                            <textarea  class="form-control" name="system_remarks" rows="3">{$matchInfo.system_remarks}</textarea>
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -181,11 +138,11 @@
                     <div class="form-group">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
-                            {eq name="camp.status" value="0"}
+                            {eq name="matchInfo.status_num" value="0"}
                             <button type="button" class="btn btn-success" onclick="check(1);">审核通过</button>
-                            <button type="button" class="btn btn-default" onclick="check(3);">审核不通过</button>
+                            <button type="button" class="btn btn-default" onclick="check(2);">审核不通过</button>
+                            {else/}
                             {/eq}
-                            <button type="button" class="btn btn-info" onclick="check(2);">修改平台备注</button>
                         </div>
                     </div>
                 </div>
@@ -193,152 +150,117 @@
         </div>
     </div>
 
-    {if condition="$camp['member']"}
+    {if condition="$matchInfo['match_org']"}
+    <!--联赛组织信息-->
     <div class="col-sm-12 col-md-6">
         <div class="box box-info">
             <div class="box-header with-border">
-                <h3 class="box-title">训练营负责人 详细资料</h3>
+                <h3 class="box-title">联赛组织信息</h3>
             </div>
             <form class="form-horizontal" method="post" action="">
-                <input type="hidden" id="member-id" name="mid" value="{$camp.member.id}">
                 <div class="box-body">
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">用户名</div>
+                        <div class="col-sm-2 control-label">联赛组织</div>
                         <div class="col-sm-5">
-                            {$camp.member.member}
+                            {$matchInfo.match_org.name}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">微信昵称</div>
+                        <div class="col-sm-2 control-label">创建会员</div>
                         <div class="col-sm-5">
-                            {$camp.member.nickname}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">真实姓名</div>
-                        <div class="col-sm-5">
-                            {$camp.member.realname}
+                            {$matchInfo.match_org.member}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">电话号码</div>
                         <div class="col-sm-5">
-                            {$camp.member.telephone}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">电子邮箱</div>
-                        <div class="col-sm-5">
-                            {$camp.member.email}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">证件</div>
-                        <div class="col-sm-5">
-                            {notempty name="camp.member.cert_id"}
-                            <img src="{$camp.member.cert.photo_positive}" class="img-thumbnail" alt="">
-                            {/notempty}
-                        </div>
-                        <div class="col-sm-5">
-                            {notempty name="camp.member.cert_id"}
-                            {notempty name="camp.member.cert.photo_back"}
-                            <img src="{$camp.member.cert.photo_back}" class="img-thumbnail" alt="">
-                            {/notempty}
-                            {/notempty}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">头像</div>
-                        <div class="col-sm-5">
-                            {notempty name="camp.member.avatar"}
-                            <img src="{$camp.member.avatar}" class="img-thumbnail" alt="">
-                            {/notempty}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">性别</div>
-                        <div class="col-sm-5">
-                            {switch name="camp.member.sex"}
-                            {case value="1"}男{/case}
-                            {case value="2"}女{/case}
-                            {default/}未知
-                            {/switch}
-                        </div>
-                        <div class="col-sm-5"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">生日</div>
-                        <div class="col-sm-5">
-                            {$camp.member.birthday}
+                            {$matchInfo.match_org.contact_tel}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">所在地区</div>
                         <div class="col-sm-5">
-                            {$camp.member.province}-{$camp.member.city}
+                            {$matchInfo.match_org.province}-{$matchInfo.match_org.city}-{$matchInfo.match_org.area}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">居住地址</div>
+                        <div class="col-sm-2 control-label">具体地址</div>
                         <div class="col-sm-5">
-                            {$camp.member.location}
+                            {$matchInfo.match_org.address}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">流量</div>
+                        <div class="col-sm-2 control-label">LOGO</div>
                         <div class="col-sm-5">
-                            {$camp.member.flow}
+                            <img src="{$matchInfo.match_org.logo}" class="img-thumbnail" alt="logo">
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">阶衔</div>
+                        <div class="col-sm-2 control-label">封面图</div>
                         <div class="col-sm-5">
-                            {$camp.member.level}
+                            <img src="{$matchInfo.match_org.cover}" class="img-thumbnail" alt="logo">
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">营业执照</div>
+                        <div class="col-sm-5">
+                            {empty name="orgCert.cert"}暂无
+                            {else/}
+                            <img src="{$orgCert.cert}" class="img-thumbnail" alt="logo">
+                            {/empty}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">积分余额</div>
+                        <div class="col-sm-2 control-label">法人证件</div>
                         <div class="col-sm-5">
-                            {$camp.member.score}
+                            {empty name="orgCert.fr.photo_positive"}暂无
+                            {else/}
+                            <img src="{$orgCert.fr.photo_positive}" class="img-thumbnail" alt="logo">
+                            {/empty}
                         </div>
-                        <div class="col-sm-5"></div>
+                        <div class="col-sm-5">证件号：{$orgCert.fr.cert_no}</div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">人民币余额</div>
+                        <div class="col-sm-2 control-label">创建人证件</div>
                         <div class="col-sm-5">
-                            {$camp.member.balance}
+                            {empty name="idCard.photo_positive"}暂无
+                            {else/}
+                            <img src="{$idCard.photo_positive}" class="img-thumbnail" alt="logo">
+                            {/empty}
                         </div>
-                        <div class="col-sm-5"></div>
+                        <div class="col-sm-5">证件号：{$idCard.cert_no}</div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-2 control-label">身高 体重 鞋码</div>
+                        <div class="col-sm-2 control-label">其他证书</div>
                         <div class="col-sm-5">
-                            {$camp.member.height}cm  {$camp.member.weight}kg {$camp.member.shoe_code}码
+                            {empty name="orgCert.other"}暂无
+                            {else/}
+                            <img src="{$orgCert.other}" class="img-thumbnail" alt="logo">
+                            {/empty}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
+
                     <div class="form-group">
                         <div class="col-sm-2 control-label">注册时间</div>
                         <div class="col-sm-5">
-                            {$camp.member.create_time}
+                            {$matchInfo.match_org.create_time}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">个人备注</div>
                         <div class="col-sm-5">
-                            {$camp.member.remarks}
+                            {$matchInfo.match_org.remarks}
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
@@ -353,6 +275,43 @@
 {block name="js"}
 <script>
 "use strict";
+function check(code) {
+    var match_id = $('#id').val();
+    var sremarks_txt = $("textarea[name='system_remarks']").val();
+    console.log(match_id);
+    switch ( code ) {
+        case 1:
+            var msg = '确定审核通过?';
+            if ( confirm(msg) === true ) {
+                sendpost(match_id, code, '');
+            }
+            break;
+        case 2:
+            var msg = '确定审核不通过?';
+            if ( confirm(msg) === true ) {
+                if (sremarks_txt == "") {
+                    alert('请输入平台备注以作审核回复');
+                    return;
+                }
+                sendpost(match_id, code, sremarks_txt);
+            }
+            break;
+    }
+}
 
+function sendpost(match_id, code, sremarks) {
+    var serverurl = "{:url('league/audit')}";
+    $.post(serverurl, {
+        id: match_id,
+        status: code,
+        system_remarks: sremarks
+    }, function(res) {
+        console.log(res);
+        alert(res.msg);
+        if (res.status) {
+            location.reload();
+        }
+    }, 'json');
+}
 </script>
 {/block}

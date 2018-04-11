@@ -34,6 +34,7 @@ class League extends Base
                 $leagueService->saveMatchOrgMember([
                     'match_org_id' => $matchOrgId,
                     'match_org' => $data['name'],
+                    'match_org_logo' => $data['logo'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'type' => 10,

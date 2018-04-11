@@ -1,0 +1,198 @@
+{extend name="layout/common"/}
+{block name="css"}
+<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
+<style>
+	#exportExcel:hover small{
+		color:#da7908;
+		cursor: pointer;
+	}
+</style>
+{/block}
+{block name="page-content"}
+
+<!----------------------------------- 训练营学员列表 ： 开始-------------------------------------------->
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<!--<div class="box-header">-->
+			<!--<h3 class="box-title">教练员收益统计</h3>-->
+			<!--</div>-->
+			<!-- /.box-header -->
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>关键字：</label>
+								<div class="input-group radius4">
+									<input type="text" name="keyword" class="form-control pull-right radius4" placeholder="学生名/课程名/班级名" style="border:none !important;">
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<label>退费方式：</label>
+								<div class="input-group radius4">
+									<select name="refundType" class="form-control radius4" style="border:none !important;">
+										<option value=""></option>
+										<option value="1">平台原路退回</option>
+										<option value="2">银行转账退回</option>
+										<option value="3">现金退回</option>
+										<option value="3">其他方式</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>退费总数：</small><strong class="text-yellow sAllCount"></strong></span>
+							</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="box-body">
+
+								<table id="billList" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+									<thead>
+									<tr>
+										<th>学生ID</th>
+										<th>姓名</th>
+										<th>所退课程</th>
+										<th>所退课时</th>
+										<th>退费金额</th>
+										<th>手续费</th>
+										<th>退费原因</th>
+										<th>退费方式</th>
+										<th>操作人</th>
+										<th>操作时间</th>
+										<th>备注</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td>{student_id}</td>
+										<td>{student}</td>
+										<td>{lesson}</td>
+										<td>{scheduleCount}</td>
+										<td>{sum}</td>
+										<td>{fee}</td>
+										<td>{reason}</td>
+										<td>{refundType}</td>
+										<td>{member}</td>
+										<td>{time}</td>
+										<td>{remarks}</td>
+									</tr>
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+	<!-- /.col -->
+</div>
+
+<!----------------------------------- 训练营学员列表 ： 结束-------------------------------------------->
+
+
+
+<!-- Modal : 学员档案 -->
+<div class="modal fade" id="studentInfoModal">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="coachModalLabel">学员档案</h4>
+			</div>
+			<div class="modal-body">
+				<iframe id="studentInfoframe" width="100%" height="500" frameborder="0"></iframe>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script>
+
+    var currDateYM = localStorage.getItem('currDateYM');
+    var currRefundType = localStorage.getItem('currRefundType');
+    var currRefundKeyword = localStorage.getItem('currKeyword');
+
+    $(function () {
+
+        //=========================== 初始化数据 ==============================//
+
+        //隔行变色
+        $(".hotTable tbody td ul").find("li:even").addClass("even");
+
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=keyword]").val(currRefundKeyword);
+        if(currRefundType!=''&&currRefundType!=null){
+            $('select[name="refundType"]').find('option[value="'+currRefundType+'"]').prop("selected", true);
+        }
+
+        //=========================== 初始化数据 ==============================//
+
+
+        //查询统计
+        $("#goSearch").on("click", function () {
+            var refundType = $("select[name=refundType]").val();
+            var keyword = $("input[name=keyword]").val();
+            var linkPram = '';
+            if(refundType==""&&keyword==""){
+                alert("请填写或选择其中一项！");
+                return false;
+            }
+
+            if(refundType!=""&&refundType!=null){
+                linkPram = linkPram+"/type/"+refundType+"/";
+            }
+            if(keyword!=""&&keyword!=null){
+                linkPram = linkPram+"/keyword/"+keyword+"/";
+            }
+
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            localStorage.setItem('currRefundType',currRefundType);
+            localStorage.setItem('currKeyword',keyword);
+
+
+            window.location.href="{:url('management/Student/studentList')}"+linkPram;
+        })
+
+
+        $(".sInfo").click(function(){
+            var getSID = $(this).attr("data-student_id");
+            var frameSrc = "{:url('management/Student/studentInfo')}"+"/student_id/"+getSID+"/camp_id/9";
+            $("#studentInfoframe").attr("src", frameSrc);
+            $('#studentInfoModal').modal({ show: true, backdrop: 'static' });
+        });
+
+    })
+
+</script>
+
+{/block}
+
+
