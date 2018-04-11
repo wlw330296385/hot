@@ -87,13 +87,13 @@
 									<tr>
 										<td>{$vol.student_id}</td>
 										<td>{$vol.student}</td>
-										<td>{$vol.s_balance_pay}</td>
-										<td>{$vol.s_total_schedule}</td>
-										<td>{$vol.s_rest_schedule}</td>
+										<td>{$vol.balance_pay}</td>
+										<td>{$vol.total_schedule}</td>
+										<td>{$vol.rest_schedule}</td>
 										<td>{$vol.type}</td>
 										<td>{$vol.status}</td>
-										<td><a href="{:url('studentInfo',['camp_id'=>$vol['camp_id'],'student_id'=>$vol['student_id']])}" class="btn btn-xs btn-info sInfo" data-student_id="98"><i class="fa fa-inbox"></i> 查看详情</a></td>
-										<td><button  class="btn btn-xs btn-default sendTip"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
+										<td><a class="btn btn-xs btn-info sInfo" data-student_id="{$vol['student_id']}"><i class="fa fa-inbox"></i> 查看详情</a></td>
+										<td><button  class="btn btn-xs btn-default sendTip" data-member_id = "{$vol['member_id']}" data-total_schedule = "{$vol.total_schedule}" data-rest_schedule = "{$vol.rest_schedule}"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
 									</tr>
 									{/volist}
 									</tbody>
@@ -243,7 +243,7 @@
                 url: "{:url('frontend/message/index','','',true)}",
                 topcolor: "#FF0000",
                 data: {
-                    'first': { 'value': '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。' },
+                    'first': { 'value': '您好，您所报的（{$campInfo.camp}下的课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。' },
                     'keyword1': { 'value': total_schedule },
                     'keyword2': { 'value': (total_schedule - rest_schedule) },
                     'keyword3': { 'value': rest_schedule },
@@ -253,7 +253,7 @@
             };
             var saveData = {
                 title: '课时提醒',
-                content: '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。',
+                content: '您好，您所报的（{$campInfo.camp}下的课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。',
                 url: "{:url('frontend/message/index','','',true)}",
                 member_id: member_id
             };

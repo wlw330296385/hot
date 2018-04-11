@@ -10,5 +10,6 @@ class Camp extends Backend{
 		parent::_initialize();
         $campInfo = db('camp')->where(['id'=>$this->camp_member['camp_id']])->find();
         $this->campInfo = $campInfo;
+        $this->assign('campInfo',$campInfo);
 	}
 }

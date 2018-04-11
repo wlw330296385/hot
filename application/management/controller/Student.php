@@ -102,7 +102,6 @@ class Student extends Camp{
         $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
 		$this->assign('restSchedule',$restSchedule);
         $this->assign('totalScheule',$totalScheule);
-		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
 		$this->assign('studentGradeList',$studentGradeList);
 		$this->assign('notPayBill',$notPayBill);
@@ -134,9 +133,9 @@ class Student extends Camp{
     		$map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
     	}
 
-    	$studentList = db('lesson_member')->field('lesson_member.member_id,lesson_member.member,lesson_member.student_id,lesson,lesson_id,lesson_member.camp_id,lesson_member.camp,lesson_member.student,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,lesson_member.type,lesson_member.status,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->group('lesson_member.student_id')->order('lesson_member.id desc')->select();
+    	// $studentList = db('lesson_member')->field('lesson_member.member_id,lesson_member.member,lesson_member.student_id,lesson,lesson_id,lesson_member.camp_id,lesson_member.camp,lesson_member.student,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,lesson_member.type,lesson_member.status,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->group('lesson_member.student_id')->order('lesson_member.id desc')->select();
 
-
+    	$studentList = db('lesson_member')->field('lesson_member.*,bill.balance_pay,bill.refundamount')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->group('lesson_member.student_id')->order('lesson_member.id desc')->select();
     	$this->assign('studentList',$studentList);
         return view('Student/studentList');
     }
