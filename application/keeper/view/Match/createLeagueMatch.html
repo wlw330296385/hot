@@ -10,10 +10,10 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet"/>
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet"/>
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
         .mui-popover-arrow {
@@ -34,270 +34,316 @@
 
 <body>
 
-<header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
-        <span class="return">返回</span>
-    </a>
-</header>
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+    </header>
 
-<div class="mui-content">
+    <div class="mui-content">
 
-    <div class="camp-list camp-lesson-list">
-        <input type="hidden" name="__token__" class="data" value="{$Request.token}"/>
+        <div class="camp-list camp-lesson-list">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-        <form action="" class="mui-input-group mt55">
-            <div class="mui-input-row">
-                <label>联赛组织</label>
-                {if condition="$orgId"}
-                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
-                <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data">
-                {else/}
-                <div class="mui-navigate-right">
-                    <span class="select-row">
-                        <select class="data select-matchOrg">
-                            <option value="0">请选择</option>
-                            {volist name="matchOrgList" id="vo"}
-                            <option value="{$vo.match_org_id}">{$vo.match_org}</option>
-                            {/volist}
-                        </select>
-                    </span>
+            <form action="" class="mui-input-group mt55">
+                <div class="mui-input-row">
+                    <label>联赛组织</label>
+                    {if condition="$orgId"}
+                    <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
+                    <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data"> {else/}
+                    <div class="mui-navigate-right">
+                        <span class="select-row">
+                            <select class="data select-matchOrg">
+                                <option value="0">请选择</option>
+                                {volist name="matchOrgList" id="vo"}
+                                <option value="{$vo.match_org_id}">{$vo.match_org}</option>
+                                {/volist}
+                            </select>
+                        </span>
+                    </div>
+                    <input type="hidden" name="match_org" value="" class="data">
+                    <input type="hidden" name="match_org_id" value="" class="data"> {/if}
                 </div>
-                <input type="hidden" name="match_org" value="" class="data">
-                <input type="hidden" name="match_org_id" value="" class="data">
-                {/if}
-            </div>
-            <div class="mui-input-row h-auto">
-                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                    <label>联赛封面</label>
-                    <img id="preview_1" class="upload-preview" alt="">
-                    <input type="hidden" name="cover" value='' class="data">
-                </a>
-            </div>
-
-            <div class="mui-input-row">
-                <label>联赛名称</label>
-                <input type="text" name="name" value="" class="data" placeholder="请输入联赛名称">
-            </div>
-
-            <div class="mui-input-row" id='showCityPicker3'>
-                <div class="mui-navigate-right">
-                    <label>联赛地点</label>
-                    <span id="cityResult3" class="ui-alert"></span>
-                    <input type="hidden" name="province" value="" class="data" id="province">
-                    <input type="hidden" name="city" value="" class="data" id="city">
-                    <input type="hidden" name="area" value="" class="data" id="area">
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>联赛封面</label>
+                        <img id="preview_1" class="upload-preview" alt="">
+                        <input type="hidden" name="cover" value='' class="data">
+                    </a>
                 </div>
-            </div>
 
-            <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>联赛类型</label>
-                    <span class="select-row">
-                        <select id="matchType" class="data" name="type">
-                            <option value="">请选择</option>
-                            <option value="5">邀请赛</option>
-                            <option value="6">公开赛</option>
-                            <option value="7">企业赛</option>
-                            <option value="8">机关赛</option>
-                            <option value="9">校园赛</option>
-                        </select>
-                    </span>
+                <div class="mui-input-row">
+                    <label>联赛名称</label>
+                    <input type="text" name="name" value="" class="data" placeholder="请输入联赛名称">
                 </div>
-            </div>
 
-            <div class="mui-input-row picker btnStart">
-                <div class="mui-navigate-right">
-                    <label>开始时间</label>
-                    <span id="resultStart" class="ui-alert domData" name="start_time"></span>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <div class="mui-navigate-right">
+                        <label>联赛地点</label>
+                        <span id="cityResult3" class="ui-alert"></span>
+                        <input type="hidden" name="province" value="" class="data" id="province">
+                        <input type="hidden" name="city" value="" class="data" id="city">
+                        <input type="hidden" name="area" value="" class="data" id="area">
+                    </div>
                 </div>
-            </div>
 
-            <div class="mui-input-row picker btnEnd">
-                <div class="mui-navigate-right">
-                    <label>结束时间</label>
-                    <span id="resultEnd" class="ui-alert domData" name="end_time"></span>
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>联赛类型</label>
+                        <span class="select-row">
+                            <select id="matchType" class="data" name="type">
+                                <option value="">请选择</option>
+                                <option value="5">邀请赛</option>
+                                <option value="6">公开赛</option>
+                                <option value="7">企业赛</option>
+                                <option value="8">机关赛</option>
+                                <option value="9">校园赛</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label class="wd60">赛制（选择后不可修改）</label>
-                    <span class="select-row">
+                <div class="mui-input-row picker btnStartls">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">联赛开始时间</label>
+                        <span id="resultStartls" class="ui-alert domData" name="start_time"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnEndls">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">联赛结束时间</label>
+                        <span id="resultEndls" class="ui-alert domData wd52" name="end_time"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnStartbm">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">报名开始时间</label>
+                        <span id="resultStartbm" class="ui-alert domData wd52" name="start_time"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row picker btnEndbm">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">报名结束时间</label>
+                        <span id="resultEndbm" class="ui-alert domData wd52" name="end_time"></span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="wd60">赛制（选择后不可修改）</label>
+                        <span class="select-row">
                             <select id="" class="data" name="format">
                                 <option value="5v5">5v5</option>
                                 <option value="3v3">3v3</option>
                             </select>
                         </span>
+                    </div>
                 </div>
-            </div>
-            <div class="mui-input-row">
-                <label>负责人姓名</label>
-                <input type="text" name="charge_name" value="" class="data" placeholder="输入负责人真实姓名">
-            </div>
+                <div class="mui-input-row">
+                    <label>负责人姓名</label>
+                    <input type="text" name="charge_name" value="" class="data" placeholder="输入负责人真实姓名">
+                </div>
 
-            <div class="mui-input-row">
-                <label>最多参赛队伍数</label>
-                <input type="text" name="teams_max" value="" class="data" placeholder="请输入最多参赛队伍数">
-            </div>
+                <div class="mui-input-row">
+                    <label class="wd45">最多参赛队伍数</label>
+                    <input type="text" name="teams_max" value="" class="data wd52" placeholder="请输入最多参赛队伍数">
+                </div>
 
-            <div class="mui-input-row">
-                <label>球队参赛费用</label>
-                <input type="text" name="entry_fees" value="" class="data" placeholder="输入参赛费用">
-            </div>
-            <div class="mui-input-row">
-                <label>球队参赛保证金</label>
-                <input type="text" name="deposit" value="" class="data" placeholder="输入球队参赛保证金">
-            </div>
+                <div class="mui-input-row">
+                    <label class="wd45">球队参赛费用</label>
+                    <input type="text" name="entry_fees" value="" class="data wd52" placeholder="输入参赛费用">
+                </div>
+                <div class="mui-input-row">
+                    <label class="wd45">球队参赛保证金</label>
+                    <input type="text" name="deposit" value="" class="data wd52" placeholder="输入球队参赛保证金">
+                </div>
 
-            <div class="page-header" style="background: #efeff4;">
-                <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
-                <span class="f12">创建联赛后，工作人员会在24小时内与您联系，请保持手机畅通。如有问题请加篮球管家官方用户群：</span>
-            </div>
+                <div class="page-header" style="background: #efeff4;">
+                    <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
+                    <span class="f12">创建联赛后，工作人员会在24小时内与您联系，请保持手机畅通。如有问题请加篮球管家官方用户群：</span>
+                </div>
 
-        </form>
+            </form>
 
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
-                创建联赛
-            </li>
-        </ul>
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
+                    创建联赛
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
 
 
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!-- 选择器 -->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script src="/static/frontend/js/common.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
-<script src="/static/frontend/libs/webuploader.min.js"></script>
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
-</script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
 
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    //选择器
-    var getProvince = '';
-    var getCity = '';
-    var getArea = '';
-    (function ($, doc) {
-        $.ready(function () {
-            var _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
-
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-
-            // 设置默认值
-            cityPicker3.pickers[0].setSelectedIndex(18);
-            cityPicker3.pickers[1].setSelectedIndex(2);
-            cityPicker3.pickers[2].setSelectedIndex(2);
-
-            cityPicker3.setData(cityData3);
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
-                    getProvince = _getParam(items[0], 'text');
-                    getCity = _getParam(items[1], 'text');
-                    getArea = _getParam(items[2], 'text');
-                    document.getElementById('province').value = getProvince;
-                    document.getElementById('city').value = getCity;
-                    document.getElementById('area').value = getArea;
-                });
-            }, false);
-
-            //开始时间
-            var resultStart = $('#resultStart')[0];
-            var btnStart = $('.btnStart');
-            btnStart.each(function (i, btn) {
-                btn.addEventListener('tap', function () {
-                    var optionsJson = this.getAttribute('data-options') || '{}';
-                    var options = JSON.parse(optionsJson);
-                    var id = this.getAttribute('id');
-                    var picker = new $.DtPicker(options);
-
-                    picker.show(function (rs) {
-                        resultStart.innerText = rs.text;
-                        picker.dispose();
-                    });
-                }, false);
-            });
-
-            //结束时间
-            var resultEnd = $('#resultEnd')[0];
-            var btnEnd = $('.btnEnd');
-            btnEnd.each(function (i, btn) {
-                btn.addEventListener('tap', function () {
-                    var optionsJson = this.getAttribute('data-options') || '{}';
-                    var options = JSON.parse(optionsJson);
-                    var id = this.getAttribute('id');
-                    var picker = new $.DtPicker(options);
-
-                    picker.show(function (rs) {
-                        resultEnd.innerText = rs.text;
-                        picker.dispose();
-                    });
-                }, false);
-            });
-
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
         });
-    })(mui, document);
 
-    // 联赛组织选择框
-    $('.select-matchOrg').change(function() {
-        var matchOrgId = $(this).find('option:selected').val();
-        var matchOrg = $(this).find('option:selected').text();
-        if (matchOrgId == 0) {
-            matchOrg = '';
-        }
-        $('input[name=match_org_id]').val(matchOrgId);
-        $('input[name=match_org]').val(matchOrg);
-    });
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
 
-    // 获取数据并进行提交
-    function submitAction() {
-        var data = wooApi.getInputData('input', 'data');
-        datas = wooApi.getInputData('select', 'data', data);
-        // 获取其他标签值
-        arrData = wooApi.getDomData('domData', datas);
-        var objData = wooApi.arrTOobj(arrData);
-        var url = "{:url('api/league/creatematch')}";
-        var ajaxResult = wooApi.asyncF(url, objData);
-        if (ajaxResult.code == 200) {
-            mui.alert('联赛创建成功，请等待审核', '确定', function () {
-                var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
-                window.top.location.href = goUrl;
-            })
-        } else {
-            mui.alert(ajaxResult.msg, '联赛创建失败');
-            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                if (data.code === 200) {
-                    $('input[name=__token__]').val(data.data);
-                }
-            }, 'json');
-        }
-    };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
 
-</script>
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
+                    });
+                }, false);
+
+                //联赛开始时间
+                var resultStartls = $('#resultStartls')[0];
+                var btnStartls = $('.btnStartls');
+                btnStartls.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStartls.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //联赛结束时间
+                var resultEndls = $('#resultEndls')[0];
+                var btnEndls = $('.btnEndls');
+                btnEndls.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultEndls.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //报名开始时间
+                var resultStartbm = $('#resultStartbm')[0];
+                var btnStartbm = $('.btnStartbm');
+                btnStartbm.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStartbm.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+                //报名结束时间
+                var resultEndbm = $('#resultEndbm')[0];
+                var btnEndbm = $('.btnEndbm');
+                btnEndbm.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultEndbm.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
+
+        // 联赛组织选择框
+        $('.select-matchOrg').change(function () {
+            var matchOrgId = $(this).find('option:selected').val();
+            var matchOrg = $(this).find('option:selected').text();
+            if (matchOrgId == 0) {
+                matchOrg = '';
+            }
+            $('input[name=match_org_id]').val(matchOrgId);
+            $('input[name=match_org]').val(matchOrg);
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/league/creatematch')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('联赛创建成功，请等待审核', '确定', function () {
+                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '联赛创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+
+    </script>
 </body>
 
 </html>
