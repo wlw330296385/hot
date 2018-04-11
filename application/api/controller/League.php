@@ -28,16 +28,17 @@ class League extends Base
         $leagueService = new LeagueService();
         try {
             $res = $leagueService->createMatchOrg($data);
-            // 创建联赛组织成功 保存组织负责人数据
+            // 创建联赛组织成功
             if ($res['code'] == 200) {
                 $matchOrgId = $res['data'];
+                // 保存联赛组织-会员关系数据
                 $leagueService->saveMatchOrgMember([
                     'match_org_id' => $matchOrgId,
                     'match_org' => $data['name'],
                     'match_org_logo' => $data['logo'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
-                    'type' => 10,
+                    'member_avatar' => $this->memberInfo['avatar'],
                     'status' => 1
                 ]);
             }
@@ -162,9 +163,24 @@ class League extends Base
         // 创建联赛 status=0 待审核
         $data['status'] = 0;
         $matchS = new MatchService();
+        $leagueS = new LeagueService();
         try {
             // 保存联赛信息
             $res = $matchS->saveMatch($data, 'league_add');
+            if ($res['code'] == 200) {
+                $matchId = $res['data'];
+                // 保存联赛-工作人员关系数据
+                $leagueS->saveMatchMember([
+                    'match_org_id' => $matchId,
+                    'match_org' => $data['name'],
+                    'match_org_logo' => $data['logo'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'member_avatar' => $this->memberInfo['avatar'],
+                    'type' => 10,
+                    'status' => 1
+                ]);
+            }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

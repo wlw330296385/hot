@@ -10,187 +10,176 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
 </head>
 
 <body>
 
-<header class="mui-bar mui-bar-nav" style="padding: 0">
-    <div class="camp-lesson-list">
-        <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
-            <a class="mui-control-item "
-               href="{:url('match/organizationSetting', ['step' => 1, 'id' => $matchOrgInfo.id])}">基本信息</a>
-            <a class="mui-control-item mui-active"
-               href="{:url('match/organizationSetting', ['step' => 2, 'id' => $matchOrgInfo.id])}">认证信息</a>
+    <header class="mui-bar mui-bar-nav" style="padding: 0">
+        <div class="camp-lesson-list">
+            <div id="segmentedControl" class="mui-segmented-control" style="top: 0">
+                <a class="mui-control-item " href="{:url('match/organizationSetting', ['step' => 1, 'org_id' => $matchOrgInfo.id])}">基本信息</a>
+                <a class="mui-control-item mui-active" href="{:url('match/organizationSetting', ['step' => 2, 'org_id' => $matchOrgInfo.id])}">认证信息</a>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<div class="mui-content">
+    <div class="mui-content">
 
-    <form action="" class="mui-input-group">
+        <form action="" class="mui-input-group">
 
-        <input type="hidden" name="__token__" class="data" value="{$Request.token}"/>
-        <div class="mui-input-row ">
-            <label>组织名称</label>
-            <span>{$matchOrgInfo.name}</span>
-            <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
-        </div>
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <div class="mui-input-row ">
+                <label>组织名称</label>
+                <span>{$matchOrgInfo.name}</span>
+                <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
+            </div>
 
-        <div class="mui-input-row h-auto">
-            <a class="mui-navigate-right filePicker" onclick="add_id(1)">
-                <label>营业执照</label>
-                <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name='$orgCert.cert'
-                     }src="{$orgCert.cert}" {/notempty}>
-                <input type="hidden" name="cert" value="{$orgCert.cert}" class="data">
-            </a>
-        </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                    <label>营业执照</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name='$orgCert.cert' }src="{$orgCert.cert}" {/notempty}>
+                    <input type="hidden" name="cert" value="{$orgCert.cert}" class="data">
+                </a>
+            </div>
 
-        <div class="mui-input-row h-auto">
-            <a class="mui-navigate-right filePicker" onclick="add_id(2)">
-                <label>法人身份证</label>
-                <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name='$orgCert.fr.photo_positive'
-                     }src="{$orgCert.fr.photo_positive}" {/notempty}>
-                <input type="hidden" name="fr_idcard" class="data" value="{$orgCert.fr.photo_positive}">
-            </a>
-        </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                    <label>法人身份证</label>
+                    <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name='$orgCert.fr.photo_positive' }src="{$orgCert.fr.photo_positive}"
+                        {/notempty}>
+                    <input type="hidden" name="fr_idcard" class="data" value="{$orgCert.fr.photo_positive}">
+                </a>
+            </div>
 
-        <div class="mui-input-row">
-            <label class="wd45">法人身份证号</label>
-            <input type="text" class="input fridno wd52 data" name="fr_idno" placeholder="请输入身份证号码"
-                   value="{$orgCert.fr.cert_no}">
-        </div>
+            <div class="mui-input-row">
+                <label class="wd45">法人身份证号</label>
+                <input type="text" class="input fridno wd52 data" name="fr_idno" placeholder="请输入身份证号码" value="{$orgCert.fr.cert_no}">
+            </div>
 
-        <div class="mui-input-row h-auto">
-            <a class="mui-navigate-right filePicker" onclick="add_id(3)">
-                <label>创建者身份证</label>
-                <img id="preview_3" class="coachicon icon01 upload-preview" {notempty name='$idCard.photo_positive'
-                     }src="{$idCard.photo_positive}" {/notempty}>
-                <input type="hidden" name="cjz_idcard" class="data" value="{$idCard.photo_positive}">
-            </a>
-        </div>
-        <div class="mui-input-row">
-            <label class="wd45">创建者身份证号</label>
-            <input type="text" class="input data cjzidno" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%"
-                   value="{$idCard.cert_no}">
-        </div>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                    <label>创建者身份证</label>
+                    <img id="preview_3" class="coachicon icon01 upload-preview" {notempty name='$idCard.photo_positive' }src="{$idCard.photo_positive}"
+                        {/notempty}>
+                    <input type="hidden" name="cjz_idcard" class="data" value="{$idCard.photo_positive}">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">创建者身份证号</label>
+                <input type="text" class="input data cjzidno" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%" value="{$idCard.cert_no}">
+            </div>
 
 
-        <div class="mui-input-row h-auto">
-            <a class="mui-navigate-right filePicker" onclick="add_id(4)">
-                <label>其他证明</label>
-                <img id="preview_4" class="coachicon icon01 upload-preview" {notempty name='$orgCert.other'
-                     }src="{$orgCert.other}" {/notempty}>
-                <input type="hidden" name="other_cert" class="data" value="{$orgCert.other}">
-            </a>
+            <div class="mui-input-row h-auto">
+                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                    <label>其他证明</label>
+                    <img id="preview_4" class="coachicon icon01 upload-preview" {notempty name='$orgCert.other' }src="{$orgCert.other}" {/notempty}>
+                    <input type="hidden" name="other_cert" class="data" value="{$orgCert.other}">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <label class="wd45">银行</label>
+                <input type="text" class="input wd52 data" name="bank" placeholder="请输入银行" value="{$matchOrgInfo.bank}">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">银行卡号</label>
+                <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入银行卡号" value="{$matchOrgInfo.bankcard_no}">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">持卡人</label>
+                <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入持卡人" value="{$matchOrgInfo.bankcard_name}">
+            </div>
+            <div class="mui-input-row  border-b">
+                <label class="wd45">银行卡联系电话</label>
+                <input type="text" class="input wd52 data" name="bankcard_telephone" placeholder="请输入银行卡联系电话" value="{$matchOrgInfo.bankcard_telephone}">
+            </div>
+
+        </form>
+
+        <div class="tip-box">
+            修改后需要重新审核认证信息，审核通过前比赛的发布、展示功能将停止使用
         </div>
 
-        <div class="mui-input-row">
-            <label class="wd45">银行</label>
-            <input type="text" class="input wd52 data" name="bank" placeholder="请输入银行" value="{$matchOrgInfo.bank}">
-        </div>
-        <div class="mui-input-row">
-            <label class="wd45">银行卡号</label>
-            <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入银行卡号"
-                   value="{$matchOrgInfo.bankcard_no}">
-        </div>
-        <div class="mui-input-row">
-            <label class="wd45">持卡人</label>
-            <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入持卡人"
-                   value="{$matchOrgInfo.bankcard_name}">
-        </div>
-        <div class="mui-input-row  border-b">
-            <label class="wd45">银行卡联系电话</label>
-            <input type="text" class="input wd52 data" name="bankcard_telephone" placeholder="请输入银行卡联系电话"
-                   value="{$matchOrgInfo.bankcard_telephone}">
+        <div class="tjbtn mb44">
+            <button type="button" class="mui-btn btn" onclick="submitAction();">提交修改</button>
         </div>
 
-    </form>
-
-    <div class="tip-box">
-        修改后需要重新审核认证信息，审核通过前比赛的发布、展示功能将停止使用
     </div>
 
-    <div class="tjbtn mb44">
-        <button type="button" class="mui-btn btn" onclick="submitAction();">提交修改</button>
-    </div>
-
-</div>
-
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<!--选择器-->
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-</script>
-<script src="/static/frontend/js/common.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-
-    mui("body").on("tap", "a.mui-control-item", function () {
-        window.top.location.href = this.href;
-    });
-
-    // 提交
-    function submitAction() {
-        var org_id = "{$matchOrgInfo.id}";
-        // 证件提交验证
-        var cert = $('input[name=cert]').val();
-        var fr_idcard = $('input[name=fr_idcard]').val();
-        var fr_idno = $('.fridno').val();
-        var cjz_idcard = $('input[name=cjz_idcard]').val();
-        var cjz_idno = $('.cjzidno').val();
-        var other_cert = $('input[name=other_cert]').val();
-        var idno = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
-        if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
-            mui.toast("请输入正确身份证号码");
-            return false;
-        }
-        if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
-            mui.toast("请上传证件照");
-            return false;
-        }
-
-
-
-        // 提交数据
-        mui.confirm('修改认证资料需要重新审核', '确认要提交修改吗?', ['取消', '确认'], function (e) {
-            if (e.index == 1) {
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                var objData = wooApi.arrTOobj(arrData);
-                console.log(objData);
-                var url = "{:url('api/league/editmatchorg')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-                console.log(ajaxResult);
-                if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '修改联赛组织成功', '确定', function () {
-                        window.location.href = "{:url('keeper/index/index')}";
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '修改失败');
-                    tuwenToEdit(); //图文转换成可编辑状态
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
-            }
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
+    </script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
         });
-    }
 
-</script>
+        mui("body").on("tap", "a.mui-control-item", function () {
+            window.top.location.href = this.href;
+        });
+
+        // 提交
+        function submitAction() {
+            var org_id = "{$matchOrgInfo.id}";
+            // 证件提交验证
+            var cert = $('input[name=cert]').val();
+            var fr_idcard = $('input[name=fr_idcard]').val();
+            var fr_idno = $('.fridno').val();
+            var cjz_idcard = $('input[name=cjz_idcard]').val();
+            var cjz_idno = $('.cjzidno').val();
+            var other_cert = $('input[name=other_cert]').val();
+            var idno = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+            if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+                mui.toast("请输入正确身份证号码");
+                return false;
+            }
+            if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
+                mui.toast("请上传证件照");
+                return false;
+            }
+
+            // 提交数据
+            mui.confirm('修改认证资料需要重新审核', '确认要提交修改吗?', ['取消', '确认'], function (e) {
+                if (e.index == 1) {
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    console.log(objData);
+                    var url = "{:url('api/league/editmatchorg')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    console.log(ajaxResult);
+                    if (ajaxResult.code == 200) {
+                        mui.alert(ajaxResult.msg, '修改联赛组织成功', '确定', function () {
+                            window.location.href = "{:url('keeper/index/index')}";
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '修改失败');
+                        tuwenToEdit(); //图文转换成可编辑状态
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    }
+                }
+            });
+        }
+
+    </script>
 </body>
 
 </html>

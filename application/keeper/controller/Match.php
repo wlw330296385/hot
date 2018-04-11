@@ -3,6 +3,7 @@
 namespace app\keeper\controller;
 
 
+use app\model\Plan;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
@@ -83,7 +84,7 @@ class Match extends Base {
         $view = 'Match/createOrganization'.$step;
 
         // 有联赛组织
-        $id = input('id', 0, 'intval');
+        $id = input('org_id', 0, 'intval');
         $leagueS = new LeagueService();
         if ($id) {
             $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
@@ -119,19 +120,19 @@ class Match extends Base {
         $view = 'Match/organizationSetting'.$step;
 
         // 有联赛组织
-        $id = input('id', 0, 'intval');
+        $orgId = input('org_id', 0, 'intval');
         $leagueS = new LeagueService();
-        if (!$id) {
+        if (!$orgId) {
            $this->error(__lang('MSG_402'));
         }
-        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $id]);
+        $matchOrgInfo = $leagueS->getMatchOrg(['id' => $orgId]);
         if (!$matchOrgInfo) {
             $this->error(__lang('MSG_404'));
         }
 
         // 证件信息
         $certS = new CertService();
-        $orgCert = $leagueS->getOrgCert($id);
+        $orgCert = $leagueS->getOrgCert($orgId);
         // 创建人身份证
         $idCard = db('cert')->where([
             'cert_type' => 1,
@@ -185,29 +186,53 @@ class Match extends Base {
         }
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+        if (!$matchInfo) {
+            $this->error('无此联赛信息');
+        }
+
         return view('Match/leagueMatchEdit', [
-            'matchInfo' => $matchInfo
+            'leagueInfo' => $matchInfo
         ]);
     }
 
     // 联赛管理
     public function leagueManage() {
+        // 获取联赛详情数据
         $leagueId = input('league_id', 0, 'intval');
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatch(['id' => $leagueId]);
+
         return view('Match/leagueManage', [
-            'matchInfo' => $matchInfo
+            'leagueInfo' => $matchInfo
         ]);
     }
 
     // 我的联赛
     public function myLeague() {
-        return view('Match/myLeague');
+        $id = input('org_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 获取联赛组织详情
+        $leagueOrg = $leagueS->getMatchOrg(['id' =>$id]);
+        // 获取该联赛组织的联赛列表
+        $leagueList = $matchS->matchListAll(['match_org_id' => $id]);
+
+        return view('Match/myLeague', [
+            'orgInfo' => $leagueOrg,
+            'leagueList' => $leagueList
+        ]);
     }
 
     // 联赛主页
     public function leagueInfo() {
-        return view('Match/leagueInfo');
+        $matchS = new MatchService();
+        // 获取联赛详情数据
+        $id = input('league_id', 0, 'intval');
+        $leagueInfo = $matchS->getMatch(['id' => $id]);
+
+        return view('Match/leagueInfo', [
+            'leagueInfo' => $leagueInfo
+        ]);
     }
 
     // 联赛章程
@@ -258,6 +283,11 @@ class Match extends Base {
     // 联赛编辑比赛
     public function matchEditOfLeague() {
         return view('Match/matchEditOfLeague');
+    }
+
+    // 报名联赛
+    public function signUpLeague() {
+        return view('Match/signUpLeague');
     }
     
 }
