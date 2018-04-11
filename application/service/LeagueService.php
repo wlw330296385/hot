@@ -155,4 +155,37 @@ class LeagueService
         $result['status_num'] = $getData['status'];
         return $result;
     }
+
+    // 保存联赛-工作人员关系数据
+    public function saveMatchMember($data, $condition=[]) {
+        $model = new MatchMember();
+        // 带更新条件更新数据
+        if ( !empty($condition) ) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 直接更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res ) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
 }
