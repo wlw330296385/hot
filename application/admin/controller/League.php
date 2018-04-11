@@ -95,7 +95,8 @@ class League extends Backend
                 'keyword1' => $checkstr,
                 'keyword2' => $datetime,
                 'url' => url('keeper/match/leagueManage', ['league_id' => $matchInfo['id']], '', true),
-                'remark' => '点击进入'
+                'remark' => '点击进入',
+                'steward_type' => 2,
             ];
             $messageS->sendMessageToMember($matchInfo['member_id'], $message, config('wxTemplateID.successCheck'));
         } else {
