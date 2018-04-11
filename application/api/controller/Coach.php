@@ -173,7 +173,7 @@ class Coach extends Base{
             // 教练数据
             $coachdata = [
                 'coach' => input('post.coach'),
-                'member_id' => $this->memberInfo['id'];
+                'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
                 'coach_year' => input('post.coach_year'),
                 'experience' => input('post.experience'),
