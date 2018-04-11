@@ -1,10 +1,10 @@
 <?php 
 namespace app\management\controller;
-use app\management\controller\Backend;
+use app\management\controller\Camp;
 use app\service\CampService;
 use app\service\StudentService;
 use think\Db;
-class Student extends Backend{
+class Student extends Camp{
 	public $StudentService;
 	public function _initialize(){
 		parent::_initialize();
@@ -45,7 +45,7 @@ class Student extends Backend{
 	        }
 		}
         
-		$campInfo = db('camp')->where(['id'=>$camp_id])->find();
+		$campInfo = $this->campInfo;
 		
 		//学生的班级	
 		$studentGradeList = Db::view('grade_member')
@@ -113,16 +113,32 @@ class Student extends Backend{
 		$this->assign('totalBill',$totalBill);
 		$this->assign('studentcando', $studentcando);
 		$this->assign('camp_id', $camp_id);
-        return view('Student/StudentInfo');
+        return view('Student/studentInfo');
     }
 
 
     public function StudentList(){
 
+    	$type = input('param.type');
+    	$status = input('param.status');
+    	$keyword = input('param.keyword');
+    	$camp_id = $this->camp_member['camp_id'];
+    	$map['lesson_member.camp_id'] = $camp_id;
+    	if ($type) {
+    		$map['lesson_member.type'] = $type;
+    	}
+    	if($status){
+    		$map['lesson_member.status'] = $status;
+    	}
+    	if($keyword){
+    		$map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
+    	}
+
+    	$studentList = db('lesson_member')->field('lesson_member.member_id,lesson_member.member,lesson_member.student_id,lesson,lesson_id,lesson_member.camp_id,lesson_member.camp,lesson_member.student,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,lesson_member.type,lesson_member.status,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->group('lesson_member.student_id')->order('lesson_member.id desc')->select();
 
 
-
-        return view('Student/StudentList');
+    	$this->assign('studentList',$studentList);
+        return view('Student/studentList');
     }
     
 }

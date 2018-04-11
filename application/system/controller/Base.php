@@ -13,6 +13,6 @@ class Base extends Controller{
 
     protected function record($data){
     	$data['date_str'] = date('Y-m-d H:i:s',time());
-    	$this->CrontabRecord->save($data);
+    	$this->CrontabRecord->isUpdate(false)->save($data);
     }
-}
+}	

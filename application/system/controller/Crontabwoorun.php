@@ -182,7 +182,7 @@ class Crontabwoorun extends Controller {
                         'rebate_type' => $campInfo['rebate_type'],
                         'status' => 1,
                         'type' => 3,
-                        'schedule_rebate'=>(1-$campScheduleRebate),
+                        'schedule_rebate'=>$campScheduleRebate,
                         'system_remarks' => '',
                     ];
                     $this->insertIncome($incomeCamp,0,1);

@@ -27,7 +27,7 @@
 								<!-- /.input group -->
 								<label>关键字：</label>
 								<div class="input-group radius4">
-									<input type="text" name="keyword" class="form-control pull-right radius4" placeholder="学生名/课程名/班级名" style="border:none !important;">
+									<input type="text" name="keyword" class="form-control pull-right radius4" placeholder="学生名/课程名" style="border:none !important;">
 								</div>
 							</div>
 							<div class="form-group">
@@ -83,17 +83,19 @@
 									</tr>
 									</thead>
 									<tbody>
+									{volist name="studentList" id="vol"}
 									<tr>
-										<td>{student_id}</td>
-										<td>{student}</td>
-										<td>{tuition}</td>
-										<td>{total_schedule}</td>
-										<td>{rest_schedule}</td>
-										<td>{type}</td>
-										<td>{status}</td>
-										<td><a href="#" class="btn btn-xs btn-info sInfo" data-student_id="98"><i class="fa fa-inbox"></i> 查看详情</a></td>
-										<td><a href="#" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i> 发送续费提醒</a></td>
+										<td>{$vol.student_id}</td>
+										<td>{$vol.student}</td>
+										<td>{$vol.s_balance_pay}</td>
+										<td>{$vol.s_total_schedule}</td>
+										<td>{$vol.s_rest_schedule}</td>
+										<td>{$vol.type}</td>
+										<td>{$vol.status}</td>
+										<td><a href="{:url('studentInfo',['camp_id'=>$vol['camp_id'],'student_id'=>$vol['student_id']])}" class="btn btn-xs btn-info sInfo" data-student_id="98"><i class="fa fa-inbox"></i> 查看详情</a></td>
+										<td><button  class="btn btn-xs btn-default sendTip"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
 									</tr>
+									{/volist}
 									</tbody>
 								</table>
 
@@ -136,7 +138,9 @@
 
 
 {block name='js'}
-
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
 <script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script>
@@ -146,7 +150,6 @@
     var currKeyword = localStorage.getItem('currKeyword');
 
     $(function () {
-
         $(".content-header h1").html('<i class="fa fa-fw fa-th-large"></i> 训练营学员列表');
 
         $('#billList').DataTable({
@@ -213,6 +216,54 @@
             $("#studentInfoframe").attr("src", frameSrc);
             $('#studentInfoModal').modal({ show: true, backdrop: 'static' });
         });
+
+
+
+
+
+
+
+
+
+
+        //发送提醒
+        var isTip = true;
+        // 发送模板消息
+        $(document).on("click", '.sendTip', function () {
+            var aa = $(this);
+            var member_id = aa.attr('data-member_id');
+
+            var url = "{:url('api/message/sendMessageApi')}/member_id/" + member_id;
+            var total_schedule = aa.attr('data-total_schedule');
+            var rest_schedule = aa.attr('data-rest_schedule');
+            var lesson = aa.attr('data-lesson');
+            var messageData = {
+                touser: '',
+                template_id: "{:config('wxTemplateID.scheduleExpend')}",
+                url: "{:url('frontend/message/index','','',true)}",
+                topcolor: "#FF0000",
+                data: {
+                    'first': { 'value': '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。' },
+                    'keyword1': { 'value': total_schedule },
+                    'keyword2': { 'value': (total_schedule - rest_schedule) },
+                    'keyword3': { 'value': rest_schedule },
+                    'remark': { 'value': '如果您想续费,请重新购买课程' }
+                }
+
+            };
+            var saveData = {
+                title: '课时提醒',
+                content: '您好，您所报的（课程）只剩下' + rest_schedule + '节课，请及时续费，谢谢。',
+                url: "{:url('frontend/message/index','','',true)}",
+                member_id: member_id
+            };
+
+            var postParam = {
+                messageData: JSON.stringify(messageData),
+                saveData: JSON.stringify(saveData),
+            }
+            sendMsg(aa, url, postParam);
+        })
 
     })
 

@@ -11,7 +11,7 @@
  Target Server Version : 100126
  File Encoding         : 65001
 
- Date: 04/04/2018 14:36:37
+ Date: 11/04/2018 14:29:23
 */
 
 SET NAMES utf8mb4;
@@ -38,30 +38,35 @@ CREATE TABLE `member_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 163 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 168 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of member_menu
 -- ----------------------------
-INSERT INTO `member_menu` VALUES (143, 0, 'management', '首页', 'fa fa-cog', 0, 'index/index', '_self', 1, 0, 1, 0, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (144, 0, 'management', '训练营财务管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (145, 144, 'management', '资金账单', 'fa fa-cog', 0, 'StatisticsCamp/campBill', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (146, 144, 'management', '收益统计', 'fa fa-cog', 0, 'StatisticsCamp/campIncome', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (147, 144, 'management', '营业额统计', 'fa fa-cog', 0, 'StatisticsCamp/campTurnover', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (148, 144, 'management', '每月图表', 'fa fa-cog', 0, 'StatisticsCamp/campChart', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (149, 144, 'management', '每月报表', 'fa fa-cog', 0, 'StatisticsCamp/campStatistics', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (150, 144, 'management', '课时统计', 'fa fa-cog', 0, 'StatisticsCamp/campScheduleStatistics', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (151, 144, 'management', '课时结算表', 'fa fa-cog', 0, 'StatisticsCamp/lessonSchedule', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (152, 144, 'management', '赠课记录', 'fa fa-cog', 0, 'StatisticsCamp/campGift', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (153, 144, 'management', '订单列表', 'fa fa-cog', 0, 'StatisticsCamp/campBillList', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (154, 144, 'management', '提现列表', 'fa fa-cog', 0, 'StatisticsCamp/campWithdraw', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (155, 144, 'management', '教练工资月表', 'fa fa-cog', 0, 'StatisticsCamp/campCoachSalaryMth', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (156, 144, 'management', '教练工资明细', 'fa fa-cog', 0, 'StatisticsCamp/campCoachSalary', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (157, 0, 'management', '教练员财务管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (158, 157, 'management', '资金账单', 'fa fa-cog', 0, 'StatisticsCoach/coachBill', '_self', 1, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (159, 157, 'management', '收益统计', 'fa fa-cog', 0, 'StatisticsCoach/coachIncome', '_self', 1, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (160, 157, 'management', '课时收入表', 'fa fa-cog', 0, 'StatisticsCoach/coachSalary', '_self', 1, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (161, 157, 'management', '提现列表', 'fa fa-cog', 0, 'StatisticsCoach/coachWithdraw', '_self', 1, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (162, 0, 'management', '首页', 'fa fa-cog', 0, 'index/index', '_self', 1, 0, 1, 0, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (143, 0, 'management', '首页', 'fa fa-home', 0, 'index/index', '_self', 1, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (144, 0, 'management', '财务管理', 'fa fa-area-chart', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (145, 144, 'management', '资金账单', 'fa fa-genderless', 0, 'StatisticsCamp/campBill', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (146, 144, 'management', '收益统计', 'fa fa-genderless', 0, 'StatisticsCamp/campIncome', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (147, 144, 'management', '营业额统计', 'fa fa-genderless', 0, 'StatisticsCamp/campTurnover', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (148, 144, 'management', '每月图表', 'fa fa-genderless', 0, 'StatisticsCamp/campChart', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (149, 144, 'management', '每月报表', 'fa fa-genderless', 0, 'StatisticsCamp/campStatistics', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (150, 144, 'management', '课时统计', 'fa fa-genderless', 0, 'StatisticsCamp/campScheduleStatistics', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (151, 144, 'management', '课时结算表', 'fa fa-genderless', 0, 'StatisticsCamp/lessonSchedule', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (152, 144, 'management', '赠课记录', 'fa fa-genderless', 0, 'StatisticsCamp/campGift', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (153, 144, 'management', '订单列表', 'fa fa-genderless', 0, 'StatisticsCamp/campBillList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (154, 144, 'management', '提现列表', 'fa fa-genderless', 0, 'StatisticsCamp/campWithdraw', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (155, 144, 'management', '教练工资月表', 'fa fa-genderless', 0, 'StatisticsCamp/campCoachSalaryMth', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (156, 144, 'management', '教练工资明细', 'fa fa-genderless', 0, 'StatisticsCamp/campCoachSalary', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (157, 0, 'management', '个人财务管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (158, 157, 'management', '资金账单', 'fa fa-genderless', 0, 'StatisticsCoach/coachBill', '_self', 1, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (159, 157, 'management', '收益统计', 'fa fa-genderless', 0, 'StatisticsCoach/coachIncome', '_self', 1, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (160, 157, 'management', '课时收入表', 'fa fa-genderless', 0, 'StatisticsCoach/coachSalary', '_self', 1, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (161, 157, 'management', '提现列表', 'fa fa-genderless', 0, 'StatisticsCoach/coachWithdraw', '_self', 1, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (162, 0, 'management', '学员管理', 'fa fa-user', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (163, 162, 'management', '学员列表', 'fa fa-genderless', 0, 'Student/studentList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (164, 162, 'management', '学员档案', 'fa fa-genderless', 0, 'Student/studentInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (165, 0, 'management', '首页', 'fa fa-home', 0, 'index/indexOfCoach', '_self', 1, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (166, 144, 'management', '退费列表', 'fa fa-genderless', 0, 'StatisticsCamp/refundList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (167, 144, 'management', '退费处理', 'fa fa-genderless', 0, 'StatisticsCamp/refundDeal', '_self', 1, 0, 1, 3, 1, 0, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
