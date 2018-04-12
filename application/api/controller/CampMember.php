@@ -43,7 +43,7 @@ class CampMember extends Base
             ]);
         }
         return json(['code' => 200, 'msg' => $msg]);
-        
+
     }
 
     // 申请成为训练营的某个身份
@@ -175,7 +175,7 @@ class CampMember extends Base
                 'update_time' => time()
             ];
             // 同意教练申请设为兼职教练type=2 level=1 status=1
-            if ($status==1) {
+            if ($status == 1) {
                 if ($campMemberInfo['type'] == 2) {
                     $data['level'] = 1;
                 }
@@ -265,9 +265,9 @@ class CampMember extends Base
                 ->select();
             foreach ($list as $k => $val) {
                 if ($val['star'] > 0) {
-                    $list[$k]['star'] = ceil($val['star']/$val['star_num']);
+                    $list[$k]['star'] = ceil($val['star'] / $val['star_num']);
                 }
-            } 
+            }
             return ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list];
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -318,8 +318,8 @@ class CampMember extends Base
             if (isset($map['page'])) {
                 unset($map['page']);
             }
-            if(!empty($type) && $type != ' ' && $type != ''){
-                $map['type'] = ['egt',$type];
+            if (!empty($type) && $type != ' ' && $type != '') {
+                $map['type'] = ['egt', $type];
             }
             $CampMember = new  \app\model\CampMember;
             $result = $CampMember->where($map)->select();
@@ -385,69 +385,71 @@ class CampMember extends Base
             // 获取会员在训练营角色，营主才能操作
             $power = getCampPower($campMemberData['camp_id'], $this->memberInfo['id']);
             if ($power != 4) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403').'，只有营主才能操作']);
+                return json(['code' => 100, 'msg' => __lang('MSG_403') . '，只有营主才能操作']);
             }
             $messageSevice = new MessageService();
             $messageData = [];
             $resUpdateCampMebmer = false;
             // 根据action参数 识别业务操作 level:改变角色等级，del移除人员出训练营
             switch ($action) {
-                case 'level' : {
-                    // 改变角色等级
-                    if ($campMemberData['type'] == 2) {
-                        // 教练角色 改变兼职教练/正职教练：现在是兼职改为正职，反之现在是正职改为兼职
-                        if ($campMemberData['level'] == 1) {
-                            $newLevel=2;
-                            $levelText = '高级教练';
-                        } else {
-                            $newLevel=1;
-                            $levelText = '普通教练';
+                case 'level' :
+                    {
+                        // 改变角色等级
+                        if ($campMemberData['type'] == 2) {
+                            // 教练角色 改变兼职教练/正职教练：现在是兼职改为正职，反之现在是正职改为兼职
+                            if ($campMemberData['level'] == 1) {
+                                $newLevel = 2;
+                                $levelText = '高级教练';
+                            } else {
+                                $newLevel = 1;
+                                $levelText = '普通教练';
+                            }
+                            // 更新camp_member数据
+                            $resUpdateCampMebmer = $model->save(['level' => $newLevel], ['id' => $campMemberData['id']]);
+                            $messageData = [
+                                'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更',
+                                'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更，现为：' . $levelText,
+                                'keyword1' => '训练营教练权限变更',
+                                'keyword2' => $levelText,
+                                'keyword3' => date('Y年m月d日 H:i', time()),
+                                'remark' => '点击进入查看更多',
+                                'url' => url('frontend/camp/campinfo', ['camp_id' => $campMember['camp_id']], '', true)
+                            ];
                         }
-                        // 更新camp_member数据
-                        $resUpdateCampMebmer = $model->save(['level' => $newLevel], ['id' => $campMemberData['id']]);
+                        break;
+                    }
+                default:
+                    {
+                        // 移除
+                        // 营主不能移除自己
+                        if ($campMemberData['type'] == 4 && $campMemberData['member_id'] == $this->memberInfo['id']) {
+                            return json(['code' => 100, 'msg' => '你是营主不能删除自己']);
+                        }
+                        // 删教练 检查教练在营内有无班级
+                        if ($campMember['type'] == 2) {
+                            $coachS = new CoachService();
+                            $coach = $coachS->getCoachInfo(['member_id' => $campMemberData['member_id']]);
+                            $grade = $coachS->ingradelist($coach['id'], $campMemberData['camp_id']);
+                            if ($grade) {
+                                return json(['code' => 100, 'msg' => '该教练有班级记录,请先修改班级记录主教练/助教练']);
+                            }
+                            $lesson = $coachS->inlessonlist($coach['id'], $campMemberData['camp_id']);
+                            if ($lesson) {
+                                return json(['code' => 100, 'msg' => '该教练有课程记录,请先修改课程记录主教练/助教练']);
+                            }
+                        }
+                        // 移除人员 更新camp_member数据
+                        $resUpdateCampMebmer = $model->save(['status' => -1], ['id' => $campMemberData['id']]);
                         $messageData = [
-                            'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更',
-                            'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '权限发生变更，现为：'.$levelText,
-                            'keyword1' => '训练营教练权限变更',
-                            'keyword2' => $levelText,
+                            'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
+                            'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
+                            'keyword1' => '训练营教练身份',
+                            'keyword2' => '被移除',
                             'keyword3' => date('Y年m月d日 H:i', time()),
                             'remark' => '点击进入查看更多',
                             'url' => url('frontend/camp/campinfo', ['camp_id' => $campMember['camp_id']], '', true)
                         ];
                     }
-                    break;
-                }
-                default: {
-                    // 移除
-                    // 营主不能移除自己
-                    if ($campMemberData['type'] == 4 && $campMemberData['member_id'] == $this->memberInfo['id']) {
-                        return json(['code' => 100, 'msg' => '你是营主不能删除自己']);
-                    }
-                    // 删教练 检查教练在营内有无班级
-                    if ($campMember['type'] == 2) {
-                        $coachS = new CoachService();
-                        $coach = $coachS->getCoachInfo(['member_id' => $campMemberData['member_id']]);
-                        $grade = $coachS->ingradelist($coach['id'], $campMemberData['camp_id']);
-                        if ($grade) {
-                            return json(['code' => 100, 'msg' => '该教练有班级记录,请先修改班级记录主教练/助教练']);
-                        }
-                        $lesson = $coachS->inlessonlist($coach['id'], $campMemberData['camp_id']);
-                        if ($lesson) {
-                            return json(['code' => 100, 'msg' => '该教练有课程记录,请先修改课程记录主教练/助教练']);
-                        }
-                    }
-                    // 移除人员 更新camp_member数据
-                    $resUpdateCampMebmer = $model->save(['status' => -1], ['id' => $campMemberData['id']]);
-                    $messageData = [
-                        'title' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
-                        'content' => '您好, 您所在的' . $campMember['camp'] . '的' . $campMember['type'] . '身份被移除了',
-                        'keyword1' => '训练营教练身份',
-                        'keyword2' => '被移除',
-                        'keyword3' => date('Y年m月d日 H:i', time()),
-                        'remark' => '点击进入查看更多',
-                        'url' => url('frontend/camp/campinfo', ['camp_id' => $campMember['camp_id']], '', true)
-                    ];
-                }
             }
             if (!$resUpdateCampMebmer) {
                 $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
@@ -486,7 +488,7 @@ class CampMember extends Base
             $keyword = input('param.keyword');
             if (isset($keyword)) {
                 if (!empty($keyword)) {
-                    if (!ctype_space($keyword)){
+                    if (!ctype_space($keyword)) {
                         // 关键字不为空 组合查询条件
                         $map['student.student'] = ['like', "%$keyword%"];
                     }
@@ -528,7 +530,7 @@ class CampMember extends Base
             $keyword = input('param.keyword');
             if (isset($keyword)) {
                 if (!empty($keyword)) {
-                    if (!ctype_space($keyword)){
+                    if (!ctype_space($keyword)) {
                         // 关键字不为空 组合查询条件
                         $map['student.student'] = ['like', "%$keyword%"];
                     }
@@ -594,90 +596,157 @@ class CampMember extends Base
     // 训练营 学生在营/离营操作
     public function removestudent()
     {
-        try {
-            $student_id = input('param.student_id', 0);
-            $camp_id = input('param.camp_id', 0);
-            $action = input('param.action');
-            if (!$action || !$student_id || !$camp_id) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-            }
-            $power = getCampPower($camp_id, $this->memberInfo['id']);
-            if ($power < 3) { // 管理员以上才能操作
-                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
-            }
-
-            $studentS = new StudentService();
-            $studentInfo = $studentS->getStudentInfo(['id' => $student_id]);
-//            dump($studentInfo);
-            $model = new \app\model\CampMember();
-            $campmember = $model->where(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id']])->find()->toArray();
-            // 如果学员有离营申请记录，可直接进行离营操作；否则先检查剩余课时
-            $studentleaveappply = db('camp_leaveapply')->where(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id']])->find();
-            // 学员有剩余课时 不允许操作
-            $studentLessons = $studentS->getLessons(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']]);
-            //dump($studentLessons);
-            $isStudentRestSchedule = 0;
-            $isStudentLeave = 0;
-            foreach ($studentLessons as $studentLesson) {
-                if ($studentLesson['lesson_member_status'] == -1) {
+        // 接收传参
+        $student_id = input('param.student_id', 0);
+        $camp_id = input('param.camp_id', 0);
+        $action = input('param.action');
+        if (!$action || !$student_id || !$camp_id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 获取训练营角色 管理员以上才能操作
+        $power = getCampPower($camp_id, $this->memberInfo['id']);
+        if ($power < 3) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 获取学员信息
+        $studentS = new StudentService();
+        $studentInfo = $studentS->getStudentInfo(['id' => $student_id]);
+        // 学员是否已离营标识 1：已离营
+        $isStudentLeave = 0;
+        // 学员在营剩余课时数
+        $studentRestScheduleNum = 0;
+        // 获取学员与课程关系数据
+        $studentInLessons = $studentS->getInLessons([
+            'camp_id' => $camp_id,
+            'student_id' => $studentInfo['id'],
+            'member_id' => $studentInfo['member_id']
+        ]);
+        if (!empty($studentInLessons)) {
+            foreach ($studentInLessons as $val) {
+                $studentRestScheduleNum += $val['rest_schedule'];
+                if ($val['status'] != 1) {
                     $isStudentLeave = 1;
                 }
-                if ($studentLesson['rest_schedule'] > 0) {
-                    $isStudentRestSchedule = 1;
-//                    continue;
+                continue;
+            }
+        }
+        // 获取学员与班级关系数据
+        $studentInGrades = $studentS->getInGrades([
+            'camp_id' => $camp_id,
+            'student_id' => $studentInfo['id'],
+            'member_id' => $studentInfo['member_id']
+        ]);
+        // 获取学员有无离营申请数据
+        $leaveApplyInfo = db('camp_leaveapply')->where([
+            'camp_id' => $camp_id,
+            'user_id' => $studentInfo['id'],
+            'member_id' => $studentInfo['member_id'],
+            'status' => 0
+        ])->whereNull('delete_time')->find();
+        // 获取学员的会员账号与训练营关系
+        $campMember = db('camp_member')->where(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id']])->find();
+        // 以$isStudentLeave区别当前学员在营|离营状态，操作设为离营|在营操作
+        $lessonMemberModel = new \app\model\LessonMember();
+        $gradeMemberModel = new \app\model\GradeMember();
+        if ($isStudentLeave) {
+            // 设为在营状态
+            try {
+                // 数据业务操作：lesson_member status=1,rest_schedule=0,system_remarks记录在营操作；
+                $saveAllDataLessonMember = [];
+                if (!empty($studentInLessons)) {
+                    foreach ($studentInLessons as $k => $val) {
+                        $saveAllDataLessonMember[$k]['id'] = $val['id'];
+                        $saveAllDataLessonMember[$k]['status'] = 1;
+                        $systemRemarksTxt = date('Ymd', time()).' 训练营人员 '. $this->memberInfo['member'] .' 操作设为在营';
+                        $saveAllDataLessonMember[$k]['system_remarks'] = empty($val['system_remarks']) ? $systemRemarksTxt : $val['system_remarks'].'\n'.$systemRemarksTxt;
+                    }
+                    $updateLessonMember = $lessonMemberModel->saveAll($saveAllDataLessonMember);
+                }
+                // grade_member status=1
+                $updateGradeMember = $gradeMemberModel->where(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']])->setField('status', 1);
+                // 涉及grade的student_str更新（操作的学员 回到班级）
+                if (!empty($studentInGrades)) {
+                    foreach ($studentInGrades as $val) {
+                        $reserveStudentList = $gradeMemberModel->where(['grade_id' => $val['grade_id'], 'status' => 1])->column('student');
+                        $reserveStudentStr = '';
+                        if ($reserveStudentList) {
+                            foreach ($reserveStudentList as $student) {
+                                $reserveStudentStr .= $student . ',';
+                            }
+                            $reserveStudentStr = rtrim($reserveStudentStr, ',');
+                        }
+                        db('grade')->update([
+                            'id' => $val['grade_id'],
+                            'student_str' => $reserveStudentStr,
+                            'students' => count($reserveStudentList)
+                        ]);
+                    }
+                }
+                // camp_leaveapply 清理学员的离营申请
+                db('camp_leaveapply')->where(['user_id' => $studentInfo['id']])->update(['delete_time' => time()]);
+                // camp_member status=1
+                db('camp_member')->update(['id' => $campMember['id'], 'status' => 1, 'update_time' => time()]);
+            } catch (Exception $e) {
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
+            }
+            // 返回成功结果
+            return json(['code' => 200, 'msg' => '学员设为在营' . __lang('MSG_200')]);
+        } else {
+            // 设为离营状态
+            // 若学员有离营申请，直接操作数据|提示学员有剩余课时
+            if (!$leaveApplyInfo) {
+                if ($studentRestScheduleNum) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营课时尚未完成']);
                 }
             }
-            // 学员在有效数据的班级中
-            $studentGrades = $studentS->getGrades(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']]);
-            $isStudentInGrade = 0;
-            foreach ($studentGrades as $studentGrade) {
-                if ($studentGrade['grade_member_status'] == 1) {
-                    $isStudentInGrade =1;
-//                    continue;
+            try {
+                // 数据业务操作：lesson_member status=-1,rest_schedule=0,system_remarks记录离营操作；
+                $saveAllDataLessonMember = [];
+                if (!empty($studentInLessons)) {
+                    foreach ($studentInLessons as $k => $val) {
+                        $saveAllDataLessonMember[$k]['id'] = $val['id'];
+                        $saveAllDataLessonMember[$k]['rest_schedule'] = 0;
+                        $saveAllDataLessonMember[$k]['status'] = -1;
+                        $systemRemarksTxt = date('Ymd', time()).' 训练营人员 '. $this->memberInfo['member'] .' 操作设为离营，当前学员剩余课时数：'.$val['rest_schedule'];
+                        $saveAllDataLessonMember[$k]['system_remarks'] = empty($val['system_remarks']) ? $systemRemarksTxt : $val['system_remarks'].'\n'.$systemRemarksTxt;
+                    }
+                    $updateLessonMember = $lessonMemberModel->saveAll($saveAllDataLessonMember);
                 }
+                // grade_member status=-1
+                $updateGradeMember = $gradeMemberModel->where(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']])->setField('status', -1);
+                // 涉及grade的student_str更新（保留同班其他学员）
+                if (!empty($studentInGrades)) {
+                    foreach ($studentInGrades as $val) {
+                        $reserveStudentList = $gradeMemberModel->where(['grade_id' => $val['grade_id'], 'status' => 1])->column('student');
+                        $reserveStudentStr = '';
+                        if ($reserveStudentList) {
+                            foreach ($reserveStudentList as $student) {
+                                $reserveStudentStr .= $student . ',';
+                            }
+                            $reserveStudentStr = rtrim($reserveStudentStr, ',');
+                        }
+                        db('grade')->update([
+                            'id' => $val['grade_id'],
+                            'student_str' => $reserveStudentStr,
+                            'students' => count($reserveStudentList)
+                        ]);
+                    }
+                }
+                // camp_leaveapply status=1
+                db('camp_leaveapply')->where(['id' => $leaveApplyInfo['id']])->update(['status' => 1, 'update_time' => time()]);
+                // 如果会员账号下所有学员都离营了 更新camp_member status=-1
+                $studentLessonAllLeave = $studentS->getInLessons(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id'], 'status' => -1]);
+                if ($studentLessonAllLeave) {
+                    db('camp_member')->update(['id' => $campMember['id'], 'status' => -1, 'update_time' => time()]);
+                }
+            } catch (Exception $e) {
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
             }
-            //dump($isStudentLeave);
-            $lessonmemberM = new \app\model\LessonMember();
-            $gradememberM = new \app\model\GradeMember();
-            if ($isStudentLeave) {
-                $updateLessonmember = $lessonmemberM->where(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']])->setField('status', 1);
-                if (!$updateLessonmember)  {
-                    return json(['code' => 100, 'msg' => '学员设为在营'.__lang('MSG_400')]);
-                } else {
-                    $studentLessonAllLeave = $studentS->getLessons(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id'], 'status' => 1]);
-                    if ($studentLessonAllLeave) {
-                        $model->update(['id' => $campmember['id'], 'status' => 1, 'update_time' => time()]);
-                    }
-                    return json(['code' => 200, 'msg' => '学员设为在营'.__lang('MSG_200')]);
-                }
-            } else { // 执行离营
-                if (!$studentleaveappply) {
-                    if ($isStudentRestSchedule) {
-                        return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营课时尚未完成']);
-                    }
-                }
-
-                if ($isStudentInGrade) {
-                    return json(['code' => 100, 'msg' => __lang('MSG_400') . '，该学员在训练营班级中，请先将学员移出班级']);
-                }
-
-                // lesson_member、grade_member status=-1 学员离营
-                $studentleave1 = $lessonmemberM->where(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']])->setField('status', -1);
-                $studentleave2 = $gradememberM->where(['camp_id' => $camp_id, 'student_id' => $studentInfo['id'], 'member_id' => $studentInfo['member_id']])->setField('status', -1);
-                if (!$studentleave1 && !$studentleave2) {
-                    return json(['code' => 100, 'msg' => '学员设为离营' . __lang('MSG_400')]);
-                } else {
-                    $studentLessonAllLeave = $studentS->getLessons(['camp_id' => $camp_id, 'member_id' => $studentInfo['member_id'], 'status' => -1]);
-                    if ($studentLessonAllLeave) {
-                        $model->update(['id' => $campmember['id'], 'status' => -1, 'update_time' => time()]);
-                    }
-                    return json(['code' => 200, 'msg' => '学员设为离营' . __lang('MSG_200')]);
-                }
-            }
-        } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
+            // 返回成功结果
+            return json(['code' => 200, 'msg' => '学员设为离营' . __lang('MSG_200')]);
         }
     }
+
 
     // 训练营教务人员列表
     public function teachlist()
@@ -715,28 +784,25 @@ class CampMember extends Base
     }
 
 
-
-
-
-
     // 搜索训练营的教练(一页全部)  (不含有教练员身份的营主，考虑弃用legend)
-    public function getCoachOfCampListAllApi(){
-        try{
+    public function getCoachOfCampListAllApi()
+    {
+        try {
             $camp_id = input('param.camp_id');
             $keyword = input('param.keyword');
-            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2,'camp_member.member'=>['like',"%$keyword%"]];
-            }else{
-                $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>2];
+            if (!empty($keyword) && $keyword != ' ' && $keyword != '') {
+                $map = ['camp_member.camp_id' => $camp_id, 'camp_member.type' => 2, 'camp_member.member' => ['like', "%$keyword%"]];
+            } else {
+                $map = ['camp_member.camp_id' => $camp_id, 'camp_member.type' => 2];
             }
-            $result = db('camp_member')->where($map)->join('coach','camp_member.member_id = coach.member_id')->order('camp_member.id desc')->select();
-            if($result){
-                return json(['code' => 200, 'msg' =>'查询成功', 'data' => $result]);
-            }else{
-                return json(['code' => 100, 'msg' =>'查询成功,无数据']);
+            $result = db('camp_member')->where($map)->join('coach', 'camp_member.member_id = coach.member_id')->order('camp_member.id desc')->select();
+            if ($result) {
+                return json(['code' => 200, 'msg' => '查询成功', 'data' => $result]);
+            } else {
+                return json(['code' => 100, 'msg' => '查询成功,无数据']);
             }
-            
-        }catch (Exception $e){
+
+        } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }

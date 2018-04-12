@@ -168,41 +168,33 @@ class StudentService{
         
     }
 
-    // 学员参加的课程
-    public function getLessons($map=[]){
-        $where['lesson_member.camp_id'] = $map['camp_id'];
-        if (isset($map['student_id'])) {
-            $where['lesson_member.student_id'] = $map['student_id'];
+    // 学员参加的课程列表
+    public function getInLessons($map=[]){
+        $res = db('lesson_member')->where($map)->whereNull('delete_time')->select();
+        if (!$res) {
+            return $res;
         }
-        $where['lesson_member.member_id'] = $map['member_id'];
-        if (isset($map['status'])) {
-            $where['lesson_member.status'] = $map['status'];
+        // 遍历课程信息
+        foreach ($res as $k => $val) {
+            $res[$k]['lesson'] = db('lesson')->where('id', $val['lesson_id'])->whereNull('delete_time')->find();
         }
-        $result = Db::view('lesson')
-            ->view('lesson_member', ['student_id','student','member_id','member','status' => 'lesson_member_status','rest_schedule'], 'lesson_member.lesson_id=lesson.id')
-            ->where($where)
-            ->where('lesson.delete_time', null)
-            ->select();
-        return $result;
+        return $res;
     }
 
-    // 学员所在班级
-    public function getGrades($map=[]) {
-        $where['grade_member.camp_id'] = $map['camp_id'];
-        $where['grade_member.student_id'] = $map['student_id'];
-        $where['grade_member.member_id'] = $map['member_id'];
-        if (isset($map['status'])) {
-            $where['grade_member.status'] = $map['status'];
+    // 学员所在班级列表
+    public function getInGrades($map=[]) {
+        $res = db('grade_member')->where($map)->whereNull('delete_time')->select();
+        if (!$res) {
+            return $res;
         }
-        $result = Db::view('grade')
-            ->view('grade_member', ['student_id', 'student', 'member', 'member_id', 'status' => 'grade_member_status'], 'grade_member.grade_id=grade.id')
-            ->where($where)
-            ->where('grade.delete_time', null)
-            ->select();
-        return $result;
+        // 遍历班级信息
+        foreach ($res as $k => $val) {
+            $res[$k]['grade'] = db('grade')->where('id', $val['grade_id'])->whereNull('delete_time')->find();
+        }
+        return $res;
     }
 
-    // 学员所在训练营
+    // 学员所在训练营列表
     public function getCamps($map=[]) {
         $where['student.id'] = $map['student_id'];
         $where['camp_member.camp_id'] = $map['camp_id'];
