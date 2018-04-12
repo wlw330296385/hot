@@ -32,6 +32,16 @@
 							</div>
 							<div class="form-group">
 								<!-- /.input group -->
+								<label>退费状态：</label>
+								<div class="input-group radius4">
+									<select name="status" class="form-control radius4" style="border:none !important;">
+										<option value="-1">退款中</option>
+										<option value="-2">已退款</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<!-- /.input group -->
 								<label>退费方式：</label>
 								<div class="input-group radius4">
 									<select name="refundType" class="form-control radius4" style="border:none !important;">
@@ -43,7 +53,6 @@
 									</select>
 								</div>
 							</div>
-
 							<div class="form-group">
 								<!-- /.input group -->
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
@@ -64,13 +73,16 @@
 										<th>姓名</th>
 										<th>所退课程</th>
 										<th>所退课时</th>
-										<th>退费金额</th>
+										<th>最大可退金额</th>
+										<th>实际退费金额</th>
 										<th>手续费</th>
 										<th>退费原因</th>
 										<th>退费方式</th>
+										<th>申请时间</th>
+										<th>退费时间</th>
 										<th>操作人</th>
-										<th>操作时间</th>
 										<th>备注</th>
+										<th>操作</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -79,13 +91,16 @@
 										<td>{student}</td>
 										<td>{lesson}</td>
 										<td>{scheduleCount}</td>
+										<td>{maxSum}</td>
 										<td>{sum}</td>
 										<td>{fee}</td>
 										<td>{reason}</td>
 										<td>{refundType}</td>
+										<td>{creatTime}</td>
+										<td>{agreeTime}</td>
 										<td>{member}</td>
-										<td>{time}</td>
 										<td>{remarks}</td>
+										<td><a href="#" class="btn btn-xs btn-info rInfo" data-student_id="98"><i class="fa fa-inbox"></i> 立即处理</a></td>
 									</tr>
 									</tbody>
 								</table>
@@ -107,18 +122,15 @@
 
 
 <!-- Modal : 学员档案 -->
-<div class="modal fade" id="studentInfoModal">
+<div class="modal fade" id="refundInfoModal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="coachModalLabel">学员档案</h4>
+				<h4 class="modal-title" id="coachModalLabel">退费订单处理</h4>
 			</div>
 			<div class="modal-body">
-				<iframe id="studentInfoframe" width="100%" height="500" frameborder="0"></iframe>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<iframe id="refundInfoframe" width="100%" height="590" frameborder="0"></iframe>
 			</div>
 		</div>
 	</div>
@@ -182,14 +194,19 @@
         })
 
 
-        $(".sInfo").click(function(){
+        $(".rInfo").click(function(){
             var getSID = $(this).attr("data-student_id");
-            var frameSrc = "{:url('management/Student/studentInfo')}"+"/student_id/"+getSID+"/camp_id/9";
-            $("#studentInfoframe").attr("src", frameSrc);
-            $('#studentInfoModal').modal({ show: true, backdrop: 'static' });
+            var frameSrc = "{:url('management/StatisticsCamp/refundDeal')}"+"/refund_id/"+getSID;
+            $("#refundInfoframe").attr("src", frameSrc);
+            $('#refundInfoModal').modal({ show: true, backdrop: 'static' });
         });
 
-    })
+
+    });
+
+    function closeModel(){
+        $('#refundInfoModal').modal('hide');
+	}
 
 </script>
 
