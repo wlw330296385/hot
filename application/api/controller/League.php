@@ -20,6 +20,11 @@ class League extends Base
         $data['creater_member'] = $this->memberInfo['member'];
         $data['member_id'] = $this->memberInfo['id'];
         $data['member'] = $this->memberInfo['member'];
+        // 验证数据
+        $validate = validate('MatchOrgVal');
+        if (!$validate->scene('message')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
         // 联系电话默认会员电话
         if ( !array_key_exists('contact_tel', $data) || empty($data['contact_tel']) ) {
             $data['contact_tel'] = $this->memberInfo['telephone'];
@@ -140,24 +145,39 @@ class League extends Base
         $data['member_id'] = $this->memberInfo['id'];
         $data['member'] = $this->memberInfo['member'];
         $data['member_avatar'] = $this->memberInfo['avatar'];
-        // 时间字段格式转化
+        // 数据验证
+        $validate = validate('MatchVal');
+        if ( !$validate->scene('league_add')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 时间格式转换
+        $data['start_time'] = strtotime($data['start_time']);
+        $data['end_time'] = strtotime($data['end_time']);
+        $data['reg_start_time'] = strtotime($data['reg_start_time']);
+        $data['reg_end_time'] = strtotime($data['reg_end_time']);
+        // 时间字段严谨性校验
         $newTime = time();
-        if ( array_key_exists('start_time', $data) ) {
-            $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
-            if ( $data['start_time'] != 0 && $newTime > $data['start_time'] ) {
-                return json(['code' => 100, 'msg' => '开始时间必须大于当前时间']);
-            }
+        if ($data['start_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '开始时间不能大于当前时间']);
         }
-        if ( array_key_exists('end_time', $data) ) {
-            $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
-            if ( $data['end_time'] != 0 && $newTime > $data['end_time'] ) {
-                return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
-            }
+        if ($data['end_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '结束时间不能大于当前时间']);
         }
-        if ( isset($data['start_time']) && isset($data['end_time']) ) {
-            if ($data['end_time'] <= $data['start_time']) {
-                return json(['code' => 100, 'msg' => '结束时间必须大于开始时间']);
-            }
+        if ($data['reg_start_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '报名开始时间不能大于当前时间']);
+        }
+        if ($data['reg_end_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '报名结束时间不能大于当前时间']);
+        }
+        if ($data['start_time'] >= $data['end_time']) {
+            return json(['code' => 100, 'msg' => '开始时间不能大于结束时间']);
+        }
+        if ($data['reg_start_time'] >= $data['reg_end_time']) {
+            return json(['code' => 100, 'msg' => '报名开始时间不能大于报名结束时间']);
+        }
+        // 报名时间不能大于比赛开始时间
+        if ($data['reg_start_time'] >= $data['start_time'] || $data['reg_end_time'] >= $data['start_time']) {
+            return json(['code' => 100, 'msg' => '报名时间不能大于联赛开始时间']);
         }
 
         // 创建联赛 status=0 待审核
@@ -195,29 +215,45 @@ class League extends Base
         }
         // 接收输入变量
         $data = input('post.');
+        // 数据验证
+        $validate = validate('MatchVal');
+        if ( !$validate->scene('league_edit')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 时间格式转换
+        $data['start_time'] = strtotime($data['start_time']);
+        $data['end_time'] = strtotime($data['end_time']);
+        $data['reg_start_time'] = strtotime($data['reg_start_time']);
+        $data['reg_end_time'] = strtotime($data['reg_end_time']);
+        // 时间字段严谨性校验
         $newTime = time();
-        if ( array_key_exists('start_time', $data) ) {
-            $data['start_time'] = empty($data['start_time']) ? 0 : strtotime($data['start_time']);
-            if ( $data['start_time'] != 0 && $newTime > $data['start_time'] ) {
-                return json(['code' => 100, 'msg' => '开始时间必须大于当前时间']);
-            }
+        if ($data['start_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '开始时间不能大于当前时间']);
         }
-        if ( array_key_exists('end_time', $data) ) {
-            $data['end_time'] = empty($data['end_time']) ? 0 : strtotime($data['end_time']);
-            if ( $data['end_time'] != 0 && $newTime > $data['end_time'] ) {
-                return json(['code' => 100, 'msg' => '结束时间必须大于当前时间']);
-            }
+        if ($data['end_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '结束时间不能大于当前时间']);
         }
-        if ( isset($data['start_time']) && isset($data['end_time']) ) {
-            if ($data['end_time'] <= $data['start_time']) {
-                return json(['code' => 100, 'msg' => '结束时间必须大于开始时间']);
-            }
+        if ($data['reg_start_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '报名开始时间不能大于当前时间']);
+        }
+        if ($data['reg_end_time'] <= $newTime) {
+            return json(['code' => 100, 'msg' => '报名结束时间不能大于当前时间']);
+        }
+        if ($data['start_time'] >= $data['end_time']) {
+            return json(['code' => 100, 'msg' => '开始时间不能大于结束时间']);
+        }
+        if ($data['reg_start_time'] >= $data['reg_end_time']) {
+            return json(['code' => 100, 'msg' => '报名开始时间不能大于报名结束时间']);
+        }
+        // 报名时间不能大于比赛开始时间
+        if ($data['reg_start_time'] >= $data['start_time'] || $data['reg_end_time'] >= $data['start_time']) {
+            return json(['code' => 100, 'msg' => '报名时间不能大于联赛开始时间']);
         }
 
         $matchS = new MatchService();
         try {
             // 保存联赛信息
-            $res = $matchS->saveMatch($data, 'league_edit');
+            $res = $matchS->saveMatch($data);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

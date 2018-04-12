@@ -66,8 +66,12 @@ class Match extends Base
                 $data['name'] = $homeTeam['name'] . ' vs （待定）';
             }
 
-
-            $res = $matchS->saveMatch($data, 'add');
+            // 验证器
+            $validate = validate('MatchVal');
+            if ( !$validate->scene('add')->check($data) ) {
+                return json(['code' => 100, 'msg' => $validate->getError()]);
+            }
+            $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
                 $matchId = $res['data'];
@@ -259,9 +263,12 @@ class Match extends Base
             } else {
                 $data['name'] = $homeTeam['name'] . ' vs （待定）';
             }
-
-
-            $res = $matchS->saveMatch($data, 'add');
+            // 验证器
+            $validate = validate('MatchVal');
+            if ( !$validate->scene('add')->check($data) ) {
+                return json(['code' => 100, 'msg' => $validate->getError()]);
+            }
+            $res = $matchS->saveMatch($data);
             // 比赛记录创建成功后操作
             if ($res['code'] == 200) {
                 $matchId = $res['data'];
@@ -723,9 +730,13 @@ class Match extends Base
                 ]);
             }
             // 比赛完成的操作 end
-
+            // 数据验证
+            $validate = validate('MatchVal');
+            if ( !$validate->scene('edit')->check($dataMatch) ) {
+                return json(['code' => 100, 'msg' => $validate->getError()]);
+            }
             // 更新match数据
-            $resultSaveMatch = $matchS->saveMatch($dataMatch, 'edit');
+            $resultSaveMatch = $matchS->saveMatch($dataMatch);
             if ($resultSaveMatch['code'] == 100) {
                 return json(['code' => 100, 'msg' => '更新比赛信息失败']);
             }
@@ -785,8 +796,13 @@ class Match extends Base
             $post['match_time'] = $matchTimeStamp;
             // 组合match保存数据 end
 
+            // 数据验证
+            $validate = validate('MatchVal');
+            if ( !$validate->scene('league_edit')->check($post) ) {
+                return json(['code' => 100, 'msg' => $validate->getError()]);
+            }
             // 保存match数据
-            $resultSaveMatch = $matchS->saveMatch($post, 'add');
+            $resultSaveMatch = $matchS->saveMatch($post);
             // 保存match数据成功 保存match_record数据
             if ($resultSaveMatch['code'] == 200) {
                 // 组合match_record保存数据
@@ -1322,9 +1338,13 @@ class Match extends Base
                     ]);
                 }
                 // 比赛完成的操作 end
-
+                // 数据验证
+                $validate = validate('MatchVal');
+                if ( !$validate->scene('edit')->check($dataMatch) ) {
+                    return json(['code' => 100, 'msg' => $validate->getError()]);
+                }
                 // 更新match数据
-                $resultSaveMatch = $matchS->saveMatch($dataMatch, 'edit');
+                $resultSaveMatch = $matchS->saveMatch($dataMatch);
                 if ($resultSaveMatch['code'] == 100) {
                     return json(['code' => 100, 'msg' => '更新比赛信息失败']);
                 }
@@ -1350,8 +1370,13 @@ class Match extends Base
                 $post['match_time'] = $matchTimeStamp;
                 // 组合match保存数据 end
 
+                // 数据验证
+                $validate = validate('MatchVal');
+                if ( !$validate->scene('add')->check($post) ) {
+                    return json(['code' => 100, 'msg' => $validate->getError()]);
+                }
                 // 保存match数据
-                $resultSaveMatch = $matchS->saveMatch($post, 'add');
+                $resultSaveMatch = $matchS->saveMatch($post);
                 // 保存match数据成功 保存match_record数据
                 if ($resultSaveMatch['code'] == 200) {
                     // 组合match_record保存数据
