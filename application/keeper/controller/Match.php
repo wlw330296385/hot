@@ -289,5 +289,10 @@ class Match extends Base {
     public function signUpLeague() {
         return view('Match/signUpLeague');
     }
+
+    // 组织管理员
+    public function adminListOfOrganization() {
+        return view('Match/adminListOfOrganization');
+    }
     
 }
