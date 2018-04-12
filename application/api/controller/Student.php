@@ -136,7 +136,7 @@ class Student extends Base
 
             $addApplyleavecampResult = $db->insert([
                 'member_id' => $student['member_id'],
-                'member' => $student['member'],
+                'member' => $student['member']['member'],
                 'camp_id' => $camp['id'],
                 'camp' => $camp['camp'],
                 'username' => $student['student'],

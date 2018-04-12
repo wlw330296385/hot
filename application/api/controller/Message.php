@@ -286,7 +286,7 @@ class Message extends Base{
 
             $messageData = [
                 'template_id' => config('wxTemplateID.checkPend'),
-                'url' => url('frontend/student/studentlistofcamp', ['camp_id' => $applydata['camp_id'], 'type' => 1], '', true),
+                'url' => url('frontend/student/studentinfoofcamp', ['camp_id' => $applydata['camp_id'], 'student_id' => ['user_id']], '', true),
                 'data' => [
                     'first' => ['value' => $applydata['camp'] . '的学员 ' . $applydata['username'] . '申请退出训练营。'],
                     'keyword1' => '申请退出训练营',

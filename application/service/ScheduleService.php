@@ -403,7 +403,7 @@ class ScheduleService
                     if ($grademember) {
                         $gradeMemberDb->where('id', $grademember['id'])->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
                         // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
-                        $reserveStudentList = $gradeMemberDb->where(['grade_id' => $grademember['grade_id']])->column('student');
+                        $reserveStudentList = $gradeMemberDb->where(['grade_id' => $grademember['grade_id'], 'status' => 1])->column('student');
                         $reserveStudentStr = '';
                         if ($reserveStudentList) {
                             foreach ($reserveStudentList as $val) {

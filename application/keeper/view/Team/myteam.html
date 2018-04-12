@@ -23,8 +23,8 @@
         }
 
         .coloricon {
-            width: 2.4em;
-            height: 2.4em;
+            width: 2.3em;
+            height: 2.3em;
             vertical-align: -0.7em;
             fill: currentColor;
             overflow: hidden;
@@ -140,7 +140,7 @@
             </ul>
             {/notempty}
 
-            <div class="page-header">
+            <div class="page-header organizationTitle">
                 <span class="course">组织</span>
             </div>
             <div class="myOrganization mb">
@@ -150,39 +150,39 @@
                 <div class="mb">
                     <ul class="mui-table-view list">
                         <li class="mui-table-view-cell listli">
-                            <a href="{:url('match/myLeague')}">
+                            <a href="{:url('match/myLeague',['org_id'=>$vo['match_org_id']])}">
                                 <img src="{$vo.match_org_logo}" class="img24">{$vo.match_org}</a>
                             <span class="mui-navigate-right wd36"></span>
                         </li>
                     </ul>
                     <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                            <a href="">
+                            <a href="{:url('match/organizationSetting', ['org_id' => $vo.match_org_id])}">
                                 <span class="icon iconfont icon-training-camp"></span>
                                 <div class="mui-media-body">组织设置</div>
                             </a>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                            <a href="">
+                            <a href="{:url('match/myLeague',['org_id'=>$vo.id])}">
                                 <span class="icon iconfont icon-training-course"></span>
                                 <div class="mui-media-body">联赛</div>
                             </a>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                            <a href="">
+                            <a href="{:url('match/adminListOfOrganization',['org_id'=>$vo.id])}">
                                 <span class="icon iconfont icon-training-course"></span>
-                                <div class="mui-media-body">人员</div>
+                                <div class="mui-media-body">管理员</div>
                             </a>
                         </li>
                     </ul>
                 </div>
                 {/volist} {/notempty}
             </div>
-            <div class="hintsO hintsTip mui-text-center hide whitebg">
+            <!-- <div class="hintsO hintsTip mui-text-center hide whitebg">
                 <p>你还没组织哦</p>
                 <p>赶紧来查找或创建你的组织吧！</p>
-            </div>
-
+            </div> -->
+<!-- 
             <div class="success-frame success-frame2" style="padding-bottom:30px !important;">
                 <div class="mui-row mui-text-center">
                     <div class="mui-col-xs-6 mui-col-sm-6">
@@ -196,7 +196,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="page-header">
                 <span class="course">球队</span>
@@ -281,8 +281,9 @@
                 $(".hintsT").show();
             }
             if (htmlO == '') {
-                $(".hintsO").show();
+                $(".organizationTitle").hide();
             }
+           
         });
 
     </script>
