@@ -123,6 +123,8 @@ class Student extends Camp{
     	$keyword = input('param.keyword');
     	$camp_id = $this->camp_member['camp_id'];
     	$map['lesson_member.camp_id'] = $camp_id;
+    	$map['bill.is_pay'] = 1;
+    	$map['bill.goods_type'] = 1;
     	if ($type) {
     		$map['lesson_member.type'] = $type;
     	}
@@ -135,7 +137,8 @@ class Student extends Camp{
 
     	// $studentList = db('lesson_member')->field('lesson_member.member_id,lesson_member.member,lesson_member.student_id,lesson,lesson_id,lesson_member.camp_id,lesson_member.camp,lesson_member.student,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,lesson_member.type,lesson_member.status,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->group('lesson_member.student_id')->order('lesson_member.id desc')->select();
 
-    	$studentList = db('lesson_member')->field('lesson_member.*,bill.balance_pay,bill.refundamount')->join('bill','bill.student_id = lesson_member.student_id')->where($map)->order('lesson_member.id desc')->select();
+    	$studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
+
     	$this->assign('studentList',$studentList);
         return view('Student/studentList');
     }
