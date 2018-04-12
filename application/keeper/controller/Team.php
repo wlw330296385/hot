@@ -805,4 +805,9 @@ class Team extends Base {
             'refereeInfo' => $refereeInfo
         ]);
     }
+
+     // 记录数据
+     public function recordData() {
+        return view('Team/recordData');
+    }
 }
