@@ -297,6 +297,81 @@ class ScheduleService
      * id 是grade_member表id
      * @return array
      */
+    // function decStudentRestschedule($students, $schedule)
+    // {
+    //     $gradeMemberDb = db('grade_member');
+    //     $modelLessonMember = new LessonMember();
+    //     $modelStudent = new Student();
+    //     $modelGrade = new Grade();
+    //     foreach ($students as $student) {
+    //         // student结构中有lmid为拼课学员
+    //         if (isset($student['lmid'])) {
+    //             $lessonmember = $modelLessonMember->where('id', $student['lmid'])->find();
+    //         } else {
+    //             // 课时本班级学员
+    //             $lessonMemberWhere['student_id'] = $student['student_id'];
+    //             $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
+    //             $lessonMemberWhere['camp_id'] = $schedule['camp_id'];
+    //             $lessonMemberWhere['type'] = 1;
+    //             $lessonmember = $modelLessonMember->where($lessonMemberWhere)->find();
+    //         }
+    //         if ($lessonmember) {
+    //             $lessonmember = $lessonmember->toArray();
+    //             if ($lessonmember['rest_schedule'] == 1) {
+    //                 // lesson_member剩余课时为0 毕业状态
+    //                 $finishSchedule = $modelLessonMember->where('id', $lessonmember['id'])->update(['rest_schedule' => 0, 'status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
+    //                 if (!$finishSchedule) {
+    //                     // 记录错误log
+    //                 }
+    //                 // 学员档案完成课程数+1
+    //                 $studentFinishedTotal = $modelStudent->where('id',$lessonmember['student_id'])->setInc('finished_lesson', 1);
+    //                 if (!$studentFinishedTotal) {
+    //                     // 记录错误log
+    //                 }
+    //                 // 学员从班级毕业（grade_member数据 status=4）
+    //                 $grademember = $gradeMemberDb->where(['camp_id' => $schedule['camp_id'], 'lesson_id' => $lessonmember['lesson_id'], 'student_id' => $lessonmember['student_id']])->whereNull('delete_time')->find();
+    //                 if ($grademember) {
+    //                     $gradeMemberDb->where('id', $grademember['id'])->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
+    //                     // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
+    //                     $reserveStudentList = $gradeMemberDb->where(['grade_id' => $grademember['grade_id']])->column('student');
+    //                     $reserveStudentStr = '';
+    //                     if ($reserveStudentList) {
+    //                         foreach ($reserveStudentList as $val) {
+    //                             $reserveStudentStr .= $val . ',';
+    //                         }
+    //                         $reserveStudentStr = rtrim($reserveStudentStr, ',');
+    //                     }
+    //                     $modelGrade->where(['id' => $grademember['grade_id']])->update(['student_str' => $reserveStudentStr, 'students' => count($reserveStudentList)]);
+    //                 }
+    //             } else {
+    //                 $decRestSchedule = $modelLessonMember->where('id', $lessonmember['id'])->setDec('rest_schedule', 1);
+    //                 if (!$decRestSchedule) {
+    //                     // 记录错误log
+    //                 }
+    //             }
+    //             $incStudentFinishedSchedule = $modelStudent->where('id',$lessonmember['student_id'])->setInc('finished_schedule', 1);
+    //             if (!$incStudentFinishedSchedule) {
+    //                 // 记录错误log
+    //             }
+    //         }
+    //     }
+    //     //return ['code' => 200, 'msg' => __lang('MSG_200')];
+    //     return true;
+    // }
+
+
+
+
+    /** 课时相关学员剩余课时-1
+     * @param $students 学员列表数组
+     * [
+     * [] => ['id','student_id','student']
+     * [] => ['id','student_id','student']
+     * ]
+     * id 是grade_member表id
+     * @return array
+     * 2018年4月11日改动:不需要判断mid;
+     */
     function decStudentRestschedule($students, $schedule)
     {
         $gradeMemberDb = db('grade_member');
@@ -304,17 +379,12 @@ class ScheduleService
         $modelStudent = new Student();
         $modelGrade = new Grade();
         foreach ($students as $student) {
-            // student结构中有lmid为拼课学员
-            if (isset($student['lmid'])) {
-                $lessonmember = $modelLessonMember->where('id', $student['lmid'])->find();
-            } else {
-                // 课时本班级学员
-                $lessonMemberWhere['student_id'] = $student['student_id'];
-                $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
-                $lessonMemberWhere['camp_id'] = $schedule['camp_id'];
-                $lessonMemberWhere['type'] = 1;
-                $lessonmember = $modelLessonMember->where($lessonMemberWhere)->find();
-            }
+            // 课时本班级学员
+            $lessonMemberWhere['student_id'] = $student['student_id'];
+            $lessonMemberWhere['lesson_id'] = $schedule['lesson_id'];
+            $lessonMemberWhere['camp_id'] = $schedule['camp_id'];
+            $lessonMemberWhere['type'] = 1;
+            $lessonmember = $modelLessonMember->where($lessonMemberWhere)->find();
             if ($lessonmember) {
                 $lessonmember = $lessonmember->toArray();
                 if ($lessonmember['rest_schedule'] == 1) {

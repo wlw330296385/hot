@@ -30,6 +30,12 @@ class Index extends Controller{
         // phpinfo();
     }
     
+    // 找出schedule的名单和schedule_member不对应的bug
+    public function findbug(){
+        $list = 
+    }
+
+
 
 
     public function test(){
