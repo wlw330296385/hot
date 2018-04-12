@@ -4,6 +4,7 @@ namespace app\service;
 
 
 use app\model\Match;
+use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 

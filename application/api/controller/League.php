@@ -171,9 +171,9 @@ class League extends Base
                 $matchId = $res['data'];
                 // 保存联赛-工作人员关系数据
                 $leagueS->saveMatchMember([
-                    'match_org_id' => $matchId,
-                    'match_org' => $data['name'],
-                    'match_org_logo' => $data['logo'],
+                    'match_id' => $matchId,
+                    'match' => $data['name'],
+                    'match_logo' => $data['logo'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
