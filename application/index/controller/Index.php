@@ -32,7 +32,49 @@ class Index extends Controller{
     
     // 找出schedule的名单和schedule_member不对应的bug
     public function findbug(){
-        $list = 
+        $Schedule = new \app\model\Schedule;
+        $list = $Schedule->where(['lesson_time'=>['gt',1519833600],'status'=>1])->select();
+        // // ->with('scheduleMember')
+        // ->scheduleMember()
+        // // ->hasWhere('scheduleMember',['type'=>1])
+        // ->where(['type'=>1])
+        // ->select();
+        $a = $list->toArray();
+        $b = [];
+        // dump($a);die;
+        // foreach ($a as $key => $value) {
+
+        //     $b[] = [
+        //         'grade'=>$value['grade'],
+        //         'camp_id'   =>$value['camp_id'],
+        //         'students' => unserialize($value['student_str']),
+        //         'student_count'=>   count(unserialize($value['student_str'])),
+        //         'members'  =>count($value['schedule_member'])
+        //         ];
+        // }
+        // dump($b);
+
+        foreach ($a as $key => $value) {
+           $scheduleMember = db('schedule_member')->where(['schedule_id'=>$value['id'],'type'=>1])->where('delete_time',null)->count(); 
+           $b[] = [
+            'grade'=>$value['grade'],
+            'students' =>count(unserialize($value['student_str'])),
+            'schedule_member'=>$scheduleMember,
+            'lesson_time'=>$value['lesson_time'],
+            'camp'=>$value['camp'],
+            'id'=>$value['id']
+            ] ;
+        }
+        foreach ($b as $key => &$value) {
+            if($value['students'] == $value['schedule_member']){
+                unset($b[$key]);
+                continue;
+            }
+            $scheduleMemberList = db('schedule_member')->where(['schedule_id'=>$value['id'],'type'=>1])->where('delete_time',null)->column('user'); 
+            $value['userList'] = $scheduleMemberList;
+        }
+
+        dump($b);
     }
 
 
@@ -682,5 +724,28 @@ class Index extends Controller{
         $ids = db('admin_menu')->column('id');
         dump(json_encode($ids));
         db('admin_group')->where(['pid'=>1])->update(['menu_auth'=>json_encode($ids)]);
+    }
+
+
+    // 补退款订单
+    public function billRefund(){
+        $list = db('bill')->where(['status'=>['lt',0]])->select();
+        foreach ($list as $key => $value) {
+            db('refund')->insert([
+                                'member'=>$value['member'],
+                                'member_id'=>$value['member_id'],
+                                'bill_id'=>$value['id'],
+                                'bill_order'=>$value['bill_order'],
+                                'camp_id'=>$value['camp_id'],
+                                'camp'=>$value['camp'],
+                                'total'=>$value['refundamount']/$value['price'],
+                                'student_id'=>$value['student_id'],
+                                'student'=>$value['student'],
+                                'reason'=>$value['remarks'],
+                                'create_time'=>$value['create_time'],
+                                'refundamount'=>$value['refundamount'],
+                                'status'=>$value['status'] == -1?1:3,
+                            ]);
+        }
     }
 }

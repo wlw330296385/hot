@@ -345,95 +345,95 @@ class Schedule extends Base
         }
     }
 
-    // 操作课时 设为已申/删除
-    public function removeschedule()
-    {
-        try {
-            $schedule_id = input('schedule_id');
-            $action = input('action');
-            if (!$schedule_id || !$action) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-            }
-            $schedule = db('schedule')->where(['id' => $schedule_id])->find();
-            if (!$schedule) {
-                return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
-            }
-            // 获取会员在训练营角色
-            $power = getCampPower($schedule['camp_id'], $this->memberInfo['id']);
-            if ($power < 2) {
-                return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
-            }
-            // 兼职教练不能操作
-            if ($power == 2) {
-                $level = getCampMemberLevel($schedule['camp_id'], $this->memberInfo['id']);
-                if ($level == 1) {
-                    return json(['code' => 100, 'msg' => __lang('MSG_403').',不能操作']);
-                }
-            }
+    // // 操作课时 设为已申/删除
+    // public function removeschedule()
+    // {
+    //     try {
+    //         $schedule_id = input('schedule_id');
+    //         $action = input('action');
+    //         if (!$schedule_id || !$action) {
+    //             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+    //         }
+    //         $schedule = db('schedule')->where(['id' => $schedule_id])->find();
+    //         if (!$schedule) {
+    //             return json(['code' => 100, 'msg' => '课时' . __lang('MSG_404')]);
+    //         }
+    //         // 获取会员在训练营角色
+    //         $power = getCampPower($schedule['camp_id'], $this->memberInfo['id']);
+    //         if ($power < 2) {
+    //             return json(['code' => 100, 'msg' => __lang('MSG_403').'不能操作']);
+    //         }
+    //         // 兼职教练不能操作
+    //         if ($power == 2) {
+    //             $level = getCampMemberLevel($schedule['camp_id'], $this->memberInfo['id']);
+    //             if ($level == 1) {
+    //                 return json(['code' => 100, 'msg' => __lang('MSG_403').',不能操作']);
+    //             }
+    //         }
 
 
-            if ($action == 'editstatus') {
-                if ($schedule['status'] != -1) {
-                    return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
-                }
-                // 审核课时
-                // 课时学员名单
-                $students = unserialize($schedule['student_str']);
-                // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时收入金额（课时学员*课程单价）
-                $campInfo = db('camp')->where('id',$schedule['camp_id'])->whereNull('delete_time')->find();
-                if ($campInfo['rebate_type'] == 1) {
-                    // 课时工资
-                    $numScheduleStudent = count($students);
-                    $lessonCost = db('lesson')->where('id', $schedule['lesson_id'])->value('cost');
-                    $scheduleIncome = $lessonCost * $numScheduleStudent;
-                    // 平台抽取金额：课时工资*抽取比例（注意训练营有单独的比例）
-                    if (!empty($campInfo['schedule_rebate'])) {
-                        // 以训练营独有平台抽取比例
-                        $scheduleRebate = ($campInfo['schedule_rebate'] == 0) ? 0 : $campInfo['schedule_rebate'];
-                    } else {
-                        $SystemS = new SystemService();
-                        $setting = $SystemS::getSite();
-                        $scheduleRebate = $setting['sysrebate'];
-                    }
-                    // 平台抽取金额
-                    $systemExtractionAmount = $scheduleIncome * $scheduleRebate;
-                    // 助教练（多个）底薪总
-                    $assistantIncomeSum = 0;
-                    if (!empty($schedule['assistant'])) {
-                        $assistantCount = count(unserialize($schedule['assistant']));
-                        $assistantIncomeSum = $schedule['assistant_salary'] * $assistantCount;
-                    }
-                    // 课时工资提成
-                    $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
-                    // 金额总和大于课时收入金额，抛出提示
-                    $salaryInSum = $schedule['coach_salary'] + $assistantIncomeSum + $systemExtractionAmount + $pushSalary;
-                    if ( $salaryInSum > $scheduleIncome ) {
-                        return json(['code' => 100, 'msg' => '课时支出给教练的工资超过课时收入，请修改信息']);
-                    }
-                }
-                // 检查课时相关学员剩余课时
-                $checkStudentRestscheduleResult = $this->ScheduleService->checkstudentRestschedule($schedule, $students);
-                if ($checkStudentRestscheduleResult['code'] == 100) {
-                    return json($checkStudentRestscheduleResult);
-                }
-                $res = $this->ScheduleService->saveScheduleMember($schedule, $students);
-                return json($res);
-            } else {
-                if ($schedule['is_settle'] == 1) {
-                    return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
-                }
-                $res = $this->ScheduleService->delSchedule($schedule_id);
-                if ($res) {
-                    $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-                } else {
-                    $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-                }
-                return json($response);
-            }
-        } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
-        }
-    }
+    //         if ($action == 'editstatus') {
+    //             if ($schedule['status'] != -1) {
+    //                 return ['code' => 100, 'msg' => '该课时记录已审核，不能操作了'];
+    //             }
+    //             // 审核课时
+    //             // 课时学员名单
+    //             $students = unserialize($schedule['student_str']);
+    //             // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时收入金额（课时学员*课程单价）
+    //             $campInfo = db('camp')->where('id',$schedule['camp_id'])->whereNull('delete_time')->find();
+    //             if ($campInfo['rebate_type'] == 1) {
+    //                 // 课时工资
+    //                 $numScheduleStudent = count($students);
+    //                 $lessonCost = db('lesson')->where('id', $schedule['lesson_id'])->value('cost');
+    //                 $scheduleIncome = $lessonCost * $numScheduleStudent;
+    //                 // 平台抽取金额：课时工资*抽取比例（注意训练营有单独的比例）
+    //                 if (!empty($campInfo['schedule_rebate'])) {
+    //                     // 以训练营独有平台抽取比例
+    //                     $scheduleRebate = ($campInfo['schedule_rebate'] == 0) ? 0 : $campInfo['schedule_rebate'];
+    //                 } else {
+    //                     $SystemS = new SystemService();
+    //                     $setting = $SystemS::getSite();
+    //                     $scheduleRebate = $setting['sysrebate'];
+    //                 }
+    //                 // 平台抽取金额
+    //                 $systemExtractionAmount = $scheduleIncome * $scheduleRebate;
+    //                 // 助教练（多个）底薪总
+    //                 $assistantIncomeSum = 0;
+    //                 if (!empty($schedule['assistant'])) {
+    //                     $assistantCount = count(unserialize($schedule['assistant']));
+    //                     $assistantIncomeSum = $schedule['assistant_salary'] * $assistantCount;
+    //                 }
+    //                 // 课时工资提成
+    //                 $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
+    //                 // 金额总和大于课时收入金额，抛出提示
+    //                 $salaryInSum = $schedule['coach_salary'] + $assistantIncomeSum + $systemExtractionAmount + $pushSalary;
+    //                 if ( $salaryInSum > $scheduleIncome ) {
+    //                     return json(['code' => 100, 'msg' => '课时支出给教练的工资超过课时收入，请修改信息']);
+    //                 }
+    //             }
+    //             // 检查课时相关学员剩余课时
+    //             $checkStudentRestscheduleResult = $this->ScheduleService->checkstudentRestschedule($schedule, $students);
+    //             if ($checkStudentRestscheduleResult['code'] == 100) {
+    //                 return json($checkStudentRestscheduleResult);
+    //             }
+    //             $res = $this->ScheduleService->saveScheduleMember($schedule, $students);
+    //             return json($res);
+    //         } else {
+    //             if ($schedule['is_settle'] == 1) {
+    //                 return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
+    //             }
+    //             $res = $this->ScheduleService->delSchedule($schedule_id);
+    //             if ($res) {
+    //                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+    //             } else {
+    //                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+    //             }
+    //             return json($response);
+    //         }
+    //     } catch (Exception $e) {
+    //         return json(['code' => 100, 'msg' => $e->getMessage()]);
+    //     }
+    // }
 
     // 发送课时结果消息给学员
     public function sendschedule()

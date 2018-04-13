@@ -26,6 +26,6 @@ class Apply extends Model {
     }
 
     public function member() {
-        return $this->belongsTo('Member');
+        return $this->belongsTo('member');
     }
 }

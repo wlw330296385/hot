@@ -504,7 +504,7 @@ class StatisticsCamp extends Camp{
         }
         if(isset($map)){
             $scheduleList = db('salary_in')
-            ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
+            ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students,schedule.can_settle_date')
             ->where($map)
             ->join('schedule','schedule.id = salary_in.schedule_id')
             ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
@@ -702,12 +702,55 @@ class StatisticsCamp extends Camp{
 
     // 退费列表
     public function refundList(){
+        $camp_id = $this->camp_member['camp_id'];
+        $map = ['camp_id'=>$camp_id];
 
+        $Refund = new \app\model\Refund;
+        $refundList = $Refund->with('bill')->where($map)->select();
+
+        if($refundList){
+            $refundList = $refundList->toArray();
+        }else{
+            $refundList = [];
+        }  
+
+        $this->assign('refundList',$refundList);
         return $this->fetch('StatisticsCamp/refundList');
     }
 
     // 退费处理
     public function refundDeal(){
+        $camp_id = $this->camp_member['camp_id'];
+        $type = input('param.type');
+        $status = input('param.type');
+        $keyword = input('param.keyword');
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd)+86399;
+        $map = ['create_time'=>['between',[$month_start,$month_end]],'camp_id'=>$camp_id];
+        if($status){
+            $map['status'] = $status;
+        }
+        if($type){
+            $map['type'] = $status;
+        }
+        
+        if($keyword){
+            $map['student|goods|member'] = ['like',"%$keyword%"];
+        }
+
+        $Bill = new \app\model\Bill;
+        $billList = $Bill
+                    ->where($map)
+                    ->select();
+
+        if($billList){
+            $billList = $billList->toArray();
+        }else{
+            $billList = [];
+        }            
+        $this->assign('billList',$billList);
 
         return $this->fetch('StatisticsCamp/refundDeal');
     }

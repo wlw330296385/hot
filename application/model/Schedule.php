@@ -19,4 +19,9 @@ class Schedule extends Model{
     public function scheduleComment(){
     	return $this->hasMany('schedule_comment','schedule_id');
     }
+
+
+    public function scheduleMember(){
+        return $this->hasMany('schedule_member','schedule_id');
+    }
 }
