@@ -117,14 +117,14 @@
                 <div class="mui-input-row picker btnStartbm">
                     <div class="mui-navigate-right">
                         <label class="wd36">报名开始时间</label>
-                        <span id="resultStartbm" class="ui-alert domData" name="reg_start_time"></span>
+                        <span id="resultStartbm" class="ui-alert domData" name="reg_start_time">{$leagueInfo.reg_start_time}</span>
                     </div>
                 </div>
 
                 <div class="mui-input-row picker btnEndbm">
                     <div class="mui-navigate-right">
                         <label class="wd36">报名结束时间</label>
-                        <span id="resultEndbm" class="ui-alert domData" name="reg_end_time"></span>
+                        <span id="resultEndbm" class="ui-alert domData" name="reg_end_time">{$leagueInfo.reg_end_time}</span>
                     </div>
                 </div>
 
@@ -155,8 +155,8 @@
                     <span class="course">联赛简介</span>
                 </div>
                 <div class="mui-input-row tuwenEditor">
-                    <textarea name="league_des" class="data league_des" style="display: none"></textarea>
-                    <div class="introBox"></div>
+                    <textarea name="introduce" class="data introduce" style="display: none"></textarea>
+                    <div class="introBox">{$leagueInfo.introduce}</div>
                     <div class="mui-row mui-text-center mui-row-operation">
                         <div class="mui-col-xs-3 mui-col-sm-3 muicol">
                             <a class="frame up pd">上移</a>
@@ -325,7 +325,7 @@
 
             });
         })(mui, document);
-
+        var league_id = "{$leagueInfo.id}";
         $(function () {
             // 设置比赛类型默认值
             $('#leagueType option[value="{$leagueInfo.type_num}"]').prop("selected", true);
@@ -338,7 +338,7 @@
             tuwenToView()
             //获取最终含简单html标签的图文内容
             var introHtml = $(".introBox").html();
-            $(".league_des").val(introHtml);
+            $(".introduce").val(introHtml);
             /////////////////////////////////////////////////////////////////
 
             var data = wooApi.getInputData('input', 'data');
@@ -346,13 +346,13 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var league_des = $('textarea.data').val();
-            objData.league_des = league_des;
+            var introduce = $('textarea.introduce').val();
+            objData.introduce = introduce;
             var url = "{:url('api/api/league/updatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '联赛修改成功', '确定', function () {
-                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
+                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
                     window.top.location.href = goUrl;
                 })
             } else {

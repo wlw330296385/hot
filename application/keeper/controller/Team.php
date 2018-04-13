@@ -805,4 +805,32 @@ class Team extends Base {
             'refereeInfo' => $refereeInfo
         ]);
     }
+
+     // 记录数据
+     public function recordData() {
+        return view('Team/recordData');
+    }
+
+    
+    // 荣誉列表 （球队主页）
+    public function honorList() {
+        return view('Team/honorList');
+    }
+     
+    //荣誉列表 （管理）
+    public function honorListOfTeam() {
+        return view('Team/honorListOfTeam');
+    } 
+    //添加荣誉
+    public function createHonor() {
+        return view('Team/createHonor');
+    }
+    //荣誉详情
+    public function honorInfo() {
+        return view('Team/honorInfo');
+    }
+    //荣誉编辑
+    public function honorEdit() {
+        return view('Team/honorEdit');
+    }
 }

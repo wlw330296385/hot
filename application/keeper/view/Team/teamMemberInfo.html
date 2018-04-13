@@ -57,7 +57,7 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli">个人宣言
-                    <span class="about mui-text-left">{$teamMemberInfo.description}</span>
+                    <span class="about mui-text-left description">{$teamMemberInfo.description}</span>
                 </li>
             </ul>
 
@@ -239,9 +239,10 @@
             </li>
         </ul>
 
-        <div class="page-header">
-            <span class="course">他效力的其他球队（
+        <div class="page-header border-b teamList">
+            <span class="course wd83">他效力的其他球队（
                 <samll class="otherLength"></samll>）
+                <span class="noDataTip"></span>
             </span>
         </div>
         <ul class="mui-table-view detalis-list list border-b teammember">
@@ -259,17 +260,21 @@
         </ul>
 
         <!--球员印象-->
-        <div class="page-header border-b">
-            <span class="course">球员印象</span>
+        <div class="page-header border-b impressTip">
+            <span class="course">球员印象
+                <span class="noDataTip"></span>
+            </span>
             <span class="more pdr15">
-                <a href="#Impress" class="mui-navigate-right myimpress" onclick="submitAction()">发表我的印象</a>
+                <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
             </span>
         </div>
         <div class="impress border-b whitebg tagCommentList"></div>
 
         <!-- 球员介绍 -->
-        <div class="page-header border-b">
-            <span class="course">球员介绍</span>
+        <div class="page-header border-b introduction">
+            <span class="course">球员介绍
+                <span class="noDataTip"></span>
+            </span>
         </div>
         <ul class="mui-table-view mb">
             <li class="mui-table-view-cell listli introBox">{$teamMemberInfo.introduction}</li>
@@ -277,12 +282,14 @@
 
         <!-- 评论 -->
         <div class="page-header border-b">
-            <span class="course wd52">评论</span>
+            <span class="course wd52">评论
+                <span class="noDataTip"></span>
+            </span>
             <span class="more f14">评论
                 <small class="comment_count">0</small>
             </span>
         </div>
-        <ul class="mui-table-view comment-list"></ul>
+        <ul class="mui-table-view comment-list coach"></ul>
 
         {neq name="delbtnDisplay" value="0"}
         <!--移除队员-->
@@ -370,10 +377,17 @@
                 $(".follow").hide();
             }
 
+            //个人宣言内容
+            var description = '{$teamMemberInfo.description}';
+            if (description == '') {
+                $(".description").text("暂无数据");
+            }
+
             //球员介绍内容
             var introduction = '{$teamMemberInfo.introduction}';
             if (introduction == '') {
-                $(".introBox").append("<p class='nodata' style='margin-left:0'>还没有球员介绍，赶紧去编辑吧</p>")
+                $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无数据）");
+                $(".introBox").hide();
             }
 
             // 去除逗号
@@ -384,7 +398,8 @@
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
             if (tips == '') {
-                $(".teammember").append('<p class="nodata">还没有效力的其他球队</p>');
+                $(".teammember").prev(".teamList").find(".noDataTip").append("（暂无数据）");
+                $(".teammember").hide();
             }
 
             // 其他效力球队长度
@@ -660,7 +675,7 @@
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     } else {
-                        $("ul.comment-list").html('<p class="nodata" style="margin-left:0">还没有评论哦，你来说几句吧！</p>');
+                        $(".comment-list").prev().find(".noDataTip").append("（暂无数据）");
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -752,10 +767,11 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
                         }
-                        $(".tagCommentList").empty();
+                        $(".tagCommentList").empty().show();
                         $(".tagCommentList").append(div);
                     } else {
-                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".tagCommentList").hide();
                     }
                 },
                 error: function (xhr, type, errorThrown) {

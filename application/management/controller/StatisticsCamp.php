@@ -720,38 +720,32 @@ class StatisticsCamp extends Camp{
 
     // 退费处理
     public function refundDeal(){
-        $camp_id = $this->camp_member['camp_id'];
-        $type = input('param.type');
-        $status = input('param.type');
-        $keyword = input('param.keyword');
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
-        $map = ['create_time'=>['between',[$month_start,$month_end]],'camp_id'=>$camp_id];
-        if($status){
-            $map['status'] = $status;
-        }
-        if($type){
-            $map['type'] = $status;
+        $refund_id = input('param.refund_id');
+        if(request()->isPost()){
+            $refund = input('param.refund');
+            $remarks = input('param.remarks');
+            $refund_type = input('param.refund_type');
+            $status=>input('param.status');
+            $data = [
+                'refund'=>$refund,
+                'remarks'=>$remarks,
+                'refund_type'=>$refund_type,
+                'process'=>$this->memberInfo['member'],
+                'process_id'=>$this->memberInfo['id'],
+                'process_time'=>time(),
+                'status'=>$status,
+            ];
+            dump($data);
+        }else{
+            $Refund = new \app\model\Refund;
+            $refundInfo = $Refund
+                        ->with('bill')
+                        ->where(['id'=>$refund_id])
+                        ->find();    
+            $this->assign('refundInfo',$refundInfo);
+
+            return $this->fetch('StatisticsCamp/refundDeal');
         }
         
-        if($keyword){
-            $map['student|goods|member'] = ['like',"%$keyword%"];
-        }
-
-        $Bill = new \app\model\Bill;
-        $billList = $Bill
-                    ->where($map)
-                    ->select();
-
-        if($billList){
-            $billList = $billList->toArray();
-        }else{
-            $billList = [];
-        }            
-        $this->assign('billList',$billList);
-
-        return $this->fetch('StatisticsCamp/refundDeal');
     }
 }
