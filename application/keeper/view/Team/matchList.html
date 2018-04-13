@@ -35,13 +35,13 @@
 
         @media screen and (min-width:320px) {
             #refreshContainer {
-                margin-top: 230px
+                margin-top: 324px
             }
         }
 
         @media screen and (min-width:375px) {
             #refreshContainer {
-                margin-top: 209px
+                margin-top: 303px
             }
         }
     </style>
@@ -56,6 +56,23 @@
     <div class="mui-content">
 
         <div class="list camp-list detalis-list otherInfo mt55">
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <div class="mui-media-body wdBody">
+                        <strong class="f16">{$teamInfo.name}</strong>
+                        <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
+                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                        </p>
+                    </div>
+                    <div class="price-frame">
+                        <p class="f12" style="margin-top:37px">球队成员：
+                            <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
+                    </div>
+                </li>
+            </ul>
 
             <form action="" class="mui-input-group">
                 <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
@@ -255,8 +272,8 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
-                                var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
+                                var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match_timestamp * 1000);
                                 var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
                                 newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
