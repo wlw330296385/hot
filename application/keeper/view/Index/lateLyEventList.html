@@ -19,8 +19,25 @@
         <h1 class="mui-title">最近活动列表</h1>
     </header>
 
-    <div class="mui-content">
-        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
+    <div class="mui-content list">
+
+        <ul class="mui-table-view mb" style="margin-top: 0">
+            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                <div class="mui-media-body wdBody">
+                    <strong class="f16">{$teamInfo.name}</strong>
+                    <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
+                    <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
+                        <strong class="colororange">{$teamInfo.fans_num}</strong>
+                    </p>
+                </div>
+                <div class="price-frame">
+                    <p class="f12" style="margin-top:37px">球队成员：
+                        <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
+                </div>
+            </li>
+        </ul>
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 137px;">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b event">
                 </ul>
@@ -100,7 +117,7 @@
                 mui.ajax({
                     url: url,
                     data: {
-                        page:page,
+                        page: page,
                         member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
