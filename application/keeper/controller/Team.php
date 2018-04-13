@@ -474,6 +474,30 @@ class Team extends Base {
         ]);
     }
 
+    // 发布约战
+    public function createAboutMatch() {
+        $teamS = new TeamService();
+        // 传入客队id 页面输出信息
+        $awayTeam = [];
+        $awayTeamId = input('away_id');
+        if ($awayTeamId) {
+            $awayTeam = $teamS->getTeam(['id' => $awayTeamId]);
+        }
+
+        // 传入裁判id 页面输出信息
+        $refereeInfo = [];
+        $refereeId = input('referee_id', 0);
+        $refereeS = new RefereeService();
+        if ($refereeId) {
+            $refereeInfo = $refereeS->getRefereeInfo(['id' => $refereeId]);
+        }
+        
+        return view('Team/createAboutMatch', [
+            'awayTeam' => $awayTeam,
+            'refereeInfo' => $refereeInfo
+        ]);
+    }
+
     // 创建+录入比赛
     public function directmatch() {
         $match_id = input('match_id', 0);

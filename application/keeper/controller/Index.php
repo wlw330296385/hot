@@ -4,6 +4,7 @@ use app\keeper\controller\Base;
 use app\service\MemberService;
 use app\service\WechatService;
 use app\service\BannerService;
+use app\service\TeamService;
 use think\Cookie;
 
 class Index extends Base{
@@ -122,11 +123,21 @@ class Index extends Base{
 
      // 最近赛事列表
      public function lateLyMatchList() {
+        $team_id = input('team_id');
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        $this->assign('team_id', $team_id);
+        $this->assign('teamInfo', $teamInfo);
         return view('Index/lateLyMatchList');
     }
 
     // 最近活动列表
     public function lateLyEventList() {
+        $team_id = input('team_id');
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        $this->assign('team_id', $team_id);
+        $this->assign('teamInfo', $teamInfo);
         return view('Index/lateLyEventList');
     }
 }
