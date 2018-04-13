@@ -64,7 +64,9 @@
 			<form role="form" style="margin-top: 20px;">
 				<!-- text input -->
 				<div class="form-group">
-					<label>实际退费金额</label><a class="pull-right" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="实际退款不可大于可退金额，假设某学员可退10课时，原值1000元，经双方协商一致只可退还500，剩余500元，平台占10%，训练营占90%"><span class="fa fa-info-circle"></span> 特别说明</a>
+					<label>实际退费金额</label>
+					<small class="getIncome" style="color:red; margin-left: 20px;"></small>
+					<a class="pull-right" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="实际退款不可大于可退金额，假设某学员可退10课时，原值1000元，经双方协商一致只可退还500，剩余500元，平台占10%，训练营占90%"><span class="fa fa-info-circle"></span> 特别说明</a>
 					<input type="text" class="form-control" name="sum" placeholder="请填写实际退费金额 ...">
 				</div>
 				<!-- select -->
@@ -120,7 +122,6 @@
             'autoWidth'   : true
         });
 
-        //=========================== 初始化数据 ==============================//
 
         //隔行变色
         $(".hotTable tbody td ul").find("li:even").addClass("even");
@@ -130,6 +131,17 @@
             window.parent.closeModel();
         })
 
+        $("input[name=sum]").on("blur",'', function () {
+            var sum = parseInt($(this).val());
+            var maxSum = parseInt($(".maxSum").text());
+            if(sum>maxSum){
+                alert("您所填写的实际退款金额不能大于可退金额"+maxSum+"!")
+			}else{
+                var forHOT = (maxSum-sum)*0.1;
+                var forCamp = (maxSum-sum)*0.9;
+                $(".getIncome").text("退款后剩余金额分配：平台"+forHOT.toFixed(2)+"（10%）训练营"+forCamp.toFixed(2)+"（90%）")
+			}
+        })
 
     })
 
