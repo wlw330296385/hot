@@ -123,11 +123,14 @@
     <div id="honorMember" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course">
+            <span class="course wd45">
                 <strong>授奖人</strong>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="honorMemberConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="mui-btn qxBtn">全选</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -228,16 +231,26 @@
             //授奖人列表复选框赋值
             $("#setHonorMemberBox").on('tap', '', function () {
                 //每次打开先清空所有选择
-                $("input[name='checkbox-honorMember']").prop("checked", false);
+                $("input[name='checkbox-honor']").prop("checked", false);
                 //然后遍历出对应所选
                 var str = $("input[name='prize_team_member']").val();
                 var s = str.split(',');
                 for (var i = 0; i < s.length; i++) {
-                    $("input[name='checkbox-honorMember']").filter(function (index) {
+                    $("input[name='checkbox-honor']").filter(function (index) {
                         return $(this).attr("data-id") == s[i]
                     }).prop("checked", true);
                 }
             });
+
+            // 反选
+            $(".qxBtn").on("tap", "", function () {
+                var checked = $("input[name='checkbox-honor']").prop("checked");
+                if (checked == false) {
+                    $("input[name='checkbox-honor']").prop("checked", true);
+                } else {
+                    $("input[name='checkbox-honor']").prop("checked", false);
+                }
+            })
         })
 
         // 获取数据并进行提交
@@ -295,7 +308,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
                         }
                         $("#honorMemberDiv").empty();
                         if (newli == '') {
