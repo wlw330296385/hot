@@ -124,6 +124,9 @@ class BillService {
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
+            //grade_member续费
+            db('grade_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->update(['status'=>1]);
+            
             // 发送个人消息           
             $MessageData = [
                 "touser" => '',
@@ -205,6 +208,7 @@ class BillService {
         $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
         $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
         //结束课程操作
+
         // 记录训练营课程营业额
         $daytime = $data['pay_time'];
         $dataCampFinance = [
@@ -265,7 +269,8 @@ class BillService {
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
             //学生表的总课程和总课量+n;   
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
-            
+            //grade_member续费
+            db('grade_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->update(['status'=>1]);
             //给训练营营主发送消息
             $MessageCampData = [
                 "touser" => '',
