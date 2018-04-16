@@ -2409,5 +2409,68 @@ class Team extends Base
         }
     }
 
-
+    // 添加球队荣誉
+    public function createteamhonor() {
+        $data = input('post.');
+        // 验证器验证数据
+        $validate = validate('TeamHonorVal');
+        if ( !$validate->scene('add')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        $teamS = new TeamService();
+        // 检查会员在球队的角色
+        $role = $teamS->checkMemberTeamRole($data['team_id'], $this->memberInfo['id']);
+        if (!$role || $role == 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 时间格式转换
+        $data['honor_time'] = strtotime($data['honor_time']);
+        // 组装授奖球员名单数据
+        $prizeMembers = $prizeMemberData = [];
+        if ( !empty($data['prize_team_member']) ) {
+            $prizeMembers = explode(',', $data['prize_team_member']);
+            // 遍历授奖球员的在队信息
+            foreach ($prizeMembers as $k => $prizeMember) {
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $prizeMember]);
+                $prizeMemberData[$k] = [
+                    'id' => $teamMemberInfo['id'],
+                    'name' => $teamMemberInfo['name'],
+                    'member_id' => $teamMemberInfo['member_id'],
+                    'member' => $teamMemberInfo['member']
+                ];
+            }
+            $data['prize_team_member'] = json_encode($prizeMemberData, JSON_UNESCAPED_UNICODE);
+        }
+        // 组合数据字段
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['author_team_id'] = $data['team_id'];
+        $data['author_team'] = $data['team'];
+        $data['prize_team_id'] = $data['team_id'];
+        $data['prize_team'] = $data['team'];
+        // 业务数据操作
+        try {
+            // 保存荣誉数据
+            $resSaveTeamHonor = $teamS->saveTeamHonor($data);
+            if ($resSaveTeamHonor['code'] == 200) {
+                $honorId= $resSaveTeamHonor['data'];
+                // 批量保存荣誉-球员关系数据
+                if ( !empty($prizeMemberData) ) {
+                    foreach ($prizeMemberData as $k => $val) {
+                        $prizeMemberData[$k]['team_honor_id'] = $honorId;
+                        $prizeMemberData[$k]['team_honor'] = $data['name'];
+                        $prizeMemberData[$k]['team_id'] = $data['team_id'];
+                        $prizeMemberData[$k]['team'] = $data['team'];
+                        $prizeMemberData[$k]['status'] = 1;
+                        $prizeMemberData[$k]['team_member_id'] = $val['id'];
+                        unset($prizeMemberData[$k]['id']);
+                    }
+                    $teamS->saveAllTeamHonorMember($prizeMemberData);
+                }
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($resSaveTeamHonor);
+    }
 }

@@ -7,6 +7,8 @@ use app\model\Team;
 use app\model\TeamComment;
 use app\model\TeamEvent;
 use app\model\TeamEventMember;
+use app\model\TeamHonor;
+use app\model\TeamHonorMember;
 use app\model\TeamMember;
 use app\model\TeamMemberRole;
 use app\model\TeamMessage;
@@ -1037,24 +1039,11 @@ class TeamService
         $model = new TeamRank();
         // 带更新条件更新数据
         if(!empty($condition)) {
-            // 检查有无符合条件数据
-            $rows = $model->where($condition)->select();
-            if (!$rows->isEmpty()) {
-                // 更新数据
-                $res = $model->allowField(true)->save($data, $condition);
-                if ($res || ($res === 0)) {
-                    return ['code' => 200, 'msg' => __lang('MSG_200')];
-                } else {
-                    return ['code' => 100, 'msg' => __lang('MSG_400')];
-                }
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
-                //新增数据
-                $res = $model->allowField(true)->isUpdate(false)->save($data);
-                if ($res) {
-                    return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
-                } else {
-                    return ['code' => 100, 'msg' => __lang('MSG_400')];
-                }
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
         // 根据主键id 跟新数据
@@ -1074,5 +1063,162 @@ class TeamService
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 保存球队荣誉记录
+    public function saveTeamHonor($data=[], $condition=[]) {
+        $model = new TeamHonor();
+        // 带更新条件更新数据
+        if ( !empty($condition) && is_array($condition) ) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 根据主键id 更新数据
+        if ( array_key_exists('id', $data) ) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 新增数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 球队荣誉列表（分页）
+    public function getTeamHonorPaginator($map=[], $order=['id' => 'desc'], $limit=10) {
+        $model = new TeamHonor();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 球队荣誉列表
+    public function getTeamHonorList($map=[], $page=1, $order=['id' => 'desc'], $limit=10) {
+        $model = new TeamHonor();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 球队荣誉列表（无分页）
+    public function getTeamHonorAll($map=[], $order=['id' => 'desc']) {
+        $model = new TeamHonor();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 球队荣誉详情
+    public function getTeamHonor($map=[]) {
+        $model = new TeamHonor();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 保存球队荣誉-队员（会员）关系
+    public function saveTeamHonorMember($data=[], $condition=[]) {
+        $model = new TeamHonorMember();
+        // 带更新条件更新数据
+        if ( !empty($condition) && is_array($condition) ) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 根据主键id 更新数据
+        if ( array_key_exists('id', $data) ) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 新增数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 批量保存球队荣誉-球员（会员）关系
+    public function saveAllTeamHonorMember($data) {
+        $model = new TeamHonorMember();
+        $res = $model->allowField(true)->saveAll($data);
+        if ($res || ($res === 0)) {
+            return ['code' => 200, 'msg' => __lang('MSG_200')];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 球队荣誉-球员（会员）关系列表（分页）
+    public function getTeamHonorMemberPaginator($map=[], $order=['id' => 'desc'], $limit=10) {
+        $model = new TeamHonorMember();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 球队荣誉列表
+    public function getTeamHonorMemberList($map=[], $page=1, $order=['id' => 'desc'], $limit=10) {
+        $model = new TeamHonorMember();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 球队荣誉列表（无分页）
+    public function getTeamHonorMemberAll($map=[], $order=['id' => 'desc']) {
+        $model = new TeamHonorMember();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 }
