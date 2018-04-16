@@ -27,6 +27,7 @@
 
 <div class="row">
 
+	<form role="form" method="post" style="margin-top: 20px;" action="">
 	<div class="col-sm-12">
 		<div class="box-body">
 
@@ -62,7 +63,6 @@
 			</table>
 
 
-			<form role="form" style="margin-top: 20px;" action="post">
 				<!-- text input -->
 				<div class="form-group">
 					<label>实际退费金额</label>
@@ -87,16 +87,18 @@
 					<label>备注</label>
 					<textarea class="form-control" rows="3" name="remarks" placeholder="请填写训练营备注 ..."></textarea>
 				</div>
-			</form>
 
 		</div>
 
 		<div class="box-footer">
 			<button class="btn btn-default closeModel">关闭</button>
+
+			<input type="hidden" class="form-control" name="refund_id" value="{$refundInfo.id}" >
 			<input type="hidden" class="form-control" name="status" placeholder="状态:-2:已撤销|-1:已拒绝|1:申请中|2:已同意|3:已打款" value="2" >
 			<button type="submit" class="btn btn-info pull-right">确认退费</button>
 		</div>
 	</div>
+</form>
 </div>
 
 
@@ -134,9 +136,9 @@
             window.parent.closeModel();
         })
 
-        $("input[name=sum]").on("blur",'', function () {
-            var sum = parseInt($(this).val());
-            var maxSum = parseInt($(".maxSum").text());
+        $("input[name=refund]").on("blur",'', function () {
+            var sum = parseFloat($(this).val());
+            var maxSum = parseFloat($(".maxSum").text());
             if(sum>maxSum){
                 alert("您所填写的实际退款金额不能大于可退金额"+maxSum+"!")
 			}else{
