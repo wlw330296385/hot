@@ -2549,7 +2549,7 @@ class Team extends Base
     }
 
     // 球队荣誉列表（分页）
-    public function getTeamHonorPage() {
+    public function getteamhonorpage() {
         try {
             $map = input('param.');
             if (input('?page')) {
@@ -2569,7 +2569,7 @@ class Team extends Base
     }
 
     // 球队荣誉列表
-    public function getTeamHonorList() {
+    public function getteamhonorlist() {
         try {
             $map = input('param.');
             $page = input('param.page');
@@ -2590,7 +2590,7 @@ class Team extends Base
     }
 
     // 删除球队荣誉
-    public function delTeamHonor() {
+    public function delteamhonor() {
         $id = input('honor_id', 0, 'intval');
         if (!$id) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);

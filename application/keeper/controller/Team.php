@@ -844,17 +844,65 @@ class Team extends Base {
     //荣誉列表 （管理）
     public function honorListOfTeam() {
         return view('Team/honorListOfTeam');
-    } 
+    }
+
     //添加荣誉
     public function createHonor() {
         return view('Team/createHonor');
     }
+
     //荣誉详情
     public function honorInfo() {
-        return view('Team/honorInfo');
+        $id = input('honor_id', 0, 'intval');
+        if (!$id) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取荣誉详情数据
+        $teamS = new TeamService();
+        $honorInfo = $teamS->getTeamHonor(['id' => $id]);
+        if (!$honorInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 格式转换
+        $prizeTeamMemberList = empty($honorInfo['prize_team_member']) ? [] : json_decode($honorInfo['prize_team_member'], true);
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($honorInfo['author_team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        return view('Team/honorInfo', [
+            'honorInfo' => $honorInfo,
+            'teamrole' => $teamrole,
+            'prizeTeamMemberList' => $prizeTeamMemberList
+        ]);
     }
+
     //荣誉编辑
     public function honorEdit() {
-        return view('Team/honorEdit');
+        $id = input('honor_id', 0, 'intval');
+        if (!$id) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取荣誉详情数据
+        $teamS = new TeamService();
+        $honorInfo = $teamS->getTeamHonor(['id' => $id]);
+        if (!$honorInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 格式转换
+        $prizeTeamMemberList = empty($honorInfo['prize_team_member']) ? [] : json_decode($honorInfo['prize_team_member'], true);
+
+        return view('Team/honorEdit', [
+            'honorInfo' => $honorInfo,
+            'prizeTeamMemberList' => $prizeTeamMemberList
+        ]);
     }
 }
