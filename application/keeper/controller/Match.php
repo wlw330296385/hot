@@ -40,6 +40,17 @@ class Match extends Base {
         return view('Match/friendlylist');
     }
 
+    // 发布约战比赛列表
+    public function friendlylistOfTeam() {
+        // 获取球队详细信息 模块下全局赋值
+        $team_id = input('team_id');
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
+        $this->assign('team_id', $team_id);
+        $this->assign('teamInfo', $teamInfo);
+        return view('Match/friendlylistOfTeam');
+    }
+
     // 约战列表 (机构版)
     public function friendlylistOfOrganization() {
         return view('Match/friendlylistOfOrganization');

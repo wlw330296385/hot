@@ -253,9 +253,9 @@
                             area: sArea,
                             keyword: keyword,
                             choice_time: choice_time,
-                            //                            is_finished:-1,
-                            // type: 1,
-                            // status: 1,
+                            is_finished: -1,
+                            type: 2,
+                            status: 1,
                             islive: 1,
                             page: page,
                             lng: current_lng,
@@ -275,31 +275,34 @@
                                 var match_time = '';
                                 var isfinished = '';
                                 for (var i = 0; i <= data.data.length - 1; i++) {
-                                    urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
-                                    if (data.data[i].apply_status_num == 2) {
-                                        isfinished = '<font class="tipCorner bggreen">完成约战</font>';
+                                    var del_time = data.data[i].delete_time;
+                                    if (del_time == null) {
+                                        urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
+                                        if (data.data[i].apply_status_num == 2) {
+                                            isfinished = '<font class="tipCorner bggreen">完成约战</font>';
+                                        }
+                                        if (data.data[i].sl == "" || data.data[i].sl == null) {
+                                            win_rate = "0";
+                                        } else {
+                                            win_rate = data.data[i].sl;
+                                        }
+                                        if (data.data[i].match_time == 0) {
+                                            match_time = '比赛时间待定';
+                                        } else {
+                                            match_time = gettime(data.data[i].match_time * 1000);
+                                        }
+                                        if (data.data[i].court_lat == "" || data.data[i].court_lng == "") {
+                                            distance = '<font class="f10">未定位</font>';
+                                        } else {
+                                            distance = data.data[i].distance.toFixed(1) + 'km';
+                                        }
+                                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                                        newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>' + isfinished;
+                                        newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
+                                        newli += '<p class="mui-ellipsis">' + match_time + '</p>'
+                                        newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a>'
+                                        newli += '</li>';
                                     }
-                                    if (data.data[i].sl == "" || data.data[i].sl == null) {
-                                        win_rate = "0";
-                                    } else {
-                                        win_rate = data.data[i].sl;
-                                    }
-                                    if (data.data[i].match_time == 0) {
-                                        match_time = '比赛时间待定';
-                                    } else {
-                                        match_time = gettime(data.data[i].match_time * 1000);
-                                    }
-                                    if (data.data[i].court_lat == "" || data.data[i].court_lng == "") {
-                                        distance = '<font class="f10">未定位</font>';
-                                    } else {
-                                        distance = data.data[i].distance.toFixed(1) + 'km';
-                                    }
-                                    newli += '<li class="mui-table-view-cell mui-media listli">';
-                                    newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>' + isfinished;
-                                    newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
-                                    newli += '<p class="mui-ellipsis">' + match_time + '</p>'
-                                    newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a>'
-                                    newli += '</li>';
                                 }
                             }
                             if (gType == 1) {
