@@ -24,14 +24,14 @@
 
 <body class="whitebg">
     <div class="mui-content">
-        <div id="tabbar" class="mui-control-content mui-active coach">
+        <div id="tabbar" class="mui-control-content mui-active">
 
             <div class="img4x3" style="background-image: url({$teamInfo.cover})"></div>
             <div class="page-header">
                 <a href="{:url('team/myteam')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
                 <span class="more">{$teamInfo.name}球队管理</span>
             </div>
-            <div class="nav-list">
+            <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="#">
@@ -54,38 +54,11 @@
                 </ul>
             </div>
 
-
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
-                {eq name="teamrole" value="6"}
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/teamEdit',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-training-Order"></span>
-                        <div class="mui-media-body">编辑</div>
-                    </a>
-                </li>
-                {/eq}
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
                         <span class="icon iconfont icon-team-homepage"></span>
                         <div class="mui-media-body">球队主页</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/matchListOfTeam',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-training-game"></span>
-                        <div class="mui-media-body">添加比赛</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/directMatch',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-team-VS"></span>
-                        <div class="mui-media-body">录入比赛</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/eventListOfTeam',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-training-activity"></span>
-                        <div class="mui-media-body">活动</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -113,32 +86,6 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/teamApplyList',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-team-Join"></span>
-                        <div class="mui-media-body">加入</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/matchApplyList',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-team-VS"></span>
-                        <div class="mui-media-body">约战</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <!-- <a href="{:url('team/createAboutMatch',['team_id'=>$teamInfo['id']])}"> -->
-                    <a >
-                        <span class="icon iconfont icon-team-VS"></span>
-                        <div class="mui-media-body">发起约战</div>
-                    </a>
-                </li>
-
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('team/matchRefereeApplyList',['team_id'=>$teamInfo['id']])}">
-                        <span class="icon iconfont icon-team-cost"></span>
-                        <div class="mui-media-body">找裁判</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="#">
                         <span class="icon iconfont icon-team-cost"></span>
                         <div class="mui-media-body">队费</div>
@@ -150,25 +97,90 @@
                         <div class="mui-media-body">章程</div>
                     </a>
                 </li>
+            </ul>
+
+            {eq name="teamrole" value="6"}
+            <div class="page-header f12">管理员版块</div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/teamEdit',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-training-Order"></span>
+                        <div class="mui-media-body">球队设置</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/matchListOfTeam',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-training-game"></span>
+                        <div class="mui-media-body">比赛</div>
+                    </a>
+                </li>
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/eventListOfTeam',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-training-activity"></span>
+                        <div class="mui-media-body">活动</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/directMatch',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-team-VS"></span>
+                        <div class="mui-media-body">录入比赛</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/createAboutMatch',['team_id'=>$teamInfo['id']])}">
+                        <!-- <a > -->
+                        <span class="icon iconfont icon-team-VS"></span>
+                        <div class="mui-media-body">发起约战</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/matchApplyList',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-team-VS"></span>
+                        <div class="mui-media-body">约战</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/matchRefereeApplyList',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-team-cost"></span>
+                        <div class="mui-media-body">找裁判</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('team/teamApplyList',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-team-Join"></span>
+                        <div class="mui-media-body">加入</div>
+                    </a>
+                </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('team/honorListOfTeam',['team_id'=>$teamInfo['id']])}">
                         <span class="icon iconfont icon-team-cost"></span>
                         <div class="mui-media-body">荣誉</div>
                     </a>
                 </li>
+
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a >
+                    <a>
                         <span class="icon iconfont icon-team-Charter"></span>
                         <div class="mui-media-body">数据</div>
                     </a>
                 </li>
             </ul>
+            {/eq}
 
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:0 !important">
+            <div class="page-header f12">公开版块</div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="">
+                    <a href="{:url('index/lateLyMatchList',['team_id'=>$teamInfo['id']])}">
+                        <span class="icon iconfont icon-team-VS"></span>
+                        <div class="mui-media-body">比赛</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('index/lateLyEventList',['team_id'=>$teamInfo['id']])}">
                         <span class="icon iconfont icon-training-Set"></span>
-                        <div class="mui-media-body">球队设置</div>
+                        <div class="mui-media-body">活动</div>
                     </a>
                 </li>
             </ul>
