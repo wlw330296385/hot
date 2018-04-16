@@ -756,256 +756,258 @@
                     send_m.val("-1");
                 }
             });
+            
+        });
 
-            // 获取数据并进行提交
-            function submitAction() {
+        // 获取数据并进行提交
+        function submitAction() {
 
-                // 场地费用与付费方式判断
-                var court_cost_bear = $("#courtCostBear").children("option:selected").val()
-                var court_cost = $("input[name=court_cost]").val();
-                if (!(/^[0-9]*$/).test(court_cost)) {
-                    mui.toast("场地费用请填写数字");
-                    return false;
-                }
-                if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
-                    mui.toast("填写场地费用与付费方式不对应");
-                    return false;
-                }
+            // 场地费用与付费方式判断
+            var court_cost_bear = $("#courtCostBear").children("option:selected").val()
+            var court_cost = $("input[name=court_cost]").val();
+            if (!(/^[0-9]*$/).test(court_cost)) {
+                mui.toast("场地费用请填写数字");
+                return false;
+            }
+            if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
+                mui.toast("填写场地费用与付费方式不对应");
+                return false;
+            }
 
-                // 裁判员1
-                referee1 = [];
-                var referee_1 = $(".refereeName1").val();
-                var referee_id1 = $(".refereeId1").val();
-                var referee_cost1 = $(".refereeCost1").val();
+            // 裁判员1
+            referee1 = [];
+            var referee_1 = $(".refereeName1").val();
+            var referee_id1 = $(".refereeId1").val();
+            var referee_cost1 = $(".refereeCost1").val();
 
-                // 裁判员2
-                referee2 = [];
-                var referee_2 = $(".refereeName2").val();
-                var referee_id2 = $(".refereeId2").val();
-                var referee_cost2 = $(".refereeCost2").val();
+            // 裁判员2
+            referee2 = [];
+            var referee_2 = $(".refereeName2").val();
+            var referee_id2 = $(".refereeId2").val();
+            var referee_cost2 = $(".refereeCost2").val();
 
-                // 裁判员3
-                referee3 = [];
-                var referee_3 = $(".refereeName3").val();
-                var referee_id3 = $(".refereeId3").val();
-                var referee_cost3 = $(".refereeCost3").val();
-                if (!(/^[0-9]*$/).test(referee_cost1) || !(/^[0-9]*$/).test(referee_cost2) || !(/^[0-9]*$/).test(referee_cost3)) {
-                    mui.toast("裁判出场费请填写数字");
-                    return false;
-                }
+            // 裁判员3
+            referee3 = [];
+            var referee_3 = $(".refereeName3").val();
+            var referee_id3 = $(".refereeId3").val();
+            var referee_cost3 = $(".refereeCost3").val();
+            if (!(/^[0-9]*$/).test(referee_cost1) || !(/^[0-9]*$/).test(referee_cost2) || !(/^[0-9]*$/).test(referee_cost3)) {
+                mui.toast("裁判出场费请填写数字");
+                return false;
+            }
 
-                referee1.push({ referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 });
-                referee2.push({ referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 });
-                referee3.push({ referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 });
+            referee1.push({ referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 });
+            referee2.push({ referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 });
+            referee3.push({ referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 });
 
 
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                var objData = wooApi.arrTOobj(arrData);
-                var remarks = $('textarea.remarks').val();
-                objData.remarks = remarks;
-                var description = $('textarea.description').val();
-                objData.description = description;
-                objData.referee1 = JSON.stringify(referee1);
-                objData.referee2 = JSON.stringify(referee2);
-                objData.referee3 = JSON.stringify(referee3);
-                var url = "{:url('api/match/creatematch')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert(ajaxResult.msg, '约战创建成功', '确定', function () {
-                        var goUrl = "{:url('team/matchlistOfTeam')}" + '/match_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '创建失败');
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
-            };
-
-            //场地列表接口获取数据并追加到页面
-            function toCourtList(keyword, wCourt, page) {
-                var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
-                var wCourtList = "ul.courtList";
-                var currPage = ".currPage";
-                var totalPage = ".totalPage";
-                if (keyword != '' && wCourt != '') {
-                    wCourtList = "#" + wCourt + " ul.courtList";
-                    currPage = "#" + wCourt + " .currPage";
-                    totalPage = "#" + wCourt + " .totalPage";
-                }
-                mui.ajax({
-                    url: url,
-                    data: {
-                        page: page,
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            var newli = '';
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
-                            }
-                            if (newli == '') {
-                                newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addNewcourt">确认</button></div>'
-                            }
-                            $(wCourtList).empty().append(newli);
-                            $(currPage).text(data.data.current_page);
-                            $(totalPage).text(data.data.last_page);
-                        } else {
-                            mui.toast('数据获取失败,请稍候再试');
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var remarks = $('textarea.remarks').val();
+            objData.remarks = remarks;
+            var description = $('textarea.description').val();
+            objData.description = description;
+            objData.referee1 = JSON.stringify(referee1);
+            objData.referee2 = JSON.stringify(referee2);
+            objData.referee3 = JSON.stringify(referee3);
+            var url = "{:url('api/match/creatematch')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '约战创建成功', '确定', function () {
+                    var goUrl = "{:url('team/matchlistOfTeam')}" + '/match_id/' + ajaxResult.data + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
                     }
-                });
-            };
+                }, 'json');
+            }
+        };
 
-            //自定义获取裁判列表1
-            function toRefereeList1(keyword, wReferee1, page1) {
-                var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page1;
-                var wRefereeList = "ul.refereeList1";
-                var currPage = ".currPage";
-                var totalPage = ".totalPage";
-                if (keyword != '' && wReferee1 != '') {
-                    wRefereeList = "#" + wReferee1 + " ul.refereeList1";
-                    currPage = "#" + wReferee1 + " .currPage";
-                    totalPage = "#" + wReferee1 + " .totalPage";
-                }
-                mui.ajax({
-                    url: url,
-                    data: {
-                        status: 1,
-                        page: page1,
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            var newli = '';
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
-                            }
-                            if (newli == '') {
-                                newli = '<p class="nohave">没有查找到数据哦</p>'
-                            }
-                            $(wRefereeList).empty().append(newli);
-                            $(currPage).text(data.data.current_page);
-                            $(totalPage).text(data.data.last_page);
-                        } else {
-                            mui.toast('数据获取失败,请稍候再试');
+        //场地列表接口获取数据并追加到页面
+        function toCourtList(keyword, wCourt, page) {
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var wCourtList = "ul.courtList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wCourt != '') {
+                wCourtList = "#" + wCourt + " ul.courtList";
+                currPage = "#" + wCourt + " .currPage";
+                totalPage = "#" + wCourt + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
                         }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addNewcourt">确认</button></div>'
+                        }
+                        $(wCourtList).empty().append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
                     }
-                });
-            };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
-            //自定义获取裁判列表2
-            function toRefereeList2(keyword, wReferee2, page2) {
-                var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page2;
-                var wRefereeList = "ul.refereeList2";
-                var currPage = ".currPage";
-                var totalPage = ".totalPage";
-                if (keyword != '' && wReferee2 != '') {
-                    wRefereeList = "#" + wReferee2 + " ul.refereeList2";
-                    currPage = "#" + wReferee2 + " .currPage";
-                    totalPage = "#" + wReferee2 + " .totalPage";
-                }
-                mui.ajax({
-                    url: url,
-                    data: {
-                        status: 1,
-                        page: page2,
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            var newli = '';
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
-                            }
-                            if (newli == '') {
-                                newli = '<p class="nohave">没有查找到数据哦</p>'
-                            }
-                            $(wRefereeList).empty().append(newli);
-                            $(currPage).text(data.data.current_page);
-                            $(totalPage).text(data.data.last_page);
-                        } else {
-                            mui.toast('数据获取失败,请稍候再试');
+        //自定义获取裁判列表1
+        function toRefereeList1(keyword, wReferee1, page1) {
+            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page1;
+            var wRefereeList = "ul.refereeList1";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wReferee1 != '') {
+                wRefereeList = "#" + wReferee1 + " ul.refereeList1";
+                currPage = "#" + wReferee1 + " .currPage";
+                totalPage = "#" + wReferee1 + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    page: page1,
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
                         }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
+                        if (newli == '') {
+                            newli = '<p class="nohave">没有查找到数据哦</p>'
+                        }
+                        $(wRefereeList).empty().append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
                     }
-                });
-            };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
-            //自定义获取裁判列表3
-            function toRefereeList3(keyword, wReferee3, page3) {
-                var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page3;
-                var wRefereeList = "ul.refereeList3";
-                var currPage = ".currPage";
-                var totalPage = ".totalPage";
-                if (keyword != '' && wReferee3 != '') {
-                    wRefereeList = "#" + wReferee3 + " ul.refereeList3";
-                    currPage = "#" + wReferee3 + " .currPage";
-                    totalPage = "#" + wReferee3 + " .totalPage";
-                }
-                mui.ajax({
-                    url: url,
-                    data: {
-                        status: 1,
-                        page: page3,
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            var newli = '';
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
-                            }
-                            if (newli == '') {
-                                newli = '<p class="nohave">没有查找到数据哦</p>'
-                            }
-                            $(wRefereeList).empty().append(newli);
-                            $(currPage).text(data.data.current_page);
-                            $(totalPage).text(data.data.last_page);
-                        } else {
-                            mui.toast('数据获取失败,请稍候再试');
+        //自定义获取裁判列表2
+        function toRefereeList2(keyword, wReferee2, page2) {
+            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page2;
+            var wRefereeList = "ul.refereeList2";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wReferee2 != '') {
+                wRefereeList = "#" + wReferee2 + " ul.refereeList2";
+                currPage = "#" + wReferee2 + " .currPage";
+                totalPage = "#" + wReferee2 + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    page: page2,
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
                         }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
+                        if (newli == '') {
+                            newli = '<p class="nohave">没有查找到数据哦</p>'
+                        }
+                        $(wRefereeList).empty().append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
                     }
-                });
-            };
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //自定义获取裁判列表3
+        function toRefereeList3(keyword, wReferee3, page3) {
+            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page3;
+            var wRefereeList = "ul.refereeList3";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wReferee3 != '') {
+                wRefereeList = "#" + wReferee3 + " ul.refereeList3";
+                currPage = "#" + wReferee3 + " .currPage";
+                totalPage = "#" + wReferee3 + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    page: page3,
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
+                        }
+                        if (newli == '') {
+                            newli = '<p class="nohave">没有查找到数据哦</p>'
+                        }
+                        $(wRefereeList).empty().append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
     </script>
 </body>

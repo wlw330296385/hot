@@ -2473,4 +2473,157 @@ class Team extends Base
         }
         return json($resSaveTeamHonor);
     }
+
+    public function editteamhonor() {
+        $data = input('post.');
+        // 验证器验证数据
+        $validate = validate('TeamHonorVal');
+        if ( !$validate->scene('edit')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        $teamS = new TeamService();
+        // 检查会员在球队的角色
+        $role = $teamS->checkMemberTeamRole($data['team_id'], $this->memberInfo['id']);
+        if (!$role || $role == 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 时间格式转换
+        $data['honor_time'] = strtotime($data['honor_time']);
+        // 组装授奖球员名单数据
+        $prizeMembers = $prizeMemberData = [];
+        if ( !empty($data['prize_team_member']) ) {
+            $prizeMembers = explode(',', $data['prize_team_member']);
+            // 遍历授奖球员的在队信息
+            foreach ($prizeMembers as $k => $prizeMember) {
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $prizeMember]);
+                $prizeMemberData[$k] = [
+                    'id' => $teamMemberInfo['id'],
+                    'name' => $teamMemberInfo['name'],
+                    'member_id' => $teamMemberInfo['member_id'],
+                    'member' => $teamMemberInfo['member']
+                ];
+            }
+            $data['prize_team_member'] = json_encode($prizeMemberData, JSON_UNESCAPED_UNICODE);
+        }
+        // 组合数据字段
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_id'] = $this->memberInfo['id'];
+        // 业务数据操作
+        try {
+            // 保存荣誉数据
+            $resSaveTeamHonor = $teamS->saveTeamHonor($data);
+            if ($resSaveTeamHonor['code'] == 200) {
+                $honorId= $data['id'];
+                // 批量保存荣誉-球员关系数据
+                // 所有关联数据设为无效status=-1
+                $teamS->saveTeamHonorMember(['status' => -1], ['team_honor_id' => $honorId]);
+                if ( !empty($prizeMemberData) ) {
+                    foreach ($prizeMemberData as $k => $val) {
+                        // 查询有无关系数据
+                        $teamHonorMember = $teamS->getTeamHonorMember([
+                            'team_honor_id' => $honorId,
+                            'team_member_id' => $val['id']
+                        ]);
+                        // 更新原有数据
+                        if ($teamHonorMember) {
+                            $prizeMemberData[$k]['id'] = $teamHonorMember['id'];
+                            $prizeMemberData[$k]['status'] = 1;
+                        } else {
+                            // 插入新数据
+                            $prizeMemberData[$k]['team_honor_id'] = $honorId;
+                            $prizeMemberData[$k]['team_honor'] = $data['name'];
+                            $prizeMemberData[$k]['team_id'] = $data['team_id'];
+                            $prizeMemberData[$k]['team'] = $data['team'];
+                            $prizeMemberData[$k]['status'] = 1;
+                            $prizeMemberData[$k]['team_member_id'] = $val['id'];
+                            unset($prizeMemberData[$k]['id']);
+                        }
+                    }
+                    $teamS->saveAllTeamHonorMember($prizeMemberData);
+                }
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($resSaveTeamHonor);
+    }
+
+    // 球队荣誉列表（分页）
+    public function getteamhonorpage() {
+        try {
+            $map = input('param.');
+            if (input('?page')) {
+                unset($map['page']);
+            }
+            $teamS = new TeamService();
+            $res = $teamS->getTeamHonorMemberPaginator($map);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 球队荣誉列表
+    public function getteamhonorlist() {
+        try {
+            $map = input('param.');
+            $page = input('param.page');
+            if (input('?page')) {
+                unset($map['page']);
+            }
+            $teamS = new TeamService();
+            $res = $teamS->getTeamHonorList($map, $page);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 删除球队荣誉
+    public function delteamhonor() {
+        $id = input('honor_id', 0, 'intval');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $teamS = new TeamService();
+        $teamHonor = $teamS->getTeamHonor(['id' => $id]);
+        if (!$teamHonor) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查会员在球队的角色
+        $role = $teamS->checkMemberTeamRole($teamHonor['author_team_id'], $this->memberInfo['id']);
+        if (!$role || $role == 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 删除操作
+        try {
+            // 软删除荣誉记录
+            $res = $teamS->deleteTeamHonor($id);
+            if ($res) {
+                // 软删除荣誉-球员关系记录
+                $teamS->saveTeamHonorMember([
+                    'status' => -1,
+                    'delete_time' => time()
+                ], [
+                    'team_honor_id' => $id
+                ]);
+                $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($response);
+    }
 }

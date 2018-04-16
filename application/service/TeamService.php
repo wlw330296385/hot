@@ -1143,6 +1143,12 @@ class TeamService
         return $result;
     }
 
+    // 删除球队荣誉
+    public function deleteTeamHonor($id) {
+        $res = TeamHonor::destroy($id);
+        return $res;
+    }
+
     // 保存球队荣誉-队员（会员）关系
     public function saveTeamHonorMember($data=[], $condition=[]) {
         $model = new TeamHonorMember();
@@ -1187,6 +1193,17 @@ class TeamService
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 获取球队荣誉-球员（会员）关系详情
+    public function getTeamHonorMember($map=[]) {
+        $model = new TeamHonorMember();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 
     // 球队荣誉-球员（会员）关系列表（分页）
