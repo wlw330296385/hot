@@ -404,8 +404,9 @@ class BillService {
                     
                     $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
                     $result = $this->Bill->save($updateData,$map);
+                    $refundamount = $refundTotal*$billInfo['price'];
                     $refundData = [
-                        'refundamount'=>$refundTotal*$billInfo['price'],
+                        'refundamount'=>$refundamount,
                         'reason'=>$data['remarks'],
                         'bill_id'=>$billInfo['id'],
                         'total'=>$refundTotal,
@@ -434,7 +435,7 @@ class BillService {
                         ];
                         $saveData = [
                                 'title'=>"退款申请-{$billInfo['goods']}",
-                                'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: {$refundTotal*$billInfo['price']}元<br/>退款理由:{$data['remarks']}",
+                                'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: {$refundamount}元<br/>退款理由:{$data['remarks']}",
                                 'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']])
                             ];
                         $MessageService->sendCampMessage($billInfo['camp_id'],$MessageCampData,$saveData);
