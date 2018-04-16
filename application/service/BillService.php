@@ -126,7 +126,7 @@ class BillService {
             db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
             //grade_member续费
             db('grade_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->update(['status'=>1]);
-            
+
             // 发送个人消息           
             $MessageData = [
                 "touser" => '',
@@ -413,8 +413,10 @@ class BillService {
                         'camp_id'=>$billInfo['camp_id'],
                         'camp'=>$billInfo['camp'],
                         'bill_order'=>$billInfo['bill_order'],
-                        'member'=>$this->memberInfo['member'],
-                        'member_id'=>$this->memberInfo['id'],
+                        'member'=>$billInfo['member'],
+                        'member_id'=>$billInfo['member_id'],
+                        'student'=>$billInfo['student'],
+                        'student_id'=>$billInfo['student_id'],
                     ];
                     $Refund = new \app\model\Refund;
                     $Refund->save($refundData);

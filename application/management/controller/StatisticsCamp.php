@@ -726,14 +726,15 @@ class StatisticsCamp extends Camp{
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
             $status=>input('param.status');
-            $refundamount = input('param.refundamount');
-            if($refundamount <= $refund){
-                $this->error('打款金额不可大于退款金额');
-            }
+            
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
             if($refundInfo){
                 $this->error('传参错误');
+            }
+            $refundamount = $refundInfo['refundamount'];
+            if($refundamount <= $refund){
+                $this->error('打款金额不可大于退款金额');
             }
             if($this->campInfo['rebate_type'] == 1){
                 $refund_fee = ($refundamount - $refund)*$this->campInfo['schedule_rebate'];
@@ -775,7 +776,7 @@ class StatisticsCamp extends Camp{
                     'status'=>$status,
                     'reject_time'=>time()
                 ]; 
-                $res = $BillService->updateBill(['action'=>4,'output'=>0],['id'=>$refundInfo['bill_id'],$refundData);
+                $res = $BillService->updateBill(['action'=>4,'output'=>0],['id'=>$refundInfo['bill_id']],$refundData);
                 if($res['code'] == 100){
                     $this->error($res['msg']);
                 }
