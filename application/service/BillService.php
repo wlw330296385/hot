@@ -405,7 +405,7 @@ class BillService {
                     $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
                     $result = $this->Bill->save($updateData,$map);
                     $refundData = [
-                        'refundamount'=>$refundTotal*$billInfo['price'],
+                        'refundamount'=>($refundTotal*$billInfo['price']),
                         'reason'=>$data['remarks'],
                         'bill_id'=>$billInfo['id'],
                         'total'=>$refundTotal,
