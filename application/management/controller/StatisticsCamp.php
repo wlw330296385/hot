@@ -725,7 +725,7 @@ class StatisticsCamp extends Camp{
             $refund = input('param.refund');
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $status=>input('param.status');
+            $status = input('param.status');
             
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
@@ -796,7 +796,7 @@ class StatisticsCamp extends Camp{
                     'member_id'     => $refundInfo['member_id'],
                     'member'        => $refundInfo['member'],
                     'type'          => 2,
-                    'e_balance'     =>$this->campInfo['balance'] - $output),
+                    'e_balance'     =>($this->campInfo['balance'] - $output),
                     's_balance'     =>$this->campInfo['balance'],
                     'f_id'          =>$refundInfo['id'],
                     'create_time'   => time(),
