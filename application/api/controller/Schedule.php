@@ -506,12 +506,12 @@ class Schedule extends Base
             $res = $this->ScheduleService->buygift($request);
             if ($res['code'] == 200) {
                 // 更新课程赠送课时字段
-                $updateLesson = db('lesson')->where('id', $request['lesson_id'])->setInc('resi_giftschedule', $request['quantity']);
+                $updateLesson = db('lesson')->where('id', $request['lesson_id'])->inc('resi_giftschedule', $request['quantity'])->update();
                 if (!$updateLesson) {
                     return json(['code' => 100, 'msg' => '更新课程赠送课时' . __lang('MSG_400')]);
                 }
                 // 扣除训练营的余额
-                db('camp')->where(['id'=>$camp_id])->dec('balance_true',$totalCost)->updaet();
+                db('camp')->where(['id'=>$camp_id])->dec('balance',$totalCost)->update();
             }
             return json($res);
         } catch (Exception $e) {

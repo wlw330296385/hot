@@ -726,16 +726,85 @@ class StatisticsCamp extends Camp{
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
             $status=>input('param.status');
-            $data = [
-                'refund'=>$refund,
-                'remarks'=>$remarks,
-                'refund_type'=>$refund_type,
-                'process'=>$this->memberInfo['member'],
-                'process_id'=>$this->memberInfo['id'],
-                'process_time'=>time(),
-                'status'=>$status,
-            ];
-            dump($data);
+            $refundamount = input('param.refundamount');
+            if($refundamount <= $refund){
+                $this->error('打款金额不可大于退款金额');
+            }
+            $Refund = new \app\model\Refund;
+            $refundInfo = $Refund->where(['id'=>$refund_id])->find();
+            if($refundInfo){
+                $this->error('传参错误');
+            }
+            if($this->campInfo['rebate_type'] == 1){
+                $refund_fee = ($refundamount - $refund)*$this->campInfo['schedule_rebate'];
+                $output = $refundamount - $refund - $refund_fee;
+            }else{
+                $refund_fee = 0;
+                $output = 0;
+            }
+            
+
+            $BillService = new \app\service\BillService;
+            if($status > 1){
+            
+                $refundData = [
+                    'refund'=>$refund,
+                    'refund_fee'=>$refund_fee,
+                    'remarks'=>$remarks,
+                    'refund_type'=>$refund_type,
+                    'process'=>$this->memberInfo['member'],
+                    'process_id'=>$this->memberInfo['id'],
+                    'process_time'=>time(),
+                    'status'=>$status,
+                    'agree_time'=>time()
+                ]; 
+                
+                $res = $BillService->updateBill(['action'=>3,'output'=>$output],['id'=>$refundInfo['bill_id']],$refundData);
+                if($res['code'] == 100){
+                    $this->error($res['msg']);
+                }
+            }elseif ($status == -1) {
+                $refundData = [
+                    'refund'=>0,
+                    'refund_fee'=>0,
+                    'remarks'=>$remarks,
+                    'refund_type'=>$refund_type,
+                    'process'=>$this->memberInfo['member'],
+                    'process_id'=>$this->memberInfo['id'],
+                    'process_time'=>time(),
+                    'status'=>$status,
+                    'reject_time'=>time()
+                ]; 
+                $res = $BillService->updateBill(['action'=>4,'output'=>0],['id'=>$refundInfo['bill_id'],$refundData);
+                if($res['code'] == 100){
+                    $this->error($res['msg']);
+                }
+            }else{
+                $this->error('传参错误');
+            }
+            if ($status == 3) {
+                if($this->campInfo['rebate_type'] == 1){
+                    $this->error('训练营为[课时版结算],不可以操作打款');
+                }
+                //训练营营业额支出
+                db('output')->insert([
+                    'output'        => $output,
+                    'camp_id'       => $refundInfo['camp_id'],
+                    'camp'          => $refundInfo['camp'],
+                    'member_id'     => $refundInfo['member_id'],
+                    'member'        => $refundInfo['member'],
+                    'type'          => 2,
+                    'e_balance'     =>$this->campInfo['balance'] - $output),
+                    's_balance'     =>$this->campInfo['balance'],
+                    'f_id'          =>$refundInfo['id'],
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+                // 减少训练营营业额
+                db('camp')->where(['id'=>$refundInfo['camp_id']])->dec('balance',$output)->update();
+                $Refund->where(['id'=>$refund_id])->save(['status'=>3]);
+            }
+            $this->success('操作成功');    
         }else{
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund
