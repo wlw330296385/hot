@@ -17,12 +17,12 @@
 
 <body class=whitebg>
 
-    <header class="mui-bar mui-bar-nav subheader">
+    <header id="header" class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
     <div class="mui-content list">
-
+        <div class="img4x3" style="background-image:url('{$honorInfo.cover}')"></div>
         <ul class="mui-table-view mb" style="margin-top: -4px">
             <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                 <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
@@ -46,34 +46,34 @@
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-Startingtim colororange"></span>奖项名称</label>
-                <span></span>
+                <span>{$honorInfo.name}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EndTime colororange"></span>赛事名称</label>
-                <span></span>
+                <span>{$honorInfo.match}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-Location colororange"></span>授奖单位</label>
-                <span></span>
+                <span>{$honorInfo.award_org}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>授奖时间</label>
-                <span></span>
+                <span>{$honorInfo.honor_time}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>授奖人</label>
-                <span></span>
+                <span class="honorList">{volist name='prizeTeamMemberList' id='vo'} {$vo.name},{/volist}</span>
             </li>
             <div class="page-header bggray2 introduction">
                 <span class="course">荣誉简介
                     <span class="noDataTip"></span>
                 </span>
             </div>
-            <li class="mui-table-view-cell listli introBox" style="padding:0 !important"></li>
+            <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$honorInfo.introduction}</li>
         </ul>
 
         <div class="page-header whitebg border-b">
@@ -90,7 +90,7 @@
         <!--底部操作-->
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{$homeurl}">
+                <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
@@ -100,7 +100,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
-                <a href="{:url('team/honorEdit',['team_id'=>$teamInfo['id']])}">
+                <a href="{:url('team/honorEdit',['team_id'=>$teamInfo['id'],'honor_id'=>$honorInfo['id']])}">
                     编辑
                 </a>
             </li>
@@ -137,171 +137,232 @@
 
         $(function () {
 
-            // pulldownRefresh(); //页面打开时获取一次最新评论信息
-            // isthumbsup(); //点赞状态
+            // 去逗号
+            var honorList = $(".honorList").text()
+            $(".honorList").text(honorList.substring(0, honorList.length - 1));
 
+            pulldownRefresh(); //页面打开时获取一次最新评论信息
+            isthumbsup(); //点赞状态
+            followStatus(); //判断当前的关注状态
             // 活动详情默认的提示
             if ($(".introBox").html() == '') {
                 $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无数据）");
                 $(".introBox").hide();
             }
 
+            // 关注球队
+            $(".follow").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
             //评论功能
-            // $(".commentBtn").on('tap', function () {
-            //     var commented_id = "{eventInfo.id}";
-            //     var comment = $(".comment").val();
+            $(".commentBtn").on('tap', function () {
+                var commented_id = "{eventInfo.id}";
+                var comment = $(".comment").val();
 
-            //     if (comment == '') {
-            //         mui.toast("评价内容不能为空哦");
-            //         return false;
-            //     }
+                if (comment == '') {
+                    mui.toast("评价内容不能为空哦");
+                    return false;
+                }
 
-            //     mui.ajax("{:url('api/team/addteamcomment')}", {
-            //         data: {
-            //             commented_id: commented_id,
-            //             comment_type: 2,
-            //             comment: comment
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 mui.alert('评价成功，感谢你的评价！', function () {
-            //                     location.reload();
-            //                 });
-            //                 mui('#fbcomment').popover('toggle');
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
+                mui.ajax("{:url('api/team/addteamcomment')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 2,
+                        comment: comment
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('评价成功，感谢你的评价！', function () {
+                                location.reload();
+                            });
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             //点赞功能
-            // $(".thumbsup").on('tap', function () {
-            //     var commented_id = "{eventInfo.id}";
-            //     mui.ajax("{:url('api/team/dianzan')}", {
-            //         data: {
-            //             commented_id: commented_id,
-            //             comment_type: 2,
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 $(".thumbup_count").text(data.thumbup_count);
-            //                 isthumbsup();
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{eventInfo.id}";
+                mui.ajax("{:url('api/team/dianzan')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 2,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
+                            isthumbsup();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
         })
 
+        // 判断当前的关注状态
+        function followStatus() {
+            var team_id = "{$teamInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
         // 点赞状态
-        // function isthumbsup() {
-        //     var commented_id = "{eventInfo.id}";
-        //     mui.ajax("{:url('api/team/isthumbup')}", {
-        //         data: {
-        //             commented_id: commented_id,
-        //             comment_type: 2,
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data);
-        //             if (data.code == 200) {
-        //                 $(".thumbup_count").text(data.thumbsup_count);
-        //                 if (data.thumbsup == 1) {
-        //                     $(".thumbsup").css("color", "red");
-        //                 } else {
-        //                     $(".thumbsup").css("color", "#737373");
-        //                 }
-        //             } else {
-        //                 mui.toast(data.msg);
-        //             }
-        //         },
-        //         error: function (xhr, type, errorThrown) {
-        //             //异常处理；
-        //             console.log(type);
-        //         }
-        //     });
-        // }
+        function isthumbsup() {
+            var commented_id = "{eventInfo.id}";
+            mui.ajax("{:url('api/team/isthumbup')}", {
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 2,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         //下拉刷新具体业务实现
-        // function pulldownRefresh() {
-        //     setTimeout(function () {
-        //         count = 1;//刷新并显示第一页
-        //         var page = count;
-        //         var gType = 1;//代表下拉刷新
-        //         toCommentList(page, gType);//具体取数据的方法
-        //     }, 100);
-        // }
-        // //上拉加载具体业务实现
-        // function pullupRefresh() {
-        //     setTimeout(function () {
-        //         count++;//翻下一页
-        //         var page = count;
-        //         var gType = 2;//代表上拉加载
-        //         toCommentList(page, gType);//具体取数据的方法
-        //     }, 100);
-        // }
-        // //获取评论列表
-        // function toCommentList(page, gType) {
-        //     var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-        //     var commented_id = "{eventInfo.id}";
-        //     mui.ajax({
-        //         url: url,
-        //         data: {
-        //             commented_id: commented_id,
-        //             comment_type: 2,
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data)
-        //             var newli = '';
-        //             if (data.code == 200) {
-        //                 $(".comment_count").text(data.data.length);
-        //                 for (var i = 0; i <= data.data.length - 1; i++) {
-        //                     newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
-        //                 }
-        //             }
-        //             if (gType == 1) {
-        //                 //上拉刷新
-        //                 $("ul.comment-list").empty().append(newli);
-        //                 if (newli == '') {
-        //                     $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
-        //                 }
-        //             } else {
-        //                 //下拉加载 gType==2
-        //                 $("ul.comment-list").append(newli);
-        //             }
-        //         },
-        //         error: function (xhr, type, errerThrown) {
-        //             mui.toast('网络异常,请稍候再试');
-        //         }
-        //     });
-        // };
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //获取评论列表
+        function toCommentList(page, gType) {
+            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
+            var commented_id = "{eventInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 2,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".comment_count").text(data.data.length);
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
 
