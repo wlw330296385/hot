@@ -729,7 +729,7 @@ class StatisticsCamp extends Camp{
             
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
-            if($refundInfo){
+            if(!$refundInfo){
                 $this->error('传参错误');
             }
             $refundamount = $refundInfo['refundamount'];
@@ -804,7 +804,7 @@ class StatisticsCamp extends Camp{
                 ]);
                 // 减少训练营营业额
                 db('camp')->where(['id'=>$refundInfo['camp_id']])->dec('balance',$output)->update();
-                $Refund->where(['id'=>$refund_id])->save(['status'=>3]);
+                $Refund->save(['status'=>3],['id'=>$refund_id]);
             }
             $this->success('操作成功');    
         }else{
