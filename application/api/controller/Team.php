@@ -2589,6 +2589,28 @@ class Team extends Base
         }
     }
 
+    // 球队最近荣誉列表
+    public function lastteamhonorlist() {
+        try {
+            $map = input('param.');
+            $page = input('param.page');
+            if (input('?page')) {
+                unset($map['page']);
+            }
+            $orderby = ['honor_time' => 'desc', 'id' => 'desc'];
+            $teamS = new TeamService();
+            $res = $teamS->getTeamHonorList($map, $page, $orderby);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
     // 删除球队荣誉
     public function delteamhonor() {
         $id = input('honor_id', 0, 'intval');
@@ -2625,5 +2647,46 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($response);
+    }
+
+    // 获取球员的荣誉列表(页码)
+    public function getteammemberhonorpage() {
+        try {
+            // 传入team_member_id
+            $tmId = input('tm_id', 0, 'intval');
+            $map['team_member_id'] = $tmId;
+            $map['status'] = 1;
+            $teamS = new TeamService();
+            $res = $teamS->getTeamHonorMemberPaginator($map);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 获取球员的荣誉列表
+    public function getteammemberhonorlist() {
+        try {
+            // 传入team_member_id
+            $tmId = input('tm_id', 0, 'intval');
+            $map['team_member_id'] = $tmId;
+            $map['status'] = 1;
+            $page = input('param.page', 1);
+            $teamS = new TeamService();
+            $res = $teamS->getTeamHonorMemberList($map, $page);
+            if ($res) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
     }
 }
