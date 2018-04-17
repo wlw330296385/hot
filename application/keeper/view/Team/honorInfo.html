@@ -181,7 +181,9 @@
 
             //评论功能
             $(".commentBtn").on('tap', function () {
-                var commented_id = "{eventInfo.id}";
+                var commented_id = "{$honorInfo.id}";
+                var commented = "{$honorInfo.name}";
+                var team_id = "{$honorInfo.prize_team_id}";
                 var comment = $(".comment").val();
 
                 if (comment == '') {
@@ -192,8 +194,10 @@
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
                         commented_id: commented_id,
-                        comment_type: 2,
-                        comment: comment
+                        comment_type: 5,
+                        comment: comment,
+                        commented: commented,
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -219,11 +223,15 @@
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var commented_id = "{eventInfo.id}";
+                var commented_id = "{$honorInfo.id}";
+                var commented = "{$honorInfo.name}";
+                var team_id = "{$honorInfo.prize_team_id}";
                 mui.ajax("{:url('api/team/dianzan')}", {
                     data: {
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 5,
+                        commented: commented,
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -276,11 +284,11 @@
         }
         // 点赞状态
         function isthumbsup() {
-            var commented_id = "{eventInfo.id}";
+            var commented_id = "{$honorInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 5,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -327,12 +335,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{eventInfo.id}";
+            var commented_id = "{$honorInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 5,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
