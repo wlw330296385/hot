@@ -798,7 +798,7 @@ class Match extends Base
 
             // 数据验证
             $validate = validate('MatchVal');
-            if ( !$validate->scene('league_edit')->check($post) ) {
+            if ( !$validate->scene('add')->check($post) ) {
                 return json(['code' => 100, 'msg' => $validate->getError()]);
             }
             // 保存match数据
