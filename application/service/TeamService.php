@@ -1139,7 +1139,10 @@ class TeamService
         if (!$res) {
             return $res;
         }
+        // 字段原始数据
+        $getData = $res->getData();
         $result = $res->toArray();
+        $result['honor_timestamp'] = $getData['honor_time'];
         return $result;
     }
 

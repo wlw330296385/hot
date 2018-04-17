@@ -15,7 +15,7 @@
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
             {volist name = '_sidebar_menus' id ='vol'}
-            {if !empty($vol['daughter'])}
+            {if !empty($vol['daughter']) && $vol.online_hide == 1}
             <li class="treeview  {if isset($_location[0]) && $_location[0]['title'] == $vol.title  } active {/if} ">
                 <a href="{$vol.url_value}">
                     <i class="{$vol.icon}"></i> <span>{$vol.title}</span>
@@ -26,11 +26,13 @@
                 </a>
                 <ul class="treeview-menu">
                     {volist name = "$vol['daughter']" id ='v'}
+                    {if $v.online_hide == 1}
                     <li>
                         <a href="{:url($v['url_value'])}">
                             <i class="{$v.icon}"></i> <span>{$v.title}</span>
                         </a>
                     </li>
+                    {/if}
                     {/volist}
                 </ul>
                 

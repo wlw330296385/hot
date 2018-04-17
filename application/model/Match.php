@@ -11,15 +11,6 @@ class Match extends Model {
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
-    // 字段类型转换
-    protected $type = [
-        //'match_time' => 'timestamp:Y-m-d H:i',
-        'start_time' => 'timestamp:Y-m-d H:i',
-        'end_time' => 'timestamp:Y-m-d H:i',
-        'reg_start_time' => 'timestamp:Y-m-d H:i',
-        'reg_end_time' => 'timestamp:Y-m-d H:i',
-    ];
-
     // match_time （比赛时间）获取器 时间戳转换日期格式
     public function getMatchTimeAttr($value) {
         return ($value>0) ? date('Y-m-d H:i', $value) : 0;

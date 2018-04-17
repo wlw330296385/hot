@@ -55,27 +55,19 @@
                 <input type="text" name="award_org" class="data" value="" placeholder="授奖单位">
             </div>
 
-            <div class="mui-input-row picker btn" id="demo3">
+            <div class="mui-input-row picker btn" id="demo4" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>授奖时间</label>
                     <span id="result" class="ui-alert domData" name="honor_time"></span>
                 </div>
             </div>
-
+            
             <div class="mui-input-row price-input-row h-auto">
                 <a href="#honorMember" id="setCoachBox" class="mui-navigate-right">
-                    <label>授奖人</label>
+                    <label>获奖者</label>
                     <span class="honorMember" style="width: 60%"></span>
                     <div id="hideList"></div>
                     <input type="hidden" name="prize_team_member" value="" class="data">
-                </a>
-            </div>
-
-            <div class="mui-input-row h-auto">
-                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                    <label>荣誉证书</label>
-                    <img id="preview_1" class="upload-preview" alt="">
-                    <input type="hidden" name="cover" value='' class="data">
                 </a>
             </div>
 
@@ -100,7 +92,7 @@
                         <a class="frame imageClass">
                             <div id="uploader-demo">
                                 <div id="fileList" class="uploader-list"></div>
-                                <div class="filePickerTwo">选择图片</div>
+                                <div class="filePickerTwo">添加图片</div>
                             </div>
                         </a>
                     </div>
@@ -126,11 +118,14 @@
     <div id="honorMember" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course">
-                <strong>授奖人</strong>
+            <span class="course  wd45">
+                <strong>获奖者</strong>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="honorMemberConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="mui-btn qxBtn">全选</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -229,6 +224,16 @@
                 $("#hideList").html(honorMemberList);
                 mui("#honorMember").popover("toggle");
             });
+
+            // 反选
+            $(".qxBtn").on("tap", "", function () {
+                var checked = $("input[name='checkbox-honor']").prop("checked");
+                if (checked == false) {
+                    $("input[name='checkbox-honor']").prop("checked", true);
+                } else {
+                    $("input[name='checkbox-honor']").prop("checked", false);
+                }
+            })
         })
 
         // 获取数据并进行提交
@@ -286,7 +291,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-coach" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
                         }
                         $("#honorMemberDiv").empty();
                         if (newli == '') {

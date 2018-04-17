@@ -2492,7 +2492,7 @@ class Team extends Base
         // 组装授奖球员名单数据
         $prizeMembers = $prizeMemberData = [];
         if ( !empty($data['prize_team_member']) ) {
-            $prizeMembers = explode(',', $data['prize_team_member']);
+            $prizeMembers = explode(',', rtrim($data['prize_team_member'], ',') );
             // 遍历授奖球员的在队信息
             foreach ($prizeMembers as $k => $prizeMember) {
                 $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $prizeMember]);
