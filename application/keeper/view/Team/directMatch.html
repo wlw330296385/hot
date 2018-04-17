@@ -85,8 +85,12 @@
         }
 
         .refereeChoise input {
-            width: 25% !important;
+            width: 29% !important;
             text-align: left !important;
+        }
+
+        .refereeChoise input::placeholder {
+            color: #bbb;
         }
     </style>
 </head>
@@ -226,28 +230,28 @@
             </div>
 
             <div class="page-header bggray2">
-                <span class="course">选择裁判</span>
+                <span class="f12">选择裁判（请选择裁判价位及数量，系统将随机安排裁判，如须指定裁判请点击搜索查询。）</span>
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判1</label>
                 <a href="#referee1" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判" disabled class="refereeName1">
+                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName1">
                 <input type="hidden" value="" class="refereeId1">
-                <input type="text" value="" placeholder="出场费" class="refereeCost1">
+                <input type="text" value="" placeholder="出场费（0）" class="refereeCost1">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判2</label>
                 <a href="#referee2" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判" disabled class="refereeName2">
+                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName2">
                 <input type="hidden" value="" class="refereeId2">
-                <input type="text" value="" placeholder="出场费" class="refereeCost2">
+                <input type="text" value="" placeholder="出场费（0）" class="refereeCost2">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判3</label>
                 <a href="#referee3" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判" disabled class="refereeName3">
+                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName3">
                 <input type="hidden" value="" class="refereeId3">
-                <input type="text" value="" placeholder="出场费" class="refereeCost3">
+                <input type="text" value="" placeholder="出场费（0）" class="refereeCost3">
             </div>
 
             <div class="mui-input-row">
@@ -1219,6 +1223,13 @@
                     toCourtList(keyword, "court", pageCR);
                 }
             })
+            // 添加新场地
+            $(document).on("tap", ".addNewcourt", function () {
+                var court = $(".addCourtInput").val();
+                $(".courtCont").text(court);
+                $("input[name=court_id]").val("-1");
+                mui("#court").popover("toggle");
+            })
             //////////////////////常驻球场////////////////////////////////////
 
             // 添加新的球队
@@ -1232,14 +1243,6 @@
             //删除操作
             $(document).on('tap', '.delbtn', function () {
                 $(this).parent().remove();
-            });
-
-            // 添加新的球队
-            $(document).on('tap', '.addBtn', function () {
-                var addOpponent = $(".addInput").val();
-                $(".opponentCont").text(addOpponent);
-                $("input[name='record[away_team_id]']").val("-1");
-                mui("#opponent").popover("toggle");
             });
 
             // 是否完成提示
