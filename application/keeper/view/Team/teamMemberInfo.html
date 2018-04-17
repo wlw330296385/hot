@@ -369,7 +369,8 @@
         var member = "{$teamMemberInfo.member}";
         var member_id = "{$teamMemberInfo.member_id}";
         var team_id = "{$teamMemberInfo.team_id}";
-        var id = "{$teamMemberInfo.id}";
+        var id = "{$teamMemberInfo.id}"; //team_member_id
+        var tm_name = "{$teamMemberInfo.name}"; // team_member_name
         $(function () {
 
             // 非平台会员不显示关注按钮
@@ -565,8 +566,8 @@
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 1,
-                        commented: member,
-                        commented_id: member_id,
+                        commented: tm_name,
+                        commented_id: id,
                         tags: tags,
                         tag_ids: tag_ids,
                     },
@@ -601,10 +602,11 @@
                 }
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        commented_id: member_id,
+                        commented_id: id,
                         comment_type: 4,
                         comment: comment,
-                        commented: member
+                        commented: tm_name,
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -658,8 +660,8 @@
                 url: url,
                 data: {
                     page: page,
-                    commented: member,
-                    commented_id: member_id,
+                    commented: tm_name,
+                    commented_id: id,
                     comment_type: 4,
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -754,7 +756,7 @@
             mui.ajax("{:url('api/tag/commentlist')}", {
                 data: {
                     comment_type: 1,
-                    commented_id: member_id,
+                    commented_id: id,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
