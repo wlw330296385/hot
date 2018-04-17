@@ -905,4 +905,138 @@ class Team extends Base {
             'prizeTeamMemberList' => $prizeTeamMemberList
         ]);
     }
+
+    //个人比赛列表
+    public function personalMatchList() {
+        return view('Team/personalMatchList');
+    }
+
+    //球员数据（在球队的单场比赛）
+    public function teamMemberData() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        // 比赛详情
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+
+        // 输出比赛战绩数据
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+            }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
+        }
+      
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
+
+        $this->assign('teamrole', $teamrole);
+        $this->assign('countTeamMember', $countTeamMember);
+        $this->assign('matchInfo', $matchInfo);
+        return view('Team/teamMemberData');
+    }
+
+     //球员数据（在这个球队的全部比赛数据）
+     public function teamMemberAllData() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        // 比赛详情
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+
+        // 输出比赛战绩数据
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+            }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
+        }
+      
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
+
+        $this->assign('teamrole', $teamrole);
+        $this->assign('countTeamMember', $countTeamMember);
+        $this->assign('matchInfo', $matchInfo);
+        return view('Team/teamMemberAllData ');
+    }
+
+    //球队数据
+    public function teamData() {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        // 比赛详情
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+
+        // 输出比赛战绩数据
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+            }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
+        }
+      
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
+
+        $this->assign('teamrole', $teamrole);
+        $this->assign('countTeamMember', $countTeamMember);
+        $this->assign('matchInfo', $matchInfo);
+        return view('Team/teamData');
+    }
+
+    //球队数据列表（管理入口）
+    public function dataOfTeam() {
+        return view('Team/dataOfTeam');
+    }
+
 }

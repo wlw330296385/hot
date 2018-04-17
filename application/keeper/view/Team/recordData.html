@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>记录数据</title>
+    <title>录入数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -12,28 +12,25 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .recordTable {
-            width: 100%;
-            text-align: center
-        }
-
-        .recordTable td {
-            border: 1px solid #ddd;
-        }
-
-        .recordTable .name {
-            border: none;
-            padding: 10px;
-        }
-
-        .recordTable p {
-            margin: 5px 0 0 0;
-            font-size: 12px;
-        }
-
-        .recordTable input {
-            padding: 0 4px;
+        .dataCollapse,
+        .dataCollapse input {
             text-align: center;
+
+        }
+
+        .dataCollapse input {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dataCollapse .dataText {
+            padding: 9px;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+        }
+
+        .dataCollapse .mui-row {
+            border-right: 1px solid #ddd;
         }
     </style>
 </head>
@@ -50,72 +47,120 @@
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-        <form class="mui-input-group mt55">
+        <form action="" class="mui-input-group mt55">
 
-            <table class="recordTable">
-                <tbody>
-                    <tr>
-                        <td colspan="6" class="name">
-                            张三
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>号码</p>
-                            <input type="text" value="2">
-                        </td>
-                        <td>
-                            <p>位置</p>
-                            <input type="text" value="中锋">
-                        </td>
-                        <td>
-                            <p>时间</p>
-                            <input type="text" value="15分">
-                        </td>
-                        <td>
-                            <p>得分</p>
-                            <input type="text" value="20">
-                        </td>
-                        <td>
-                            <p>助攻</p>
-                            <input type="text" value="3">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>篮板</p>
-                            <input type="text" value="4">
-                        </td>
-                        <td>
-                            <p>抢断</p>
-                            <input type="text" value="1">
-                        </td>
-                        <td>
-                            <p>盖帽</p>
-                            <input type="text" value="1">
-                        </td>
-                        <td>
-                            <p>失误</p>
-                            <input type="text" value="0">
-                        </td>
-                        <td>
-                            <p>犯规</p>
-                            <input type="text" value="4">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <p>篮板</p>
-                            <input type="text" value="4">
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>选择比赛</label>
+                    <span class="select-row">
+                        <select class="data" name="">
+                            <option value="">请选择</option>
+                            <option value="1">比赛1</option>
+                            <option value="2">比赛2</option>
+                            <option value="3">比赛3</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
 
-                        </td>
-                        <td colspan="2">
-                            <p>抢断</p>
-                            <input type="text" value="1">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="mui-input-row">
+                <label>比赛日期</label>
+                <span></span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>对手</label>
+                <span></span>
+            </div>
+
+            <div class="mui-input-row">
+                <label>最终比分</label>
+                <span></span>
+            </div>
+
+            <!--球员数据-->
+            <div class="page-header bggray2">
+                <span class="course">球员数据</span>
+                <span class="more mui-navigate-right">添加</span>
+            </div>
+            <ul class="mui-table-view list border-b honorList">
+                <li class="mui-table-view-cell mui-collapse listli">
+                    <a class="mui-navigate-right">
+                        <div class="mui-row">
+                            <div class="mui-col-xs-4">张学友</div>
+                            <div class="mui-col-xs-4 colororange">#21</div>
+                            <div class="mui-col-xs-4">00</div>
+                        </div>
+                    </a>
+                    <div class="mui-collapse-content dataCollapse">
+                        <div class="mui-row">
+                            <div class="mui-col-xs-6">出手次数</div>
+                            <div class="mui-col-xs-6">命中次数</div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">罚球</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">罚球</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">篮板</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">助攻</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">抢断</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">封盖</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText">失误</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">犯规</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+
+                    </div>
+                </li>
+            </ul>
 
         </form>
 
