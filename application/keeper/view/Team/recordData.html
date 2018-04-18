@@ -12,25 +12,80 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .addOperation {
+            float: right;
+            font-size: 14px;
+            display: flex;
+            color: #ff7f00;
+        }
+
+        .addInput {
+            padding: 0 !important;
+            height: 21px !important;
+        }
+
+        .addOperation text {
+            padding-top: 2px;
+        }
+
+        .dataIcon text {
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            text-align: center;
+            background-color: #ddd;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            background-clip: padding-box;
+        }
+
+        .dataIcon i {
+            color: #fff;
+            font-size: 22px;
+        }
+
+        .dataCollapse .dataTitle {
+            border: 1px solid #ddd;
+            padding: 9px;
+        }
+
         .dataCollapse,
         .dataCollapse input {
             text-align: center;
+        }
 
+        .dataCollapse input::-webkit-input-placeholder {
+            color: #ff7f00;
         }
 
         .dataCollapse input {
+            border-left: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            color: #ff7f00;
         }
 
         .dataCollapse .dataText {
             padding: 9px;
-            border-right: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
+        }
+
+        .dataCollapse .dataTextLeft {
             border-left: 1px solid #ddd;
         }
 
-        .dataCollapse .mui-row {
-            border-right: 1px solid #ddd;
+        .dataCollapse .sfText {
+            padding: 9px;
+        }
+
+        .dataCollapse .sfButton,
+        .dataCollapse .confirmBtn {
+            padding: 5px;
         }
     </style>
 </head>
@@ -50,55 +105,56 @@
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>选择比赛</label>
-                    <span class="select-row">
-                        <select class="data" name="">
-                            <option value="">请选择</option>
-                            <option value="1">比赛1</option>
-                            <option value="2">比赛2</option>
-                            <option value="3">比赛3</option>
-                        </select>
-                    </span>
-                </div>
+                <a href="#match" class="mui-navigate-right">
+                    <label>比赛</label>
+                    <span class="matchCont domData"></span>
+                    <input type="hidden" name="match_id" value="" class="data">
+                </a>
             </div>
 
             <div class="mui-input-row">
                 <label>比赛日期</label>
-                <span></span>
+                <span class="match_time"></span>
             </div>
 
             <div class="mui-input-row">
                 <label>对手</label>
-                <span></span>
+                <span class="away_team"></span>
             </div>
 
             <div class="mui-input-row">
                 <label>最终比分</label>
-                <span></span>
+                <span>我方<text class="colororange home_score">0</text>分，对方<text class="colororange away_score">0</text>分</span>
             </div>
 
             <!--球员数据-->
             <div class="page-header bggray2">
                 <span class="course">球员数据</span>
-                <span class="more mui-navigate-right">添加</span>
+                <span class="addOperation">
+                    <text>添加</text>
+                    <i class="mui-icon mui-icon-plusempty"></i>
+                </span>
             </div>
             <ul class="mui-table-view list border-b honorList">
-                <li class="mui-table-view-cell mui-collapse listli">
+                <!-- <li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-4">张学友</div>
                             <div class="mui-col-xs-4 colororange">#21</div>
-                            <div class="mui-col-xs-4">00</div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                <text>
+                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                </text>
+                            </div>
                         </div>
                     </a>
                     <div class="mui-collapse-content dataCollapse">
-                        <div class="mui-row">
+                        <div class="mui-row dataTitle">
                             <div class="mui-col-xs-6">出手次数</div>
                             <div class="mui-col-xs-6">命中次数</div>
                         </div>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">二分</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
@@ -108,7 +164,7 @@
                             </div>
                         </div>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">三分</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
@@ -118,17 +174,18 @@
                             </div>
                         </div>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">罚球</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
-                            <div class="mui-col-xs-2 dataText">罚球</div>
+                            <div class="mui-col-xs-2 dataText">罚中</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
                         </div>
+                        <p class="pline"></p>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">篮板</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
@@ -138,7 +195,7 @@
                             </div>
                         </div>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">抢断</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
@@ -148,7 +205,7 @@
                             </div>
                         </div>
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText">失误</div>
+                            <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
                             <div class="mui-col-xs-4">
                                 <input type="text" value="" placeholder="0">
                             </div>
@@ -157,27 +214,298 @@
                                 <input type="text" value="" placeholder="0">
                             </div>
                         </div>
-
+                        <div class="mui-row ">
+                            <div class="mui-col-xs-2 sfText">首发</div>
+                            <div class="mui-col-xs-4 sfButton">
+                                <div class="mui-switch">
+                                    <div class="mui-switch-handle"></div>
+                                </div>
+                            </div>
+                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                                <button class="mui-btn bggreen">确认</button>
+                            </div>
+                        </div>
                     </div>
-                </li>
+                </li> -->
             </ul>
 
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <a class="mui-action-back">
+                    返回
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-7 mui-col-xs-7 opli bggreen" onclick="submitAction()">
                 提交
             </li>
         </ul>
 
     </div>
 
+    <!--比赛-->
+    <div id="match" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>比赛列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="matchDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordLD" placeholder="请比赛名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list matchList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
+        });
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        $(function () {
+            $(".addOperation").on("tap", "", function () {
+                var addData = `<li class="mui-table-view-cell mui-collapse listli">
+                    <a class="mui-navigate-right">
+                        <div class="mui-row">
+                            <div class="mui-col-xs-4"><input type="text" class="addInput" value="" placeholder="球员姓名"></div>
+                            <div class="mui-col-xs-4 colororange"><input type="text" class="addInput" value="" placeholder="球员号码"></div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                <text>
+                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                </text>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="mui-collapse-content dataCollapse">
+                        <div class="mui-row dataTitle">
+                            <div class="mui-col-xs-6">出手次数</div>
+                            <div class="mui-col-xs-6">命中次数</div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">罚中</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <p class="pline"></p>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">助攻</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">封盖</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">犯规</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" value="" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row ">
+                            <div class="mui-col-xs-2 sfText">首发</div>
+                            <div class="mui-col-xs-4 sfButton">
+                                <div class="mui-switch">
+                                    <div class="mui-switch-handle"></div>
+                                </div>
+                            </div>
+                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                                <button class="mui-btn bggreen">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </li>`;
+                $(".honorList").append(addData);
+            });
+
+            var matchKeyword = '';
+            var wMatch = '';
+            var pageCR = 1;
+            var keywordLD = '';
+            toMatchList(wMatch, matchKeyword, 1);
+            //////////////////////常驻球场////////////////////////////////////
+            // 常驻球场
+            $(".matchList").on('tap', 'li', function () {
+                var match = $(this).find("font").text();
+                $(".matchCont").text(match);
+                var id = $(this).attr('data-id');
+                $("input[name=match_id]").val(id);
+                var match_time = $(this).attr('data-match_time');
+                $(".match_time").text(match_time);
+                var away_team = $(this).attr('data-away_team');
+                $(".away_team").text(away_team);
+                var home_score = $(this).attr('data-home_score');
+                $(".home_score").text(home_score);
+                var away_score = $(this).attr('data-away_score');
+                $(".away_score").text(away_score);
+                mui("#match").popover("toggle");
+            })
+            //清除常驻球场
+            $("#matchDel").on('tap', '', function () {
+                $(".matchCont").text('');
+                $("input[name=match_id]").val("");
+                $(".match_time").text('');
+                $(".away_team").text('');
+                $(".home_score").text('');
+                $(".away_score").text('');
+                mui("#match").popover("toggle");
+            })
+            //搜索常驻球场
+            $("#searchCR").on("tap", function () {
+                var keyword = $(".keywordLD").val();
+                var pageCR = 1;
+                toMatchList(keyword, "match", pageCR);
+            })
+            //常驻球场弹出框页码控制
+            $("#match").on('tap', '.next_page', function () {
+                var getTotalPage = $("#match .totalPage").text();
+                pageCR++;
+                if (pageCR > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toMatchList(keyword, "match", pageCR);
+                }
+            })
+            $("#match").on('tap', '.prev_page', function () {
+                pageCR--;
+                if (pageCR < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordLD").val();
+                    toMatchList(keyword, "match", pageCR);
+                }
+            })
+            //////////////////////常驻球场///////////////////////////////////
+
+            //获取比赛列表
+            function toMatchList(keyword, wMatch, page) {
+                var url = "{:url('api/match/matchlistpage','','',true)}/?page=" + page;
+                var wMatchList = "ul.matchList";
+                var currPage = ".currPage";
+                var totalPage = ".totalPage";
+                if (keyword != '' && wMatch != '') {
+                    wMatchList = "#" + wMatch + " ul.matchList";
+                    currPage = "#" + wMatch + " .currPage";
+                    totalPage = "#" + wMatch + " .totalPage";
+                }
+                mui.ajax({
+                    url: url,
+                    data: {
+                        page: page,
+                        keyword: keyword,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 200) {
+                            var newli = '';
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].team.name + '" data-home_score="' + data.data.data[i].team.home_color + '" data-away_score="' + data.data.data[i].team.away_color + '" data-away_score="' + data.data.data[i].team.away_color + '"><font class="court">' + data.data.data[i].name + '</font></li>'
+                            }
+                            if (newli == '') {
+                                newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p></div>'
+                            }
+                            $(wMatchList).empty().append(newli);
+                            $(currPage).text(data.data.current_page);
+                            $(totalPage).text(data.data.last_page);
+                        } else {
+                            mui.toast('数据获取失败,请稍候再试');
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            };
+
+
         });
     </script>
 </body>
