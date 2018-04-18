@@ -497,7 +497,7 @@ class BillService {
                         }
                        
                         $Refund = new \app\model\Refund;
-                        $Refund->where(['bill_id'=>$billInfo['id']])->save($refundData);
+                        $Refund->save($refundData,['bill_id'=>$billInfo['id']]);
                         if($result){
                             //发送信息给用户
                             $MessageData = [
@@ -516,7 +516,7 @@ class BillService {
                                             'title'=>"{$billInfo['goods']}退款申请已被同意",
                                             'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: ({$data['output']})元<br/>支付信息:{$billInfo['student']}",
                                             'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
-                                            'member_id'=>$data['member_id']
+                                            'member_id'=>$billInfo['member_id']
                                         ];
 
                             $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
@@ -526,7 +526,7 @@ class BillService {
                 case '4': 
                     $result = $this->Bill->save(['status'=>1],$map);
                     $Refund = new \app\model\Refund;
-                    $Refund->where(['bill_id'=>$billInfo['id']])->save($refundData);
+                    $Refund->save($refundData,['bill_id'=>$billInfo['id']]);
                     if($result){
                             //发送信息给用户
                             $MessageData = [
@@ -545,7 +545,7 @@ class BillService {
                                             'title'=>"{$billInfo['goods']}退款申请已被拒绝",
                                             'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: ({$data['output']})元<br/>支付信息:{$billInfo['student']}",
                                             'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
-                                            'member_id'=>$data['member_id']
+                                            'member_id'=>$billInfo['member_id']
                                         ];
 
                             $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
