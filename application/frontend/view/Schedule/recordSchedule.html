@@ -1066,9 +1066,7 @@
                 $("input.stdList[type=checkbox]:checked").each(function () {
                     var id = $(this).attr("data-id");
                     var lesson = $(this).attr("data-lesson");
-                    var lesson_id = $(this).attr("data-lesson_id");
-                    var camp = $(this).attr("data-camp");
-                    var camp_id = $(this).attr("data-camp_id");
+                    var lesson_id = $(this).attr("data-lesson_id");\
                     var student = $(this).attr("data-student");
                     var student_id = $(this).attr("data-student_id");
                     var member = $(this).attr("data-member");
@@ -1114,8 +1112,8 @@
                                     'area': area,
                                     'grade': grade,
                                     'grade_id': grade_id,
-                                    'camp': camp,
-                                    'camp_id': campid,
+                                    'camp': "{$campInfo.camp}",
+                                    'camp_id': {$campInfo.id},
                                     'lesson': lesson,
                                     'lesson_id': lesson_id,
                                     'lesson_time_date': lesson_time_date,
@@ -1141,7 +1139,9 @@
                                     'plan': plan,
                                     'plan_id': plan_id,
                                     'exercise': JSON.stringify(exercise_str),
-                                    cost: cost
+                                    cost: cost,
+                                    'schedule_rebate':{$campInfo.schedule_rebate}
+                                    'rebate_type':{$campInfo.rebate_type}
                                 },
                                 dataType: 'json',//服务器返回json格式数据
                                 type: 'post',//HTTP请求类型

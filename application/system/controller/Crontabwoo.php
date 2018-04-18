@@ -47,7 +47,6 @@ class Crontabwoo extends Base {
             $nowDate = date('Ymd', time());
             $map['camp_id'] = $campInfo['id'];
             $map['can_settle_date'] = $nowDate;
-            $map['rebate_type'] = 1;
             $map['questions'] = 0;
             Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
                 foreach ($schedules as $key=> $schedule) {
@@ -267,19 +266,18 @@ class Crontabwoo extends Base {
             $map['camp_id'] = $campInfo['id'];
             $map['can_settle_date'] = $nowDate;
             $map['questions'] = 0;
-            $map['rebate_type'] = 2;
             db('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
                 foreach ($schedules as $key => $schedule) {
                     // 训练营的支出 = (教练薪资+人头提成)
                     $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
-//扣减课时学员课时数 start----------------------------
+                //扣减课时学员课时数 start----------------------------
                     // 课时相关学员剩余课时-1
                     $scheduleS = new ScheduleService();
                     $students = unserialize($schedule['student_str']);
                     $decStudentRestscheduleResult = $scheduleS->decStudentRestschedule($students, $schedule);
-//扣减课时学员课时数 end------------------------------
+                //扣减课时学员课时数 end------------------------------
 
-//课时工资收入结算 start------------------------------
+                //课时工资收入结算 start------------------------------
                     // 课时正式学员人数
                     $totalScheduleStudent = count(unserialize($schedule['student_str']));
                     $totalCoachSalary = 0;

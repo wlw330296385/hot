@@ -478,7 +478,7 @@ class BillService {
 
                             $updateData = [
                                 'refundamount'=>($refundTotal*$billInfo['price']),
-                                'status'=>-2,
+                                // 'status'=>-2,
                                 'remarks' => "您的剩余课时为{$lesson_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},因此您最多只能申请退{$refundTotal}节课的钱"
                             ]; 
                             $result = $this->Bill->save($updateData,$map);

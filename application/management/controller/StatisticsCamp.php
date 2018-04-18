@@ -1627,6 +1627,7 @@ class StatisticsCamp extends Camp{
                 // 减少训练营营业额
                 db('camp')->where(['id'=>$refundInfo['camp_id']])->dec('balance',$output)->update();
                 $Refund->save(['status'=>3],['id'=>$refund_id]);
+                db('bill')->where(['id'=>$refundInfo['bill_id']])->update(['status'=>-2]);
             }
             $this->success('操作成功');    
         }else{

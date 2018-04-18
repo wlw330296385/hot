@@ -19,10 +19,27 @@ class Index extends Controller{
             foreach ($value as $k => &$val) {
                $lesson_id = db('grade_member')->where(['id'=>$val['id']])->value('lesson_id');
                $val['lesson_id'] = $lesson_id;
-               // db('lesson_member')->where(['lesson_id'=>$lesson_id,'student_id'=>$val['student_id']])->inc('rest_schedule')->update();
+               db('lesson_member')->where(['lesson_id'=>$lesson_id,'student_id'=>$val['student_id']])->inc('rest_schedule')->update();
             }
         }
         dump($list);
+    }
+
+    //学生表的总课时
+    public function totalScheduleS(){
+           $sum =  db('lesson_member')->field('sum(total_schedule) as ts, student_id')->group('student_id')->select();
+           foreach ($sum as $key => $value) {
+               db('student')->where(['id'=>$value['student_id']])->update(['total_schedule'=>$value['ts']]);
+           }
+    }
+
+    // 课时的训练营类型
+    public function rebateType(){
+        $list = db('schedule')->field('schedule.camp_id,schedule.id,camp.rebate_type,camp.schedule_rebate')->join('camp','camp.id = schedule.camp_id')->select();
+
+        foreach ($list as $key => &$value) {
+            db('schedule')->where(['id'=>$value['id']])->update(['rebate_type'=>$value['rebate_type'],'schedule_rebate'=>$value['schedule_rebate']]);
+        }
     }
 
     public function index(){
@@ -163,9 +180,14 @@ class Index extends Controller{
                 $data['e_balance'] = $campInfo['balance'];
                 $data2['s_balance'] = $campInfo['balance'];
                 $data2['e_balance'] = $campInfo['balance'];
+
             }
             db('income')->insert($data);
             db('camp_finance')->insert($data2);
+            if($value['goods_type'] == 1){
+                db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['goods_id']])->inc('rest_schedule',$value['total'])->inc('total_schedule',$value['total'])->update();
+                db('student')->where(['id'=>$value['student_id']])->inc('total_schedule',$value['total'])->update();
+            }
         }
     }
 
@@ -207,11 +229,15 @@ class Index extends Controller{
             }
             db('output')->insert($data);
             db('camp_finance')->insert($data2);
+            if($value['goods_type'] == 1){
+                db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['goods_id']])->dec('rest_schedule',($value['refundamount']/$value['price']))->dec('total_schedule',($value['refundamount']/$value['price']))->update();
+                db('student')->where(['id'=>$value['student_id']])->dec('total_schedule',($value['refundamount']/$value['price']))->update();
+            }
         }
     }
 
     // 3
-    public function gift(){
+    public function gift1(){
         $giftList = db('schedule_giftrecord')->field('schedule_giftrecord.*,lesson.cost')->join('lesson','lesson.id=schedule_giftrecord.lesson_id')->where('schedule_giftrecord.delete_time',null)->select();      
         $data = [];
         foreach ($giftList as $key => $value) {
@@ -230,6 +256,19 @@ class Index extends Controller{
             db('camp')->where(['id'=>$value['camp_id']])->dec('balance',$data['output'])->update();
         }
     }
+
+    //4 
+    public function gift2(){
+        $giftList = db('schedule_gift_student')->select();      
+        $data = [];
+        foreach ($giftList as $key => $value) {
+            db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['lesson_id']])->inc('rest_schedule',$value['gift_schedule'])->inc('total_schedule',$value['gift_schedule'])->update();
+            db('student')->where(['id'=>$value['student_id']])->inc('total_schedule',$value['gift_schedule'])->update();
+        }
+    }
+
+
+
 
     public function schedulecost(){
         $list = db('schedule')->select();
