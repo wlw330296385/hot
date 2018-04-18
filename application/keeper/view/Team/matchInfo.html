@@ -244,25 +244,10 @@
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
                     <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
                 </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
-                    <span class="refereeType">{$matchInfo.referee_type}</span>
-                </li>
-                <li class="mui-table-view-cell listli refereeCount">
-                    <label>
-                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
-                    <span class="wd60">{$matchInfo.referee_count}/人</span>
-                </li>
                 <li class="mui-table-view-cell listli refereeName">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
                     <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
-                    <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -411,32 +396,6 @@
                 $(".courtCostBear").text("客队负责");
             }
 
-            // 裁判列表文字转换中文
-            var referee_type = "{$matchInfo.referee_type}";
-            if (referee_type == 0) {
-                $(".refereeType").text("免裁判");
-                $(".refereeName").hide();
-                $(".refereeCount").hide();
-            } else if (referee_type == 1) {
-                $(".refereeType").text("系统随机安排");
-                $(".refereeName").hide();
-                $(".refereeCount").show();
-            } else if (referee_type == 2) {
-                $(".refereeType").text("自行安排");
-                $(".refereeCount").hide();
-            }
-
-            // 付费方式文字转换中文
-            var referee_cost_bear = "{$matchInfo.referee_cost_bear}";
-            if (referee_cost_bear == 0) {
-                $(".refereeCostBear").text("免费");
-            } else if (referee_cost_bear == 1) {
-                $(".refereeCostBear").text("费用AA");
-            } else if (referee_cost_bear == 2) {
-                $(".refereeCostBear").text("主队负责");
-            } else if (referee_cost_bear == 3) {
-                $(".refereeCostBear").text("客队负责");
-            }
 
             // 申请执裁
             $(".apply-referee").on("tap", function () {
@@ -567,7 +526,7 @@
 
             // 判断身份显示操作按钮
             var memberRefereeInfoId = "{$memberRefereeInfo.id}";
-            var referee_type = "{$matchInfo.referee_type}"
+            var referee_type = "{$matchInfo.referee_type}";
             var teamrole = "{$teamrole}";
             var is_finished = "{$matchInfo.is_finished_num}";
 
