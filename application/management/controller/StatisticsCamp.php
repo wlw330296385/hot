@@ -8,6 +8,7 @@ class StatisticsCamp extends Camp{
 		parent::_initialize();
         
 	}
+    
 
     // 课时列表
     public function campSchedule() {
