@@ -622,6 +622,9 @@
             <span class="course wd45">
                 <strong>裁判列表</strong>
             </span>
+            <span class="fr">
+                <button class="mui-btn" id="refereeDel1">清除</button>
+            </span>
         </div>
         <div class="pop-search">
             <input type="search" class="keyword1" placeholder="请输入裁判名称搜索">
@@ -652,6 +655,9 @@
             <span class="course wd45">
                 <strong>裁判列表</strong>
             </span>
+            <span class="fr">
+                <button class="mui-btn" id="refereeDel2">清除</button>
+            </span>
         </div>
         <div class="pop-search">
             <input type="search" class="keyword2" placeholder="请输入裁判名称搜索">
@@ -675,12 +681,15 @@
             </div>
         </div>
     </div>
-    <!--裁判列表1-->
+    <!--裁判列表3-->
     <div id="referee3" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course wd45">
                 <strong>裁判列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="refereeDel3">清除</button>
             </span>
         </div>
         <div class="pop-search">
@@ -882,6 +891,13 @@
                 var keyword = $(".keyword1").val();
                 var page1 = 1;
                 toRefereeList1(keyword, "referee1", page1);
+            });
+            //清除裁判
+            $("#refereeDel1").on('tap', '', function () {
+                $(".refereeName1").val('');
+                $(".refereeId1").val('');
+                $(".refereeCost1").val('');
+                mui("#referee1").popover("toggle");
             })
             //裁判弹出框页码控制
             $("#referee1").on('tap', '.next_page', function () {
@@ -921,6 +937,13 @@
                 var keyword = $(".keyword2").val();
                 var page2 = 1;
                 toRefereeList2(keyword, "referee2", page2);
+            });
+            //清除裁判
+            $("#refereeDel2").on('tap', '', function () {
+                $(".refereeName2").val('');
+                $(".refereeId2").val('');
+                $(".refereeCost2").val('');
+                mui("#referee2").popover("toggle");
             })
             //裁判弹出框页码控制
             $("#referee2").on('tap', '.next_page', function () {
@@ -960,6 +983,13 @@
                 var keyword = $(".keyword3").val();
                 var page3 = 1;
                 toRefereeList3(keyword, "referee3", page3);
+            });
+            //清除裁判
+            $("#refereeDel3").on('tap', '', function () {
+                $(".refereeName3").val('');
+                $(".refereeId3").val('');
+                $(".refereeCost3").val('');
+                mui("#referee3").popover("toggle");
             })
             //裁判弹出框页码控制
             $("#referee3").on('tap', '.next_page', function () {
@@ -1329,6 +1359,10 @@
                 mui.toast("裁判出场费请填写数字");
                 return false;
             }
+            // if (referee_id1 == referee_id2 || referee_id1 == referee_id3 || referee_id2 == referee_id3) {
+            //     mui.toast("请勿重复选择裁判");
+            //     return false;
+            // }
 
             referee1.push({ referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 });
             referee2.push({ referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 });
