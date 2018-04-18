@@ -80,7 +80,7 @@
 				<div class="form-group">
 					<label>退费方式</label>
 					<select class="form-control" name="refund_type">
-						<option value="0">请选择</option>
+						<option value="-1">请选择</option>
 						<option value="1">平台原路退回</option>
 						<option value="2">银行转账退回</option>
 						<option value="3">现金退回</option>
@@ -138,16 +138,16 @@
         if(rebateType=="2"){
             $("#getIncome").hide();
             $("#specTips").hide();
-            payed = '<button type="button" class="btn btn-info pull-right">同意并已打款</button>';
+            payed = '<button type="button" class="btn btn-success" data-value="3">同意并已打款</button>';
 		}
 		//判断退款状态列出相应按钮
         var refundStatus = "{$refundInfo.status}";
         if(refundStatus=="已拒绝"){
-            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="2">同意</button>'+payed);
+            $("#operable").html('<button type="button" class="btn btn-info" data-value="2">同意</button>'+payed);
         }else if(refundStatus=="已同意"){
-            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="-1">拒绝</button>'+payed);
+            $("#operable").html(payed);
 		}else if(refundStatus=="申请中"){
-            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="-1">拒绝</button><button type="button" class="btn btn-info" data-vaule="2">同意</button>'+payed);
+            $("#operable").html('<button type="button" class="btn btn-danger" data-value="-1">拒绝</button><button type="button" class="btn btn-info" data-value="2">同意</button>'+payed);
 		}
 
 
@@ -182,10 +182,15 @@
             var dataVaule = $(this).attr("data-value");
             $("input[name=status]").val(dataVaule);
 
-            if(dataVaule=="2"||dataVaule=="3"){
-                if(rSum==""||rType==0){
+            if(dataVaule==2||dataVaule==3){
+                if(rSum==""||rType==-1){
                     alert("请您所填写的实际退款金额和选择退款方式!")
                 }else{
+                    var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+                    if (!reg.test(rSum)){
+                        alert("请您输入正确的金额数字，小数位只能保留后两位！")
+                        return false;
+                    }
                     $("#refundForm").submit();
 				}
             }else{

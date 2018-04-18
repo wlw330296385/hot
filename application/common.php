@@ -350,6 +350,8 @@ function checkDatetimeIsValid($date) {
     $unixTime = strtotime($date);
     if (!$unixTime) {
         return false;
+    } else {
+        return true;
     }
     // 检查日期格式是否有效
     if (date('Y-m-d', $unixTime) == $date) {

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>球员数据</title>
+    <title>球队数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,25 +21,25 @@
 
         @media screen and (min-width: 320px) {
             .teamLogo {
-                height: 5.4rem;
+                height: 4.5rem;
             }
         }
 
         @media screen and (min-width: 375px) {
             .teamLogo {
-                height: 6.6rem;
+                height: 5.4rem;
             }
         }
 
         @media screen and (min-width: 414px) {
             .teamLogo {
-                height: 7.4rem;
+                height: 6.0rem;
             }
         }
 
         @media screen and (min-width: 768px) {
             .teamLogo {
-                height: 14.8rem;
+                height: 11.5rem;
             }
         }
     </style>
@@ -168,10 +168,11 @@
     </style>
 </head>
 
-<body class=whitebg>
+<body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">球队数据</h1>
     </header>
 
     <div class="mui-content">
@@ -179,22 +180,22 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
                     <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;">
+                        <div class="mui-col-sm-3 mui-col-xs-3">
                             <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
                         </div>
-                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding: 12% 0;">
+                        <div class="mui-col-sm-6 mui-col-xs-6" style="padding: 8% 0;">
                             <h3 class="colororange">{$matchInfo.record.home_score} ：{$matchInfo.record.away_score}</h3>
                         </div>
-                        <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px">
+                        <div class="mui-col-sm-3 mui-col-xs-3">
                             <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
                         </div>
                     </div>
                     <div class="mui-row">
-                        <div class="mui-col-sm-4 mui-col-xs-4">
+                        <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
                         </div>
-                        <div class="mui-col-sm-4 mui-col-xs-4 colorgray">{$matchInfo.match_time}</div>
-                        <div class="mui-col-sm-4 mui-col-xs-4">
+                        <div class="mui-col-sm-6 mui-col-xs-6 colorgray">{$matchInfo.match_time}</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong class="f16 colororange away_team">{$matchInfo.record.away_team}</strong>
                         </div>
                     </div>
@@ -203,18 +204,14 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;">
                     <div>
                         <strong class="f16">{$teamInfo.name}</strong>
-                        <i class="icon iconfont icon-sex1"></i>
-                        <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
-                        <em class="colorred">
-                            <strong>VIP-1</strong>
-                        </em>
                     </div>
                     <div class="mui-media-body">
                         <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
-                        <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
+                        <p class="mui-ellipsis" style="line-height:20px;">队员:
+                            <strong class="colororange">{$teamInfo.member_num}</strong>&nbsp;|&nbsp;粉丝数:
                             <strong class="colororange">{$teamInfo.fans_num}</strong>
                         </p>
                     </div>
@@ -224,73 +221,61 @@
                 </li>
             </ul>
 
-            <!--个人数据-->
+            <!--球队数据-->
             <div class="page-header">
-                <span class="course">个人数据</span>
+                <span class="course">球队数据</span>
+                <span class="more">
+                    <a href="{:url('team/teamMemberAllData',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                        球员数据
+                    </a>
+                </span>
             </div>
-            <div class="nav-list record mb">
+            <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>得分</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">得分</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>三分</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">三分</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>篮板</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">篮板</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>助攻</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">助攻</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>抢断</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">抢断</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>封盖</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">封盖</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>失误</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">失误</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="#">
-                            <span>犯规</span>
-                            <div class="mui-media-body colorred">0</div>
-                        </a>
+                        <span class="f14">犯规</span>
+                        <div class="mui-media-body colorred f18">0</div>
                     </li>
                 </ul>
             </div>
 
-            <!--个人效率-->
+            <!--球队效率-->
             <div class="page-header">
-                <span class="course">个人效率</span>
+                <span class="course">球队效率</span>
             </div>
-
             <ul class="mui-table-view mui-text-center list mb">
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row">
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong>球员效率</strong>
+                            <strong>得失分</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong class="colorred">45</strong>
@@ -349,20 +334,60 @@
                 </li>
             </ul>
 
+            <!-- 比赛信息 -->
+            <div class="page-header">
+                <span class="course">比赛信息</span>
+            </div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                    <span class="match_time">{$matchInfo.match_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                    <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
+                    <span>{$matchInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
+                    <span>{$matchInfo.court_cost}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
+                    <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
+                </li>
+            </ul>
+
             <div class="mui-table-view detalis-list list mainInfo mb">
                 <div class="page-header">
-                    <span class="course">其他球员</span>
+                    <span class="course">参赛人员 出勤率
+                        <b class="colororange rate">0%</b>
+                    </span>
                     <span class="more f14">
-                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right"></a>
+                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                            <b class="colororange signup_num">0</b>/{$countTeamMember}
+                        </a>
                     </span>
                 </div>
                 <div class="imgShow overflow-x"></div>
             </div>
 
-            <div class="page-header whitebg">
+            <div class="page-header">
                 <span class="course">比赛花絮</span>
             </div>
-
             {notempty name="matchInfo.record.album"}
             <div class="mui-content-padded">
                 <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
@@ -373,12 +398,12 @@
                 </div>
             </div>
             {else/}
-            <p class="nohave">还没有上传花絮图哦</p>
+            <p class="nohave whitebg">还没有上传花絮图哦</p>
             {/notempty}
 
         </div>
 
-        <div class="page-header whitebg border-b ">
+        <div class="page-header border-b ">
             <span class="course wd52">评论</span>
             <span class="more f14">评论
                 <span class="comment_count">0</span>&nbsp;|&nbsp;
@@ -395,12 +420,12 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <!-- <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee" style="display:none">申请执裁</li>
-            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status1" style="display:none">参加</li> -->
-            <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue">
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgblue status2">
                 <a href="#fbcomment">发表评论</a>
             </li>
-
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen status3">
+                <a>编辑</a>
+            </li>
         </ul>
 
     </div>
@@ -424,7 +449,8 @@
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
-    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script src="/static/frontend/js/mui.zoom.js"></script>
     <script src="/static/frontend/js/mui.previewimage.js"></script>
@@ -575,64 +601,6 @@
                     }
                 });
             });
-
-            // 判断身份显示操作按钮
-            var teamrole = "{$teamrole}";
-            var is_finished = "{$matchInfo.is_finished_num}";
-
-            // 队委
-            // if (teamrole > 0 && is_finished == 1) {
-            //     $(".status2").show();
-            //     $(".status2").removeClass("mui-col-xs-10").addClass("mui-col-xs-5");
-            //     $(".status2").removeClass("mui-col-sm-10").addClass("mui-col-sm-5");
-            //     $(".status3").show();
-            // } else if (teamrole > 0 && is_finished == -1) {
-            //     if (memberRefereeInfoId != '' && referee_type != 0) {
-            //         $(".status1").show();
-            //         $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
-            //         $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
-            //         $(".status3").show();
-            //         $(".status3").removeClass("mui-col-xs-5").addClass("mui-col-xs-4");
-            //         $(".status3").removeClass("mui-col-sm-5").addClass("mui-col-sm-4");
-            //         $(".matchpk").show();
-            //         $(".matchpk").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
-            //         $(".matchpk").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
-            //         return false;
-            //     } else {
-            //         $(".status1").show();
-            //         $(".status3").show();
-            //     }
-            // }
-
-            // // 队员
-            // if (teamrole == 0 && is_finished == 1) {
-            //     $(".status2").show();
-            // } else if (teamrole == 0 && is_finished == -1) {
-            //     if (memberRefereeInfoId != '' && referee_type != 0) {
-            //         $(".status1").show();
-            //         $(".matchpk").show();
-            //         return false;
-            //     } else {
-            //         $(".status1").show();
-            //         $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-            //         $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-            //     }
-            // }
-
-            // // 平台会员
-            // if (teamrole < 0 && is_finished == 1) {
-            //     $(".status2").show();
-            // } else if (teamrole < 0 && is_finished == -1) {
-            //     if (memberRefereeInfoId != '' && referee_type != 0) {
-            //         $(".status1").show();
-            //         $(".matchpk").show();
-            //         return false;
-            //     } else {
-            //         $(".status1").show();
-            //         $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-            //         $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-            //     }
-            // }
 
         });
 

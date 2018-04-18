@@ -408,20 +408,20 @@ class Team extends Base {
             }
             $matchInfo['record'] = $matchRecordInfo;
         }
+        // 判断比赛是否“免裁判”
+        $matchInfo['referee_type'] = 0;
+        if ( !empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3']) ) {
+            $matchInfo['referee_type'] = 1;
+        }
         
-        // 裁判列表
+        // 裁判列表:获取已同意的裁判比赛申请|邀请的裁判名单
         $refereeList= [];
-        /*if (!empty($matchInfo['referee_str'])) {
-            $refereeList = json_decode($matchInfo['referee_str'], true);
-        }*/
-        // 获取已同意的裁判比赛申请|邀请的裁判名单
         $modelMatchRefereeApply = new MatchRefereeApply();
         $refereeList = $modelMatchRefereeApply->where([
             'match_id' => $matchRecordInfo['match_id'],
             'match_record_id' => $matchRecordInfo['id'],
             'status' => ['neq', 3]
         ])->select();
-
 
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         $teamMemberInfo = $teamS->getTeamMemberInfo([
@@ -588,11 +588,7 @@ class Team extends Base {
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
-            // 裁判列表
-            /*if (!empty($matchInfo['referee_str'])) {
-                $refereeList = json_decode($matchInfo['referee_str'], true);
-            }*/
-            // 获取已同意的裁判比赛申请|邀请的裁判名单
+            // 裁判列表： 获取已同意的裁判比赛申请|邀请的裁判名单
             $modelMatchRefereeApply = new MatchRefereeApply();
             $refereeList = $modelMatchRefereeApply->where([
                 'match_id' => $matchRecordInfo['match_id'],
@@ -600,7 +596,7 @@ class Team extends Base {
                 'status' => ['neq', 3]
             ])->select();
         }
-        
+
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);
@@ -990,7 +986,7 @@ class Team extends Base {
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
-        return view('Team/teamMemberAllData ');
+        return view('Team/teamMemberAllData');
     }
 
     //球队数据
@@ -1037,6 +1033,16 @@ class Team extends Base {
     //球队数据列表（管理入口）
     public function dataOfTeam() {
         return view('Team/dataOfTeam');
+    }
+
+    //记录的数据详情
+    public function dataInfo() {
+        return view('Team/dataInfo');
+    }
+
+    //编辑数据
+    public function dataEdit() {
+        return view('Team/dataEdit');
     }
 
 }
