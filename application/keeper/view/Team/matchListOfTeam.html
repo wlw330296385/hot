@@ -374,7 +374,8 @@
             url: url,
             data: {
                 team_id: team_id,
-                is_finished: is_finished
+                is_finished: is_finished,
+                islive: -1
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -385,23 +386,20 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var type = data.data.data[i].type;
-                        if (type != "友谊赛") {
-                            var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
-                            newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].name + '';
-                            if (data.data.data[i].status == "公开") {
-                                newli += '<font class="tipCorner bgorange">公开</font>';
-                            }
-                            if (data.data.data[i].match_time == 0) {
-                                newli += '<p class="mui-ellipsis">比赛时间待定</p>'
-                            } else {
-                                newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
-                            }
-                            newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].type + '</a></div>'
-                            newli += '</li>';
+                        var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
+                        newli += '<li class="mui-table-view-cell mui-media listli coach">';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd83">' + data.data.data[i].name + '';
+                        if (data.data.data[i].status == "公开") {
+                            newli += '<font class="tipCorner bgorange">公开</font>';
                         }
+                        if (data.data.data[i].match_time == 0) {
+                            newli += '<p class="mui-ellipsis">比赛时间待定</p>'
+                        } else {
+                            newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
+                        }
+                        newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].type + '</a></div>'
+                        newli += '</li>';
                     }
                 }
 

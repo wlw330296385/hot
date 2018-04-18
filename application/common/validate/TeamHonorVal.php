@@ -16,7 +16,7 @@ class TeamHonorVal extends Validate
         'award_org_id' => 'number',
         'honor_time' => 'require',
         'prize_team_member' => 'require',
-        'cover' => 'require'
+        //'cover' => 'require'
     ];
 
     // 验证信息
@@ -32,12 +32,12 @@ class TeamHonorVal extends Validate
         'award_org_id.require' => '授奖单位ID格式不正确',
         'honor_time.require' => '请输入授奖时间',
         'prize_team_member.require' => '请选择授奖人',
-        'cover.require' => '请输入荣誉证书'
+        //'cover.require' => '请输入荣誉证书'
     ];
 
     // 验证场景
     protected $scene = [
-        'add' => ['name', 'match', 'award_org', 'honor_time', 'prize_team_member', 'cover'],
-        'edit' => ['name', 'match', 'award_org', 'honor_time', 'prize_team_member', 'cover'],
+        'add' => ['name', 'match', 'award_org', 'honor_time', 'prize_team_member'],
+        'edit' => ['name', 'match', 'award_org', 'honor_time', 'prize_team_member'],
     ];
 }

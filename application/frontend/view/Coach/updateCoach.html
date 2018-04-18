@@ -15,6 +15,7 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <link rel="stylesheet" href="/static/plugins/cropper/cropper.css">
     <style>
         .regspan {
             font-size: 12px;
@@ -27,6 +28,24 @@
             display: table;
             width: 100%;
         }
+    </style>
+    <style>
+        #clipArea {
+            height: 300px;
+        }
+        #file,
+        #clipBtn {
+            margin: 20px;
+        }
+        #view {
+            margin: 0 auto;
+            width: 42px;
+            height: 42px;
+            border:1px solid #CCC;
+        }
+        .mui-popover{
+            height: 400px;
+         }
     </style>
 </head>
 
@@ -98,6 +117,12 @@
                         <img id="preview_3" class="coachicon icon01 upload-preview" {notempty name="coachInfo.portraits" }src='{$coachInfo.portraits}'
                             {/notempty}>
                         <input type="hidden" name="portraits" value='{notempty name="coachInfo.portraits"}{$coachInfo.portraits}{/notempty}'>
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label>个人头像</label>
+                        <div id="view"></div>
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
@@ -188,6 +213,28 @@
 
     </div>
 
+
+    <!-- 头像截图弹框 -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <!--<div class="list camp-list camp-lesson-list detalis-list grade-list coach">-->
+            <!--<ul class="mui-table-view operation">-->
+                <!--<h5>-->
+                    <!--<span>评价我的训练营</span>-->
+                    <!--<a href="#txpopover" class="mui-icon mui-icon-closeempty"></a>-->
+                <!--</h5>-->
+                <!--<li class="mui-table-view-cell listli">-->
+                    <!--<textarea rows="4" name="comment" class="data inputComment"></textarea>-->
+                    <!--<div class="mui-text-center" id="commentCount"></div>-->
+                <!--</li>-->
+                <!--<li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="commentSubmit">提交</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+
+        <div id="clipArea"></div>
+        <input type="file" id="file">
+        <button id="clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!--选择器-->
@@ -201,6 +248,11 @@
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -324,7 +376,39 @@
                 });
 
             })
+
+
         })
+
+
+    </script>
+
+    <script>
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            //adaptive: ['60%', '80%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function() {
+                console.log('开始读取照片');
+            },
+            loadComplete: function() {
+                console.log('照片读取完成');
+            },
+            done: function(dataURL) {
+                console.log(dataURL);
+            },
+            fail: function(msg) {
+                alert(msg);
+            }
+        });
+
+        // 加载的图片必须要与本程序同源，否则无法截图
+//        pc.load('img/mm.jpg');
+
     </script>
 </body>
 

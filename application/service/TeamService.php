@@ -1139,7 +1139,10 @@ class TeamService
         if (!$res) {
             return $res;
         }
+        // 字段原始数据
+        $getData = $res->getData();
         $result = $res->toArray();
+        $result['honor_timestamp'] = $getData['honor_time'];
         return $result;
     }
 
@@ -1209,7 +1212,7 @@ class TeamService
     // 球队荣誉-球员（会员）关系列表（分页）
     public function getTeamHonorMemberPaginator($map=[], $order=['id' => 'desc'], $limit=10) {
         $model = new TeamHonorMember();
-        $res = $model->where($map)->order($order)->paginate($limit);
+        $res = $model->with('TeamHonor')->where($map)->order($order)->paginate($limit);
         if (!$res) {
             return $res;
         }
@@ -1220,7 +1223,7 @@ class TeamService
     // 球队荣誉列表
     public function getTeamHonorMemberList($map=[], $page=1, $order=['id' => 'desc'], $limit=10) {
         $model = new TeamHonorMember();
-        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        $res = $model->with('TeamHonor')->where($map)->order($order)->page($page, $limit)->select();
         if (!$res) {
             return $res;
         }

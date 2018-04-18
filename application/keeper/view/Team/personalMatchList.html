@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>战绩列表</title>
+    <title>个人比赛列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -50,7 +50,7 @@
 <body class=whitebg>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">战绩列表</h1>
+        <h1 class="mui-title">个人比赛列表</h1>
     </header>
 
     <div class="mui-content">
@@ -68,8 +68,7 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <p class="f12" style="margin-top:37px">球队成员：
-                            <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
+                        <button class="mui-btn bgred opBtn follow" style="margin-top:27px">关注</button>
                     </div>
                 </li>
             </ul>
@@ -77,9 +76,6 @@
             <form action="" class="mui-input-group">
                 <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
                     <div class="mui-navigate-right">
-                        <label class="wd73" style="line-height:20px">
-                            <strong class="f16">{$teamInfo.name}战绩</strong>
-                        </label>
                         <span id="result" class="ui-alert year">选择赛季</span>
                     </div>
                 </div>
@@ -186,7 +182,38 @@
             });
         })(mui);
 
+        var member_id = "{$memberInfo.id}";
         $(function () {
+
+            followStatus(); //判断当前的关注状态
+
+            // 关注会员
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 1,
+                        member_id: member_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             //初始化全局变量
             var count = 1;
@@ -274,7 +301,7 @@
                                 // 将时间戳转成日期格式
                                 var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
                                 var matchTimeY = gettimeY(data.data.data[i].match_timestamp * 1000);
-                                var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
+                                var urls = "{:url('team/teamMemberData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
                                 newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
                                 if (data.data.data[i].home_score > data.data.data[i].away_score) {
@@ -318,6 +345,34 @@
                 });
             };
         });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 1,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         //创建补0函数
         function p(s) {

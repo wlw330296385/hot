@@ -17,12 +17,12 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-transparent">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
+    
 
     <div class="mui-content list">
-        <div class="img4x3" style="background-image:url('{$honorInfo.cover}')"></div>
         <ul class="mui-table-view mb" style="margin-top: -4px">
             <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                 <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
@@ -65,7 +65,7 @@
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
-                    <span class="icon iconfont icon-activity-EventLocati colororange"></span>授奖人</label>
+                    <span class="icon iconfont icon-activity-EventLocati colororange"></span>获奖者</label>
                 <span class="honorList">{volist name='prizeTeamMemberList' id='vo'} {$vo.name},{/volist}</span>
             </li>
             <div class="page-header bggray2 introduction">
@@ -181,7 +181,9 @@
 
             //评论功能
             $(".commentBtn").on('tap', function () {
-                var commented_id = "{eventInfo.id}";
+                var commented_id = "{$honorInfo.id}";
+                var commented = "{$honorInfo.name}";
+                var team_id = "{$honorInfo.prize_team_id}";
                 var comment = $(".comment").val();
 
                 if (comment == '') {
@@ -192,8 +194,10 @@
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
                         commented_id: commented_id,
-                        comment_type: 2,
-                        comment: comment
+                        comment_type: 5,
+                        comment: comment,
+                        commented: commented,
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -202,9 +206,9 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.alert('评价成功，感谢你的评价！', function () {
-                                location.reload();
-                            });
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
                             mui('#fbcomment').popover('toggle');
                         } else {
                             mui.toast(data.msg);
@@ -219,11 +223,15 @@
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var commented_id = "{eventInfo.id}";
+                var commented_id = "{$honorInfo.id}";
+                var commented = "{$honorInfo.name}";
+                var team_id = "{$honorInfo.prize_team_id}";
                 mui.ajax("{:url('api/team/dianzan')}", {
                     data: {
                         commented_id: commented_id,
-                        comment_type: 2,
+                        comment_type: 5,
+                        commented: commented,
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -276,11 +284,11 @@
         }
         // 点赞状态
         function isthumbsup() {
-            var commented_id = "{eventInfo.id}";
+            var commented_id = "{$honorInfo.id}";
             mui.ajax("{:url('api/team/isthumbup')}", {
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 5,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -327,12 +335,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{eventInfo.id}";
+            var commented_id = "{$honorInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
                     commented_id: commented_id,
-                    comment_type: 2,
+                    comment_type: 5,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

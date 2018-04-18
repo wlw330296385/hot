@@ -13,9 +13,19 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--icon扩展样式icons-extra.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+        <!--自定义多色图标icon.js-->
+        <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
         .mui-popover {
             height: 260px;
+        }
+
+        .coloricon {
+            width: 2.3em;
+            height: 2.3em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
         }
 
         .page-header .more {
@@ -123,6 +133,43 @@
                 </li>
             </ul>
 
+            <!--赛季数据-->
+            <div class="page-header">
+                <span class="course">2018赛季数据</span>
+            </div>
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-equipment"></use>
+                        </svg>
+                        <span class="f14">比赛</span>
+                        <div class="mui-media-body f18 colororange">0   </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-activity"></use>
+                        </svg>
+                        <span class="f14">效率</span>
+                        <div class="mui-media-body f18 colororange">0</div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-game"></use>
+                        </svg>
+                        <span class="f14">锻炼</span>
+                        <div class="mui-media-body f18 colororange">0</div>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-VS"></use>
+                        </svg>
+                        <span class="f14">体质</span>
+                        <div class="mui-media-body f18 colororange">0</div>
+                    </li>
+                </ul>
+            </div>
+
             <!--球队战绩-->
             <div class="page-header">
                 <span class="course">球队战绩</span>
@@ -221,8 +268,8 @@
                     <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
-                        <a href="{:url('index/lateLyMatchList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
-                    </span>
+                    <a href="{:url('index/lateLyMatchList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
+                </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
 
@@ -243,8 +290,8 @@
                     <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
-                        <a href="{:url('index/lateLyEventList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
-                    </span>
+                    <a href="{:url('index/lateLyEventList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
+                </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
 
@@ -262,7 +309,7 @@
             <!--荣誉-->
             <div class="page-header border-b">
                 <span class="course">荣誉
-                    <span class="noDataTip">（暂无数据）</span>
+                    <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
                     <a href="{:url('team/honorList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
@@ -770,6 +817,7 @@
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
             toTeam(); //获取所在的球队列表
+            toHonorList(); //荣誉列表
         });
 
         // 点赞状态
@@ -926,7 +974,6 @@
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
                     } else {
-                        // $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
                         $(".tagCommentList").prev().find(".noDataTip").append("（暂无数据）");
                         $(".tagCommentList").removeClass("impress");
                     }
@@ -1010,7 +1057,6 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-                        // for (var i = 0; i <= data.data[0]; i++) {
                         // 将时间戳转成日期格式
                         var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
                         var Tday = gettimed(data.data[0].start_time_stamp * 1000);
@@ -1036,7 +1082,6 @@
                         $(".newEvent").empty().append(div);
                     }
                     if (data.code == 100) {
-                        // $(".newEvent").empty().append('<p class="nohave">还没有活动数据，赶紧去创建活动吧</p>');
                         $(".newEvent").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
@@ -1081,7 +1126,6 @@
                     }
                     $("ul.recordEvent").empty().append(newli);
                     if (newli == '') {
-                        // $("ul.recordEvent").html('<p class="nohave">没有相关数据哦</p>');
                         $(".recordEvent").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
@@ -1109,7 +1153,6 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-                        // for (var i = 0; i <= data.data.length - 1; i++) {
                         // 将时间戳转成日期格式
                         var Tmonth = gettimem(data.data[0].match_timestamp * 1000);
                         var Tday = gettimed(data.data[0].match_timestamp * 1000);
@@ -1137,11 +1180,9 @@
                             div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
                         }
                         div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
-                        // }
                         $(".newMatch").empty().append(div);
                     }
                     if (data.code == 100) {
-                        // $(".noDataTip").empty().append('<p class="nohave">还没有比赛数据，赶紧去创建比赛吧</p>');
                         $(".newMatch").prev().find(".noDataTip").append("（暂无数据）");
                     }
                 },
@@ -1291,6 +1332,43 @@
                 }
             });
         }
+
+        //获取荣誉列表
+        function toHonorList() {
+            var url = "{:url('api/team/lastteamhonorlist','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    author_team_id: team_id,
+                    status: 1,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            var urls = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].id + '/team_id/' + data.data[i].author_team_id;
+                            newli += '<li class="mui-table-view-cell listli"><a href="' + urls + '">';
+                            newli += '<div class="mui-media-body wd83">奖项名称：<strong class="colororange f16"> ' + data.data[i].name + '</strong><p class="mui-ellipsis lineHeight20" >授奖单位： ' + data.data[i].award_org + '</p ><p class="mui-ellipsis lineHeight20">授奖日期：' + data.data[i].honor_time + '</p></div >'
+                            newli += '</a></li >';
+                        }
+                    }
+                    $("ul.honor").empty().append(newli);
+                    if (newli == '') {
+                        $(".honor").prev().find(".noDataTip").append("（暂无数据）");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
 
         //创建补0函数
         function p(s) {

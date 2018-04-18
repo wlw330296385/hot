@@ -22,11 +22,18 @@
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+	<style type="text/css">
+		#getIncome { color:red; margin-left: 20px; }
+		#refundStatus{ margin-left: 20px;}
+		#operable { float: right; }
+		#operable button { margin-left: 10px;}
+	</style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 
 <div class="row">
 
+	<form role="form" id="refundForm" method="post" action="">
 	<div class="col-sm-12">
 		<div class="box-body">
 
@@ -62,18 +69,18 @@
 			</table>
 
 
-			<form role="form" style="margin-top: 20px;" action="post">
 				<!-- text input -->
 				<div class="form-group">
 					<label>实际退费金额</label>
-					<small class="getIncome" style="color:red; margin-left: 20px;"></small>
-					<a class="pull-right" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="实际退款不可大于可退金额，假设某学员可退10课时，原值1000元，经双方协商一致只可退还500，剩余500元，平台占10%，训练营占90%"><span class="fa fa-info-circle"></span> 特别说明</a>
-					<input type="text" class="form-control" name="refund" placeholder="请填写实际退费金额 ...">
+					<small id="getIncome"></small>
+					<a class="pull-right" id="specTips" href="#" data-toggle="tooltip" data-placement="left" title="" data-original-title="实际退款不可大于可退金额，假设某学员可退10课时，原值1000元，经双方协商一致只可退还500，剩余500元，平台占10%，训练营占90%"><span class="fa fa-info-circle"></span> 特别说明</a>
+					<input type="text" class="form-control" name="refund" placeholder="请填写实际退费金额 ..." value="">
 				</div>
 				<!-- select -->
 				<div class="form-group">
 					<label>退费方式</label>
 					<select class="form-control" name="refund_type">
+						<option value="0">请选择</option>
 						<option value="1">平台原路退回</option>
 						<option value="2">银行转账退回</option>
 						<option value="3">现金退回</option>
@@ -85,18 +92,20 @@
 				<!-- textarea -->
 				<div class="form-group">
 					<label>备注</label>
-					<textarea class="form-control" rows="3" name="remarks" placeholder="请填写训练营备注 ..."></textarea>
+					<textarea class="form-control" rows="3" name="remarks" placeholder="请填写训练营备注 ...">{$refundInfo.remarks}</textarea>
 				</div>
-			</form>
 
 		</div>
 
 		<div class="box-footer">
-			<button class="btn btn-default closeModel">关闭</button>
-			<input type="hidden" class="form-control" name="status" placeholder="状态:-2:已撤销|-1:已拒绝|1:申请中|2:已同意|3:已打款" value="2" >
-			<button type="submit" class="btn btn-info pull-right">确认退费</button>
+			<button class="btn btn-default closeModel">关闭</button> <small id="refundStatus">当前状态：{$refundInfo.status}</small>
+
+			<input type="hidden" class="form-control" name="refund_id" value="{$refundInfo.id}" >
+			<input type="hidden" class="form-control" name="status" placeholder="状态:-2:已撤销|-1:已拒绝|1:申请中|2:已同意|3:已打款" value="" >
+			<span id="operable"></span>
 		</div>
 	</div>
+</form>
 </div>
 
 
@@ -108,35 +117,53 @@
 <script src="/static/backend/layui/layui.js"></script>
 <!-- 自定义 -->
 <script src="/static/backend/adminlte/js/master.js"></script>
-<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script>
 
 
     $(function () {
 
+        //初始化
+        var refundSum = "{$refundInfo.refund}";
+        if(refundSum!=""&&refundSum!=null&&refundSum!="0.00"){
+            $("input[name=refund]").attr("placeholder",refundSum);
+        }
+        var refundType = "{$refundInfo.refund_type}";
+		if(refundType!=""&&refundType!=null){
+            $('select[name="refund_type"]').find('option[value="'+refundType+'"]').prop("selected", true);
+		}
 
-        $('#billList').DataTable({
-            'paging'      : true,
-            'lengthChange': false,
-            'searching'   : false,
-            'ordering'    : true,
-            'info'        : true,
-            'autoWidth'   : true
-        });
+        //判断训练营是课时版（1）还是营业额版（2）
+        var rebateType = "{$campInfo.rebate_type}";
+        var payed = "";
+        if(rebateType=="2"){
+            $("#getIncome").hide();
+            $("#specTips").hide();
+            payed = '<button type="button" class="btn btn-info pull-right">同意并已打款</button>';
+		}
+		//判断退款状态列出相应按钮
+        var refundStatus = "{$refundInfo.status}";
+        if(refundStatus=="已拒绝"){
+            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="2">同意</button>'+payed);
+        }else if(refundStatus=="已同意"){
+            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="-1">拒绝</button>'+payed);
+		}else if(refundStatus=="申请中"){
+            $("#operable").html('<button type="button" class="btn btn-info" data-vaule="-1">拒绝</button><button type="button" class="btn btn-info" data-vaule="2">同意</button>'+payed);
+		}
+
 
 
         //隔行变色
         $(".hotTable tbody td ul").find("li:even").addClass("even");
 
-
+		//触发父级窗口关闭模态框
         $(".closeModel").on("click", function () {
             window.parent.closeModel();
         })
 
-        $("input[name=sum]").on("blur",'', function () {
-            var sum = parseInt($(this).val());
-            var maxSum = parseInt($(".maxSum").text());
+		//判断所填写的实际退款金额是否不能大于可退金额
+        $("input[name=refund]").on("blur",'', function () {
+            var sum = parseFloat($(this).val());
+            var maxSum = parseFloat($(".maxSum").text());
             if(sum>maxSum){
                 alert("您所填写的实际退款金额不能大于可退金额"+maxSum+"!")
 			}else{
@@ -144,6 +171,30 @@
                 var forCamp = (maxSum-sum)*0.9;
                 $(".getIncome").text("退款后剩余金额分配：平台"+forHOT.toFixed(2)+"（10%）训练营"+forCamp.toFixed(2)+"（90%）")
 			}
+        })
+
+        //提交最终操作
+        $("#operable button").on("click",'', function () {
+
+            var rSum = $("input[name=refund]").val();
+            var rType = $('select[name="refund_type"]').val();
+            var rRemark= $('textarea[name="remarks"]').val();
+            var dataVaule = $(this).attr("data-value");
+            $("input[name=status]").val(dataVaule);
+
+            if(dataVaule=="2"||dataVaule=="3"){
+                if(rSum==""||rType==0){
+                    alert("请您所填写的实际退款金额和选择退款方式!")
+                }else{
+                    $("#refundForm").submit();
+				}
+            }else{
+                if(rRemark==""){
+                    alert("请在备注栏填写您拒绝的理由，谢谢！!")
+                }else{
+                    $("#refundForm").submit();
+                }
+            }
         })
 
     })

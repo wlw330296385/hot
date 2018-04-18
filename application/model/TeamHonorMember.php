@@ -12,4 +12,7 @@ class TeamHonorMember extends Model
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
+    public function TeamHonor() {
+        return $this->belongsTo('teamHonor');
+    }
 }
