@@ -990,7 +990,7 @@ class Team extends Base {
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
-        return view('Team/teamMemberAllData ');
+        return view('Team/teamMemberAllData');
     }
 
     //球队数据
@@ -1037,6 +1037,16 @@ class Team extends Base {
     //球队数据列表（管理入口）
     public function dataOfTeam() {
         return view('Team/dataOfTeam');
+    }
+
+    //记录的数据详情
+    public function dataInfo() {
+        return view('Team/dataInfo');
+    }
+
+    //编辑数据
+    public function dataEdit() {
+        return view('Team/dataEdit');
     }
 
 }
