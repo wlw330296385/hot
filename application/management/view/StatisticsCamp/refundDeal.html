@@ -80,13 +80,12 @@
 				<div class="form-group">
 					<label>退费方式</label>
 					<select class="form-control" name="refund_type">
-						<option value="-1">请选择</option>
-						<option value="1">平台原路退回</option>
-						<option value="2">银行转账退回</option>
-						<option value="3">现金退回</option>
-						<option value="4">支付宝</option>
-						<option value="5">微信</option>
 						<option value="6">其他</option>
+						<option value="1">平台原路退回</option>
+						<option value="2">银行转账</option>
+						<option value="3">现金退回</option>
+						<option value="4">支付宝退款</option>
+						<option value="5">微信退款</option>
 					</select>
 				</div>
 				<!-- textarea -->
@@ -126,10 +125,11 @@
         var refundSum = "{$refundInfo.refund}";
         if(refundSum!=""&&refundSum!=null&&refundSum!="0.00"){
             $("input[name=refund]").attr("placeholder",refundSum);
+            $("input[name=refund]").val(refundSum);
         }
         var refundType = "{$refundInfo.refund_type}";
 		if(refundType!=""&&refundType!=null){
-            $('select[name="refund_type"]').find('option[value="'+refundType+'"]').prop("selected", true);
+            $('select[name="refund_type"]').find('option:contains("'+refundType+'")').prop("selected", true);
 		}
 
         //判断训练营是课时版（1）还是营业额版（2）
@@ -177,20 +177,15 @@
         $("#operable button").on("click",'', function () {
 
             var rSum = $("input[name=refund]").val();
-            var rType = $('select[name="refund_type"]').val();
             var rRemark= $('textarea[name="remarks"]').val();
             var dataVaule = $(this).attr("data-value");
             $("input[name=status]").val(dataVaule);
 
             if(dataVaule==2||dataVaule==3){
-                if(rSum==""||rType==-1){
-                    alert("请您所填写的实际退款金额和选择退款方式!")
+                var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+                if(rSum==""||!reg.test(rSum)){
+                    alert("请您输入正确的金额数字，小数位只能保留后两位！");
                 }else{
-                    var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-                    if (!reg.test(rSum)){
-                        alert("请您输入正确的金额数字，小数位只能保留后两位！")
-                        return false;
-                    }
                     $("#refundForm").submit();
 				}
             }else{
