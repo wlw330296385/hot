@@ -414,9 +414,8 @@ class Team extends Base {
             $matchInfo['referee_type'] = 1;
         }
         
-        // 裁判列表
+        // 裁判列表:获取已同意的裁判比赛申请|邀请的裁判名单
         $refereeList= [];
-        // 获取已同意的裁判比赛申请|邀请的裁判名单
         $modelMatchRefereeApply = new MatchRefereeApply();
         $refereeList = $modelMatchRefereeApply->where([
             'match_id' => $matchRecordInfo['match_id'],
@@ -589,11 +588,7 @@ class Team extends Base {
                 }
                 $matchInfo['record'] = $matchRecordInfo;
             }
-            // 裁判列表
-            /*if (!empty($matchInfo['referee_str'])) {
-                $refereeList = json_decode($matchInfo['referee_str'], true);
-            }*/
-            // 获取已同意的裁判比赛申请|邀请的裁判名单
+            // 裁判列表： 获取已同意的裁判比赛申请|邀请的裁判名单
             $modelMatchRefereeApply = new MatchRefereeApply();
             $refereeList = $modelMatchRefereeApply->where([
                 'match_id' => $matchRecordInfo['match_id'],
@@ -601,7 +596,7 @@ class Team extends Base {
                 'status' => ['neq', 3]
             ])->select();
         }
-        
+
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('directentry', $directentry);

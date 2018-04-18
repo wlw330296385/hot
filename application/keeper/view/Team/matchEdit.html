@@ -108,6 +108,7 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="directentry" value="{$directentry}">
         <input type="hidden" name="team_id" value="{$team_id}" class="data">
+        <input type="hidden" name="team" value="{$matchInfo.team}" class="data">
         <input type="hidden" name="record[id]" value="{$matchInfo.record.id}" class="data">
         <input type="hidden" name="id" class="data" value="{$matchInfo.id}">
         <form action="" class="mui-input-group mt55">
@@ -259,102 +260,36 @@
 
             <p class="pline"></p>
 
-            <!-- <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>裁判类型</label>
-                    <span class="select-row">
-                        <select class="data" id="refereeSlecct" name="referee_type">
-                            <option value="0">免裁判</option>
-                            <option value="1">系统邀请</option>
-                            <option value="2">自行邀请</option>
-                        </select>
-                    </span>
-                </div>
-            </div> -->
-
-            <!-- <div class="mui-input-row refereeCount hide">
-                <label>系统邀请人数</label>
-                <input type="text" name="referee_count" value="{$matchInfo.referee_count}" class="data" placeholder="请填写系统邀请的人数">
-            </div> -->
-            <!-- 系统邀请裁判名单 -->
-            <!-- <div class="mui-input-row refereeCount hide h-auto">
-                <a href="#refereeAp" class="mui-navigate-right setRefereeAp">
-                    <label>裁判名单</label>
-                    <span class="refereeApply wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-
-                    <div class="hideApListVolist hide"> {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideApListDefault hide"> {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideApList" style="display:none;">{volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideApListIni" style="display:none;">{volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-
-                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}">
-                    <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
-                </a>
-            </div> -->
-
-            <!-- 自行邀请裁判名单 -->
-            <!-- <div class="mui-input-row refereeRow hide h-auto">
-                <a href="#refereeDom" class="mui-navigate-right setReferee">
-                    <label>裁判名单</label>
-                    <span class="referee wd52" style="width: 60%">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-
-                    <div class="hideListVolist hide"> {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideListDefault hide"> {volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideList" style="display:none;">{volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-                    <div class="hideListIni" style="display:none;">{volist name="$refereeList" id="vol"}
-                        <input type="hidden" data-referee="{$vol.referee}" data-referee_id="{$vol.referee_id}" data-referee_cost="{$vol.referee_cost}"
-                            data-status="{$vol.status}" data-id="{$vol.id}"> {/volist}</div>
-
-                    <input type="hidden" name="referee_id" value="{volist name=" $refereeList " id="vol "}{$vol.referee_id},{/volist}">
-                    <input type="hidden" name="referee_cost" value="{$matchInfo.referee_cost}" class="data">
-                    <input type="hidden" name="referee_count" value="" class="data">
-                </a>
-            </div> -->
-
             <div class="page-header bggray2">
                 <span class="f12">选择裁判（请选择裁判价位及数量，系统将随机安排裁判，如须指定裁判请点击搜索查询。）</span>
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判1</label>
                 <a href="#referee1" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName1">
-                <input type="hidden" value="" class="refereeId1">
-                <input type="text" value="" placeholder="出场费（0）" class="refereeCost1">
+                <input type="text" value="{$matchInfo.record.referee1.referee}" placeholder="裁判名称" disabled class="refereeName1">
+                <input type="hidden" value="{$matchInfo.record.referee1.referee_id}" class="refereeId1">
+                <input type="text" value="{$matchInfo.record.referee1.referee_cost}" placeholder="出场费（0）" class="refereeCost1">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判2</label>
                 <a href="#referee2" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName2">
-                <input type="hidden" value="" class="refereeId2">
-                <input type="text" value="" placeholder="出场费（0）" class="refereeCost2">
+                <input type="text" value="{$matchInfo.record.referee2.referee}" placeholder="裁判名称" disabled class="refereeName2">
+                <input type="hidden" value="{$matchInfo.record.referee2.referee_id}" class="refereeId2">
+                <input type="text" value="{$matchInfo.record.referee2.referee_cost}" placeholder="出场费（0）" class="refereeCost2">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判3</label>
                 <a href="#referee3" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="" placeholder="裁判名称" disabled class="refereeName3">
-                <input type="hidden" value="" class="refereeId3">
-                <input type="text" value="" placeholder="出场费（0）" class="refereeCost3">
+                <input type="text" value="{$matchInfo.record.referee3.referee}" placeholder="裁判名称" disabled class="refereeName3">
+                <input type="hidden" value="{$matchInfo.record.referee3.referee_id}" class="refereeId3">
+                <input type="text" value="{$matchInfo.record.referee3.referee_cost}" placeholder="出场费（0）" class="refereeCost3">
             </div>
 
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label class="wd45">裁判付费方式</label>
                     <span class="select-row">
-                        <select class="data" id="refereeCostBear" name="referee_cost_bear">
+                        <select class="data" id="refereeCostBear" name="record[referee_cost_bear]">
                             <option value="">免费</option>
                             <option value="1">费用AA</option>
                             <option value="2">主队负责</option>
@@ -1079,10 +1014,6 @@
             $('#matchType option[value="{$matchInfo.type_num}"]').prop("selected", true);
             // 设置是场地付费方式默认值
             $('#courtCostBear option[value="{$matchInfo.court_cost_bear}"]').prop("selected", true);
-            // 设置裁判类型默认值
-            $('#refereeSlecct option[value="{$matchInfo.referee_type}"]').prop("selected", true);
-            // 设置裁判付费方式默认值
-            $('#refereeCostBear option[value="{$matchInfo.referee_cost_bear}"]').prop("selected", true);
             // 设置是否约战默认值
             $('#islive option[value="{$matchInfo.islive}"]').prop("selected", true);
 
@@ -1124,15 +1055,8 @@
 
             if (directentry == 0) {
                 var match_time = "{$matchInfo.match_time}";
-                var refereeType = "{$matchInfo.referee_type}";
                 if (match_time == 0) {
                     $(".match_time").text("待定");
-                }
-                if (refereeType == 2) {
-                    $(".refereeRow").show();
-                }
-                if (refereeType == 1) {
-                    $(".refereeCount").show();
                 }
             }
 
@@ -2002,9 +1926,12 @@
                 return false;
             }
 
-            referee1.push({ referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 });
+            /* referee1.push({ referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 });
             referee2.push({ referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 });
-            referee3.push({ referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 });
+            referee3.push({ referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 });*/
+            referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
+            referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
+            referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
 
 
             var data = wooApi.getInputData('input', 'data');
