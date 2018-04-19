@@ -121,13 +121,13 @@
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#">
                                     <span>剩余课时</span>
-                                    <div class="mui-media-body">{$restSchedule}</div>
+                                    <div class="mui-media-body" id="restSchedule">{$restSchedule}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#">
                                     <span>已上课时</span>
-                                    <div class="mui-media-body">{$studentInfo['finished_schedule']}</div>
+                                    <div class="mui-media-body" id="finishedSchedule">{$studentInfo['finished_schedule']}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -456,6 +456,7 @@
             //processData:false,
             success: function (data) {
                 var newli = '';
+                var weiJieSuan = 0;
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].schedule_id + '/camp_id/' + data.data.data[i].camp_id;
@@ -463,10 +464,21 @@
                         // var time = data.data.data[i].schedule_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
                         // var schedule_time = gettime(time)
                         newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li></ul></li></a>';
+                        //判断第一页是否有未结算的课时
+                        if(page==1&&data.data.data[i].status==0){
+                            weiJieSuan++;
+                        }
                     }
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.schedule").empty().append(newli);
+                        //判断是否有未结算课时，有则在顶部数据中扣除
+                        if(weiJieSuan>0){
+                            var restCount = parseInt($("#restSchedule").text())-weiJieSuan;
+                            var finishedCount = parseInt($("#finishedSchedule").text())+weiJieSuan;
+                            $("#restSchedule").text(restCount);
+                            $("#finishedSchedule").text(finishedCount);
+                        }
                         mui('#' + wList).pullRefresh().endPulldownToRefresh();
                         mui('#' + wList).pullRefresh().refresh(true);
                         if (newli == '') {
