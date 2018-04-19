@@ -22,20 +22,28 @@ class Crontabwoo extends Base {
 
 
     public function delayedTask(){
-        $campList = db('camp')->where('delete_time',null)->select();
-        foreach ($campList as $key => $value) {
-            if($value['rebate_type'] == 1){
-                $this->schedulesalaryin1($value);
-            }elseif ($value['rebate_type'] == 2) {
-                $this->schedulesalaryin2($value);
+        try{
+            $campList = db('camp')->where('delete_time',null)->select();
+            foreach ($campList as $key => $value) {
+                if($value['rebate_type'] == 1){
+                    $this->schedulesalaryin1($value);
+                }elseif ($value['rebate_type'] == 2) {
+                    $this->schedulesalaryin2($value);
+                }
             }
+            $data = ['crontab'=>'每日结算','status'=>1];
+            $this->record($data);
+        } catch (Exception $e) {
+            // 记录日志：错误信息
+            $data = ['crontab'=>'每日结算','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
         }
-
+        
     }
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
     private function schedulesalaryin1($campInfo) {
-        try {
             // 获取可结算课时数据列表
             // 赠课记录，有赠课记录先抵扣
             // 91分 9进入运算 1平台收取
@@ -244,58 +252,98 @@ class Crontabwoo extends Base {
                 }
 
             });
-    
-            $data = ['crontab'=>'每日结算[课时版]'];  
-            $this->record($data);  
-        } catch (Exception $e) {
-            // 记录日志：错误信息
-            $data = ['crontab'=>'每日结算[课时版]','status'=>0,'callback_str'=>$e->getMessage()];
-            $this->record($data);
-            trace($e->getMessage(), 'error');
-        }
+        
     }
 
     // 结算可结算已申课时工资收入&扣减课时学员课时数
     private function schedulesalaryin2($campInfo) {
-        try {
-            // 获取可结算课时数据列表   
-            $map['status'] = 1;
-            $map['is_settle'] = 0;
-            // 当前时间日期
-            $nowDate = date('Ymd', time());
-            $map['camp_id'] = $campInfo['id'];
-            $map['can_settle_date'] = $nowDate;
-            $map['questions'] = 0;
-            db('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
-                foreach ($schedules as $key => $schedule) {
-                    // 训练营的支出 = (教练薪资+人头提成)
-                    $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
-                //扣减课时学员课时数 start----------------------------
-                    // 课时相关学员剩余课时-1
-                    $scheduleS = new ScheduleService();
-                    $students = unserialize($schedule['student_str']);
-                    $decStudentRestscheduleResult = $scheduleS->decStudentRestschedule($students, $schedule);
-                //扣减课时学员课时数 end------------------------------
+        // 获取可结算课时数据列表   
+        $map['status'] = 1;
+        $map['is_settle'] = 0;
+        // 当前时间日期
+        $nowDate = date('Ymd', time());
+        $map['camp_id'] = $campInfo['id'];
+        $map['can_settle_date'] = $nowDate;
+        $map['questions'] = 0;
+        db('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
+            foreach ($schedules as $key => $schedule) {
+                // 训练营的支出 = (教练薪资+人头提成)
+                $campInfo = db('camp')->where(['id'=>$schedule['camp_id']])->find();
+            //扣减课时学员课时数 start----------------------------
+                // 课时相关学员剩余课时-1
+                $scheduleS = new ScheduleService();
+                $students = unserialize($schedule['student_str']);
+                $decStudentRestscheduleResult = $scheduleS->decStudentRestschedule($students, $schedule);
+            //扣减课时学员课时数 end------------------------------
 
-                //课时工资收入结算 start------------------------------
-                    // 课时正式学员人数
-                    $totalScheduleStudent = count(unserialize($schedule['student_str']));
-                    $totalCoachSalary = 0;
-                    $MemberFinanceData = [];
-                    // 主教练课时人头工资提成
-                    $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
-                    $coachMember = $this->getCoachMember($schedule['coach_id']);
-                    if($coachMember){
-                        // 主教练薪资
-                        $incomeCoach = [
-                            'salary' => $schedule['coach_salary'],
-                            'push_salary' => $pushSalary,
+            //课时工资收入结算 start------------------------------
+                // 课时正式学员人数
+                $totalScheduleStudent = count(unserialize($schedule['student_str']));
+                $totalCoachSalary = 0;
+                $MemberFinanceData = [];
+                // 主教练课时人头工资提成
+                $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
+                $coachMember = $this->getCoachMember($schedule['coach_id']);
+                if($coachMember){
+                    // 主教练薪资
+                    $incomeCoach = [
+                        'salary' => $schedule['coach_salary'],
+                        'push_salary' => $pushSalary,
+                        'member_id' => $coachMember['member']['id'],
+                        'member' => $coachMember['member']['member'],
+                        'realname' => $coachMember['coach'],
+                        'member_type' => 4,
+                        'pid' => $coachMember['member']['pid'],
+                        'level' => $coachMember['member']['level'],
+                        'schedule_id' => $schedule['id'],
+                        'lesson_id' => $schedule['lesson_id'],
+                        'lesson' => $schedule['lesson'],
+                        'grade_id' => $schedule['grade_id'],
+                        'grade' => $schedule['grade'],
+                        'camp_id' => $schedule['camp_id'],
+                        'camp' => $schedule['camp'],
+                        'schedule_time' => $schedule['lesson_time'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'students'=>$schedule['students'],
+                        'status' => 1,
+                        'type' => 1,
+                    ];
+                    $MemberFinanceData = [
                             'member_id' => $coachMember['member']['id'],
                             'member' => $coachMember['member']['member'],
-                            'realname' => $coachMember['coach'],
-                            'member_type' => 4,
-                            'pid' => $coachMember['member']['pid'],
-                            'level' => $coachMember['member']['level'],
+                            's_balance'=>$coachMember['member']['balance'],
+                            'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                            'money' =>$schedule['coach_salary']+$pushSalary,
+                            'type'=>1,
+                            'system_remarks'=>'课时主教练总薪资收入',
+                            'f_id'=>$schedule['id'],
+                            'remarks'=>$schedule['lesson_time'],
+                        ];
+                    $this->insertSalaryIn($incomeCoach,0,2);
+                    $totalCoachSalary = $schedule['coach_salary'] + $pushSalary;
+                    $this->insertMemberFinance($MemberFinanceData,0,2);
+                }
+                
+                // 助教薪资
+                $totalAssistantSalary = 0;
+                if (!empty($schedule['assistant_id']) && ($schedule['assistant_salary']>0 || $schedule['salary_base']>0)) {
+                    
+                    $MemberFinanceData = [];
+                    $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
+                    foreach ($assistantMember as $k => $val) {
+                        $totalAssistantSalary += $schedule['assistant_salary']; 
+                        $totalAssistantSalary += $pushSalary;
+                        $totalCoachSalary += $schedule['assistant_salary']; 
+                        $totalCoachSalary += $pushSalary;
+                        $incomeAssistant[$k] = [
+                            'salary' => $schedule['assistant_salary'],
+                            'push_salary' => $pushSalary,
+                            'member_id' => $val['member']['id'],
+                            'member' => $val['member']['member'],
+                            'realname' => $val['coach'],
+                            'member_type' => 3,
+                            'pid' => $val['member']['pid'],
+                            'level' => $val['member']['level'],
                             'schedule_id' => $schedule['id'],
                             'lesson_id' => $schedule['lesson_id'],
                             'lesson' => $schedule['lesson'],
@@ -304,128 +352,71 @@ class Crontabwoo extends Base {
                             'camp_id' => $schedule['camp_id'],
                             'camp' => $schedule['camp'],
                             'schedule_time' => $schedule['lesson_time'],
-                            'rebate_type'=>$campInfo['rebate_type'],
                             'students'=>$schedule['students'],
+                            's_balance'=>$val['member']['balance'],
+                            'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                            'rebate_type'=>$campInfo['rebate_type'],
                             'status' => 1,
                             'type' => 1,
+                            'f_id'=>$schedule['id'],
                         ];
-                        $MemberFinanceData = [
-                                'member_id' => $coachMember['member']['id'],
-                                'member' => $coachMember['member']['member'],
-                                's_balance'=>$coachMember['member']['balance'],
-                                'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
-                                'money' =>$schedule['coach_salary']+$pushSalary,
-                                'type'=>1,
-                                'system_remarks'=>'课时主教练总薪资收入',
-                                'f_id'=>$schedule['id'],
-                                'remarks'=>$schedule['lesson_time'],
-                            ];
-                        $this->insertSalaryIn($incomeCoach,0,2);
-                        $totalCoachSalary = $schedule['coach_salary'] + $pushSalary;
-                        $this->insertMemberFinance($MemberFinanceData,0,2);
+                        $MemberFinanceData[$k] = [
+                            'member_id' => $val['member']['id'],
+                            'member' => $val['member']['member'],
+                            's_balance'=>$val['member']['balance'],
+                            'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                            'money' =>$schedule['assistant_salary']+$pushSalary,
+                            'type'=>1,
+                            'system_remarks'=>'课时助理教练总薪资收入',
+                            'f_id'=>$schedule['id'],
+                            'remarks'=>$schedule['lesson_time'],
+                        ];
                     }
-                    
-                    // 助教薪资
-                    $totalAssistantSalary = 0;
-                    if (!empty($schedule['assistant_id']) && ($schedule['assistant_salary']>0 || $schedule['salary_base']>0)) {
-                        
-                        $MemberFinanceData = [];
-                        $assistantMember = $this->getAssistantMember($schedule['assistant_id']);
-                        foreach ($assistantMember as $k => $val) {
-                            $totalAssistantSalary += $schedule['assistant_salary']; 
-                            $totalAssistantSalary += $pushSalary;
-                            $totalCoachSalary += $schedule['assistant_salary']; 
-                            $totalCoachSalary += $pushSalary;
-                            $incomeAssistant[$k] = [
-                                'salary' => $schedule['assistant_salary'],
-                                'push_salary' => $pushSalary,
-                                'member_id' => $val['member']['id'],
-                                'member' => $val['member']['member'],
-                                'realname' => $val['coach'],
-                                'member_type' => 3,
-                                'pid' => $val['member']['pid'],
-                                'level' => $val['member']['level'],
-                                'schedule_id' => $schedule['id'],
-                                'lesson_id' => $schedule['lesson_id'],
-                                'lesson' => $schedule['lesson'],
-                                'grade_id' => $schedule['grade_id'],
-                                'grade' => $schedule['grade'],
-                                'camp_id' => $schedule['camp_id'],
-                                'camp' => $schedule['camp'],
-                                'schedule_time' => $schedule['lesson_time'],
-                                'students'=>$schedule['students'],
-                                's_balance'=>$val['member']['balance'],
-                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
-                                'rebate_type'=>$campInfo['rebate_type'],
-                                'status' => 1,
-                                'type' => 1,
-                                'f_id'=>$schedule['id'],
-                            ];
-                            $MemberFinanceData[$k] = [
-                                'member_id' => $val['member']['id'],
-                                'member' => $val['member']['member'],
-                                's_balance'=>$val['member']['balance'],
-                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
-                                'money' =>$schedule['assistant_salary']+$pushSalary,
-                                'type'=>1,
-                                'system_remarks'=>'课时助理教练总薪资收入',
-                                'f_id'=>$schedule['id'],
-                                'remarks'=>$schedule['lesson_time'],
-                            ];
-                        }
-                        $this->insertSalaryIn($incomeAssistant,1,2);
-                        $this->insertMemberFinance($MemberFinanceData,1,2);
-                    }
-                    
-                    // 保存训练营财务支出信息
-                    $dataOutput = [
-                        'output'    => $totalCoachSalary,
-                        'camp_id'   => $schedule['camp_id'],
-                        'camp'      => $schedule['camp'],
-                        'member'    =>'system',
-                        'member_id' =>0,
-                        'type'      =>3,
-                        's_balance' =>$campInfo['balance'],
-                        'e_balance' =>$campInfo['balance']-$totalCoachSalary,
-                        'system_remarks'=>'营业额结算',
-                        'schedule_time'=>$schedule['lesson_time'],
-                        'rebate_type' => $campInfo['rebate_type'],
-                        'status'    =>1,
-                        'remarks'   =>'课时教练总薪资支出',
-                        'create_time'=>$schedule['create_time'],
-                        'f_id'=>$schedule['id'],
-                        'system_remarks'=>$schedule['lesson_time'],
-                    ];
-                    $this->insertOutput($dataOutput,0,2);
-                    // 保存训练营财务收入支出信息
-                    $dataCampFinance = [
-                        'camp_id' => $schedule['camp_id'],
-                        'camp' => $schedule['camp'],
-                        'money'=>$totalCoachSalary,
-                        'type' => -1,
-                        'e_balance' => $campInfo['balance']-$totalCoachSalary,
-                        's_balance'=>$campInfo['balance'],
-                        'f_id' => $schedule['id'],
-                        'date' => date('Ymd', $schedule['lesson_time']),
-                        'datetime' => $schedule['lesson_time']
-                    ];
-                    $this->insertcampfinance($dataCampFinance,2);
-                    
-                    db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
-                    // 更新课时数据
-                    Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' =>  time(),'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
-                    db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
-                    // 课时工资收入结算 end --------------------------------------
+                    $this->insertSalaryIn($incomeAssistant,1,2);
+                    $this->insertMemberFinance($MemberFinanceData,1,2);
                 }
-            });
-            $data = ['crontab'=>'每日结算[营业额版]'];  
-            $this->record($data);  
-        } catch (Exception $e) {
-            // 记录日志：错误信息
-            $data = ['crontab'=>'每日结算[营业额版]','status'=>0,'callback_str'=>$e->getMessage()];
-            $this->record($data); 
-            trace($e->getMessage(), 'error');
-        }
+                
+                // 保存训练营财务支出信息
+                $dataOutput = [
+                    'output'    => $totalCoachSalary,
+                    'camp_id'   => $schedule['camp_id'],
+                    'camp'      => $schedule['camp'],
+                    'member'    =>'system',
+                    'member_id' =>0,
+                    'type'      =>3,
+                    's_balance' =>$campInfo['balance'],
+                    'e_balance' =>$campInfo['balance']-$totalCoachSalary,
+                    'system_remarks'=>'营业额结算',
+                    'schedule_time'=>$schedule['lesson_time'],
+                    'rebate_type' => $campInfo['rebate_type'],
+                    'status'    =>1,
+                    'remarks'   =>'课时教练总薪资支出',
+                    'create_time'=>$schedule['create_time'],
+                    'f_id'=>$schedule['id'],
+                    'system_remarks'=>$schedule['lesson_time'],
+                ];
+                $this->insertOutput($dataOutput,0,2);
+                // 保存训练营财务收入支出信息
+                $dataCampFinance = [
+                    'camp_id' => $schedule['camp_id'],
+                    'camp' => $schedule['camp'],
+                    'money'=>$totalCoachSalary,
+                    'type' => -1,
+                    'e_balance' => $campInfo['balance']-$totalCoachSalary,
+                    's_balance'=>$campInfo['balance'],
+                    'f_id' => $schedule['id'],
+                    'date' => date('Ymd', $schedule['lesson_time']),
+                    'datetime' => $schedule['lesson_time']
+                ];
+                $this->insertcampfinance($dataCampFinance,2);
+                
+                db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
+                // 更新课时数据
+                Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' =>  time(),'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
+                db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
+                // 课时工资收入结算 end --------------------------------------
+            }
+        });
     }
 
     // 结算上一个月收入 会员分成

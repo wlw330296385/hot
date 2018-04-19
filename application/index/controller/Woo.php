@@ -4,7 +4,7 @@ use think\Controller;
 use think\Cookie;
 use think\Db;
 use app\service\WechatService;
-class Index extends Controller{
+class Woo extends Controller{
 
     public function _initialize(){
         // $this->success('??????什么情况','frontend/index/index');
@@ -15,7 +15,7 @@ class Index extends Controller{
         $list = db('schedule')->where(['can_settle_date'=>'20180405'])->column('student_str');
 
         foreach ($list as $key => &$value) {
-            $value = unserialize($value);
+            $value = unserialize($value);                       
             foreach ($value as $k => &$val) {
                $lesson_id = db('grade_member')->where(['id'=>$val['id']])->value('lesson_id');
                $val['lesson_id'] = $lesson_id;
@@ -269,7 +269,14 @@ class Index extends Controller{
 
 
 
+    // 5 修复grade_member状态
+    public function repairGradeMemberStatus(){
+        $list = db('lesson_member')->where(['status'=>1])->select();
+        foreach ($list as $key => $value) {
+            db('grade_member')->where(['lesson_id'=>$value['lesson_id'],'student_id'=>$value['student_id']])->update(['status'=>1]);    
+        }
 
+    }
     public function schedulecost(){
         $list = db('schedule')->select();
         foreach ($list as $key => $value) {
@@ -634,24 +641,9 @@ class Index extends Controller{
     }
 
 
+    
 
-    public function insertLessonMember(){
-        $action = input('param.action');
-        if($action!= 'woo'){
-
-            return '???';die;
-        }
-        $grade_member = db('grade_member')->select();
-        foreach ($grade_member as $key => &$value) {
-            unset($value['id']);
-        }
-
-        // dump($grade_member);die;
-        $LessonMmeber = new \app\model\LessonMember;
-        $LessonMmeber->saveAll($grade_member);
-
-    }
-
+    // 修复训练营的场地
     public function repairCourt(){
         $result = db('court_camp')
                 ->field("camp_id,count('court_id') camp_base,camp")
@@ -665,6 +657,7 @@ class Index extends Controller{
         }
     }
 
+    // 修复未付款订单的过期时间
     public function repairBill(){
         $result = db('bill')
                 ->where(['balance_pay'=>0])
@@ -672,6 +665,7 @@ class Index extends Controller{
         
     }
 
+    // 修复学生全部课时
     public function repairStudentStotalschedule(){
         // $studentList = db('lesson_member')->field('sum(`rest_schedule`) total_schedule,student_id id')->group('student_id')->select();
 
@@ -683,7 +677,7 @@ class Index extends Controller{
         echo $StudentModel->getlastsql();
     }
 
-
+    // 修复学生全部课程
     public function repairStudentStotalslesson(){
         // $studentList = db('lesson_member')->field('sum(`rest_schedule`) total_schedule,student_id id')->group('student_id')->select();
 
@@ -696,6 +690,7 @@ class Index extends Controller{
     }
 
 
+    //班级类型
     public function sortGC(){
         
         $arr = db('grade_category')->order('sort asc')->select();
@@ -706,7 +701,7 @@ class Index extends Controller{
     }
 
 
-
+    // 班级类型树
     protected function getGradeCategoryTree($arr = [],$pid = 0){
         $list = [];
          foreach ($arr as $key => $value) {
@@ -718,6 +713,7 @@ class Index extends Controller{
         return $list;
     }
 
+    // 课程的班级类型
     public function sortLesson(){
         $list = Db::view('lesson','*')
                 ->view('grade_category','pid','lesson.gradecate_id=grade_category.id')
@@ -733,6 +729,7 @@ class Index extends Controller{
        
     }
 
+    // 班级排序
     public function sortGrade(){
         $list = Db::view('grade','*')
                 ->view('lesson','gradecate gradecates, gradecate_id gradecate_ids, gradecate_setion gradecate_setions,gradecate_setion_id gradecate_setion_ids','lesson.id=grade.lesson_id')
@@ -743,6 +740,7 @@ class Index extends Controller{
        
     }
 
+    // 添加班级类型
     public function gradecate(){
         $arr = db('test')->where(['pid'=>0])->select();
         foreach ($arr as $key => $value) {
@@ -753,12 +751,12 @@ class Index extends Controller{
         }
         
     }
-
+    // 获取定位地点
     public function getLocation(){
         $aee = file_get_contents('https://api.map.baidu.com/location/ip?ak=g5XXhTU6gY4Ka68E5ktVMrGz2uiosuTE&coor=bd09ll');
         dump($aee);die;
     }
-
+    // 获取admin树
     public function getAdmin(){
         $ids = db('admin_menu')->column('id');
         dump(json_encode($ids));

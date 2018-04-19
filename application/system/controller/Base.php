@@ -11,7 +11,7 @@ class Base extends Controller{
     protected function record($data){
     	
     	$data['create_time'] = time();
-    	dump($data);
+    	$data['date_str'] = date('Y-m-d H:i:s');
     	db('crontab_record')->insert($data);
     }
 }	
