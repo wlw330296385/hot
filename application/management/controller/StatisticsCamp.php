@@ -725,7 +725,7 @@ class StatisticsCamp extends Camp{
             $refund = input('param.refund');
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $status = input('param.status');
+            $action = input('param.action');
             
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
@@ -744,9 +744,8 @@ class StatisticsCamp extends Camp{
                 $output = 0;
             }
             
-
             $BillService = new \app\service\BillService;
-            if($status > 1){
+            if($action == 1 || $action == 3){
             
                 $refundData = [
                     'refund'=>$refund,
@@ -756,7 +755,7 @@ class StatisticsCamp extends Camp{
                     'process'=>$this->memberInfo['member'],
                     'process_id'=>$this->memberInfo['id'],
                     'process_time'=>time(),
-                    'status'=>$status,
+                    'status'=>1,
                     'agree_time'=>time()
                 ]; 
                 
@@ -764,7 +763,7 @@ class StatisticsCamp extends Camp{
                 if($res['code'] == 100){
                     $this->error($res['msg']);
                 }
-            }elseif ($status == -1) {
+            }elseif ($action == -1) {
                 $refundData = [
                     'refund'=>0,
                     'refund_fee'=>0,
@@ -773,7 +772,7 @@ class StatisticsCamp extends Camp{
                     'process'=>$this->memberInfo['member'],
                     'process_id'=>$this->memberInfo['id'],
                     'process_time'=>time(),
-                    'status'=>$status,
+                    'status'=>-1,
                     'reject_time'=>time()
                 ]; 
                 
@@ -784,7 +783,7 @@ class StatisticsCamp extends Camp{
             }else{
                 $this->error('传参错误');
             }
-            if ($status == 3) {
+            if($action == 3 || $action == 4) {
                 if($this->campInfo['rebate_type'] == 1){
                     $this->error('训练营为[课时版结算],不可以操作打款');
                 }

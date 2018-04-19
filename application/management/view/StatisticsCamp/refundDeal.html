@@ -100,7 +100,7 @@
 			<button class="btn btn-default closeModel">关闭</button> <small id="refundStatus">当前状态：{$refundInfo.status}</small>
 
 			<input type="hidden" class="form-control" name="refund_id" value="{$refundInfo.id}" >
-			<input type="hidden" class="form-control" name="status" placeholder="状态:-2:已撤销|-1:已拒绝|1:申请中|2:已同意|3:已打款" value="" >
+			<input type="hidden" class="form-control" name="action" placeholder="状态:-2:已撤销|-1:已拒绝|1:申请中|2:已同意|3:已打款" value="" >
 			<span id="operable"></span>
 		</div>
 	</div>
@@ -138,14 +138,14 @@
         if(rebateType=="2"){
             $("#getIncome").hide();
             $("#specTips").hide();
-            payed = '<button type="button" class="btn btn-success" data-value="3">同意并已打款</button>';
+            payed = '<button type="button" class="btn btn-success" data-value="3">同意已打款</button>';
 		}
 		//判断退款状态列出相应按钮
         var refundStatus = "{$refundInfo.status}";
         if(refundStatus=="已拒绝"){
             $("#operable").html('<button type="button" class="btn btn-info" data-value="2">同意</button>'+payed);
         }else if(refundStatus=="已同意"){
-            $("#operable").html(payed);
+            $("#operable").html('<button type="button" class="btn btn-success" data-value="4">打款</button>');
 		}else if(refundStatus=="申请中"){
             $("#operable").html('<button type="button" class="btn btn-danger" data-value="-1">拒绝</button><button type="button" class="btn btn-info" data-value="2">同意</button>'+payed);
 		}
