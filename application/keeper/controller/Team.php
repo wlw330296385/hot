@@ -408,7 +408,7 @@ class Team extends Base {
             }
             $matchInfo['record'] = $matchRecordInfo;
         }
-        // 判断比赛是否“免裁判”
+        // 判断比赛是否“免裁判” 0为“免裁判”
         $matchInfo['referee_type'] = 0;
         if ( !empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3']) ) {
             $matchInfo['referee_type'] = 1;
@@ -586,6 +586,19 @@ class Team extends Base {
                 if (!empty($matchRecordInfo['album'])) {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
+                // 裁判字段数据为空
+                $emptyRefereeArr = [
+                    'referee_id' => 0, 'referee' => '', 'referee_cost' => ''
+                ];
+                if ( empty($matchRecordInfo['referee1']) ) {
+                    $matchRecordInfo['referee1'] = $emptyRefereeArr;
+                }
+                if ( empty($matchRecordInfo['referee2']) ) {
+                    $matchRecordInfo['referee2'] = $emptyRefereeArr;
+                }
+                if ( empty($matchRecordInfo['referee3']) ) {
+                    $matchRecordInfo['referee3'] = $emptyRefereeArr;
+                }
                 $matchInfo['record'] = $matchRecordInfo;
             }
             // 裁判列表： 获取已同意的裁判比赛申请|邀请的裁判名单
@@ -596,6 +609,7 @@ class Team extends Base {
                 'status' => ['neq', 3]
             ])->select();
         }
+
 
         $this->assign('match_id', $match_id);
         $this->assign('matchInfo', $matchInfo);
