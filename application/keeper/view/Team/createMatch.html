@@ -172,7 +172,7 @@
                 <div class="mui-input-row">
                     <a href="#court" class="mui-navigate-right">
                         <label>球场</label>
-                        <span class="courtCont domData" name="court"></span>
+                        <span class="courtCont domData wd60" name="court"></span>
                         <input type="hidden" name="court_id" value="" class="data">
                         <input type="hidden" name="court_lng" value="" class="data">
                         <input type="hidden" name="court_lat" value="" class="data">
@@ -230,6 +230,19 @@
                     <input type="text" value="" placeholder="裁判名称" disabled class="refereeName3">
                     <input type="hidden" value="" class="refereeId3">
                     <input type="text" value="" placeholder="出场费（0）" class="refereeCost3">
+                </div>
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label class="wd45">裁判付费方式</label>
+                        <span class="select-row">
+                            <select class="data" name="referee_cost_bear">
+                                <option value="">免费</option>
+                                <option value="1">费用AA</option>
+                                <option value="2">主队负责</option>
+                                <option value="3">客队负责</option>
+                            </select>
+                        </span>
+                    </div>
                 </div>
 
                 <p class="pline"></p>
@@ -738,6 +751,12 @@
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
                 var refereeCost = $(this).attr("data-referee_cost");
+                var refereeId2 = $(".refereeId2").val();
+                var refereeId3 = $(".refereeId3").val();
+                if (refereeId == refereeId2 || refereeId == refereeId3) {
+                    mui.alert("请勿重复选择裁判");
+                    return false;
+                }
                 $(".refereeName1").val(refereeName);
                 $(".refereeId1").val(refereeId);
                 $(".refereeCost1").val(refereeCost);
@@ -784,6 +803,12 @@
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
                 var refereeCost = $(this).attr("data-referee_cost");
+                var refereeId1 = $(".refereeId1").val();
+                var refereeId3 = $(".refereeId3").val();
+                if (refereeId == refereeId1 || refereeId == refereeId3) {
+                    mui.alert("请勿重复选择裁判");
+                    return false;
+                }
                 $(".refereeName2").val(refereeName);
                 $(".refereeId2").val(refereeId);
                 $(".refereeCost2").val(refereeCost);
@@ -830,6 +855,12 @@
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
                 var refereeCost = $(this).attr("data-referee_cost");
+                var refereeId1 = $(".refereeId1").val();
+                var refereeId2 = $(".refereeId2").val();
+                if (refereeId == refereeId1 || refereeId == refereeId2) {
+                    mui.alert("请勿重复选择裁判");
+                    return false;
+                }
                 $(".refereeName3").val(refereeName);
                 $(".refereeId3").val(refereeId);
                 $(".refereeCost3").val(refereeCost);
@@ -1050,8 +1081,6 @@
                 return false;
             }
 
-
-
             // 裁判员1
             referee1 = [];
             var referee_1 = $(".refereeName1").val();
@@ -1073,13 +1102,6 @@
                 mui.toast("裁判出场费请填写数字");
                 return false;
             }
-            // if (referee_id1 != '' && referee_id2 != '' && referee_id3 != '') {
-            //     if (referee_id1 == referee_id2 || referee_id1 == referee_id3 || referee_id2 == referee_id3) {
-            //         mui.toast("请勿重复选择裁判");
-            //         return false;
-            //     }
-            // }
-
 
             referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
             referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
