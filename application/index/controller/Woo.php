@@ -319,13 +319,20 @@ class Woo extends Controller{
     }
 
     public function spu(){
-        $a = [
-            ['name'=>'包车','price'=>5200],
-            ['name'=>'不包车','price'=>5000]
-        ];
-        $b = in_array('1,2,3,4', ['a'=>1]);
-        dump($b);
-        echo json_encode($a);
+        // 测试用例 
+        $array = [
+            0=>['a','b'],1=>['a','c'],2=>['b','c'],3=>['a','b']
+        ]; 
+        $unique_arr = [
+            0=>['a','b'],1=>['a','c'],2=>['b','c']
+        ]; 
+        // 获取去掉重复数据的数组 
+        // $unique_arr = array_unique ( $array ); 
+
+        // 获取重复数据的数组 
+        $repeat_arr = array_flip($array);
+        // $repeat_arr = array_diff_assoc ( $array, $unique_arr ); 
+        dump($repeat_arr);
     }
 
     public function insql(){
@@ -784,5 +791,16 @@ class Woo extends Controller{
                                 'status'=>$value['status'] == -1?1:3,
                             ]);
         }
+    }
+
+
+    // 去掉班级重复数据
+    public function gradeMemberRepeat(){
+        $list = db('grade_member')->group('student_id')->having('count(id) > 1')->column('student');
+        echo db('grade_member')->getlastsql();
+        dump($list);
+        // db('grade_member')->where(['id'=>['in',$list]])->delete();
+        // echo db('grade_member')->getlastsql();
+        
     }
 }

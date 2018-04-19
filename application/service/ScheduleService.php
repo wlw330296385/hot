@@ -162,7 +162,7 @@ class ScheduleService
                 'lesson_id'=>$schedule['lesson_id'],
                 'lesson'=>$schedule['lesson'],
                 'type' => 1,
-                'status' => 1,
+                'status' => 0,
                 'schedule_time' => $schedule['lesson_time'],
                 'is_transfer' => $student['is_transfer'],
             ];

@@ -81,6 +81,9 @@
             {/case}
             {case  value="-1"}
             <li class="mui-table-view-cell mui-media mui-col-xs-5 opli bgred">退款中</li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli cancel" style="background:#59b200"  disabled="true">
+                撤销退款申请
+             </li>
             {/case}
             {case  value="-2"}
             <li class="mui-table-view-cell mui-media mui-col-xs-5 opli bggray">已退款</li>
@@ -152,6 +155,33 @@ $(function(){
         });
     })
 
+    // 申请退款
+    $(".cancel").click(function(){
+        mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
+            data:{
+                'action':5,
+            },
+            dataType:'json',//服务器返回json格式数据
+            type:'post',//HTTP请求类型
+            timeout:10000,//超时时间设置为10秒；
+            headers:{'Content-Type':'application/json'},                  
+            success:function(result){ 
+                //服务器返回响应，根据响应结果，分析是否登录成功；
+                if(result.code == 200){
+                    mui.alert('',result.msg,'确定',function(){
+                        location.reload();
+                    });
+                }else{
+                    mui.alert('',result.msg,'确定',function(){
+                    });
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+            }
+        });
+    })
 
     // 立即支付
     $('#wxpay').on('click',function(){

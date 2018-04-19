@@ -382,7 +382,7 @@ class BillService {
         $billInfo = $this->getBill($map);   
         $MessageService = new \app\service\MessageService;            
         switch ($data['action']) {
-        // 退款操作
+        // 申请退款操作
             case '1':
                 if($billInfo['member_id']!= session('memberInfo.id','','think')){
                     return ['code'=>100,'msg'=>'不是您的订单不能申请退款,谢谢'];
@@ -487,6 +487,7 @@ class BillService {
                                 $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
                                 if($rest_schedule == 0){
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
+                                    
                                 }else{
                                     db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
                                 }
@@ -551,7 +552,35 @@ class BillService {
                             $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
                         }
                     break;
+            //撤销退款
+                case '5': 
+                    $result = $this->Bill->save(['status'=>1],$map);
+                    $Refund = new \app\model\Refund;
+                    $Refund->save(['status'=>-2,'cancel_time'=>time()],['bill_id'=>$billInfo['id']]);
+                    if($result){
+                            //发送信息给用户
+                            $MessageData = [
+                                "touser" => session('memberInfo.openid'),
+                                "template_id" => config('wxTemplateID.successCheck'),
+                                "url" => url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                "topcolor"=>"#FF0000",
+                                "data" => [
+                                    'first' => ['value' => "{$billInfo['goods']}退款申请已撤销"],
+                                    'keyword1' => ['value' => '您的退款申请已撤销'],
+                                    'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
+                                    'remark' => ['value' => '如有疑问,请联系客服']
+                                ]
+                            ];
+                            $saveData = [
+                                            'title'=>"{$billInfo['goods']}退款申请已撤销",
+                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付信息:{$billInfo['student']}",
+                                            'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                            'member_id'=>$billInfo['member_id']
+                                        ];
 
+                            $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
+                        }
+                    break;       
             //其他  
                 default:
                     return ['code'=>100,'msg'=>'非法操作'];
