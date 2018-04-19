@@ -105,11 +105,11 @@ class Grade extends Base{
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$gradeInfo['camp_id'],'status'=>1]);
     	// 获取班级学生
-    	$students = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);
+    	$students = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1])->select();
 
         // 教案列表
         $PlanService = new \app\service\PlanService;
-        $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
+        $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1])->select();
         // dump($gradeInfo);die;
         $this->assign('delete_time',time());
         $this->assign('planList',$planList);
