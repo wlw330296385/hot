@@ -725,7 +725,7 @@ class StatisticsCamp extends Camp{
             $refund = input('param.refund');
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $action = input('param.action');
+            $action = input('param.action');//2=同意,3=同意并打款
             
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
@@ -745,7 +745,7 @@ class StatisticsCamp extends Camp{
             }
             
             $BillService = new \app\service\BillService;
-            if($action == 1 || $action == 3){
+            if($action == 2 || $action == 3){
             
                 $refundData = [
                     'refund'=>$refund,
