@@ -209,16 +209,11 @@ class GradeService{
     // 批量更新班级-学生grade_member数据
     public function saveAllGradeMember($data,$grade_id) {
         $model = new GradeMember();
-        $result = $model->where(['grade_id'=>$grade_id])->delete();
-        if ($result) {
-            
-            return ['code' => 200, 'msg' => __lang('MSG_200')];
-        } else {
-            $res = false;
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
-        }
+        db('grade_member')->where(['grade_id'=>$grade_id])->delete();
+ 
+        $res = $model->saveAll($data);
         if ($res) {
-
+           
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_400')];

@@ -736,14 +736,14 @@ class StatisticsCamp extends Camp{
             if($refundamount <= $refund){
                 $this->error('打款金额不可大于退款金额');
             }
-            if($this->campInfo['rebate_type'] == 1){
+            
+            if($this->campInfo['rebate_type'] == 1){//课时版
                 $refund_fee = ($refundamount - $refund)*$this->campInfo['schedule_rebate'];
-                $output = $refundamount - $refund - $refund_fee;
+                $output = 0;
             }else{
                 $refund_fee = 0;
-                $output = 0;
+                $output = $refund;//手续费+退款金额;
             }
-            
             $BillService = new \app\service\BillService;
             if($action == 2 || $action == 3){
             
@@ -780,13 +780,12 @@ class StatisticsCamp extends Camp{
                 if($res['code'] == 100){
                     $this->error($res['msg']);
                 }
-            }else{
-                $this->error('传参错误,操作代码不一致');
             }
             if($action == 3 || $action == 4) {
                 if($this->campInfo['rebate_type'] == 1){
                     $this->error('训练营为[课时版结算],不可以操作打款');
                 }
+                
                 //训练营营业额支出
                 db('output')->insert([
                     'output'        => $output,
