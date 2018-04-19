@@ -17,127 +17,12 @@
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
-        .opBtn {
-            padding: 5px 16px;
-        }
-
         .coloricon {
             width: 2.3em;
             height: 2.3em;
             vertical-align: -0.7em;
             fill: currentColor;
             overflow: hidden;
-        }
-
-        @media screen and (min-width: 320px) {
-            .personalImg {
-                width: 100%;
-                height: 10rem;
-            }
-            .personalInfo {
-                padding: 2px 10px 0 10px;
-            }
-            .hotNum {
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                border: 4px solid #ddd;
-                margin-left: 80px;
-                background: #fff;
-                text-align: center;
-                padding-top: 20px;
-                font-size: 22px;
-                color: #dd524d;
-            }
-            .assess {
-                font-size: 12px;
-                margin-bottom: 0;
-                text-align: center;
-                line-height: 20px !important;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .personalImg {
-                width: 100%;
-                height: 11.7rem;
-            }
-            .personalInfo {
-                padding: 7px 10px 0 10px;
-            }
-            .hotNum {
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                border: 4px solid #ddd;
-                margin-left: 88px;
-                margin-top: 10px;
-                background: #fff;
-                text-align: center;
-                padding-top: 25px;
-                font-size: 24px;
-                color: #dd524d;
-            }
-            .assess {
-                font-size: 12px;
-                margin-top: 11px;
-                margin-bottom: 0;
-                text-align: center;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            .personalImg {
-                width: 100%;
-                height: 12.9rem;
-            }
-            .hotNum {
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                border: 4px solid #ddd;
-                margin-left: 107px;
-                margin-top: 10px;
-                background: #fff;
-                text-align: center;
-                padding-top: 30px;
-                font-size: 24px;
-                color: #dd524d;
-            }
-            .assess {
-                font-size: 12px;
-                margin-top: 20px;
-                margin-bottom: 0;
-                text-align: center;
-                line-height: 20px !important;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .personalImg {
-                width: 100%;
-                height: 24rem;
-            }
-            .hotNum {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                border: 6px solid #ddd;
-                margin-left: 243px;
-                margin-top: 25px;
-                background: #fff;
-                text-align: center;
-                padding-top: 48px;
-                font-size: 35px;
-                color: #dd524d;
-            }
-            .assess {
-                font-size: 16px;
-                margin-top: 140px;
-                margin-bottom: 0;
-                text-align: center;
-                line-height: 20px !important;
-            }
         }
     </style>
 </head>
@@ -148,22 +33,21 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">{$teamInfo.name}队员资料</h1>
     </header>
-    <div class="mui-content  mt55">
 
-        <div class="list detalis-list otherInfo">
-
+    <div class="mui-content mt55">
+        <div class="list">
 
             <div class="mui-row" style="line-height: 11px !important">
                 <div class="mui-col-sm-6 mui-col-xs-6">
-                    <img src="/static/frontend/images/1.jpg" class="personalImg" />
+                    <img src="{$teamMemberInfo.avatar}" class="personalImg" />
                 </div>
                 <div class="mui-col-sm-6 mui-col-xs-6 personalInfo">
-                    <h4>Easy Chen</h4>
+                    <h4>{$teamMemberInfo.member}</h4>
                     <p style="margin: 0;line-height: 20px;">粉丝
-                        <text class="colororange">322</text>
+                        <text class="colororange">{$teamInfo.fans_num}</text>
                     </p>
                     <p style="margin: 0;line-height: 20px;">热能量值</p>
-                    <p class="hotNum">443</p>
+                    <p class="hotNum">20</p>
                     <p class="assess">评估时间：2018-04-12</p>
                 </div>
             </div>
@@ -173,10 +57,10 @@
                     <div class="mui-media-body  wd66">
                         <strong class="f16">{$teamMemberInfo.name}</strong>
                         <i class="icon iconfont icon-sex{$teamMemberInfo.sex}"></i>
-                        <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
+                        <!-- <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
                         <em class="colorred">
                             <strong>VIP-1</strong>
-                        </em>
+                        </em> -->
                         <p class="mui-ellipsis" style="line-height:20px">{$teamInfo.city} {$teamInfo.area}</p>
                         <p class="mui-ellipsis" style="line-height:20px ">年龄:
                             <text class="colororange">{$teamInfo.avg_age}</text> 身高:
@@ -185,16 +69,13 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <p class="mui-ellipsis">粉丝数：
-                            <text class="colororange">{$teamInfo.fans_num}</text>
-                        </p>
-                        <button class="mui-btn bgred opBtn follow" style="margin-top:7px">关注</button>
+                        <button class="mui-btn bgred follow" style="margin-top:26px">关注</button>
                     </div>
                 </li>
             </ul>
 
             <!--个人宣言-->
-            <ul class="mui-table-view mb">
+            <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli detalisli">个人宣言
                     <span class="about mui-text-left description">{$teamMemberInfo.description}</span>
                 </li>
@@ -204,35 +85,35 @@
             <div class="page-header">
                 <span class="course">2018赛季数据</span>
             </div>
-            <div class="nav-list record mb">
+            <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-home-equipment"></use>
+                            <use xlink:href="#icon-p-game"></use>
                         </svg>
                         <span class="f14" style="display: block;">比赛</span>
-                        <div class="mui-media-body f18 colororange">37</div>
+                        <div class="mui-media-body f18 colororange">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-home-activity"></use>
+                            <use xlink:href="#icon-p-efficiency"></use>
                         </svg>
                         <span class="f14" style="display: block;">效率</span>
-                        <div class="mui-media-body f18 colororange">39</div>
+                        <div class="mui-media-body f18 colororange">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-home-game"></use>
+                            <use xlink:href="#icon-p-workout"></use>
                         </svg>
                         <span class="f14" style="display: block;">锻炼</span>
-                        <div class="mui-media-body f18 colororange">38</div>
+                        <div class="mui-media-body f18 colororange">0</div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-home-VS"></use>
+                            <use xlink:href="#icon-p-constitution"></use>
                         </svg>
                         <span class="f14" style="display: block;">体质</span>
-                        <div class="mui-media-body f18 colororange">36</div>
+                        <div class="mui-media-body f18 colororange">0</div>
                     </li>
                 </ul>
             </div>
@@ -244,7 +125,7 @@
                     <a href="{:url('team/personalMatchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">单场数据</a>
                 </span>
             </div>
-            <div class="nav-list mb">
+            <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <span class="f14">得分</span>
@@ -284,25 +165,25 @@
             <!--赛季个人效率-->
             <div class="page-header">
                 <span class="course">赛季个人效率</span>
-                <span class="more pdr15">
+                <span class="more">
                     <a class="mui-navigate-right f14">历史数据</a>
                 </span>
             </div>
 
-            <ul class="mui-table-view mui-text-center list mb">
+            <ul class="mui-table-view mui-text-center list">
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row">
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>首发</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">45</strong>
+                            <strong class="colorred">0</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>命中率</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">37.3%</strong>
+                            <strong class="colorred">0</strong>
                         </div>
                     </div>
                 </li>
@@ -319,10 +200,10 @@
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>二分球</strong>
                         </div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">13</div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">25</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">37.3%</strong>
+                            <strong class="colorred">0</strong>
                         </div>
                     </div>
                 </li>
@@ -331,10 +212,10 @@
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>三分球</strong>
                         </div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">13</div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">25</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">37.3%</strong>
+                            <strong class="colorred">0</strong>
                         </div>
                     </div>
                 </li>
@@ -343,10 +224,10 @@
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>罚球</strong>
                         </div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">13</div>
-                        <div class="mui-col-sm-3 mui-col-xs-3">25</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
+                        <div class="mui-col-sm-3 mui-col-xs-3">0</div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">37.3%</strong>
+                            <strong class="colorred">0</strong>
                         </div>
                     </div>
                 </li>
@@ -355,7 +236,7 @@
             <!--个人荣誉-->
             <div class="page-header">
                 <span class="course">个人荣誉</span>
-                <span class="more pdr15">
+                <span class="more">
                     <a class="mui-navigate-right f14">更多</a>
                 </span>
             </div>
@@ -367,11 +248,11 @@
                     <span class="noDataTip"></span>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list border-b teammember">
+            <ul class="mui-table-view list border-b teammember coach">
                 {volist name="memberOtherTeam" id="vol"}
-                <li class="mui-table-view-cell mui-media listli" id="logoframe">
+                <li class="mui-table-view-cell mui-media listli">
                     <a href="{:url('team/teamInfo',['team_id'=>$vol.team['id']])}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left logostyle" src="{$vol.team.logo}">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$vol.team.logo}">
                         <div class="mui-media-body wd60">{$vol.team.name}
                             <p class="mui-ellipsis">入队时间:{$vol.team.create_time}</p>
                         </div>
@@ -386,7 +267,7 @@
                 <span class="course">球员印象
                     <span class="noDataTip"></span>
                 </span>
-                <span class="more pdr15">
+                <span class="more">
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
                 </span>
             </div>
@@ -436,21 +317,35 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue memberEdit">
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <a href="#shareGuide">
+                    分享
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue">
+                <a href="#fbcomment">评论</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit">
                 <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'id'=>$teamMemberInfo['id']])}">
                     编辑
                 </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
-                <a href="#fbcomment">评论</a>
             </li>
         </ul>
 
     </div>
 
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
     <!-- 发表印象 -->
     <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+        <div class="list">
             <ul class="mui-table-view operation">
                 <h5>
                     <span>我的印象</span>
@@ -464,32 +359,26 @@
 
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5>
-                    <span class="type">评价一下</span>
-                    <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <li class="listli">
-                    <textarea rows="4" class="comment" placeholder="评价一下这个球员吧。"></textarea>
-                </li>
-                <li class="mui-col-xs-12 opli fbcommentBtn">发表</li>
-            </ul>
-        </div>
+        <ul class="mui-table-view operation list">
+            <h5>
+                <span class="type">评价一下</span>
+                <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
+            </h5>
+            <li class="listli">
+                <textarea rows="4" class="comment" placeholder="评价一下这个球员吧。"></textarea>
+            </li>
+            <li class="mui-col-xs-12 opli fbcommentBtn">发表</li>
+        </ul>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.view.js "></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
         });
-        (function ($) {
-            $('.mui-scroll-wrapper').scroll({
-                indicators: true //是否显示滚动条
-            });
-        })(mui);
 
         var member = "{$teamMemberInfo.member}";
         var member_id = "{$teamMemberInfo.member_id}";
@@ -758,7 +647,7 @@
             toTagAllList(); //所有标签列表
             toTagCommentList(); //已经评价的标签列表
             toCommentList(); //获取评论列表
-            toHonorList();
+            toHonorList(); // 获取荣誉列表
         });
 
         //下拉刷新具体业务实现
@@ -949,7 +838,44 @@
             });
         };
     </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$teamMemberInfo.name}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$teamMemberInfo.avatar}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: "{$teamMemberInfo.name}",
+                desc: "{$teamMemberInfo.description}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$teamMemberInfo.avatar}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
 
+        });
+    </script>
 </body>
 
 </html>

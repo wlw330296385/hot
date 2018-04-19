@@ -73,7 +73,7 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">球员数据</h1>
     </header>
@@ -124,7 +124,7 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view list border-b honorList">
+            <ul class="mui-table-view border-b honorList">
                 <li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
@@ -260,7 +260,8 @@
 
         </div>
 
-        <div class="page-header bggray2 border-b ">
+        <!-- 评论区 -->
+        <div class="page-header border-b ">
             <span class="course wd52">评论</span>
             <span class="more f14">评论
                 <span class="comment_count">0</span>&nbsp;|&nbsp;
@@ -277,30 +278,38 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue">
+            <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli">
+                <a href="#shareGuide">分享</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-7 mui-col-sm-7 opli bgblue">
                 <a href="#fbcomment">发表评论</a>
             </li>
-
         </ul>
 
     </div>
 
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
 
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
-            <ul class="mui-table-view operation">
-                <h5>
-                    <span class="type">评价一下</span>
-                    <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
-                </h5>
-                <li class="listli">
-                    <textarea rows="4" class="comment" placeholder="为这个比赛做做评价吧。"></textarea>
-                </li>
-                <li class="mui-col-xs-12 opli commentBtn">发表</li>
-            </ul>
-        </div>
+        <ul class="mui-table-view operation list">
+            <h5>
+                <span class="type">评价一下</span>
+                <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
+            </h5>
+            <li class="listli">
+                <textarea rows="4" class="comment" placeholder="为这个比赛做做评价吧。"></textarea>
+            </li>
+            <li class="mui-col-xs-12 opli commentBtn">发表</li>
+        </ul>
+    </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -314,7 +323,37 @@
 
         $(function () {
             pulldownRefresh(); //页面打开时获取一次最新评论信息
-            // isthumbsup(); //点赞状态
+            isthumbsup(); //点赞状态
+            followStatus(); //判断当前的关注状态
+
+            // 关注球队
+            $(".follow").on("tap", '', function () {
+                var team_id = "{$teamInfo.id}";
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             var count = 1;
             //评论功能
@@ -385,6 +424,34 @@
             });
 
         });
+        // 判断当前的关注状态
+        function followStatus() {
+            var team_id = "{$teamInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         // 点赞状态
         function isthumbsup() {

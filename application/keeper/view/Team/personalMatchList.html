@@ -35,38 +35,37 @@
 
         @media screen and (min-width:320px) {
             #refreshContainer {
-                margin-top: 324px
+                margin-top: 315px
             }
         }
 
         @media screen and (min-width:375px) {
             #refreshContainer {
-                margin-top: 303px
+                margin-top: 294px
             }
         }
     </style>
 </head>
 
-<body class=whitebg>
+<body>
+
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">个人比赛列表</h1>
     </header>
 
-    <div class="mui-content">
-
-        <div class="list camp-list detalis-list otherInfo mt55">
-
+    <div class="mui-content ">
+        <div class="list">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                     <div>
                         <strong class="f16">{$teamInfo.name}</strong>
                         <i class="icon iconfont icon-sex1"></i>
-                        <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
+                        <!-- <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
                         <em class="colorred">
                             <strong>VIP-1</strong>
-                        </em>
+                        </em> -->
                     </div>
                     <div class="mui-media-body">
                         <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
@@ -80,7 +79,7 @@
                 </li>
             </ul>
 
-            <form action="" class="mui-input-group">
+            <form class="mui-input-group">
                 <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
                     <div class="mui-navigate-right">
                         <span id="result" class="ui-alert year">选择赛季</span>
@@ -153,11 +152,21 @@
 
     </div>
 
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -183,9 +192,7 @@
 
         var member_id = "{$memberInfo.id}";
         $(function () {
-
             followStatus(); //判断当前的关注状态
-
             // 关注会员
             $(".follow").on("tap", '', function () {
                 mui.ajax("{:url('api/follow/focus')}", {

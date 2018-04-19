@@ -673,10 +673,6 @@ class MatchService {
         }
         $result = $res->toArray();
         foreach ($result as $k => $val) {
-            // 裁判信息转格式
-            if (!empty($val['match']['referee_str'])) {
-                $result[$k]['match']['referee_str'] = json_decode($val['match']['referee_str'], true);
-            }
             // 比赛时间戳
             if ($val['match']['match_time']) {
                 $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
