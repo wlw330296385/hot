@@ -109,7 +109,7 @@ class Grade extends Base{
 
         // 教案列表
         $PlanService = new \app\service\PlanService;
-        $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1])->select();
+        $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
         // dump($gradeInfo);die;
         $this->assign('delete_time',time());
         $this->assign('planList',$planList);
