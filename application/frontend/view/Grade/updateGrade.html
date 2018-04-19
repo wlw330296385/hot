@@ -123,16 +123,16 @@
                             {volist name="students" id="vol"}
                             <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"
                                 data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"
-                                data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
+                                data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-student_typenum="{$vol.type}"> {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
-
-                        <div id="hideStListIni">
-                            {volist name="students" id="vol"}
-                            <input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"
-                                data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"
-                                data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}
-                        </div>
+                        <!--考虑去除-->
+                        <!--<div id="hideStListIni">-->
+                            <!--{volist name="students" id="vol"}-->
+                            <!--<input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"-->
+                                <!--data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"-->
+                                <!--data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}-->
+                        <!--</div>-->
                     </a>
                 </div>
 
@@ -703,7 +703,9 @@
                 var lesson_id = $(this).attr("data-lesson_id");
                 var member = $(this).attr("data-member");
                 var member_id = $(this).attr("data-member_id");
-                studentList[i] = { student: student, student_id: student_id, status: 1, id: id, amp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum };
+                var grade = "{$gradeInfo.grade}";
+                var grade_id = "{$gradeInfo.id}";
+                studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, id: id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
             });
 
             //学员列表复选框赋值
@@ -772,8 +774,10 @@
                     var lesson_id = $(this).attr("data-lesson_id");
                     var member = $(this).attr("data-member");
                     var member_id = $(this).attr("data-member_id");
+                    var grade = "{$gradeInfo.grade}";
+                    var grade_id = "{$gradeInfo.id}";
 
-                    studentList[i] = { student: student, student_id: student_id, id: id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
+                    studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, id: id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
                     inputList += '<input type="hidden" class="stdList" data-id="' + id + '" data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-student_typenum="' + student_typenum + '" >';
                     studentNames += student + ','
                 });
@@ -1016,58 +1020,57 @@
                     return false;
                 } else {
 
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    studentList = [];
-
-                    var idNewID = ""
-                    //新增学员
-                    $("#hideStList input").each(function (i) {
-                        var sid = $(this).attr("data-student_id");
-                        //默认为新添加学员
-                        idNewID = "Yes";
-                        //该学员遍历原学生表判断是否存在
-                        $("#hideStListIni input").each(function () {
-                            if (sid == $(this).attr("data-student_id")) {
-                                console.log($(this).attr("data-student_id"))
-                                idNewID = "No";
-                                return false;
-                            }
-                        });
-                        //上面遍历过不存在就添加到最终变动学员列表中
-                        if (idNewID == "Yes") {
-                            var student_id = $(this).attr("data-student_id");
-                            var student = $(this).attr("data-student");
-                            var student_typenum = $(this).attr("data-student_typenum");
-                            var camp = $(this).attr("data-camp");
-                            var camp_id = $(this).attr("data-camp_id");
-                            var lesson = $(this).attr("data-lesson");
-                            var lesson_id = $(this).attr("data-lesson_id");
-                            var member = $(this).attr("data-member");
-                            var member_id = $(this).attr("data-member_id");
-                            studentList.push({ student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, grade: "{$gradeInfo.grade}", grade_id: "{$gradeInfo.id}", status: 1 });
-                        }
-                    });
-
-                    var idDelID = ""
-                    //去除学员
-                    $("#hideStListIni input").each(function (i) {
-                        var dsid = $(this).attr("data-student_id");
-                        //默认为要去除的学员
-                        idDelID = "Yes";
-                        //该学员遍历新编辑的学生表判断是否存在
-                        $("#hideStList input").each(function () {
-                            if (dsid == $(this).attr("data-student_id")) {
-                                idDelID = "No";
-                                return false;
-                            }
-                        });
-                        //上面遍历过不存在就添加到最终变动学员列表中
-                        if (idDelID == "Yes") {
-                            var id = $(this).attr("data-id");
-                            studentList.push({ id: id, status: 2 });
-
-                        }
-                    });
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 20180419考虑去除只传【新增、删除】学员处理：丽文只要提交最终名单（最终名单在选择学员确认时已经组合数组）
+//                    studentList = [];
+//
+//                    var idNewID = ""
+//                    //新增学员
+//                    $("#hideStList input").each(function (i) {
+//                        var sid = $(this).attr("data-student_id");
+//                        //默认为新添加学员
+//                        idNewID = "Yes";
+//                        //该学员遍历原学生表判断是否存在
+//                        $("#hideStListIni input").each(function () {
+//                            if (sid == $(this).attr("data-student_id")) {
+//                                console.log($(this).attr("data-student_id"))
+//                                idNewID = "No";
+//                                return false;
+//                            }
+//                        });
+//                        //上面遍历过不存在就添加到最终变动学员列表中
+//                        if (idNewID == "Yes") {
+//                            var student_id = $(this).attr("data-student_id");
+//                            var student = $(this).attr("data-student");
+//                            var student_typenum = $(this).attr("data-student_typenum");
+//                            var camp = $(this).attr("data-camp");
+//                            var camp_id = $(this).attr("data-camp_id");
+//                            var lesson = $(this).attr("data-lesson");
+//                            var lesson_id = $(this).attr("data-lesson_id");
+//                            var member = $(this).attr("data-member");
+//                            var member_id = $(this).attr("data-member_id");
+//                            studentList.push({ student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, grade: "{$gradeInfo.grade}", grade_id: "{$gradeInfo.id}", status: 1 });
+//                        }
+//                    });
+//
+//                    var idDelID = ""
+//                    //去除学员
+//                    $("#hideStListIni input").each(function (i) {
+//                        var dsid = $(this).attr("data-student_id");
+//                        //默认为要去除的学员
+//                        idDelID = "Yes";
+//                        //该学员遍历新编辑的学生表判断是否存在
+//                        $("#hideStList input").each(function () {
+//                            if (dsid == $(this).attr("data-student_id")) {
+//                                idDelID = "No";
+//                                return false;
+//                            }
+//                        });
+//                        //上面遍历过不存在就添加到最终变动学员列表中
+//                        if (idDelID == "Yes") {
+//                            var id = $(this).attr("data-id");
+//                            studentList.push({ id: id, status: 2 });
+//                        }
+//                    });
                     var coach_salary = $('input[name="coach_salary"]').val();
                     var coach_salaryIni = "{$gradeInfo.coach_salary}";
                     var assistant_salary = $('input[name="assistant_salary"]').val();
@@ -1115,7 +1118,7 @@
                     objData.studentData = JSON.stringify(studentList);
                     console.log(studentList);
                     console.log(objData);
-                    // return;
+                    //return false;
                     var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     console.log(ajaxResult);
