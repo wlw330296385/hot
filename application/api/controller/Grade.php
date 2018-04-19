@@ -202,7 +202,7 @@ class Grade extends Base{
 
             if ( !empty($data['studentData']) && $data['studentData'] != '[]' ) {
                 $studentData = json_decode($data['studentData'], true);
-                $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData);
+                $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
                 if ($resSaveGradeMember['code'] == 100) {
                     return json($resSaveGradeMember);
                 }

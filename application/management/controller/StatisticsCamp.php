@@ -725,12 +725,12 @@ class StatisticsCamp extends Camp{
             $refund = input('param.refund');
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $action = input('param.action');//2=同意,3=同意并打款
+            $action = input('param.action');//2=同意,3=同意并打款,4=同意后打款;
             
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
             if(!$refundInfo){
-                $this->error('传参错误');
+                $this->error('传参错误,找不到退款信息');
             }
             $refundamount = $refundInfo['refundamount'];
             if($refundamount <= $refund){
@@ -755,7 +755,7 @@ class StatisticsCamp extends Camp{
                     'process'=>$this->memberInfo['member'],
                     'process_id'=>$this->memberInfo['id'],
                     'process_time'=>time(),
-                    'status'=>1,
+                    'status'=>2,
                     'agree_time'=>time()
                 ]; 
                 
@@ -781,7 +781,7 @@ class StatisticsCamp extends Camp{
                     $this->error($res['msg']);
                 }
             }else{
-                $this->error('传参错误');
+                $this->error('传参错误,操作代码不一致');
             }
             if($action == 3 || $action == 4) {
                 if($this->campInfo['rebate_type'] == 1){
