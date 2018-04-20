@@ -41,8 +41,11 @@
                     <div class="mui-media-body wd49" style="line-height:20px !important">
                         <p class="mui-ellipsis">{$coachInfo.province} {$coachInfo.city} {$coachInfo.area}</p>
                         <p class="f12">
-                            教龄：<strong class="colororange">{$coachInfo.coach_year}</strong> <i class="fgline">|</i>
-                            等级：<strong class="colororange">{$coachInfo.coach_rank}</strong>
+                            教龄：
+                            <strong class="colororange">{$coachInfo.coach_year}</strong>
+                            <i class="fgline">|</i>
+                            等级：
+                            <strong class="colororange">{$coachInfo.coach_rank}</strong>
                         </p>
                     </div>
                     <div class="price-frame" style="padding:0;">
@@ -62,7 +65,9 @@
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli detalisli listinitial">教练宣言
-                    <span class="about">{$coachInfo.description}<a href="javascript:void(0)">......全文展示</a></span>
+                    <span class="about">{$coachInfo.description}
+                        <a href="javascript:void(0)">......全文展示</a>
+                    </span>
                 </li>
             </ul>
 
@@ -152,16 +157,26 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli">
+                <li class="mui-table-view-cell mui-col-xs-2 opli">
+                    <a href="#shareGuide">分享</a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#comment" id="typeBtn1">我要评价</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 opli">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
                     <a href="#invitation" class="typeBtn2">邀请加入</a>
                 </li>
             </ul>
 
         </div>
-
+        <!--分享-->
+        <div id="shareGuide" class="mui-popover">
+            <div class="shareGuideText">1、点击右上角的
+                <span class="shareEllipsis">···</span>
+                <img src="/static/frontend/images/esp.png" alt="">
+            </div>
+            <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+        </div>
         <!-- 发表印象 -->
         <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
             <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
@@ -243,7 +258,7 @@
 
             //判断训练营宣言长度是否超过30字符
             var aboutlen = $(".about").text();
-            if(aboutlen.length<42){
+            if (aboutlen.length < 42) {
                 $(".about a").hide();
             }
             //展示训练营介绍全文
@@ -255,8 +270,8 @@
             // 星星显示
             var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
             starShow(star);
-            if(isNaN(star)){star=3}
-            $(".starScore").prepend('评分 '+star+'.0');
+            if (isNaN(star)) { star = 3 }
+            $(".starScore").prepend('评分 ' + star + '.0');
 
             //教练员介绍内容
             var introduce = $(".introBox").children().hasClass("operationDiv");

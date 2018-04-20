@@ -148,36 +148,50 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
                 <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="#shareGuide">分享</a>
+            </li>
             {switch name="variable"} {case value='1'}
             <!--报名状态-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli">
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
                 <a href="tel:{$eventInfo.telephone}">
-                    <span class="mui-icon mui-icon-phone"></span> 咨询</a>
+                    <!-- <span class="mui-icon mui-icon-phone"></span>  -->
+                    咨询</a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli ">剩余
+            <li class="mui-table-view-cell mui-col-xs-4 opli ">剩余
                 <font class="surplus colororange"></font>名额</li>
             {if empty($EventMemberList)}
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen signupbtn">报名</li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli bggreen signupbtn">报名</li>
             {else /}
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli ">已报名</li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli ">已报名</li>
             {/if} {/case} {case value='3'}
             <!--报名人数已满-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">报名人数已满</li>
+            <li class="mui-table-view-cell mui-col-xs-10 opli bggray">报名人数已满</li>
             {/case} {case value='2'}
             <!--已下架-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">已下架</li>
+            <li class="mui-table-view-cell mui-col-xs-10 opli bggray">已下架</li>
             {/case} {case value='4'}
             <!--已过期-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-10 opli bggray">已过期</li>
+            <li class="mui-table-view-cell mui-col-xs-10 opli bggray">已过期</li>
             {/case} {/switch}
         </ul>
     </div>
-     <!-- 卡券弹框 -->
+
+     <!--分享-->
+     <div id="shareGuide" class="mui-popover">
+            <div class="shareGuideText">1、点击右上角的
+                <span class="shareEllipsis">···</span>
+                <img src="/static/frontend/images/esp.png" alt="">
+            </div>
+            <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+        </div>
+
+    <!-- 卡券弹框 -->
     <div id="cppopover" class="mui-popover" style="width: 95% !important;">
         <div class="mui-popover-arrow"></div>
         <div class="page-header explain-title">
@@ -190,7 +204,9 @@
 
                 <div class="coupon">
                     <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
                         <div class="cFrom">{$vol.organization}</div>
                         <div class="cName">{$vol.coupon}</div>
                         <div class="cDate">{$vol.start} 至 {$vol.end}</div>
@@ -198,16 +214,18 @@
                     </div>
                     <div class="tips">
                         <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
                     </div>
                 </div>
-                {/volist}
-
-                {volist empty="" name="couponListOfCamp" id="vol" }
+                {/volist} {volist empty="" name="couponListOfCamp" id="vol" }
 
                 <div class="coupon">
                     <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
                         <div class="cFrom">{$vol.organization}</div>
                         <div class="cName">{$vol.coupon}</div>
                         <div class="cDate">{$vol.start} 至 {$vol.end}</div>
@@ -215,7 +233,9 @@
                     </div>
                     <div class="tips">
                         <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
                     </div>
                 </div>
                 {/volist}

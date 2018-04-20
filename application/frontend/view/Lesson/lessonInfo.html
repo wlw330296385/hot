@@ -31,7 +31,10 @@
                             <p class="mui-ellipsis">{$lessonInfo.gradecate_setion}{$lessonInfo.gradecate}</p>
                         </div>
                         <div class="price-frame">
-                            <p class="price">￥<strong>{$lessonInfo.cost}</strong><span class="nofloat"> / 课时</span></p>
+                            <p class="price">￥
+                                <strong>{$lessonInfo.cost}</strong>
+                                <span class="nofloat"> / 课时</span>
+                            </p>
                         </div>
                     </a>
                 </li>
@@ -41,17 +44,23 @@
                 {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
                 <li class="mui-table-view-cell listli">
                     <a href="#cppopover">
-                    <ul class="mini-coupon">
+                        <ul class="mini-coupon">
 
-                    {volist empty="" name="couponListOfSystem" id="vol" }
-                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
-                    {/volist}
+                            {volist empty="" name="couponListOfSystem" id="vol" }
+                            <li>
+                                <div>
+                                    <span>{$vol.coupon}</span>赠券</div>
+                                <i></i>
+                            </li>
+                            {/volist} {volist empty="" name="couponListOfCamp" id="vol" }
+                            <li>
+                                <div>
+                                    <span>{$vol.coupon}</span>赠券</div>
+                                <i></i>
+                            </li>
+                            {/volist}
 
-                    {volist empty="" name="couponListOfCamp" id="vol" }
-                        <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
-                    {/volist}
-
-                    </ul>
+                        </ul>
                     </a>
                 </li>
                 {/if}
@@ -64,17 +73,39 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <a class="mui-navigate-right" href="{:url('frontend/camp/campInfo',['camp_id'=>$lessonInfo['camp_id']])}">
-                    所属训练营<span class="wd66" id="aaa">{$lessonInfo.camp}</span>
+                        所属训练营
+                        <span class="wd66" id="aaa">{$lessonInfo.camp}</span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label><span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label><span>{$lessonInfo.court}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label><span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label>
+                    <span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span>
                 </li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-EventLocati colororange"></span>具体地址</label><span>{$lessonInfo.location}</span></li>
-                <li class="mui-table-view-cell listli"><label><span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label><span>{$lessonInfo.min}-{$lessonInfo.max}人</span></li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label>
+                    <span>{$lessonInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label>
+                    <span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>具体地址</label>
+                    <span>{$lessonInfo.location}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label>
+                    <span>{$lessonInfo.min}-{$lessonInfo.max}人</span>
+                </li>
 
-                <li class="mui-table-view-cell listli">备注<span>{$lessonInfo.remarks}</span></li>
+                <li class="mui-table-view-cell listli">备注
+                    <span>{$lessonInfo.remarks}</span>
+                </li>
             </ul>
 
             <!--推荐人信息-->
@@ -96,17 +127,35 @@
             <!--<li class="mui-table-view-cell mui-col-xs-12 opli bggreen" style="color: #fff">-->
             <!--此功能维护中，请稍后再使用-->
             <!--</li>-->
-            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli"><a href="{$homeurl}"><span
-                    class="mui-icon icon iconfont icon-nav-Home"></span></a></li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli"><a href="tel:{$lessonInfo.telephone}"><span
-                    class="mui-icon mui-icon-phone"></span> 咨询</a></li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                <a href="{$homeurl}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="#shareGuide">分享</a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                <a href="tel:{$lessonInfo.telephone}">
+                    <!-- <span class="mui-icon mui-icon-phone"></span> -->
+                     咨询</a>
+            </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bgblue" id="bookLesson">预约体验</li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" id="buyLesson">购买课程</a>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen" id="buyLesson">购买课程</a>
             </li>
         </ul>
     </div>
     <input type="hidden" name="{$shareurl}">
 
+
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+            <div class="shareGuideText">1、点击右上角的
+                <span class="shareEllipsis">···</span>
+                <img src="/static/frontend/images/esp.png" alt="">
+            </div>
+            <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+        </div>
 
     <!-- 卡券弹框 -->
     <div id="cppopover" class="mui-popover" style="width: 95% !important;">
@@ -121,7 +170,9 @@
 
                 <div class="coupon">
                     <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
                         <div class="cFrom">{$vol.organization}</div>
                         <div class="cName">{$vol.coupon}</div>
                         <div class="cDate">{$vol.start} 至 {$vol.end}</div>
@@ -129,16 +180,18 @@
                     </div>
                     <div class="tips">
                         <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
                     </div>
                 </div>
-                {/volist}
-
-                {volist empty="" name="couponListOfCamp" id="vol" }
+                {/volist} {volist empty="" name="couponListOfCamp" id="vol" }
 
                 <div class="coupon">
                     <div class="orangebg">
-                        <div class="cNum">{$vol.price}<span>元</span></div>
+                        <div class="cNum">{$vol.price}
+                            <span>元</span>
+                        </div>
                         <div class="cFrom">{$vol.organization}</div>
                         <div class="cName">{$vol.coupon}</div>
                         <div class="cDate">{$vol.start} 至 {$vol.end}</div>
@@ -146,7 +199,9 @@
                     </div>
                     <div class="tips">
                         <span>剩余领取：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>
+                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                            <span class="mui-icon mui-icon-forward"></span>
+                        </a>
                     </div>
                 </div>
                 {/volist}
@@ -178,7 +233,7 @@
 
     var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
     var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
-    
+
     // 预约课程和购买课程
     $(function () {
 
