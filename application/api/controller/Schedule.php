@@ -685,9 +685,11 @@ class Schedule extends Base
             }
             $res = $this->ScheduleService->getScheduleGiftStudentList($map, $page);
             if (!$res) {
-                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000'), 'data' => [], 'sum' => 0];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+                // 受赠课总数和
+                $sum = $this->ScheduleService->getSchedleGiftStudentNumSum($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res, 'sum' => $sum];
             }
             return json($response);
         } catch (Exception $e) {
@@ -705,9 +707,11 @@ class Schedule extends Base
             }
             $res = $this->ScheduleService->getScheduleGiftStudentPagintor($map);
             if (!$res) {
-                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000'), 'data' => [], 'sum' => 0];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+                // 受赠课总数和
+                $sum = $this->ScheduleService->getSchedleGiftStudentNumSum($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res, 'sum' => $sum];
             }
             return json($response);
         } catch (Exception $e) {
