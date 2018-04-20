@@ -36,7 +36,8 @@
 </head>
 
 <body class=whitebg>
-    <header id="header" class="mui-bar mui-bar-nav search2">
+    
+    <header  class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">
             <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
@@ -72,15 +73,14 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="/frontend/">
+                <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <a href="#fbyuezhan">
-                <li class="mui-col-xs-10 mui-col-sm-10 opli bgred fbBtn">
-                    发布约战
-                </li>
-            </a>
+            <li class="mui-col-xs-10 mui-col-sm-10 opli bgred fbBtn">
+                <a href="#fbyuezhan">发布约战 </a>
+            </li>
+
         </ul>
 
     </div>
@@ -239,11 +239,9 @@
                     }, 100);
                 }
 
-
                 //接口获取数据并追加到页面
                 var toList = function (page, gType) {
                     //搜索关键字不能完全为空，否则查询为空
-                    // var url = "{:url('api/match/matchlistpage')}?page=" + page;
                     var url = "{:url('api/match/getMatchListOrderByDistanceApi')}";
                     mui.ajax({
                         url: url,
@@ -275,34 +273,31 @@
                                 var match_time = '';
                                 var isfinished = '';
                                 for (var i = 0; i <= data.data.length - 1; i++) {
-                                    var del_time = data.data[i].delete_time;
-                                    if (del_time == null) {
-                                        urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
-                                        if (data.data[i].apply_status_num == 2) {
-                                            isfinished = '<font class="tipCorner bggreen">完成约战</font>';
-                                        }
-                                        if (data.data[i].sl == "" || data.data[i].sl == null) {
-                                            win_rate = "0";
-                                        } else {
-                                            win_rate = data.data[i].sl;
-                                        }
-                                        if (data.data[i].match_time == 0) {
-                                            match_time = '比赛时间待定';
-                                        } else {
-                                            match_time = gettime(data.data[i].match_time * 1000);
-                                        }
-                                        if (data.data[i].court_lat == "" || data.data[i].court_lng == "") {
-                                            distance = '<font class="f10">未定位</font>';
-                                        } else {
-                                            distance = data.data[i].distance.toFixed(1) + 'km';
-                                        }
-                                        newli += '<li class="mui-table-view-cell mui-media listli">';
-                                        newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>' + isfinished;
-                                        newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
-                                        newli += '<p class="mui-ellipsis">' + match_time + '</p>'
-                                        newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a>'
-                                        newli += '</li>';
+                                    urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
+                                    if (data.data[i].apply_status_num == 2) {
+                                        isfinished = '<font class="tipCorner bggreen">完成约战</font>';
                                     }
+                                    if (data.data[i].sl == "" || data.data[i].sl == null) {
+                                        win_rate = "0";
+                                    } else {
+                                        win_rate = data.data[i].sl;
+                                    }
+                                    if (data.data[i].match_time == 0) {
+                                        match_time = '比赛时间待定';
+                                    } else {
+                                        match_time = gettime(data.data[i].match_time * 1000);
+                                    }
+                                    if (data.data[i].court_lat == "" || data.data[i].court_lng == "") {
+                                        distance = '<font class="f10">未定位</font>';
+                                    } else {
+                                        distance = data.data[i].distance.toFixed(1) + 'km';
+                                    }
+                                    newli += '<li class="mui-table-view-cell mui-media listli">';
+                                    newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>' + isfinished;
+                                    newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
+                                    newli += '<p class="mui-ellipsis">' + match_time + '</p>'
+                                    newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a>'
+                                    newli += '</li>';
                                 }
                             }
                             if (gType == 1) {
