@@ -15,97 +15,110 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class=whitebg>
+<body>
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
-    
 
-    <div class="mui-content list">
-        <ul class="mui-table-view mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                <h4>{$teamInfo.name}</h4>
-                <div class="mui-media-body wd49" style="line-height:20px !important">
-                    <p>{$teamInfo.city} {$teamInfo.area}</p>
-                    <p class="f12">队员：
-                        <strong class="colororange">{$teamInfo.member_num}</strong>人 |
-                        <a href="{:url('team/fans',['team_id'=>$teamInfo['id']])}">粉丝：
-                            <strong class="colororange">{$teamInfo.fans_num}</strong>
-                        </a>
-                    </p>
-                </div>
-                <div class="price-frame" style="padding:0">
-                    <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
-                </div>
-            </li>
-        </ul>
+    <div class="mui-content">
+        <div class="list coach mb44">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$teamInfo.name}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p>{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="f12">队员：
+                            <strong class="colororange">{$teamInfo.member_num}</strong>人 |
+                            <a href="{:url('team/fans',['team_id'=>$teamInfo['id']])}">粉丝：
+                                <strong class="colororange">{$teamInfo.fans_num}</strong>
+                            </a>
+                        </p>
+                    </div>
+                    <div class="price-frame" style="padding:0">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                    </div>
+                </li>
+            </ul>
 
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-Startingtim colororange"></span>奖项名称</label>
-                <span>{$honorInfo.name}</span>
-            </li>
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-EndTime colororange"></span>赛事名称</label>
-                <span>{$honorInfo.match}</span>
-            </li>
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-Location colororange"></span>授奖单位</label>
-                <span>{$honorInfo.award_org}</span>
-            </li>
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-EventLocati colororange"></span>授奖时间</label>
-                <span>{$honorInfo.honor_time}</span>
-            </li>
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-EventLocati colororange"></span>获奖者</label>
-                <span class="honorList">{volist name='prizeTeamMemberList' id='vo'} {$vo.name},{/volist}</span>
-            </li>
-            <div class="page-header bggray2 introduction">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>奖项名称</label>
+                    <span>{$honorInfo.name}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>赛事名称</label>
+                    <span>{$honorInfo.match}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>授奖单位</label>
+                    <span>{$honorInfo.award_org}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>授奖时间</label>
+                    <span>{$honorInfo.honor_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>获奖者</label>
+                    <span class="honorList">{volist name='prizeTeamMemberList' id='vo'} {$vo.name},{/volist}</span>
+                </li>
+            </ul>
+
+            <!-- 荣誉简介 -->
+            <div class="page-header border-b introduction">
                 <span class="course">荣誉简介
                     <span class="noDataTip"></span>
                 </span>
             </div>
-            <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$honorInfo.introduction}</li>
-        </ul>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli introBox" style="padding:0 !important">{$honorInfo.introduction}</li>
+            </ul>
 
-        <div class="page-header whitebg border-b">
-            <span class="course wd52">评论</span>
-            <span class="more">评论
-                <span class="comment_count">0</span>&nbsp;|&nbsp;
-                <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
-                <span class="thumbup_count">0</span>
-            </span>
+            <div class="page-header border-b">
+                <span class="course wd52">评论</span>
+                <span class="more">评论
+                    <span class="comment_count">0</span>&nbsp;|&nbsp;
+                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
+                    <span class="thumbup_count">0</span>
+                </span>
+            </div>
+            <ul class="mui-table-view comment-list"></ul>
+
+            <!--底部操作-->
+            <ul class="mui-table-view operation mt">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                {eq name="$teamrole" value="6"}
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
+                    <a href="#fbcomment">
+                        发表评论
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
+                    <a href="{:url('team/honorEdit',['team_id'=>$teamInfo['id'],'honor_id'=>$honorInfo['id']])}">
+                        编辑
+                    </a>
+                </li>
+                {else/}
+                <li class="mui-table-view-cell mui-media mui-col-xs-10 mui-col-sm-10 opli bgblue">
+                    <a href="#fbcomment">
+                        发表评论
+                    </a>
+                </li>
+                {/eq}
+
+            </ul>
+
         </div>
-
-        <ul class="mui-table-view comment-list mt55"></ul>
-
-        <!--底部操作-->
-        <ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
-                <a href="#fbcomment">
-                    发表评论
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bggreen">
-                <a href="{:url('team/honorEdit',['team_id'=>$teamInfo['id'],'honor_id'=>$honorInfo['id']])}">
-                    编辑
-                </a>
-            </li>
-        </ul>
-
     </div>
 
     <!-- 发表评论 -->
@@ -125,7 +138,7 @@
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
-    <script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
@@ -134,20 +147,16 @@
         });
 
         var count = 1;
-
         $(function () {
 
             // 去逗号
             var honorList = $(".honorList").text()
             $(".honorList").text(honorList.substring(0, honorList.length - 1));
 
-            pulldownRefresh(); //页面打开时获取一次最新评论信息
-            isthumbsup(); //点赞状态
-            followStatus(); //判断当前的关注状态
-            // 活动详情默认的提示
+            // 荣誉简介默认的提示
             if ($(".introBox").html() == '') {
-                $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无数据）");
-                $(".introBox").hide();
+                $(".introduction").find(".noDataTip").append("（暂无数据）");
+                $(".introBox").parent().hide();
             }
 
             // 关注球队
@@ -252,7 +261,11 @@
                     }
                 });
             });
-        })
+
+            pulldownRefresh(); //页面打开时获取一次最新评论信息
+            isthumbsup(); //点赞状态
+            followStatus(); //判断当前的关注状态
+        });
 
         // 判断当前的关注状态
         function followStatus() {

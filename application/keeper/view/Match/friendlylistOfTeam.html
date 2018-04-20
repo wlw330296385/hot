@@ -127,8 +127,19 @@
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<a href="' + urls + '"><div><strong class="f14">' + data.data.data[i].name + '</strong><p class="mui-ellipsis lineHeight20">' + data.data.data[i].court + '</p><p class="mui-ellipsis lineHeight20">' + data.data.data[i].match_time + '</p></div>'
-                                newli += '<div class="price-frame mui-text-center">';
+                                newli += '<a href="' + urls + '"><div class="mui-media-body wd83"><strong class="f14">' + data.data.data[i].name + '</strong>';
+                                if (data.data.data[i].court == '') {
+                                    newli += '<p class="mui-ellipsis lineHeight20">比赛场地待定</p>';
+                                } else {
+                                    newli += '<p class="mui-ellipsis lineHeight20">' + data.data.data[i].court + '</p>';
+                                }
+                                if (data.data.data[i].match_time == '') {
+                                    newli += '<p class="mui-ellipsis lineHeight20">比赛时间待定</p>';
+                                } else {
+                                    newli += '<p class="mui-ellipsis lineHeight20">' + data.data.data[i].match_time + '</p>'
+                                }
+                                
+                                newli += '</div><div class="price-frame">' + data.data.data[i].area + '</div>';
                                 newli += '</li>';
                             }
                         }

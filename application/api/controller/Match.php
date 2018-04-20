@@ -2087,7 +2087,7 @@ class Match extends Base
             if (input('?city')) {
                 $map['`match`.city'] = $data['city'];
             }
-            if ($data['area']) {
+            if ( input('?area') && !empty( input('area') ) ) {
                 $map['`match`.area'] = $data['area'];
             }
             $map['`match`.islive'] = input('islive', -1);
@@ -2144,9 +2144,15 @@ class Match extends Base
                 $map['c.camp_id'] = input('camp_id');
             }
 
-            $result = db('match')->field("`match`.*,c.avg_height,c.logo,c.match_win,c.match_num,round(c.match_win/c.match_num) as sl,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `match`.court_lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`match`.court_lat*pi()/180)*pow(sin(($lng *pi()/180 - `match`.court_lng*pi()/180)/2),2))) as distance")->where($map)->join('__TEAM__ c', 'match.team_id = c.id')->page($page)->order($orderby)->select();
+            $result = db('match')
+                ->field("`match`.*,c.avg_height,c.logo,c.match_win,c.match_num,round(c.match_win/c.match_num) as sl,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `match`.court_lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`match`.court_lat*pi()/180)*pow(sin(($lng *pi()/180 - `match`.court_lng*pi()/180)/2),2))) as distance")
+                ->join('__TEAM__ c', 'match.team_id = c.id')
+                ->where($map)
+                ->whereNull('match.delete_time')
+                ->whereNull('c.delete_time')
+                ->page($page)->order($orderby)->select();
 
-            // echo  db('match')->getlastsql();
+            //echo  db('match')->getlastsql();exit();
 
             if ($result) {
                 return json(['code' => 200, 'msg' => 'ok', 'data' => $result]);

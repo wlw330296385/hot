@@ -55,7 +55,7 @@
             <div class="mui-input-row picker btn" id="demo4" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>授奖时间</label>
-                    <span id="result" class="ui-alert domData" name="honor_time"></span>
+                    <span id="result" class="ui-alert domData" name="honor_time">{$honorInfo.honor_time}</span>
                 </div>
             </div>
 
@@ -63,7 +63,7 @@
                 <a href="#honorMember" id="setHonorMemberBox" class="mui-navigate-right">
                     <label>获奖者</label>
                     <span class="honorMember" style="width: 60%">{volist name='prizeTeamMemberList' id='vo'} {$vo.name},{/volist}</span>
-                    <div id="hideList"></div>
+                    <!-- <div id="hideList"></div> -->
                     <input type="hidden" name="prize_team_member" value="{volist name='prizeTeamMemberList' id='vo'}{$vo.id},{/volist}" class="data">
                 </a>
             </div>
@@ -196,6 +196,10 @@
 
         $(function () {
             TeamMemberOfCocahList();
+
+            // 去逗号
+            var honorList = $(".honorMember").text()
+            $(".honorMember").text(honorList.substring(0, honorList.length - 1));
 
             // 选择授奖人
             $("#honorMemberConfirm").on('tap', '', function () {
