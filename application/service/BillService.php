@@ -425,7 +425,12 @@ class BillService {
                         'student_id'=>$billInfo['student_id'],
                     ];
                     $Refund = new \app\model\Refund;
-                    $Refund->save($refundData);
+                    if($data['refund_id']){
+                        $Refund->save($refundData,$data['refund_id']);
+                    }else{
+                        $Refund->save($refundData);
+                    }
+                    
                     if($result){
                         // 发送消息给训练营管理员和营主
                         $MessageCampData = [
