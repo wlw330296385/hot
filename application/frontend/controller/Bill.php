@@ -134,7 +134,9 @@ class Bill extends Base{
         $Refund = new \app\model\Refund;
         $refundList = $Refund->where(['bill_id'=>$billInfo['id']])->select();
         
-
+        if($refundList){
+            $refundList =$refundList ->toArray();
+        }
         $this->assign('refundList',$refundList);
         $this->assign('goodsInfo',$goodsInfo);
         $this->assign('jsApiParameters',$jsApiParameters);

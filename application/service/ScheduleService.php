@@ -782,6 +782,13 @@ class ScheduleService
         return $res->toArray();
     }
 
+    // 获取赠课课时-学员关系赠课数总和
+    public function getSchedleGiftStudentNumSum($map) {
+        $model = new ScheduleGiftStudent();
+        $res = $model->where($map)->sum('gift_schedule');
+        return ($res) ? $res : 0;
+    }
+
 
     // 课时结算的收入统计
     public function scheduleIncome($map)
