@@ -738,7 +738,7 @@ class StatisticsCamp extends Camp{
             }
             
             if($this->campInfo['rebate_type'] == 1){//课时版
-                $refund_fee = ($refundamount - $refund)*$this->campInfo['schedule_rebate'];
+                $refund_fee = ($refundamount - $refund)*$this->campInfo['refund_rebate'];
                 $output = 0;
             }else{
                 $refund_fee = 0;
@@ -794,9 +794,9 @@ class StatisticsCamp extends Camp{
                     'member_id'     => $refundInfo['member_id'],
                     'member'        => $refundInfo['member'],
                     'type'          => 2,
-                    'e_balance'     =>($this->campInfo['balance'] - $output),
-                    's_balance'     =>$this->campInfo['balance'],
-                    'f_id'          =>$refundInfo['id'],
+                    'e_balance'     => ($this->campInfo['balance'] - $output),
+                    's_balance'     => $this->campInfo['balance'],
+                    'f_id'          => $refundInfo['id'],
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
