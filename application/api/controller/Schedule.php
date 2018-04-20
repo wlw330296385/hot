@@ -466,7 +466,7 @@ class Schedule extends Base
                 'content' => '您参加的' . $schedule['camp'] . '-' . $schedule['lesson'] . '-' . $schedule['grade'] . '班级 发布最新课时',
                 'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true),
                 'keyword1' => $schedule['grade'] . '最新课时',
-                'keyword2' => $schedule['lesson_time'],
+                'keyword2' => $schedule['lesson_time']-1,
                 'remark' => '点击进入查看详细，如有疑问可进行留言'
             ];
             $messageS = new MessageService();

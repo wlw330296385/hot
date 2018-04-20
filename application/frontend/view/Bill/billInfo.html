@@ -143,11 +143,11 @@ $(function(){
                 }
                 let data = {
                         "remarks":remarks,
-                        'action':5,
+                        'action':1,
                     };
 
                 {if isset($refundList[0]['id'])}
-                    data.refund_id = refund_id;
+                    data.refund_id = {$refundList[0]['id']};
                 {/if}
                 mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
                     data:data,
@@ -176,7 +176,7 @@ $(function(){
 
     })
 
-    // 申请退款
+    // 撤销退款
     $(".cancel").click(function(){
 
         mui.confirm('您确认【撤销退款申请】吗?', '', ['取消', '确认'], function (e) {
@@ -186,7 +186,7 @@ $(function(){
                     };
 
                 {if isset($refundList[0]['id'])}
-                    data.refund_id = refund_id;
+                    data.refund_id = {$refundList[0]['id']};
                 {/if}
                 console.log(data);
                 mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{

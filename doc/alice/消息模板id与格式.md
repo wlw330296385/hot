@@ -47,7 +47,7 @@
 申请时间：2014年7月21日 18:36
 请登录平台同意或拒绝。
 
-4. 退款提醒
+4. 退款申请成功提醒
 模板id：MHLQONFLdMBSEGQS2AW06V3sFV5zEXQYq_iqbPJpAgQ
 
 格式内容：
