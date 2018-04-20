@@ -763,6 +763,26 @@ class ScheduleService
         return $result;
     }
 
+    // 获取赠课课时-学员关系列表
+    public function getScheduleGiftStudentList($map = [], $page = 1, $order = 'id desc', $limit = 10) {
+        $model = new ScheduleGiftStudent();
+        $res = $model->where($map)->order($order)->page($page, $limit)->select();
+        if (!$res) {
+            return ['code' => 100, 'msg' => __lang('MSG_000')];
+        }
+        return $res->toArray();
+    }
+    // 获取赠课课时-学员关系列表
+    public function getScheduleGiftStudentPagintor($map = [],$order = 'id desc', $limit = 10) {
+        $model = new ScheduleGiftStudent();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return ['code' => 100, 'msg' => __lang('MSG_000')];
+        }
+        return $res->toArray();
+    }
+
+
     // 课时结算的收入统计
     public function scheduleIncome($map)
     {

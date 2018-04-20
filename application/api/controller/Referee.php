@@ -552,9 +552,13 @@ class Referee extends Base{
         $matchRecordInfo = $matchService->getMatchRecord(['id' => $post['match_record_id']]);
         $matchInfo['record'] = $matchRecordInfo;
         // 判断比赛是否有裁判信息，没有当做不需要裁判
-        if (empty($matchRecordInfo['referee1']) && empty($matchRecordInfo['referee2']) && empty($matchRecordInfo['referee3'])) {
+        if ( empty($matchRecordInfo['referee1']['referee_id']) && empty($matchRecordInfo['referee1']['referee_cost'])
+            && empty($matchRecordInfo['referee2']['referee_id']) && empty($matchRecordInfo['referee2']['referee_cost'])
+            && empty($matchRecordInfo['referee3']['referee_id']) && empty($matchRecordInfo['referee3']['referee_cost'])
+        ) {
             return json(['code' => 100, 'msg' => '此比赛不需要裁判，请选择其他比赛']);
         }
+
         // 获取裁判员信息
         $refereeInfo = $refereeService->getRefereeInfo(['id' => $post['referee_id']]);
         if (!$refereeInfo || $refereeInfo['status_num'] != 1) {
@@ -622,19 +626,19 @@ class Referee extends Base{
 
             // 匹配比赛裁判价格与裁判出场费符合的数据字段位置
             $updateMatchRecordData = [];
-            if ($matchRecordInfo['referee1']['referee_cost'] == $refereeInfo['appearance_fee']) {
+            if ( empty( $matchRecordInfo['referee1']['referee_id'] ) ) {
                 $updateMatchRecordData['referee1'] = json_encode([
                     'referee' => $refereeInfo['referee'],
                     'referee_id' => $refereeInfo['id'],
                     'referee_cost' => $refereeInfo['appearance_fee']
                 ], JSON_UNESCAPED_UNICODE);
-            } elseif ($matchRecordInfo['referee2']['referee_cost'] == $refereeInfo['appearance_fee']) {
+            } elseif ( empty( $matchRecordInfo['referee2']['referee_id'] ) ) {
                 $updateMatchRecordData['referee2'] = json_encode([
                     'referee' => $refereeInfo['referee'],
                     'referee_id' => $refereeInfo['id'],
                     'referee_cost' => $refereeInfo['appearance_fee']
                 ], JSON_UNESCAPED_UNICODE);
-            } elseif ($matchRecordInfo['referee3']['referee_cost'] == $refereeInfo['appearance_fee']) {
+            } elseif ( empty( $matchRecordInfo['referee3']['referee_id'] ) ) {
                 $updateMatchRecordData['referee3'] =  json_encode([
                     'referee' => $refereeInfo['referee'],
                     'referee_id' => $refereeInfo['id'],
