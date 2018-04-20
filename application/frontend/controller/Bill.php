@@ -94,10 +94,10 @@ class Bill extends Base{
         $bill_id = input('param.bill_id');
         $bill_order = input('param.bill_order');
         if($bill_id){
-            $billInfo = $this->BillService->getBill(['id'=>$bill_id]);
+            $billInfo = $this->BillService->getBillInfo(['id'=>$bill_id]);
         }else{
             
-            $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
+            $billInfo = $this->BillService->getBillInfo(['bill_order'=>$bill_order]);
         }
         if($billInfo['goods_type']=='课程'){
             // $LessonService = new \app\service\LessonService;

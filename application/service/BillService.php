@@ -14,7 +14,7 @@ class BillService {
         $this->Bill = new Bill;
     }
 
-    // 关联lesson获取订单详情
+    // 获取订单详情
     public function getBill($map){
         $result = $this->Bill->where($map)->find();
         if($result){
@@ -25,6 +25,12 @@ class BillService {
         }
     }
 
+
+    // 获取订单详情
+    public function getBillInfo($map){
+        $result = $this->Bill->with('refund')->where($map)->find();
+        return $result;
+    }
 
     // 获取订单列表
     public function getBillList($map,$p = 1){

@@ -29,5 +29,8 @@ class Bill extends Model{
     	return $this->hasOne('lesson','id','goods_id',[],'left join');
     } 
 
+    public function refund(){
+      return $this->hasOne('refund','bill_id','id');
+    }
 }
 

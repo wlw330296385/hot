@@ -803,4 +803,12 @@ class Woo extends Controller{
         // echo db('grade_member')->getlastsql();
         
     }
+
+
+    // 关联查询
+    public function hasone(){
+        $Refund = new \app\model\Refund;
+        $refundList = $Refund->hasWhere('bill',['camp'=>'大热篮球俱乐部'])->with('bill')->where(['refund.status'=>3])->select();
+        dump($refundList->toArray());
+    }
 }
