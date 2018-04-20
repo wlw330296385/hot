@@ -130,7 +130,12 @@ class Bill extends Base{
             }
         }
         
+        // 退款信息
+        $Refund = new \app\model\Refund;
+        $refundList = $Refund->where(['bill_id'=>$billInfo['id']])->select();
         
+
+        $this->assign('refundList',$refundList);
         $this->assign('goodsInfo',$goodsInfo);
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsApi', $jsApi);
