@@ -674,4 +674,44 @@ class Schedule extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    // 赠课记录-学员列表
+    public function studentgiftschedulelist() {
+        try {
+            $map = input('param.');
+            $page = input('param.page', 1);
+            if ( input('?param.page') ) {
+                unset($map['page']);
+            }
+            $res = $this->ScheduleService->getScheduleGiftStudentList($map, $page);
+            if (!$res) {
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 赠课记录-学员列表
+    public function studentgiftschedulepage() {
+        try {
+            $map = input('param.');
+            $page = input('param.page', 1);
+            if ( input('?param.page') ) {
+                unset($map['page']);
+            }
+            $res = $this->ScheduleService->getScheduleGiftStudentPagintor($map);
+            if (!$res) {
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 }
