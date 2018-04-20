@@ -24,6 +24,11 @@
         #segmentedControl {
             top: 0;
         }
+        .moreData{
+            margin: 12px 20px;
+            text-align: center;
+        }
+
     </style>
 </head>
 
@@ -113,7 +118,7 @@
                     <div class="nav-list">
                         <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
+                                <a href="#totalScheuleTips">
                                     <span>总课时</span>
                                     <div class="mui-media-body">{$totalScheule}</div>
                                 </a>
@@ -131,17 +136,17 @@
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
+                                <a href="#giftList">
                                     <span>赠送课时</span>
-                                    <div class="mui-media-body">{$restSchedule}</div>
+                                    <div class="mui-media-body giftScheduleTotal">0</div>
                                 </a>
                             </li>
                         </ul>
                         <ul class="mui-table-view mui-text-center">
                             <li class="mui-table-view-cell border-b">
                                 <ul class="mui-row table">
-                                    <li class="mui-col-sm-6 mui-col-xs-6">上课时间</li>
-                                    <li class="mui-col-sm-6 mui-col-xs-6">班级</li>
+                                    <li class="mui-col-sm-5 mui-col-xs-5">上课时间</li>
+                                    <li class="mui-col-sm-7 mui-col-xs-7">班级</li>
                                 </ul>
                             </li>
                         </ul>
@@ -198,6 +203,37 @@
         </div>
 
     </div>
+
+
+
+    <!--赠课记录-->
+    <div id="giftList" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title border-b">
+            <span class="course wd49">赠课记录</span>
+            <span class="more pull-right">共<span class="giftTotal"></span>条，总赠<span class="giftScheduleTotal"></span>节</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list studentGiftList"></ul>
+                <p id="moreGift" class="moreData">点击加载更多...</p>
+            </div>
+        </div>
+    </div>
+
+    <!--总课量说明-->
+    <div id="totalScheuleTips" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title border-b">
+            <span class="course wd49">总课量说明</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <p class="moreData">总课量是您购买课程的总量加上赠送的课量，您的总课量中包含<span class="giftScheduleTotal"></span>赠课</p>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -206,6 +242,9 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
 
     mui(".mui-content").on("tap", "a", function () {
         window.top.location.href = this.href;
@@ -251,6 +290,28 @@
         var gCount = 1;
         var sCount = 1;
         var bCount = 1;
+
+        //////////////////////////////////////////////////////////////// 赠课相关
+        var giftCount = 1;
+
+        toGiftList('giftList', 1, 1);//具体取数据的方法
+
+        $("#moreGift").on("click", function () {
+            if(!$(this).hasClass("noData")){
+                pullupRefreshGift();
+            }
+        });
+
+        //点击加载具体业务实现（课量）
+        function pullupRefreshGift() {
+            setTimeout(function () {
+                giftCount++;//翻下一页
+                var page = giftCount;
+                var gType = 2;//代表上拉加载
+                toGiftList('giftList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+        ////////////////////////////////////////////////////////////////
 
         mui('#item2').pullRefresh({
             down: {
@@ -463,7 +524,7 @@
                         // // 将时间戳转成日期格式(建议后端转换)
                         // var time = data.data.data[i].schedule_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
                         // var schedule_time = gettime(time)
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule_time + '</li><li class="mui-col-xs-6 mui-col-sm-6">' + data.data.data[i].schedule + '</li></ul></li></a>';
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].schedule_time + '</li><li class="mui-col-xs-7 mui-col-sm-7">' + data.data.data[i].schedule + '</li></ul></li></a>';
                         //判断第一页是否有未结算的课时
                         if(page==1&&data.data.data[i].status==0){
                             weiJieSuan++;
@@ -551,6 +612,58 @@
                 } else {
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //获取赠课列表数据并追加到页面
+    var toGiftList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/schedule/studentgiftschedulepage','','',true)}/?page=" + page;
+        var campID = "{$camp_id}";
+        var studentID = "{$studentInfo.id}"
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                student_id: studentID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    $(".giftScheduleTotal").text(data.sum);
+                    $(".giftTotal").text(data.data.total);
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        newli = newli + '<li class="mui-table-view-cell listli detalisli">赠送' + data.data.data[i].gift_schedule + '节<span>' + data.data.data[i].create_time + '<br />' + data.data.data[i].lesson + '</span></li>';
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.studentGiftList").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.studentGiftList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.studentGiftList").append(newli);
+                    }
+                    if (data.data.data.length < 10) {
+                        $("#moreGift").addClass("noData");
+                        $("#moreGift").text("没有更多数据了");
+                    }
+                } else {
+                    mui.toast('数据获取失败,请稍候再试');
+                }
+
 
             },
             error: function (xhr, type, errerThrown) {
