@@ -466,7 +466,7 @@ class Schedule extends Base
                 'content' => '您参加的' . $schedule['camp'] . '-' . $schedule['lesson'] . '-' . $schedule['grade'] . '班级 发布最新课时',
                 'url' => url('frontend/schedule/scheduleinfo', ['schedule_id' => $schedule['id'], 'camp_id' => $schedule['camp_id']], '', true),
                 'keyword1' => $schedule['grade'] . '最新课时',
-                'keyword2' => $schedule['lesson_time']-1,
+                'keyword2' => $schedule['lesson_time'],
                 'remark' => '点击进入查看详细，如有疑问可进行留言'
             ];
             $messageS = new MessageService();
@@ -685,9 +685,11 @@ class Schedule extends Base
             }
             $res = $this->ScheduleService->getScheduleGiftStudentList($map, $page);
             if (!$res) {
-                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000'), 'data' => [], 'sum' => 0];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+                // 受赠课总数和
+                $sum = $this->ScheduleService->getSchedleGiftStudentNumSum($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res, 'sum' => $sum];
             }
             return json($response);
         } catch (Exception $e) {
@@ -705,9 +707,11 @@ class Schedule extends Base
             }
             $res = $this->ScheduleService->getScheduleGiftStudentPagintor($map);
             if (!$res) {
-                $response = ['code' => 100, 'msg'=> __lang('MSG_000')];
+                $response = ['code' => 100, 'msg'=> __lang('MSG_000'), 'data' => [], 'sum' => 0];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
+                // 受赠课总数和
+                $sum = $this->ScheduleService->getSchedleGiftStudentNumSum($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res, 'sum' => $sum];
             }
             return json($response);
         } catch (Exception $e) {
