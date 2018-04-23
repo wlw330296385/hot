@@ -996,7 +996,7 @@
             var refereeApply = $(".refereeApply").text()
             $(".refereeApply").text(referee.substring(0, referee.length - 1));
 
-           ///////////////裁判1//////////////////////////////////
+            ///////////////裁判1//////////////////////////////////
             //搜索裁判
             $("#search1").on("tap", function () {
                 var keyword = $(".keyword1").val();
@@ -1808,8 +1808,10 @@
 
         //自定义获取裁判列表1
         function toRefereeList1(keyword, wReferee1, page1) {
-            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page1;
+            var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page1;
             var wRefereeList = "ul.refereeList1";
+            var match_id = "{$matchInfo.id}";
+            var match_record_id = "{$matchInfo.record.id}";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
             if (keyword != '' && wReferee1 != '') {
@@ -1823,6 +1825,8 @@
                     status: 1,
                     page: page1,
                     keyword: keyword,
+                    match_id: match_id,
+                    match_record_id: match_record_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1833,7 +1837,17 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee;
+                            if (data.data.data[i].match_apply.status == 1) {
+                                newli += '<span class="wd45">未回复</span>';
+                            } else if (data.data.data[i].match_apply.status == 2) {
+                                newli += '<span class="wd45">已同意</span>';
+                            } else if (data.data.data[i].match_apply.status == 3) {
+                                newli += '<span class="wd45">已拒绝</span>';
+                            } else if (data.data.data[i].match_apply == '') {
+                                newli += '<span class="wd45">未申请</span>';
+                            }
+                            newli += '</span></span></li>'
                         }
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'
@@ -1853,8 +1867,10 @@
 
         //自定义获取裁判列表2
         function toRefereeList2(keyword, wReferee2, page2) {
-            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page2;
+            var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page2;
             var wRefereeList = "ul.refereeList2";
+            var match_id = "{$matchInfo.id}";
+            var match_record_id = "{$matchInfo.record.id}";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
             if (keyword != '' && wReferee2 != '') {
@@ -1868,6 +1884,8 @@
                     status: 1,
                     page: page2,
                     keyword: keyword,
+                    match_id: match_id,
+                    match_record_id: match_record_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1878,7 +1896,17 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee;
+                            if (data.data.data[i].match_apply.status == 1) {
+                                newli += '<span class="wd45">未回复</span>';
+                            } else if (data.data.data[i].match_apply.status == 2) {
+                                newli += '<span class="wd45">已同意</span>';
+                            } else if (data.data.data[i].match_apply.status == 3) {
+                                newli += '<span class="wd45">已拒绝</span>';
+                            } else if (data.data.data[i].match_apply == '') {
+                                newli += '<span class="wd45">未申请</span>';
+                            }
+                            newli += '</span></span></li>'
                         }
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'
@@ -1898,8 +1926,10 @@
 
         //自定义获取裁判列表3
         function toRefereeList3(keyword, wReferee3, page3) {
-            var url = "{:url('api/referee/refereelistpage','','',true)}/?page=" + page3;
+            var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page3;
             var wRefereeList = "ul.refereeList3";
+            var match_id = "{$matchInfo.id}";
+            var match_record_id = "{$matchInfo.record.id}";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
             if (keyword != '' && wReferee3 != '') {
@@ -1913,6 +1943,8 @@
                     status: 1,
                     page: page3,
                     keyword: keyword,
+                    match_id: match_id,
+                    match_record_id: match_record_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1923,7 +1955,17 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee + '</span></span></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '"><font>' + data.data.data[i].referee + '</font><span>出场费：' + data.data.data[i].appearance_fee;
+                            if (data.data.data[i].match_apply.status == 1) {
+                                newli += '<span class="wd45">未回复</span>';
+                            } else if (data.data.data[i].match_apply.status == 2) {
+                                newli += '<span class="wd45">已同意</span>';
+                            } else if (data.data.data[i].match_apply.status == 3) {
+                                newli += '<span class="wd45">已拒绝</span>';
+                            } else if (data.data.data[i].match_apply == '') {
+                                newli += '<span class="wd45">未申请</span>';
+                            }
+                            newli += '</span></span></li>'
                         }
                         if (newli == '') {
                             newli = '<p class="nohave">没有查找到数据哦</p>'
@@ -1942,62 +1984,62 @@
         };
 
         //自定义获取裁判列表
-        function toRefereeList(keyword, wReferee, page) {
-            var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page;
-            var match_id = "{$matchInfo.id}";
-            var match_record_id = "{$matchInfo.record.id}";
-            var wRefereeList = "ul.refereeList";
-            var currPage = ".currPageIni";
-            var totalPage = ".totalPageIni";
-            if (keyword != '' && wReferee != '') {
-                wRefereeList = "#" + wReferee + " ul.refereeList";
-                currPage = "#" + wReferee + " .currPageIni";
-                totalPage = "#" + wReferee + " .totalPageIni";
-            }
-            mui.ajax({
-                url: url,
-                data: {
-                    page: page,
-                    //keyword: keyword,
-                    match_id: match_id,
-                    match_record_id: match_record_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data.data[i].referee + '</label>';
-                            if (data.data.data[i].match_apply.status == 1) {
-                                newli += '<span class="wd45">未回复</span>';
-                            } else if (data.data.data[i].match_apply.status == 2) {
-                                newli += '<span class="wd45">已同意</span>';
-                            } else if (data.data.data[i].match_apply.status == 3) {
-                                newli += '<span class="wd45">已拒绝</span>';
-                            } else if (data.data.data[i].match_apply == '') {
-                                newli += '<span class="wd45">未申请</span>';
-                            }
-                            newli += '<input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '" data-status="' + data.data.data[i].match_apply.status + '" data-id="' + data.data.data[i].match_apply.id + '"></li>'
-                        }
-                        if (newli == '') {
-                            newli = '<p class="nohave">没有查找到数据哦</p>'
-                        }
-                        $(wRefereeList).empty().append(newli);
-                        $(currPage).text(data.data.current_page);
-                        $(totalPage).text(data.data.last_page);
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
+        // function toRefereeList3(keyword, wReferee3, page3) {
+        //     var url = "{:url('api/referee/getrefereepagewithmatchapply','','',true)}/?page=" + page3;
+        //     var match_id = "{$matchInfo.id}";
+        //     var match_record_id = "{$matchInfo.record.id}";
+        //     var wRefereeList = "ul.refereeList3";
+        //     var currPage = ".currPage";
+        //     var totalPage = ".totalPage";
+        //     if (keyword != '' && wReferee3 != '') {
+        //         wRefereeList = "#" + wReferee3 + " ul.refereeList3";
+        //         currPage = "#" + wReferee3 + " .currPage";
+        //         totalPage = "#" + wReferee3 + " .totalPage";
+        //     }
+        //     mui.ajax({
+        //         url: url,
+        //         data: {
+        //             page: page3,
+        //             keyword: keyword,
+        //             match_id: match_id,
+        //             match_record_id: match_record_id
+        //         },
+        //         dataType: 'json',//服务器返回json格式数据
+        //         type: 'post',//HTTP请求类型
+        //         timeout: 10000,//超时时间设置为10秒；
+        //         headers: { 'Content-Type': 'application/json' },
+        //         success: function (data) {
+        //             console.log(data)
+        //             if (data.code == 200) {
+        //                 var newli = '';
+        //                 for (var i = 0; i <= data.data.data.length - 1; i++) {
+        //                     newli += '<li class="mui-input-row mui-checkbox mui-left" ><label class="wd52">' + data.data.data[i].referee + '</label>';
+        //                     if (data.data.data[i].match_apply.status == 1) {
+        //                         newli += '<span class="wd45">未回复</span>';
+        //                     } else if (data.data.data[i].match_apply.status == 2) {
+        //                         newli += '<span class="wd45">已同意</span>';
+        //                     } else if (data.data.data[i].match_apply.status == 3) {
+        //                         newli += '<span class="wd45">已拒绝</span>';
+        //                     } else if (data.data.data[i].match_apply == '') {
+        //                         newli += '<span class="wd45">未申请</span>';
+        //                     }
+        //                     newli += '<input name="checkbox-referee" class="" type="checkbox" data-referee="' + data.data.data[i].referee + '" data-referee_id="' + data.data.data[i].id + '" data-referee_cost="' + data.data.data[i].appearance_fee + '" data-status="' + data.data.data[i].match_apply.status + '" data-id="' + data.data.data[i].match_apply.id + '"></li>'
+        //                 }
+        //                 if (newli == '') {
+        //                     newli = '<p class="nohave">没有查找到数据哦</p>'
+        //                 }
+        //                 $(wRefereeList).empty().append(newli);
+        //                 $(currPage).text(data.data.current_page);
+        //                 $(totalPage).text(data.data.last_page);
+        //             } else {
+        //                 mui.toast('数据获取失败,请稍候再试');
+        //             }
+        //         },
+        //         error: function (xhr, type, errerThrown) {
+        //             mui.toast('网络异常,请稍候再试');
+        //         }
+        //     });
+        // };
     </script>
 </body>
 

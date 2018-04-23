@@ -2,8 +2,7 @@
 // 比赛 赛事
 namespace app\keeper\controller;
 
-
-use app\model\Plan;
+use app\model\MatchRefereeApply;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
@@ -58,11 +57,11 @@ class Match extends Base {
 
     // 约战比赛详情
     public function friendlyinfo() {
-        $id = input('match_id');
+        $matchId = input('match_id');
         $matchS = new MatchService();
         $refereeS = new RefereeService();
         // 比赛详情
-        $matchInfo = $matchS->getMatch(['id' => $id]);
+        $matchInfo = $matchS->getMatch(['id' => $matchId]);
         $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
         if ($matchRecordInfo) {
             if (!empty($matchRecordInfo['album'])) {
@@ -71,8 +70,29 @@ class Match extends Base {
             if (empty($matchRecordInfo['away_team'])) {
                 $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
             }
+            // 裁判字段数据为空
+            $emptyRefereeArr = [
+                'referee_id' => 0, 'referee' => '', 'referee_cost' => ''
+            ];
+            if ( empty($matchRecordInfo['referee1']) ) {
+                $matchRecordInfo['referee1'] = $emptyRefereeArr;
+            }
+            if ( empty($matchRecordInfo['referee2']) ) {
+                $matchRecordInfo['referee2'] = $emptyRefereeArr;
+            }
+            if ( empty($matchRecordInfo['referee3']) ) {
+                $matchRecordInfo['referee3'] = $emptyRefereeArr;
+            }
             $matchInfo['record'] = $matchRecordInfo;
         }
+
+        // 裁判列表： 获取已同意的裁判比赛申请|邀请的裁判名单
+        $modelMatchRefereeApply = new MatchRefereeApply();
+        $refereeList = $modelMatchRefereeApply->where([
+            'match_id' => $matchRecordInfo['match_id'],
+            'match_record_id' => $matchRecordInfo['id'],
+            'status' => ['neq', 3]
+        ])->select();
 
 
         // 比赛发布球队信息
@@ -82,9 +102,11 @@ class Match extends Base {
         // 获取会员的已审核裁判员信息
         $memberRefereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id'], 'status' => 1]);
 
+        $this->assign('match_id', $matchId);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('teamInfo', $teamInfo);
         $this->assign('memberRefereeInfo', $memberRefereeInfo);
+        $this->assign('refereeList', $refereeList);
         return view('Match/friendlyinfo');
     }
 
