@@ -579,8 +579,8 @@ class BillService {
                                 'keyword1' => ['value' => $billInfo['refundamount']],
                                 'keyword2' => ['value' => $billInfo['goods']],
                                 'keyword3' => ['value' => $billInfo['bill_order']],
-                                'keyword3' => ['value' => date('Y-m-d H:i',time())],
-                                'remark' => ['value' => $billInfo['remarks']]
+                                'keyword4' => ['value' => date('Y年m月d日 H:i',time())],
+                                'remark' => ['value' => "订单已还原成支付状态,点击查看"]
                             ]
                         ];
                         $saveData = [
