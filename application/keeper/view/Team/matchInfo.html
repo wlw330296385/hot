@@ -251,6 +251,11 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                    <span class="wd60 refereeCostBear">{$matchInfo.record.referee_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
                         <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
                     <span class="match_time">{$matchInfo.type}</span>
                 </li>
@@ -395,7 +400,18 @@
             } else if (court_cost_bear == 3) {
                 $(".courtCostBear").text("客队负责");
             }
-
+            
+            // 付费方式文字转换中文
+            var referee_cost_bear = "{$matchInfo.record.referee_cost_bear}";
+            if (referee_cost_bear == 0) {
+                $(".refereeCostBear").text("免费");
+            } else if (referee_cost_bear == 1) {
+                $(".refereeCostBear").text("费用AA");
+            } else if (referee_cost_bear == 2) {
+                $(".refereeCostBear").text("主队负责");
+            } else if (referee_cost_bear == 3) {
+                $(".refereeCostBear").text("客队负责");
+            }
 
             // 申请执裁
             $(".apply-referee").on("tap", function () {
@@ -524,9 +540,11 @@
                 });
             });
 
+
+
             // 判断身份显示操作按钮
             var memberRefereeInfoId = "{$memberRefereeInfo.id}";
-            var referee_type = "{$matchInfo.referee_type}";
+            var referee_type = '{$refereeList}';
             var teamrole = "{$teamrole}";
             var is_finished = "{$matchInfo.is_finished_num}";
 
@@ -537,7 +555,7 @@
                 $(".status2").removeClass("mui-col-sm-10").addClass("mui-col-sm-5");
                 $(".status3").show();
             } else if (teamrole > 0 && is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != 0) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
                     $(".status1").show();
                     $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
                     $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
@@ -558,7 +576,7 @@
             if (teamrole == 0 && is_finished == 1) {
                 $(".status2").show();
             } else if (teamrole == 0 && is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != 0) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
                     $(".status1").show();
                     $(".matchpk").show();
                     return false;
@@ -573,7 +591,7 @@
             if (teamrole < 0 && is_finished == 1) {
                 $(".status2").show();
             } else if (teamrole < 0 && is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != 0) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
                     $(".status1").show();
                     $(".matchpk").show();
                     return false;
