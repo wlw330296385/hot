@@ -116,8 +116,17 @@ class Match extends Base
             // 创建match数据成功后续业务
             if ($res['code'] == 200) {
                 $matchId = $res['data'];
+                // 记录比赛战绩数据
+                $dataMatchRecord['match_id'] = $res['data'];
+                $dataMatchRecord['match'] = $data['name'];
+                $resMatchRecord = $matchS->saveMatchRecord($dataMatchRecord);
+                $matchRecordId = $resMatchRecord['data'];
+
+                // 执行裁判消息通知业务
+                $this->setMatchReferee($data, $matchId, $matchRecordId, $inviteeRefereeIds, $sendMatchToRefereeByCost);
+
                 // 发送比赛邀请给对手球队
-                if (isset($data['away_team_id'])) {
+                if (array_key_exists('away_team_id', $data)) {
                     $awayTeam = $teamS->getTeam(['id' => $data['away_team_id']]);
                     if ($awayTeam) {
                         // 保存约战申请
@@ -155,13 +164,6 @@ class Match extends Base
                         $teamS->saveTeamMessage($dataMessage);
                     }
                 }
-                // 记录比赛战绩数据
-                $dataMatchRecord['match_id'] = $res['data'];
-                $dataMatchRecord['match'] = $data['name'];
-                $resMatchRecord = $matchS->saveMatchRecord($dataMatchRecord);
-                $matchRecordId = $resMatchRecord['data'];
-                // 执行裁判消息通知业务
-                $this->setMatchReferee($data, $matchId, $matchRecordId, $inviteeRefereeIds, $sendMatchToRefereeByCost);
             }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -1460,16 +1462,15 @@ class Match extends Base
             $id = input('match_id');
             $matchS = new MatchService();
             $teamS = new TeamService();
+            $matchRecord = $matchS->getMatchRecord(['id' => $id]);
             // 查询比赛match数据
-            $match = $matchS->getMatch(['id' => $id]);
+            $match = $matchS->getMatch(['id' => $matchRecord['match_id']]);
             if (!$match) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他比赛']);
             }
             if ($match['is_finished_num'] == 1) {
                 return json(['code' => 100, 'msg' => '此比赛' . $match['is_finished'] . '，请选择其他比赛']);
             }
-
-            $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
             if ($matchRecord) {
                 $match['record'] = $matchRecord;
             }

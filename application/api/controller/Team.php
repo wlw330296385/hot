@@ -1317,6 +1317,9 @@ class Team extends Base
                             array_push($teamIds, $team['team_id']);
                         }
                         $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
@@ -1381,6 +1384,9 @@ class Team extends Base
                         } else {
                             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                         }
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
@@ -1444,6 +1450,9 @@ class Team extends Base
                             array_push($teamIds, $team['team_id']);
                         }
                         $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
@@ -1543,6 +1552,9 @@ class Team extends Base
                             array_push($teamIds, $team['team_id']);
                         }
                         $map['team_id'] = ['in', $teamIds];
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
@@ -1588,6 +1600,9 @@ class Team extends Base
                             array_push($teamIds, $team['team_id']);
                         }
                         $map['team_id'] = ['in', $teamIds];
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
@@ -1635,18 +1650,12 @@ class Team extends Base
                     if ($memberInTeam) {
                         $teamIds = [];
                         foreach ($memberInTeam as $team) {
-                            if (input('?param.camp_id')) {
-                                if ($team['team']['camp_id'] == input('param.camp_id')) {
-                                    array_push($teamIds, $team['team_id']);
-                                }
-                                unset($map['camp_id']);
-                            }
+                            array_push($teamIds, $team['team_id']);
                         }
-                        if ( !empty($teamIds) ) {
-                            $map['team_id'] = ['in', $teamIds];
-                        } else {
-                            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-                        }
+                        $map['team_id'] = ['in', $teamIds];
+                    } else {
+                        // 会员无参加任何球队 返回无数据
+                        return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                     }
                 }
                 unset($map['member_id']);
