@@ -145,6 +145,34 @@ c3apkhh3Sd8k2NLlD8ezl_WPguo2KuQSP8ZJ652n2eg
 
 
 
+
+9. 客户取消退款通知
+模板ID:
+gXXoLU9ccggzyEgKrvDZoNYNnX71k7-A6gXHRAPU1qs
+
+{{first.DATA}}
+退款金额：{{keyword1.DATA}}
+商品名称：{{keyword2.DATA}}
+订单编号：{{keyword3.DATA}}
+取消时间：{{keyword4.DATA}}
+{{remark.DATA}}
+
+内容示例:
+客户已取消退款申请
+退款金额：200.00
+商品名称：七匹狼正品 牛皮男士钱包 真皮钱…
+订单编号：32401560307008
+取消时间：2016年1月9日 16:03
+订单已还原成支付状态，请及时发货，
+
+
+
+
+
+
+
+
+
 ***
 wechatService调用
 $data = [

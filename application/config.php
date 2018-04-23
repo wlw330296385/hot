@@ -44,6 +44,7 @@ return [
         'refuseInvitaion' => 'oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg', // 拒绝邀请提醒,
         'matchResult' => 'R5jFmx4b5mTSXyRXyls3AAGO0vGgy7tbTMJ6GcEdotI', // 比赛结果通知
         'informationChange' => 'b_aj8CaXc3P4d03RpCtQbLCUBLeowrj-z1SVo2uXr5M', //信息变更提醒
+        'cancelRefund'=>'gXXoLU9ccggzyEgKrvDZoNYNnX71k7-A6gXHRAPU1qs',//撤销退款通知
     ],
 
     // 七牛云

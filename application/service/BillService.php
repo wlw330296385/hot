@@ -571,19 +571,20 @@ class BillService {
                             // 发送消息给训练营管理员和营主
                         $MessageCampData = [
                             "touser" => '',
-                            "template_id" => config('wxTemplateID.successRefund'),
+                            "template_id" => config('wxTemplateID.cancelRefund'),
                             "url" => url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']],'',true),
                             "topcolor"=>"#FF0000",
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']退款已撤销'],
-                                'keyword1' => ['value' => $billInfo['bill_order']],
-                                'keyword2' => ['value' => '0元'],
-                                'keyword3' => ['value' => $billInfo['remarks']],
-                                'remark' => ['value' => '大热篮球']
+                                'keyword1' => ['value' => $billInfo['refundamount']],
+                                'keyword2' => ['value' => $billInfo['goods']],
+                                'keyword3' => ['value' => $billInfo['bill_order']],
+                                'keyword3' => ['value' => date('Y-m-d H:i',time())],
+                                'remark' => ['value' => $billInfo['remarks']]
                             ]
                         ];
                         $saveData = [
-                                'title'=>"退款申请-{$billInfo['goods']}",
+                                'title'=>"退款申请-{$billInfo['goods']}撤销",
                                 'content'=>"订单号: {$billInfo['bill_order']}退款已撤销",
                                 'url'=>url('frontend/bill/billInfoOfCamp',['bill_id'=>$map['id']])
                             ];
