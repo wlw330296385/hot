@@ -60,10 +60,6 @@ class Crontab extends Controller
             }
             db('income')->insert($data);
             db('camp_finance')->insert($data2);
-            if($value['goods_type'] == 1){
-                db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['goods_id']])->inc('rest_schedule',$value['total'])->inc('total_schedule',$value['total'])->update();
-                db('student')->where(['id'=>$value['student_id']])->inc('total_schedule',$value['total'])->update();
-            }
         }
     }
 
@@ -108,10 +104,6 @@ class Crontab extends Controller
             }
             db('output')->insert($data);
             db('camp_finance')->insert($data2);
-            if($value['goods_type'] == 1){
-                db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['goods_id']])->dec('rest_schedule',($value['refundamount']/$value['price']))->dec('total_schedule',($value['refundamount']/$value['price']))->update();
-                db('student')->where(['id'=>$value['student_id']])->dec('total_schedule',($value['refundamount']/$value['price']))->update();
-            }
         }
     }
 
@@ -138,19 +130,48 @@ class Crontab extends Controller
         }
     }
 
-    //4 
+    //4 (修复lesson_member)
     public function gift2(){
-        $giftList = db('schedule_gift_student')->select();      
+        $giftList = db('schedule_gift_student')->where('delete_time',null)->select();      
         $data = [];
         foreach ($giftList as $key => $value) {
             db('lesson_member')->where(['student_id'=>$value['student_id'],'lesson_id'=>$value['lesson_id']])->inc('rest_schedule',$value['gift_schedule'])->inc('total_schedule',$value['gift_schedule'])->update();
-            db('student')->where(['id'=>$value['student_id']])->inc('total_schedule',$value['gift_schedule'])->update();
+        }
+    }
+
+    //5 根据订单总课时增加(修复lesson_member)
+    public function totalSchedule(){
+    	$billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>1,'goods_type'=>1])->select();
+    	// dump($billList);die;
+        foreach ($billList as $key => $value) {
+        	db('lesson_member')->where(['lesson_id'=>$value['goods_id'],'student_id'=>$value['student_id']])->inc('total_schedule',$value['total'])->inc('rest_schedule',$value['total'])->update();
+        	db('student')->where(['id'=>$value['student_id']])->inc('total_schedule',$value['total'])->update();
+        }
+    }
+
+
+    //6根据schedule_member减少剩余课时(修复lesson_member)
+    public function repairLessonMemberRestSchedule(){
+    	$list = db('schedule_member')->where(['type'=>1,'status'=>1])->select();
+    	foreach ($list as $key => $value) {
+    		db('lesson_member')->where(['lesson_id'=>$value['lesson_id'],'student_id'=>$value['user_id']])->dec('rest_schedule')->update();
+    	}
+    }
+
+
+    //7 根据退款减少rest_schedule(修复lesson_member)
+
+    public function refundLessonMember(){
+    	$billList = db('bill')->where('delete_time',null)->where(['is_pay'=>1,'status'=>-2,'goods_type'=>1])->select();
+    	foreach ($billList as $key => $value) {
+        	db('lesson_member')->where(['lesson_id'=>$value['goods_id'],'student_id'=>$value['student_id']])->dec('total_schedule',($value['refundamount']/$value['price']))->dec('rest_schedule',$value['total'])->update();
+        	db('student')->where(['id'=>$value['student_id']])->dec('total_schedule',($value['refundamount']/$value['price']))->update();
         }
     }
 
 
 
-    // 5 修复grade_member状态
+    // 7 修复grade_member状态
     public function repairGradeMemberStatus(){
         $list = db('lesson_member')->where(['status'=>1])->select();
         foreach ($list as $key => $value) {
@@ -160,9 +181,10 @@ class Crontab extends Controller
     }
 
 
-    // 5 修复lesson_member状态
+    // 8 修复lesson_member状态
     public function repairLessonMemberStatus(){
-       db('grade_member')->where(['rest_schedule'=>['gt',0]])->update(['status'=>1]);    
+       db('lesson_member')->where(['rest_schedule'=>['gt',0]])->update(['status'=>1]);    
+       db('lesson_member')->where(['rest_schedule'=>['elt',0]])->update(['status'=>4]);  
     }
 
 
