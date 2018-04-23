@@ -126,13 +126,13 @@
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#">
                                     <span>剩余课时</span>
-                                    <div class="mui-media-body" id="restSchedule">{$restSchedule}</div>
+                                    <div class="mui-media-body" id="restSchedule" data-org="{$restSchedule}">{$restSchedule}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#">
                                     <span>已上课时</span>
-                                    <div class="mui-media-body" id="finishedSchedule">{$studentInfo['finished_schedule']}</div>
+                                    <div class="mui-media-body" id="finishedSchedule" data-org="{$studentInfo['finished_schedule']}">{$studentInfo['finished_schedule']}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -526,7 +526,7 @@
                         // var schedule_time = gettime(time)
                         newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].schedule_time + '</li><li class="mui-col-xs-7 mui-col-sm-7">' + data.data.data[i].schedule + '</li></ul></li></a>';
                         //判断第一页是否有未结算的课时
-                        if(page==1&&data.data.data[i].status==0){
+                        if(page==1&&data.data.data[i].status=="-1"){
                             weiJieSuan++;
                         }
                     }
@@ -535,8 +535,8 @@
                         $("ul.schedule").empty().append(newli);
                         //判断是否有未结算课时，有则在顶部数据中扣除
                         if(weiJieSuan>0){
-                            var restCount = parseInt($("#restSchedule").text())-weiJieSuan;
-                            var finishedCount = parseInt($("#finishedSchedule").text())+weiJieSuan;
+                            var restCount = parseInt($("#restSchedule").attr("data-org"))-weiJieSuan;
+                            var finishedCount = parseInt($("#finishedSchedule").attr("data-org"))+weiJieSuan;
                             $("#restSchedule").text(restCount);
                             $("#finishedSchedule").text(finishedCount);
                         }
