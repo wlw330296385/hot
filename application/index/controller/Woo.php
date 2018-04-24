@@ -11,7 +11,13 @@ class Woo extends Controller{
     }
 
 
-
+    public function aa(){
+        $list = db('schedule')->where('delete_time','not null')->column('id');
+        dump($list);
+        $b = db('schedule_member')->where(['schedule_id'=>['in',$list]])->update(['delete_time'=>time()]);
+        // $b = db('schedule_member')->where(['schedule_id'=>['in',$list]])->where('delete_time',null)->select();
+        dump($b);
+    }
 
 
 

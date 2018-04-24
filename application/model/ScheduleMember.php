@@ -16,6 +16,11 @@ class ScheduleMember extends Model {
         return date('Y-m-d H:i',$value);
     }
 
+
+    public function getStatusAttr($value){
+        $list = [-1=>'未结算',1=>'已结算'];
+        return $list[$value];
+    }
     // 关联member
     public function member(){
     	return $this->hasOne('member','id','member_id',[],'left join');
