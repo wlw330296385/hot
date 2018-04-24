@@ -98,7 +98,7 @@
                 data: {
                     match_id: match_id,
                     status: 1,
-                    is_apply: 1
+                    // is_apply: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -112,7 +112,13 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell mui-media listli">'
                             newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].avatar + '"><div class="mui-media-body">' + data.data.data[i].member + '';
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p></div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].create_time + '</div>'
+                            if (data.data.data[i].contact_tel == '') {
+                                newli += '<p class="mui-ellipsis">暂无联系方式</p>'
+                            } else {
+                                newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p>'
+                            }
+
+                            newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data.data[i].create_time + '</div>'
                             newli += '</li>';
                         }
                     }
