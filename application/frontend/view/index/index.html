@@ -482,10 +482,9 @@
         mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-
+        
+        var member_id = "{$memberInfo.id}";
         $(function () {
-
-
 
             //未开发提示
             $(".goConfirm").click(function () {
@@ -547,7 +546,6 @@
 
         }
 
-
         //搜索子页面
         var menuWrapper = document.getElementById("menu-wrapper");
         var menu = document.getElementById("menu");
@@ -590,7 +588,6 @@
         toLastEventList(); //最近活动
         toCampEventList(); //训练营活动
 
-        var member_id = "{$memberInfo.id}"
         //获取最近一条新闻
         function toNewList(page) {
             mui.ajax("{:url('api/article/getArticleListByPageApi')}", {
@@ -634,6 +631,7 @@
             mui.ajax({
                 url: url,
                 data: {
+                    member_id: member_id,
                     status: 1,
                 },
                 dataType: 'json',//服务器返回json格式数据

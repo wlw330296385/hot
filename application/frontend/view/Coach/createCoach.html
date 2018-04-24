@@ -30,6 +30,59 @@
             display: table;
             width: 100%;
         }
+
+        /* 裁剪图片样式 */
+
+        #clipArea {
+            height: 300px;
+        }
+
+        .fileFrame {
+            color: #000;
+            width: 26%;
+            height: 40px;
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-left: 30px;
+            margin-top: 15px;
+            text-align: center;
+            padding-top: 10px;
+            float: left;
+            font-size: 14px;
+        }
+
+        #file {
+            height: 25px;
+            top: 310px;
+            left: 30px;
+            overflow: hidden;
+            position: absolute;
+            z-index: 1;
+            width: 20%;
+            opacity: 0;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        #clipBtn {
+            float: right;
+            padding: 12px 20px;
+            margin: 15px 30px 0 0;
+            border-radius: 0;
+        }
+
+        #view {
+            width: 56px;
+            height: 56px;
+            border: 1px solid #CCC;
+            float: right;
+            margin-right: 35px;
+        }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -44,8 +97,7 @@
         <div class="register">
             <form action="" class="mui-input-group">
                 <input type="hidden" name="memberid" value="{$mid}">
-                <input type="hidden" name="member" value="{$memberInfo.member}">
-                {notempty name="memberInfo.nickname"}
+                <input type="hidden" name="member" value="{$memberInfo.member}"> {notempty name="memberInfo.nickname"}
                 <div class="mui-input-row">
                     <label>微信昵称</label>
                     <span>
@@ -74,11 +126,17 @@
                         <input type="hidden" name="photo_back" value="">
                     </a>
                 </div>
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
                         <label>个人形象照</label>
                         <img id="preview_3" class="coachicon icon01 upload-preview">
                         <input type="hidden" name="portraits" value=''>
+                    </a>
+                </div> -->
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label>个人头像</label>
+                        <div id="view"></div>
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
@@ -174,6 +232,15 @@
         </div>
     </div>
 
+    <!-- 头像截图弹框 -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" id="file">
+        </div>
+        <button id="clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!--选择器-->
@@ -187,6 +254,11 @@
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -277,7 +349,7 @@
                 var photo_positive = $('input[name=photo_positive]').val();
                 var photo_back = $('input[name=photo_back]').val();
                 var cert = $('input[name=cert]').val();
-               
+
                 if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(coach_name)) {
                     mui.toast("请输入您的真实姓名");
                     return false;
@@ -306,14 +378,14 @@
                         mui.ajax("{:url('api/coach/createCoachApi')}", {
                             data: {
                                 coachid: coachid,
-                                member:member,
+                                member: member,
                                 member_id: memberid,
                                 coach: coach_name,
                                 coach_year: coach_year,
                                 experience: experience,
                                 introduction: introHtml,
                                 description: description,
-                                portraits: portraits,
+                                portraits: imgurl,
                                 locationStr: locationStr,
                                 photo_positive: photo_positive,
                                 photo_back: photo_back,
@@ -327,7 +399,8 @@
                             success: function (data) {
                                 console.log(data);
                                 if (data.code == 200) {
-                                    window.location.href = "{:url('coach/registersuccess')}";
+                                    mui.toast("申请成功，请耐心等待审核");
+                                    setTimeout(window.location.href = "{:url('coach/registersuccess')}", 3000);
                                 } else {
                                     //图文转换成可编辑状态
                                     tuwenToEdit()
@@ -344,6 +417,43 @@
             })
 
         })
+    </script>
+
+    <script>
+        var imgurl = '';
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            //adaptive: ['60%', '80%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurl = res.path;
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
+    // 加载的图片必须要与本程序同源，否则无法截图
+    //        pc.load('img/mm.jpg');
+
     </script>
 </body>
 

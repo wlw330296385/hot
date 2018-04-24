@@ -49,40 +49,12 @@ class Upload {
     // 截取图片 保存到指定目录
     public function imgcropupload() {
         $data = input('post.');
-        $res = $this->base64_image_content($data['dataurl'], $data['path']);
+        $res = base64_image_content($data['dataurl'], $data['path']);
         if ($res) {
             $return = ['error' => 0, 'success' => 1, 'status' => 1, 'path' => $res];
         } else {
             $return = ['error' => 1, 'success' => 0, 'status' => 0, 'msg' => '上传图片失败'];
         }
         return json($return);
-    }
-
-    /**
-     * [将Base64图片转换为本地图片并保存]
-     * @param  [Base64] $base64_image_content [要保存的Base64]
-     * @param  [目录] $path [要保存的路径]
-     * @return bool|string
-     */
-    function base64_image_content($base64_image_content,$path){
-        //匹配出图片的格式
-        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
-            $type = $result[2];
-            //$new_file = $path."/".date('Ymd',time())."/";
-            $new_file =  "uploads" . DS . "images". DS . $path . DS . date('Y') . DS . date('m') . DS;
-            if(!file_exists($new_file)){
-                //检查是否有该文件夹，如果没有就创建，并给予最高权限
-                mkdir($new_file, 0700);
-            }
-            // 保存的图片文件名
-            $new_file = $new_file.sha1(time()).".{$type}";
-            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64_image_content)))){
-                return '/'.$new_file;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
     }
 }

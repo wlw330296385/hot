@@ -133,12 +133,12 @@
                 </a>
             </li>
             <li class="mui-table-view-cell mui-col-xs-2 opli">
-                <a href="#shareGuide">分享</a>
+                <a href="#shareGuide" id="fenxiang">分享</a>
             </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
                 <a href="tel:{$lessonInfo.telephone}">
                     <!-- <span class="mui-icon mui-icon-phone"></span> -->
-                     咨询</a>
+                    咨询</a>
             </li>
             <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bgblue" id="bookLesson">预约体验</li>
             <li class="mui-table-view-cell mui-media mui-col-xs-3 opli bggreen" id="buyLesson">购买课程</a>
@@ -150,12 +150,12 @@
 
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
-            <div class="shareGuideText">1、点击右上角的
-                <span class="shareEllipsis">···</span>
-                <img src="/static/frontend/images/esp.png" alt="">
-            </div>
-            <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
         </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
 
     <!-- 卡券弹框 -->
     <div id="cppopover" class="mui-popover" style="width: 95% !important;">
@@ -231,11 +231,20 @@
         console.log(data);
     }, 'json');
 
+
     var buyUrl = "{:url('lesson/comfirmBill',['lesson_id'=>$lessonInfo['id']])}";
     var bookUrl = "{:url('lesson/bookBill',['lesson_id'=>$lessonInfo['id']])}";
 
+
+
     // 预约课程和购买课程
     $(function () {
+
+        //如果是私密课程就显示显示引导页
+        var isprivate = wooApi.GetQueryString('isprivate');
+        if (isprivate == 1) {
+            mui('#shareGuide').popover('toggle')
+        }
 
         //        sessionStorage.lessonTotal = 0;
         //        $('.selectTotal').on('click', function () {

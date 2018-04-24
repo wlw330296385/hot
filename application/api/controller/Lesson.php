@@ -198,6 +198,8 @@ class Lesson extends Base{
             if ($data['isprivate']==1 && $data['memberData'] == "[]") {
                 return json(['code' => 100, 'msg' => '私密课程必须选择想要发送私密课程的会员']);
             }
+            // 封面图 base64转存
+            $data['cover'] = base64_image_content($data['cover'], 'lesson');
             if($lesson_id){
                 $lesson = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
                 $hasgradeused = $this->LessonService->hasgradeused($lesson_id);

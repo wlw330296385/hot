@@ -409,3 +409,34 @@ function deep_in_array($value, $array) {
     }
     return false;
 }
+
+/**
+ * [将Base64图片转换为本地图片并保存]
+ * @param  [Base64] $base64_image_content [要保存的Base64]
+ * @param  [目录] $path [要保存的路径]
+ * @return bool|string
+ */
+function base64_image_content($base64_image_content,$path){
+    //匹配出图片的格式
+    if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
+        // 文件后缀
+        $type = $result[2];
+        // 文件名
+        $fileName = sha1(time().rand(1111, 9999)).".{$type}";
+        // 文件路径
+        $dirName = "uploads" . DS . "images". DS . $path . DS . date('Y') . DS . date('m') . DS;
+        $saveDir =  ROOT_PATH  . "public" . DS. $dirName;
+        if ( !is_dir($saveDir) ) { // 目录不存在 创建目录
+            mkdir($saveDir, 0700, true);
+        }
+        $fileSrc = $saveDir . $fileName;
+        // 转存文件数据
+        $fileContent = base64_decode( str_replace($result[1], '', $base64_image_content) );
+        $res = file_put_contents($fileSrc, $fileContent);
+        if ($res) {
+            return '/'.$dirName . $fileName;
+        } else {
+            return false;
+        }
+    }
+}
