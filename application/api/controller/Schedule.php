@@ -142,7 +142,7 @@ class Schedule extends Base
 
     }
 
-    // 删除课程
+    // 删除课时
     public function delScheduleApi(){
         try {
             $schedule_id = input('param.schedule_id');
@@ -159,12 +159,15 @@ class Schedule extends Base
                     return json(['code' => 100, 'msg' => __lang('MSG_403').',不能操作']);
                 }
             }
-            
+            if ($schedule['status'] == 1) {
+                return ['code' => 100, 'msg' => '该课时记录已过审核，不能删除'];
+            }
             if ($schedule['is_settle'] == 1) {
                 return ['code' => 100, 'msg' => '该课时记录已结算，不能删除'];
             }
             $res = $this->ScheduleService->delSchedule($schedule_id);
             if ($res) {
+                db('schedule_member')->where(['schedule_id'=>$schedule_id])->delete();
                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];

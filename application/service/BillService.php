@@ -321,7 +321,7 @@ class BillService {
                     }
             }else{
                 // 课量增加
-                $re = db('lesson_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status'=>1,'update_time'=>time()]);
+                $re = db('lesson _member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status'=>1,'update_time'=>time()]);
                 $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
                 if(!$re){
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
