@@ -29,17 +29,17 @@ class Woo extends Controller{
     // 找出schedule的名单和schedule_member不对应的bug
     public function findbug(){
         $list = db('schedule_member')
-        ->field('count(schedule_member.id) as c_id,lesson_member.total_schedule,lesson_member.rest_schedule,lesson_member.student_id,lesson_member.student,lesson_member.id')
+        ->field('count(schedule_member.id) as c_id,sum(lesson_member.total_schedule) as s_t,sum(lesson_member.rest_schedule) as s_r,lesson_member.student_id,lesson_member.student,lesson_member.id')
         // ->join('lesson_member','schedule_member.user_id = lesson_member.student_id')
-        ->join('lesson_member','schedule_member.user_id = lesson_member.student_id and lesson_member.lesson_id=schedule_member.lesson_id')
+        ->join('lesson_member','schedule_member.user_id = lesson_member.student_id and lesson_member.camp_id=schedule_member.camp_id')
         ->where(['schedule_member.type'=>1,'schedule_member.status'=>1])
-        ->group('schedule_member.user_id')
+        ->group('lesson_member.student_id')
         ->order('lesson_member.id')
         ->select();
         $a= [];
         // dump($list);
         foreach ($list as $key => $value) {
-            if(($value['total_schedule']-$value['rest_schedule'])<>$value['c_id']){
+            if(($value['s_t']-$value['s_r'])<>$value['c_id']){
                 $a[] = $value;
             }
         }
