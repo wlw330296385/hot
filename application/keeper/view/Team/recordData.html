@@ -212,6 +212,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -321,15 +322,6 @@
                         <input type="hidden" name="allScore" value="" class="data">
                     </div>`;
 
-            // 是否发布通知
-            // $(".isLineup").on("tap", '', function () {
-            //     var send_m = $("input[name=lineup]");
-            //     if (send_m.val() == "0") {
-            //         send_m.val("1");
-            //     } else {
-            //         send_m.val("0");
-            //     }
-            // });
 
             //添加球队队员操作 
             $(document).on("tap", ".teamMemberList li", function () {
@@ -388,6 +380,15 @@
                 mui("#teamMember").popover("toggle");
             });
 
+            // 是否首发
+            $(document).on("tap", ".isLineup", function () {
+                var lineUp = $(this).siblings("input[name=lineup]");
+                if (lineUp.val() == "0") {
+                    lineUp.val("1");
+                } else {
+                    lineUp.val("0");
+                }
+            });
             toTeamMemberList(); //获取球员列表
             var matchKeyword = '';
             var wMatch = '';
@@ -521,7 +522,7 @@
                     mui.toast("罚球命中次数不能大于罚球数");
                     return false;
                 }
-                
+
                 // 求和判断
                 var personalScore = fg * fga + pfga * pfg + fta * ft;
                 var countScore = 0;
@@ -533,32 +534,32 @@
                     mui.toast("球员总得分不能大于球队总得分");
                     return false;
                 }
-                teamMember.push({ member, member_id, name, team_member_id, number, fga, fg, pfga, pfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+                teamMember.push({ member, member_id, name, team_member_id, number,lineup, fga, fg, pfga, pfg, fta, ft, reb, ast, stl, blk, turnover, foul });
             });
             console.log(teamMember)
-            
+
             // 提交api
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
+            // var data = wooApi.getInputData('input', 'data');
+            // datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
+            // arrData = wooApi.getDomData('domData', datas);
+            // var objData = wooApi.arrTOobj(arrData);
             // var url = "{:url('api/team/createteamhonor')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
+            // var ajaxResult = wooApi.asyncF(url, objData);
+            // if (ajaxResult.code == 200) {
+                // mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
                     // var goUrl = "{:url('team/')}/team_id/" + "{$team_id}";
                     // window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '录入失败');
-                tuwenToEdit(); //图文转换成可编辑状态
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '录入失败');
+            //     tuwenToEdit(); //图文转换成可编辑状态
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //             $('input[name=__token__]').val(data.data);
+            //         }
+            //     }, 'json');
+            // }
 
         }
 
