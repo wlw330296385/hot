@@ -1145,6 +1145,52 @@ class Match extends Base
         }
     }
 
+    // 比赛列表（含有比赛战绩、参赛球员）
+    public function matchpagewithrecord() {
+        try {
+            $data = input('param.');
+            $matchS = new MatchService();
+            // 查询条件
+            // 关键字搜索：发布比赛的球队名(team)
+            $keyword = input('keyword');
+            if (isset($keyword)) {
+                // 关键字null情况处理
+                if ($keyword == null) {
+                    unset($data['keyword']);
+                } else {
+                    if (!empty($keyword)) {
+                        if (!ctype_space($keyword)) {
+                            $data['team'] = ['like', "%$keyword%"];
+                        }
+                    }
+                }
+                unset($data['keyword']);
+            }
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+            // 查询条件 end
+
+            // 比赛信息列表分页
+            $result = $matchS->matchListPaginator($data);
+            if (!$result) {
+                // 无数据
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            foreach ($result['data'] as $k => $val) {
+                // 获取比赛战绩数据
+                $matchRecord = $matchS->getMatchRecord(['match_id' => $val['id']]);
+                $result['data'][$k]['record'] = ($matchRecord) ? $matchRecord : [];
+                // 获取参赛球员列表
+                $matchRecordMembers = $matchS->getMatchRecordMemberListAll(['match_id' => $val['id'], 'match_record_id' => $matchRecord['id']]);
+                $result['data'][$k]['record_members'] = ($matchRecordMembers) ? $matchRecordMembers : [];
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 球队认领比赛列表（分页）
     public function teamclaimfinishmatchpage()
     {
