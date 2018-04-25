@@ -596,6 +596,10 @@ class Camp extends Base{
     // 训练营-余额
     public function campWallet() {
         $buffer = 0;
+        $campWithdraw = db('camp_withdraw')->where(['camp_id'=>$this->campInfo['id']])->sum('buffer');
+        if($campWithdraw){
+            $buffer = $campWithdraw; 
+        }
         $this->assign('buffer',$buffer);
         return view('Camp/campWallet');
     }
@@ -603,6 +607,10 @@ class Camp extends Base{
     // 训练营-提现操作
     public function campWithdraw() {
 
+        $campBankcard = db('camp_bankcard')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->find();
+
+
+        $this->assign('campBankcard',$campBankcard);
 
         return view('Camp/campWithdraw');
     }
@@ -610,7 +618,7 @@ class Camp extends Base{
     // 训练营-收支明细
     public function campSalaryDetail() {
 
-        
+
         return view('Camp/campSalaryDetail');
     }
 

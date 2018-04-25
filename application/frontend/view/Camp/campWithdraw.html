@@ -28,33 +28,40 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>训练营余额</label>
-                <span class="colororange">￥{8888}</span>
+                <span class="colororange">￥{$campInfo.balance}</span>
             </div>
             <div class="mui-input-row">
                 <label>提现金额</label>
                 <input type="text" name="salary" class="data" value="" placeholder="￥0.00">
             </div>
+            {if $campInfo.rebate_type == 2}}
             <div class="mui-input-row">
                 <label>提现手续费</label>
-                <span class="t_rebate">￥666.00</span>
+                <span class="t_rebate">￥提现金额*{$campInfo.schedule_rebate}</span>
             </div>
+            {/if}
         </form>
 
-        <!-- 课时信息 -->
+        <!-- 账户 -->
+        {if $campBankcard}
         <div class="page-header">
             <span class="course">提现账号信息</span>
         </div>
         <ul class="mui-table-view">
             <li class="mui-table-view-cell listli">收款人
-                <span>某某某人/公司</span>
+                <span>{$campBankcard.account}</span>
             </li>
             <li class="mui-table-view-cell listli">收款账号
-                <span>62203272364284239467</span>
+                <span>{$campBankcard.bank_card}</span>
             </li>
             <li class="mui-table-view-cell listli">收款银行
-                <span>工商银行</span>
+                <span>{$campBankcard.bank}</span>
+            </li>
+            <li class="mui-table-view-cell listli">银行支行
+                <span>{$campBankcard.branch}</span>
             </li>
         </ul>
+        {/if}
     </div>
 
     <ul class="mui-table-view operation">
