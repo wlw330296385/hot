@@ -132,7 +132,7 @@
             <!--球员数据-->
             <div class="page-header bggray2">
                 <span class="course">球员数据</span>
-                <a href="#teamMember" class="addOperation">
+                <a href="#member" class="addOperation">
                     <text>添加</text>
                     <i class="mui-icon mui-icon-plusempty"></i>
                 </a>
@@ -188,25 +188,58 @@
         </div>
     </div>
 
-    <!--球队队员-->
-    <div id="teamMember" class="mui-popover">
+    <!--领队-->
+    <div id="member" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course wd25">
-                <strong>球队名单</strong>
+            <span class="course wd36">
+                <strong>选择球员</strong>
             </span>
+            <!-- <span class="fr">
+                <button class="mui-btn" id="memberDel">清除</button>
+            </span> -->
             <span class="fr">
-                <button class="mui-btn" id="teamMemberDel">清除</button>
-            </span>
-            <span class="fr">
-                <button class="mui-btn addTp">加临时队员</button>
+                <button class="mui-btn addTp">添加临时球员</button>
             </span>
         </div>
-
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list teamMemberList"></ul>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item11">球员列表</a>
+                <a class="mui-control-item" href="#item22">平台会员列表</a>
             </div>
+        </div>
+        <div id="item11" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list teamMemberList">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="item22" class="mui-control-content">
+            <div class="pop-search">
+                <input type="search" class="keywordMB" placeholder="请输入会员手机号搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchMB"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:40px !important;">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list memberList">
+                    </ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -340,13 +373,15 @@
                 if (!isOk) { return isOk }
 
                 if (addtmNumber == 'null') {
-                    addtmNumber = ''
+                    addtmNumber = '';
+                    console.log(123)
+                    // $(".dataTitle input[name='number']").attr("disabled", false);
                 }
                 var tmFormal = `<li class="mui-table-view-cell mui-collapse listli" data-id="${addtmId}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}"  placeholder="球员姓名"></div>
-                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}" placeholder="球员号码"></div>
+                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}"  placeholder="球员姓名" ></div>
+                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}" placeholder="球员号码" ></div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -357,7 +392,40 @@
                 </li>`;
                 $(".dataList").append(tmFormal);
                 mui('.mui-switch').switch();
-                mui("#teamMember").popover("toggle");
+                mui("#member").popover("toggle");
+            });
+
+            //添加平台会员操作 
+            $(document).on("tap", ".memberList li", function () {
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-id");
+                // 判断球员是否在列表中
+                var isOk = true
+                $(".dataList li").each(function () {
+                    var tmId = $(this).attr("data-id");
+                    if (member_id == tmId) {
+                        mui.toast("该队员已在列表中");
+                        return isOk = false;
+                    }
+                });
+                if (!isOk) { return isOk }
+
+                var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-id="${member_id}">
+                    <a class="mui-navigate-right">
+                        <div class="mui-row">
+                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${member}"  placeholder="球员姓名"></div>
+                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="" placeholder="球员号码"></div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                <text class="bgcolor">
+                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                </text>
+                            </div>
+                        </div>
+                    </a>${dataPublic}
+                </li>`;
+                $(".dataList").append(ptMember);
+                mui('.mui-switch').switch();
+                mui("#member").popover("toggle");
             });
 
             //添加临时队员操作
@@ -377,7 +445,7 @@
                 </li>`;
                 $(".dataList").append(tmTemporary);
                 mui('.mui-switch').switch();
-                mui("#teamMember").popover("toggle");
+                mui("#member").popover("toggle");
             });
 
             // 是否首发
@@ -389,12 +457,18 @@
                     lineUp.val("0");
                 }
             });
-            toTeamMemberList(); //获取球员列表
+
             var matchKeyword = '';
+            var memberKeyword = '';
             var wMatch = '';
+            var wMember = '';
             var pageCR = 1;
+            var pageMB = 1;
             var keywordLD = '';
-            toMatchList(wMatch, matchKeyword, 1);
+            var keywordMB = '';
+            toMatchList(wMatch, matchKeyword, 1); //获取比赛列表
+            toMemberList(wMember, memberKeyword, 1); //获取会员列表
+            toTeamMemberList(); //获取球员列表
             //////////////////////比赛列表////////////////////////////////////
             // 选择比赛
             $(".matchList").on('tap', 'li', function () {
@@ -472,7 +546,51 @@
                 }
             })
             //////////////////////比赛//////////////////////////////////
+            /////////////////////会员//////////////////////////////////
+            // 会员
+            $(".member").on('click', 'li', function () {
+                var member = $(this).text();
+                $("input[name='member']").val(member);
+                var member_id = $(this).attr('data-member_id');
+                $(".member_id").val(id);
+                mui("#member").popover("toggle");
+            })
+            //清除会员
+            $("#memberDel").on('tap', '', function () {
+                $("input[name='member']").val("");
+                $(".member_id").val("");
+                mui("#member").popover("toggle");
+            })
 
+            //搜索会员
+            $("#searchMB").on("tap", function () {
+                var keywordMB = $(".keywordMB").val();
+                var pageMB = 1;
+                toMemberList(keywordMB, "member", pageMB);
+            })
+            //会员弹出框页码控制
+            $("#member").on('tap', '.next_page', function () {
+                var getTotalPage = $("#member .totalPage").text();
+                pageMB++;
+                if (pageMB > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                    pageMB = getTotalPage;
+                } else {
+                    var keywordMB = $(".keywordMB").val();
+                    toMemberList(keywordMB, "member", pageMB);
+                }
+            })
+            $("#member").on('tap', '.prev_page', function () {
+                pageMB--;
+                if (pageMB < 1) {
+                    mui.toast("已经是第一页了");
+                    pageMB = 1;
+                } else {
+                    var keywordMB = $(".keywordMB").val();
+                    toMemberList(keywordMB, "member", pageMB);
+                }
+            })
+            //////////////////////会员//////////////////////////////////
             // 确认标志完成
             $(document).on("tap", ".confirmBtn button", function () {
                 var confirmText = $(this).text();
@@ -534,7 +652,7 @@
                     mui.toast("球员总得分不能大于球队总得分");
                     return false;
                 }
-                teamMember.push({ member, member_id, name, team_member_id, number,lineup, fga, fg, pfga, pfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+                teamMember.push({ member, member_id, name, team_member_id, number, lineup, fga, fg, pfga, pfg, fta, ft, reb, ast, stl, blk, turnover, foul });
             });
             console.log(teamMember)
 
@@ -547,9 +665,9 @@
             // var url = "{:url('api/team/createteamhonor')}";
             // var ajaxResult = wooApi.asyncF(url, objData);
             // if (ajaxResult.code == 200) {
-                // mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
-                    // var goUrl = "{:url('team/')}/team_id/" + "{$team_id}";
-                    // window.top.location.href = goUrl;
+            // mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
+            // var goUrl = "{:url('team/')}/team_id/" + "{$team_id}";
+            // window.top.location.href = goUrl;
             //     })
             // } else {
             //     mui.alert(ajaxResult.msg, '录入失败');
@@ -640,6 +758,51 @@
                         }
                         $("ul.teamMemberList").append(newli);
 
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取会员列表
+        function toMemberList(keywordMB, wMember, page) {
+            var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
+            var wMemberList = "ul.memberList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keywordMB != '' && wMember != '') {
+                wMemberList = "#" + wMember + " ul.memberList";
+                currPage = "#" + wMember + " .currPage";
+                totalPage = "#" + wMember + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keywordMB,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell listli"  data-member_id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" ><font class="court">' + data.data.data[i].member + '</font>';
+                            newli += '</div></li>'
+                        }
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据</p></div>'
+                        }
+                        $(wMemberList).empty().append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
