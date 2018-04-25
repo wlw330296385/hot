@@ -282,7 +282,7 @@
                     </span>
                 </div>
 
-                <div class="image-items memberInput-row border-b" style="padding-top: 0;display: none">
+                <div class="image-items memberInput-row border-b" style="padding-top: 6px;display: none">
                     <div class="mui-input-group">
                         <div class="box checkChecked" id="inactiveList">
                             <p class="nohave">请选择你想要发送私密课程的会员。</p>
@@ -292,7 +292,7 @@
                             <a class="all">全选</a>
                             <a class="cancel">取消</a>
                             <a class="del">[删除]</a>
-                            <a href="#addMember" id="setMemberCBox" class="mui-icon mui-icon-personadd add"></a>
+                            <a href="#addStudent" id="setMemberCBox" class="mui-icon mui-icon-personadd add"></a>
                         </div>
                     </div>
                 </div>
@@ -313,24 +313,65 @@
 
 
     <!--会员名单-->
-    <div id="addMember" class="mui-popover">
+    <!--<div id="addMember" class="mui-popover">-->
+        <!--<div class="mui-popover-arrow"></div>-->
+        <!--<div class="page-header">-->
+            <!--<span class="course wd36">-->
+                <!--<strong>会员名单</strong>-->
+            <!--</span>-->
+            <!--<span class="fr">-->
+                <!--<button class="mui-btn-blue" id="memberConfirm">确认</button>-->
+            <!--</span>-->
+        <!--</div>-->
+        <!--<div class="mui-scroll-wrapper">-->
+            <!--<div class="mui-scroll">-->
+                <!--<form id="newdiv" class="mui-input-group campMemberList">-->
+
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+
+    <!--学员名单-->
+    <div id="addStudent" class="mui-popover">
         <div class="mui-popover-arrow"></div>
+
         <div class="page-header">
-            <span class="course wd36">
-                <strong>会员名单</strong>
+            <span class="course wd27">
+                <strong>训练营会员名单</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn-blue" id="memberConfirm">确认</button>
+                <button class="mui-btn" id="addStudentAll">查看所有</button>
+                <button class="mui-btn" id="addStudentClose">关闭</button>
             </span>
         </div>
-        <div class="mui-scroll-wrapper">
+        <div class="pop-search page-header border-b">
+            <input type="search" class="searchStudent" placeholder="请输入关键字搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchStudent"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="margin-top:37px">
             <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group campMemberList">
-
-                </form>
+                <form id="newdiv" class="mui-input-group campMemberList"></form>
+                <ul class="mui-pager">
+                    <li>
+                        <button class="prev_page">上一页</button>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <button class="next_page">下一页</button>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+
+
+
+
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -851,48 +892,143 @@
                 }
             });
 
-            //学员列表复选框赋值
-            $("#setMemberCBox").on('tap', '', function () {
-                //每次打开先清空所有选择
-                $("input[name='checkbox-member']").prop("checked", false);
-                //然后遍历出对应所选
-                $(".stdList").each(function (i) {
-                    var id = $(this).attr("data-id");
-                    var member = $(this).attr("data-member");
-                    $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
-                        return $(this).attr("data-id") == id
-                    }).prop("checked", true);
-                });
-            });
-
-            //角标随checkboxCont的数量变化
-            $(document).on('click', '.del', function () {
-                totalNum = $(".checkboxCont").length;
-                $(".mui-badge").text(totalNum);
-            });
 
             // 选择添加学员点击事件
-            memberList = [];//学员列表数组
-            $("#memberConfirm").on('click', function () {
-                $("#inactiveList").empty();
-                $(".campMemberList input[type=checkbox]:checked").each(function (i) {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
-                    var member_type = $(this).attr("data-type");
-                    var id = $(this).attr("data-id");
-                    var member = $(this).attr("data-member");
-                    $("#inactiveList").append(str);
-                    //memberList.push({ member: member, id: id, type: member_type });
-                    memberList[i] = { member: member, id: id, type: member_type };
+            $(".campMemberList").on('tap', '.student', function () {
+                var id = $(this).find("span").attr("data-id");
+                var lesson = $(this).find("span").attr("data-lesson");
+                var lesson_id = $(this).find("span").attr("data-lesson_id");
+                var camp = $(this).find("span").attr("data-camp");
+                var camp_id = $(this).find("span").attr("data-camp_id");
+                var student = $(this).find("span").attr("data-student");
+                var student_id = $(this).find("span").attr("data-student_id");
+                var member = $(this).find("span").attr("data-member");
+                var member_id = $(this).find("span").attr("data-member_id");
+                var student_type = $(this).find("span").attr("data-type");
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + student + '</font><input name="student" value="' + student_id + '" data-id="' + id + '" data-lesson="' + lesson + '"  data-lesson_id="' + lesson_id + '" data-camp="' + camp + '"  data-camp_id="' + camp_id + '"  data-student="' + student + '" data-student_id="' + student_id + '" data-member="' + member + '"  data-member_id="' + member_id + '" data-type="' + student_type + '" type="checkbox" checked="checked" class="stdList eachList"  data-is_transfer="' + 1 + '" ></div>';
+
+                //遍历上课学员列表中是否存在此学员
+                var isExist = false;
+                $("input.stdList[type=checkbox]").each(function () {
+                    var student_id_grade = $(this).attr("data-student_id");
+                    if (student_id_grade == student_id) {
+                        isExist = true;
+                        //有则勾选，无需添加到表内
+                        $(this).prop("checked", true);
+                        mui.toast("已勾选");
+                        return false;
+                    }
                 });
+                if (!isExist) {
+                    //无则添加到表内
+                    if (student_type == "正式生") {
+                        $("#inactiveList").append(str);
+                    } else {
+                        $("#expinactiveList").append(str);
+                    }
+                    mui.toast("已插入列表并勾选");
+                }
 
-                // checkmember();// 检查是否有学员数据
-                console.log(memberList)
+                //调用-更新序号
+                changeIndex();
 
-                changeIndex();//调用-更新序号
-                mui("#addMember").popover("toggle");
-                totalNum = $(".checkboxCont").length;
-                $(".mui-badge").text(totalNum);
+                //获取学生列表并写入对应位置
+                getStudentCount()
+
+
+            });
+
+            $("#addStudentAll").hide();
+            //添加学生窗口点击所有
+            $("#addStudentAll").on("tap", "", function () {
+                toScheduleList("", 1);
+                $(".searchStudent").val("");
+                $("#addStudentAll").hide();
+            });
+
+            //关闭添加学生窗口
+            $("#addStudentClose").on("tap", "", function () {
+                mui("#addStudent").popover("toggle");
+            });
+
+            //搜索学生
+            $("#searchStudent").on("tap", "", function () {
+                var keywordSD = $(".searchStudent").val();
+                if (keywordSD != "") {
+                    $("#addStudentAll").show();
+                } else {
+                    $("#addStudentAll").hide();
+                };
+                pageSTD = 1;
+                toScheduleList(keywordSD, pageSTD);
+            });
+
+            //领队粉丝弹出框页码控制
+            $("#addStudent").on('tap', '.next_page', function () {
+                var getTotalPage = $("#addStudent .totalPage").text();
+                pageSTD++;
+                if (pageSTD > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                    pageSTD = getTotalPage;
+                } else {
+                    var keywordSD = $(".searchStudent").val();
+                    toScheduleList(keywordSD, pageSTD);
+                }
             })
+            $("#addStudent").on('tap', '.prev_page', function () {
+                pageSTD--;
+                if (pageSTD < 1) {
+                    mui.toast("已经是第一页了");
+                    pageSTD = 1;
+                } else {
+                    var keywordSD = $(".searchStudent").val();
+                    toScheduleList(keywordSD, pageSTD);
+                }
+            })
+
+
+            //学员列表复选框赋值
+//            $("#setMemberCBox").on('tap', '', function () {
+//                //每次打开先清空所有选择
+//                $("input[name='checkbox-member']").prop("checked", false);
+//                //然后遍历出对应所选
+//                $(".stdList").each(function (i) {
+//                    var id = $(this).attr("data-id");
+//                    var member = $(this).attr("data-member");
+//                    $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
+//                        return $(this).attr("data-id") == id
+//                    }).prop("checked", true);
+//                });
+//            });
+
+            //角标随checkboxCont的数量变化
+//            $(document).on('click', '.del', function () {
+//                totalNum = $(".checkboxCont").length;
+//                $(".mui-badge").text(totalNum);
+//            });
+
+            // 选择添加学员点击事件
+//            memberList = [];//学员列表数组
+//            $("#memberConfirm").on('click', function () {
+//                $("#inactiveList").empty();
+//                $(".campMemberList input[type=checkbox]:checked").each(function (i) {
+//                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
+//                    var member_type = $(this).attr("data-type");
+//                    var id = $(this).attr("data-id");
+//                    var member = $(this).attr("data-member");
+//                    $("#inactiveList").append(str);
+//                    //memberList.push({ member: member, id: id, type: member_type });
+//                    memberList[i] = { member: member, id: id, type: member_type };
+//                });
+//
+//                // checkmember();// 检查是否有学员数据
+//                console.log(memberList)
+//
+//                changeIndex();//调用-更新序号
+//                mui("#addMember").popover("toggle");
+//                totalNum = $(".checkboxCont").length;
+//                $(".mui-badge").text(totalNum);
+//            })
             //获取训练营身份列表
             toCampMemberList();
             //获取训练营场地表
@@ -1009,10 +1145,9 @@
         }
 
 
-
         //获取会员列表
         var toCampMemberList = function (type) {
-            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
+            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}/?page=" + page + "&keyword="+keyword;
             var campID = "{$campInfo.id}";
             mui.ajax({
                 url: url,
@@ -1029,15 +1164,16 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            if (data.data.data[i].type == "学生" || data.data.data[i].type == "粉丝") {
-                                newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
-                            }
+//                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
+                            newli = newli + '<div class="mui-input-row student"><label>' + data.data.data[i].member + '</label><span data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].type + '</b> +</span></div>'
                         }
                         $(".campMemberList").empty();
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $(".campMemberList").append(newli);
+                        $("#addStudent .currPage").text(data.data.current_page);
+                        $("#addStudent .totalPage").text(data.data.last_page);
 
                     } else {
                         mui.toast('数据获取失败,请稍候再试');

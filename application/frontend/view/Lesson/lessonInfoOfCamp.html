@@ -21,7 +21,7 @@
         <h5 class="mui-title">{$lessonInfo.camp}</h5>
     </header>
     <!--首页-->
-    <div class="mui-content">
+    <div class="mui-content mt55">
 
         <div class="list">
 
@@ -86,17 +86,19 @@
                 </li>
             </ul>
 
+            {eq name="lessonInfo.isprivate" value="1"}
             <!-- 私密课程 -->
-            <div class="page-header {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}">
+            <div class="page-header">
                 <span class="course wd83">
-                    <a href="{:url('lesson/lessonInfo',['camp_id'=>$lessonInfo.camp_id,'lesson_id'=>$lessonInfo.id])}/?isprivate=1" class="colororange">私密课程（点击去分享给会员吧）</a>
+                    私密课程
                 </span>
             </div>
             <ul class="mui-table-view border-b">
-                <li class="mui-table-view-cell listli {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}">私密课程指定会员
+                <li class="mui-table-view-cell listli">私密课程指定会员
                     <span class="wd60">{volist name="$assignMemberList" id="vol" }{$vol.member},{/volist}</span>
                 </li>
             </ul>
+            {/eq}
 
             <!-- 课时信息 -->
             <div class="page-header">
@@ -117,6 +119,13 @@
         </div>
     </div>
 
+    {eq name="lessonInfo.isprivate" value="1"}
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue">
+            <a href="{:url('lesson/lessonInfo',['camp_id'=>$lessonInfo.camp_id,'lesson_id'=>$lessonInfo.id])}/?isprivate=1">进入分享页面</a>
+        </li>
+    </ul>
+    {/eq}
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>

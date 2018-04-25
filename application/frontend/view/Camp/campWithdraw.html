@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提现</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <h1 class="mui-title">{$campInfo.camp} - 提现操作</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>训练营余额</label>
+                <span class="colororange">￥{8888}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>提现金额</label>
+                <input type="text" name="salary" class="data" value="" placeholder="￥0.00">
+            </div>
+            <div class="mui-input-row">
+                <label>提现手续费</label>
+                <span class="t_rebate">￥666.00</span>
+            </div>
+        </form>
+
+        <!-- 课时信息 -->
+        <div class="page-header">
+            <span class="course">提现账号信息</span>
+        </div>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell listli">收款人
+                <span>某某某人/公司</span>
+            </li>
+            <li class="mui-table-view-cell listli">收款账号
+                <span>62203272364284239467</span>
+            </li>
+            <li class="mui-table-view-cell listli">收款银行
+                <span>工商银行</span>
+            </li>
+        </ul>
+    </div>
+
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue" id="submitBtn">
+            确定提现
+        </li>
+    </ul>
+</div>
+
+</body>
+
+</html>
+
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    var ok = true;
+    $(function(){
+        var bankcard = $('.bankcard span').text();
+
+        $('.bankcard_select').on('click',function(){
+            console.log(bankcard);
+            bankcard = $(this).children().find('h4').text();
+            $('.bankcard span').text(bankcard);
+            $('input[name=bank_card]').val($(this).attr('data-bank-card'));
+            $('input[name=bank_type]').val($(this).attr('data-bank-type'));
+            $('input[name=bank]').val($(this).attr('data-bank'));
+            $('input[name=realname]').val($(this).attr('data-realname'));
+        })
+
+        $('#submitBtn').on('click',function(){
+            var data1 = wooApi.getInputData();
+            var objData = wooApi.arrTOobj(data1);
+            if(!objData.salary){
+                mui.toast('请输入金额');
+                ok = false
+                return false;
+            }else{
+                ok = true;
+            }
+            if(ok == true){
+                var result = wooApi.asyncF("{:url('api/SalaryOut/applySalaryOut')}",objData);
+                alert(result.msg)
+                if(result.code == 200){
+                    window.location.href="{:url('member/mywallet')}";
+                }
+            }else{
+                mui.toast('请核对金额和账号是否正确');
+            }
+            
+        })
+
+
+        // 提现金额
+        $('input[name=salary]').on('keyup',function(){
+            if( parseFloat($(this).val()) <0){
+                mui.toast('提现金额不能小于0');
+                return false;
+            }else if(parseFloat($(this).val())> parseFloat("{$memberInfo['balance']}") ){
+                ok = true;
+                $(this).val("{$memberInfo['balance']}");
+            }
+        })
+    })
+</script>

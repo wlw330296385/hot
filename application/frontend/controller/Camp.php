@@ -593,7 +593,32 @@ class Camp extends Base{
     }
 
 
+    // 训练营-余额
+    public function campWallet() {
+        $camp_id = input('camp_id');
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
 
+        $this->assign('campInfo',$campInfo);
+        return view('Camp/campWallet');
+    }
+
+    // 训练营-提现操作
+    public function campWithdraw() {
+        $camp_id = input('camp_id');
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
+
+        $this->assign('campInfo',$campInfo);
+        return view('Camp/campWithdraw');
+    }
+
+    // 训练营-收支明细
+    public function campSalaryDetail() {
+        $camp_id = input('camp_id');
+        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
+
+        $this->assign('campInfo',$campInfo);
+        return view('Camp/campSalaryDetail');
+    }
 
 
     // 训练营统计表
