@@ -11,11 +11,16 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .desimg img {
+            width: 100%;
+        }
+    </style>
 </head>
 
-<body class="whitebg">
+<body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('event/eventListOfCamp',['organization_id'=>$eventInfo['organization_id']])}">
             <span class="return">返回活动列表</span>
         </a>
@@ -24,9 +29,9 @@
 
     <div class="mui-content">
 
-        <div class="camp-list camp-lesson-list detalis-list">
+        <div class="camp-lesson-list list mb44">
 
-            <ul class="mui-table-view list mb">
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli">
                     <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}" style="width:70px!important;height: 56px!important;">
                     <div class="mui-media-body wd52">
@@ -41,7 +46,7 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view list">
+            <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli">报名人员
                     <a href="{:url('event/eventOfSignUpList',['event_id'=>$eventInfo['id']])}" class="mui-navigate-right colororange fr">
                         <span style="display: table"> 已有 {$eventInfo.participator} 人报名，点击查看</span>
@@ -60,7 +65,9 @@
                 <li class="mui-table-view-cell listli" style="line-height:37px">活动套餐
                     <span class="wd">
                         {volist name='$eventInfo.doms' id="vol"}
-                        <button type="button" class="mui-btn selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
+                        <button type="button" class="mui-btn selectDom" value="{$vol.price}" data="{$key}">{$vol.name}
+                            <div>{$vol.price}</div>
+                        </button>
                         {/volist}
                     </span>
                 </li>
@@ -91,29 +98,29 @@
             </ul>
 
             <!--活动简介-->
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header ">
                 <span class="course">活动简介</span>
             </div>
-            <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli introBox intro1">{$eventInfo.event_des}</li>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli desimg intro1">{$eventInfo.event_des}</li>
             </ul>
 
             <!--已参与人员-->
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header">
                 <span class="course">已参与人员</span>
             </div>
-            <ul class="mui-table-view list">
-                <li class="mui-table-view-cell listli introBox">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli">
                     <div class="box intro2" id="inactiveList"></div>
                 </li>
             </ul>
 
             <!--备注信息-->
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header">
                 <span class="course">备注信息</span>
             </div>
-            <ul class="mui-table-view list mt55">
-                <li class="mui-table-view-cell listli introBox intro3">{$eventInfo.remarks}</li>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli desimg intro3">{$eventInfo.remarks}</li>
             </ul>
 
             {egt name="power" value='2'}
@@ -138,10 +145,10 @@
             toExpMemberList();
 
             // 简介默认的提示
-            if ($(".intro1").text() == '') {
+            if ($(".intro1").html() == '') {
                 $(".intro1").append("<p class='nohave'>没有活动简介哦</p>")
             }
-            if ($(".intro3").text() == '') {
+            if ($(".intro3").html() == '') {
                 $(".intro3").append("<p class='nohave'>没有备注信息哦</p>")
             }
 

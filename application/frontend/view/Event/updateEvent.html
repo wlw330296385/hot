@@ -46,7 +46,7 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
@@ -58,10 +58,10 @@
 
     <div class="mui-content pt">
 
-        <div class="camp-list camp-lesson-list" style="margin-top: 4px">
+        <div class="list  mb44">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-            <form action="" class="mui-input-group mt55">
+            <form action="" class="mui-input-group">
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -137,7 +137,9 @@
                         <label>活动套餐</label>
                         <span class="eventDom wd60 hdDoms" style="line-height: 37px;">
                             {volist name="$eventInfo.doms" id="vol"}
-                            <button type="button" class="selectDom">{$vol.name}<div>{$vol.price}</div></button>
+                            <button type="button" class="selectDom">{$vol.name}
+                                <div>{$vol.price}</div>
+                            </button>
                             {/volist}
                         </span>
                     </a>
@@ -208,38 +210,13 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                 </div>
-                <div class="mui-input-row tuwenEditor">
-                    <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                    <div class="introBox">{$eventInfo.event_des}</div>
-                    <div class="mui-row mui-text-center mui-row-operation">
-                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                            <a class="frame up pd">上移</a>
-                            <a class="frame down pd">下移</a>
-                        </div>
-                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                            <a class="frame titleClass">添加标题</a>
-                        </div>
-                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                            <a class="frame textClass">添加正文</a>
-                        </div>
-                        <div class="mui-col-xs-3 mui-col-sm-3 muicol">
-                            <a class="frame imageClass">
-                                <div id="uploader-demo">
-                                    <div id="fileList" class="uploader-list"></div>
-                                    <div class="filePickerTwo">选择图片</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="page-header" style="background: #efeff4;">
-                    <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
-                </div>
+                <textarea name="event_des" class="data event_des" style="display: none"></textarea>
+                <div id="articleEditor" class="tuwenIntro">{$eventInfo.event_des}</div>
 
             </form>
 
             <ul class="mui-table-view operation">
-                <li class="mui-col-xs-12 opli bggreen"onclick="submitAction()">
+                <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交
                 </li>
             </ul>
@@ -360,8 +337,17 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script>
+        var Edr = new Eleditor({
+            el: '#articleEditor', //容器
+            upload: {
+                server: uploadApiUrl, //填写你的后端上传路径
+                fileSizeLimit: 2 //限制图片上传大小，单位M
+            },
+            placeHolder: '点击编辑活动图文介绍',
+        });
+    </script>
     <script>
         //初始化
         mui.init({
@@ -400,22 +386,6 @@
                 // cityPicker3.pickers[1].setSelectedIndex(searchCity(cityData3[i].children[j], "{$eventInfo.city}"));
                 // cityPicker3.pickers[2].setSelectedIndex(2);
 
-                // for (i = 0; i < cityData3.length; i++) {
-                //     cityData3[i].index = i;
-                //     console.log(cityData3.length)
-                //     console.log(cityData3[i].text + '第一级')
-                //     for (j = 0; j < cityData3.length; i++) {
-                //         cityData3[i].children[j].index = j;
-                //         console.log(cityData3[i].children[j].length)
-                //         console.log(cityData3[i].children[j].text + '第二级')
-                //         for (k = 0; k < cityData3.length; i++) {
-                //             cityData3[i].children[j].children[k].index = k;
-                //             console.log(cityData3[i].children[j].children[k].text + '第三级')
-                //         }
-                //     }
-
-                // }
-                // console.log(cityData3)
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
                 var cityResult3 = doc.getElementById('cityResult3');
@@ -485,18 +455,18 @@
             var eDomPrice = $(this).find("input[name='event-dom_price']").val();
             var ePrice = $("#eventPrice").val();
             //eventDomArr.push({ name: eDom, price: eDomPrice });
-            if(ePrice == 2){
+            if (ePrice == 2) {
                 eventDomArr.push({ name: eDom, price: eDomPrice });
-            }else{
+            } else {
                 eventDomArr.push({ name: eDom, price: '' });
             }
         });
         $(function () {
-//
-//            var cDoms = $(".hdDoms").text();
-//            console.log(cDoms)
-//            cDoms = cDoms.substring(0, cDoms.length - 1);
-//            $(".hdDoms").text(cDoms);
+            //
+            //            var cDoms = $(".hdDoms").text();
+            //            console.log(cDoms)
+            //            cDoms = cDoms.substring(0, cDoms.length - 1);
+            //            $(".hdDoms").text(cDoms);
 
             //获取训练营粉丝列表
             var StudentKeyword = '';
@@ -568,11 +538,11 @@
                         isTrue = false;
                         return false;
                     } else {
-                        if(ePrice == 2){
-                            eDoms += '<button type="button" class="selectDom">'+eDom+'<div>'+eDomPrice+'</div></button>'
+                        if (ePrice == 2) {
+                            eDoms += '<button type="button" class="selectDom">' + eDom + '<div>' + eDomPrice + '</div></button>'
                             eventDomArr.push({ name: eDom, price: eDomPrice });
-                        }else{
-                            eDoms += '<button type="button" class="selectDom">'+eDom+'</button>'
+                        } else {
+                            eDoms += '<button type="button" class="selectDom">' + eDom + '</button>'
                             eventDomArr.push({ name: eDom, price: '' });
                         }
 
@@ -691,13 +661,10 @@
                 return;
             };
 
-            //图文编辑状态转换浏览状态
-            tuwenToView()
-
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
-            var introHtml = $(".introBox").html();
-            /////////////////////////////////////////////////////////////////
-
+            var introHtml = $("#articleEditor").html();
             $(".event_des").val(introHtml);
 
             var data = wooApi.getInputData('input', 'data');
@@ -705,7 +672,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var event_des = $('textarea.data').val();
+            var event_des = $('textarea.event_des').val();
             objData.dom = JSON.stringify(eventDomArr);
             objData.event_des = event_des;
             if (eventDomArr.length == 0 || eventDomArr == undefined || eventDomArr == []) {
@@ -727,8 +694,6 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                //图文转换成可编辑状态
-                tuwenToEdit()
                 mui.alert(ajaxResult.msg, '活动修改失败', '确定', function () {
 
                 });
