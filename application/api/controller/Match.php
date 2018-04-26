@@ -435,6 +435,7 @@ class Match extends Base
                 $homeMember[$k]['number'] = $teamMember['number'];
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
+                $homeMember[$k]['match_time'] = $data['match_time'];
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                 if ($isFinished == 1) {
                     $homeMember[$k]['is_attend'] = 1;
@@ -807,6 +808,7 @@ class Match extends Base
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
                 $homeMember[$k]['number'] = $teamMember['number'];
+                $homeMember[$k]['match_time'] = $data['match_time'];
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                 if ($isFinished == 1) {
                     $homeMember[$k]['is_attend'] = 1;
@@ -1829,12 +1831,10 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberListPaginator($map);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -1854,12 +1854,10 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberList($map, $page);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -1875,12 +1873,57 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberListAll($map);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球员参赛列表（页码）
+    public function playermatchpage() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+
+            $result = $matchS->getMatchRecordMemberListPaginator($map, $orderby);
+            // 返回结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球员参赛列表
+    public function playermatchlist() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+            $result =  $matchS->getMatchRecordMemberList($map, $page, $orderby);
+            // 返回结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            // 首发比赛次数
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
