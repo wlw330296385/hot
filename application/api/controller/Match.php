@@ -1886,6 +1886,61 @@ class Match extends Base
         }
     }
 
+    // 已登记技术数据的比赛列表
+    public function matchlisthasstatics() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            // 默认查询已登记技术数据
+            if (!array_key_exists('has_statics', $data)) {
+                $data['has_statics'] =1;
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 排序：比赛时间降序
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+            // 获取比赛战绩列表数据
+            $matchS = new MatchService();
+            $result = $matchS->matchRecordList($data, $page, $orderby);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 已登记技术数据的比赛列表（页码）
+    public function matchpagehasstatics() {
+        try {
+            $data = input('param.');
+            // 默认查询已登记技术数据
+            if (!array_key_exists('has_statics', $data)) {
+                $data['has_statics'] =1;
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 排序：比赛时间降序
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+            // 获取比赛战绩列表数据
+            $matchS = new MatchService();
+            $result = $matchS->matchRecordListPaginator($data, $orderby);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 球队参加比赛申请
     public function joinmatchapply()
     {

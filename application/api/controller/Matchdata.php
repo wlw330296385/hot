@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 
 use app\model\MatchStatistics;
+use app\service\MatchService;
 use app\service\TeamService;
 use think\Exception;
 
@@ -110,6 +111,7 @@ class Matchdata
         // 比赛时间格式转化
         $data['match_time'] = checkDatetimeIsValid($data['match_time']) ? strtotime($data['match_time']) : $data['match_time'];
         $model = new MatchStatistics();
+        $matchS = new MatchService();
         // 球员名单数据列表
         if ( array_key_exists('members', $data) && !empty($data['members']) && $data['members'] != "[]" ) {
             $recordMembers = json_decode($data['members'], true);
@@ -144,11 +146,15 @@ class Matchdata
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
-
             if (!$res) {
                 return json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
             // 更新比赛战绩 已录入技术统计标识
+            $matchS->saveMatchRecord([
+                'id' => $data['match_record_id'],
+                'has_statics' => 1,
+                'statics_time' => time()
+            ]);
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
     }
