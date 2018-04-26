@@ -217,8 +217,8 @@ class MatchService {
         }
     }
 
-    // 比赛球队战绩列表Pagigator
-    public function matchRecordListPaginator($map, $order='match_record.id desc', $paginate=10) {
+    // 视图查询比赛球队战绩列表（关联比赛信息）Pagigator
+    public function matchRecordListPaginatorView($map, $order='match_record.id desc', $paginate=10) {
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
@@ -257,8 +257,8 @@ class MatchService {
         }
     }
 
-    // 比赛球队战绩列表
-    public function matchRecordList($map, $page=1, $order='match_record.id desc', $limit=10) {
+    // 视图查询比赛球队战绩列表（关联比赛信息）
+    public function matchRecordListView($map, $page=1, $order='match_record.id desc', $limit=10) {
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
@@ -295,8 +295,8 @@ class MatchService {
         }
     }
 
-    // 比赛球队战绩列表（所有数据）
-    public function matchRecordListAll($map, $order='match_record.id desc') {
+    // 视图查询比赛球队战绩列表（关联比赛信息 无分页）
+    public function matchRecordListAllView($map, $order='match_record.id desc') {
         $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
             'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
             'finished_time', 'is_finished' ,'islive'];
