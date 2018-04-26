@@ -115,7 +115,9 @@ class CampWithdraw extends Base{
             if($campWithdrawInfo['member_id']<>$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不可操作非本人发起的提现申请']);
             }
-
+            if($campWithdrawInfo['status']<>1){
+                return json(['code'=>100,'msg'=>'该提现状态不允许取消']);
+            }
             $result = $CampWithdraw->where(['id'=>$camp_withdraw_id])->save(['status'=>-2,'buffer'=>0,'remarks'=>$remarks]);
             if($result){
                 db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$campWithdrawInfo['buffer'])->update();
