@@ -103,28 +103,6 @@ class Camp extends Frontend{
         return view('Camp/searchCamp');
     }
 
-    public function searchCampApi(){
-        try{
-             $keyword = input('keyword');
-            $province = input('province');
-            $city = input('city');
-            $area = input('area');
-            $map = ['province'=>$province,'city'=>$city,'area'=>$area];
-            foreach ($map as $key => $value) {
-                if($value == ''){
-                    unset($map[$key]);
-                }
-            }
-            if($keyword){
-                $map['camp'] = ['LIKE',$keyword];
-            }
-            $campList = $this->CampService->campListPage($map);
-            return json(['code'=>100,'msg'=>'OK','data'=>$campList]);
-        }catch(Exception $e){
-            return json(['code'=>200,'msg'=>$e->getMessage()]);
-        }       
-    }
-
 
     // 邀请学生入驻
     public function inviteStudent(){
@@ -299,17 +277,7 @@ class Camp extends Frontend{
         return view('Camp/coachCamp');
     }
 
-    /* public function coachListOfCamp(){
-        $camp_id = input('param.camp_id');
-        $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
-        $type = input('param.type')?input('param.type'):2;
-        $status = input('param.status')?input('param.status'):1;
-        $map = ['camp_member.camp_id'=>$camp_id,'camp_member.type'=>$type,'camp_member.status'=>$status];
-        $coachList = $this->CoachService->getCoachListOfCamp($map);
-        $this->assign('campInfo',$campInfo); 
-        $this->assign('coachList',$coachList);
-        return view('Camp/coachListOfCamp');
-    }*/
+
 
     // 训练营设置
     public function campSetting(){
@@ -325,7 +293,10 @@ class Camp extends Frontend{
         // 营业执照
         $campS = new CampService();
         $campcert = $campS->getCampCert($camp_id);
+        //提款账号
+        $campBankcard = db('camp_bankcard')->where(['camp_id'=>$camp_id])->find();
 
+        $this->assign('campBankcard',$campBankcard);
         $this->assign('campInfo',$campInfo);
         $this->assign('campcert', $campcert);
         return view($view);
