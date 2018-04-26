@@ -29,7 +29,7 @@
     <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('member/index')}"></a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav backToPage" href="{:url('member/index')}"></a>
                 <a class="mui-control-item mui-active" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
                 <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
                 <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}">账号信息</a>
@@ -106,6 +106,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
 <!--选择器-->
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -169,6 +170,16 @@
     })(mui, document);
 
     $(function () {
+
+        //判断从哪里进入设置页面
+        var getBackLink = wooApi.GetQueryString('from');
+        if(getBackLink!=""&&getBackLink!=null){
+            localStorage.campSettingBackTo = getBackLink;
+        }
+        if(localStorage.campSettingBackTo!=""&&localStorage.campSettingBackTo!=null){
+            $(".backToPage").attr("href",localStorage.campSettingBackTo)
+        }
+
 
         $('#submit-form1').click(function () {
 
