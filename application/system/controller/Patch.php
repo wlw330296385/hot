@@ -639,6 +639,11 @@ class Patch extends Controller {
                     $matchRecordMemberData['name'] = $teamMemberInfo['name'];
                     $matchRecordMemberData['number'] = $teamMemberInfo['number'];
                 }
+                // 比赛时间
+                $matchRecord = db('match_record')->where(['id' => $member['match_record_id']])->find();
+                if ($matchRecord) {
+                    $matchRecordMemberData['match_time'] = $matchRecord['match_time'];
+                }
                 db('match_record_member')->update($matchRecordMemberData);
             }
         });
