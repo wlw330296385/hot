@@ -335,6 +335,7 @@ class MatchService {
     // 比赛战绩列表（关联比赛信息 页码）
     public function matchRecordListPaginator($map, $order='id desc', $size=10) {
         $model = new MatchRecord();
+        $modelMatch = new Match();
         $res = $model->with('match')->where($map)->order($order)->paginate($size);
         if (!$res) {
             return $res;
