@@ -13,13 +13,6 @@ class CampBankcardService {
     }
 
 
-    // 获取所有银行卡
-    public function getCampBankcardInfo($map=[],$page = 1,$order='',$paginate = 10) {
-        $result = $this->CampBankcardModel->where($map)->find();
-
-        
-        return $result;
-    }
 
  
 

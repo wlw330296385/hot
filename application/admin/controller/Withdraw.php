@@ -1,0 +1,114 @@
+<?php 
+namespace app\admin\controller;
+use app\admin\controller\base\Backend;
+use app\admin\service\WithdrawService;
+class Withdraw extends Backend{
+	protected $WithdrawService;
+	public function _initialize(){
+		parent::_initialize();
+		$this->WithdrawService = new WithdrawService;
+	}
+
+    public function index() {
+
+        return view('Withdraw/index');
+    }
+
+
+   
+    // 退费列表
+    public function refundList(){
+        $keyword = input('param.keyword');
+        $status = input('param.status');
+        $rebate_type = input('param.rebate_type');
+        $map = [];
+        if($status){
+            $map['refund.status'] = $status;
+        }
+        if($rebate_type){
+            $map['refund.rebate_type'] = $rebate_type;
+        }
+
+        $Withdraw = new \app\model\Withdraw;
+        if($keyword){
+            $hasWhere['camp|goods|student'] = ['like',"%$keyword%"];
+            $refundList = $Withdraw->with('bill')->hasWhere($hasWhere)->where($map)->select();
+        }else{
+            $refundList = $Withdraw->with('bill')->hasWhere($hasWhere)->where($map)->select();
+        }
+        
+
+        if($refundList){
+            $refundList = $refundList->toArray();
+        }else{
+            $refundList = [];
+        }  
+
+        $this->assign('refundList',$refundList);
+        return $this->fetch('StatisticsCamp/refundList');
+    }
+
+    // 退费处理
+    public function refundDeal(){
+        $refund_id = input('param.refund_id');
+        if(request()->isPost()){
+            $remarks = input('param.remarks');
+            $refund_type = input('param.refund_type');
+            $action = input('param.action');//2=同意,3=同意并打款,4=已打款;
+            
+            $Withdraw = new \app\model\Withdraw;
+            $refundInfo = $Withdraw->where(['id'=>$refund_id])->find();
+            if(!$refundInfo){
+                $this->error('传参错误,找不到退款信息');
+            }
+            $refundamount = $refundInfo['refundamount'];
+            if($refundamount <= $refundInfo['refund']){
+                $this->error('打款金额不可大于退款金额');
+            }
+            
+            if($refundInfo['rebate_type'] <> 1){//课时版
+                $this->error('非课时版训练营不允许操作');
+            }
+            
+            
+            if($action == 4) {
+                $income  = $refundInfo['refundamount'] - $refundInfo['refund'] - $refundInfo['refund_fee'];
+                $BillService = new \app\service\BillService;
+                //训练营课时版收入
+                $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
+                db('income')->insert([
+                    'income'        => $income,
+                    'camp_id'       => $refundInfo['camp_id'],
+                    'camp'          => $refundInfo['camp'],
+                    'member_id'     => $refundInfo['member_id'],
+                    'member'        => $refundInfo['member'],
+                    'type'          => 5,
+                    'e_balance'     =>($campInfo['balance'] + $income),
+                    's_balance'     =>$campInfo['balance'],
+                    'f_id'          =>$refundInfo['id'],
+                    'student_id'    =>$refundInfo['student_id'],
+                    'student'       =>$refundInfo['student'],
+                    'system_remarks'=>$remarks,
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+                // 增加训练营营业额
+                db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
+                $Withdraw->save(['status'=>3],['id'=>$refund_id]);
+            }
+            $this->success('操作成功');    
+        }else{
+            $Withdraw = new \app\model\Withdraw;
+            $refundInfo = $Withdraw
+                        ->with('bill')
+                        ->where(['id'=>$refund_id])
+                        ->find();    
+            $this->assign('refundInfo',$refundInfo);
+
+            return $this->fetch('StatisticsCamp/refundDeal');
+        }
+        
+    }
+
+
+}

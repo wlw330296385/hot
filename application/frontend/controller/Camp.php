@@ -1,13 +1,13 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\frontend\controller\Frontend;
 use app\model\CampMember;
 use app\service\CampService;
 use app\service\CoachService;
 use app\service\MemberService;
 use app\service\ScheduleService;
 use think\Db;
-class Camp extends Base{
+class Camp extends Frontend{
     protected $CampService;
     protected $CoachService;
     protected $campInfo;
