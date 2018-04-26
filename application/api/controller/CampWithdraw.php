@@ -49,8 +49,8 @@ class CampWithdraw extends Base{
             $camp_withdraw_id = input('param.camp_withdraw_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-
-            $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+            
+            $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
             if($campInfo['balance']<$data['withdraw']){
                 return json(['code'=>100,'msg'=>'余额不足']);
             }
@@ -74,7 +74,7 @@ class CampWithdraw extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
 
-            $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+            $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
             if($campInfo['balance']<$data['withdraw']){
                 return json(['code'=>100,'msg'=>'余额不足']);
             }
