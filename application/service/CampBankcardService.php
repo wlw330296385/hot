@@ -47,7 +47,7 @@ class CampBankcardService {
         
         $result = $this->CampBankcardModel->allowField(true)->save($data,$map);
         if($result){
-            return ['msg' => '操作成功', 'code' => 200, 'data' => $id];
+            return ['msg' => '操作成功', 'code' => 200];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
         }
