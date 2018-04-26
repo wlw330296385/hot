@@ -15,7 +15,9 @@ class Coach extends Backend {
     }
     // 教练列表
     public function index() {
-        $list = CoachModel::order('id desc')->paginate(15);
+        $list = CoachModel::order('id desc')->paginate(15)->each(function($item, $key) {
+            $item->member = \app\model\Member::get($item->member_id);
+        });
 
         $breadcrumb = [ 'ptitle' => '训练营' , 'title' => '教练管理' ];
         $this->assign( 'breadcrumb', $breadcrumb );
