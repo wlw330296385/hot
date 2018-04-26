@@ -105,7 +105,6 @@
         <input type="hidden" name="team_id" value="" class="data">
 
         <form action="" class="mui-input-group mb44">
-            <input type="text" value="ssss" disabled>
             <div class="mui-input-row">
                 <a href="#match" class="mui-navigate-right">
                     <label>比赛</label>
@@ -374,15 +373,16 @@
                 });
                 if (!isOk) { return isOk }
 
+                var checkdisabled = 'disabled';
                 if (addtmNumber == 'null') {
                     addtmNumber = '';
-                    console.log(123)
+                    var checkdisabled = '';
                 }
                 var tmFormal = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="球员姓名" ></div>
-                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}"  placeholder="球员号码" ></div>
+                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="球员姓名" disabled =${checkdisabled}></div>
+                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}" ${checkdisabled}  placeholder="球员号码" ></div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -501,16 +501,16 @@
                     var tmId = $(this).attr("data-team_member_id");
                     var tmemberId = $(this).attr("data-member_id");
                     var match_record_member_id = $(this).attr("data-match_record_member_id");
-                    var checkdisabled = true;
+                    var checkdisabled = 'disabled';
                     if (tmNumber == 'null') {
                         tmNumber = '';
-                        var checkdisabled = false;
+                        var checkdisabled = '';
                     }
                     var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${tmemberId}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="球员姓名" disabled =${checkdisabled}></div>
-                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码" disabled =${checkdisabled}></div>
+                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码" ${checkdisabled}></div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                         <text class="bgcolor">
                                             <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -618,6 +618,22 @@
                     $(this).text("确认");
                 }
             });
+
+            // 判断球衣号码不能重复
+            // var array = [];
+            // $(document).on("blur", "input[name=number]", function () {
+            //     var thisNumber = $(this).val();
+            //     console.log(thisNumber)
+            //     var result = ''
+            //     array = [];
+            //     $(".dataList input[name=number]").each(function () {
+            //         var dataNumber = $(this).val();
+            //         array.push($(this).val())
+            //         result = $.inArray(thisNumber, array);
+            //     });
+            //     console.log(result)
+            //     console.log(array)
+            // });
 
         });
 
