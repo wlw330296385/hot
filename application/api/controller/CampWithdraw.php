@@ -98,5 +98,33 @@ class CampWithdraw extends Base{
 
 
     // 取消提现
-    
+    public function cancelWithdrawApi(){
+        try{
+            $isPower = $this->isPower();
+            if($isPower<>4){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }   
+            $camp_withdraw_id = input('param.camp_withdraw_id');
+            $remarks = input('param.remarks');
+            $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
+            $CampWithdraw = new \app\model\CampWithdraw;
+            $campWithdrawInfo = $CampWithdraw->where(['id'=>$camp_withdraw_id])->find();
+            if($campWithdrawInfo['camp_id']<>input('param.camp_id')){
+                return json(['code'=>100,'msg'=>'不可操作他人的训练营']);
+            }
+            if($campWithdrawInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'不可操作非本人发起的提现申请']);
+            }
+
+            $result = $CampWithdraw->where(['id'=>$camp_withdraw_id])->save(['status'=>-2,'buffer'=>0,'remarks'=>$remarks]);
+            if($result){
+                db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$campWithdrawInfo['buffer'])->update();
+                return json(['code'=>200,'msg'=>'操作成攻']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作成败']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
