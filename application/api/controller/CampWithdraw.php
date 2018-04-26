@@ -80,7 +80,7 @@ class CampWithdraw extends Base{
                 return json(['code'=>100,'msg'=>'余额不足']);
             }
             $data['s_balance'] = $data['e_balance'] = $campInfo['balance'];
-            $data['camp_type'] = $campInfo['type'];
+            $data['camp_type'] = $campInfo['rebate_type'];
             $buffer = $data['withdraw'];
             if($campInfo['type'] == 2){
                 $buffer += $buffer*$campInfo['schedule_rebate'];
