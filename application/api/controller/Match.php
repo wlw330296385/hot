@@ -435,6 +435,7 @@ class Match extends Base
                 $homeMember[$k]['number'] = $teamMember['number'];
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
+                $homeMember[$k]['match_time'] = $data['match_time'];
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                 if ($isFinished == 1) {
                     $homeMember[$k]['is_attend'] = 1;
@@ -807,6 +808,7 @@ class Match extends Base
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
                 $homeMember[$k]['number'] = $teamMember['number'];
+                $homeMember[$k]['match_time'] = $data['match_time'];
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                 if ($isFinished == 1) {
                     $homeMember[$k]['is_attend'] = 1;
