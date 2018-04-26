@@ -19,7 +19,7 @@
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('camp/campWallet',['camp_id'=>$campInfo['id']])}"></a>
     <h1 class="mui-title">{$campInfo.camp} - 提现操作</h1>
 </header>
 <div class="mui-content">
@@ -32,7 +32,7 @@
             </div>
             <div class="mui-input-row">
                 <label>提现金额</label>
-                <input type="text" name="salary" class="data" value="" placeholder="￥0.00">
+                <input type="text" name="sum" class="data" value="" placeholder="￥0.00">
             </div>
             {if $campInfo.rebate_type == 2}}
             <div class="mui-input-row">
@@ -61,14 +61,28 @@
                 <span>{$campBankcard.branch}</span>
             </li>
         </ul>
+        {else /}
+        <div class="page-header">
+            <span class="course">提现账号信息</span>
+        </div>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell listli mui-text-center">
+                <br />
+                <p>您的收款账号信息未完善无法提现， <br />请完善后再进行提现操作。</p>
+                <br />
+                <p><a class="mui-btn mui-btn-primary" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}?from={:url('camp/campWithdraw',['camp_id'=>$campInfo.id])}">立即完善账号信息</a></p>
+            </li>
+        </ul>
         {/if}
     </div>
 
+    {if $campBankcard}
     <ul class="mui-table-view operation">
         <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue" id="submitBtn">
             确定提现
         </li>
     </ul>
+    {/if}
 </div>
 
 </body>
@@ -88,17 +102,7 @@
 
     var ok = true;
     $(function(){
-        var bankcard = $('.bankcard span').text();
 
-        $('.bankcard_select').on('click',function(){
-            console.log(bankcard);
-            bankcard = $(this).children().find('h4').text();
-            $('.bankcard span').text(bankcard);
-            $('input[name=bank_card]').val($(this).attr('data-bank-card'));
-            $('input[name=bank_type]').val($(this).attr('data-bank-type'));
-            $('input[name=bank]').val($(this).attr('data-bank'));
-            $('input[name=realname]').val($(this).attr('data-realname'));
-        })
 
         $('#submitBtn').on('click',function(){
             var data1 = wooApi.getInputData();
@@ -124,13 +128,12 @@
 
 
         // 提现金额
-        $('input[name=salary]').on('keyup',function(){
-            if( parseFloat($(this).val()) <0){
-                mui.toast('提现金额不能小于0');
+        $('input[name=sum]').on('blur',function(){
+            var sum = parseFloat($(this).val());
+            var balance = parseFloat("{$campInfo.balance}");
+            if(sum<0||sum>balance){
+                mui.toast('提现金额不能小于0或大于余额');
                 return false;
-            }else if(parseFloat($(this).val())> parseFloat("{$memberInfo['balance']}") ){
-                ok = true;
-                $(this).val("{$memberInfo['balance']}");
             }
         })
     })
