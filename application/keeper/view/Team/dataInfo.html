@@ -101,22 +101,24 @@
 
             <div class="mui-input-row">
                 <label>比赛</label>
-                <span></span>
+                <span>{$matchInfo.name}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>比赛日期</label>
-                <span></span>
+                <span>{$matchInfo.match_time}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>对手</label>
-                <span></span>
+                <span>{$matchInfo.record.away_team}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>最终比分</label>
-                <span></span>
+                <span>我方
+                    <text class="colororange home_score">{$matchInfo.record.home_score}</text>分，对方
+                    <text class="colororange away_score">{$matchInfo.record.away_score}</text>分</span>
             </div>
 
             <!--球员数据-->
@@ -124,11 +126,13 @@
                 <span class="course">球员数据</span>
             </div>
             <ul class="mui-table-view list border-b honorList">
+
+                {volist name="matchStatcList" id="vol"}
                 <li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4">张学友</div>
-                            <div class="mui-col-xs-4 colororange">#21</div>
+                            <div class="mui-col-xs-4">{$vol.name}</div>
+                            <div class="mui-col-xs-4 colororange">{$vol.number}</div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text>
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -144,68 +148,68 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.fga}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">二分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.fg}" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.threepfga}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.threepfg}" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.fta}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">罚中</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.ft}" placeholder="0" disabled>
                             </div>
                         </div>
                         <p class="pline"></p>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.reb}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">助攻</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.ast}" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.stl}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">封盖</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.blk}" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.turnover}" placeholder="0" disabled>
                             </div>
                             <div class="mui-col-xs-2 dataText">犯规</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
+                                <input type="text" value="{$vol.foul}" placeholder="0" disabled>
                             </div>
                         </div>
                         <div class="mui-row ">
                             <div class="mui-col-xs-2 sfText">首发</div>
                             <div class="mui-col-xs-4 sfButton">
-                                <div class="mui-switch">
+                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                     <div class="mui-switch-handle"></div>
                                 </div>
                             </div>
@@ -215,97 +219,7 @@
                         </div>
                     </div>
                 </li>
-                <li class="mui-table-view-cell mui-collapse listli">
-                    <a class="mui-navigate-right">
-                        <div class="mui-row">
-                            <div class="mui-col-xs-4">张学友</div>
-                            <div class="mui-col-xs-4 colororange">#21</div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
-                                <text style="background-color: #05af20">
-                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
-                                </text>
-                            </div>
-                        </div>
-                    </a>
-                    <div class="mui-collapse-content dataCollapse">
-                        <div class="mui-row dataTitle">
-                            <div class="mui-col-xs-6">出手次数</div>
-                            <div class="mui-col-xs-6">命中次数</div>
-                        </div>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">二分</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">三分</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">罚中</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <p class="pline"></p>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">助攻</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">封盖</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <div class="mui-row">
-                            <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                            <div class="mui-col-xs-2 dataText">犯规</div>
-                            <div class="mui-col-xs-4">
-                                <input type="text" value="" placeholder="0" disabled>
-                            </div>
-                        </div>
-                        <div class="mui-row ">
-                            <div class="mui-col-xs-2 sfText">首发</div>
-                            <div class="mui-col-xs-4 sfButton">
-                                <div class="mui-switch">
-                                    <div class="mui-switch-handle"></div>
-                                </div>
-                            </div>
-                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
-                                <button class="mui-btn bggreen">确认</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+                {/volist}
             </ul>
 
         </form>
@@ -316,13 +230,8 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
-                <a class="mui-action-back">
-                    返回
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-7 mui-col-xs-7 opli bggreen">
-                <a href="{:url('team/dataEdit',['team_id'=>$team_id])}"> 编辑</a>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bggreen">
+                <a href="{:url('team/dataEdit',['match_record_id'=>$matchInfo.record.id,'team_id'=>$team_id])}"> 编辑</a>
             </li>
         </ul>
 
@@ -335,7 +244,6 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
     </script>
 </body>
 

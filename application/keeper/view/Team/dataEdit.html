@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>录入数据</title>
+    <title>编辑数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -108,7 +108,7 @@
             <div class="mui-input-row">
                 <a href="#match" class="mui-navigate-right">
                     <label>比赛</label>
-                    <span class="matchCont domData" name="match"></span>
+                    <span class="matchCont domData" name="match">{$matchInfo.name}</span>
                     <input type="hidden" name="match_id" value="" class="data">
                     <input type="hidden" name="match_record_id" value="" class="data">
                 </a>
@@ -116,19 +116,19 @@
 
             <div class="mui-input-row">
                 <label>比赛日期</label>
-                <span class="match_time domData" name="match_time" class="data"></span>
+                <span>{$matchInfo.match_time}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>对手</label>
-                <span class="away_team"></span>
+                <span>{$matchInfo.record.away_team}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>最终比分</label>
                 <span>我方
-                    <text class="colororange home_score">0</text>分，对方
-                    <text class="colororange away_score">0</text>分</span>
+                    <text class="colororange home_score">{$matchInfo.record.home_score}</text>分，对方
+                    <text class="colororange away_score">{$matchInfo.record.away_score}</text>分</span>
             </div>
 
             <!--球员数据-->
@@ -139,7 +139,108 @@
                     <i class="mui-icon mui-icon-plusempty"></i>
                 </a>
             </div>
-            <ul class="mui-table-view list border-b dataList"></ul>
+            <ul class="mui-table-view list border-b dataList">
+                {volist name="matchStatcList" id="vol"}
+                <li class="mui-table-view-cell mui-collapse listli" data-team_member_id="{$vol.team_member_id}" data-member_id="{$vol.member_id}">
+                    <a class="mui-navigate-right">
+                        <div class="mui-row">
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}"
+                                    placeholder="球员姓名" >
+                            </div>
+                            <div class="mui-col-xs-4 colororange">
+                                <input type="text" name="number" class="addInput" value="{$vol.number}" placeholder="球员号码">
+                            </div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                <text class="bgcolor">
+                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                </text>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="mui-collapse-content dataCollapse">
+                        <div class="mui-row dataTitle">
+                            <div class="mui-col-xs-6">出手次数</div>
+                            <div class="mui-col-xs-6">命中次数</div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="fga" value="{$vol.fga}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">二分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="fg" value="{$vol.fg}" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="threepfga" value="{$vol.threepfga}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">三分</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="threepfg" value="{$vol.threepfg}" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="fta" value="{$vol.fta}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">罚中</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="ft" value="{$vol.ft}" placeholder="0">
+                            </div>
+                        </div>
+                        <p class="pline"></p>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="reb" value="{$vol.reb}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">助攻</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="ast" value="{$vol.ast}" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="stl" value="{$vol.stl}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">封盖</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="blk" value="{$vol.blk}" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="turnover" value="{$vol.turnover}" placeholder="0">
+                            </div>
+                            <div class="mui-col-xs-2 dataText">犯规</div>
+                            <div class="mui-col-xs-4">
+                                <input type="text" name="foul" value="{$vol.foul}" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mui-row ">
+                            <div class="mui-col-xs-2 sfText">首发</div>
+                            <div class="mui-col-xs-4 sfButton">
+                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
+                                    <div class="mui-switch-handle"></div>
+                                </div>
+                                <input type="hidden" name="lineup" value="0">
+                            </div>
+                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                                <button type="button" class="mui-btn bggreen">确认</button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="personalScoreCont" value="">
+                    </div>
+                </li>
+                {/volist}
+            </ul>
 
         </form>
 
