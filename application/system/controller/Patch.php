@@ -570,29 +570,8 @@ class Patch extends Controller {
     }
 
     // 整理team_member_role数据表
-    public function teamMemberRole() {
+    public function teammemberrole() {
         try {
-            /**
-             * 补全team_member_role member字段 2018-02-28
-            db('team_member_role')->chunk(50, function($roles) {
-                foreach ($roles as $role) {
-                    //dump($role);
-                    $teamMember = db('team_member')->where(['team_id' => $role['team_id'], 'member_id' => $role['member_id']])->find();
-                    //dump($teamMember);
-                    db('team_member_role')->where('id', $role['id'])->update([
-                        'member' => $teamMember['member']
-                    ]);
-                    
-                    if ($role['type'] == 5 && $role['member_id'] === 0) {
-                        $team = db('team')->where('id', $role['team_id'])->find();
-                        db('team_member_role')->where('id', $role['id'])->update([
-                            'member' => $team['leader'],
-                            'member_id' => $team['leader_id']
-                        ]);
-                    }
-                }
-            });
-             */
             // 手动清空team_member_role数据
             // 生成领队type=6，队长type=3 数据
             db('team')->chunk(50, function($teams) {
@@ -627,19 +606,42 @@ class Patch extends Controller {
             // 补充team_member name字段
             db('team_member')->chunk(50, function($members) {
                foreach ($members as $member) {
-                   db('team_member')->where('id', $member['id'])->update([
-                       'name' => $member['member']
-                   ]);
-                   if ($member['member_id'] == -1) {
-                       db('team_member')->where('id', $member['id'])->update([
-                           'member' => null
-                       ]);
-                   }
+                  $teamMemberData = [];
+                  $teamMemberData['id'] = $member['id'];
+                  if ($member['member_id'] == -1) {
+                      $teamMemberData['member'] = null;
+                  }
+                  if ($member['member_id']) {
+                      $teamMemberData['telephone'] = db('member')->where('id', $member['member_id'])->value('telephone');
+                  }
+                  db('team_member')->update($teamMemberData);
                }
             });
         } catch (Exception $e) {
             dump($e->getMessage());
         }
+    }
+
+    // 补充match_record_member数据
+    public function matchrecordmember() {
+        db('match_record_member')->chunk(50, function($members) {
+            foreach ($members as $member) {
+                $matchRecordMemberData = [];
+                $matchRecordMemberData['id'] = $member['id'];
+                // 查询team_member
+                $teamMemberInfo = db('team_member')->where([
+                    'team_id' => $member['team_id'],
+                    'member_id' => $member['member_id'],
+                    //'member' => $member['member']
+                ])->find();
+                if ($teamMemberInfo) {
+                    $matchRecordMemberData['team_member_id'] = $teamMemberInfo['id'];
+                    $matchRecordMemberData['name'] = $teamMemberInfo['name'];
+                    $matchRecordMemberData['number'] = $teamMemberInfo['number'];
+                }
+                db('match_record_member')->update($matchRecordMemberData);
+            }
+        });
     }
 
     // 搜索课时结算产生的数据

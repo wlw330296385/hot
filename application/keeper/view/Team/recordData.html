@@ -292,11 +292,11 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="3pfga" value="" placeholder="0">
+                                <input type="text" name="threepfg   a" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="3pfg" value="" placeholder="0">
+                                <input type="text" name="threepfg" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row">
@@ -473,6 +473,7 @@
             //////////////////////比赛列表////////////////////////////////////
             // 选择比赛
             $(".matchList").on('tap', 'li', function () {
+                $(".dataList").empty();
                 var match = $(this).find("font").text();
                 $(".matchCont").text(match);
                 var id = $(this).attr('data-id');
@@ -487,16 +488,18 @@
                 $(".away_score").text(away_score);
 
                 $(this).find(".tmInfo").each(function () {
-                    $(".honortList").empty();
                     var tmName = $(this).attr("data-name");
-                    // if (tmNumber == 'null') {
-                    //     tmNumber = ''
-                    // }
+                    var tmNumber = $(this).attr("data-number");
+                    var checkDisabled = true;
+                    if (tmNumber == 'null') {
+                        tmNumber = '';
+                        // checkDisabled = 'false';
+                    }
                     var tmMatch = `<li class="mui-table-view-cell mui-collapse listli">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-id="" placeholder="球员姓名"></div>
-                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmName}" placeholder="球员号码"></div>
+                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码"></div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                         <text class="bgcolor">
                                             <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -619,8 +622,8 @@
                 var lineup = $("input[name=lineup]").val(); //首发
                 var fga = $("input[name=fga]").val(); //二分出手次数
                 var fg = $("input[name=fg]").val(); //二分命中数
-                var pfga = $("input[name=3pfga]").val(); //三分出手次数
-                var pfg = $("input[name=3pfg]").val(); //三分命中数
+                var threepfga = $("input[name=threepfga]").val(); //三分出手次数
+                var threepfg = $("input[name=threepfg]").val(); //三分命中数
                 var fta = $("input[name=fta]").val(); //罚球次数
                 var ft = $("input[name=ft]").val(); //罚球命中数
                 var reb = $("input[name=reb]").val(); //篮板
@@ -629,31 +632,31 @@
                 var blk = $("input[name=blk]").val(); //封盖
                 var turnover = $("input[name=turnover]").val(); //失误
                 var foul = $("input[name=foul]").val(); //犯规
+                console.log(fg)
                 if (fg > fga) {
                     mui.toast("二分命中次数不能大于出手次数");
                     return false;
                 }
-                if (pfga > pfg) {
+                if (threepfg > threepfga) {
                     mui.toast("三分命中次数不能大于出手次数");
                     return false;
                 }
-                if (fta > ft) {
+                if (ft > fta) {
                     mui.toast("罚球命中次数不能大于罚球数");
                     return false;
                 }
-
                 // 求和判断
-                var personalScore = fg * fga + pfga * pfg + fta * ft;
-                var countScore = 0;
-                $("input[name=allScore]").each(function () {
-                    countScore += parseInt(personalScore);
-                    console.log(countScore)
-                })
-                if (countScore > allScore) {
-                    mui.toast("球员总得分不能大于球队总得分");
-                    return false;
-                }
-                teamMember.push({ member, member_id, name, team_member_id, number, lineup, fga, fg, pfga, pfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+                // var personalScore = fg * 2 + threepfg * 3 + ft * 1;
+                // var countScore = 0;
+                // $("input[name=allScore]").each(function () {
+                //     countScore += parseInt(personalScore);
+                //     console.log(countScore)
+                // })
+                // if (countScore > allScore) {
+                //     mui.toast("球员总得分不能大于球队总得分");
+                //     return false;
+                // }
+                teamMember.push({ member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
             });
             console.log(teamMember)
 
@@ -663,7 +666,7 @@
             // 获取其他标签值
             // arrData = wooApi.getDomData('domData', datas);
             // var objData = wooApi.arrTOobj(arrData);
-            // var url = "{:url('api/team/createteamhonor')}";
+            // var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
             // var ajaxResult = wooApi.asyncF(url, objData);
             // if (ajaxResult.code == 200) {
             // mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
@@ -672,7 +675,6 @@
             //     })
             // } else {
             //     mui.alert(ajaxResult.msg, '录入失败');
-            //     tuwenToEdit(); //图文转换成可编辑状态
             //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
             //         if (data.code === 200) {
             //             $('input[name=__token__]').val(data.data);
@@ -684,10 +686,11 @@
 
         //获取比赛列表
         function toMatchList(keyword, wMatch, page) {
-            var url = "{:url('api/match/matchlistpage','','',true)}/?page=" + page;
+            var url = "{:url('api/match/matchpagewithrecord','','',true)}/?page=" + page;
             var wMatchList = "ul.matchList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";
+            var team_id = "{$team_id}";
             if (keyword != '' && wMatch != '') {
                 wMatchList = "#" + wMatch + " ul.matchList";
                 currPage = "#" + wMatch + " .currPage";
@@ -698,6 +701,8 @@
                 data: {
                     page: page,
                     keyword: keyword,
+                    is_finished: 1,
+                    team_id: team_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -708,15 +713,15 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].team.name + '" data-home_score="' + data.data.data[i].team.home_color + '" data-away_score="' + data.data.data[i].team.away_color + '" data-away_score="' + data.data.data[i].team.away_color + '"><font class="court">' + data.data.data[i].name + '</font>';
+                            newli += '<li class="mui-table-view-cell listli"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].record.away_team + '" data-home_score="' + data.data.data[i].record.home_score + '" data-away_score="' + data.data.data[i].record.away_score + '" data-away_score="' + data.data.data[i].record.away_score + '"><font class="court">' + data.data.data[i].name + '</font>';
                             newli += '<div class="hide">';
-                            for (var j = 0; j <= data.data.data[i].team.colors.length - 1; j++) {
-                                newli += '<input type="hidden" class="tmInfo" data-name="' + data.data.data[i].team.colors[j].color + '" >'
+                            for (var j = 0; j <= data.data.data[i].record_members.length - 1; j++) {
+                                newli += '<input type="hidden" class="tmInfo" data-name="' + data.data.data[i].record_members[j].name + '" data-number="' + data.data.data[i].record_members[j].number + '">'
                             }
                             newli += '</div></li>'
                         }
                         if (newli == '') {
-                            var matchUrl = "{:url('keeper/team/createMatch')}/" + 'team_id/' + 2
+                            var matchUrl = "{:url('keeper/team/createMatch')}/" + 'team_id/' + "{$team_id}"
                             newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据，<a href="' + matchUrl + '" class="colororange">前往创建比赛</a></p></div>'
                         }
                         $(wMatchList).empty().append(newli);

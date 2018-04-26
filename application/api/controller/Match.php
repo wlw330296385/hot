@@ -432,6 +432,7 @@ class Match extends Base
                 $homeMember[$k]['match_record_id'] = $dataMatchRecord['id'];
                 $homeMember[$k]['avatar'] = ($teamMember['member_id'] > 0) ? $teamMember['avatar'] : config('default_image.member_avatar');
                 $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
+                $homeMember[$k]['number'] = $teamMember['number'];
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
@@ -805,6 +806,7 @@ class Match extends Base
                 $homeMember[$k]['contact_tel'] = $teamMember['telephone'];
                 $homeMember[$k]['status'] = 1;
                 $homeMember[$k]['is_checkin'] = 1;
+                $homeMember[$k]['number'] = $teamMember['number'];
                 // 若比赛完成 比赛参赛球队成员 match_record_member is_attend=1
                 if ($isFinished == 1) {
                     $homeMember[$k]['is_attend'] = 1;
@@ -1571,6 +1573,7 @@ class Match extends Base
                 $dataRecordMember['team_member_id'] = $inHomeTeam['id'];
                 $dataRecordMember['avatar'] = $inHomeTeam['avatar'];
                 $dataRecordMember['contact_tel'] = $inHomeTeam['telephone'];
+                $dataRecordMember['number'] = $inHomeTeam['number'];
                 if ($inHomeTeam['student_id']) {
                     $dataRecordMember['student_id'] = $inHomeTeam['student_id'];
                     $dataRecordMember['student'] = $inHomeTeam['student'];
@@ -1584,6 +1587,7 @@ class Match extends Base
                 $dataRecordMember['team_member_id'] = $inAwayTeam['id'];
                 $dataRecordMember['avatar'] = $inAwayTeam['avatar'];
                 $dataRecordMember['contact_tel'] = $inAwayTeam['telephone'];
+                $dataRecordMember['number'] = $inAwayTeam['number'];
                 if ($inAwayTeam['student_id']) {
                     $dataRecordMember['student_id'] = $inAwayTeam['student_id'];
                     $dataRecordMember['student'] = $inAwayTeam['student'];
