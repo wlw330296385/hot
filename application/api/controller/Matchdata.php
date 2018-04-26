@@ -113,16 +113,6 @@ class Matchdata
             if (!$teamMemberInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
             }
-            // 赛季时间(年)
-            if (input('?year')) {
-                $year = input('year');
-                // 比赛时间在赛季年
-                $when = getStartAndEndUnixTimestamp($year);
-                /*$data['match_time'] = ['between',
-                    [ $when['start'], $when['end'] ]
-                ];*/
-                unset($data['year']);
-            }
             if (input('?page')) {
                 unset($data['page']);
             }
@@ -132,7 +122,7 @@ class Matchdata
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
-            dump($result);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
