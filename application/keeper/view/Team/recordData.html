@@ -101,20 +101,23 @@
     <div class="mui-content">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="team" value="" class="data">
+        <input type="hidden" name="team_id" value="" class="data">
 
         <form action="" class="mui-input-group mb44">
-
+            <input type="text" value="ssss" disabled>
             <div class="mui-input-row">
                 <a href="#match" class="mui-navigate-right">
                     <label>比赛</label>
-                    <span class="matchCont domData"></span>
+                    <span class="matchCont domData" name="match"></span>
                     <input type="hidden" name="match_id" value="" class="data">
+                    <input type="hidden" name="match_record_id" value="" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>比赛日期</label>
-                <span class="match_time"></span>
+                <span class="match_time domData" name="match_time" class="data"></span>
             </div>
 
             <div class="mui-input-row">
@@ -188,7 +191,7 @@
         </div>
     </div>
 
-    <!--领队-->
+    <!--选择球员-->
     <div id="member" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
@@ -263,13 +266,10 @@
                 indicators: true //是否显示滚动条,默认是true
             });
             // 关闭弹出菜单
-            $(".mui-content").on('tap', '.mui-backdrop', function () {
+            $("body").on('tap', '.mui-backdrop', function () {
                 mui(".mui-popover.mui-active").popover("toggle");
-            })
-
+            });
         })(mui);
-
-
 
         $(function () {
 
@@ -292,7 +292,7 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="threepfg   a" value="" placeholder="0">
+                                <input type="text" name="threepfga" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">三分</div>
                             <div class="mui-col-xs-4">
@@ -346,25 +346,27 @@
                                 <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                     <div class="mui-switch-handle"></div>
                                 </div>
-                                <input type="hidden" name="lineup" value="0" class="data">
+                                <input type="hidden" name="lineup" value="0">
                             </div>
                             <div class="mui-col-xs-6 mui-text-right confirmBtn">
                                 <button type="button" class="mui-btn bggreen">确认</button>
                             </div>
                         </div>
-                        <input type="hidden" name="allScore" value="" class="data">
+                        <input type="hidden" name="personalScoreCont" value="">
                     </div>`;
 
 
             //添加球队队员操作 
             $(document).on("tap", ".teamMemberList li", function () {
                 var addtmName = $(this).attr("data-name");
-                var addtmId = $(this).attr("data-id");
+                var addtmId = $(this).attr("data-tmid");
                 var addtmNumber = $(this).attr("data-number");
+                var addMember = $(this).attr("data-Member");
+                var addtmember_Id = $(this).attr("data-member_id");
                 // 判断球员是否在列表中
                 var isOk = true
                 $(".dataList li").each(function () {
-                    var tmId = $(this).attr("data-id");
+                    var tmId = $(this).attr("data-team_member_id");
                     if (addtmId == tmId) {
                         mui.toast("该队员已在列表中");
                         return isOk = false;
@@ -375,13 +377,12 @@
                 if (addtmNumber == 'null') {
                     addtmNumber = '';
                     console.log(123)
-                    // $(".dataTitle input[name='number']").attr("disabled", false);
                 }
-                var tmFormal = `<li class="mui-table-view-cell mui-collapse listli" data-id="${addtmId}">
+                var tmFormal = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}"  placeholder="球员姓名" ></div>
-                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}" placeholder="球员号码" ></div>
+                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="球员姓名" ></div>
+                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}"  placeholder="球员号码" ></div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -399,22 +400,22 @@
             //添加平台会员操作 
             $(document).on("tap", ".memberList li", function () {
                 var member = $(this).attr("data-member");
-                var member_id = $(this).attr("data-id");
+                var member_id = $(this).attr("data-member_id");
                 // 判断球员是否在列表中
                 var isOk = true
                 $(".dataList li").each(function () {
-                    var tmId = $(this).attr("data-id");
-                    if (member_id == tmId) {
+                    var memberId = $(this).attr("data-member_id");
+                    if (member_id == memberId) {
                         mui.toast("该队员已在列表中");
                         return isOk = false;
                     }
                 });
                 if (!isOk) { return isOk }
 
-                var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-id="${member_id}">
+                var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-member_id="${member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${member}"  placeholder="球员姓名"></div>
+                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${member}" data-member="${member}"   placeholder="球员姓名" disabled></div>
                             <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="" placeholder="球员号码"></div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text class="bgcolor">
@@ -474,6 +475,8 @@
             // 选择比赛
             $(".matchList").on('tap', 'li', function () {
                 $(".dataList").empty();
+                var match_record_id = $(this).attr('data-match_record_id');
+                $("input[name=match_record_id]").val(match_record_id);
                 var match = $(this).find("font").text();
                 $(".matchCont").text(match);
                 var id = $(this).attr('data-id');
@@ -482,24 +485,32 @@
                 $(".match_time").text(match_time);
                 var away_team = $(this).attr('data-away_team');
                 $(".away_team").text(away_team);
+                var home_team = $(this).attr('data-home_team');
+                $("input[name=team]").val(home_team);
+                var home_team_id = $(this).attr('data-home_team_id');
+                $("input[name=team_id]").val(home_team_id);
                 var home_score = $(this).attr('data-home_score');
                 $(".home_score").text(home_score);
                 var away_score = $(this).attr('data-away_score');
                 $(".away_score").text(away_score);
 
                 $(this).find(".tmInfo").each(function () {
+                    var tmMember = $(this).attr("data-member");
                     var tmName = $(this).attr("data-name");
                     var tmNumber = $(this).attr("data-number");
-                    var checkDisabled = true;
+                    var tmId = $(this).attr("data-team_member_id");
+                    var tmemberId = $(this).attr("data-member_id");
+                    var match_record_member_id = $(this).attr("data-match_record_member_id");
+                    var checkdisabled = true;
                     if (tmNumber == 'null') {
                         tmNumber = '';
-                        // checkDisabled = 'false';
+                        var checkdisabled = false;
                     }
-                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli">
+                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${tmemberId}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
-                                    <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-id="" placeholder="球员姓名"></div>
-                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码"></div>
+                                    <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="球员姓名" disabled =${checkdisabled}></div>
+                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码" disabled =${checkdisabled}></div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                         <text class="bgcolor">
                                             <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -519,8 +530,9 @@
                 $("input[name=match_id]").val("");
                 $(".match_time").text('');
                 $(".away_team").text('');
-                $(".home_score").text('');
-                $(".away_score").text('');
+                $(".home_score").text('0');
+                $(".away_score").text('0');
+                $(".dataList").empty();
                 mui("#match").popover("toggle");
             })
             //搜索比赛
@@ -611,28 +623,30 @@
 
         // 提交
         function submitAction() {
-            var teamMember = [];
+            var members = [];
+            var personalScoreAll = 0;
             $(".dataCollapse").each(function () {
-                var allScore = "10"
-                var member = "";
-                var member_id = "";
-                var name = $("input[name=name]").val();
-                var team_member_id = "";
-                var number = $("input[name=number]").val();
-                var lineup = $("input[name=lineup]").val(); //首发
-                var fga = $("input[name=fga]").val(); //二分出手次数
-                var fg = $("input[name=fg]").val(); //二分命中数
-                var threepfga = $("input[name=threepfga]").val(); //三分出手次数
-                var threepfg = $("input[name=threepfg]").val(); //三分命中数
-                var fta = $("input[name=fta]").val(); //罚球次数
-                var ft = $("input[name=ft]").val(); //罚球命中数
-                var reb = $("input[name=reb]").val(); //篮板
-                var ast = $("input[name=ast]").val(); //助攻
-                var stl = $("input[name=stl]").val(); //抢断
-                var blk = $("input[name=blk]").val(); //封盖
-                var turnover = $("input[name=turnover]").val(); //失误
-                var foul = $("input[name=foul]").val(); //犯规
-                console.log(fg)
+                var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+                var member = $(this).siblings().find("input[name=name]").attr("data-member");
+                var member_id = $(this).parents(".mui-collapse").attr("data-member_id");
+                var name = $(this).siblings().find("input[name=name]").val();
+                var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
+                var number = $(this).siblings().find("input[name=number]").val();
+                var number01 = $(this).siblings().find("input[name=number]").val();
+                var lineup = $(this).find("input[name=lineup]").val(); //首发
+                var fga = $(this).find("input[name=fga]").val(); //二分出手次数
+                var fg = $(this).find("input[name=fg]").val(); //二分命中数
+                var threepfga = $(this).find("input[name=threepfga]").val(); //三分出手次数
+                var threepfg = $(this).find("input[name=threepfg]").val(); //三分命中数
+                var fta = $(this).find("input[name=fta]").val(); //罚球次数
+                var ft = $(this).find("input[name=ft]").val(); //罚球命中数
+                var reb = $(this).find("input[name=reb]").val(); //篮板
+                var ast = $(this).find("input[name=ast]").val(); //助攻
+                var stl = $(this).find("input[name=stl]").val(); //抢断
+                var blk = $(this).find("input[name=blk]").val(); //封盖
+                var turnover = $(this).find("input[name=turnover]").val(); //失误
+                var foul = $(this).find("input[name=foul]").val(); //犯规
+
                 if (fg > fga) {
                     mui.toast("二分命中次数不能大于出手次数");
                     return false;
@@ -645,36 +659,41 @@
                     mui.toast("罚球命中次数不能大于罚球数");
                     return false;
                 }
-                // 求和判断
-                // var personalScore = fg * 2 + threepfg * 3 + ft * 1;
-                // var countScore = 0;
-                // $("input[name=allScore]").each(function () {
-                //     countScore += parseInt(personalScore);
-                //     console.log(countScore)
-                // })
-                // if (countScore > allScore) {
-                //     mui.toast("球员总得分不能大于球队总得分");
-                //     return false;
-                // }
-                teamMember.push({ member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+
+                personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
+                $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+                personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
+                members.push({ match_record_member_id, member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
             });
-            console.log(teamMember)
+            var teamScore = $(".home_score").text(); // 球队总得分
+            console.log(teamScore)
+            // 遍历求和球员总得分
+            $("input[name=personalScoreCont]").each(function () {
+                personalScoreAll += parseInt($(this).val());
+            })
+            console.log(personalScoreAll)
+            if (personalScoreAll > teamScore) {
+                mui.toast("球员总得分不能大于球队总得分");
+                return false;
+            }
+            console.log(members)
 
             // 提交api
             // var data = wooApi.getInputData('input', 'data');
             // datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
+            // // 获取其他标签值
             // arrData = wooApi.getDomData('domData', datas);
             // var objData = wooApi.arrTOobj(arrData);
+            // objData.members = JSON.stringify(members);
             // var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
             // var ajaxResult = wooApi.asyncF(url, objData);
             // if (ajaxResult.code == 200) {
-            // mui.alert(ajaxResult.msg, '数据录入成功', '确定', function () {
-            // var goUrl = "{:url('team/')}/team_id/" + "{$team_id}";
-            // window.top.location.href = goUrl;
+            //     mui.alert(ajaxResult.msg, '创建数据成功', '确定', function () {
+            //         var goUrl = "{:url('team/dataOfTeam')}" + '/team_id/' + "{$team_id}";
+            //         window.top.location.href = goUrl;
             //     })
             // } else {
-            //     mui.alert(ajaxResult.msg, '录入失败');
+            //     mui.alert(ajaxResult.msg, '创建失败');
             //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
             //         if (data.code === 200) {
             //             $('input[name=__token__]').val(data.data);
@@ -713,10 +732,10 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].record.away_team + '" data-home_score="' + data.data.data[i].record.home_score + '" data-away_score="' + data.data.data[i].record.away_score + '" data-away_score="' + data.data.data[i].record.away_score + '"><font class="court">' + data.data.data[i].name + '</font>';
+                            newli += '<li class="mui-table-view-cell listli" data-match_record_id="' + data.data.data[i].record.id + '"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].record.away_team + '" data-home_team="' + data.data.data[i].record.home_team + '" data-home_team_id="' + data.data.data[i].record.home_team_id + '" data-home_score="' + data.data.data[i].record.home_score + '" data-away_score="' + data.data.data[i].record.away_score + '" data-away_score="' + data.data.data[i].record.away_score + '"><font class="court">' + data.data.data[i].name + '</font>';
                             newli += '<div class="hide">';
                             for (var j = 0; j <= data.data.data[i].record_members.length - 1; j++) {
-                                newli += '<input type="hidden" class="tmInfo" data-name="' + data.data.data[i].record_members[j].name + '" data-number="' + data.data.data[i].record_members[j].number + '">'
+                                newli += '<input type="hidden" class="tmInfo" data-member="' + data.data.data[i].record_members[j].member + '" data-name="' + data.data.data[i].record_members[j].name + '" data-number="' + data.data.data[i].record_members[j].number + '" data-team_member_id="' + data.data.data[i].record_members[j].team_member_id + '" data-member_id="' + data.data.data[i].record_members[j].member_id + '" data-match_record_member_id="' + data.data.data[i].record_members[j].id + '">'
                             }
                             newli += '</div></li>'
                         }
@@ -726,7 +745,7 @@
                         }
                         $(wMatchList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
-                        $(totalPage).text(data.data.last_page);
+                        $(totalPage).text(data.data.totalPage);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -756,7 +775,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' + data.data[i].number + '" data-name="' + data.data[i].name + '" data-id="' + data.data[i].id + '">' + data.data[i].name + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' + data.data[i].number + '" data-name="' + data.data[i].name + '" data-tmid="' + data.data[i].id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '">' + data.data[i].name + '</li>'
                         }
                         $("ul.teamMemberList").empty();
                         if (newli == '') {
