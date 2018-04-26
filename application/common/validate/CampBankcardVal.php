@@ -1,7 +1,7 @@
 <?php 
 namespace app\common\validate;
 use think\Validate;
-class BankcardVal extends Validate{
+class CampBankcardVal extends Validate{
 
 
    protected $rule = [
