@@ -38,9 +38,10 @@ class CampWithdraw extends Base{
          }
      }
     
-    // 编辑提现
+    // 编辑提现(废弃)
     public function updateCampWithdrawApi(){
          try{
+            return false;
             $isPower = $this->isPower();
             if($isPower<>4){
                 return json(['code'=>100,'msg'=>'权限不足']);
@@ -49,7 +50,7 @@ class CampWithdraw extends Base{
             $camp_withdraw_id = input('param.camp_withdraw_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            
+
             $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
             if($campInfo['balance']<$data['withdraw']){
                 return json(['code'=>100,'msg'=>'余额不足']);
@@ -73,7 +74,7 @@ class CampWithdraw extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-
+            $data['camp_id'] = input('param.camp_id');
             $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
             if($campInfo['balance']<$data['withdraw']){
                 return json(['code'=>100,'msg'=>'余额不足']);
@@ -94,4 +95,8 @@ class CampWithdraw extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 取消提现
+    
 }
