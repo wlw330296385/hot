@@ -1831,12 +1831,10 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberListPaginator($map);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -1856,12 +1854,10 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberList($map, $page);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -1877,16 +1873,16 @@ class Match extends Base
             $matchS = new MatchService();
             $result = $matchS->getMatchRecordMemberListAll($map);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json($response);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
+    //
 
     // 已登记技术数据的比赛列表
     public function matchlisthasstatics() {

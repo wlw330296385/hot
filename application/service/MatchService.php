@@ -332,6 +332,55 @@ class MatchService {
         }
     }
 
+    // 比赛战绩列表（关联比赛信息 页码）
+    public function matchRecordListPaginator($map, $order='id desc', $size=10) {
+        $model = new MatchRecord();
+        $res = $model->with('match')->where($map)->order($order)->paginate($size);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['match_timestamp'] = $val['match_time'];
+            $result['data'][$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
+            // 比赛信息字段整合
+            $matchInfo = $modelMatch->where(['id' => $val['match_id']])->find();
+            if($matchInfo){
+                $matchInfo = $matchInfo->getData();
+                $result['data'][$k]['match']['type_num'] = $matchInfo['type'];
+                $result['data'][$k]['is_finished_num']  = $matchInfo['is_finished'];
+                $result['data'][$k]['status_num'] = $matchInfo['status'];
+                $result['data'][$k]['apply_status_num'] = $matchInfo['apply_status'];
+            }
+        }
+        return $result;
+    }
+
+    // 比赛球队战绩列表（关联比赛信息）
+    public function matchRecordList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchRecord();
+        $modelMatch = new Match();
+        $res = $model->with('match')->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['match_timestamp'] = $val['match_time'];
+            $result[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
+            // 比赛信息字段整合
+            $matchInfo = $modelMatch->where(['id' => $val['match_id']])->find();
+            if($matchInfo){
+                $matchInfo = $matchInfo->getData();
+                $result[$k]['match']['type_num'] = $matchInfo['type'];
+                $result[$k]['is_finished_num']  = $matchInfo['is_finished'];
+                $result[$k]['status_num'] = $matchInfo['status'];
+                $result[$k]['apply_status_num'] = $matchInfo['apply_status'];
+            }
+        }
+        return $result;
+    }
 
     // 更新球队的比赛场数与胜场数
     public function countTeamMatchNum($teamId) {
