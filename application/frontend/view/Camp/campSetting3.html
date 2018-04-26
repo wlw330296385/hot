@@ -61,7 +61,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>支行名称</label>
-                    <input type="text" name="banksub" class="banksub" value="{$campBankcard.branch}" placeholder="请输入开户银行支行名称">
+                    <input type="text" name="bank_branch" class="bank_branch" value="{$campBankcard.bank_branch}" placeholder="请输入开户银行支行名称">
                 </div>
                 <div class="mui-input-row">
                     <label>银行账号</label>
@@ -84,7 +84,7 @@
             <span class="tip-box validate-result"></span>
 
             <div class="tjbtn mb44">
-                <button type="button" class="mui-btn btn" id="submit-edit">修改</button>
+                <button type="button" class="mui-btn btn" id="submit-form">修改</button>
             </div>
             <!--账号更新：结束-->
 
@@ -109,7 +109,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>支行名称</label>
-                    <input type="text" name="banksub" class="banksub" value="" placeholder="请输入开户银行支行名称">
+                    <input type="text" name="bank_branch" class="bank_branch" value="" placeholder="请输入开户银行支行名称">
                 </div>
                 <div class="mui-input-row">
                     <label>银行账号</label>
@@ -132,7 +132,7 @@
             <span class="tip-box validate-result"></span>
 
             <div class="tjbtn mb44">
-                <button type="button" class="mui-btn btn" id="submit-add">添加</button>
+                <button type="button" class="mui-btn btn" id="submit-form">添加</button>
             </div>
             <!--账号添加：结束-->
 
@@ -238,13 +238,36 @@
         }
 
 
-        //新添加账号信息
-        $('#submit-add').click(function () {
 
+        //提交/修改账号信息
+        $('#submit-form').on("tap",function(){
+
+            //短信验证
+            var code = document.getElementById('code').value;
+            var codeReg = /^\d{6,6}$/;
+
+            $('.validate-result span').remove('.code_yz');
+            //console.log(code);
+            if(!codeReg.test(code)){
+                $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
+                return false;
+            }else{
+                var telephone = document.getElementById('telephone').value;
+                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                if(result.code == 200){
+                    mui.toast(result.msg);
+                }else{
+                    $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
+                    return false;
+                }
+            }
+
+            //获取表单提交
             var campid = "{$campInfo.id}";
             var camp = "{$campInfo.camp}";
             var account = $('input[name=account]').val();
             var bank = $('input[name=bank]').val();
+            var bank_branch = $('input[name=bank_branch]').val();
             var bankcard = $('input[name=bankcard]').val();
             var telephone = $('input[name=telephone]').val();
             var smscode = $('.reg_code').val();
@@ -255,13 +278,21 @@
                 return false;
             }
 
-            mui.ajax("{:url('api/camp_bankcard/createCampBankcardApi')}", {
+            var url="";
+            {if $campBankcard}
+                url = "{:url('api/camp_bankcard/updateCampBankcardApi')}?camp_bankcard_id={$campBankcard.id}";
+            {else /}
+                url = "{:url('api/camp_bankcard/createCampBankcardApi')}";
+            {/if}
+
+            mui.ajax(url, {
                 data: {
                     camp_id: campid,
                     camp: camp,
                     account: account,
                     bank: bank,
-                    bankcard: bankcard,
+                    bank_branch: bank_branch,
+                    bank_card: bankcard,
                     telephone: telephone
                 },
                 dataType: 'json',
@@ -284,49 +315,6 @@
         });
 
 
-        //修改账号信息
-        $('#submit-edit').click(function () {
-
-            var campid = "{$campInfo.id}";
-            var account = $('input[name=account]').val();
-            var bank = $('input[name=bank]').val();
-            var bankcard = $('input[name=bankcard]').val();
-            var telephone = $('input[name=telephone]').val();
-            var smscode = $('.reg_code').val();
-
-            var validateResult = $(".validate-result span").text();
-            if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
-                mui.toast("提交失败，请填写完整并保证信息格式正确！");
-                return false;
-            }
-
-            mui.ajax("{:url('api/camp_bankcard/updateCampBankcardApi')}?camp_bankcard_id="+campid, {
-                data: {
-                    account: account,
-                    bank: bank,
-                    bankcard: bankcard,
-                    telephone: telephone
-                },
-                dataType: 'json',
-                type: 'post',
-                timeout: 10000,
-                headers: { 'Content-Type': 'application/json' },
-                success: function (res) {
-                    if (res.code == 200) {
-                        mui.alert("修改成功", function () {
-                            window.location.href = "{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}";
-                        });
-                    } else {
-                        mui.toast(res.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
-        });
-
-
         //银行选择
         $('#bankList a').on("click","",function(){
             var bank = $(this).attr("title");
@@ -335,26 +323,6 @@
             mui("#bankList").popover("toggle");
         });
 
-        //验证短信验证码
-        $('#code').on("blur",function(){
-            var code = document.getElementById('code').value;
-            var codeReg = /^\d{6,6}$/;
-
-            $('.validate-result span').remove('.code_yz');
-            //console.log(code);
-            if(!codeReg.test(code)){
-                $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
-            }else{
-                var telephone = document.getElementById('telephone').value;
-                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-                if(result.code == 200){
-                    mui.toast(result.msg);
-                }else{
-                    $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
-                }
-            }
-
-        });
 
     });
 
