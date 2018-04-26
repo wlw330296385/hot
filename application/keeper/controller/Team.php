@@ -1069,12 +1069,77 @@ class Team extends Base {
 
     //记录的数据详情
     public function dataInfo() {
-        return view('Team/dataInfo');
+        $matchRecordId = input('match_record_id', 0, 'intval');
+        if (!$matchRecordId) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取比赛信息
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $matchRecordId]);
+        if (!$matchRecordInfo) {
+            $this->error('无此比赛信息');
+        }
+        $matchInfo = $matchS->getMatch(['id' => $matchRecordInfo['match_id']]);
+        if (!$matchInfo) {
+            $this->error('无此比赛信息');
+        }
+        $matchInfo['record'] = $matchRecordInfo;
+
+        // 比赛球员技术数据列表
+        $matchStatistics = $matchS->getMatchStatisticsAll([
+            'match_id' => $matchInfo['id'],
+            'match_record_id' => $matchRecordId
+        ]);
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        return view('Team/dataInfo', [
+            'matchInfo' => $matchInfo,
+            'matchStatcList' => $matchStatistics,
+            'teamrole' => $teamrole
+        ]);
     }
 
     //编辑数据
     public function dataEdit() {
-        return view('Team/dataEdit');
+        $matchRecordId = input('match_record_id', 0, 'intval');
+        if (!$matchRecordId) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取比赛信息
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $matchRecordId]);
+        if (!$matchRecordInfo) {
+            $this->error('无此比赛信息');
+        }
+        $matchInfo = $matchS->getMatch(['id' => $matchRecordInfo['match_id']]);
+        if (!$matchInfo) {
+            $this->error('无此比赛信息');
+        }
+        $matchInfo['record'] = $matchRecordInfo;
+
+        // 比赛球员技术数据列表
+        $matchStatistics = $matchS->getMatchStatisticsAll([
+            'match_id' => $matchInfo['id'],
+            'match_record_id' => $matchRecordId
+        ]);
+        
+        return view('Team/dataEdit', [
+            'matchInfo' => $matchInfo,
+            'matchStatcList' => $matchStatistics,
+        ]);
     }
 
 }
