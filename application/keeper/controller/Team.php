@@ -218,10 +218,28 @@ class Team extends Base {
             $editbtnDisplay = 1;
         }
 
+        // 赛季选择列表：从球员加入球队年至当前年
+        $seasonList = [];
+        $teamMemberCreateYear = checkDatetimeIsValid($teamMemberInfo['create_time']) ? strtotime($teamMemberInfo['create_time']) : $teamMemberInfo['create_time'];
+        $teamMemberCreateYear = intval(date('Y', $teamMemberCreateYear));
+        // 当前年份
+        $curYear = intval(date('Y', time()));
+        if ($teamMemberCreateYear != $curYear) {
+            $i = 0;
+            while($teamMemberCreateYear <= $curYear) {
+                $seasonList[$i] = $curYear--;
+                $i++;
+            }
+        } else {
+            $seasonList[] = $curYear;
+        }
+
+
         $this->assign('teamMemberInfo', $teamMemberInfo);
         $this->assign('memberOtherTeam', $memberOtherTeam);
         $this->assign('delbtnDisplay', $delbtnDisplay);
         $this->assign('editbtnDisplay', $editbtnDisplay);
+        $this->assign('seasonList', $seasonList);
         return view('Team/teamMemberInfo');
     }
 
