@@ -98,6 +98,46 @@ class Matchdata
         }
     }
 
+    // 球员比赛列表,含有比赛战绩信息，比赛时间降序
+    public function playermatchlist() {
+        try {
+            $data = input('param.');
+            $page = input('page');
+            // 球员id必须传入
+            if ( !array_key_exists('team_member_id', $data) ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球员']);
+            }
+            $teamS = new TeamService();
+            // 获取球队成员数据
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $data['team_member_id']]);
+            if (!$teamMemberInfo) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
+            }
+            // 赛季时间(年)
+            if (input('?year')) {
+                $year = input('year');
+                // 比赛时间在赛季年
+                $when = getStartAndEndUnixTimestamp($year);
+                /*$data['match_time'] = ['between',
+                    [ $when['start'], $when['end'] ]
+                ];*/
+                unset($data['year']);
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $matchS = new MatchService();
+            $result = $matchS->getMatchRecordMemberList($data, $page);
+            // 返回无数据结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            dump($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
     // 球队录入球队比赛技术数据
     public function savematchstatisticsbyteam() {
         $data = input('post.');

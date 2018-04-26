@@ -392,7 +392,7 @@ class MatchService {
     // 比赛战绩-会员关联列表（页码）
     public function getMatchRecordMemberListPaginator($map, $order='id desc', $paginate=10) {
         $model = new MatchRecordMember();
-        $query = $model->where($map)->order($order)->paginate($paginate);
+        $query = $model->with('record')->where($map)->order($order)->paginate($paginate);
         if ($query) {
             return $query->toArray();
         } else {
@@ -403,7 +403,7 @@ class MatchService {
     // 比赛战绩-会员关联列表
     public function getMatchRecordMemberList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MatchRecordMember();
-        $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        $query = $model->with('record')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($query) {
             return $query->toArray();
         } else {
@@ -421,7 +421,6 @@ class MatchService {
             return $query;
         }
     }
-
 
     // 保存历史对手球队
     public function saveHistoryTeam($data) {
