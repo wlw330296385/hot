@@ -7,6 +7,7 @@ use app\model\MatchRecord;
 use app\model\MatchRecordMember;
 use app\model\MatchReferee;
 use app\model\MatchRefereeApply;
+use app\model\MatchStatistics;
 use app\model\MatchTeam;
 use app\model\MatchHistoryTeam;
 use think\Db;
@@ -844,6 +845,17 @@ class MatchService {
         $model = new MatchRefereeApply();
         $res = $model->where($map)->count();
         return $res ? $res : 0;
+    }
+
+    // 获取比赛球员技术数据列表（无分页）
+    public function getMatchStatisticsAll($map=[]) {
+        $model = new MatchStatistics();
+        $res = $model->where($map)->select();
+        if ($res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 
 }
