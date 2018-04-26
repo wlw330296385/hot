@@ -1725,9 +1725,7 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
-                $map['match_record.team_id'] = $team_id;
-                unset($map['team_id']);
+                $map['home_team_id|away_team_id'] = $team_id;
             }
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1766,9 +1764,7 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
-                $map['match_record.team_id'] = $team_id;
-                unset($map['team_id']);
+                $map['home_team_id|away_team_id'] = $team_id;
             }
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1799,9 +1795,7 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
-                $map['match_record.team_id'] = $team_id;
-                unset($map['team_id']);
+                $map['home_team_id|away_team_id'] = $team_id;
             }
             $result = $matchS->matchRecordListAll($map);
             // 返回结果
