@@ -59,9 +59,9 @@ class CampWithdraw extends Base{
 
             $result = $this->CampWithdrawService->updateCampWithdraw($data,['id'=>$camp_withdraw_id]);
             return json($result);
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-         }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
      }
     // 新建提现
     public function createCampWithdrawApi(){
@@ -80,8 +80,15 @@ class CampWithdraw extends Base{
             }
             $data['s_balance'] = $data['e_balance'] = $campInfo['balance'];
             $data['camp_type'] = $campInfo['type'];
-
+            $buffer = $data['withdraw'];
+            if($campInfo['type'] == 2){
+                $buffer += $buffer*$campInfo['schedule_rebate'];
+            }
+            $data['buffer'] = $buffer;
             $result = $this->CampWithdrawService->createCampWithdraw($data);
+            if($result['code'] == 200){
+                db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$buffer)->update();
+            }
             return json($result);   
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);

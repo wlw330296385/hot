@@ -91,14 +91,14 @@ class Withdraw extends Backend{
                     'member_id'     => $campWithdrawInfo['member_id'],
                     'member'        => $campWithdrawInfo['member'],
                     'type'          => -1,
-                    'e_balance'     =>($campInfo['balance'] + $output),
-                    's_balance'     =>$campInfo['balance'],
+                    'e_balance'     =>($campInfo['balance'] - $output - $camp_withdraw_fee),
+                    's_balance'     =>($campInfo['balance'] - $camp_withdraw_fee),
                     'f_id'          =>$campWithdrawInfo['id'],
                     'system_remarks'=>$remarks,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
-                $Withdraw->save(['status'=>3],['id'=>$campWithdraw_id]);
+                $Withdraw->save(['status'=>3,'buffer'=>0],['id'=>$campWithdraw_id]);
             }elseif ($action == -1) {
                 if($campWithdrawInfo['camp_type'] == 2){
                     $camp_withdraw_fee = $campWithdrawInfo['withdraw'] * $campInfo['schedule_rebate'];
