@@ -285,15 +285,17 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/match/playermatchpage','','',true)}" + '/?page=' + page;
                 var team_id = "{$team_id}"
+                var team_member_id = "{$teamMemberInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
                         team_id: team_id,
                         // is_finished:1,
                         // status:1,
-                        year: sYear,
+                        //year: sYear,
+                        team_member_id: team_member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -305,19 +307,19 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
-                                var matchTimeY = gettimeY(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
+                                var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
                                 var urls = "{:url('team/teamMemberData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
                                 newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
-                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
-                                    newli += '<p class="colororange">' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                if (data.data.data[i].record.home_score > data.data.data[i].record.away_score) {
+                                    newli += '<p class="colororange">' + data.data.data[i].record.away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].record.home_score + ':' + data.data.data[i].record.away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
                                 } else {
-                                    newli += '<p>' + data.data.data[i].away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].home_score + ':' + data.data.data[i].away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                    newli += '<p>' + data.data.data[i].record.away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].record.home_score + ':' + data.data.data[i].record.away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
                                 }
-                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                if (data.data.data[i].record.home_score > data.data.data[i].record.away_score) {
                                     newli += '<p class="colororange">胜</p>'
-                                } else if (data.data.data[i].home_score < data.data.data[i].away_score) {
+                                } else if (data.data.data[i].record.home_score < data.data.data[i].record.away_score) {
                                     newli += '<p>负</p>'
                                 } else {
                                     newli += '<p>--</p>'

@@ -1882,7 +1882,52 @@ class Match extends Base
         }
     }
 
-    //
+    // 球员参赛列表（页码）
+    public function playermatchpage() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+
+            $result = $matchS->getMatchRecordMemberListPaginator($map, $orderby);
+            // 返回结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球员参赛列表
+    public function playermatchlist() {
+        try {
+            // 传入变量作为查询条件
+            $map = input('param.');
+            $page = input('page', 1);
+            if (input('?param.page')) {
+                unset($map['page']);
+            }
+            // 获取数据列表
+            $matchS = new MatchService();
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+            $result =  $matchS->getMatchRecordMemberList($map, $page, $orderby);
+            // 返回结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            }
+            // 首发比赛次数
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
 
     // 已登记技术数据的比赛列表
     public function matchlisthasstatics() {
