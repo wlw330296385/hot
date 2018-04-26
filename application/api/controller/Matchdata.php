@@ -145,11 +145,11 @@ class Matchdata
                 return json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
 
-            if ($res) {
-                return json(['code' => 200, 'msg' => __lang('MSG_200')]);
-            } else {
+            if (!$res) {
                 return json(['code' => 100, 'msg' => __lang('MSG_400')]);
             }
+            // 更新比赛战绩 已录入技术统计标识
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
     }
 }
