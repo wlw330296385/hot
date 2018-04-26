@@ -29,7 +29,7 @@ class Student extends Backend {
             $map['member.telephone'] = $tel;
         }
         // 视图查询 grade_member - student
-        $list = Db::view('student','student,member_id,id')
+        $studentList = Db::view('student','student,member_id,id')
             ->view('member', 'member,hot_id,telephone', 'member.id=student.member_id', 'left')
             ->view('grade_member', 'camp,camp_id,grade,grade_id,status', 'grade_member.student_id=student.id', 'LEFT')
             ->where($map)
@@ -37,7 +37,7 @@ class Student extends Backend {
             ->order('student.member_id desc')
             ->paginate(15, false, ['query' => request()->param()]);
 //        dump($list->toArray());die;
-        $this->assign('list', $list);
+        $this->assign('studentList', $studentList);
         $this->assign('camp_id', $camp_id);
         return $this->fetch();
     }
@@ -45,11 +45,11 @@ class Student extends Backend {
     // 学员档案
     public function show() {
         $id = input('id');
-        $data = StudentModel::with('member')->where(['id' => $id])->find()->toArray();
-        $data['_incamp'] = Db::view('student', 'id, student,member_id')
+        $studentInfo = StudentModel::with('member')->where(['id' => $id])->find()->toArray();
+        $studentInfo['_incamp'] = Db::view('student', 'id, student,member_id')
             ->view('grade_member', 'grade,camp,type,status', 'grade_member.student_id=student.id')
-            ->where(['student_id' => $data['id']])->select();
-
+            ->where(['student_id' => $studentInfo['id']])->select();
+        $this->assign('studentInfo', $studentInfo);    
         return view();
     }
 
