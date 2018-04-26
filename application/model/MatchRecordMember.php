@@ -10,4 +10,8 @@ class MatchRecordMember extends Model {
     // 软删除
     use SoftDelete;
     protected $deleteTime = 'delete_time';
+
+    public function record() {
+        return $this->belongsTo('MatchRecord');
+    }
 }
