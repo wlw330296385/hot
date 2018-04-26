@@ -1223,7 +1223,7 @@ class Match extends Base
 
             // 获取数据列表
             $matchS = new MatchService();
-            $result = $matchS->matchRecordListPaginator($map);
+            $result = $matchS->matchRecordListPaginatorView($map);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -1269,7 +1269,7 @@ class Match extends Base
 
             // 获取数据列表
             $matchS = new MatchService();
-            $result = $matchS->matchRecordList($map, $page);
+            $result = $matchS->matchRecordListView($map, $page);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -1725,14 +1725,16 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['home_team_id|away_team_id'] = $team_id;
+                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
+                $map['match_record.team_id'] = $team_id;
+                unset($map['team_id']);
             }
             if (input('?param.page')) {
                 unset($map['page']);
             }
             // 获取数据列表
             $matchS = new MatchService();
-            $result = $matchS->matchRecordListPaginator($map);
+            $result = $matchS->matchRecordListPaginatorView($map);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -1764,14 +1766,16 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['home_team_id|away_team_id'] = $team_id;
+                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
+                $map['match_record.team_id'] = $team_id;
+                unset($map['team_id']);
             }
             if (input('?param.page')) {
                 unset($map['page']);
             }
             // 获取数据列表
             $matchS = new MatchService();
-            $result = $matchS->matchRecordList($map, $page);
+            $result = $matchS->matchRecordListView($map, $page);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -1795,9 +1799,11 @@ class Match extends Base
             // 传入球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['home_team_id|away_team_id'] = $team_id;
+                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
+                $map['match_record.team_id'] = $team_id;
+                unset($map['team_id']);
             }
-            $result = $matchS->matchRecordListAll($map);
+            $result = $matchS->matchRecordListAllView($map);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
@@ -1889,12 +1895,6 @@ class Match extends Base
             if (!array_key_exists('has_statics', $data)) {
                 $data['has_statics'] =1;
             }
-            // 传入球队team_id 查询比赛战绩所属球队
-            if (input('?param.team_id')) {
-                $team_id = input('param.team_id');
-                $map['match_record.team_id'] = $team_id;
-                unset($data['team_id']);
-            }
             if (input('?page')) {
                 unset($data['page']);
             }
@@ -1921,12 +1921,6 @@ class Match extends Base
             // 默认查询已登记技术数据
             if (!array_key_exists('has_statics', $data)) {
                 $data['has_statics'] =1;
-            }
-            // 传入球队team_id 查询比赛战绩所属球队
-            if (input('?param.team_id')) {
-                $team_id = input('param.team_id');
-                $map['match_record.team_id'] = $team_id;
-                unset($data['team_id']);
             }
             if (input('?page')) {
                 unset($data['page']);

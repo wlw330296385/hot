@@ -1330,7 +1330,7 @@ class Team extends Base
             // 查询条件组合end
             // 未完成比赛优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastMatch = $matchS->matchRecordListAll($map, $orderby);
+            $lastMatch = $matchS->matchRecordListAllView($map, $orderby);
             // 球队无比赛记录
             if (!$lastMatch) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1398,7 +1398,7 @@ class Team extends Base
             }
             // 未完成比赛优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastMatch = $matchS->matchRecordList($map, $page,$orderby);
+            $lastMatch = $matchS->matchRecordListView($map, $page,$orderby);
             // 球队无比赛记录
             if (!$lastMatch) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1469,7 +1469,7 @@ class Team extends Base
             }
             // 先列出未完成比赛
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastMatch = $matchS->matchRecordList($map, $page, $orderby);
+            $lastMatch = $matchS->matchRecordListView($map, $page, $orderby);
             // 如果没有未完成的活动记录，清理查询条件is_finished=-1，再次执行查询
             if (!$lastMatch) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1511,7 +1511,7 @@ class Team extends Base
             $teamS = new TeamService();
             // 未完成的记录优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
-            $lastMatch = $matchS->matchRecordListAll($map, $orderby);
+            $lastMatch = $matchS->matchRecordListAllView($map, $orderby);
             // 球队无比赛记录
             if (!$lastMatch) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);

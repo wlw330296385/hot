@@ -217,79 +217,119 @@ class MatchService {
         }
     }
 
-    // 比赛球队战绩列表Pagigator
-    public function matchRecordListPaginator($map, $order='id desc', $paginate=10) {
-        $model = new MatchRecord();
-        $modelMatch = new Match();
-        $res = $model->with('match')->where($map)->order($order)->paginate($paginate);
-        if (!$res) {
-            return $res;
-        }
-        $result = $res->toArray();
-        foreach ($result['data'] as $k => $val) {
-            $result['data'][$k]['match_timestamp'] = $val['match_time'];
-            $result['data'][$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
-            // 比赛信息字段整合
-            $matchInfo = $modelMatch->where(['id' => $val['match_id']])->find();
-            if($matchInfo){
-                $matchInfo = $matchInfo->getData();
-                $result['data'][$k]['match']['type_num'] = $matchInfo['type'];
-                $result['data'][$k]['is_finished_num']  = $matchInfo['is_finished'];
-                $result['data'][$k]['status_num'] = $matchInfo['status'];
-                $result['data'][$k]['apply_status_num'] = $matchInfo['apply_status'];
+    // 视图查询比赛球队战绩列表（关联比赛信息）Pagigator
+    public function matchRecordListPaginatorView($map, $order='match_record.id desc', $paginate=10) {
+        $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
+            'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
+            'finished_time', 'is_finished' ,'islive'];
+
+        $query = Db::view('match_record', '*')
+            ->view('match', $matchField, 'match.id=match_record.match_id', 'left')
+            ->where($map)
+            ->order($order)
+            ->paginate($paginate);
+
+
+        if ($query) {
+            //return $query->toArray();
+            $res = $query->toArray();
+            // match字段内容输出转换
+            $modelMatch = new Match();
+            foreach ($res['data'] as $k => $val) {
+                $res['data'][$k]['match_timestamp'] = $val['match_time'];
+                $res['data'][$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
+                $res['data'][$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
+                $res['data'][$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res['data'][$k]['type_num'] = $val['type'];
+                    $res['data'][$k]['type'] = $matchInfo['type'];
+                    $res['data'][$k]['is_finished_num']  = $val['is_finished'];
+                    $res['data'][$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res['data'][$k]['status_num'] = $val['status'];
+                    $res['data'][$k]['status'] = $matchInfo['status'];
+                }
             }
+            return $res;
+        } else {
+            return $query;
         }
-        return $result;
     }
 
-    // 比赛球队战绩列表
-    public function matchRecordList($map, $page=1, $order='id desc', $limit=10) {
-        $model = new MatchRecord();
-        $modelMatch = new Match();
-        $res = $model->with('match')->where($map)->order($order)->page($page)->limit($limit)->select();
-        if (!$res) {
+    // 视图查询比赛球队战绩列表（关联比赛信息）
+    public function matchRecordListView($map, $page=1, $order='match_record.id desc', $limit=10) {
+        $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
+            'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
+            'finished_time', 'is_finished' ,'islive'];
+
+        $res = Db::view('match_record', '*')
+            ->view('match', $matchField, 'match.id=match_record.match_id', 'left')
+            ->where($map)
+            ->order($order)
+            ->page($page)->limit($limit)->select();
+
+
+        if ($res) {
+            // match字段内容输出转换
+            $modelMatch = new Match();
+            foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
+                $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
+                $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res[$k]['type_num'] = $val['type'];
+                    $res[$k]['type'] = $matchInfo['type'];
+                    $res[$k]['is_finished_num']  = $val['is_finished'];
+                    $res[$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res[$k]['status_num'] = $val['status'];
+                    $res[$k]['status'] = $matchInfo['status'];
+                }
+            }
+            return $res;
+        } else {
             return $res;
         }
-        $result = $res->toArray();
-        foreach ($result as $k => $val) {
-            $result[$k]['match_timestamp'] = $val['match_time'];
-            $result[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
-            // 比赛信息字段整合
-            $matchInfo = $modelMatch->where(['id' => $val['match_id']])->find();
-            if($matchInfo){
-                $matchInfo = $matchInfo->getData();
-                $result[$k]['match']['type_num'] = $matchInfo['type'];
-                $result[$k]['is_finished_num']  = $matchInfo['is_finished'];
-                $result[$k]['status_num'] = $matchInfo['status'];
-                $result[$k]['apply_status_num'] = $matchInfo['apply_status'];
-            }
-        }
-        return $result;
     }
 
-    // 比赛球队战绩列表（所有数据）
-    public function matchRecordListAll($map, $order='match_record.id desc') {
-        $model = new MatchRecord();
-        $modelMatch = new Match();
-        $res = $model->with('match')->where($map)->order($order)->select();
-        if (!$res) {
+    // 视图查询比赛球队战绩列表（关联比赛信息 无分页）
+    public function matchRecordListAllView($map, $order='match_record.id desc') {
+        $matchField = ['type', 'start_time', 'end_time', 'reg_start_time', 'reg_end_time', 'province', 'city', 'area',
+            'court_id', 'court', 'court_lng', 'court_lat', 'status', 'logo', 'cover',
+            'finished_time', 'is_finished' ,'islive'];
+
+        $res = Db::view('match_record', '*')
+            ->view('match', $matchField, 'match.id=match_record.match_id', 'left')
+            ->where($map)
+            ->order($order)->select();
+
+
+        if ($res) {
+            // match字段内容输出转换
+            $modelMatch = new Match();
+            foreach ($res as $k => $val) {
+                $res[$k]['match_timestamp'] = $val['match_time'];
+                $res[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
+                $res[$k]['create_time'] = date('Y-m-d H:i', $val['create_time']);
+                $res[$k]['update_time'] = date('Y-m-d H:i', $val['update_time']);
+                $matchInfo =$modelMatch->where(['id' => $val['match_id']])->find();
+                if($matchInfo){
+                    $matchInfo = $matchInfo->toArray();
+                    $res[$k]['type_num'] = $val['type'];
+                    $res[$k]['type'] = $matchInfo['type'];
+                    $res[$k]['is_finished_num']  = $val['is_finished'];
+                    $res[$k]['is_finished']  = $matchInfo['is_finished'];
+                    $res[$k]['status_num'] = $val['status'];
+                    $res[$k]['status'] = $matchInfo['status'];
+                }
+            }
+            return $res;
+        } else {
             return $res;
         }
-        $result = $res->toArray();
-        foreach ($result as $k => $val) {
-            $result[$k]['match_timestamp'] = $val['match_time'];
-            $result[$k]['match_time'] = date('Y-m-d H:i',  $val['match_time']);
-            // 比赛信息字段整合
-            $matchInfo = $modelMatch->where(['id' => $val['match_id']])->find();
-            if($matchInfo){
-                $matchInfo = $matchInfo->getData();
-                $result[$k]['match']['type_num'] = $matchInfo['type'];
-                $result[$k]['is_finished_num']  = $matchInfo['is_finished'];
-                $result[$k]['status_num'] = $matchInfo['status'];
-                $result[$k]['apply_status_num'] = $matchInfo['apply_status'];
-            }
-        }
-        return $result;
     }
 
 
@@ -303,16 +343,12 @@ class MatchService {
                 ->where('match.is_finished', 1)
                 ->where('match_record.home_team_id|away_team_id', $teamInfo['id'])
                 ->order('match_record.id desc')
-                ->whereNull('match_record.delete_time', null)
-                ->whereNull('match.delete_time', null)
                 ->count();
             $teamWinNum =  Db::view('match_record', '*')
                 ->view('match', '*', 'match.id=match_record.match_id', 'left')
                 ->where('match.is_finished', 1)
                 ->where(['match_record.win_team_id' => $teamInfo['id']])
                 ->order('match_record.id desc')
-                ->whereNull('match_record.delete_time', null)
-                ->whereNull('match.delete_time', null)
                 ->count();
             $dbTeam->where('id', $teamInfo['id'])->update(['match_num' => $teamMatchNum, 'match_win' => $teamWinNum]);
         }
