@@ -5,7 +5,7 @@ class CampBankcardVal extends Validate{
 
 
    protected $rule = [
-        'bank_card'        =>  'require|unique:camp_bankcard,bank_card',
+        'bank_card'        =>  'require',
         'bank' => 'require',
         'member_id'=>'require',
         'account'=>'require',

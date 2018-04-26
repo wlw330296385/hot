@@ -16,96 +16,89 @@ class Withdraw extends Backend{
 
 
    
-    // 退费列表
-    public function refundList(){
+    // 提现列表
+    public function campWithdrawList(){
         $keyword = input('param.keyword');
         $status = input('param.status');
-        $rebate_type = input('param.rebate_type');
+        $camp_type = input('param.camp_type');
         $map = [];
         if($status){
-            $map['refund.status'] = $status;
+            $map['status'] = $status;
         }
-        if($rebate_type){
-            $map['refund.rebate_type'] = $rebate_type;
+        if($camp_type){
+            $map['camp_type'] = $camp_type;
         }
 
         $Withdraw = new \app\model\Withdraw;
         if($keyword){
             $hasWhere['camp|goods|student'] = ['like',"%$keyword%"];
-            $refundList = $Withdraw->with('bill')->hasWhere($hasWhere)->where($map)->select();
+            $campWithdrawList = $Withdraw->where($map)->select();
         }else{
-            $refundList = $Withdraw->with('bill')->hasWhere($hasWhere)->where($map)->select();
+            $campWithdrawList = $Withdraw->where($map)->select();
         }
         
 
-        if($refundList){
-            $refundList = $refundList->toArray();
+        if($campWithdrawList){
+            $campWithdrawList = $campWithdrawList->toArray();
         }else{
-            $refundList = [];
+            $campWithdrawList = [];
         }  
 
-        $this->assign('refundList',$refundList);
-        return $this->fetch('StatisticsCamp/refundList');
+        $this->assign('campWithdrawList',$campWithdrawList);
+        return $this->fetch('StatisticsCamp/campWithdrawList');
     }
 
-    // 退费处理
-    public function refundDeal(){
-        $refund_id = input('param.refund_id');
+    // 提现处理
+    public function campWithdrawDeal(){
+        $campWithdraw_id = input('param.campWithdraw_id');
         if(request()->isPost()){
             $remarks = input('param.remarks');
-            $refund_type = input('param.refund_type');
-            $action = input('param.action');//2=同意,3=同意并打款,4=已打款;
+            $action = input('param.action');//2=同意,3=已打款,4=同意并已打款;
             
             $Withdraw = new \app\model\Withdraw;
-            $refundInfo = $Withdraw->where(['id'=>$refund_id])->find();
-            if(!$refundInfo){
+            $campWithdrawInfo = $Withdraw->where(['id'=>$campWithdraw_id])->find();
+            if(!$campWithdrawInfo){
                 $this->error('传参错误,找不到退款信息');
             }
-            $refundamount = $refundInfo['refundamount'];
-            if($refundamount <= $refundInfo['refund']){
-                $this->error('打款金额不可大于退款金额');
-            }
-            
-            if($refundInfo['rebate_type'] <> 1){//课时版
-                $this->error('非课时版训练营不允许操作');
-            }
-            
-            
-            if($action == 4) {
-                $income  = $refundInfo['refundamount'] - $refundInfo['refund'] - $refundInfo['refund_fee'];
+            $campInfo = db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->find();
+            if($action == 2) {
+                if($campWithdrawInfo['camp_type'] == 2){
+                    $camp_withdraw_fee = $campWithdrawInfo['withdraw'] * $campInfo['schedule_rebate'];
+                    $output  = $campWithdrawInfo['withdraw'] - $campWithdrawInfo['campWithdraw'] - $campWithdrawInfo['campWithdraw_fee'];
+                }
+                
                 $BillService = new \app\service\BillService;
                 //训练营课时版收入
-                $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
+                $campInfo = db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->find();
                 db('income')->insert([
                     'income'        => $income,
-                    'camp_id'       => $refundInfo['camp_id'],
-                    'camp'          => $refundInfo['camp'],
-                    'member_id'     => $refundInfo['member_id'],
-                    'member'        => $refundInfo['member'],
+                    'camp_id'       => $campWithdrawInfo['camp_id'],
+                    'camp'          => $campWithdrawInfo['camp'],
+                    'member_id'     => $campWithdrawInfo['member_id'],
+                    'member'        => $campWithdrawInfo['member'],
                     'type'          => 5,
                     'e_balance'     =>($campInfo['balance'] + $income),
                     's_balance'     =>$campInfo['balance'],
-                    'f_id'          =>$refundInfo['id'],
-                    'student_id'    =>$refundInfo['student_id'],
-                    'student'       =>$refundInfo['student'],
+                    'f_id'          =>$campWithdrawInfo['id'],
+                    'student_id'    =>$campWithdrawInfo['student_id'],
+                    'student'       =>$campWithdrawInfo['student'],
                     'system_remarks'=>$remarks,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
                 // 增加训练营营业额
-                db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
-                $Withdraw->save(['status'=>3],['id'=>$refund_id]);
+                db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$income)->update();
+                $Withdraw->save(['status'=>3],['id'=>$campWithdraw_id]);
             }
             $this->success('操作成功');    
         }else{
             $Withdraw = new \app\model\Withdraw;
-            $refundInfo = $Withdraw
-                        ->with('bill')
-                        ->where(['id'=>$refund_id])
+            $campWithdrawInfo = $Withdraw
+                        ->with('bank')
+                        ->where(['id'=>$campWithdraw_id])
                         ->find();    
-            $this->assign('refundInfo',$refundInfo);
-
-            return $this->fetch('StatisticsCamp/refundDeal');
+            $this->assign('campWithdrawInfo',$campWithdrawInfo);
+            return $this->fetch('StatisticsCamp/campWithdrawDeal');
         }
         
     }

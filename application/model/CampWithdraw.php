@@ -13,8 +13,10 @@ class CampWithdraw extends Model {
     //                         ];
 
 	
-    public function getTypeAttr($value){
-        $status = [1=>'银行卡',2=>'支付宝',];
-        return $status[$value];
+    public function bank(){
+        return $this->hasOne('camp_bankcard','id','bank_id',[],'left join');                 
     }
+
+
+
 }
