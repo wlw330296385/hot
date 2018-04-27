@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <style type="text/css">
         .mui-table-view-cell p{ line-height: 27px; }
+        .mui-segmented-control .mui-control-item{ border-bottom: 5px solid #FFF; }
     </style>
 </head>
 
@@ -40,19 +41,10 @@
 
 <div class="mui-content">
 
+    <div class="mui-input-row mui-search">
+        <input type="search" class="mui-input-clear keyword" placeholder="请输入学员名称">
+    </div>
     <div class="tab-pullRefresh">
-        <div class="mui-input-row mui-search" id="sOn">
-            <input type="search" class="mui-input-clear keywordOn" placeholder="请输入在营学员名称">
-        </div>
-        <div class="mui-input-row mui-search" id="sGraduate" style="display: none;">
-            <input type="search" class="mui-input-clear keywordGraduate" placeholder="请毕业学员名称">
-        </div>
-        <div class="mui-input-row mui-search" id="sOff" style="display: none;">
-            <input type="search" class="mui-input-clear keywordOff" placeholder="请输入离营学员名称">
-        </div>
-        <div class="mui-input-row mui-search" id="sPend" style="display: none;">
-            <input type="search" class="mui-input-clear keywordPend" placeholder="请输入未处理学员名称">
-        </div>
         <div id="onlineStudentList" class="mui-control-content mui-scroll-wrapper mui-active" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student1 OA_task_student"></ul>
@@ -71,6 +63,11 @@
         <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student-p"></ul>
+            </div>
+        </div>
+        <div id="searchList" class="mui-control-content mui-scroll-wrapper" style="top:80px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view coach list border-b student-search"><li class="mui-table-view-cell mui-media listli mui-text-center colorgray">请在搜索栏输入您需要查找的学生名称，<br />可只输入关键字，如姓氏“李”、名字“佳”等</li></ul>
             </div>
         </div>
     </div>
@@ -103,40 +100,26 @@
         var offCount = 1;
         var gdCount = 1;
         var pendCount = 1;
-        var keywordOn='';
-        $('.keywordOn').val(keywordOn);
-        var keywordOff='';
-        $('.keywordOff').val(keywordOff);
-        var keywordPend='';
-        $('.keywordPend').val(keywordPend);
-        var keywordGraduate='';
-        $('.keywordGraduate').val(keywordGraduate);
+        var searchCount = 1;
+
+        var keyword='';
+        $('.keyword').val(keyword);
 
         //搜索
 
-        $(".keywordOn").on("blur",'', function () {
-            keywordOn = $(this).val();
-            toList('onlineStudentList', 1, 1, 1, keywordOn);
+        $(".mui-search").on("focus",'.keyword', function () {
+            $(this).focus;
+            $('.mui-control-item').removeClass("mui-active");
+            $('.mui-control-content').removeClass("mui-active");
+            $('#searchList').addClass("mui-active");
         })
-        $(".keywordGraduate").on("blur",'', function () {
-            keywordGraduate = $(this).val();
-            toList('graduateStudentList', 1, 1, 4, keywordGraduate);
-        })
-        $(".keywordOff").on("blur",'', function () {
-            keywordOff = $(this).val();
-            toList('offlineStudentList', 1, 1, -1, keywordOff);
-        })
-        $(".keywordPend").on("blur",'', function () {
-            keywordPend = $(this).val();
-            toPendList('pendingStudentList', 1, 1, 1, keywordPend);
+        $(".keyword").on("blur",'', function () {
+            keyword = $(this).val();
+            if(keyword!=""&&keyword!=null){
+                toSearchList('searchList', 1, 1, keyword);
+            }
         })
 
-        //切换tab的同时切换搜索框
-        $(".mui-control-item").on("tap",'', function () {
-            var seachID = $(this).attr("search-id");
-            $(".mui-search").hide();
-            $("#"+seachID).show();
-        })
 
         mui('#onlineStudentList').pullRefresh({
             down: {
@@ -164,7 +147,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onlineStudentList', page, gType, 1, keywordOn);//具体取数据的方法
+                toList('onlineStudentList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -174,7 +157,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType = 2;//代表上拉加载
-                toList('onlineStudentList', page, gType, 1, keywordOn);//具体取数据的方法
+                toList('onlineStudentList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -205,7 +188,7 @@
                 gdCount = 1;//刷新并显示第一页
                 var page = gdCount;
                 var gType = 1;//代表下拉刷新
-                toList('graduateStudentList', page, gType, 4, keywordGraduate);//具体取数据的方法
+                toList('graduateStudentList', page, gType, 4);//具体取数据的方法
             }, 100);
         }
 
@@ -215,7 +198,7 @@
                 gdCount++;//翻下一页
                 var page = gdCount;
                 var gType = 2;//代表上拉加载
-                toList('graduateStudentList', page, gType, 4, keywordGraduate);//具体取数据的方法
+                toList('graduateStudentList', page, gType, 4);//具体取数据的方法
             }, 100);
         }
 
@@ -245,7 +228,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
+                toList('offlineStudentList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -255,7 +238,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineStudentList', page, gType, -1, keywordOff);//具体取数据的方法
+                toList('offlineStudentList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -285,7 +268,7 @@
                 pendCount = 1;//刷新并显示第一页
                 var page = pendCount;
                 var gType = 1;//代表下拉刷新
-                toPendList('pendingStudentList', page, gType, 1, keywordPend);//具体取数据的方法
+                toPendList('pendingStudentList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -295,17 +278,150 @@
                 pendCount++;//翻下一页
                 var page = pendCount;
                 var gType = 2;//代表上拉加载
-                toPendList('pendingStudentList', page, gType, 1, keywordPend);//具体取数据的方法
+                toPendList('pendingStudentList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
 
+        mui('#searchList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: false,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshSearch
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshSearch
+            }
+        });
+
+        //下拉刷新具体业务实现（搜索）
+        function pulldownRefreshSearch() {
+            setTimeout(function () {
+                searchCount = 1;//刷新并显示第一页
+                var page = searchCount;
+                var gType = 1;//代表下拉刷新
+                toSearchList('searchList', page, gType, keyword);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（搜索）
+        function pullupRefreshSearch() {
+            setTimeout(function () {
+                searchCount++;//翻下一页
+                var page = searchCount;
+                var gType = 2;//代表上拉加载
+                toSearchList('searchList', page, gType, keyword);//具体取数据的方法
+            }, 100);
+        }
+
+
+
     })
 
+    //学生状态数字转换中文
+    function numTOcn(n){
+        var cn="";
+        switch (n)
+        {
+            case -1:
+                cn="离营";
+                break;
+            case 0:
+                cn="待审核";
+                break;
+            case 1:
+                cn="在学";
+                break;
+            case 2:
+                cn="退出";
+                break;
+            case 3:
+                cn="被开除";
+                break;
+            case 4:
+                cn="毕业";
+                break;
+        }
+        return cn;
+    }
+
+
     //接口获取数据并追加到页面
-    var toList = function (wList, page, gType, status, keyword) {
+    var toSearchList = function (wList, page, gType, keyword) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/lesson_member/getLessonMemberListOfCampByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+        var campID = "{$camp_id}";
+        var typeID = 1;
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id: campID,
+                type: typeID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var statusCn = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        statusCn = numTOcn(data.data.data[i].student.status);
+                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        if (status >= 1) {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为离营</span></div>';
+                        } else {
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
+                        }
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'<br />状态：'+ statusCn +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div></a></div>';
+                        newli += '</li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.student-search").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.student-search").append('<li class="nodata"><p>没有搜索到相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.student-search").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+    //接口获取数据并追加到页面
+    var toList = function (wList, page, gType, status) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/lesson_member/getLessonMemberListOfCampByPageApi','','',true)}?page="+page;
         var campID = "{$camp_id}";
         var typeID = 1;
         mui.ajax({
@@ -323,10 +439,8 @@
             success: function (data) {
 
                 var newli = '';
-                var lessonName = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status >= 1) {
@@ -413,9 +527,9 @@
 
 
     //训练营训练营未分配班级学生
-    var toPendList = function (wList, page, gType, status, keyword) {
+    var toPendList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+        var url  = "{:url('api/lesson_member/getNoGradeMemberListByPageApi','','',true)}?page="+page;
         var campID = "{$camp_id}";
         mui.ajax({
             url: url,
