@@ -4,6 +4,7 @@ namespace app\keeper\controller;
 
 
 use app\model\MatchRefereeApply;
+use app\model\MatchStatistics;
 use app\service\LeagueService;
 use app\service\MatchService;
 use app\service\RefereeService;
@@ -1098,9 +1099,34 @@ class Team extends Base {
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
 
+        // 获取球队在比赛技术统计数据
+        $teamMatchStatic = db('match_statistics')
+            ->field('sum(pts) as pts, sum(ast) as ast, sum(reb) as reb, sum(stl) as stl, sum(blk) as blk, sum(turnover) as turnover, sum(foul) as foul, sum(fg) as fg, sum(fga) as fga, sum(fg) as fg, sum(threepfg) as threepfg, sum(threepfga) as threepfga, sum(ft) as ft, sum(fta) as fta')
+            ->where([
+                'team_id' => $this->team_id,
+                'match_id' => $matchInfo['id'],
+                'match_record_id' => $matchRecordInfo['id'],
+                'status' => 1
+            ])
+            ->whereNull('delete_time')
+            ->find();
+        // 平均2分命中率
+        $fgHitRate = ( $teamMatchStatic['fga'] ) ? $teamMatchStatic['fg']/$teamMatchStatic['fga'] : 0;
+        $teamMatchStatic['fg_hitrate'] = round($fgHitRate*100,1).'%';
+        // 平均3分命中率
+        $fg3pHitRate = ( $teamMatchStatic['threepfga'] ) ? $teamMatchStatic['threepfg']/$teamMatchStatic['threepfga'] : 0;
+        $teamMatchStatic['threepfg_hitrate'] = round($fg3pHitRate*100, 1).'%';
+        // 平均罚球命中率
+        $ftHitRate = ( $teamMatchStatic['fta'] ) ? $teamMatchStatic['ft']/$teamMatchStatic['fta'] : 0;
+        $teamMatchStatic['ft_hitrate'] = round($ftHitRate*100, 1).'%';
+        // 平均命中率(综合2分与3分）
+        $hitRate = ($teamMatchStatic['fga'] && $teamMatchStatic['threepfga']) ? ($teamMatchStatic['fg']+$teamMatchStatic['threepfg'])/($teamMatchStatic['fga']+$teamMatchStatic['threepfga']) : 0;
+        $teamMatchStatic['hitrate'] = round($hitRate*100, 1).'%';
+
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
+        $this->assign('teamMatchStatic', $teamMatchStatic);
         return view('Team/teamData');
     }
 
