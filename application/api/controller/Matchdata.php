@@ -158,4 +158,37 @@ class Matchdata
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
     }
+
+    // 获取球员在某场比赛的技术统计数据
+    public function getplayermatchstatis() {
+        try {
+            $data = input('param.');
+            // 必须team_member_id
+            if (!array_key_exists('team_member_id', $data)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'传入球员ID']);
+            }
+            // 必须match_id
+            if (!array_key_exists('match_id', $data)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'传入比赛ID']);
+            }
+            // 必须match_record_id
+            if (!array_key_exists('match_record_id', $data)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402').'传入比赛战绩ID']);
+            }
+            // 获取球员比赛技术统计数据
+            $matchS = new MatchService();
+            $result = $matchS->getMatchStatistics($data);
+            // 返回无数据结果
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            dump($result);
+            // 计算单场技术数据效率值:(得分+篮板+助攻+抢断+封盖)-(出手次数-命中次数)-(罚球次数-罚球命中次数)-失误次数
+            $efficiency = ($result['pts']+$result['reb']+$result['ast']+$result['stl']+$result['blk']) - ( ($result['fga']+$result['threepfga'])-($result['fg']+$result['threepfg']) ) - ($result['fta']-$result['ft']) - $result['turnover'];
+            // 命中率计算
+
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
 }

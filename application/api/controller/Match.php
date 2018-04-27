@@ -1886,14 +1886,24 @@ class Match extends Base
     public function playermatchpage() {
         try {
             // 传入变量作为查询条件
-            $map = input('param.');
+            $data = input('param.');
+            // 赛季时间(年)
+            if (input('?param.year')) {
+                $year = input('year');
+                // 比赛时间在赛季年
+                $when = getStartAndEndUnixTimestamp($year);
+                $data['match_time'] = ['between',
+                    [ $when['start'], $when['end'] ]
+                ];
+                unset($data['year']);
+            }
             if (input('?param.page')) {
-                unset($map['page']);
+                unset($data['page']);
             }
             // 获取数据列表
             $matchS = new MatchService();
             $orderby = ['match_time' => 'desc', 'id' => 'desc'];
-            $result = $matchS->getMatchRecordMemberListPaginator($map, $orderby);
+            $result = $matchS->getMatchRecordMemberListPaginator($data, $orderby);
             // 返回结果
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_401')]);
@@ -1930,15 +1940,25 @@ class Match extends Base
     public function playermatchlist() {
         try {
             // 传入变量作为查询条件
-            $map = input('param.');
-            $page = input('page', 1);
+            $data = input('param.');
+            $page = input('page');
+            // 赛季时间(年)
+            if (input('?param.year')) {
+                $year = input('year');
+                // 比赛时间在赛季年
+                $when = getStartAndEndUnixTimestamp($year);
+                $data['match_time'] = ['between',
+                    [ $when['start'], $when['end'] ]
+                ];
+                unset($data['year']);
+            }
             if (input('?param.page')) {
-                unset($map['page']);
+                unset($data['page']);
             }
             // 获取数据列表
             $matchS = new MatchService();
             $orderby = ['match_time' => 'desc', 'id' => 'desc'];
-            $result =  $matchS->getMatchRecordMemberList($map, $page, $orderby);
+            $result =  $matchS->getMatchRecordMemberList($data, $page, $orderby);
             // 返回结果
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_401')]);

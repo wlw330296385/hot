@@ -956,12 +956,12 @@ class Team extends Base {
 
     //球员数据（在球队的单场比赛）
     public function teamMemberData() {
-        $match_id = input('match_id', 0);
+        $match_id = input('match_id', 0); // 比赛id
+        $tmId = input('team_member_id', 0, 'intval'); //球员id
         $matchS = new MatchService();
         $teamS = new TeamService();
         // 比赛详情
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
-
         // 输出比赛战绩数据
         $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
         if ($matchRecordInfo) {
@@ -975,23 +975,24 @@ class Team extends Base {
         }
       
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
-        $teamMemberInfo = $teamS->getTeamMemberInfo([
-            'team_id' => $this->team_id,
-            'member_id' => $this->memberInfo['id'],
-            'status' => 1
-        ]);
-        if ($teamMemberInfo) {
+        $checkMemberTeamRole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        if ($checkMemberTeamRole) {
             $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
         } else {
             $teamrole = -1;
         }
 
+
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount([ 'team_id' => $matchInfo['team_id'] ]);
+
+        // 获取球员信息
+        $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $tmId]);
 
         $this->assign('teamrole', $teamrole);
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
+        $this->assign('teamMemberInfo', $teamMemberInfo);
         return view('Team/teamMemberData');
     }
 
