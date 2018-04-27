@@ -15,6 +15,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style type="text/css">
+        .cancelWD { margin-left: 10px;}
+    </style>
 </head>
 
 <body>
@@ -25,7 +28,8 @@
         <div class="mui-segmented-control">
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/campWallet',['camp_id'=>$campInfo.id])}"></a>
-            <a class="mui-control-item mui-active" href="#salaryInList">收入明细</a>
+            <a class="mui-control-item mui-active" href="#withdrawList">提现明细</a>
+            <a class="mui-control-item" href="#salaryInList">收入明细</a>
             <a class="mui-control-item" href="#salaryOutList">支出明细</a>
         </div>
     </div>
@@ -34,7 +38,12 @@
 <div class="mui-content">
 
     <div class="tab-pullRefresh message-list">
-        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
+        <div id="withdrawList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list item-list withdraw border-b"></ul>
+            </div>
+        </div>
+        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg">
             <div class="mui-scroll">
                 <ul class="mui-table-view list item-list salaryIn"></ul>
             </div>
@@ -69,6 +78,7 @@
         //初始化全局变量
         var sInCount = 1;
         var sOutCount = 1;
+        var wCount = 1;
 
         mui('#salaryInList').pullRefresh({
             down: {
@@ -152,6 +162,83 @@
         }
 
 
+        mui('#withdrawList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshWD
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshWD
+            }
+        });
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshWD() {
+            setTimeout(function () {
+                wCount = 1;//刷新并显示第一页
+                var page = wCount;
+                var gType = 1;//代表下拉刷新
+                toWithdrawList('withdrawList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshWD() {
+            setTimeout(function () {
+                sOutCount++;//翻下一页
+                var page = sOutCount;
+                var gType = 2;//代表上拉加载
+                toWithdrawList('withdrawList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+
+
+        // 取消提现
+        $(".withdraw").on('tap', '.cancelWD', function () {
+            var camp_id = "{$campInfo.id}";
+            var w_ID = $(this).attr("data-id");
+            console.log(w_ID)
+            mui.confirm('您确认【取消提现申请】吗?', '', ['取消', '确认'], function (e) {
+                if (e.index == 1) {
+                    mui.ajax("{:url('api/camp_withdraw/cancelWithdrawApi',['camp_id'=>$campInfo.id])}"+"/camp_withdraw_id/"+w_ID,{
+                        data:{
+                            camp_withdraw_id:w_ID,
+                            camp_id:camp_id
+                        },
+                        dataType:'json',//服务器返回json格式数据
+                        type:'post',//HTTP请求类型
+                        timeout:10000,//超时时间设置为10秒；
+                        headers:{'Content-Type':'application/json'},
+                        success:function(result){
+                            //服务器返回响应，根据响应结果，分析是否登录成功；
+                            if(result.code == 200){
+                                location.reload();
+                            }else{
+                                mui.alert('',result.msg,'确定',function(){
+                                });
+                            }
+                        },
+                        error:function(xhr,type,errorThrown){
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+
+                }
+            })
+
+        })
 
     })
 
@@ -160,11 +247,11 @@
     var toSalaryInList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/salaryin/getSalaryInListByPageApi','','',true)}?page="+page;
-        var memberID = "{$campInfo.id}";
+        var camp_id = "{$campInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                member_id: memberID
+                camp_id: camp_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -211,11 +298,11 @@
     var toSalaryOutList = function (wList, page, gType, status) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/salary_out/getSalaryoutListByPageApi','','',true)}?page="+page;
-        var memberID = "{$campInfo.id}";
+        var camp_id = "{$campInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                member_id: memberID
+                camp_id: camp_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -261,6 +348,84 @@
 
 
 
+    //获取提现明细表
+    var toWithdrawList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/camp_withdraw/getCampWithdrawListApi',['camp_id'=>$campInfo.id],'',true)}?page="+page;
+        mui.ajax({
+            url: url,
+            data: {},
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var statusCN = '';
+                var btn = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        btn = "";
+                        if(data.data[i].status===1){
+                            btn = '<div class="mui-btn mui-btn-primary cancelWD" data-id="'+data.data[i].id+'">取消申请</div>';
+                        }
+                        statusCN = numTOcn(data.data[i].status);
+                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>提现金额：￥' + data.data[i].withdraw
+                            + '</h4><p>申请时间：' + data.data[i].create_time + '</p></div><span class="date f14 colorred">'+statusCN+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">训练营<span>' + data.data[i].camp + '</span></li><li class="mui-table-view-cell listli">申请日期<span>' + data.data[i].create_time + '</span></li><li class="mui-table-view-cell listli">提现金额<span>' + data.data[i].withdraw + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data[i].camp_withdraw_fee + '</span></li><li class="mui-table-view-cell listli">更新日期<span>' + data.data[i].update_time + '</span></li><li class="mui-table-view-cell listli">状态<span>' + statusCN + btn + '</span></li></ul></div></div></li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.withdraw").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.withdraw").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.withdraw").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //状态数字转换中文
+    function numTOcn(n){
+        var cn="";
+        switch (n)
+        {
+            case -2:
+                cn="已取消";
+                break;
+            case -1:
+                cn="已拒绝";
+                break;
+            case 1:
+                cn="申请中";
+                break;
+            case 2:
+                cn="已同意";
+                break;
+            case 3:
+                cn="已打款";
+                break;
+        }
+        return cn;
+    }
 
 </script>
 </html>
