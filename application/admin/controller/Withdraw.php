@@ -65,7 +65,7 @@ class Withdraw extends Backend{
             if($action == 3){
                 if($campWithdrawInfo['camp_type'] == 2){
                     $camp_withdraw_fee = $campWithdrawInfo['withdraw'] * $campInfo['schedule_rebate'];
-                    $balance = $camp_withdraw_fee + $campWithdrawInfo['withdraw'];
+                    $buffer = $camp_withdraw_fee + $campWithdrawInfo['withdraw'];
                     db('output')->insert([
                         'output'        => $camp_withdraw_fee,
                         'camp_id'       => $campWithdrawInfo['camp_id'],
@@ -81,7 +81,7 @@ class Withdraw extends Backend{
                         'update_time'   => time(),
                     ]);
                 }else{
-                    $balance = $campWithdrawInfo['withdraw'];
+                    $buffer = $campWithdrawInfo['withdraw'];
                 }
                 $output  = $campWithdrawInfo['withdraw'];
                 db('output')->insert([
@@ -101,14 +101,11 @@ class Withdraw extends Backend{
                 $Withdraw->save(['status'=>3,'buffer'=>0],['id'=>$campWithdraw_id]);
             }elseif ($action == -1) {
                 if($campWithdrawInfo['camp_type'] == 2){
-                    $camp_withdraw_fee = $campWithdrawInfo['withdraw'] * $campInfo['schedule_rebate'];
-                    $balance = $camp_withdraw_fee + $campWithdrawInfo['withdraw'];
-                }else{
-                    $balance = $campWithdrawInfo['withdraw'];
-                }
+                $buffer = $campWithdrawInfo['withdraw'];
+                
                 // 解冻资金
                 $Withdraw->save(['status'=>-1,'buffer'=>0],['id'=>$campWithdraw_id]);
-                db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$balance)->update();
+                db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$buffer)->update();
             }
             
             $this->success('操作成功');    

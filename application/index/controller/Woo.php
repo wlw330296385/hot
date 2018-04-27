@@ -20,6 +20,16 @@ class Woo extends Controller{
     }
 
 
+    // 训练营收支数据
+    public function sysoutput(){
+        $list = db('output')->where(['rebate_type'=>1,'type'=>3])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_output')->insert(
+                ['f_id'=>$value['id'],'type'=>1,'output'=>$value['output'],'camp_id'=>$value['camp_id']]
+            )
+        }
+    }
+
 
     public function index(){
         $this->redirect('frontend/Index/index',['o_id'=>0,'o_type'=>0]);
