@@ -327,33 +327,6 @@
 
     })
 
-    //学生状态数字转换中文
-    function numTOcn(n){
-        var cn="";
-        switch (n)
-        {
-            case -1:
-                cn="离营";
-                break;
-            case 0:
-                cn="待审核";
-                break;
-            case 1:
-                cn="在学";
-                break;
-            case 2:
-                cn="退出";
-                break;
-            case 3:
-                cn="被开除";
-                break;
-            case 4:
-                cn="毕业";
-                break;
-        }
-        return cn;
-    }
-
 
     //接口获取数据并追加到页面
     var toSearchList = function (wList, page, gType, keyword) {
@@ -375,10 +348,8 @@
             success: function (data) {
 
                 var newli = '';
-                var statusCn = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        statusCn = numTOcn(data.data.data[i].student.status);
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         if (status >= 1) {
@@ -386,7 +357,7 @@
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为在营</span></div>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'<br />状态：'+ statusCn +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div></a></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].student.student_avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student.student + '<i class="icon iconfont icon-sex'+data.data.data[i].student.student_sex+'"></i><p class="mui-ellipsis">' + data.data.data[i].lesson + '</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
