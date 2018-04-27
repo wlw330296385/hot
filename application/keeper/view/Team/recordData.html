@@ -84,7 +84,8 @@
         }
 
         .dataCollapse .sfButton,
-        .dataCollapse .confirmBtn {
+        .dataCollapse .confirmBtn,
+        .dataCollapse .delBtn {
             padding: 5px;
         }
     </style>
@@ -197,9 +198,6 @@
             <span class="course wd36">
                 <strong>选择球员</strong>
             </span>
-            <!-- <span class="fr">
-                <button class="mui-btn" id="memberDel">清除</button>
-            </span> -->
             <span class="fr">
                 <button class="mui-btn addTp">添加临时球员</button>
             </span>
@@ -220,7 +218,7 @@
         </div>
         <div id="item22" class="mui-control-content">
             <div class="pop-search">
-                <input type="search" class="keywordMB" placeholder="请输入会员手机号搜索">
+                <input type="search" class="keywordMB" placeholder="请输入会员手机号或会员名搜索">
                 <span class="mui-icon mui-icon-search searchicon" id="searchMB"></span>
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
@@ -347,7 +345,10 @@
                                 </div>
                                 <input type="hidden" name="lineup" value="0">
                             </div>
-                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                            <div class="mui-col-xs-3 mui-text-right delBtn">
+                                <button type="button" class="mui-btn">删除</button>
+                            </div>
+                            <div class="mui-col-xs-3 mui-text-right confirmBtn">
                                 <button type="button" class="mui-btn bggreen">确认</button>
                             </div>
                         </div>
@@ -619,21 +620,26 @@
                 }
             });
 
+            // 删除球员
+            $(document).on("tap", ".delBtn button", function () {
+                $(this).parents(".mui-collapse").remove();
+            });
+
             // 判断球衣号码不能重复
-            // var array = [];
-            // $(document).on("blur", "input[name=number]", function () {
-            //     var thisNumber = $(this).val();
-            //     console.log(thisNumber)
-            //     var result = ''
-            //     array = [];
-            //     $(".dataList input[name=number]").each(function () {
-            //         var dataNumber = $(this).val();
-            //         array.push($(this).val())
-            //         result = $.inArray(thisNumber, array);
-            //     });
-            //     console.log(result)
-            //     console.log(array)
-            // });
+            $(document).on("blur", "input[name=number]", function () {
+                var numberCount = 0;
+                var thisNumber = $(this).val();
+                $(".dataList input[name=number]").each(function () {
+                    if (thisNumber === $(this).val() && thisNumber !== '') {
+                        numberCount++;
+                    }
+                });
+                if (numberCount > 1) {
+                    mui.toast("球衣号码不能重复");
+                    $(this).focus();
+                    return false;
+                }
+            });
 
         });
 
@@ -643,10 +649,16 @@
             var personalScoreAll = 0;
             $(".dataCollapse").each(function () {
                 var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+                if (match_record_member_id == undefined) {
+                    match_record_member_id = 0;
+                }
+                var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
+                if (team_member_id == undefined) {
+                    team_member_id = 0;
+                }
                 var member = $(this).siblings().find("input[name=name]").attr("data-member");
                 var member_id = $(this).parents(".mui-collapse").attr("data-member_id");
                 var name = $(this).siblings().find("input[name=name]").val();
-                var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
                 var number = $(this).siblings().find("input[name=number]").val();
                 var number01 = $(this).siblings().find("input[name=number]").val();
                 var lineup = $(this).find("input[name=lineup]").val(); //首发
@@ -682,7 +694,6 @@
                 members.push({ match_record_member_id, member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
             });
             var teamScore = $(".home_score").text(); // 球队总得分
-            console.log(teamScore)
             // 遍历求和球员总得分
             $("input[name=personalScoreCont]").each(function () {
                 personalScoreAll += parseInt($(this).val());

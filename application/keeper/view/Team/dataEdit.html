@@ -84,7 +84,8 @@
         }
 
         .dataCollapse .sfButton,
-        .dataCollapse .confirmBtn {
+        .dataCollapse .confirmBtn,
+        .dataCollapse .delBtn {
             padding: 5px;
         }
     </style>
@@ -101,27 +102,27 @@
     <div class="mui-content">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="team" value="" class="data">
-        <input type="hidden" name="team_id" value="" class="data">
+        <input type="hidden" name="team" value="{$matchInfo.team}" class="data">
+        <input type="hidden" name="team_id" value="{$matchInfo.team_id}" class="data">
 
         <form action="" class="mui-input-group mb44">
             <div class="mui-input-row">
                 <a href="#match" class="mui-navigate-right">
                     <label>比赛</label>
                     <span class="matchCont domData" name="match">{$matchInfo.name}</span>
-                    <input type="hidden" name="match_id" value="" class="data">
-                    <input type="hidden" name="match_record_id" value="" class="data">
+                    <input type="hidden" name="match_id" value="{$matchInfo.record.match_id}" class="data">
+                    <input type="hidden" name="match_record_id" value="{$matchInfo.record.id}" class="data">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label>比赛日期</label>
-                <span>{$matchInfo.match_time}</span>
+                <span class="match_time domData" name="match_time" class="data">{$matchInfo.match_time}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>对手</label>
-                <span>{$matchInfo.record.away_team}</span>
+                <span class="away_team">{$matchInfo.record.away_team}</span>
             </div>
 
             <div class="mui-input-row">
@@ -145,11 +146,10 @@
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-4">
-                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}"
-                                    placeholder="球员姓名" >
+                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}" placeholder="球员姓名" disabled>
                             </div>
                             <div class="mui-col-xs-4 colororange">
-                                <input type="text" name="number" class="addInput" value="{$vol.number}" placeholder="球员号码">
+                                <input type="text" name="number" class="addInput" value="{$vol.number}" placeholder="球员号码" disabled>
                             </div>
                             <div class="mui-col-xs-4 mui-text-center dataIcon">
                                 <text class="bgcolor">
@@ -230,9 +230,12 @@
                                 <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                     <div class="mui-switch-handle"></div>
                                 </div>
-                                <input type="hidden" name="lineup" value="0">
+                                <input type="hidden" name="lineup" value="{$vol.lineup}">
                             </div>
-                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                            <div class="mui-col-xs-3 mui-text-right delBtn">
+                                <button type="button" class="mui-btn">删除</button>
+                            </div>
+                            <div class="mui-col-xs-3 mui-text-right confirmBtn">
                                 <button type="button" class="mui-btn bggreen">确认</button>
                             </div>
                         </div>
@@ -240,6 +243,11 @@
                     </div>
                 </li>
                 {/volist}
+                <div class="hideDataList">
+                    {volist name="matchStatcList" id="vol"}
+                    <input type="hidden" data-id="{$vol.id}" data-member_id="{$vol.member_id}"> {/volist}
+                </div>
+
             </ul>
 
         </form>
@@ -298,9 +306,6 @@
             <span class="course wd36">
                 <strong>选择球员</strong>
             </span>
-            <!-- <span class="fr">
-                <button class="mui-btn" id="memberDel">清除</button>
-            </span> -->
             <span class="fr">
                 <button class="mui-btn addTp">添加临时球员</button>
             </span>
@@ -321,7 +326,7 @@
         </div>
         <div id="item22" class="mui-control-content">
             <div class="pop-search">
-                <input type="search" class="keywordMB" placeholder="请输入会员手机号搜索">
+                <input type="search" class="keywordMB" placeholder="请输入会员手机号或会员名搜索">
                 <span class="mui-icon mui-icon-search searchicon" id="searchMB"></span>
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
@@ -372,6 +377,14 @@
         })(mui);
 
         $(function () {
+
+            // 球衣号码为空可编辑
+            $(".dataList").find("input[name=number]").each(function () {
+                console.log($(this).val())
+                if ($(this).val() == 0) {
+                    $(this).removeAttr("disabled");
+                }
+            })
 
             // 公共数据
             var dataPublic = `<div class="mui-collapse-content dataCollapse">
@@ -448,7 +461,10 @@
                                 </div>
                                 <input type="hidden" name="lineup" value="0">
                             </div>
-                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
+                            <div class="mui-col-xs-3 mui-text-right delBtn">
+                                <button type="button" class="mui-btn">删除</button>
+                            </div>
+                            <div class="mui-col-xs-3 mui-text-right confirmBtn">
                                 <button type="button" class="mui-btn bggreen">确认</button>
                             </div>
                         </div>
@@ -560,6 +576,14 @@
                     lineUp.val("0");
                 }
             });
+
+            // 首发按钮
+            $(".dataList input[name=lineup]").each(function () {
+                if ($(this).val() == 1) {
+                    $(this).siblings(".isLineup").addClass("mui-active");
+                }
+            })
+
 
             var matchKeyword = '';
             var memberKeyword = '';
@@ -720,34 +744,47 @@
                 }
             });
 
+            // 删除球员
+            $(document).on("tap", ".delBtn button", function () {
+                $(this).parents(".mui-collapse").remove();
+            });
+
             // 判断球衣号码不能重复
-            // var array = [];
-            // $(document).on("blur", "input[name=number]", function () {
-            //     var thisNumber = $(this).val();
-            //     console.log(thisNumber)
-            //     var result = ''
-            //     array = [];
-            //     $(".dataList input[name=number]").each(function () {
-            //         var dataNumber = $(this).val();
-            //         array.push($(this).val())
-            //         result = $.inArray(thisNumber, array);
-            //     });
-            //     console.log(result)
-            //     console.log(array)
-            // });
+            $(document).on("blur", "input[name=number]", function () {
+                var numberCount = 0;
+                var thisNumber = $(this).val();
+                $(".dataList input[name=number]").each(function () {
+                    if (thisNumber === $(this).val() && thisNumber !== '') {
+                        numberCount++;
+                    }
+                });
+                if (numberCount > 1) {
+                    mui.toast("球衣号码不能重复");
+                    $(this).focus();
+                    return false;
+                }
+            });
 
         });
 
         // 提交
         function submitAction() {
+
             var members = [];
+            var delMembers = [];
             var personalScoreAll = 0;
             $(".dataCollapse").each(function () {
                 var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+                if (match_record_member_id == undefined) {
+                    match_record_member_id = 0;
+                }
+                var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
+                if (team_member_id == undefined) {
+                    team_member_id = 0;
+                }
                 var member = $(this).siblings().find("input[name=name]").attr("data-member");
                 var member_id = $(this).parents(".mui-collapse").attr("data-member_id");
                 var name = $(this).siblings().find("input[name=name]").val();
-                var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
                 var number = $(this).siblings().find("input[name=number]").val();
                 var number01 = $(this).siblings().find("input[name=number]").val();
                 var lineup = $(this).find("input[name=lineup]").val(); //首发
@@ -795,28 +832,51 @@
             }
             console.log(members)
 
+            // 删除的球员数组
+            var delId = ""
+            $(".hideDataList input").each(function (i) {
+                var initialId = $(this).attr("data-member_id");
+                delId = "Yes";
+                //遍历新编辑的球员员表判断是否存在
+                $(".dataList li").each(function () {
+                    if (initialId == $(this).attr("data-member_id")) {
+                        delId = "No";
+                        return false;
+                    }
+                });
+                //上面遍历过不存在就添加到最终变动球员列表中
+                if (delId == "Yes") {
+                    var id = $(this).attr("data-id");
+                    delMembers.push({ id });
+                }
+            });
+            console.log(delMembers)
+
+
+
             // 提交api
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.members = JSON.stringify(members);
-            // var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '创建数据成功', '确定', function () {
-            //         var goUrl = "{:url('team/dataOfTeam')}" + '/team_id/' + "{$team_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.members = JSON.stringify(members);
+            objData.delMembers = JSON.stringify(delMembers);
+            var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建数据成功', '确定', function () {
+                    var goUrl = "{:url('team/dataOfTeam')}" + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
 
         }
 

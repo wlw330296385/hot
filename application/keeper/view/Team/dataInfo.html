@@ -125,7 +125,7 @@
             <div class="page-header bggray2">
                 <span class="course">球员数据</span>
             </div>
-            <ul class="mui-table-view list border-b honorList">
+            <ul class="mui-table-view list border-b dataList">
 
                 {volist name="matchStatcList" id="vol"}
                 <li class="mui-table-view-cell mui-collapse listli">
@@ -133,11 +133,7 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-4">{$vol.name}</div>
                             <div class="mui-col-xs-4 colororange">{$vol.number}</div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
-                                <text>
-                                    <i class="mui-icon mui-icon-checkmarkempty"></i>
-                                </text>
-                            </div>
+                            <div class="mui-col-xs-4 colororange isLineup">{$vol.lineup}</div>
                         </div>
                     </a>
                     <div class="mui-collapse-content dataCollapse">
@@ -206,17 +202,15 @@
                                 <input type="text" value="{$vol.foul}" placeholder="0" disabled>
                             </div>
                         </div>
-                        <div class="mui-row ">
+                        <!-- <div class="mui-row ">
                             <div class="mui-col-xs-2 sfText">首发</div>
                             <div class="mui-col-xs-4 sfButton">
-                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
+                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini mui-disabled" style="opacity: 1">
                                     <div class="mui-switch-handle"></div>
                                 </div>
+                                <input type="hidden" name="lineup" class="lineup" value="{$vol.lineup}">
                             </div>
-                            <div class="mui-col-xs-6 mui-text-right confirmBtn">
-                                <button class="mui-btn bggreen">确认</button>
-                            </div>
-                        </div>
+                        </div> -->
                     </div>
                 </li>
                 {/volist}
@@ -244,6 +238,17 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        $(function () {
+            // 首发按钮
+            $(".dataList .isLineup").each(function () {
+                if ($(this).text() == 1) {
+                    $(this).text("首发");
+                } else {
+                    $(this).text(" ");
+                }
+            })
+        })
     </script>
 </body>
 
