@@ -751,7 +751,6 @@
                 var thisId = $(this).parents(".mui-collapse").attr("data-id");
                 $(".hideDataList input").each(function () {
                     if (thisId == $(this).attr("data-id")) {
-                        console.log(123)
                         $(this).remove();
                     }
                 })
@@ -768,6 +767,32 @@
                 });
                 if (numberCount > 1) {
                     mui.toast("球衣号码不能重复");
+                    $(this).focus();
+                    return false;
+                }
+            });
+            
+
+            var fg = $("input[name=fg]").val(); //二分命中数
+            var threepfg = $("input[name=threepfg]").val(); //三分命中数
+            var ft = $("input[name=ft]").val(); //罚球命中数
+            $(document).on("blur", "input[name=fg]", function () {
+                if ($(this).val() > fg) {
+                    mui.toast("二分命中次数不能大于出手次数");
+                    $(this).focus();
+                    return false;
+                }
+            });
+            $(document).on("blur", "input[name=threepfg]", function () {
+                if ($(this).val() > threepfg) {
+                    mui.toast("三分命中次数不能大于出手次数");
+                    $(this).focus();
+                    return false;
+                }
+            });
+            $(document).on("blur", "input[name=ft]", function () {
+                if ($(this).val() > ft) {
+                    mui.toast("罚球命中次数不能大于罚球数");
                     $(this).focus();
                     return false;
                 }
@@ -809,19 +834,6 @@
                 var turnover = $(this).find("input[name=turnover]").val(); //失误
                 var foul = $(this).find("input[name=foul]").val(); //犯规
 
-                if (fg > fga) {
-                    mui.toast("二分命中次数不能大于出手次数");
-                    return false;
-                }
-                if (threepfg > threepfga) {
-                    mui.toast("三分命中次数不能大于出手次数");
-                    return false;
-                }
-                if (ft > fta) {
-                    mui.toast("罚球命中次数不能大于罚球数");
-                    return false;
-                }
-
                 personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
                 $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
                 personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
@@ -859,8 +871,6 @@
                 }
             });
             console.log(delMembers)
-
-
 
             // 提交api
             var data = wooApi.getInputData('input', 'data');
