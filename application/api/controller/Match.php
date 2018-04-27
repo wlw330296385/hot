@@ -1893,13 +1893,34 @@ class Match extends Base
             // 获取数据列表
             $matchS = new MatchService();
             $orderby = ['match_time' => 'desc', 'id' => 'desc'];
-
             $result = $matchS->getMatchRecordMemberListPaginator($map, $orderby);
             // 返回结果
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            // 统计球员出赛的首发次数
+            $lineupCount = 0;
+            // 统计球员出赛的胜场数
+            $winCount = 0;
+            foreach ($result['data'] as $k => $val) {
+                // 获取比赛技术统计数据
+                $static = $matchS->getMatchStatistics([
+                    'match_record_id' => $val['match_record_id'],
+                    'match_record_member_id' => $val['id']
+                ]);
+                //$result['data'][$k]['static'] = ($static) ? $static : [];
+                // 首发次数统计
+                if ($static['lineup']) {
+                    $lineupCount++;
+                }
+                // 胜场数统计：比赛战绩（match_record）数据中比赛胜方队（win_team_id)是当前球员参赛队(team_id)
+                if ($val['record']['win_team_id'] == $val['team_id']) {
+                    $winCount++;
+                }
+            }
+            // 球员出赛胜率
+            $winRate = ($winCount) ? round( ($winCount/$result['total']*100),1).'%' : 0;
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'lineup_count' => $lineupCount, 'win_rate' => $winRate]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
@@ -1922,8 +1943,29 @@ class Match extends Base
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_401')]);
             }
-            // 首发比赛次数
-            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            // 统计球员出赛的首发次数
+            $lineupCount = 0;
+            // 统计球员出赛的胜场数
+            $winCount = 0;
+            foreach ($result as $k => $val) {
+                // 获取比赛技术统计数据
+                $static = $matchS->getMatchStatistics([
+                    'match_record_id' => $val['match_record_id'],
+                    'match_record_member_id' => $val['id']
+                ]);
+                //$result['data'][$k]['static'] = ($static) ? $static : [];
+                // 首发次数统计
+                if ($static['lineup']) {
+                    $lineupCount++;
+                }
+                // 胜场数统计：比赛战绩（match_record）数据中比赛胜方队（win_team_id)是当前球员参赛队(team_id)
+                if ($val['record']['win_team_id'] == $val['team_id']) {
+                    $winCount++;
+                }
+            }
+            // 球员出赛胜率
+            $winRate = ($winCount) ? round( ($winCount/count($result)*100),1).'%' : 0;
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'lineup_count' => $lineupCount, 'win_rate' => $winRate]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }

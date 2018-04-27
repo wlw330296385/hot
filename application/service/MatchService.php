@@ -847,11 +847,22 @@ class MatchService {
         return $res ? $res : 0;
     }
 
-    // 获取比赛球员技术数据列表（无分页）
+    // 获取比赛球员技术统计数据列表（无分页）
     public function getMatchStatisticsAll($map=[]) {
         $model = new MatchStatistics();
         $res = $model->where($map)->select();
-        if ($res) {
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 获取比赛球员技术统计数据
+    public function getMatchStatistics($map=[]) {
+        $model = new MatchStatistics();
+        $res = $model->where($map)->find();
+        if (!$res) {
             return $res;
         }
         $result = $res->toArray();

@@ -936,7 +936,22 @@ class Team extends Base {
 
     //个人比赛列表
     public function personalMatchList() {
-        return view('Team/personalMatchList');
+        // 获取队员在当前球队的数据信息
+        $id = input('id', 0); //team_member表id
+        $team_id = input('team_id', 0);
+        $teamS = new TeamService();
+        $map['team_id'] = $team_id;
+        $map['id'] = $id;
+        $teamMemberInfo = $teamS->getTeamMemberInfo($map);
+        if (!$teamMemberInfo) {
+            $this->error('无此队员信息');
+        }
+
+
+        return view('Team/personalMatchList', [
+            'teamMemberInfo' => $teamMemberInfo,
+            'tm_id' => $id
+        ]);
     }
 
     //球员数据（在球队的单场比赛）
