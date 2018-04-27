@@ -142,7 +142,8 @@
             </div>
             <ul class="mui-table-view list border-b dataList">
                 {volist name="matchStatcList" id="vol"}
-                <li class="mui-table-view-cell mui-collapse listli" data-team_member_id="{$vol.team_member_id}" data-member_id="{$vol.member_id}">
+                <li class="mui-table-view-cell mui-collapse listli" data-team_member_id="{$vol.team_member_id}" data-member_id="{$vol.member_id}"
+                    data-id="{$vol.id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-4">
@@ -747,6 +748,13 @@
             // 删除球员
             $(document).on("tap", ".delBtn button", function () {
                 $(this).parents(".mui-collapse").remove();
+                var thisId = $(this).parents(".mui-collapse").attr("data-id");
+                $(".hideDataList input").each(function () {
+                    if (thisId == $(this).attr("data-id")) {
+                        console.log(123)
+                        $(this).remove();
+                    }
+                })
             });
 
             // 判断球衣号码不能重复
