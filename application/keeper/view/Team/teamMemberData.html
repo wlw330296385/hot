@@ -434,15 +434,16 @@
             window.top.location.href = this.href;
         });
 
-        var member = "{teamMemberInfo.member}";
-        var member_id = "{teamMemberInfo.member_id}";
-        var team_id = "{teamMemberInfo.team_id}";
-        var id = "{teamMemberInfo.id}";
-        var tm_name = "{teamMemberInfo.name}";
+        var member = "{$teamMemberInfo.member}";
+        var member_id = "{$teamMemberInfo.member_id}";
+        var team_id = "{$teamMemberInfo.team_id}";
+        var id = "{$teamMemberInfo.id}";
+        var tm_name = "{$teamMemberInfo.name}";
 
         $(function () {
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             toSignUpList(); // 报名/参赛人员
+            getPlayerMatchStatic();
 
             var count = 1;
             //评论功能
@@ -565,7 +566,8 @@
                         $(".imgShow").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             $(".signup_num").text(data.data.length);
-                            inactiveDiv += '<a href=""><img src="' + data.data[i].avatar + '" style="margin-right:3px"></a>';
+                            var linkurl = "{:url('keeper/team/teammemberdata')}/match_id/"+match_id+"/team_id/"+team_id+"/team_member_id/"+data.data[i].id;
+                            inactiveDiv += '<a href="'+linkurl+'"><img src="' + data.data[i].avatar + '" style="margin-right:3px"></a>';
                         };
                         $(".imgShow").append(inactiveDiv);
                     }
@@ -578,6 +580,29 @@
                 }
             });
         };
+
+        // 获取球员比赛技术统计数据
+        function getPlayerMatchStatic() {
+            mui.ajax({
+                url: "{:url('api/matchdata/getplayermatchstatis')}",
+                data: {
+                    team_member_id: "{$teamMemberInfo.id}",
+                    match_id: "{$matchInfo.id}",
+                    match_record_id: "{$matchInfo.record.id}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
     </script>
 
 </body>

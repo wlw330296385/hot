@@ -182,11 +182,18 @@ class Matchdata
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
-            dump($result);
             // 计算单场技术数据效率值:(得分+篮板+助攻+抢断+封盖)-(出手次数-命中次数)-(罚球次数-罚球命中次数)-失误次数
-            $efficiency = ($result['pts']+$result['reb']+$result['ast']+$result['stl']+$result['blk']) - ( ($result['fga']+$result['threepfga'])-($result['fg']+$result['threepfg']) ) - ($result['fta']-$result['ft']) - $result['turnover'];
-            // 命中率计算
-
+            $result['efficiency'] = ($result['pts']+$result['reb']+$result['ast']+$result['stl']+$result['blk']) - ( ($result['fga']+$result['threepfga'])-($result['fg']+$result['threepfg']) ) - ($result['fta']-$result['ft']) - $result['turnover'];
+            // 2分命中率
+            $fgHitRate = ( $result['fga'] ) ? $result['fg']/$result['fga'] : 0;
+            $result['fg_hitrate'] = round($fgHitRate*100,1).'%';
+            // 3分命中率
+            $fg3pHitRate = ( $result['threepfga'] ) ? $result['threepfg']/$result['threepfga'] : 0;
+            $result['threepfg_hitrate'] = round($fg3pHitRate*100, 1).'%';
+            // 罚球命中率
+            $ftHitRate = ( $result['fta'] ) ? $result['ft']/$result['fta'] : 0;
+            $result['ft_hitrate'] = round($ftHitRate*100, 1).'%';
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
