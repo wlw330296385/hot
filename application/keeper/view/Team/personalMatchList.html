@@ -60,7 +60,7 @@
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                     <div>
-                        <strong class="f16">{$teamInfo.name}</strong>
+                        <strong class="f16">{$teamMemberInfo.name}</strong>
                         <i class="icon iconfont icon-sex1"></i>
                         <!-- <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
                         <em class="colorred">
@@ -80,7 +80,7 @@
             </ul>
 
             <form class="mui-input-group">
-                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month"}'>
+                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month","beginYear":{$beginYear},"endYear":{$endYear}}'>
                     <div class="mui-navigate-right">
                         <span id="result" class="ui-alert year">选择赛季</span>
                     </div>
@@ -91,19 +91,19 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <span class="f14">场次</span>
-                        <div class="mui-media-body colorred f18">{$teamInfo.match_num}</div>
+                        <div class="mui-media-body colorred f18 totalMatch"></div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <span class="f14">胜</span>
-                        <div class="mui-media-body colorred f18">{$teamInfo.match_win}</div>
+                        <span class="f14">首发</span>
+                        <div class="mui-media-body colorred f18 lineup_count"></div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <span class="f14">负</span>
-                        <div class="mui-media-body colorred f18">{$teamInfo.match_lose}</div>
+                        <span class="f14">效率</span>
+                        <div class="mui-media-body colorred f18 efficiency"></div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <span class="f14">胜率</span>
-                        <div class="mui-media-body colorred f18">{$teamInfo.win_rate}</div>
+                        <div class="mui-media-body colorred f18 win_rate"></div>
                     </li>
                 </ul>
             </div>
@@ -191,8 +191,14 @@
         })(mui);
 
         var member_id = "{$memberInfo.id}";
+        var team_id = "{$team_id}"
+        var team_member_id = "{$teamMemberInfo.id}"
+        //初始化全局变量
+        var count = 1;
+        var sYear = '';
         $(function () {
             followStatus(); //判断当前的关注状态
+            teamMemberData(); //获取球员数据
             // 关注会员
             $(".follow").on("tap", '', function () {
                 mui.ajax("{:url('api/follow/focus')}", {
@@ -221,14 +227,11 @@
                 });
             });
 
-            //初始化全局变量
-            var count = 1;
-            var sYear = '';
-
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
-                searchToList();
+                teamMemberData();
+                searchToList()
             });
 
             //搜索、下拉刷选后触发
@@ -286,16 +289,12 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/match/playermatchpage','','',true)}" + '/?page=' + page;
-                var team_id = "{$team_id}"
-                var team_member_id = "{$teamMemberInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
                         team_id: team_id,
-                        // is_finished:1,
-                        // status:1,
-                        //year: sYear,
-                        team_member_id: team_member_id
+                        team_member_id: team_member_id,
+                        year:sYear
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -305,11 +304,14 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
+                            $(".totalMatch").text(data.data.total);
+                            $(".lineup_count").text(data.lineup_count);
+                            $(".win_rate").text(data.win_rate);
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
                                 var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
                                 var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
-                                var urls = "{:url('team/teamMemberData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}"+'/team_member_id/'+team_member_id;
+                                var urls = "{:url('team/teamMemberData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
                                 newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
                                 if (data.data.data[i].record.home_score > data.data.data[i].record.away_score) {
@@ -353,6 +355,30 @@
                 });
             };
         });
+
+        // 获取赛季球员数据
+        function teamMemberData() {
+            mui.ajax("{:url('api/matchdata/playerseasonstatis')}", {
+                data: {
+                    team_member_id: team_member_id,
+                    year: sYear
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".efficiency").text(data.data.efficiency);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         // 判断当前的关注状态
         function followStatus() {

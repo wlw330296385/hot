@@ -227,12 +227,14 @@ class Team extends Base {
         if ($teamMemberCreateYear != $curYear) {
             $i = 0;
             while($teamMemberCreateYear <= $curYear) {
-                $seasonList[$i] = $curYear--;
+                $seasonList[$i] = $teamMemberCreateYear++;
                 $i++;
             }
         } else {
             $seasonList[] = $curYear;
         }
+        $beginYear = current($seasonList);
+        $endYear = end($seasonList);
 
 
         $this->assign('teamMemberInfo', $teamMemberInfo);
@@ -241,6 +243,8 @@ class Team extends Base {
         $this->assign('editbtnDisplay', $editbtnDisplay);
         $this->assign('seasonList', $seasonList);
         $this->assign('curYear', $curYear);
+        $this->assign('beginYear', $beginYear);
+        $this->assign('endYear', $endYear);
         return view('Team/teamMemberInfo');
     }
 
@@ -957,18 +961,22 @@ class Team extends Base {
         if ($teamMemberCreateYear != $curYear) {
             $i = 0;
             while($teamMemberCreateYear <= $curYear) {
-                $seasonList[$i] = $curYear--;
+                $seasonList[$i] = $teamMemberCreateYear++;
                 $i++;
             }
         } else {
             $seasonList[] = $curYear;
         }
+        $beginYear = current($seasonList);
+        $endYear = end($seasonList);
 
         return view('Team/personalMatchList', [
             'teamMemberInfo' => $teamMemberInfo,
             'tm_id' => $id,
             'seasonList' => $seasonList,
-            'curYear' => $curYear
+            'curYear' => $curYear,
+            'beginYear' => $beginYear,
+            'endYear' => $endYear
         ]);
     }
 
