@@ -101,14 +101,15 @@ class Withdraw extends Backend{
                 $Withdraw->save(['status'=>3,'buffer'=>0],['id'=>$campWithdraw_id]);
             }elseif ($action == -1) {
                 if($campWithdrawInfo['camp_type'] == 2){
-                $buffer = $campWithdrawInfo['withdraw'];
+                    $buffer = $campWithdrawInfo['withdraw'];
                 
-                // 解冻资金
-                $Withdraw->save(['status'=>-1,'buffer'=>0],['id'=>$campWithdraw_id]);
-                db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$buffer)->update();
-            }
+                    // 解冻资金
+                    $Withdraw->save(['status'=>-1,'buffer'=>0],['id'=>$campWithdraw_id]);
+                    db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$buffer)->update();
+                }
             
-            $this->success('操作成功');    
+                $this->success('操作成功'); 
+            }   
         }else{
             $Withdraw = new \app\model\Withdraw;
             $campWithdrawInfo = $Withdraw
