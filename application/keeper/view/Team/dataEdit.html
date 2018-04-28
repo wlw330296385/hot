@@ -396,62 +396,62 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="fga" value="" placeholder="0">
+                                <input type="text" name="fga" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">二分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="fg" value="" placeholder="0">
+                                <input type="text" name="fg" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="threepfga" value="" placeholder="0">
+                                <input type="text" name="threepfga" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">三分</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="threepfg" value="" placeholder="0">
+                                <input type="text" name="threepfg" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="fta" value="" placeholder="0">
+                                <input type="text" name="fta" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">罚中</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="ft" value="" placeholder="0">
+                                <input type="text" name="ft" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <p class="pline"></p>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="reb" value="" placeholder="0">
+                                <input type="text" name="reb" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">助攻</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="ast" value="" placeholder="0">
+                                <input type="text" name="ast" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="stl" value="" placeholder="0">
+                                <input type="text" name="stl" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">封盖</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="blk" value="" placeholder="0">
+                                <input type="text" name="blk" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row">
                             <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="turnover" value="" placeholder="0">
+                                <input type="text" name="turnover" class="checkNum" value="" placeholder="0">
                             </div>
                             <div class="mui-col-xs-2 dataText">犯规</div>
                             <div class="mui-col-xs-4">
-                                <input type="text" name="foul" value="" placeholder="0">
+                                <input type="text" name="foul" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
                         <div class="mui-row ">
@@ -632,11 +632,11 @@
                         tmNumber = '';
                         var checkdisabled = '';
                     }
-                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${tmemberId}">
+                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="球员姓名" disabled =${checkdisabled}></div>
-                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${tmNumber}" placeholder="球员号码" ${checkdisabled}></div>
+                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput checkNum" value="${tmNumber}" placeholder="球员号码" ${checkdisabled}></div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                         <text class="bgcolor">
                                             <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -748,13 +748,17 @@
             // 删除球员
             $(document).on("tap", ".delBtn button", function () {
                 $(this).parents(".mui-collapse").remove();
-                var thisId = $(this).parents(".mui-collapse").attr("data-id");
-                $(".hideDataList input").each(function () {
-                    if (thisId == $(this).attr("data-id")) {
-                        $(this).remove();
-                    }
-                })
             });
+
+            // 输入数字判断
+            $(document).on("blur", ".checkNum", function () {
+                if (!(/^[0-9]*$/).test($(this).val())) {
+                    $(this).val('').focus();
+                    mui.toast("请输入数字");
+                    return false;
+                };
+            });
+
 
             // 判断球衣号码不能重复
             $(document).on("blur", "input[name=number]", function () {
@@ -771,29 +775,30 @@
                     return false;
                 }
             });
-            
 
-            var fg = $("input[name=fg]").val(); //二分命中数
-            var threepfg = $("input[name=threepfg]").val(); //三分命中数
-            var ft = $("input[name=ft]").val(); //罚球命中数
             $(document).on("blur", "input[name=fg]", function () {
-                if ($(this).val() > fg) {
+                var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
+                console.log($(this).val())
+                console.log(fga)
+                if (parseInt($(this).val()) > parseInt(fga)) {
                     mui.toast("二分命中次数不能大于出手次数");
-                    $(this).focus();
+                    $(this).val('').focus();
                     return false;
                 }
             });
             $(document).on("blur", "input[name=threepfg]", function () {
-                if ($(this).val() > threepfg) {
+                var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val();//三分出手数
+                if (parseInt($(this).val()) > parseInt(threepfga)) {
                     mui.toast("三分命中次数不能大于出手次数");
-                    $(this).focus();
+                    $(this).val('').focus();
                     return false;
                 }
             });
             $(document).on("blur", "input[name=ft]", function () {
-                if ($(this).val() > ft) {
+                var fta = $(this).parents().siblings().children("input[name=fta]").val(); //罚球出手数
+                if (parseInt($(this).val()) > parseInt(fta)) {
                     mui.toast("罚球命中次数不能大于罚球数");
-                    $(this).focus();
+                    $(this).val('').focus();
                     return false;
                 }
             });
@@ -883,12 +888,12 @@
             var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建数据成功', '确定', function () {
+                mui.alert(ajaxResult.msg, '数据修改成功', '确定', function () {
                     var goUrl = "{:url('team/dataOfTeam')}" + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败');
+                mui.alert(ajaxResult.msg, '修改失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);

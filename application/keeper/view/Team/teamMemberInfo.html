@@ -60,6 +60,7 @@
 
             <div class="teamMemberCover">
                 <div class="img4x3" style="background-image:url('/static/frontend/images/teamMemberBg.png')"></div>
+
                 <div class="mui-row position">
                     <div class="mui-col-sm-6 mui-col-xs-6 tmcLeft">
                         <img src="/static/frontend/images/teamMemberLogo.png" class="teamMemberLogo" />
@@ -67,9 +68,9 @@
                         <p class="assess">评估时间：2018-04-12</p>
                     </div>
                     <div class="mui-col-sm-6 mui-col-xs-6 tmcRight">
-                        <div class="valueTips">?</div>
                         <img src="/static/frontend/images/teamMemberCircle.png" class="teamMemberCircle" />
-                        <h4 class="tmValueNum">445</h4>
+                        <!-- <img src="/static/frontend/images/unknown.png" class="unknown" /> -->
+                        <h4 class="tmValueNum"><span>845</span></h4>
                         <p class="tmValue">球员价值</p>
                     </div>
                 </div>
@@ -78,17 +79,18 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli" id="logoframe">
                     <div class="mui-media-body  wd66">
-                        <strong class="f16">{$teamMemberInfo.member}</strong>
+                        <strong class="f16 tmName">{$teamMemberInfo.name}</strong>
                         <i class="icon iconfont icon-sex{$teamMemberInfo.sex}"></i>
                         <!-- <i class="icon iconfont mui-icon mui-icon-star-filled"></i>
                         <em class="colorred">
                             <strong>VIP-1</strong>
                         </em> -->
+                        <img class="mui-media-object mui-pull-left logostyle" src="{$teamMemberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
                         <p class="mui-ellipsis" style="line-height:20px">{$teamInfo.city} {$teamInfo.area}</p>
                         <p class="mui-ellipsis" style="line-height:20px ">年龄:
-                            <text class="colororange">{$teamInfo.avg_age}</text> 身高:
-                            <text class="colororange">{$teamInfo.avg_height}</text> 体重:
-                            <text class="colororange">{$teamInfo.avg_weight}</text>
+                            <text class="colororange">{$teamMemberInfo.age}</text> 身高:
+                            <text class="colororange">{$teamMemberInfo.height}</text> 体重:
+                            <text class="colororange">{$teamMemberInfo.weight}</text>
                         </p>
                     </div>
                     <div class="price-frame">
@@ -241,8 +243,8 @@
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3 threepfga">0</div>
                         <div class="mui-col-sm-3 mui-col-xs-3 threepfg">0</div>
-                        <div class="mui-col-sm-3 mui-col-xs-3 threepfg_hitrate">
-                            <strong class="colorred">0</strong>
+                        <div class="mui-col-sm-3 mui-col-xs-3">
+                            <strong class="colorred threepfg_hitrate">0</strong>
                         </div>
                     </div>
                 </li>
@@ -440,6 +442,10 @@
             // 非平台会员不显示关注按钮
             if (member_id == -1) {
                 $(".follow").hide();
+            }
+
+            if ($(".tmName").text() == '') {
+                $(".tmName").text("{$teamMemberInfo.member}");
             }
 
             //个人宣言内容
