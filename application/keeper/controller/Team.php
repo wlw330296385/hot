@@ -1056,8 +1056,12 @@ class Team extends Base
         }
 
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
-        $checkMemberTeamRole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
-        if ($checkMemberTeamRole) {
+        $curTeamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($curTeamMemberInfo) {
             $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
         } else {
             $teamrole = -1;
