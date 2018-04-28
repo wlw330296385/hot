@@ -206,7 +206,7 @@ class Matchdata
             $result['ft_hitrate'] = round($ftHitRate*100, 1).'%';
             // 平均命中率(综合2分与3分）
             $hitRate = ($result['fga'] && $result['threepfga']) ? ($result['fg'] + $result['threepfg']) / ($result['fga'] + $result['threepfga']) : 0;
-            $result['ft_hitrate'] = round($hitRate*100, 1).'%';
+            $result['hitrate'] = round($hitRate*100, 1).'%';
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
