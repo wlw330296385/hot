@@ -279,7 +279,7 @@
                             <strong>得失分</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="colorred">45</strong>
+                            <strong class="colorred gainLoss">0</strong>
                         </div>
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <strong>命中率</strong>
@@ -477,6 +477,8 @@
                 toSignUpList(); // 报名/参赛人员
                 followStatus(); //判断当前的关注状态
 
+
+
                 // 去逗号
                 var refereeList = $(".refereeList").text()
                 $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
@@ -487,6 +489,9 @@
                 if (homeTeam == 0 && awayTeam == 0) {
                     $(".score").hide();
                 }
+                
+                // 数据得失分统计
+                $(".gainLoss").text(homeTeam - awayTeam)
 
                 // 如果对手为空
                 if ($(".away_team").text() == '') {
@@ -510,34 +515,6 @@
                 } else if (court_cost_bear == 3) {
                     $(".courtCostBear").text("客队负责");
                 }
-
-                // 裁判列表文字转换中文
-                // var referee_type = "{matchInfo.referee_type}";
-                // if (referee_type == 0) {
-                //     $(".refereeType").text("免裁判");
-                //     $(".refereeName").hide();
-                //     $(".refereeCount").hide();
-                // } else if (referee_type == 1) {
-                //     $(".refereeType").text("系统随机安排");
-                //     $(".refereeName").hide();
-                //     $(".refereeCount").show();
-                // } else if (referee_type == 2) {
-                //     $(".refereeType").text("自行安排");
-                //     $(".refereeCount").hide();
-                // }
-
-                // 付费方式文字转换中文
-                // var referee_cost_bear = "{matchInfo.referee_cost_bear}";
-                // if (referee_cost_bear == 0) {
-                //     $(".refereeCostBear").text("免费");
-                // } else if (referee_cost_bear == 1) {
-                //     $(".refereeCostBear").text("费用AA");
-                // } else if (referee_cost_bear == 2) {
-                //     $(".refereeCostBear").text("主队负责");
-                // } else if (referee_cost_bear == 3) {
-                //     $(".refereeCostBear").text("客队负责");
-                // }
-
 
                 // 关注球队
                 $(".follow").on("tap", '', function () {
