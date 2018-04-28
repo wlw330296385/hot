@@ -94,13 +94,14 @@ class Matchdata
             ];
             return json($result);
         } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
     }
 
     // 球队录入球队比赛技术数据
     public function savematchstatisticsbyteam() {
         $data = input('post.');
+        //dump($data);exit();
         // 验证数据字段
         if ( !array_key_exists('match_id', $data) ) {
             return json(['code' => 100, 'msg' => '请输入比赛id']);
@@ -112,10 +113,16 @@ class Matchdata
         $data['match_time'] = checkDatetimeIsValid($data['match_time']) ? strtotime($data['match_time']) : $data['match_time'];
         $model = new MatchStatistics();
         $matchS = new MatchService();
-        // 球员名单数据列表
+        // 删除球员技术统计数据
+        if ( array_key_exists('delMembers', $data) && !empty($data['delMembers']) && $data['delMembers'] != '[]' ) {
+            $delIds = json_decode($data['delMembers'], true);
+        }
+        // 球员名单技术统计数据
         if ( array_key_exists('members', $data) && !empty($data['members']) && $data['members'] != "[]" ) {
             $recordMembers = json_decode($data['members'], true);
             foreach ($recordMembers as $k => $member) {
+                // 提交了无参赛信息的球员（会员）数据
+
                 // 组合补充保存数据字段
                 $recordMembers[$k]['match_id'] = $data['match_id'];
                 $recordMembers[$k]['match'] = $data['match'];
@@ -126,11 +133,16 @@ class Matchdata
                 $recordMembers[$k]['status'] = 1;
                 // 球员得分和
                 $recordMembers[$k]['pts'] = 2*$member['fg']+3*$member['threepfg']+1*$member['ft'];
+                // 球衣号码可为空
+                if (empty($member['number'])) {
+                    $recordMembers[$k]['number'] = null;
+                }
+
                 // 查询有无已有数据记录
                 $memberMatchStatisticsInfo = $model->where([
                     'match_id' => $data['match_id'],
                     'match_record_id' => $data['match_record_id'],
-                    //'match_record_member_id' => $member['match_record_member_id'],
+                    'match_record_member_id' => $member['match_record_member_id'],
                     'team_member_id' => $member['team_member_id'],
                 ])->find();
                 if ($memberMatchStatisticsInfo) {
@@ -138,7 +150,6 @@ class Matchdata
                     $recordMembers[$k]['id'] = $memberMatchStatisticsInfo['id'];
                 }
             }
-
             // 保存球员比赛技术数据入库
             try {
                 $res = $model->allowField(true)->saveAll($recordMembers);
@@ -193,6 +204,9 @@ class Matchdata
             // 罚球命中率
             $ftHitRate = ( $result['fta'] ) ? $result['ft']/$result['fta'] : 0;
             $result['ft_hitrate'] = round($ftHitRate*100, 1).'%';
+            // 平均命中率(综合2分与3分）
+            $hitRate = ($result['fga'] && $result['threepfga']) ? ($result['fg'] + $result['threepfg']) / ($result['fga'] + $result['threepfga']) : 0;
+            $result['ft_hitrate'] = round($hitRate*100, 1).'%';
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
