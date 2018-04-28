@@ -109,7 +109,7 @@
             <div class="mine">
                 <div class="explain">
                     <div class="explain-cont">
-                        <p>根据合同规定，营业额版训练营提现手续费为：￥提现金额 x {$campInfo.schedule_rebate*100}%。</p>
+                        <p>根据合同规定，营业额版训练营提现手续费为：提现金额 x {$campInfo.schedule_rebate*100}%。</p>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                     }
                 });
             }else{
-                mui.toast('提现金额填写有误，金额不能小于0或大于余额');
+                mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
             }
         })
         //////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@
         $('input[name=withdraw]').on('blur',function(){
             validWithDraw();
             if(ok == false){
-                mui.toast('提现金额填写有误，金额不能小于0或大于余额');
+                mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
             }
         })
     })
@@ -172,11 +172,12 @@
         var balance = parseFloat("{$campInfo.balance}");
         var rebate = parseFloat("{$campInfo.schedule_rebate}");
         var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-        if(withdraw<0||withdraw>balance||!reg.test(withdraw)){
+        if(withdraw<=0||withdraw>balance||!reg.test(withdraw)){
             ok = false;
             return false;
         }else{
-            $("#t_rebate").text("￥"+withdraw*rebate);
+            var fee = withdraw*rebate;
+            $("#t_rebate").text("￥"+fee.toFixed(2));
             ok = true;
         }
     }

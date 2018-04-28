@@ -83,7 +83,7 @@ class CampWithdraw extends Base{
             $data['camp_type'] = $campInfo['type'];
             $data['rebate_type'] = $campInfo['rebate_type'];
             $buffer = $data['withdraw'];
-            if($campInfo['type'] == 2){
+            if($campInfo['rebate_type'] == 2){
                 // 手续费
                 $data['camp_withdraw_fee'] = $buffer*$campInfo['schedule_rebate'];
                 $buffer += $data['camp_withdraw_fee'];
