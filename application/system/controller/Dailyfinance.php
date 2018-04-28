@@ -97,4 +97,20 @@ class Dailyfinance extends Base{
         }
     }
 
+
+
+
+    // 每日平台支出
+    public function dailyOutput(){
+        try{
+            
+            $data = ['crontab'=>'每日平台支出'];
+            $this->record($data);
+        }catch(Exception $e){
+            $data = ['crontab'=>'每日平台支出','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+    }
+
 }

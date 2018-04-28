@@ -20,16 +20,67 @@ class Woo extends Controller{
     }
 
 
-    // 训练营收支数据
-    public function sysoutput(){
-        $list = db('output')->where(['rebate_type'=>1,'type'=>3])->select();
+    // 平台支出数据3(课时退费)
+    public function sysoutput2(){
+        $list = db('output')->where(['rebate_type'=>1,'type'=>2])->select();
         foreach ($list as $key => &$value) {
             db('sys_output')->insert(
-                ['f_id'=>$value['id'],'type'=>1,'output'=>$value['output'],'camp_id'=>$value['camp_id']]
+                ['f_id'=>$value['id'],'type'=>3,'output'=>$value['output'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
             )
         }
     }
 
+    // 平台支出数据1(工资支出)
+    public function sysoutput3(){
+        $list = db('output')->where(['rebate_type'=>1,'type'=>3])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_output')->insert(
+                ['f_id'=>$value['id'],'type'=>1,'output'=>$value['output'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
+            )
+        }
+    }
+
+
+    // 平台支出数据2(课时收入)
+    public function sysoutput1(){
+        $list = db('income')->where(['rebate_type'=>1,'type'=>3])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_output')->insert(
+                ['f_id'=>$value['id'],'type'=>2,'output'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
+            )
+        }
+    }
+
+
+    // 平台收入1(课时版订单收入)
+    public function sysincome1(){
+        $list = db('income')->where(['rebate_type'=>1,'type'=>['elt',2]])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_income')->insert(
+                ['f_id'=>$value['id'],'type'=>1,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
+            )
+        }
+    }
+
+    // 平台收入1(提现收入)
+    public function sysincome1(){
+        $list = db('output')->where(['rebate_type'=>2,'type'=>4])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_income')->insert(
+                ['f_id'=>$value['id'],'type'=>2,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
+            )
+        }
+    }
+
+    // 平台收入1(赠课收入)
+    public function sysincome1(){
+        $list = db('output')->where(['rebate_type'=>2,'type'=>4])->select();
+        foreach ($list as $key => &$value) {
+            db('sys_income')->insert(
+                ['f_id'=>$value['id'],'type'=>2,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
+            )
+        }
+    }
 
     public function index(){
         $this->redirect('frontend/Index/index',['o_id'=>0,'o_type'=>0]);
