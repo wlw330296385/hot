@@ -1196,6 +1196,20 @@ class Team extends Base
             ])
             ->whereNull('delete_time')
             ->find();
+        // 返回字段为null 处理
+        $teamMatchStatic['pts'] = is_null($teamMatchStatic['pts']) ? 0 : round($teamMatchStatic['pts'], 1);
+        $teamMatchStatic['ast'] = is_null($teamMatchStatic['ast']) ? 0 : round($teamMatchStatic['ast'], 1);
+        $teamMatchStatic['reb'] = is_null($teamMatchStatic['reb']) ? 0 : round($teamMatchStatic['reb'], 1);
+        $teamMatchStatic['stl'] = is_null($teamMatchStatic['stl']) ? 0 : round($teamMatchStatic['stl'], 1);
+        $teamMatchStatic['blk'] = is_null($teamMatchStatic['blk']) ? 0 : round($teamMatchStatic['blk'], 1);
+        $teamMatchStatic['turnover'] = is_null($teamMatchStatic['turnover']) ? 0 : round($teamMatchStatic['turnover'], 1);
+        $teamMatchStatic['foul'] = is_null($teamMatchStatic['foul']) ? 0 : round($teamMatchStatic['foul'], 1);
+        $teamMatchStatic['fg'] = is_null($teamMatchStatic['fg']) ? 0 : round($teamMatchStatic['fg'], 1);
+        $teamMatchStatic['fga'] = is_null($teamMatchStatic['fga']) ? 0 : round($teamMatchStatic['fga'], 1);
+        $teamMatchStatic['threepfg'] = is_null($teamMatchStatic['threepfg']) ? 0 : round($teamMatchStatic['threepfg'], 1);
+        $teamMatchStatic['threepfga'] = is_null($teamMatchStatic['threepfga']) ? 0 : round($teamMatchStatic['threepfga'], 1);
+        $teamMatchStatic['ft'] = is_null($teamMatchStatic['ft']) ? 0 : round($teamMatchStatic['ft'], 1);
+        $teamMatchStatic['fta'] = is_null($teamMatchStatic['fta']) ? 0 : round($teamMatchStatic['fta'], 1);
         // 平均2分命中率
         $fgHitRate = ($teamMatchStatic['fga']) ? $teamMatchStatic['fg'] / $teamMatchStatic['fga'] : 0;
         $teamMatchStatic['fg_hitrate'] = round($fgHitRate * 100, 1) . '%';
