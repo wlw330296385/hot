@@ -748,12 +748,12 @@
             // 删除球员
             $(document).on("tap", ".delBtn button", function () {
                 $(this).parents(".mui-collapse").remove();
-                var thisId = $(this).parents(".mui-collapse").attr("data-id");
-                $(".hideDataList input").each(function () {
-                    if (thisId == $(this).attr("data-id")) {
-                        $(this).remove();
-                    }
-                })
+                // var thisId = $(this).parents(".mui-collapse").attr("data-id");
+                // $(".hideDataList input").each(function () {
+                //     if (thisId == $(this).attr("data-id")) {
+                //         $(this).remove();
+                //     }
+                // })
             });
 
             // 判断球衣号码不能重复
@@ -772,11 +772,8 @@
                 }
             });
             
-
-            var fg = $("input[name=fg]").val(); //二分命中数
-            var threepfg = $("input[name=threepfg]").val(); //三分命中数
-            var ft = $("input[name=ft]").val(); //罚球命中数
             $(document).on("blur", "input[name=fg]", function () {
+                var fg = $(this).parents().siblings().find("input[name=fga]").val(); //二分命中数
                 if ($(this).val() > fg) {
                     mui.toast("二分命中次数不能大于出手次数");
                     $(this).focus();
@@ -784,6 +781,7 @@
                 }
             });
             $(document).on("blur", "input[name=threepfg]", function () {
+                var threepfg = $(this).parents().siblings().find("input[name=threepfga]").val();//三分命中数
                 if ($(this).val() > threepfg) {
                     mui.toast("三分命中次数不能大于出手次数");
                     $(this).focus();
@@ -791,6 +789,7 @@
                 }
             });
             $(document).on("blur", "input[name=ft]", function () {
+                var ft = $(this).parents().siblings().find("input[name=fta]").val(); //罚球命中数
                 if ($(this).val() > ft) {
                     mui.toast("罚球命中次数不能大于罚球数");
                     $(this).focus();
