@@ -632,7 +632,7 @@
                         tmNumber = '';
                         var checkdisabled = '';
                     }
-                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${tmemberId}">
+                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="球员姓名" disabled =${checkdisabled}></div>
@@ -748,13 +748,17 @@
             // 删除球员
             $(document).on("tap", ".delBtn button", function () {
                 $(this).parents(".mui-collapse").remove();
-                // var thisId = $(this).parents(".mui-collapse").attr("data-id");
-                // $(".hideDataList input").each(function () {
-                //     if (thisId == $(this).attr("data-id")) {
-                //         $(this).remove();
-                //     }
-                // })
             });
+
+            // 输入数字判断
+            $(document).on("blur", ".checkNum", function () {
+                if (!(/^[0-9]*$/).test($(this).val())) {
+                    $(this).val('').focus();
+                    mui.toast("请输入数字");
+                    return false;
+                };
+            });
+
 
             // 判断球衣号码不能重复
             $(document).on("blur", "input[name=number]", function () {
@@ -771,7 +775,7 @@
                     return false;
                 }
             });
-            
+
             $(document).on("blur", "input[name=fg]", function () {
                 var fg = $(this).parents().siblings().find("input[name=fga]").val(); //二分命中数
                 if ($(this).val() > fg) {
