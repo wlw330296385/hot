@@ -287,6 +287,64 @@ class Matchdata extends Base
         }
     }
 
+    // 删除比赛技术统计数据
+    public function delmatchstatics() {
+        $matchRecordId = input('match_record_id', 0, 'intval');
+        if (!$matchRecordId) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 获取比赛数据
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $matchRecordId]);
+        if (!$matchRecordInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 当前会员有无操作权限：查询比赛所属球队team_member_role
+        $teamS = new TeamService();
+        $teamrole = $teamS->checkMemberTeamRole($matchRecordInfo['team_id'], $this->memberInfo['id']);
+        if (!$teamrole) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 查询比赛的技术统计数据记录
+        $matchStaticsList = $matchS->getMatchStatisticsAll([
+            'match_record_id' => $matchRecordInfo['id'],
+            'match_id' => $matchRecordInfo['match_id']
+        ]);
+        if ($matchStaticsList) {
+            foreach ($matchStaticsList as $val) {
+                // 记录删除比赛技术数据日志
+                db('log_match_statistics')->insert([
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'action' => 'delete',
+                    'more' => json_encode($val, JSON_UNESCAPED_UNICODE),
+                    'referer' => input('server.http_referer'),
+                    'create_time' => date('Ymd H:i', time())
+                ]);
+                // 真实删除数据
+                try {
+                    MatchStatistics::destroy($val['id'], true);
+                } catch (\Exception $e) {
+                    trace($e->getMessage(), 'error');
+                    return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+                }
+            }
+        }
+        // 更新比赛战绩数据为无登记技术统计
+        try {
+            $matchS->saveMatchRecord([
+                'id' => $matchRecordInfo['id'],
+                'has_statics' => 0,
+                'statics_time' => null
+            ]);
+        } catch (\Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
     // 获取球员在某场比赛的技术统计数据
     public function getplayermatchstatis() {
         try {
