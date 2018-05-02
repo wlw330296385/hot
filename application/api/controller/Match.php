@@ -1491,10 +1491,17 @@ class Match extends Base
                         }
                         $matchS->saveAllMatchRerfereeApply($delAllMatchRefereeApply);
                     }
+                    $deleteTime = time();
                     // match_referee比赛裁判表相关数据 软删除
-                    db('match_referee')->where('match_id', $match['id'])->update(['delete_time' => time()]);
+                    db('match_referee')->where('match_id', $match['id'])->update(['delete_time' => $deleteTime]);
                     // match_record比赛战绩表相关数据 软删除
-                    db('match_record')->where('match_id', $match['id'])->update(['delete_time' => time()]);
+                    db('match_record')->where('match_id', $match['id'])->update(['delete_time' => $deleteTime]);
+                    // match_record_member比赛出赛球员相关数据 软删除
+                    db('match_record_member')->where('match_id', $match['id'])->update(['delete_time' =>$deleteTime]);
+                    // match_apply约赛应战申请相关数据 软删除
+                    db('match_apply')->where(['match_id' => $match['id']])->update(['delete_time' =>$deleteTime]);
+                    // match_statistics比赛技术统计数据相关数据 真实删除
+                    db('match_statistics')->where(['match_id' => $match['id']])->update(['delete_time' =>$deleteTime]);
                 } else {
                     $response = ['code' => 100, 'msg' => __lang('MSG_400')];
                 }
