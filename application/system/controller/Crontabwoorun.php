@@ -56,6 +56,7 @@ class Crontabwoorun extends Base {
         $map['camp_id'] = $campInfo['id'];
         // $map['can_settle_date'] = $nowDate;
         $map['questions'] = 0;
+        $map['is_school'] = -1;
         Db::name('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
             foreach ($schedules as $key=> $schedule) {
 
@@ -265,6 +266,7 @@ class Crontabwoorun extends Base {
         $map['camp_id'] = $campInfo['id'];
         // $map['can_settle_date'] = $nowDate;
         $map['questions'] = 0;
+        $map['is_school'] = -1;
         db('schedule')->where($map)->whereNull('delete_time')->chunk(50, function ($schedules){
             foreach ($schedules as $key => $schedule) {
                 // 训练营的支出 = (教练薪资+人头提成)

@@ -8,12 +8,12 @@ class Dailysys extends Base{
     	parent::_initialize();
     }
 
-   //每月最后一天最后一分钟执行,如2018年3月29日23:59:00 ->每月1号00:00:00
+   //每天执行平台收支记录数据
     public function dailyInOut(){
     	try{
             $date_str = date('Ymd',time());
 
-            
+
 
 
 	    	$data = ['crontab'=>'每日平台收支'];
@@ -28,7 +28,7 @@ class Dailysys extends Base{
 
 
 
-    
+
 
     
 

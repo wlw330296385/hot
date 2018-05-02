@@ -44,8 +44,6 @@ class Lesson extends Base{
             $query->where('target_type',['=',1],['=',3],'or')
                   ->where('target_id',['=',$lessonInfo['id']],['=',0],'or');
         };
-
-        // dump($map);die;
         // 卡券系统        
         $ItemCoupon = new \app\model\ItemCoupon;
         // 平台卡券
@@ -53,16 +51,14 @@ class Lesson extends Base{
                             ->where($map)
                             ->where(['organization_type'=>1,'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])
                             ->select();
-        // echo $ItemCoupon->getlastsql();die;
         if($couponListOfSystem){
             $couponListOfSystem = $couponListOfSystem->toArray();
         }else{
             $couponListOfSystem = [];
         }
-        // dump($couponListOfSystem);die;
         // 训练营卡券
         $couponListOfCamp = $ItemCoupon->where(['organization_type'=>2,'organization_id'=>$lessonInfo['camp_id'],'status'=>1,'is_max'=>1,'publish_start'=>['lt',time()],'publish_end'=>['gt',time()]])->where($map)->select();
-        // echo $ItemCoupon->getlastsql();die;
+
         if($couponListOfCamp){
             $couponListOfCamp = $couponListOfCamp->toArray();
         }else{
@@ -502,5 +498,34 @@ class Lesson extends Base{
     	return view('Lesson/updateLessonOfSchool');
     }
 
+    public function lessonInfoOfSchool(){
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        $lessonInfo['cover'] = request()->root(true) . $lessonInfo['cover'];
+
+        $this->assign('lessonInfo',$lessonInfo);
+        return view('Lesson/lessonInfoOfSchool');
+    }
+
+
+
+    // 购买体验课
+    public function comfirmBillOfSchool(){
+        $lesson_id = input('param.lesson_id');
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 生成订单号
+        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+        $jsonLessonInfo = [
+            'camp'  => $lessonInfo['camp'],
+            'camp_id'=>$lessonInfo['camp_id'],
+            'lesson'=>$lessonInfo['lesson'],
+            'lesson_id' =>$lessonInfo['id'],
+            'location' =>$lessonInfo['location'],
+        ];
+        $this->assign('jsonLessonInfo',json_encode($jsonLessonInfo));
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('billOrder',$billOrder);
+        return view('Lesson/comfirmBillOfSchool');
+    }
 
 }
