@@ -467,6 +467,9 @@ class BillService {
                 if(!$re){
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
                 }else{
+                    // 发送模板消息
+                    $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+                    $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data),'status'=>1]);
                 }
             }else{
@@ -479,10 +482,8 @@ class BillService {
                 }
             }
             
-        //结束增加学生数据
-        // 发送模板消息
-        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
-        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+            //结束增加学生数据
+        
         //结束课程操作
 
         
