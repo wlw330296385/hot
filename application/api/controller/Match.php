@@ -628,6 +628,7 @@ class Match extends Base
         // 组合比赛战绩数据 match_record表字段
         $dataMatchRecord = $data['record'];
         $dataMatchRecord['match_time'] = $data['match_time'];
+        $dataMatchRecord['team_id'] = $data['team_id'];
         // 获取主队信息
         $homeTeam = $teamS->getTeam(['id' => $data['team_id']]);
         if ($homeTeam) {
