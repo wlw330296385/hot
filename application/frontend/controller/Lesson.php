@@ -423,4 +423,84 @@ class Lesson extends Base{
         $this->assign('campInfo',$campInfo);
         return view('Lesson/changeLessonInfo');
     }
+
+
+
+    // 添加校园课程
+    public function createLessonOfSchool(){
+        //训练营主教练
+        $camp_id = input('param.camp_id');
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        // 获取会员在训练营角色
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+        // 兼职教练不能操作
+        if ($is_power == 2) {
+            $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $this->error('您没有权限');
+            }
+        }
+
+        // 教练列表
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        $this->assign('campInfo',$campInfo);
+        $this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
+        $this->assign('staffList',$staffList);
+        return view('Lesson/createLessonOfSchool');
+    }
+
+   //编辑校园课程
+    public function updateLessonOfSchool(){
+    	//训练营主教练
+    	$camp_id = input('param.camp_id');
+        $lesson_id = input('param.lesson_id');
+        $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
+        // 获取会员在训练营角色
+        if($is_power<2){
+            $this->error('您没有权限');
+        }
+        // 兼职教练不能操作
+        if ($is_power == 2) {
+            $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
+            if ($level == 1) {
+                $this->error('您没有权限');
+            }
+        }
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+        // 教练列表
+    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        // 课程分类
+        $GradeCategoryService = new \app\service\GradeCategoryService;
+        $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+
+        $courtService = new \app\service\CourtService;
+        $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
+        // 私密课程 获取指定会员列表
+        $assignMemberList = [];
+        $assignMemberCount = 0;
+        if ($lessonInfo['isprivate']) {
+            $assignMemberList = $this->LessonService->getAssignMember($lessonInfo['id']);
+            $assignMemberCount = count($assignMemberList);
+        }
+
+        $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('camp_id',$camp_id);
+    	$this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('courtList',$courtList);
+    	$this->assign('staffList',$staffList);
+    	$this->assign('assignMemberList', $assignMemberList);
+    	$this->assign('assignMemberCount', $assignMemberCount);
+    	return view('Lesson/updateLessonOfSchool');
+    }
+
+
 }

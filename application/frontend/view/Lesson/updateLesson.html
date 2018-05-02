@@ -307,8 +307,7 @@
                             <div class="mui-input-row mui-checkbox checkboxCont">
                                 <label class="number">{$key+1}</label>
                                 <font>{$assignMember.member}</font>
-                                <input name="member" value="{$assignMember.member_id}" type="checkbox">
-                                <input type="hidden" class="stdList eachList" data-id="{$assignMember.member_id}" data-member="{$assignMember.member}" data-type="">
+                                <input type="checkbox"  name="member_id" value="{$assignMember.member_id}" class="stdList" data-member_id="{$assignMember.member_id}" data-member="{$assignMember.member}">
                             </div>
                             {/foreach} {else/}
                             <p class="nohave">请选择你想要发送私密课程的会员。</p>
@@ -319,7 +318,7 @@
                             <a class="all">全选</a>
                             <a class="cancel">取消</a>
                             <a class="del">[删除]</a>
-                            <a href="#addMember" id="setMemberCBox" class="mui-icon mui-icon-personadd add"></a>
+                            <a href="#addMember" class="mui-icon mui-icon-personadd add"></a>
                         </div>
                     </div>
                 </div>
@@ -332,31 +331,79 @@
             </form>
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                    提交
+                    提交修改
                 </li>
             </ul>
         </div>
     </div>
 
-    <!--会员名单-->
-    <div id="addMember" class="mui-popover">
+
+
+
+    <!--学员名单-->
+    <div id="addStudent" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd36">
-                <strong>会员名单</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn-blue" id="memberConfirm">确认</button>
+        <div class="page-header">
+            <span class="course">
+                <strong>添加私密会员名单</strong>
             </span>
         </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="newdiv" class="mui-input-group campMemberList">
-
-                </form>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#itemFans">粉丝列表</a>
+                <a class="mui-control-item" href="#itemStudent">学生列表</a>
+            </div>
+        </div>
+        <div id="itemFans" class="mui-control-content mui-active">
+            <div class="pop-search">
+                <input type="search" class="keywordCF" placeholder="请输入粉丝名称搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchCF"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:40px !important;">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list studentList fans-1">
+                    </ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="itemStudent" class="mui-control-content">
+            <div class="pop-search">
+                <input type="search" class="keywordCS" placeholder="请输入学生的会员名搜索">
+                <span class="mui-icon mui-icon-search searchicon" id="searchCS"></span>
+            </div>
+            <div class="mui-scroll-wrapper" style="top:40px !important;">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list studentList fans1">
+                    </ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!--课程类型-->
     <div id="lessonType" class="mui-popover">
@@ -501,7 +548,7 @@
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list headMaster fans">
+                    <ul class="mui-table-view list headMaster fans-1">
                     </ul>
                     <ul class="mui-pager">
                         <li>
@@ -552,7 +599,7 @@
             </div>
             <div class="mui-scroll-wrapper" style="top:40px !important;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list leader fans">
+                    <ul class="mui-table-view list leader fans-1">
                     </ul>
                     <ul class="mui-pager">
                         <li>
@@ -603,6 +650,7 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+
     <!--上传截图头像-->
     <script src="/static/plugins/cropper/hammer.min.js"></script>
     <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
@@ -623,7 +671,8 @@
             // 关闭弹出菜单
             $("body").on('tap', '.mui-backdrop', function () {
                 mui(".mui-popover.mui-active").popover("toggle");
-            })
+            });
+
             document.getElementById("tipSiMi").addEventListener('tap', function () {
                 mui.alert('私密课程是不对外公开的课程，只有被指定的会员才能购买。例如您想开设针对某个群体的特惠课程，只允许他们购买，那就把此课程定为私密课程，创建完成后不会出现在公开的课程列表，由训练营的工作人员直接发送该课程链接给指定会员进行购买。', '设为私密课程');
             });
@@ -677,6 +726,26 @@
         })(mui, document);
 
         $(function () {
+
+
+            //获取训练营场地表
+            toCourtList()
+            //获取训练营教练列表
+            toCoachList();
+            //获取训练营教练列表
+            var fansKeyword = '';
+            var pageHM = 1;
+            var pageLD = 1;
+            var pageCF = 1;
+            var pageCS = 1;
+            //获取训练营粉丝
+            toFansList(fansKeyword, "headMaster", 1, '-1');
+            toFansList(fansKeyword, "leader", 1, '-1');
+            toFansList(fansKeyword, "itemFans", 1, '-1');
+            //获取训练营学员
+            toFansList(fansKeyword, "itemStudent", 1, '1');
+
+
             $('input[name=cost]').on('blur', function () {
                 if ($(this).val() < 1) {
                     $(this).val(1);
@@ -849,67 +918,7 @@
                 }
             });
 
-            //全选
-            $(".all").click(function () {
-                $(".checkboxCont").find('input').prop('checked', true)
-            })
 
-            //取消全选
-            $(".cancel").click(function () {
-                $(".checkboxCont").find('input').prop('checked', false)
-            })
-
-            //删除
-            $(".del").click(function () {
-                $("input[name='member']:checked").parents(".checkboxCont").remove();
-                changeIndex();
-                if ($("#inactiveList").html() == '') {
-                    $("#inactiveList").append('<p class="nohave">请选择你想要发送私密课程的会员。</p>')
-                }
-            });
-
-            //学员列表复选框赋值
-            $("#setMemberCBox").on('tap', '', function () {
-                //每次打开先清空所有选择
-                $("input[name='checkbox-member']").prop("checked", false);
-                //然后遍历出对应所选
-                $(".stdList").each(function (i) {
-                    var id = $(this).attr("data-id");
-                    var member = $(this).attr("data-member");
-                    $("#newdiv").find("input[name='checkbox-member']").filter(function (index) {
-                        return $(this).attr("data-id") == id
-                    }).prop("checked", true);
-                });
-            });
-
-            //角标随checkboxCont的数量变化
-            $(document).on('click', '.del', function () {
-                totalNum = $(".checkboxCont").length;
-                $(".mui-badge").text(totalNum);
-            });
-
-            // 选择添加学员点击事件
-            memberList = [];//学员列表数组
-            $("#memberConfirm").on('click', function () {
-                $("#inactiveList").empty();
-                $(".campMemberList input[type=checkbox]:checked").each(function (i) {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).attr("data-id") + '" type="checkbox"><input type="hidden" class="stdList eachList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '"data-type="' + $(this).attr("data-type") + '" ></div>';
-                    var member_type = $(this).attr("data-type");
-                    var id = $(this).attr("data-id");
-                    var member = $(this).attr("data-member");
-                    $("#inactiveList").append(str);
-                    //memberList.push({ member: member, id: id, type: member_type });
-                    memberList[i] = { member: member, id: id, type: member_type };
-                });
-
-                // checkmember();// 检查是否有学员数据
-                console.log(memberList)
-
-                changeIndex();//调用-更新序号
-                mui("#addMember").popover("toggle");
-                totalNum = $(".checkboxCont").length;
-                $(".mui-badge").text(totalNum);
-            });
 
             //获取不做修改时的会员名单提交
             initialMember();
