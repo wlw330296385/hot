@@ -1300,7 +1300,8 @@ class Team extends Base
             // 参数:球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
+                $map['match_record.team_id'] = $team_id;
                 unset($map['team_id']);
             }
             // 参数：会员member_id 查询会员所在球队
@@ -1316,7 +1317,8 @@ class Team extends Base
                         foreach ($memberInTeam as $team) {
                             array_push($teamIds, $team['team_id']);
                         }
-                        $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                        $map['match_record.home_team_id|match_record.away_team_id'] = ['in', $teamIds];
+                        $map['match_record.team_id'] = ['in', $teamIds];
                     } else {
                         // 会员无参加任何球队 返回无数据
                         return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1380,7 +1382,8 @@ class Team extends Base
                             }
                         }
                         if ( !empty($teamIds) ) {
-                            $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                            $map['match_record.home_team_id|match_record.away_team_id'] = ['in', $teamIds];
+                            $map['match_record.team_id'] = ['in', $teamIds];
                         } else {
                             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
                         }
@@ -1497,7 +1500,8 @@ class Team extends Base
             // 必传参数:球队team_id 组合复合查询 查询作为主队或客队
             if (input('?param.team_id')) {
                 $team_id = input('param.team_id');
-                $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = $team_id;
+                $map['match_record.home_team_id|match_record.away_team_id'] = $team_id;
+                $map['match_record.team_id'] = $team_id;
                 unset($map['team_id']);
             }
             // 默认查询上架比赛(status=1)
