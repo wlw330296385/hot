@@ -60,63 +60,6 @@
             text-align: center;
         }
 
-        /* 裁剪图片样式 */
-
-        #clipArea {
-            height: 300px;
-        }
-
-        .fileFrame {
-            color: #000;
-            width: 26%;
-            height: 40px;
-            background: #fff;
-            border: 1px solid #ddd;
-            margin-left: 30px;
-            margin-top: 15px;
-            text-align: center;
-            padding-top: 10px;
-            float: left;
-            font-size: 14px;
-        }
-
-        #file {
-            height: 25px;
-            top: 310px;
-            left: 30px;
-            overflow: hidden;
-            position: absolute;
-            z-index: 1;
-            width: 20%;
-            opacity: 0;
-            cursor: pointer;
-            margin: 10px;
-        }
-
-        #clipBtn {
-            float: right;
-            padding: 12px 20px;
-            margin: 15px 30px 0 0;
-            border-radius: 0;
-        }
-
-        #view {
-            width: 68px;
-            height: 51px;
-            border: 1px solid #CCC;
-            float: right;
-            margin-right: 35px;
-        }
-        .mui-popover {
-            height: 370px;
-        }
-        .mui-popover .mui-control-content{
-            height: 270px;
-        }
-        #txpopover.mui-popover {
-            height: 370px;
-            background: #fff !important;
-        }
     </style>
 </head>
 
@@ -310,7 +253,7 @@
             </form>
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                    提交
+                    创建课程
                 </li>
             </ul>
         </div>
@@ -1015,56 +958,61 @@
                 }
             })
 
-        })
 
 
-        // 选择添加学员点击事件
-        $(".studentList").on('click', 'li.campMember', function () {
-            var member_id = $(this).attr("data-id");
-            var member = $(this).attr("data-member");
-            var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + member + '</font><input type="checkbox"  name="member_id" value="' + member_id + '" class="stdList" data-member_id="' + member_id + '" data-member="' + member + '" /></div>';
+            // 选择添加学员点击事件
+            $(".studentList").on('click', 'li.campMember', function () {
+                var member_id = $(this).attr("data-id");
+                var member = $(this).attr("data-member");
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + member + '</font><input type="checkbox"  name="member_id" value="' + member_id + '" class="stdList" data-member_id="' + member_id + '" data-member="' + member + '" /></div>';
 
-            var isExist = true;
-            $(".stdList").each(function () {
-                var list_id = $(this).attr("data-member_id");
-                if(list_id == member_id){
-                    isExist = false;
-                    mui.toast("该会员在存在");
-                    return false;
+                var isExist = true;
+                $(".stdList").each(function () {
+                    var list_id = $(this).attr("data-member_id");
+                    if(list_id == member_id){
+                        isExist = false;
+                        mui.toast("该会员已在列表中");
+                        return false;
+                    }
+                });
+                if(isExist==true){
+                    //无则添加到表内
+                    $("#inactiveList").append(str);
+                    mui.toast("已插入列表");
                 }
+
+                //调用-更新序号
+                changeIndex();
+
+                var totalNum = $(".checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+
+
             });
-            if(isExist==true){
-                //无则添加到表内
-                $("#inactiveList").append(str);
-                mui.toast("已插入列表");
-            }
-
-            //调用-更新序号
-            changeIndex();
-
-            var totalNum = $(".checkboxCont").length;
-            $(".mui-badge").text(totalNum);
 
 
-        });
+            //全选
+            $(".all").click(function () {
+                $(".checkboxCont").find('input').prop('checked', true)
+            })
+
+            //取消全选
+            $(".cancel").click(function () {
+                $(".checkboxCont").find('input').prop('checked', false)
+            })
+
+            //删除
+            $(".del").click(function () {
+                $("input[name='member_id']:checked").parents(".checkboxCont").remove();
+                $(".mui-badge").text($(".checkboxCont").length);
+                changeIndex();
+            });
 
 
-        //全选
-        $(".all").click(function () {
-            $(".checkboxCont").find('input').prop('checked', true)
+
         })
 
-        //取消全选
-        $(".cancel").click(function () {
-            $(".checkboxCont").find('input').prop('checked', false)
-        })
 
-        //删除
-        $(".del").click(function () {
-            $("input[name='member_id']:checked").parents(".checkboxCont").remove();
-            $(".mui-badge").text($(".checkboxCont").length);
-            changeIndex();
-        });
 
         //更新序号函数
         function changeIndex() {
