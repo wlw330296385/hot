@@ -112,5 +112,33 @@ class Bill extends Frontend{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         } 
    }
+
+   public function paySchoolApi(){
+        try{
+            $bill_order = input('param.bill_order');
+            $billInfo = db('bill')->where(['bill_order'=>$bill_order])->find();
+            if($billInfo){
+                if($billInfo['is_pay']!= 1 || $billInfo['status']!= 1){
+                    $data = input('post.');
+                    $data['status'] = 1;
+                    $data['is_pay'] = 1;
+                    $data['balance_pay'] = 0;
+                    $result = $this->BillService->paySchool($data,['bill_order'=>$bill_order]);  
+                    if($result){
+                        return json(['code'=>200,'msg'=>'支付成功']);
+                    }else{
+                        return json(['code'=>100,'msg'=>'该订单状态已失效']);
+                    }  
+                }else{
+                    return json(['code'=>200,'msg'=>'订单已支付']);
+                }
+            }else{
+                return json(['code'=>100,'msg'=>'订单号错误']);
+            }
+            
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        } 
+   }
     
 }
