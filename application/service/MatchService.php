@@ -484,6 +484,13 @@ class MatchService {
         }
     }
 
+    // 比赛战绩-球员记录数统计
+    public function getMatchRecordMemberCount($map) {
+        $model = new MatchRecordMember();
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
+    }
+
     // 保存历史对手球队
     public function saveHistoryTeam($data) {
         $model = new MatchHistoryTeam();

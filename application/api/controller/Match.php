@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\model\MatchRecord;
+use app\model\MatchStatistics;
 use app\service\MatchService;
 use app\service\MessageService;
 use app\service\RefereeService;
@@ -283,6 +284,10 @@ class Match extends Base
         if (!$match || !$matchRecord) {
             return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
         }
+        // 比赛已完成 超过24小时不能修改
+        if ($match['is_finished_num'] == 1 && ($match['finished_time']-time()>24*86400)) {
+            return json(['code' => 100, 'msg' => '比赛已完成不能修改了']);
+        }
         $matchRecordId = $matchRecord['id'];
         // 数据字段验证
         $validate = validate('MatchVal');
@@ -441,7 +446,7 @@ class Match extends Base
                     $homeMember[$k]['is_attend'] = 1;
 
                     // 批量更新team_member 比赛数match_num
-                    if ($matchRecordMember['is_checkin'] == 1) {
+                    if ($matchRecordMember['is_attend'] == 1) {
                         if ($teamMember) {
                             $dataUpdateTeamMember[$k]['id'] = $teamMember['id'];
                             $dataUpdateTeamMember[$k]['match_num'] = $teamMember['match_num'] + 1;
@@ -466,11 +471,36 @@ class Match extends Base
                 if ($matchRecordMember2) {
                     // 更新match_record_member
                     $memberArr[$k]['id'] = $matchRecordMember2['id'];
+                    // 查询参赛球员有无比赛技术统计数据，有就真实删除相关数据
+                    $matchStaticInfo = $matchS->getMatchStatistics([
+                        'match_id' => $match['id'],
+                        'match_record_id' => $dataMatchRecord['id'],
+                        'team_member_id' => $member['tmid'],
+                        'match_record_member_id' => $matchRecordMember2['id']
+                    ]);
+                    if ($matchStaticInfo) {
+                        // 记录删除比赛技术数据日志
+                        db('log_match_statistics')->insert([
+                            'member_id' => $this->memberInfo['id'],
+                            'member' => $this->memberInfo['member'],
+                            'action' => 'delete',
+                            'more' => json_encode($matchStaticInfo, JSON_UNESCAPED_UNICODE),
+                            'referer' => input('server.http_referer'),
+                            'create_time' => date('Ymd H:i', time())
+                        ]);
+                        try {
+                            MatchStatistics::destroy($matchStaticInfo['id'], true);
+                        }  catch (Exception $e) {
+                            return json(['code' => 100, 'msg' => '删除球员数据'.__lang('MSG_400')]);
+                        }
+                    }
                 }
                 $memberArr[$k]['match'] = $data['name'];
                 $memberArr[$k]['status'] = -1;
                 $memberArr[$k]['is_checkin'] = -1;
+                $memberArr[$k]['is_attend'] = -1;
             }
+
             try {
                 $resultsaveMatchRecordMember2 = $matchS->saveAllMatchRecordMember($memberArr);
             } catch (Exception $e) {
@@ -1186,8 +1216,13 @@ class Match extends Base
                 // 获取比赛战绩数据
                 $matchRecord = $matchS->getMatchRecord(['match_id' => $val['id']]);
                 $result['data'][$k]['record'] = ($matchRecord) ? $matchRecord : [];
-                // 获取参赛球员列表
-                $matchRecordMembers = $matchS->getMatchRecordMemberListAll(['match_id' => $val['id'], 'match_record_id' => $matchRecord['id']]);
+                // 获取参赛（有效）球员列表
+                $whereMatchRecordMember = [
+                    'match_id' => $val['id'],
+                    'match_record_id' => $matchRecord['id'],
+                    'status' => 1
+                ];
+                $matchRecordMembers = $matchS->getMatchRecordMemberListAll($whereMatchRecordMember);
                 $result['data'][$k]['record_members'] = ($matchRecordMembers) ? $matchRecordMembers : [];
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
