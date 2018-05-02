@@ -146,8 +146,10 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course data">自我介绍</span>
                 </div>
+                <textarea name="introduction" class="data introduction" style="display: none"></textarea>
+                <div id="articleEditor" class="tuwenIntro"></div>
 
-                <div class="mui-input-row tuwenEditor">
+                <!-- <div class="mui-input-row tuwenEditor">
                     <textarea name="introduction" class="data introduction" style="display: none"></textarea>
                     <div class="introBox"></div>
                     <div class="mui-row mui-text-center mui-row-operation">
@@ -175,7 +177,7 @@
                 <div class="page-header" style="background: #efeff4;">
                     <img src="/static/frontend/images/hot.png" class="hotimg" alt="">
                     <span class="f12">温馨提示：点击添加均为插入一段文字或一张图片，不可换行，如需换行请再次点击添加。</span>
-                </div>
+                </div> -->
 
             </form>
 
@@ -217,8 +219,17 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/tuwen.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script>
+        var Edr = new Eleditor({
+            el: '#articleEditor', //容器
+            upload: {
+                server: uploadApiUrl, //填写你的后端上传路径
+                fileSizeLimit: 2 //限制图片上传大小，单位M
+            },
+            placeHolder: '点击编辑裁判介绍',
+        });
+    </script>
     <script>
         //初始化
         mui.init({
@@ -322,10 +333,10 @@
                 }
             };
 
-            //图文编辑状态转换浏览状态
-            tuwenToView();
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
-            var introHtml = $(".introBox").html();
+            var introHtml = $("#articleEditor").html();
             $(".introduction").val(introHtml);
 
             var data = wooApi.getInputData('input', 'data');
@@ -349,7 +360,6 @@
                 })
             } else {
                 mui.alert(ajaxResult.msg, '注册失败');
-                tuwenToEdit(); //图文转换成可编辑状态
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);
