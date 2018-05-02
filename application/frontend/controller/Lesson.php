@@ -376,7 +376,7 @@ class Lesson extends Base{
         }
 
         // 课程列表
-        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1])->where('delete_time','null')->select();
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id,'status'=>1,'is_school'=>-1])->where('delete_time','null')->select();
 
         $this->assign('lessonList',$lessonList);
         $this->assign('camp_id',$camp_id);

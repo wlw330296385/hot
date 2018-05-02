@@ -55,7 +55,7 @@ class Coupon extends Base{
                 $this->error('请先加入一个训练营并成为管理员或者创建训练营');
             }
             $eventList = db('event')->where(['organization_id'=>$itemCouponInfo['organization_id'],'organization_type'=>$itemCouponInfo['organization_type']])->where('delete_time',null)->select();
-            $lessontList = db('lesson')->where(['camp_id'=>$itemCouponInfo['organization_id']])->where('delete_time',null)->select();
+            $lessontList = db('lesson')->where(['camp_id'=>$itemCouponInfo['organization_id'],'is_school'=>-1])->where('delete_time',null)->select();
         }
 //        dump($itemCouponInfo);die;
         $this->assign('itemCouponInfo',$itemCouponInfo);
@@ -78,7 +78,7 @@ class Coupon extends Base{
             }
 
             $eventList = db('event')->where(['organization_id'=>$organization_id,'organization_type'=>$organization_type])->where('delete_time',null)->select();
-            $lessontList = db('lesson')->where(['camp_id'=>$organization_id])->where('delete_time',null)->select();
+            $lessontList = db('lesson')->where(['camp_id'=>$organization_id,'is_school'=>-1])->where('delete_time',null)->select();
 
 
 
