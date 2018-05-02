@@ -61,7 +61,7 @@ class Dailytask extends Base{
 
 
 
-
+    // 每月学员训练点分布
     public function monthlyCourtStudents(){
     	try{
             $m = date('m',time());
@@ -96,4 +96,11 @@ class Dailytask extends Base{
             trace($e->getMessage(), 'error');
     	}
     }
+
+
+
+
+    
+
+    
 }
