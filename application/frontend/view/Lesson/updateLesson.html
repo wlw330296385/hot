@@ -43,10 +43,10 @@
             border-bottom: none;
         }
 
-        .mui-navigate-right input[type='text'] {
+        .mui-navigate-right input[type='text'],
+        .select-row {
             padding-right: 30px !important;
         }
-
         .show {
             display: block;
         }
@@ -67,58 +67,6 @@
             text-align: center;
         }
 
-        /* 裁剪图片样式 */
-
-        #clipArea {
-            height: 300px;
-        }
-
-        .fileFrame {
-            color: #000;
-            width: 26%;
-            height: 40px;
-            background: #fff;
-            border: 1px solid #ddd;
-            margin-left: 30px;
-            margin-top: 15px;
-            text-align: center;
-            padding-top: 10px;
-            float: left;
-            font-size: 14px;
-        }
-
-        #file {
-            height: 25px;
-            top: 310px;
-            left: 30px;
-            overflow: hidden;
-            position: absolute;
-            z-index: 1;
-            width: 20%;
-            opacity: 0;
-            cursor: pointer;
-            margin: 10px;
-        }
-
-        #clipBtn {
-            float: right;
-            padding: 12px 20px;
-            margin: 15px 30px 0 0;
-            border-radius: 0;
-        }
-
-        #view {
-            width: 68px;
-            height: 51px;
-            border: 1px solid #CCC;
-            float: right;
-            margin-right: 35px;
-        }
-
-        #txpopover.mui-popover {
-            height: 370px;
-            background: #fff !important;
-        }
     </style>
 </head>
 
@@ -276,7 +224,7 @@
                 </div>
                 <div class="mui-input-row">
                     <label>是否上架</label>
-                    <span>{$lessonInfo.status}</span>
+                    <span>（返回列表左划设置）{$lessonInfo.status}</span>
                     <input type="hidden" name="status" value="{$lessonInfo.status_num}" class="data">
 
                     <!--<label>状态</label>-->
@@ -300,7 +248,7 @@
                     </span>
                 </div>
 
-                <div class="image-items memberInput-row border-b {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}" style="padding-top: 0;">
+                <div class="image-items memberInput-row border-b {eq name='lessonInfo.isprivate' value='1'}show{else/}hide{/eq}" style="padding-top: 6px;">
                     <div class="mui-input-group">
                         <div class="box checkChecked" id="inactiveList">
                             {notempty name="assignMemberList"} {foreach name="assignMemberList" item="assignMember"}
@@ -318,7 +266,7 @@
                             <a class="all">全选</a>
                             <a class="cancel">取消</a>
                             <a class="del">[删除]</a>
-                            <a href="#addMember" class="mui-icon mui-icon-personadd add"></a>
+                            <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
                         </div>
                     </div>
                 </div>
@@ -331,7 +279,7 @@
             </form>
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" style="color: #fff" onclick="submitAction()">
-                    提交修改
+                    修改课程
                 </li>
             </ul>
         </div>
@@ -920,33 +868,32 @@
 
 
 
-            //获取不做修改时的会员名单提交
-            initialMember();
-            //获取训练营身份列表
-            toCampMemberList();
-            //获取训练营场地表
-            toCourtList()
-            //获取训练营教练列表
-            toCoachList();
-            //获取训练营教练列表
-            var fansKeyword = '';
-            var wFans = '';
-            var pageHM = 1;
-            var pageLD = 1;
-            toFansList(fansKeyword, wFans, 1);
 
             //搜索班主任粉丝
             $("#searchHM").on("click", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
-                toFansList(keyword, "headMaster", pageHM);
+                toFansList(keyword, "headMaster", pageHM, '-1');
             })
             //搜索领队粉丝
             $("#searchLD").on("click", function () {
                 var keyword = $(".keywordLD").val();
                 var pageLD = 1;
-                toFansList(keyword, "leader", pageLD);
+                toFansList(keyword, "leader", pageLD, '-1');
             })
+            //搜索训练营粉丝
+            $("#searchCF").on("click", function () {
+                var keyword = $(".keywordCF").val();
+                var pageCF = 1;
+                toFansList(keyword, "itemFans", pageCF, '-1');
+            })
+            //搜索训练营学生
+            $("#searchCS").on("click", function () {
+                var keyword = $(".keywordCS").val();
+                var pageCS = 1;
+                toFansList(keyword, "itemStudent", pageCS, '1');
+            })
+
             //领队粉丝弹出框页码控制
             $("#leader").on('click', '.next_page', function () {
                 var getTotalPage = $("#leader .totalPage").text();
@@ -955,7 +902,7 @@
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toFansList(keyword, "leader", pageLD);
+                    toFansList(keyword, "leader", pageLD, '-1');
                 }
             })
             $("#leader").on('click', '.prev_page', function () {
@@ -964,7 +911,7 @@
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordLD").val();
-                    toFansList(keyword, "leader", pageLD);
+                    toFansList(keyword, "leader", pageLD, '-1');
                 }
             })
             //班主任粉丝弹出框页码控制
@@ -975,7 +922,7 @@
                     mui.toast("已经最后一页了");
                 } else {
                     var keyword = $(".keywordHM").val();
-                    toFansList(keyword, "headMaster", pageHM);
+                    toFansList(keyword, "headMaster", pageHM, '-1');
                 }
             })
             $("#headMaster").on('click', '.prev_page', function () {
@@ -984,14 +931,98 @@
                     mui.toast("已经是第一页了");
                 } else {
                     var keyword = $(".keywordHM").val();
-                    toFansList(keyword, "headMaster", pageHM);
+                    toFansList(keyword, "headMaster", pageHM, '-1');
                 }
             })
 
+            //添加私密学生弹出框页码控制
+            $("#itemStudent").on('click', '.next_page', function () {
+                var getTotalPage = $("#itemStudent .totalPage").text();
+                pageCS++;
+                if (pageCS > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordCS").val();
+                    toFansList(keyword, "itemStudent", pageCS, '1');
+                }
+            })
+            $("#itemStudent").on('click', '.prev_page', function () {
+                pageCS--;
+                if (pageCS < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordCS").val();
+                    toFansList(keyword, "itemStudent", pageCS, '1');
+                }
+            })
+
+            //添加私密粉丝弹出框页码控制
+            $("#itemFans").on('click', '.next_page', function () {
+                var getTotalPage = $("#itemFans .totalPage").text();
+                pageCF++;
+                if (pageCF > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordCF").val();
+                    toFansList(keyword, "itemFans", pageCF, '-1');
+                }
+            })
+            $("#itemFans").on('click', '.prev_page', function () {
+                pageCF--;
+                if (pageCF < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordCF").val();
+                    toFansList(keyword, "itemFans", pageCF, '-1');
+                }
+            });
+
+            // 选择添加学员点击事件
+            $(".studentList").on('click', 'li.campMember', function () {
+                var member_id = $(this).attr("data-id");
+                var member = $(this).attr("data-member");
+                var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + member + '</font><input type="checkbox"  name="member_id" value="' + member_id + '" class="stdList" data-member_id="' + member_id + '" data-member="' + member + '" /></div>';
+
+                var isExist = true;
+                $(".stdList").each(function () {
+                    var list_id = $(this).attr("data-member_id");
+                    if(list_id == member_id){
+                        isExist = false;
+                        mui.toast("该会员已在列表中");
+                        return false;
+                    }
+                });
+                if(isExist==true){
+                    //无则添加到表内
+                    $("#inactiveList").append(str);
+                    mui.toast("已插入列表");
+                }
+
+                //调用-更新序号
+                changeIndex();
+
+                var totalNum = $(".checkboxCont").length;
+                $(".mui-badge").text(totalNum);
 
 
+            });
 
+            //全选
+            $(".all").click(function () {
+                $(".checkboxCont").find('input').prop('checked', true)
+            })
 
+            //取消全选
+            $(".cancel").click(function () {
+                $(".checkboxCont").find('input').prop('checked', false)
+            })
+
+            //删除
+            $(".del").click(function () {
+                $("input[name='member_id']:checked").parents(".checkboxCont").remove();
+                $(".mui-badge").text($(".checkboxCont").length);
+                changeIndex();
+            });
 
 
             // 判断课程是否存在订单
@@ -1007,23 +1038,8 @@
                     }
                 });
             })
+
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         // --------------------------------------------------------------------------------这里是全局定义的fn
@@ -1036,18 +1052,6 @@
             });
         }
 
-
-        //获取不做修改的会员名单提交
-        function initialMember() {
-            memberList = [];
-            $(".checkChecked input[type=hidden]").each(function (i) {
-                var member_type = $(this).attr("data-type");
-                var id = $(this).attr("data-id");
-                var member = $(this).attr("data-member");
-                memberList[i] = { member: member, id: id, type: member_type };
-            });
-        }
-
         // 获取数据并进行提交
         function submitAction() {
             //判断电话是否正确格式
@@ -1057,6 +1061,18 @@
                 mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
                 return false;
             }
+
+            var isPrivate = $("#lessonPrivate").val();
+            if(isPrivate==1){
+                //遍历获取私密会员列表数组
+                var memberList = [];
+                $(".stdList").each(function (i) {
+                    memberList[i] = { member: $(this).attr("data-member"), id: $(this).attr("data-member_id") };
+                });
+            }
+            //console.log(memberList);
+            //return false;
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -1085,44 +1101,6 @@
             }
         }
 
-        //获取会员列表
-        var toCampMemberList = function (type) {
-            var url = "{:url('api/camp_member/getCampMemberListApi','','',true)}";
-            var campID = "{$lessonInfo.camp_id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    camp_id: campID
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                //processData:false,
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            if (data.data.data[i].type == "学生" || data.data.data[i].type == "粉丝") {
-                                newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label class="wd73">' + data.data.data[i].member + '</label><span>' + data.data.data[i].type + '</span><input name="checkbox-member" class="member" value="' + data.data.data[i].member + '" type="checkbox" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '"></div>'
-                            }
-                        }
-                        $(".campMemberList").empty();
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $(".campMemberList").append(newli);
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
 
         //根据默助教遍历出对应所选
         var toAssistantCheckbox = function () {
@@ -1220,18 +1198,13 @@
 
 
         //粉丝列表接口获取数据并追加到页面
-        var toFansList = function (keyword, wFans, page) {
+        var toFansList = function (keyword, wFans, page, typeID) {
             var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
             var campID = "{$lessonInfo.camp_id}";
-            var typeID = "-1";
-            var wFansList = "ul.fans";
-            var currPage = ".currPage";
-            var totalPage = ".totalPage";
-            if (keyword != '' && wFans != '') {
-                wFansList = "#" + wFans + " ul.fans";
-                currPage = "#" + wFans + " .currPage";
-                totalPage = "#" + wFans + " .totalPage";
-            }
+            var wFansList = "#" + wFans + " ul.fans"+typeID;
+            var currPage = "#" + wFans + " .currPage";
+            var totalPage = "#" + wFans + " .totalPage";
+
             mui.ajax({
                 url: url,
                 data: {
@@ -1248,7 +1221,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '">' + data.data.data[i].member + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell campMember" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '">' + data.data.data[i].member + '</li>'
                         }
                         $(wFansList).empty();
                         if (newli == '') {
