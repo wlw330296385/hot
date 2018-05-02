@@ -297,7 +297,7 @@
                             <a class="all">全选</a>
                             <a class="cancel">取消</a>
                             <a class="del">[删除]</a>
-                            <a href="#addStudent" id="setMemberCBox" class="mui-icon mui-icon-personadd add"></a>
+                            <a href="#addStudent" class="mui-icon mui-icon-personadd add"></a>
                         </div>
                     </div>
                 </div>
@@ -379,10 +379,7 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
 
 
 
@@ -627,7 +624,7 @@
     <script src="/static/frontend/js/city.data.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
 
@@ -1021,20 +1018,15 @@
         })
 
 
-
         // 选择添加学员点击事件
-        $(".studentList").on('tap', 'li', function () {
+        $(".studentList").on('click', 'li.campMember', function () {
             var member_id = $(this).attr("data-id");
             var member = $(this).attr("data-member");
-            var member_type = $(this).attr("data-type");
-            var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + member + '</font><input type="checkbox"  name="member_id" value="' + member_id + '"class="stdList" data-member_id="' + member_id + '" data-member="' + member + '" data-member_type="' + member_type + '" ></div>';
+            var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + member + '</font><input type="checkbox"  name="member_id" value="' + member_id + '" class="stdList" data-member_id="' + member_id + '" data-member="' + member + '" /></div>';
 
-            //遍历私密会员列表中是否存在此学员
             var isExist = true;
             $(".stdList").each(function () {
                 var list_id = $(this).attr("data-member_id");
-                console.log(member_id);
-                console.log(list_id);
                 if(list_id == member_id){
                     isExist = false;
                     mui.toast("该会员在存在");
@@ -1042,7 +1034,6 @@
                 }
             });
             if(isExist==true){
-                console.log(member_id);
                 //无则添加到表内
                 $("#inactiveList").append(str);
                 mui.toast("已插入列表");
@@ -1051,7 +1042,7 @@
             //调用-更新序号
             changeIndex();
 
-            totalNum = $(".checkboxCont").length;
+            var totalNum = $(".checkboxCont").length;
             $(".mui-badge").text(totalNum);
 
 
@@ -1098,7 +1089,7 @@
                 //遍历获取私密会员列表数组
                 var memberList = [];
                 $(".stdList").each(function (i) {
-                    memberList[i] = { member: $(this).attr("data-member"), id: $(this).attr("data-member_id"), type: $(this).attr("data-member_type") };
+                    memberList[i] = { member: $(this).attr("data-member"), id: $(this).attr("data-member_id") };
                 });
             }
 //            console.log(memberList);
@@ -1237,7 +1228,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '">' + data.data.data[i].member + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell campMember" data-id="' + data.data.data[i].member_id + '" data-member="' + data.data.data[i].member + '" data-type="' + data.data.data[i].type + '">' + data.data.data[i].member + '</li>'
                         }
                         $(wFansList).empty();
                         if (newli == '') {
