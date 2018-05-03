@@ -1325,8 +1325,18 @@ class Team extends Base
         // 获取会员详情
         $memberS = new MemberService();
         $memberInfo = $memberS->getMemberInfo(['id' => $memberId]);
-        //dump($memberInfo);
 
-        return view('Team/memberPersonInfo');
+        // 在队球队列表
+        $teamS = new TeamService();
+        $memberOtherTeamMap = [
+            'member_id' => $memberInfo['id'],
+            'status' => 1
+        ];
+        $memberInTeamList = $teamS->getTeamMemberList($memberOtherTeamMap);
+
+        return view('Team/memberPersonInfo', [
+            'memberInfo' => $memberInfo,
+            'memberTeamList' => $memberInTeamList
+        ]);
     }
 }
