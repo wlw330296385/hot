@@ -164,7 +164,7 @@
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#">
                                     <span>总订单</span>
-                                    <div class="mui-media-body">{$totalBill}</div>
+                                    <div class="mui-media-body">{$totalBill+$notPayBill+$repayBill}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -237,6 +237,7 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -597,7 +598,7 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('bill/billinfoofcamp')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].create_time + '<p style="color:red">['+wooApi.dateIt('Y-m-d H:i')+']&nbsp;过期</p></li></ul></li></a>';
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].create_time + '<p style="color:red">['+wooApi.dateIt('Y-m-d H:i',data.data.data[i].expire)+']&nbsp;过期</p></li></ul></li></a>';
                     }
                     console.log(newli)
                     if (gType == 1) {

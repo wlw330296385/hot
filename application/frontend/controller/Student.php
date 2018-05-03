@@ -103,10 +103,10 @@ class Student extends Base
 		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
 		$totalBill = count($studentBillList);
 		// 未付款订单
-		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>0]);
+		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>['gt',time()]]);
 		//退款订单 
 		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>-2,'expire'=>0]);
-		$payBill = $totalBill - $notPayBill;
+		$payBill = $totalBill;
 
 
 		// 学员自己可操作区显示
