@@ -173,11 +173,11 @@
 
         //判断从哪里进入设置页面
         var getBackLink = wooApi.GetQueryString('from');
-        if(getBackLink!=""&&getBackLink!=null){
+        if (getBackLink != "" && getBackLink != null) {
             localStorage.campSettingBackTo = getBackLink;
         }
-        if(localStorage.campSettingBackTo!=""&&localStorage.campSettingBackTo!=null){
-            $(".backToPage").attr("href",localStorage.campSettingBackTo)
+        if (localStorage.campSettingBackTo != "" && localStorage.campSettingBackTo != null) {
+            $(".backToPage").attr("href", localStorage.campSettingBackTo)
         }
 
 
@@ -236,7 +236,9 @@
                             window.location.href = "{:url('camp/campsetting', ['camp_id' => $campInfo['id']])}";
                         });
                     } else {
-                        mui.toast(res.msg);
+                        mui.alert(res.msg, function () {
+                            $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
+                        });
                     }
                 },
                 error: function (xhr, type, errorThrown) {

@@ -41,7 +41,7 @@
         <h1 class="mui-title">{$eventInfo.organization}</h1>
     </header>
 
-    <div class="mui-content list">
+    <div class="mui-content list mb44">
 
             <form action="" class="mui-input-group">
                 <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
@@ -49,8 +49,8 @@
                 <ul class="mui-table-view border-b">
                     <li class="mui-table-view-cell listli">
                             <div class="mui-media-body wd83">
-                                <strong class="grade domData" name="event">{$eventInfo.event}</strong>
-                                <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">{$eventInfo.event_type}</p>
+                                <strong class="grade domData" name="event">活动主题：{$eventInfo.event}</strong>
+                                <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">活动类型：{$eventInfo.event_type}</p>
                                 <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
                                 <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
                                 <input type="hidden" name="event" value="{$eventInfo.event}" class="data">
@@ -422,7 +422,9 @@
                         window.location.href = "{:url('frontend/event/eventListOfCamp',['organization_id'=>$eventInfo['organization_id']])}";
                     })
                 } else {
-                    mui.alert(ajaxResult.msg, '创建失败');
+                    mui.alert(ajaxResult.msg, '创建失败',function(){
+                        $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
+                    });
                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                         if (data.code === 200) {
                             $('input[name=__token__]').val(data.data);

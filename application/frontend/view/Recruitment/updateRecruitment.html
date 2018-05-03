@@ -378,13 +378,15 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '招募修改失败', '确定', function () {
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                })
+                mui.alert(ajaxResult.msg, '招募创建失败', function () {
+                    $(".articleEditorRec").append("<p class='Eleditor-placeholder'>点击编辑招募简介</p>");
+                    $(".articleEditorReq").append("<p class='Eleditor-placeholder'>点击编辑招募要求</p>");
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
             }
         };
     </script>
