@@ -1077,6 +1077,8 @@ class Team extends Base
             $resSaveTeamMember = $teamS->saveTeamMember($data);
 
             if ($resSaveTeamMember['code'] == 200) {
+                // 球队成员数+1
+                db('team')->where(['id' => $teamInfo['id']])->setInc('member_num', 1);
                 // 处理球队职务
                 if ($data['role']) {
                     switch ($data['role']) {
@@ -1340,10 +1342,16 @@ class Team extends Base
             // 比赛成员名单+人数统计（列出当前球队）
             // 当前球队成员数
             foreach ($lastMatch as $k => $val) {
-                $matchMembers = $matchS->getMatchRecordMemberList(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
+                $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
                 $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                // 比赛球员出勤数：正式球队成员作算
+                $lastMatch[$k]['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $val['id'],
+                    'team_id' => $val['team_id'],
+                    'status' => ['>', 0],
+                    'team_member_id' => ['>', 0]
+                ]);
                 $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
 
@@ -1412,7 +1420,13 @@ class Team extends Base
                 $matchMembers = $matchS->getMatchRecordMemberList(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
                 $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                // 比赛球员出勤数：正式球队成员作算
+                $lastMatch[$k]['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $val['id'],
+                    'team_id' => $val['team_id'],
+                    'status' => ['>', 0],
+                    'team_member_id' => ['>', 0]
+                ]);
                 $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
 
@@ -1483,7 +1497,13 @@ class Team extends Base
                 $matchMembers = $matchS->getMatchRecordMemberList(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
                 $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                // 比赛球员出勤数：正式球队成员作算
+                $lastMatch[$k]['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $val['id'],
+                    'team_id' => $val['team_id'],
+                    'status' => ['>', 0],
+                    'team_member_id' => ['>', 0]
+                ]);
                 $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastMatch]);
@@ -1526,7 +1546,13 @@ class Team extends Base
                 $matchMembers = $matchS->getMatchRecordMemberListAll(['match_record_id' => $val['id'], 'team_id' => $val['team_id'], 'status' => ['>', 0]]);
                 $teamInfo = $teamS->getTeam(['id' => $val['team_id']]);
                 $lastMatch[$k]['memberlist'] = $matchMembers;
-                $lastMatch[$k]['reg_number'] = count($matchMembers);
+                // 比赛球员出勤数：正式球队成员作算
+                $lastMatch[$k]['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $val['id'],
+                    'team_id' => $val['team_id'],
+                    'status' => ['>', 0],
+                    'team_member_id' => ['>', 0]
+                ]);
                 $lastMatch[$k]['max'] = $teamInfo['member_num'];
             }
 
