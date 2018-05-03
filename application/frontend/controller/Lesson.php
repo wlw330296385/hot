@@ -105,37 +105,6 @@ class Lesson extends Base{
         return view('Lesson/lessonListOfOrganization');
     }
 
-    // 购买课程
-    // public function buyLesson(){
-    //     $studentInfo = db('student')->where(['member_id'=>$this->memberInfo['id']])->select();        
-    //     $this->assign('studentInfo',$studentInfo); 
-    // 	return view('Lesson/buyLesson');
-    // }
-
-    // 课程订单购买页面
-    // public function comfirmBill(){
-    //     $lesson_id = input('param.lesson_id');
-    //     $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-
-    //     // 生成订单号
-    //     $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
-    //     $jsonBillInfo = [
-    //         'goods'=>$lessonInfo['lesson'],
-    //         'goods_id'=>$lessonInfo['id'],
-    //         'camp_id'=>$lessonInfo['camp_id'],
-    //         'camp'=>$lessonInfo['camp'],
-    //         'price'=>$lessonInfo['cost'],
-    //         'score_pay'=>$lessonInfo['score'],
-    //         'goods_type'=>1,
-    //         'pay_type'=>'wxpay'
-    //     ];
-    //     $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
-    //     $this->assign('lessonInfo',$lessonInfo);
-    //     $this->assign('billOrder',$billOrder);
-    //     return view('Lesson/comfirmBill');
-    // }
-
-
     // 课程订单购买页面
     public function comfirmBill(){
         $lesson_id = input('param.lesson_id');
@@ -457,7 +426,7 @@ class Lesson extends Base{
    //编辑校园课程
     public function updateLessonOfSchool(){
     	//训练营主教练
-    	$camp_id = input('param.camp_id');
+        $camp_id = input('param.camp_id');
         $lesson_id = input('param.lesson_id');
         $is_power = $this->LessonService->isPower($camp_id,$this->memberInfo['id']);
         // 获取会员在训练营角色
@@ -473,11 +442,11 @@ class Lesson extends Base{
         }
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 教练列表
-    	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
+        $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
         $GradeCategoryService = new \app\service\GradeCategoryService;
         $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
-
+        
         $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // 私密课程 获取指定会员列表
@@ -490,12 +459,12 @@ class Lesson extends Base{
 
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('camp_id',$camp_id);
-    	$this->assign('gradeCategoryList',$gradeCategoryList);
+        $this->assign('gradeCategoryList',$gradeCategoryList);
         $this->assign('courtList',$courtList);
-    	$this->assign('staffList',$staffList);
-    	$this->assign('assignMemberList', $assignMemberList);
-    	$this->assign('assignMemberCount', $assignMemberCount);
-    	return view('Lesson/updateLessonOfSchool');
+        $this->assign('staffList',$staffList);
+        $this->assign('assignMemberList', $assignMemberList);
+        $this->assign('assignMemberCount', $assignMemberCount);
+        return view('Lesson/updateLessonOfSchool');
     }
 
     public function lessonInfoOfSchool(){
