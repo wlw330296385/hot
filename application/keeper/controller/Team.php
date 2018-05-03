@@ -7,6 +7,7 @@ use app\model\MatchRefereeApply;
 use app\model\MatchStatistics;
 use app\service\LeagueService;
 use app\service\MatchService;
+use app\service\MemberService;
 use app\service\RefereeService;
 use app\service\TeamService;
 
@@ -199,12 +200,13 @@ class Team extends Base
             $this->error('无此队员信息');
         }
 
-        // 该队员的其他球队列表
+        // 该球员的其他球队在队列表
         $memberOtherTeamMap = [
             'member_id' => $member_id,
             'team_id' => ['neq', $team_id],
             //'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
-            'name' => ['like', "%" . $teamMemberInfo['name'] . "%"]
+            'name' => ['like', "%" . $teamMemberInfo['name'] . "%"],
+            'status' => 1
         ];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
@@ -1313,4 +1315,28 @@ class Team extends Base
         ]);
     }
 
+    // 会员个人球员详情
+    public function memberpersoninfo() {
+        // 没传会员id 默认当前注册会员
+        $memberId = input('member_id', $this->memberInfo['id'], 'intval');
+        if (!$memberId) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取会员详情
+        $memberS = new MemberService();
+        $memberInfo = $memberS->getMemberInfo(['id' => $memberId]);
+
+        // 在队球队列表
+        $teamS = new TeamService();
+        $memberOtherTeamMap = [
+            'member_id' => $memberInfo['id'],
+            'status' => 1
+        ];
+        $memberInTeamList = $teamS->getTeamMemberList($memberOtherTeamMap);
+
+        return view('Team/memberPersonInfo', [
+            'memberInfo' => $memberInfo,
+            'memberTeamList' => $memberInTeamList
+        ]);
+    }
 }

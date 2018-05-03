@@ -21,6 +21,9 @@
             .headerLeft h4 {
                 line-height: 26px;
             }
+            .price-frame{
+                
+            }
         }
 
         @media screen and (min-width: 375px) {
@@ -40,19 +43,36 @@
                 line-height: 26px;
             }
         }
-        
+
+        .author,
+        .update_time {
+            line-height: 20px;
+            margin: 0;
+            padding: 0 !important;
+        }
+
+        #dianzan {
+            float: right !important;
+            width: 71% !important;
+            text-align: right !important;
+        }
+
         /* 针对控制台编辑的文章样式问题 */
+
         .introBox img {
             width: 100% !important;
             padding: 0 15px;
         }
-        .list .listli p{
+
+        .list .listli p {
             padding: 0 15px;
         }
+
         .list .listli span {
             float: initial !important;
             width: initial !important;
             text-align: initial !important;
+
         }
     </style>
 </head>
@@ -66,14 +86,14 @@
     <!--文章详情页-->
     <div class="mui-content">
 
-        <div class="list mt55">
+        <div class="list mb44">
             <div class="img4x3" style="background-image:url('{$articleInfo.covers}')"></div>
             <ul class="mui-table-view mb">
                 <li class="listli" style="overflow:hidden;">
                     <div class="mui-media-body headerLeft">
                         <h4>{$articleInfo.title}</h4>
-                        <p style="line-height:20px;margin:0;">作者：{$articleInfo.author}</p>
-                        <p style="line-height:20px;margin:0;">{$articleInfo.update_time}</p>
+                        <p class="author">作者：{$articleInfo.author}</p>
+                        <p class="update_time">{$articleInfo.update_time}</p>
                     </div>
                     <div class="price-frame">
                         {if $isCollect} {eq name="isCollect.status" value='1' }
@@ -83,7 +103,7 @@
                         {/eq} {else /}
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
                         {/if}
-                        <span>
+                        <span id="dianzan">
                             {if $isLikes} {eq name="isLikes.status" value='1' }
                             <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color" style="color:red"></i>&nbsp; {else /}
                             <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/eq} {else /}
@@ -130,10 +150,10 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli aaaa">
-                分享
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli shareLi">
+                <a href="#shareGuide">分享</a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue">
+            <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgblue commentLi">
                 <a href="#fbcomment">
                     发表评论
                 </a>
@@ -159,12 +179,31 @@
         </div>
     </div>
 
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         $(function () {
 
             toCommentList(); //获取评论列表
+
+            var organization_type = "{$articleInfo.organization_type}";
+            if (organization_type == 1) {
+                $(".commentLi").hide();
+                $(".shareLi").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                $(".shareLi").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+            }
+
             //评论功能
             $(".commentBtn").on('tap', function () {
                 var article = "{$articleInfo.title}";
@@ -340,6 +379,54 @@
             });
         };
 
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$articleInfo.title}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$articleInfo.covers}",
+                success: function () {
+
+                },
+                cancel: function () {
+
+                }
+            });
+
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$articleInfo.title}',
+                desc: '{$articleInfo.abstract}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$articleInfo.covers}",
+                type: "",
+                dataUrl: '',
+                success: function () {
+
+                },
+                cancel: function () {
+
+                }
+            });
+
+        });
     </script>
 </body>
 

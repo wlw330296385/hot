@@ -235,7 +235,7 @@ class Lesson extends Base{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
-    	
+
     }
 
     // 获取购买了课程的没毕业的学生

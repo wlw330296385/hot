@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{$lessonInfo.lesson}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+    <!--课程详情页-->
+    <div class="mui-content" style="padding: 0">
+        <div class="list camp-list coach mt55">
+            <div class="img4x3" style="background-image:url('{$lessonInfo.cover}')"></div>
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <div class="mui-media-body wd60 newline">
+                            <strong>{$lessonInfo.lesson}</strong>
+                            <p class="mui-ellipsis">{$lessonInfo.gradecate_setion}{$lessonInfo.gradecate}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price">
+                                {volist name="lessonInfo['doms']" id="vol" }
+                                <button type="button" class="mui-btn selectTotal" data="{$vol}">{$vol}节</button>
+                                {/volist}
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+
+                <li class="mui-table-view-cell listli">
+                    <a class="mui-navigate-right" href="{:url('frontend/camp/campInfo',['camp_id'=>$lessonInfo['camp_id']])}">
+                        所属训练营
+                        <span class="wd66" id="aaa">{$lessonInfo.camp}</span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>训练时间</label>
+                    <span>{$lessonInfo.week} {$lessonInfo.lesson_time |} </span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Activeobjec colororange"></span>训练地点</label>
+                    <span>{$lessonInfo.court}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>所属地区</label>
+                    <span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>具体地址</label>
+                    <span>{$lessonInfo.location}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>人数范围</label>
+                    <span>{$lessonInfo.min}-{$lessonInfo.max}人</span>
+                </li>
+
+                <li class="mui-table-view-cell listli">备注
+                    <span>{$lessonInfo.remarks}</span>
+                </li>
+            </ul>
+
+            <!--推荐人信息-->
+            {notempty name="pmember"}
+            <p class="pline"></p>
+            <div class="mui-row recommend">
+                <div class="mui-col-sm-3 mui-col-xs-3 recomLine"></div>
+                <div class="mui-col-sm-2 mui-col-xs-2 recomTxt">分享者</div>
+                <div class="mui-col-sm-2 mui-col-xs-2">
+                    <img src="{$pmember['avatar']}">
+                </div>
+                <div class="mui-col-sm-2 mui-col-xs-2 recomTxt">{$pmember.nickname}</div>
+                <div class="mui-col-sm-3 mui-col-xs-3 recomLine"></div>
+            </div>
+            {/notempty}
+
+        </div>
+        <ul class="mui-table-view operation">
+            <!--<li class="mui-table-view-cell mui-col-xs-12 opli bggreen" style="color: #fff">-->
+            <!--此功能维护中，请稍后再使用-->
+            <!--</li>-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                <a href="{$homeurl}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-2 opli">
+                <a href="#shareGuide" id="fenxiang">分享</a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                <a href="tel:{$lessonInfo.telephone}">
+                    <!-- <span class="mui-icon mui-icon-phone"></span> -->
+                    咨询</a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-6 opli bggreen" id="buyLesson">我要报名</a>
+            </li>
+        </ul>
+    </div>
+    <input type="hidden" name="{$shareurl}">
+
+
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    })
+
+    //弹出菜单
+    mui('.mui-scroll-wrapper').scroll();
+
+    mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    mui.get("{:url('api/member/checkopenid')}", {}, function (data) {
+        console.log(data);
+    }, 'json');
+
+
+    var buyUrl = "{:url('lesson/comfirmBillOfSchool',['lesson_id'=>$lessonInfo['id']])}";
+
+
+
+    // 预约课程和购买课程
+    $(function () {
+
+        //如果是私密课程就显示显示引导页
+        var isprivate = wooApi.GetQueryString('isprivate');
+        if (isprivate == 1) {
+            mui('#shareGuide').popover('toggle')
+        }
+
+
+        //选择课量
+        $('.selectTotal').on('tap', '', function () {
+            $('.selectTotal').removeClass('mui-btn-warning');
+            $(this).addClass('mui-btn-warning');
+        })
+
+        var sTotalCount = $('.selectTotal').length;
+        if(sTotalCount==1){
+            $('.selectTotal').addClass('mui-btn-warning');
+        }
+
+
+        //报名课程
+        $('#buyLesson').on('tap', '', function () {
+
+            if ("{$memberInfo.id}" <= 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            } else {
+                // var lessonTotal = sessionStorage.lessonTotal;
+                mui.ajax("{:url('api/lesson/canbuylesson')}", {
+                    data: {
+                        lesson_id: "{$lessonInfo.id}"
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    header: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.code === 200) {
+                            var lessonTotal = $('.mui-btn-warning').attr("data");
+                            if (lessonTotal == 0 || lessonTotal == null || lessonTotal == '') {
+                                //                    alert('请先选择课量');
+                                mui.alert('', '请先选择课量', function () { });
+                                return false;
+
+                            } else {
+                                // window.location.href = buyUrl;
+                                window.location.href = buyUrl + '?total=' + lessonTotal;
+                                //alert(lessonTotal);
+
+                            }
+                        } else {
+                            mui.alert(data.msg);
+                            return false;
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        mui.alert('网络异常，请稍后再试');
+                    }
+                });
+
+            }
+        })
+
+    })
+
+
+</script>
+
+<script>
+    wx.config({
+        //debug: true,
+        appId: "{$jsapi['appId']}",
+        timestamp: "{$jsapi['timestamp']}",
+        nonceStr: "{$jsapi['nonceStr']}",
+        signature: "{$jsapi['signature']}",
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ'
+        ]
+    });
+    wx.ready(function () {
+        // 分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: "{$lessonInfo.lesson}", // 分享标题
+            link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: "{$lessonInfo.cover}", // 分享图标
+            success: function () {
+
+            },
+            cancel: function () {
+            }
+        });
+
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '{$lessonInfo.lesson}', // 分享标题
+            desc: '{$lessonInfo.camp}', // 分享描述
+            link: "{$shareurl}/pid/{$mid}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: "{$lessonInfo.cover}", // 分享图标
+            type: "", // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+
+            },
+            cancel: function () {
+
+            }
+        });
+
+    });
+
+</script>
+
+</html>

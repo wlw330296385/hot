@@ -169,7 +169,7 @@
                 $("#articleEditor").children(".Eleditor-placeholder").remove();
                 //获取最终含简单html标签的图文内容
                 var introHtml = $("#articleEditor").html();
-                
+
                 var campid = $('input[name=campid]').val();
                 var logo = $('input[name=logo]').val();
                 var banner = $('input[name=banner]').val();
@@ -214,7 +214,9 @@
                             mui.toast(res.msg + ',请完善训练营资质证明');
                             setTimeout(window.location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
                         } else {
-                            mui.toast(res.msg);
+                            mui.alert(res.msg, function () {
+                                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
+                            });
                         }
                     },
                     error: function (xhr, type, errorThrown) {

@@ -21,9 +21,9 @@ class Upload {
         if ($file) {
             // 上传目录：uploads/images/图片用途/年/月（相对项目路径，用于保存数据）
             $usage = input('usage') ? input('usage') : 'other';
-            $dirName =  "uploads" . DS . "images". DS . $usage . DS . date('Y') . DS . date('m');
+            $dirName =  "uploads/images/". $usage . "/" . date('Y') . "/" . date('m');
             // 上传目录（绝对路径，用于保存文件）
-            $saveDir = ROOT_PATH  . "public" . DS. $dirName;
+            $saveDir = ROOT_PATH  . "public" . "/". $dirName;
             // 上传文件
             $info = $file->rule('uniqid')->move($saveDir);
             if ($info) {
@@ -34,9 +34,9 @@ class Upload {
                 // 压缩文件绝对路径+文件名
                 $saveThumb = "thumb_" . $info->getFileName();
                 // 压缩图片
-                $image->thumb($imageWidth/2, $imageHeight/2, Image::THUMB_CENTER)->save($saveDir . DS .$saveThumb);
-                $return['path'] = '/'. $dirName . DS . $saveThumb;
-                $return['url'] = '/'. $dirName . DS . $saveThumb;
+                $image->thumb($imageWidth/2, $imageHeight/2, Image::THUMB_CENTER)->save($saveDir . "/" .$saveThumb);
+                $return['path'] = '/'. $dirName . "/" . $saveThumb;
+                $return['url'] = '/'. $dirName . "/" . $saveThumb;
             } else {
                 $return['error'] = 1;
                 $return['success'] = 0;
@@ -46,6 +46,8 @@ class Upload {
         }
         return json($return);
     }
+
+
     // 截取图片 保存到指定目录
     public function imgcropupload() {
         $data = input('post.');

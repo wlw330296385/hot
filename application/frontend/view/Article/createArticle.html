@@ -20,6 +20,59 @@
             display: table;
             width: 100%;
         }
+
+        /* 裁剪图片样式 */
+
+        #clipArea {
+            height: 300px;
+        }
+
+        .fileFrame {
+            color: #000;
+            width: 26%;
+            height: 40px;
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-left: 30px;
+            margin-top: 15px;
+            text-align: center;
+            padding-top: 10px;
+            float: left;
+            font-size: 14px;
+        }
+
+        #file {
+            height: 25px;
+            top: 310px;
+            left: 30px;
+            overflow: hidden;
+            position: absolute;
+            z-index: 1;
+            width: 20%;
+            opacity: 0;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        #clipBtn {
+            float: right;
+            padding: 12px 20px;
+            margin: 15px 30px 0 0;
+            border-radius: 0;
+        }
+
+        #view {
+            width: 68px;
+            height: 51px;
+            border: 1px solid #CCC;
+            float: right;
+            margin-right: 35px;
+        }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -56,9 +109,9 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <a href="#txpopover" class="mui-navigate-right">
                     <label>文章封面</label>
-                    <img id="preview_1" class="upload-preview" alt="">
+                    <div id="view" style="background-image: url('')"></div>
                     <input type="hidden" name="covers" value="" class="data">
                 </a>
             </div>
@@ -91,6 +144,14 @@
 
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" id="file">
+        </div>
+        <button id="clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -102,6 +163,11 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -113,6 +179,7 @@
             placeHolder: '点击编辑文章图文',
         });
     </script>
+
     <script>
         //初始化
         mui.init({
@@ -143,7 +210,9 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '发布失败');
+                mui.alert(ajaxResult.msg, '发布失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑文章图文</p>");
+                });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);
@@ -151,6 +220,43 @@
                 }, 'json');
             }
         };
+
+    </script>
+    <script>
+        var imgurl = '';
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurl = res.path;
+                    $("input[name=covers]").val(imgurl)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
+        // 加载的图片必须要与本程序同源，否则无法截图
+        //        pc.load('img/mm.jpg');
 
     </script>
 </body>

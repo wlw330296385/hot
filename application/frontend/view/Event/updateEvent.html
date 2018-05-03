@@ -656,9 +656,17 @@
         // 获取数据并进行提交(编辑活动)
         function submitAction() {
 
+            if ($("input[name=event]").val() == '') {
+                mui.toast("请填写活动主题");
+                return false;
+            }
+            if ($("input[name=contact]").val() == '') {
+                mui.toast("请填写联系人");
+                return false;
+            }
             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-                mui.alert("请输入正确的手机格式");
-                return;
+                mui.toast("请输入正确的手机格式");
+                return false;
             };
 
             //去除提示文字的标签 
@@ -694,9 +702,14 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '活动修改失败', '确定', function () {
-
+                mui.alert(ajaxResult.msg, '活动修改失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
                 });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
             };
         };
 

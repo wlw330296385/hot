@@ -483,7 +483,17 @@ class Lesson extends Base{
         $lesson_id = input('param.lesson_id');
         $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
         // 生成订单号
-        $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+                $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
+                $jsonBillInfo = [
+                    'goods'=>$lessonInfo['lesson'],
+                    'goods_id'=>$lessonInfo['id'],
+                    'camp_id'=>$lessonInfo['camp_id'],
+                    'camp'=>$lessonInfo['camp'],
+                    'price'=>$lessonInfo['cost'],
+                    'score_pay'=>$lessonInfo['score'],
+                    'goods_type'=>1,
+                    'pay_type'=>'wxpay',
+                ];
         $jsonLessonInfo = [
             'camp'  => $lessonInfo['camp'],
             'camp_id'=>$lessonInfo['camp_id'],
@@ -491,6 +501,7 @@ class Lesson extends Base{
             'lesson_id' =>$lessonInfo['id'],
             'location' =>$lessonInfo['location'],
         ];
+         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('jsonLessonInfo',json_encode($jsonLessonInfo));
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('billOrder',$billOrder);
