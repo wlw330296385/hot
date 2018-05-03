@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>编辑课程</title>
+    <title>编辑校园课程</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -80,7 +80,7 @@
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
         <span class="return">返回</span>
     </a>
-    <h1 class="mui-title">{$lessonInfo.camp}</h1>
+    <h1 class="mui-title">{$lessonInfo.camp}（校园课）</h1>
 </header>
 <div class="mui-content pt">
 
@@ -194,11 +194,19 @@
                 </a>
             </div>
 
+            <!-- <div class="mui-input-row h-auto">
+                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                    <label>课程封面</label>
+                    <img id="preview_1" class="coachicon icon01 upload-preview" alt="" {notempty name="$lessonInfo.cover" }src="{$lessonInfo.cover}"
+                        {/notempty}>
+                    <input type="hidden" name="cover" value='{$lessonInfo.cover}' class="data">
+                </a>
+            </div> -->
 
             <div class="mui-input-row h-auto">
                 <a href="#txpopover" class="mui-navigate-right">
                     <label>课程封面</label>
-                    <div id="view" style="background-image: url({$lessonInfo.cover})"></div>
+                    <div id="view" style="background-image: url('{$lessonInfo.cover}')"></div>
                     <input type="hidden" name="cover" value='{$lessonInfo.cover}' class="data">
                 </a>
             </div>
@@ -653,6 +661,8 @@
     $(function () {
 
 
+        // 表单令牌
+        getToken();
         //获取训练营场地表
         toCourtList()
         //获取训练营教练列表
@@ -1068,16 +1078,20 @@
                 });
             } else {
                 mui.alert(ajaxResult.msg);
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
+                getToken();
             }
 
         }
     }
 
+    // 生成表单令牌
+    function getToken() {
+        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            if (data.code === 200) {
+                $('input[name=__token__]').val(data.data);
+            }
+        }, 'json');
+    }
 
     //根据默助教遍历出对应所选
     var toAssistantCheckbox = function () {
