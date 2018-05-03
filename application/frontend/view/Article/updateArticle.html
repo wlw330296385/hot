@@ -49,9 +49,9 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <a href="#txpopover" class="mui-navigate-right">
                     <label>文章封面</label>
-                    <img id="preview_1" class="upload-preview" alt="">
+                    <div id="view" style="background-image: url('{$articleInfo.covers}')"></div>
                     <input type="hidden" name="covers" value="{$articleInfo.covers}" class="data">
                 </a>
             </div>
@@ -84,6 +84,14 @@
 
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" id="file">
+        </div>
+        <button id="clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -95,6 +103,12 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -142,7 +156,7 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '修改失败',function(){
+                mui.alert(ajaxResult.msg, '修改失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑文章图文</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -152,6 +166,43 @@
                 }, 'json');
             }
         };
+
+    </script>
+    <script>
+        var imgurl = '';
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurl = res.path;
+                    $("input[name=covers]").val(imgurl)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
+        // 加载的图片必须要与本程序同源，否则无法截图
+        //        pc.load('img/mm.jpg');
 
     </script>
 </body>
