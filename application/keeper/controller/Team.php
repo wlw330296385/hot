@@ -7,6 +7,7 @@ use app\model\MatchRefereeApply;
 use app\model\MatchStatistics;
 use app\service\LeagueService;
 use app\service\MatchService;
+use app\service\MemberService;
 use app\service\RefereeService;
 use app\service\TeamService;
 
@@ -1316,6 +1317,16 @@ class Team extends Base
 
     // 会员个人球员详情
     public function memberpersoninfo() {
+        // 没传会员id 默认当前注册会员
+        $memberId = input('member_id', $this->memberInfo['id'], 'intval');
+        if (!$memberId) {
+            $this->error(__lang('MSG_402'));
+        }
+        // 获取会员详情
+        $memberS = new MemberService();
+        $memberInfo = $memberS->getMemberInfo(['id' => $memberId]);
+        //dump($memberInfo);
+
         return view('Team/memberPersonInfo');
     }
 }
