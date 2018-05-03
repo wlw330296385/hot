@@ -34,9 +34,9 @@ class Upload {
                 // 压缩文件绝对路径+文件名
                 $saveThumb = "thumb_" . $info->getFileName();
                 // 压缩图片
-                $image->thumb($imageWidth/2, $imageHeight/2, Image::THUMB_CENTER)->save($saveDir . DS .$saveThumb);
-                $return['path'] = '/'. $dirName . DS . $saveThumb;
-                $return['url'] = '/'. $dirName . DS . $saveThumb;
+                $image->thumb($imageWidth/2, $imageHeight/2, Image::THUMB_CENTER)->save($saveDir . "/" .$saveThumb);
+                $return['path'] = '/'. $dirName . "/" . $saveThumb;
+                $return['url'] = '/'. $dirName . "/" . $saveThumb;
             } else {
                 $return['error'] = 1;
                 $return['success'] = 0;

@@ -199,12 +199,13 @@ class Team extends Base
             $this->error('无此队员信息');
         }
 
-        // 该队员的其他球队列表
+        // 该球员的其他球队在队列表
         $memberOtherTeamMap = [
             'member_id' => $member_id,
             'team_id' => ['neq', $team_id],
             //'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
-            'name' => ['like', "%" . $teamMemberInfo['name'] . "%"]
+            'name' => ['like', "%" . $teamMemberInfo['name'] . "%"],
+            'status' => 1
         ];
         $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
 
@@ -1313,4 +1314,8 @@ class Team extends Base
         ]);
     }
 
+    // 会员个人球员详情
+    public function memberpersoninfo() {
+        return view('Team/memberPersonInfo');
+    }
 }
