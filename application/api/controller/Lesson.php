@@ -210,7 +210,6 @@ class Lesson extends Base{
                     }
                 }
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
-                halt($result);
                 if ($result['code'] == 200 && $data['isprivate'] == 1) {
                     $dataLessonAssign['lesson_id'] = $lesson_id;
                     $dataLessonAssign['lesson'] = $data['lesson'];
