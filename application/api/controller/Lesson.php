@@ -199,7 +199,7 @@ class Lesson extends Base{
                 return json(['code' => 100, 'msg' => '私密课程必须选择想要发送私密课程的会员']);
             }
             // 封面图 base64转存
-            //$data['cover'] = base64_image_content($data['cover'], 'lesson');
+            $data['cover'] = base64_image_content($data['cover'], 'lesson');
             if($lesson_id){
                 $lesson = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
                 $hasgradeused = $this->LessonService->hasgradeused($lesson_id);
@@ -235,7 +235,7 @@ class Lesson extends Base{
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
-    	
+
     }
 
     // 获取购买了课程的没毕业的学生

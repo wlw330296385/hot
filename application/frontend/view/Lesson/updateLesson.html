@@ -80,7 +80,7 @@
     </header>
     <div class="mui-content pt">
         <div class="camp-list camp-lesson-list editor" style="margin-top: 4px">
-            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <input type="hidden" name="__token__" class="data" value="" />
             <form action="" class="mui-input-group">
                 <div class="mui-input-row">
                     <label>课程名称</label>
@@ -674,8 +674,8 @@
         })(mui, document);
 
         $(function () {
-
-
+            // 表单令牌
+            getToken();
             //获取训练营场地表
             toCourtList()
             //获取训练营教练列表
@@ -1091,16 +1091,20 @@
                     });
                 } else {
                     mui.alert(ajaxResult.msg);
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
+                    getToken();
                 }
 
             }
         }
 
+        // 生成表单令牌
+        function getToken() {
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
 
         //根据默助教遍历出对应所选
         var toAssistantCheckbox = function () {

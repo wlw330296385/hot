@@ -418,7 +418,7 @@ function deep_in_array($value, $array) {
  */
 function base64_image_content($image_content,$path){
     if (empty($image_content) || is_null($image_content)) {
-        return ;
+        return $image_content;
     } else {
         //匹配出图片的格式
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_content, $result)){
