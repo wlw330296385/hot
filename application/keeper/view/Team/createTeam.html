@@ -849,7 +849,9 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败');
+                mui.alert(ajaxResult.msg, '创建失败',function(){
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑球队介绍</p>");
+                });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);
