@@ -416,27 +416,33 @@ function deep_in_array($value, $array) {
  * @param  [目录] $path [要保存的路径]
  * @return bool|string
  */
-function base64_image_content($base64_image_content,$path){
-    //匹配出图片的格式
-    if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
-        // 文件后缀
-        $type = $result[2];
-        // 文件名
-        $fileName = sha1(time().rand(1111, 9999)).".{$type}";
-        // 文件路径
-        $dirName = "uploads" . DS . "images". DS . $path . DS . date('Y') . DS . date('m') . DS;
-        $saveDir =  ROOT_PATH  . "public" . DS. $dirName;
-        if ( !is_dir($saveDir) ) { // 目录不存在 创建目录
-            mkdir($saveDir, 0700, true);
-        }
-        $fileSrc = $saveDir . $fileName;
-        // 转存文件数据
-        $fileContent = base64_decode( str_replace($result[1], '', $base64_image_content) );
-        $res = file_put_contents($fileSrc, $fileContent);
-        if ($res) {
-            return '/'.$dirName . $fileName;
+function base64_image_content($image_content,$path){
+    if (empty($image_content) || is_null($image_content)) {
+        return ;
+    } else {
+        //匹配出图片的格式
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_content, $result)){
+            // 文件后缀
+            $type = $result[2];
+            // 文件名
+            $fileName = sha1(time().rand(1111, 9999)).".{$type}";
+            // 文件路径
+            $dirName = "uploads/images/". $path . "/" . date('Y') . "/" . date('m') . "/";
+            $saveDir =  ROOT_PATH  . "public" . "/" . $dirName;
+            if ( !is_dir($saveDir) ) { // 目录不存在 创建目录
+                mkdir($saveDir, 0700, true);
+            }
+            $fileSrc = $saveDir . $fileName;
+            // 转存文件数据
+            $fileContent = base64_decode( str_replace($result[1], '', $image_content) );
+            $res = file_put_contents($fileSrc, $fileContent);
+            if ($res) {
+                return '/'.$dirName . $fileName;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return $image_content;
         }
     }
 }
