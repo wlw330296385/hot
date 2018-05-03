@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>预约体验</title>
+    <title>校园课程</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,7 +21,7 @@
 
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">确认订单</h1>
+    <h1 class="mui-title">登记报名订单</h1>
 </header>
 <div class="mui-content">
 
@@ -48,15 +48,14 @@
                     所属训练营<span class="wd66" >{$lessonInfo.camp}</span>
                 </a>
             </li>
-            <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$lessonInfo.cost}</b> 元</span></li>
-            <li class="mui-table-view-cell listli">所选课量<span><b class="colororange total"></b> 节</span></li>
+            <li class="mui-table-view-cell listli">本期课量<span><b class="colororange total"></b> 节</span></li>
             <li class="mui-table-view-cell listli">训练时间<span>{$lessonInfo.week} {$lessonInfo.lesson_time}</span></li>
             <li class="mui-table-view-cell listli">训练地点<span>{$lessonInfo.location}</span></li>
             <li class="mui-table-view-cell listli">所属地区<span>{$lessonInfo.province} {$lessonInfo.city} {$lessonInfo.area}</span></li>
             <li class="mui-table-view-cell listli"><span>课程总价<b class="colororange total_fee"></b></span></li>
         </ul>
         <div class="page-header">
-            <span class="title">体验生信息</span>
+            <span class="title">学生信息</span>
             <span class="fr"><span id="addBtn" class="mui-btn mui-btn-blue">添加学生</span></span>
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         </div>
@@ -91,8 +90,7 @@
     </div>
 
     <ul class="mui-table-view operation">
-        <li class="mui-table-view-cell mui-media mui-col-xs-8 opli" >还需支付:<b class="colororange total_fee">￥0</b></li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen" onclick="bookLeeson()">立即预约</li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="bookLeeson()">提交报名</li>
     </ul>
 
 </div>
@@ -118,10 +116,11 @@
     var isStudent = false;
     var strLessonInfo = '{$jsonLessonInfo}';
     var objLessonInfo = JSON.parse(strLessonInfo);
+    var strBillInfo = '{$jsonBillInfo}';
+    var objBillInfo = JSON.parse(strBillInfo);
     var total = wooApi.GetQueryString('total');
-    var total_fee = "{$lessonInfo.cost}" * total;
     $(function(){
-        $('.total_fee').html("￥"+0);
+        $('.total').text(total);
 
         // 添加学生
         $('#addBtn').on('click','',function(){
@@ -268,20 +267,18 @@
         });
 
         if (result.code == 200) {
-            presentItemCoupon();
-            mui.alert('欢迎加入本训练营，您的课程购买已完成，请留意课程消息及公告。', '购买成功', '确定', function () {
+            mui.alert('欢迎报名校园课程，请留意课程消息及公告。', '报名成功', '确定', function () {
                 followCamp();
-                window.location.href = "{:url('frontend/bill/billInfo',['bill_order'=>$billOrder])}";
-            });
-        } else {
+                window.location.href = "{:url('frontend/camp/index')}";
+            })
+        }else {
             mui.toast(result.msg);
         }
     }
     // 关注操作
     function followCamp(){
-        wooApi.asyncT("{:url('api/follow/followCampApi')}", {
-                'camp_id': {$lessonInfo.camp_id},
-            });
+        wooApi.asyncT("{:url('api/follow/followCampApi')}",{
+            'camp_id': '{$lessonInfo.camp_id}'},function(){});
     }
 
 

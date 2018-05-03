@@ -595,10 +595,15 @@
             //processData:false,
             success: function (data) {
                 var newli = '';
+                var tips = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('bill/billinfoofcamp')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].create_time + '<p style="color:red">['+wooApi.dateIt('Y-m-d H:i',data.data.data[i].expire)+']&nbsp;过期</p></li></ul></li></a>';
+                        tips='';
+                        if(data.data.data[i].is_pay==='未付款'){
+                            tips = '<p class="colorred f12">[ '+data.data.data[i].is_pay+' ]</p>';
+                        }
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].create_time + tips + '</li></ul></li></a>';
                     }
                     console.log(newli)
                     if (gType == 1) {
