@@ -514,7 +514,24 @@ class Schedule extends Base
                     return json(['code' => 100, 'msg' => '更新课程赠送课时' . __lang('MSG_400')]);
                 }
                 // 扣除训练营的余额
-                db('camp')->where(['id'=>$camp_id])->dec('balance',$totalCost)->update();
+                if($campInfo['rebate_type'] == 1){
+                    db('camp')->where(['id'=>$camp_id])->dec('balance',$totalCost)->update();
+                    db('output')->insert([
+                        'camp'=>$campInfo['camp'],
+                        'camp_id'=>$campInfo['id'],
+                        'f_id'=>$res['insid'],
+                        'type'=>1,
+                        'create_time'=>time(),
+                        'e_balance'=>($campInfo['balance']-$totalCost),
+                        's_balance'=>$campInfo['balance'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'shcedule_rebate'=>$campInfo['shcedule_rebate'],
+                        'output'=>$totalCost,
+                        'member'=>$this->memberInfo['member'],
+                        'member_id'=>$this->memberInfo['member_id']
+                    ]);
+                }
+                
             }
             return json($res);
         } catch (Exception $e) {
