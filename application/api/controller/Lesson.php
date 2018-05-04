@@ -319,6 +319,13 @@ class Lesson extends Base{
                             return json(['code' => 100,'msg' => '该课程还有没上完课的班级,不可下架,请先设置班级为预排并删除班级']);
                         }
                         $response = $this->LessonService->updateLessonField($lesson['id'], "status", -1);
+                        if($response['code'] == 200){
+                            // 校园课程把学生全部设置为毕业
+                            if($lesson['is_school'] == 1){
+                                db('lesson_member')->where(['lesson_id'=>$lesson['id']])->update(['status'=>4]);
+                                db('grade_member')->where(['lesson_id'=>$lesson['id']])->delete();
+                            }
+                        }
                         return json($response);
                     } else {
                         //$response = $this->LessonService->updateLessonField($lesson['id'], "isprivate", )

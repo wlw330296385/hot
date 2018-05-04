@@ -230,6 +230,7 @@ class LessonService {
         if (!$res) {
             return [ 'code' => 100, 'msg' => __lang('MSG_400'), 'data' => $model->getError() ];
         } else {
+            
             return [ 'code' => 200, 'msg' => __lang('MSG_200'), 'data' => $res ];
         }
     }
