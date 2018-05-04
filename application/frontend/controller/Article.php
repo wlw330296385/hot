@@ -145,5 +145,31 @@ class Article extends Base{
         $this->assign('articleInfo',$articleInfo);
         return view('Article/updateArticle');
     }
+
+
+
+
+    public function articleInfoOfLifeStyle(){
+        $article_id = input('param.article_id');
+        $articleInfo = $this->ArticleService->getArticleInfo(['id'=>$article_id]);
+        if(!$articleInfo){
+            $this->error('找不到文章信息');
+        }
+        //点击率+1;
+        $this->ArticleService->incArticle(['id'=>$article_id],'hit');
+        //收藏列表
+        $isCollect = $this->ArticleService->getCollectInfo(['article_id'=>$article_id,'member_id'=>$this->memberInfo['id']]);
+
+        $isLikes = $this->ArticleService->getLikesInfo(['article_id'=>$article_id,'member_id'=>$this->memberInfo['id']]);
+
+        //礼包列表
+        $ItemCouponList = db('item_coupon')->where(['target_type'=>4,'target_id'=>$article_id])->select();
+        
+        $this->assign('ItemCouponList',$ItemCouponList);
+        $this->assign('isLikes',$isLikes);
+        $this->assign('isCollect',$isCollect);
+        $this->assign('articleInfo',$articleInfo);
+        return view('Article/articleInfoOfLifeStyle');
+    }
    
 }
