@@ -111,11 +111,13 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-p-game"></use>
-                        </svg>
-                        <span class="f14" style="display: block;">比赛</span>
-                        <div class="mui-media-body f18 colororange match_number">0</div>
+                        <a href="{:url('index/latelyMatchList')}" style="height: 83px;">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-game"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">比赛</span>
+                            <div class="mui-media-body f18 colororange match_number">0</div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
@@ -329,7 +331,7 @@
                 <a href="#fbcomment">评论</a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit">
-                <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'id'=>$memberInfo['id']])}">
+                <a >
                     编辑
                 </a>
             </li>
@@ -405,7 +407,7 @@
 
         var member = "{$memberInfo.member}";
         var member_id = "{$memberInfo.id}";
-        var id = "{memberInfo.id}";
+        var id = "{$memberInfo.id}";
         var tm_name = "{memberInfo.name}";
         var sYear = '';
         $(function () {
@@ -461,7 +463,6 @@
                 });
             });
 
-
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {
                 var tags = $(".tagAll .bgorange").map(function () {
@@ -480,8 +481,8 @@
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 1,
-                        commented: tm_name,
-                        commented_id: id,
+                        commented: member,
+                        commented_id: member_id,
                         tags: tags,
                         tag_ids: tag_ids,
                     },
@@ -754,11 +755,10 @@
         //获取荣誉列表
         function toHonorList() {
             var url = "{:url('api/team/getteammemberhonorlist','','',true)}" + '/?page=' + 1;
-            var teamMember_id = "{$memberInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    tm_id: teamMember_id,
+                    member_id: member_id,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

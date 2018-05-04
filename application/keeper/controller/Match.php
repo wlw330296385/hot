@@ -327,5 +327,15 @@ class Match extends Base {
     public function adminListOfOrganization() {
         return view('Match/adminListOfOrganization');
     }
+
+    // 联赛工作人员
+    public function workListOfLeague() {
+        return view('Match/workListOfLeague');
+    }
+
+    // 联赛消息
+    public function messageListOfLeague() {
+        return view('Match/messageListOfLeague');
+    }
     
 }
