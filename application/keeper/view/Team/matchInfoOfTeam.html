@@ -269,7 +269,7 @@
                         <b class="colororange rate">0%</b>
                     </span>
                     <span class="more f14">
-                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}/?matchofteam=1" class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/{$countTeamMember}
                         </a>
                     </span>
@@ -315,6 +315,9 @@
                 <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status1" style="display:none">参加</li>
                 <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue status2" style="display:none">
                     <a href="#fbcomment">发表评论</a>
+                </li>
+                <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen status3" style="display:none">
+                    <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">编辑/录入 </a>
                 </li>
             </ul>
 
@@ -405,24 +408,6 @@
                 $(".refereeCostBear").text("主队负责");
             } else if (referee_cost_bear == 3) {
                 $(".refereeCostBear").text("客队负责");
-            }
-
-            // 判断身份显示操作按钮
-            var memberRefereeInfoId = "{$memberRefereeInfo.id}";
-            var referee_type = '{$refereeList}';
-            var is_finished = "{$matchInfo.is_finished_num}";
-
-            if (is_finished == 1) {
-                $(".status2").show();
-            } else if (is_finished == -1) {
-                if (memberRefereeInfoId != '' && referee_type != '') {
-                    $(".status1").show();
-                    $(".matchpk").show();
-                } else {
-                    $(".status1").show();
-                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-                }
             }
 
             // 申请执裁
@@ -552,6 +537,65 @@
                 });
             });
 
+            // 判断身份显示操作按钮
+            var memberRefereeInfoId = "{$memberRefereeInfo.id}";
+            var referee_type = '{$refereeList}';
+            var teamrole = "{$teamrole}";
+            var is_finished = "{$matchInfo.is_finished_num}";
+
+            // 队委
+            if (teamrole > 0 && is_finished == 1) {
+                $(".status2").show();
+                $(".status2").removeClass("mui-col-xs-10").addClass("mui-col-xs-5");
+                $(".status2").removeClass("mui-col-sm-10").addClass("mui-col-sm-5");
+                $(".status3").show();
+            } else if (teamrole > 0 && is_finished == -1) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
+                    $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
+                    $(".status3").show();
+                    $(".status3").removeClass("mui-col-xs-5").addClass("mui-col-xs-4");
+                    $(".status3").removeClass("mui-col-sm-5").addClass("mui-col-sm-4");
+                    $(".matchpk").show();
+                    $(".matchpk").removeClass("mui-col-xs-5").addClass("mui-col-xs-3");
+                    $(".matchpk").removeClass("mui-col-sm-5").addClass("mui-col-sm-3");
+                    return false;
+                } else {
+                    $(".status1").show();
+                    $(".status3").show();
+                }
+            }
+
+            // 队员
+            if (teamrole == 0 && is_finished == 1) {
+                $(".status2").show();
+            } else if (teamrole == 0 && is_finished == -1) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
+                    $(".status1").show();
+                    $(".matchpk").show();
+                    return false;
+                } else {
+                    $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+                }
+            }
+
+            // 平台会员
+            if (teamrole < 0 && is_finished == 1) {
+                $(".status2").show();
+            } else if (teamrole < 0 && is_finished == -1) {
+                if (memberRefereeInfoId != '' && referee_type != '') {
+                    $(".status1").show();
+                    $(".matchpk").show();
+                    return false;
+                } else {
+                    $(".status1").show();
+                    $(".status1").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                    $(".status1").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+                }
+            }
 
         });
 

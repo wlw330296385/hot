@@ -36,13 +36,15 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
+        var eventofteam = '';
         $(function () {
-
+            eventofteam = wooApi.GetQueryString('eventOfTeam');
             //初始化全局变量
             var count = 1;
 
@@ -112,7 +114,11 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell mui-media listli">'
                             newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd73">' + data.data.data[i].member + '';
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p></div>'
+                            if (eventofteam == 1) {
+                                newli += '<p class="mui-ellipsis">' + data.data.data[i].contact_tel + '</p></div>'
+                            } else {
+                                newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div>'
+                            }
                             newli += '</li>';
                         }
                     }

@@ -446,7 +446,7 @@ class Team extends Base
          $this->assign('teamrole', $teamrole);
          $this->assign('eventInfo', $eventInfo);
          $this->assign('memberList', $memberlist);
-         return view('Team/eventinfoofteam');
+         return view('Team/eventInfoOfTeam');
      }
 
     // 活动报名人员名单
@@ -596,7 +596,7 @@ class Team extends Base
         $this->assign('matchInfo', $matchInfo);
         $this->assign('refereeList', $refereeList);
         $this->assign('memberRefereeInfo', $memberRefereeInfo);
-        return view('Team/matchinfoofteam');
+        return view('Team/matchInfoOfTeam');
     }
 
     // 创建比赛信息
