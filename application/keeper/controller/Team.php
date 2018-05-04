@@ -202,13 +202,13 @@ class Team extends Base
 
         // 该球员的其他球队在队列表
         $memberOtherTeamMap = [
-            'member_id' => $member_id,
+            'member_id' => $teamMemberInfo['member_id'],
             'team_id' => ['neq', $team_id],
             //'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
             'name' => ['like', "%" . $teamMemberInfo['name'] . "%"],
             'status' => 1
         ];
-        $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
+        $memberOtherTeam = $teamS->getTeamMemberAllWithTeam($memberOtherTeamMap);
 
         // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
         $delbtnDisplay = 0;
@@ -389,7 +389,7 @@ class Team extends Base
         return view('Team/eventListOfPlatform');
     }
 
-    // 活动详情
+    // 平台活动详情
     public function eventinfo()
     {
         // 活动详情数据
@@ -419,6 +419,36 @@ class Team extends Base
         return view('Team/eventInfo');
     }
 
+     // 球队管理活动详情
+     public function eventinfoofteam()
+     {
+         // 活动详情数据
+         $event_id = input('param.event_id');
+         $teamS = new TeamService();
+         $eventInfo = $teamS->getTeamEventInfo(['id' => $event_id]);
+         if (!empty($eventInfo['album'])) {
+             $eventInfo['album'] = json_decode($eventInfo['album'], true);
+         }
+         $memberlist = $teamS->teamEventMembers(['event_id' => $event_id]);
+ 
+         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+         $teamMemberInfo = $teamS->getTeamMemberInfo([
+             'team_id' => $this->team_id,
+             'member_id' => $this->memberInfo['id'],
+             'status' => 1
+         ]);
+         if ($teamMemberInfo) {
+             $teamrole = $teamS->checkMemberTeamRole($eventInfo['team_id'], $this->memberInfo['id']);
+         } else {
+             $teamrole = -1;
+         }
+ 
+         $this->assign('teamrole', $teamrole);
+         $this->assign('eventInfo', $eventInfo);
+         $this->assign('memberList', $memberlist);
+         return view('Team/eventInfoOfTeam');
+     }
+
     // 活动报名人员名单
     public function eventsignuplist()
     {
@@ -443,7 +473,7 @@ class Team extends Base
         return view('Team/matchListOfPlatform');
     }
 
-    // 赛事详情
+    // 平台赛事详情
     public function matchinfo()
     {
         $match_id = input('match_id', 0);
@@ -504,6 +534,69 @@ class Team extends Base
         $this->assign('refereeList', $refereeList);
         $this->assign('memberRefereeInfo', $memberRefereeInfo);
         return view('Team/matchInfo');
+    }
+
+    // 管理赛事详情
+    public function matchinfoofteam()
+    {
+        $match_id = input('match_id', 0);
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $refereeS = new RefereeService();
+        // 比赛详情
+        $matchInfo = $matchS->getMatch(['id' => $match_id]);
+
+        // 输出比赛战绩数据
+        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        if ($matchRecordInfo) {
+            if (!empty($matchRecordInfo['album'])) {
+                $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+            }
+            if (empty($matchRecordInfo['away_team'])) {
+                $matchRecordInfo['away_team_logo'] = config('default_image.team_logo');
+            }
+            $matchInfo['record'] = $matchRecordInfo;
+        }
+        // 判断比赛是否“免裁判” 0为“免裁判”
+        $matchInfo['referee_type'] = 0;
+        if (!empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3'])) {
+            $matchInfo['referee_type'] = 1;
+        }
+
+        // 裁判列表:获取已同意的裁判比赛申请|邀请的裁判名单
+        $refereeList = [];
+        $modelMatchRefereeApply = new MatchRefereeApply();
+        $refereeList = $modelMatchRefereeApply->where([
+            'match_id' => $matchRecordInfo['match_id'],
+            'match_record_id' => $matchRecordInfo['id'],
+            'status' => ['neq', 3]
+        ])->select();
+
+        // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
+        $teamMemberInfo = $teamS->getTeamMemberInfo([
+            'team_id' => $this->team_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($teamMemberInfo) {
+            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
+        } else {
+            $teamrole = -1;
+        }
+
+        // 当前球队成员总数
+        $countTeamMember = $teamS->getTeamMemberCount(['team_id' => $matchInfo['team_id']]);
+
+
+        // 获取会员的已审核裁判员信息
+        $memberRefereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id'], 'status' => 1]);
+
+        $this->assign('teamrole', $teamrole);
+        $this->assign('countTeamMember', $countTeamMember);
+        $this->assign('matchInfo', $matchInfo);
+        $this->assign('refereeList', $refereeList);
+        $this->assign('memberRefereeInfo', $memberRefereeInfo);
+        return view('Team/matchInfoOfTeam');
     }
 
     // 创建比赛信息
@@ -1332,11 +1425,31 @@ class Team extends Base
             'member_id' => $memberInfo['id'],
             'status' => 1
         ];
-        $memberInTeamList = $teamS->getTeamMemberList($memberOtherTeamMap);
+        $memberTeamList = $teamS->getTeamMemberAllWithTeam($memberOtherTeamMap, ['create_time' => 'asc']);
+
+        // 赛季选择列表：从会员加入第一个球队年至当前年
+        $seasonList = [];
+        $teamMemberCreateYear = checkDatetimeIsValid($memberTeamList[0]['create_time']) ? strtotime($memberTeamList[0]['create_time']) : $memberTeamList[0]['create_time'];
+        $teamMemberCreateYear = intval(date('Y', $teamMemberCreateYear));
+        // 当前年份
+        $curYear = intval(date('Y', time()));
+        if ($teamMemberCreateYear != $curYear) {
+            $i = 0;
+            while ($teamMemberCreateYear <= $curYear) {
+                $seasonList[$i] = $teamMemberCreateYear++;
+                $i++;
+            }
+        } else {
+            $seasonList[] = $curYear;
+        }
+        $beginYear = current($seasonList);
+        $endYear = end($seasonList);
 
         return view('Team/memberPersonInfo', [
             'memberInfo' => $memberInfo,
-            'memberTeamList' => $memberInTeamList
+            'memberTeamList' => $memberTeamList,
+            'beginYear' => $beginYear,
+            'endYear' => $endYear
         ]);
     }
 }

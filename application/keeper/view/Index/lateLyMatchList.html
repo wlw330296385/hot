@@ -56,13 +56,14 @@
         $(function () {
 
             //初始化全局变量
+            var teamId = '';
             var count = 1;
-            var teamId = wooApi.GetQueryString('team_id');
+            teamId = wooApi.GetQueryString('team_id');
             if (teamId == "" || teamId == null) {
                 $(".headStatus").hide();
             } else {
                 $(".headStatus").show();
-                $("#refreshContainer").css("margin-top","137px");
+                $("#refreshContainer").css("margin-top", "137px");
             }
             //搜索、下拉刷选后触发
             function searchToList() {
@@ -118,12 +119,14 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/lastmatchlist','','',true)}";
-                var member_id = "{$memberInfo.id}"
+                var member_id = "{$memberInfo.id}";
+                var team_id = "{$team_id}";
                 mui.ajax({
                     url: url,
                     data: {
                         page: page,
                         member_id: member_id,
+                        team_id: team_id,
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
