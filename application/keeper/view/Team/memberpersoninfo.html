@@ -102,7 +102,7 @@
 
             <!--赛季数据-->
             <form class="mui-input-group">
-                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month","beginYear":2015,"endYear":2018}'>
+                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month","beginYear":{$beginYear},"endYear":{$endYear}}'>
                     <div class="mui-navigate-right">
                         <span id="result" class="ui-alert year">切换赛季</span>
                     </div>
@@ -264,15 +264,17 @@
                 </span>
             </div>
             <ul class="mui-table-view list border-b teammember coach">
+                {volist name="memberTeamList" id="vo"}
                 <li class="mui-table-view-cell mui-media listli">
-                    <a href="{:url('team/teamInfo')}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left coachicon" style="height: 42px !important; width: 42px !important" src="">
-                        <div class="mui-media-body wd60">
-                            <p class="mui-ellipsis">入队时间:</p>
+                    <a href="{:url('team/teamInfo', ['team_id' => $vo.team.id])}" class="mui-navigate-right">
+                        <img class="mui-media-object mui-pull-left coachicon" style="height: 42px !important; width: 42px !important" src="{$vo.team.logo}">
+                        <div class="mui-media-body wd60">{$vo.team.name}
+                            <p class="mui-ellipsis">入队时间:{$vo.create_time}</p>
                         </div>
-                        <div class="price-frame rightLocation"></div>
+                        <div class="price-frame rightLocation">{$vo.team.area}</div>
                     </a>
                 </li>
+                {/volist}
             </ul>
 
             <!--个人荣誉-->

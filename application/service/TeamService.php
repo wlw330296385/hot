@@ -329,6 +329,16 @@ class TeamService
         }
     }
 
+    // 获取球队成员列表（所有数据，关联球队）
+    public function getTeamMemberAllWithTeam($map, $order=['id' => 'desc']) {
+        $model = new TeamMember();
+        $res = $model->with('team')->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 获取球队-队员详细
     public function getTeamMemberInfo($map)
     {

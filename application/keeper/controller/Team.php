@@ -202,13 +202,13 @@ class Team extends Base
 
         // 该球员的其他球队在队列表
         $memberOtherTeamMap = [
-            'member_id' => $member_id,
+            'member_id' => $teamMemberInfo['member_id'],
             'team_id' => ['neq', $team_id],
             //'member' => ['like', "%". $teamMemberInfo['member'] ."%"]
             'name' => ['like', "%" . $teamMemberInfo['name'] . "%"],
             'status' => 1
         ];
-        $memberOtherTeam = $teamS->getTeamMemberList($memberOtherTeamMap);
+        $memberOtherTeam = $teamS->getTeamMemberAllWithTeam($memberOtherTeamMap);
 
         // 领队可移除除自己外的球队成员，成员自己申请退队 按钮显示
         $delbtnDisplay = 0;
@@ -1425,11 +1425,31 @@ class Team extends Base
             'member_id' => $memberInfo['id'],
             'status' => 1
         ];
-        $memberInTeamList = $teamS->getTeamMemberList($memberOtherTeamMap);
+        $memberTeamList = $teamS->getTeamMemberAllWithTeam($memberOtherTeamMap, ['create_time' => 'asc']);
+
+        // 赛季选择列表：从会员加入第一个球队年至当前年
+        $seasonList = [];
+        $teamMemberCreateYear = checkDatetimeIsValid($memberTeamList[0]['create_time']) ? strtotime($memberTeamList[0]['create_time']) : $memberTeamList[0]['create_time'];
+        $teamMemberCreateYear = intval(date('Y', $teamMemberCreateYear));
+        // 当前年份
+        $curYear = intval(date('Y', time()));
+        if ($teamMemberCreateYear != $curYear) {
+            $i = 0;
+            while ($teamMemberCreateYear <= $curYear) {
+                $seasonList[$i] = $teamMemberCreateYear++;
+                $i++;
+            }
+        } else {
+            $seasonList[] = $curYear;
+        }
+        $beginYear = current($seasonList);
+        $endYear = end($seasonList);
 
         return view('Team/memberPersonInfo', [
             'memberInfo' => $memberInfo,
-            'memberTeamList' => $memberInTeamList
+            'memberTeamList' => $memberTeamList,
+            'beginYear' => $beginYear,
+            'endYear' => $endYear
         ]);
     }
 }
