@@ -121,13 +121,22 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/lasteventlist','','',true)}";
-                var member_id = "{$memberInfo.id}"
+                var member_id = "{$memberInfo.id}";
+                var team_id = "{$team_id}";
+                if (teamId == '' || teamId == null) {
+                    var data = {
+                        page: page,
+                        member_id: member_id,
+                    }
+                } else {
+                    var data = {
+                        page: page,
+                        team_id: team_id,
+                    }
+                }
                 mui.ajax({
                     url: url,
-                    data: {
-                        page: page,
-                        member_id: member_id
-                    },
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
