@@ -96,6 +96,7 @@
                         <label>所属课程</label>
                         <input type="text" value="" name="lesson" class="lessonTypeCont data" placeholder="请先选择课程，后选择学员">
                         <input type="hidden" name="lesson_id" class="lesson_id data" value="">
+                        <input type="hidden" name="is_school" class="is_school data" value="">
                     </a>
                 </div>
 
@@ -259,7 +260,7 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list">
                     {volist name="lessonList" id="vol"}
-                    <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}" data-gradecate="{$vol.gradecate}" data-gradecate_id="{$vol.gradecate_id}" data-gradecate_setion="{$vol.gradecate_setion}" data-gradecate_setion_id="{$vol.gradecate_setion_id}">{$vol.lesson}</li>
+                    <li class="mui-table-view-cell listli detalisli lessonType lesson" data-id="{$vol.id}" data-is_school="{$vol.is_school}" data-gradecate="{$vol.gradecate}" data-gradecate_id="{$vol.gradecate_id}" data-gradecate_setion="{$vol.gradecate_setion}" data-gradecate_setion_id="{$vol.gradecate_setion_id}">{$vol.lesson}</li>
                     {/volist}
                 </ul>
             </div>
@@ -922,10 +923,12 @@
                 var gradecate_setion_id = $(this).attr('data-gradecate_setion_id');
                 var gradecate = $(this).attr('data-gradecate');
                 var gradecate_id = $(this).attr('data-gradecate_id');
+                var is_school = $(this).attr('data-is_school');
                 $("input[name='gradecate_setion']").val(gradecate_setion);
                 $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
                 $("input[name='gradecate']").val(gradecate);
                 $("input[name='gradecate_id']").val(gradecate_id);
+                $("input[name='is_school']").val(is_school);
                 $(".gradeTypeCont").text(gradecate_setion+gradecate);
                 //获取课程名称及ID并获取对应的学生
                 var lessonType = $(this).text();
