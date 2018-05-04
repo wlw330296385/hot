@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 
 use app\model\MatchStatistics;
+use app\service\MatchDataService;
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\TeamService;
@@ -15,19 +16,27 @@ class Matchdata extends Base
     public function playerseasonstatis() {
         try {
             $data = input('param.');
-            // 球员id必须传入
-            if ( !array_key_exists('team_member_id', $data) ) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402').'请选择球员']);
+            // 传入球员id
+            if ( array_key_exists('team_member_id', $data) ) {
+                // 获取球队成员信息
+                $teamS = new TeamService();
+                $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $data['team_member_id']]);
+                if (!$teamMemberInfo) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
+                }
             }
-            $teamS = new TeamService();
-            // 获取球队成员数据
-            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $data['team_member_id']]);
-            if (!$teamMemberInfo) {
-                return json(['code' => 100, 'msg' => __lang('MSG_404').'无此球员信息']);
+            // 传入会员id
+            if ( array_key_exists('member_id', $data) ) {
+                // 获取会员信息
+                $memberS = new MemberService();
+                $memberInfo = $memberS->getMemberInfo(['id' => $data['member_id']]);
+                if (!$memberInfo) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_404').'无此会员信息']);
+                }
             }
             // 赛季时间(年)
             if (input('?param.year')) {
-                $year = input('year');
+                $year = input('year', date('Y', time()));
                 // 比赛时间在赛季年
                 $when = getStartAndEndUnixTimestamp($year);
                 $data['match_time'] = ['between',
@@ -39,67 +48,19 @@ class Matchdata extends Base
             $data['status'] = 1;
             // 组合查询条件 end
 
-            // 查询数据
-            $model = new MatchStatistics();
-
+            $matchDataS = new MatchDataService();
             // 比赛次数
-            $matchNumber = $model->where($data)->count();
-            // 平均数据
-            $avgdata = [];
-            $avgdata = $model->where($data)
-                ->field('avg(pts) as pts, avg(ast) as ast, avg(reb) as reb, avg(stl) as stl, avg(blk) as blk, avg(turnover) as turnover, avg(foul) as foul, avg(fg) as fg, avg(fga) as fga, avg(threepfg) as threepfg, avg(threepfga) as threepfga, avg(ft) as ft, avg(fta) as fta')
-                ->find();
-            // 查无赛季均值数据
-            if (!$avgdata) {
-                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-            }
-            if ($avgdata) {
-                $avgdata = $avgdata->toArray();
-                // 整理字段返回
-                $avgdata['pts'] = is_null($avgdata['pts']) ? 0 : round($avgdata['pts'], 1);
-                $avgdata['ast'] = is_null($avgdata['ast']) ? 0 : round($avgdata['ast'], 1);
-                $avgdata['reb'] = is_null($avgdata['reb']) ? 0 : round($avgdata['reb'], 1);
-                $avgdata['stl'] = is_null($avgdata['stl']) ? 0 : round($avgdata['stl'], 1);
-                $avgdata['blk'] = is_null($avgdata['blk']) ? 0 : round($avgdata['blk'], 1);
-                $avgdata['turnover'] = is_null($avgdata['turnover']) ? 0 : round($avgdata['turnover'], 1);
-                $avgdata['foul'] = is_null($avgdata['foul']) ? 0 : round($avgdata['foul'], 1);
-                $avgdata['fg'] = is_null($avgdata['fg']) ? 0 : round($avgdata['fg'], 1);
-                $avgdata['fga'] = is_null($avgdata['fga']) ? 0 : round($avgdata['fga'], 1);
-                $avgdata['threepfg'] = is_null($avgdata['threepfg']) ? 0 : round($avgdata['threepfg'], 1);
-                $avgdata['threepfga'] = is_null($avgdata['threepfga']) ? 0 : round($avgdata['threepfga'], 1);
-                $avgdata['ft'] = is_null($avgdata['ft']) ? 0 : round($avgdata['ft'], 1);
-                $avgdata['fta'] = is_null($avgdata['fta']) ? 0 : round($avgdata['fta'], 1);
-            }
+            $matchNumber = $matchDataS->getMatchStaticCount($data);
+            // 获取比赛技术统计数据均值
+            $avgdata = $matchDataS->getMatchStaticAvg($data);
             // 首发次数
-            $avgdata['avg_lineup'] = $model->where($data)->where('lineup',1)->count();
-            // 平均2分命中率
-            $avgFgHitRate = ( $avgdata['fga'] ) ? $avgdata['fg']/$avgdata['fga'] : 0;
-            $avgdata['fg_hitrate'] = round($avgFgHitRate*100,1).'%';
-            // 平均3分命中率
-            $avgFg3pHitRate = ( $avgdata['threepfga'] ) ? $avgdata['threepfg']/$avgdata['threepfga'] : 0;
-            $avgdata['threepfg_hitrate'] = round($avgFg3pHitRate*100, 1).'%';
-            // 平均罚球命中率
-            $avgFtHitRate = ( $avgdata['fta'] ) ? $avgdata['ft']/$avgdata['fta'] : 0;
-            $avgdata['ft_hitrate'] = round($avgFtHitRate*100, 1).'%';
-            // 平均命中率(综合2分与3分）
-            $avgHitRate = ($avgdata['fga'] && $avgdata['threepfga']) ? ($avgdata['fg']+$avgdata['threepfg'])/($avgdata['fga']+$avgdata['threepfga']) : 0;
-            $avgdata['hitrate'] = round($avgHitRate*100, 1).'%';
-            // 数据总和
-            $sumdata = [];
-            $efficiency = 0;
-            $sumdata = $model->where($data)
-                ->field('sum(pts) as pts, sum(ast) as ast, sum(reb) as reb, sum(stl) as stl, sum(blk) as blk, sum(turnover) as turnover, sum(foul) as foul, sum(fg) as fg, sum(fga) as fga, sum(fg) as fg, sum(threepfg) as threepfg, sum(threepfga) as threepfga, sum(ft) as ft, sum(fta) as fta')
-                ->find();
-            if ($sumdata) {
-                $sumdata = $sumdata->toArray();
-            }
+            $avgdata['avg_lineup'] = $matchDataS->getMatchStaticLineUpCount($data);
+            // 获取比赛技术统计数据总和
+            $sumdata = $matchDataS->getMatchStaticSum($data);
             // 效率值 公式：[(得分+篮板+助攻+抢断+封盖)-(出手次数-命中次数)-(罚球次数-罚球命中次数)-失误次数]/球员上场比赛的场次
-            // 出手次数
-            $sumFga = $sumdata['fga']+$sumdata['threepfga'];
-            // 命中次数
-            $sumFg = $sumdata['fg']+$sumdata['threepfg'];
+            $efficiency = 0;
             if ($matchNumber) {
-                $efficiency = (($sumdata['pts']+$sumdata['reb']+$sumdata['ast']+$sumdata['stl']+$sumdata['blk']) - ($sumFga-$sumFg) - ($sumdata['fta']-$sumdata['ft']) - $sumdata['turnover']) / $matchNumber ;
+                $efficiency = (($sumdata['pts']+$sumdata['reb']+$sumdata['ast']+$sumdata['stl']+$sumdata['blk']) - (($sumdata['fga']+$sumdata['threepfga'])-($sumdata['fg']+$sumdata['threepfg'])) - ($sumdata['fta']-$sumdata['ft']) - $sumdata['turnover']) / $matchNumber ;
             }
             $result = [
                 'code' => 200,
