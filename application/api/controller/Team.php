@@ -2700,10 +2700,17 @@ class Team extends Base
     // 获取球员的荣誉列表(页码)
     public function getteammemberhonorpage() {
         try {
+            $map = [];
             // 传入team_member_id
-            $tmId = input('tm_id', 0, 'intval');
-            $map['team_member_id'] = $tmId;
+            if (input('?param.tm_id')) {
+                $map['team_member_id'] = input('param.tm_id');
+            }
+            // 传入member_id
+            if (input('?param.member_id')) {
+                $map['member_id'] = input('param.member_id');
+            }
             $map['status'] = 1;
+
             $teamS = new TeamService();
             $res = $teamS->getTeamHonorMemberPaginator($map);
             if ($res) {
@@ -2720,10 +2727,16 @@ class Team extends Base
     // 获取球员的荣誉列表
     public function getteammemberhonorlist() {
         try {
+            $map = [];
             // 传入team_member_id
-            $tmId = input('tm_id', 0, 'intval');
-            $map['team_member_id'] = $tmId;
-            $map['status'] = 1;
+            if (input('?param.tm_id')) {
+                $map['team_member_id'] = input('param.tm_id');
+            }
+            // 传入member_id
+            if (input('?param.member_id')) {
+                $map['member_id'] = input('param.member_id');
+            }
+
             $page = input('param.page', 1);
             $teamS = new TeamService();
             $res = $teamS->getTeamHonorMemberList($map, $page);
