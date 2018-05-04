@@ -94,43 +94,44 @@ class Schedule extends Base
             }
             // 课时学员名单
             $students = unserialize($schedule['student_str']);
-            // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时收入金额（课时学员*课程单价）
-            if ($schedule['rebate_type'] == 1) {
-                
-                // 课时工资
-                $numScheduleStudent = count($students);
-                $lessonCost = $schedule['cost'];
-                $scheduleIncome = $lessonCost * $numScheduleStudent;
-                // 平台抽取金额：课时工资*抽取比例（注意训练营有单独的比例）
-                if (!empty($schedule['schedule_rebate'])) {
-                    // 以训练营独有平台抽取比例
-                    $scheduleRebate = ($schedule['schedule_rebate'] == 0) ? 0 : $schedule['schedule_rebate'];
-                } else {
-                    $SystemS = new SystemService();
-                    $setting = $SystemS::getSite();
-                    $scheduleRebate = $setting['sysrebate'];
+            if($schedule['is_school'] == -1){
+                // 课时结算方式的训练营 教练、训练营课时所得工资金额与平台抽取金额的总和不能大于课时收入金额（课时学员*课程单价）
+                if ($schedule['rebate_type'] == 1) {
+                    // 课时工资
+                    $numScheduleStudent = count($students);
+                    $lessonCost = $schedule['cost'];
+                    $scheduleIncome = $lessonCost * $numScheduleStudent;
+                    // 平台抽取金额：课时工资*抽取比例（注意训练营有单独的比例）
+                    if (!empty($schedule['schedule_rebate'])) {
+                        // 以训练营独有平台抽取比例
+                        $scheduleRebate = ($schedule['schedule_rebate'] == 0) ? 0 : $schedule['schedule_rebate'];
+                    } else {
+                        $SystemS = new SystemService();
+                        $setting = $SystemS::getSite();
+                        $scheduleRebate = $setting['sysrebate'];
+                    }
+                    // 平台抽取金额
+                    $systemExtractionAmount = $scheduleIncome * $scheduleRebate;
+                    // 助教练（多个）底薪总
+                    $assistantIncomeSum = 0;
+                    $assistantCount = 0;
+                    if (!empty($schedule['assistant'])) {
+                        $assistantCount = count(unserialize($schedule['assistant']));
+                        $assistantIncomeSum = $schedule['assistant_salary'] * $assistantCount;
+                    }
+                    // 课时工资提成
+                    $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
+                    // 金额总和 = 主教练工资+副教练工资+平台抽成+教练提成;
+                    $salaryInSum = $schedule['coach_salary'] + $assistantIncomeSum + $systemExtractionAmount + ($pushSalary*(1+$assistantCount));
+                    if ( $salaryInSum > $scheduleIncome ) {
+                        return json(['code' => 100, 'msg' => '课时支出给教练的工资超过课时收入，请修改信息']);
+                    }
                 }
-                // 平台抽取金额
-                $systemExtractionAmount = $scheduleIncome * $scheduleRebate;
-                // 助教练（多个）底薪总
-                $assistantIncomeSum = 0;
-                $assistantCount = 0;
-                if (!empty($schedule['assistant'])) {
-                    $assistantCount = count(unserialize($schedule['assistant']));
-                    $assistantIncomeSum = $schedule['assistant_salary'] * $assistantCount;
+                // 检查课时相关学员剩余课时
+                $checkStudentRestscheduleResult = $this->ScheduleService->checkstudentRestschedule($schedule, $students);
+                if ($checkStudentRestscheduleResult['code'] == 100) {
+                    return json($checkStudentRestscheduleResult);
                 }
-                // 课时工资提成
-                $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
-                // 金额总和 = 主教练工资+副教练工资+平台抽成+教练提成;
-                $salaryInSum = $schedule['coach_salary'] + $assistantIncomeSum + $systemExtractionAmount + ($pushSalary*(1+$assistantCount));
-                if ( $salaryInSum > $scheduleIncome ) {
-                    return json(['code' => 100, 'msg' => '课时支出给教练的工资超过课时收入，请修改信息']);
-                }
-            }
-            // 检查课时相关学员剩余课时
-            $checkStudentRestscheduleResult = $this->ScheduleService->checkstudentRestschedule($schedule, $students);
-            if ($checkStudentRestscheduleResult['code'] == 100) {
-                return json($checkStudentRestscheduleResult);
             }
             //写入学生课时数据
             $res = $this->ScheduleService->saveScheduleMember($schedule,$students);
@@ -190,8 +191,6 @@ class Schedule extends Base
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }
-
-
             // 训练时间不能大于当前时间
             if ($data['lesson_time'] > time()) {
                 return json(['code' => 100, 'msg' => '训练时间不能大于当前时间']);

@@ -163,6 +163,7 @@ class ScheduleService
                 'lesson'=>$schedule['lesson'],
                 'type' => 1,
                 'status' => -1,
+                'is_school' =>$schedule['is_school'],
                 'schedule_time' => $schedule['lesson_time'],
                 'is_transfer' => $student['is_transfer'],
             ];

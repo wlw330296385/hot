@@ -323,7 +323,6 @@ class Lesson extends Base{
                             // 校园课程把学生全部设置为毕业
                             if($lesson['is_school'] == 1){
                                 db('lesson_member')->where(['lesson_id'=>$lesson['id']])->update(['status'=>4]);
-                                db('grade_member')->where(['lesson_id'=>$lesson['id']])->delete();
                             }
                         }
                         return json($response);

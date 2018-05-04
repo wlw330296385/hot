@@ -451,12 +451,12 @@ class BillService {
                 'url'=>url('frontend/bill/billInfoOfCamp',['bill_order'=>$data['bill_order']],'',true)
             ];
             // camp_member操作
-            $CampMember = new CampMember;
-            $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
+            $is_campMember = db('camp_member')->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
             if($is_campMember){
                 // 强制更新
-                if($is_campMember['type'])
-                 $CampMember->save(['type'=>1,'status'=>1],['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']]);
+                if($is_campMember['type']<1){
+                    db('camp_member')->where(['id'=>$is_campMember['id']])->update(['type'=>1,'status'=>1]);
+                }
             }else{
                 $CampMember->save(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
