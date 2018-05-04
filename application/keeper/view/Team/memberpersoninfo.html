@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>队员资料</title>
+    <title>个人数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -52,7 +52,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">{$memberInfo.member}资料</h1>
+        <h1 class="mui-title">{$memberInfo.member}数据</h1>
     </header>
 
     <div class="mui-content mt55">
@@ -69,7 +69,9 @@
                     </div>
                     <div class="mui-col-sm-6 mui-col-xs-6 tmcRight">
                         <img src="/static/frontend/images/teamMemberCircle.png" class="teamMemberCircle" />
-                        <h4 class="tmValueNum"><span>845</span></h4>
+                        <h4 class="tmValueNum">
+                            <span>845</span>
+                        </h4>
                         <p class="tmValue">球员价值</p>
                     </div>
                 </div>
@@ -100,7 +102,7 @@
 
             <!--赛季数据-->
             <form class="mui-input-group">
-                <div class="mui-input-row picker btn" id="demo6" >
+                <div class="mui-input-row picker btn" id="demo6" data-options='{"type":"month","beginYear":2015,"endYear":2018}'>
                     <div class="mui-navigate-right">
                         <span id="result" class="ui-alert year">切换赛季</span>
                     </div>
@@ -254,6 +256,25 @@
                 </li>
             </ul>
 
+            <!-- 效力的球队 -->
+            <div class="page-header border-b teamList">
+                <span class="course wd83">效力的球队（
+                    <samll class="otherLength"></samll>）
+                    <span class="noDataTip"></span>
+                </span>
+            </div>
+            <ul class="mui-table-view list border-b teammember coach">
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="{:url('team/teamInfo')}" class="mui-navigate-right">
+                        <img class="mui-media-object mui-pull-left coachicon" style="height: 42px !important; width: 42px !important" src="">
+                        <div class="mui-media-body wd60">
+                            <p class="mui-ellipsis">入队时间:</p>
+                        </div>
+                        <div class="price-frame rightLocation"></div>
+                    </a>
+                </li>
+            </ul>
+
             <!--个人荣誉-->
             <div class="page-header">
                 <span class="course">个人荣誉
@@ -265,8 +286,6 @@
             </div>
             <ul class="mui-table-view list border-b honorList"></ul>
 
-         
-
             <!--球员印象-->
             <div class="page-header border-b impressTip">
                 <span class="course">球员印象
@@ -277,16 +296,6 @@
                 </span>
             </div>
             <div class="impress border-b whitebg tagCommentList"></div>
-
-            <!-- 球员介绍 -->
-            <div class="page-header border-b introduction">
-                <span class="course">球员介绍
-                    <span class="noDataTip"></span>
-                </span>
-            </div>
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli introBox"></li>
-            </ul>
 
             <!-- 评论 -->
             <div class="page-header border-b">
@@ -305,7 +314,7 @@
         <!--底部操作-->
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('team/teamInfo',['team_id'=>$team_id])}">
+                <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
@@ -392,24 +401,12 @@
             });
         })(mui);
 
-        var member = "{memberInfo.member}";
-        var member_id = "{memberInfo.member_id}";
-        var team_id = "{memberInfo.team_id}";
+        var member = "{$memberInfo.member}";
+        var member_id = "{$memberInfo.id}";
         var id = "{memberInfo.id}";
         var tm_name = "{memberInfo.name}";
         var sYear = '';
         $(function () {
-            //球员介绍内容
-            var introduction = '{memberInfo.introduction}';
-            if (introduction == '') {
-                $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无数据）");
-                $(".introBox").hide();
-            }
-
-            // 去除逗号
-            var cDoms = $(".role").text();
-            cDoms = cDoms.substring(0, cDoms.length - 1);
-            $(".role").text(cDoms);
 
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
@@ -462,106 +459,6 @@
                 });
             });
 
-            // 领队移除队员操作
-            $(".signOut").on("tap", '', function () {
-                var btnArray = ['取消', '确认'];
-                mui.confirm('是否确认移除此队员？', '', btnArray, function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/team/removeteammember')}", {
-                            data: {
-                                team_id: team_id,
-                                member_id: member_id,
-                                id: id
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data)
-                                if (data.code == 200) {
-                                    mui.toast("移除队员成功");
-                                    window.setTimeout("history.go(-1)", 2000);
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                mui.toast("网络异常,请稍候再试");
-                            }
-                        });
-                    } else {
-                        return;
-                    }
-                })
-            });
-
-            // 球队成员申请离队操作
-            $(".applyOut").on("tap", '', function () {
-                var btnArray = ['取消', '确认'];
-                mui.confirm('是否确认申请离队？', '', btnArray, function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/team/applyleaveteam')}", {
-                            data: {
-                                team_id: team_id,
-                                member_id: member_id,
-                                id: id
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data)
-                                if (data.code == 200) {
-                                    mui.toast("你已成功离队");
-                                    window.setTimeout("location.href='{:url('team/myteam')}'", 2000);
-                                } else {
-                                    mui.toast(data.msg)
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                console.log(data);
-                                mui.toast("网络异常,请稍候再试");
-                            }
-                        });
-                    } else {
-                        return;
-                    }
-                })
-            });
-
-            // 邀请队员回球队
-            var teamStatus = "{$memberInfo.status}";
-            if (teamStatus == "离队") {
-                $(".applyIn").show();
-                $(".signOut").hide();
-            }
-            $(".applyIn").on("tap", '', function () {
-                mui.ajax("{:url('api/team/returnteamember')}", {
-                    data: {
-                        team_id: team_id,
-                        id: id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("操作成功");
-                            window.setTimeout("history.go(-1)", 2000);
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
 
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {
@@ -621,7 +518,6 @@
                         comment_type: 4,
                         comment: comment,
                         commented: tm_name,
-                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
