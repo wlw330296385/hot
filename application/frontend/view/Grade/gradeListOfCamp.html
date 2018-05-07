@@ -252,15 +252,20 @@
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var gradeid = elem.parentNode.getAttribute('data-id');
+        var grade_id = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
         mui.confirm('确认该班级' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                var apiurl = "{:url('api/grade/removegrade')}";
+                if (action == 'del') {
+                    // 删除班级
+                    var apiurl = "{:url('api/grade/delgrade')}";
+                } else {
+                    // 更新班级状态
+                    var apiurl = "{:url('api/grade/removegrade')}";
+                }
                 mui.ajax(apiurl, {
                     data: {
-                        gradeid: gradeid,
-                        action: action
+                        grade_id: grade_id
                     },
                     dataType: 'json',
                     type: 'post',

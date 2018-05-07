@@ -286,68 +286,87 @@ class Grade extends Base{
         }
     }
 
-    // 操作班级 当前/预排/删除 2017/10/2
+    // 操作班级当前/鱼排状态 2017/10/2
     public function removegrade() {
+        $gradeId = input('grade_id');
+        if (!$gradeId) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询班级数据
+        $gradeS = new GradeService();
+        $grade = $gradeS->getGradeInfo(['id' => $gradeId]);
+        if (!$grade) {
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+        // 训练营角色权限 教练以上才能操作
+        $power = getCampPower($grade['camp_id'], $this->memberInfo['id']);
+        if ($power < 2) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // status字段更新值
+        $statusTo = ($grade['status_num'] == 1) ? -1 : 1;
         try {
-            $gradeid = input('gradeid');
-            $action = input('action');
-            if (!$gradeid || !$action) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-            }
-
-            $gradeS = new GradeService();
-            $grade = $gradeS->getGradeInfo(['id' => $gradeid]);
-            if (!$grade) {
-                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
-            }
-
-            $power = getCampPower($grade['camp_id'], $this->memberInfo['id']);
-            if ($power < 2) { //教练以上才能操作
-                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
-            }
-
-            switch ( $grade['status_num'] ) {
-                case "1" : {
-                    // 操作当前班级
-                    if ($action == 'editstatus') {
-                        $res = $gradeS->updateGradeStatus($grade['id'], -1);
-                        if ($res) {
-                            $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
-                        } else {
-                            $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
-                        }
-                    } else {
-                        // 当前班级不能删除
-                        $response = json(['code' => 100, 'msg' => '当前班级不能删除,请先将班级设为预排班级']);
-                    }
-                    return $response;
-                    break;
-                }
-                case "-1": {
-                    // 操作预排班级
-                    if ($action == 'editstatus') {
-                        $res = $gradeS->updateGradeStatus($grade['id'], 1);
-                        if ($res) {
-                            $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
-                        } else {
-                            $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
-                        }
-                    } else {
-                        $res = $gradeS->delGrade($grade['id']);
-                        if ($res) {
-                            $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
-                        } else {
-                            $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
-                        }
-                    }
-                    return $response;
-                    break;
-                }
-            }
+            $res = $gradeS->updateGradeStatus($grade['id'], $statusTo);
         } catch ( Exception $e ) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
+        // 返回结果
+        if ($res) {
+            $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return $response;
+    }
 
+    // 删除班级
+    public function delgrade() {
+        $gradeId = input('grade_id');
+        if (!$gradeId) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询班级数据
+        $gradeS = new GradeService();
+        $grade = $gradeS->getGradeInfo(['id' => $gradeId]);
+        if (!$grade) {
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+        // 训练营角色权限 教练以上才能操作
+        $power = getCampPower($grade['camp_id'], $this->memberInfo['id']);
+        if ($power < 2) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 当前班级不能删除，改为预排班级才能操作删除
+        if ($grade['status_num'] == 1) {
+            return json(['code' => 100, 'msg' => '当前班级不能删除,请先将班级设为预排班级']);
+        }
+        // 获取班级下学生名单
+        $gradeStudentList = $gradeS->getGradeStudents(['grade_id' => $grade['id']]);
+        // log_grade_member数据组合
+        $dataLogDeleteGradeMember = [
+            'member_id' => $this->memberInfo['id'],
+            'member' => $this->memberInfo['member'],
+            'action' => 'delete',
+            'data' => json_encode($gradeStudentList, JSON_UNESCAPED_UNICODE),
+            'referer' => input('server.http_referer'),
+            'create_time' => date('YmdH:i', time())
+        ];
+        try {
+            // 删除班级学员数据
+            db('grade_member')->where(['grade_id' => $grade['id']])->delete();
+            // 记录grade_member日志
+            db('log_grade_member')->insert($dataLogDeleteGradeMember);
+            // 软删除grade
+            $res = $gradeS->delGrade($grade['id']);
+        } catch ( Exception $e ) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if ($res) {
+            $response = json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            $response = json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return $response;
     }
 
 

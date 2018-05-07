@@ -219,4 +219,19 @@ class GradeService{
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
+
+    // 获取班级的学生列表数据
+    public function getGradeStudents($map=[], $order=['id' => 'desc']) {
+        $model = new GradeMember();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['status_num'] = $res[$k]->getData('status');
+            $result[$k]['type_num'] = $res[$k]->getData('type');
+        }
+        return $result;
+    }
 }
