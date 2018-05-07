@@ -237,6 +237,27 @@ class Coach extends Base{
 
     //教练员注册
     public function createCoach(){
+
+        $certList = db('cert')->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>0])->select();
+        $identCert = [];
+        $coachCert = [];
+        if($certList){
+            foreach ($certList as $key => $value) {
+                switch ($value['cert_type']) {
+                    case '1':
+                        $identCert = $value;
+                        break;
+                     case '3':
+                        $coachCert = $value;
+                        break;
+                }
+            }
+        }
+        //dump($identCert);
+
+        $this->assign('identCert',$identCert);
+        $this->assign('coachCert',$coachCert);
+
         return view('Coach/createCoach');
     }
 
