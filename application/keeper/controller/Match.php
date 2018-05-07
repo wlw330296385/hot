@@ -338,4 +338,14 @@ class Match extends Base {
         return view('Match/messageListOfLeague');
     }
     
+    // 联赛战绩管理
+    public function recordListOfLeague() {
+        return view('Match/recordListOfLeague');
+    }
+
+    // 联赛数据管理
+    public function dataListOfLeague() {
+        return view('Match/dataListOfLeague');
+    }
+    
 }
