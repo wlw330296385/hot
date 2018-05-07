@@ -282,6 +282,13 @@ class Schedule extends Base
     {
         try {
             $map = input('post.');
+            $keyword = input('param.keyword');
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['grade|lesson|coach|assitant'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
             if(isset($map['grade_id'])){
                 $map['grade_id'] = json_decode($map['grade_id']);
             }
