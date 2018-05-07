@@ -370,8 +370,8 @@ class TeamService
     public function getTeamMemberCount($map)
     {
         $model = new TeamMember();
-        $query = $model->where($map)->count();
-        return $query;
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
     }
 
     // 插入team_member_role 会员-球队角色关联信息（自由组合内容）

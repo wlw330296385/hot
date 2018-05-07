@@ -12,13 +12,14 @@ class MemberService{
 	}
 	// 获取会员
 	public function getMemberInfo($map){
-		$result = $this->memberModel->where($map)->find();
-		if($result){
-			$res = $result->toArray();
-			$res['age'] = getAgeByBirthday($res['birthday']);
-			return $res;
-		}
-		return $result;
+		$res = $this->memberModel->where($map)->find();
+		if (!$res) {
+		    return $res;
+        }
+        $result = $res->toArray();
+		// 年龄换算
+        $result['age'] = getAgeByBirthday($result['birthday']);
+        return $result;
 	}
 
 	// 会员列表
