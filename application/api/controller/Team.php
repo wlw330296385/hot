@@ -1332,7 +1332,7 @@ class Team extends Base
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.status', 1);
             // 比赛时间小于当前时间：过期比赛
-            $map['match_record.match_time'] = ['gt', time()];
+            //$map['match_record.match_time'] = ['gt', time()];
 
             // 查询条件组合end
             // 未完成比赛优先
@@ -1406,7 +1406,7 @@ class Team extends Base
                 unset($map['member_id']);
             }
             // 比赛时间小于当前时间：过期比赛
-            $map['match_record.match_time'] = ['gt', time()];
+            //$map['match_record.match_time'] = ['gt', time()];
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1482,7 +1482,7 @@ class Team extends Base
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.staus', 1);
             // 比赛时间小于当前时间：过期比赛
-            $map['match_record.match_time'] = ['gt', time()];
+            //$map['match_record.match_time'] = ['gt', time()];
             // 查询条件组合end
 
             if (input('?param.page')) {
@@ -1596,7 +1596,7 @@ class Team extends Base
             // 默认查询上架活动(status=1)
             $map['status'] = input('param.staus', 1);
             // 活动结束时间小于当前时间: 当过期
-            $map['end_time'] = ['gt', time()];
+            //$map['end_time'] = ['gt', time()];
             // 查询条件组合end
             // 未完成的记录优先
             $orderby = ['is_finished' => 'asc', 'id' => 'desc'];
@@ -1646,7 +1646,7 @@ class Team extends Base
             // 默认查询上架活动(status=1)
             $map['status'] = input('param.staus', 1);
             // 活动结束时间小于当前时间: 当过期
-            $map['end_time'] = ['gt', time()];
+            //$map['end_time'] = ['gt', time()];
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1699,7 +1699,7 @@ class Team extends Base
                 unset($map['member_id']);
             }
             // 活动结束时间小于当前时间: 当过期
-            $map['end_time'] = ['gt', time()];
+            //$map['end_time'] = ['gt', time()];
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);

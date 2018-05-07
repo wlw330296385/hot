@@ -7,11 +7,7 @@ use app\model\Tag;
 use app\model\TagComment;
 
 class TagService {
-    /** 标签列表（所有数据 无分页）
-     * @param array $map 查询条件
-     * @param string $order 排序
-     * @return array|false|\PDOStatement|string|\think\Collection
-     */
+    /** 标签列表（所有数据 无分页）*/
     public function getTags($map=[], $order='id desc') {
         $model = new Tag();
         $res = $model->where($map)->order($order)->select();
@@ -22,13 +18,7 @@ class TagService {
         }
     }
 
-    /** 标签列表（page分页）
-     * @param array $map 查询条件
-     * @param int $page 页数（第几页）
-     * @param string $order 排序
-     * @param int $limit 每页显示的数量
-     * @return array|false|\PDOStatement|string|\think\Collection
-     */
+    /** 标签列表（page分页）*/
     public function getTagList($map=[], $page=1, $order='id desc', $limit=10) {
         $model = new Tag();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
@@ -39,12 +29,7 @@ class TagService {
         }
     }
 
-    /** 标签列表（paginate分页）
-     * @param $map
-     * @param string $order
-     * @param int $paginate
-     * @return array|\think\Paginator
-     */
+    /** 标签列表（paginate分页）*/
     public function getTagPaginator($map, $order='id desc', $paginate=10) {
         $model = new Tag();
         $res = $model->where($map)->order($order)->paginate($paginate);
@@ -73,18 +58,24 @@ class TagService {
         foreach ($tag_idArr as $k => $tag_id) {
             $hadCommentMap = [
                 'comment_type' => $data['comment_type'],
-                'commented_id' => $data['commented_id'],
                 'member_id' => $data['member_id'],
                 'tag_id' => $tag_id
             ];
+            // 识别被评论实体或者被评论会员
+            if (isset($data['commented_id'])) {
+                $hadCommentMap['commented_id'] = $data['commented_id'];
+            }
+            if (isset($data['commented_member_id'])) {
+                $hadCommentMap['commented_member_id'] = $data['commented_member_id'];
+            }
             $hadComment = $commentModel->where($hadCommentMap)->find();
             if ($hadComment) {
                 return ['code' => 100, 'msg' => '您已经发表"'.$tagArr[$k].'"印象，不能再次发表喔'];
             } else {
                 array_push($saveData, [
                     'comment_type' => $data['comment_type'],
-                    'commented' => $data['commented'],
-                    'commented_id' => $data['commented_id'],
+                    'commented' => isset($data['commented']) ? $data['commented'] : '',
+                    'commented_id' => isset($data['commented_id']) ? $data['commented_id'] : 0,
                     'commented_member_id' => isset($data['commented_member_id']) ? $data['commented_member_id'] : 0,
                     'commented_member' => isset($data['commented_member']) ? $data['commented_member'] : '',
                     'member_id' => $data['member_id'],
@@ -108,11 +99,8 @@ class TagService {
         }
     }
 
-    /** 获取标签评论记录（带统计评论次数）
-     * @param $map
-     * @return array|false|\PDOStatement|string|\think\Collection
-     */
-    public function getTagComment($map){
+    /** 获取标签评论记录（带统计评论次数）*/
+    public function getTagComment($map=[]){
         $model = new TagComment();
         $field = '*, count(*) as count';
         $res = $model->field($field)->where($map)->group('tag_id')->select();
