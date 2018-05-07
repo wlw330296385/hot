@@ -85,6 +85,8 @@ class TagService {
                     'comment_type' => $data['comment_type'],
                     'commented' => $data['commented'],
                     'commented_id' => $data['commented_id'],
+                    'commented_member_id' => isset($data['commented_member_id']) ? $data['commented_member_id'] : 0,
+                    'commented_member' => isset($data['commented_member']) ? $data['commented_member'] : '',
                     'member_id' => $data['member_id'],
                     'member' => $data['member'],
                     'member_avatar' => $data['member_avatar'],
