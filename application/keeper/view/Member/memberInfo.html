@@ -288,6 +288,9 @@
                         <div class="mui-input-row" id='showCityPicker3'>
                             <label>所属地区</label>
                             <span id="cityResult3" class="ui-alert">{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
+                            <input type="hidden" name="province" value="{$memberInfo['province']}" id="province">
+                            <input type="hidden" name="city" value="{$memberInfo['city']}" id="city">
+                            <input type="hidden" name="area" value="{$memberInfo['area']}" id="area">
                         </div>
                         <div class="mui-input-row">
                             <label>注册时间</label>
@@ -435,6 +438,9 @@
                         getProvince = _getParam(items[0], 'text');
                         getCity = _getParam(items[1], 'text');
                         getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
                     });
                 }, false);
 
@@ -461,13 +467,19 @@
         //个人信息编辑
         $(".successBtn").click(function () {
             var btnArray = ['取消', '确认'];
-            mui.confirm('是否确认修改？', '', btnArray, function (e) {
+            mui.confirm('修改个人信息将会更新个人数据，是否确认修改？', '', btnArray, function (e) {
                 if (e.index == 1) {
                     var member = $("#editor .member").val();
                     var sex = $("#editor .sex option:selected").val();
                     var height = $("#editor .height").text();
                     var weight = $("#editor .weight").text();
                     var birthday = $("#editor .birthday").text();
+                    var province = $("#editor input[name=province]").val();
+                    var city = $("#editor input[name=city]").val();
+                    var area = $("#editor input[name=area]").val();
+                    console.log(province)
+                    console.log(city)
+                    console.log(area)
                     if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
@@ -476,9 +488,9 @@
                                 'height': height,
                                 'weight': weight,
                                 'birthday': birthday,
-                                'province': getProvince,
-                                'city': getCity,
-                                'area': getArea,
+                                'province': province,
+                                'city': city,
+                                'area': area,
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
