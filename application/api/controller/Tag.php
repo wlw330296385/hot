@@ -52,8 +52,7 @@ class Tag extends Base {
         try {
             // 判断必传参数
             $comment_type = input('post.comment_type');
-            $commented_id = input('post.commented_id');
-            if (!$comment_type || !$commented_id) {
+            if (!$comment_type) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合接收参数作为查询提交

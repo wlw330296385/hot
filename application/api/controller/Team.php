@@ -2221,9 +2221,7 @@ class Team extends Base
             // 判断必传参数
             // 评论类型
             $comment_type = input('post.comment_type');
-            // 被评论实体id
-            $commented_id = input('post.commented_id');
-            if (!$comment_type || !$commented_id) {
+            if (!$comment_type ) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合传参作查询条件
@@ -2254,9 +2252,7 @@ class Team extends Base
             // 判断必传参数
             // 评论类型
             $comment_type = input('post.comment_type');
-            // 被评论实体id
-            $commented_id = input('post.commented_id');
-            if (!$comment_type || !$commented_id) {
+            if (!$comment_type) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合传参作查询条件
@@ -2293,7 +2289,7 @@ class Team extends Base
             $comment_type = input('post.comment_type');
             // 被评论实体id
             $commented_id = input('post.commented_id');
-            if (!$comment_type || !$commented_id) {
+            if (!$comment_type) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             $teamS = new TeamService();
