@@ -55,8 +55,8 @@
         <h1 class="mui-title">{$memberInfo.member}数据</h1>
     </header>
 
-    <div class="mui-content mt55">
-        <div class="list">
+    <div class="mui-content">
+        <div class="list mb44">
 
             <div class="teamMemberCover">
                 <div class="img4x3" style="background-image:url('/static/frontend/images/teamMemberBg.png')"></div>
@@ -331,7 +331,7 @@
                 <a href="#fbcomment">评论</a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit">
-                <a >
+                <a href="{:url('member/memberInfo')}">
                     编辑
                 </a>
             </li>
@@ -414,7 +414,7 @@
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
             if (tips == '') {
-                $(".teammember").prev(".teamList").find(".noDataTip").append("（暂无数据）");
+                $(".teammember").prev(".teamList").find(".noDataTip").append("（暂无）");
                 $(".teammember").hide();
             }
 
@@ -480,8 +480,10 @@
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 1,
-                        commented: member,
-                        commented_id: member_id,
+                        //commented_id: id,
+                        //commented: member,
+                        commented_member: member,
+                        commented_member_id: member_id,
                         tags: tags,
                         tag_ids: tag_ids,
                     },
@@ -531,7 +533,8 @@
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast('评价成功，感谢你的评价！')
-                            window.location.reload();
+                            $(".comment-list").empty();
+                            toCommentList();
                             mui('#fbcomment').popover('toggle');
                         } else {
                             mui.toast(data.msg);
@@ -602,7 +605,7 @@
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     } else {
-                        $(".comment-list").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".comment-list").prev().find(".noDataTip").append("（暂无）");
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -744,7 +747,7 @@
                         $(".tagCommentList").empty().show();
                         $(".tagCommentList").append(div);
                     } else {
-                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无）");
                         $(".tagCommentList").hide();
                     }
                 },
@@ -784,7 +787,7 @@
                     }
                     $("ul.honorList").empty().append(newli);
                     if (newli == '') {
-                        $(".honorList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".honorList").prev().find(".noDataTip").append("（暂无）");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
