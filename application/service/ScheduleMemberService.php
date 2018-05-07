@@ -5,7 +5,7 @@ use think\Db;
 class ScheduleMemberService{
 	protected $scheduleMemberModel;
 	public function __construct(){
-		$this->scheduleMemberModel = new ScheduleMember;
+		$this->scheduleMemberModel = new ScheduleMember();
 	}
 
 	public function getScheduleMemberList($map){
@@ -65,7 +65,7 @@ class ScheduleMemberService{
     }
     // 统计用户数量
     public function countMembers($map){
-    	$result = $this->ScheduleMemberModel->where($map)->count();
+    	$result = $this->scheduleMemberModel->where($map)->count();
     	return $result?$result:0;
     }
 

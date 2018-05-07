@@ -3,7 +3,12 @@
 namespace app\api\controller;
 
 use app\api\controller\Base;
+use app\service\FollowService;
+use app\service\MatchDataService;
+use app\service\MatchService;
 use app\service\MemberService;
+use app\service\ScheduleMemberService;
+use app\service\TeamService;
 use app\service\WechatService;
 use think\Exception;
 
@@ -63,8 +68,6 @@ class Member extends Base{
         try {
             $member_id = $this->memberInfo['id'];
             $data = input('post.');
-            $data['member_id'] = $member_id;
-            $data['member'] = $this->memberInfo['member'];
             $result = $this->MemberService->updateMemberInfo($data, ['id'=>$member_id]);
             return json($result);
         } catch (Exception $e) {
@@ -402,6 +405,81 @@ class Member extends Base{
             return json($response);
         } catch(Exception $e){
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 获取会员信息（带有运动指数）
+    public function getmembersportindex() {
+        try {
+            $memberId = input('param.member_id', $this->memberInfo['id']);
+            $memberS = new MemberService();
+            // 获取会员信息
+            $result = $memberS->getMemberInfo(['id' => $memberId]);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            unset($result['password']);
+            // 会员粉丝数
+            $followS = new FollowService();
+            $result['fans'] = $followS->getfansnum($result['id'], 1);
+            // 体质指数（体重身高都有值）：体质指数（BMI）=体重（kg）÷身高^2（m）
+            if ($result['weight'] && $result['height']) {
+                $height = $result['height']/100;
+                $result['bmi'] = round($result['weight']/(pow($height, 2)), 1);
+            }
+            // 参加球队数
+            $teamS = new TeamService();
+            $result['team_num'] = $teamS->getTeamMemberCount(['member_id' => $result['id'], 'status' => 1]);
+
+            // 获取年（默认当前年）
+            $year = input('param.year', date('Y'));
+            $when = getStartAndEndUnixTimestamp($year);
+
+            // 球员效率
+            $mapMatchData['member_id'] = $result['id'];
+            $mapMatchData['status'] = 1;
+            $mapMatchData['match_time'] = ['between',
+                [ $when['start'], $when['end'] ]
+            ];
+            $efficiency = 0;
+            $matchDataS = new MatchDataService();
+            // 比赛次数
+            $matchNumber = $matchDataS->getMatchStaticCount($mapMatchData);
+            // 获取比赛技术统计数据总和
+            $sumdata = $matchDataS->getMatchStaticSum($mapMatchData);
+            if ($matchNumber) {
+                $efficiency = (($sumdata['pts']+$sumdata['reb']+$sumdata['ast']+$sumdata['stl']+$sumdata['blk']) - (($sumdata['fga']+$sumdata['threepfga'])-($sumdata['fg']+$sumdata['threepfg'])) - ($sumdata['fta']-$sumdata['ft']) - $sumdata['turnover']) / $matchNumber ;
+            }
+            $result['efficiency'] = $efficiency;
+
+            // 运动数：参加课时数+比赛数+运动打卡（打卡功能未有）
+            // 参加课时数（审课产生的课时-会员关系数据）
+            $scheduleMemberS = new ScheduleMemberService();
+            $scheduleNum = $scheduleMemberS->countMembers([
+                'member_id' => $result['id'],
+                'status' => 1,
+                'schedule_time' => ['between',
+                    [ $when['start'], $when['end'] ]
+                ]
+            ]);
+            $result['schedule_num'] = $scheduleNum;
+            // 参加比赛数(有效，出席比赛）
+            $matchS = new MatchService();
+            $matchNum = $matchS->getMatchRecordMemberCount([
+                'member_id' => $result['id'],
+                'status' => 1,
+                'is_checkin' => 1,
+                'match_time' => ['between',
+                    [ $when['start'], $when['end'] ]
+                ]
+            ]);
+            $result['match_num'] = $matchNum;
+            $result['exercise'] = $scheduleNum+$matchNum;
+            // 返回结果
+            $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            return json($response);
+        } catch(Exception $e){
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
     }
 }
