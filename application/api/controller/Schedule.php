@@ -284,7 +284,7 @@ class Schedule extends Base
             $map = input('post.');
             $keyword = input('param.keyword');
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
-                $map['grade|lesson|coach|assitant'] = ['LIKE','%'.$keyword.'%'];
+                $map['grade|lesson|coach|assistant'] = ['LIKE','%'.$keyword.'%'];
             }
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
