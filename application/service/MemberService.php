@@ -66,7 +66,8 @@ class MemberService{
 			$memberInfo = $this->getMemberInfo($map);
 			session('memberInfo',$memberInfo,'think');
 			cookie('mid',$memberInfo['id']);
-			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$result];
+			// 修改成功返回会员最新信息
+			return ['msg'=>__lang('MSG_200'),'code'=>200,'data'=>$memberInfo];
 		}	
 	}
 

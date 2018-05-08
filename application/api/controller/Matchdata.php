@@ -67,7 +67,7 @@ class Matchdata extends Base
                 'msg' => __lang('MSG_201'),
                 'data' => [
                     'match_number' => $matchNumber,
-                    'efficiency' => $efficiency,
+                    'efficiency' => round($efficiency, 1),
                     'avgdata' => $avgdata,
                     //'sumdata' => $sumdata
                 ]

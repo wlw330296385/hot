@@ -48,13 +48,13 @@
                         <h5 class="mineName">{$memberInfo.member}</h5>
                         <p>{$memberInfo.city} {$memberInfo.area}</p>
                         <p>年龄
-                            <text class="colororange">30</text> 身高
+                            <text class="colororange age">0</text> 身高
                             <text class="colororange">{$memberInfo.height}</text> 体重
                             <text class="colororange">{$memberInfo.weight}</text>
                         </p>
                         <p>球队
-                            <text class="colororange">5</text> 粉丝
-                            <text class="colororange">322</text>
+                            <text class="colororange team_num">0</text> 粉丝
+                            <text class="colororange fans">0</text>
                         </p>
                     </div>
                     <div class="mui-col-sm-2 mui-col-xs-2 mui-text-right">
@@ -69,15 +69,15 @@
                     <div class="mui-col-sm-9 mui-col-xs-9" style="width: 75%;">
                         <div class="mui-row mui-text-center">
                             <div class="mui-col-sm-4 mui-col-xs-4">
-                                <p class="dataNum">141</p>
+                                <p class="dataNum exercise">0</p>
                                 <p>本年运动</p>
                             </div>
                             <div class="mui-col-sm-4 mui-col-xs-4">
-                                <p class="dataNum">13.2</p>
+                                <p class="dataNum efficiency">0</p>
                                 <p>球员效率</p>
                             </div>
                             <div class="mui-col-sm-4 mui-col-xs-4">
-                                <p class="dataNum">23.2</p>
+                                <p class="dataNum bmi">0</p>
                                 <p>体质指数</p>
                             </div>
                         </div>
@@ -320,7 +320,37 @@
                 $(".organizationTitle").hide();
             }
 
+            var member_id = "{$memberInfo.id}";
+            mui.ajax("{:url('api/member/getmembersportindex')}", {
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".age").text(data.data.age);
+                        $(".team_num").text(data.data.team_num);
+                        $(".fans").text(data.data.fans);
+                        $(".exercise").text(data.data.exercise);
+                        $(".efficiency").text(data.data.efficiency);
+                        $(".bmi").text(data.data.bmi);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
         });
+
 
     </script>
 </body>
