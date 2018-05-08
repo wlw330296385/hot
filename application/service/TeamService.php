@@ -349,7 +349,7 @@ class TeamService
             $result['status_num'] = $res->getData('status');
             $result['position_num'] = $res->getData('position');
             // 球龄换算:当前年-yearsexp(开始打球时间)
-            $result['yearsexp'] = date('Y')-$result['yearsexp'];
+            $result['yearsexp'] = !empty($result['yearsexp']) ? date('Y')-$result['yearsexp'] : '';
             // 获取成员在球队的角色身份
             $roleModel = new TeamMemberRole();
             $result['role_text'] = '';
