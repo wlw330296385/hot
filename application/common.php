@@ -228,8 +228,12 @@ function getAgeByBirthday($birthdate) {
         $now_d = date('d');
         //开始计算年龄
         $iage = $now_y-$birth_y;
-        if ($birth_m > $now_m || $birth_m == $now_m && $birth_d > $now_d) {
-            $iage--;
+        if ($iage > 0) {
+            if ($birth_m > $now_m || $birth_m == $now_m && $birth_d > $now_d) {
+                $iage--;
+            }
+        } else { //年龄数字非负
+            $iage = 0;
         }
         return $iage;
     } else {
