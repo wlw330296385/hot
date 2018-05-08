@@ -169,80 +169,114 @@
 
 
 
-     $('select[name=target_type]').on('change',function(){
-        if($('select[name=target_type] option:selected').val()==-1){
-            console.log(1)
-            $('.bonusDom').show(); 
-            getBonusList(); 
-        }else{
-            $('.bonusDom').hide();
-        }
-    })
+      $('select[name=target_type]').on('change',function(){
+          selectTargetType()
+      })
 
 
-    
-    
-    // 更改礼包
-    $('#bonus').on('change',function(){
-        let bonus = $('select#bonus option:selected').attr('data');
-        $('input[name=bonus]').val(bonus);
-    })
+      // 更改礼包/文章
+      $('#bonus').on('change',function(){
+          var bonus = $('select#bonus option:selected').attr('data');
+          $('input[name=target]').val(bonus);
+      })
 
-
-  
 
   });
 
-    //礼包接口获取数据并追加到页面
-    var getBonusList = function () {
-        console.log(12)
-        var url = "{:url('api/bonus/getBonusListNoPageApi')}";
-        $.post({
-            url: url,
-            data: {
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            success: function (data) {
-                if (data.code == 200) {
-                    let list = data.data;
-                    let newli = '';
-                    for (let i in list) {
-                        newli = `<option  value="${list[i].id}" data="${list[i].bonus}">${list[i].bonus}</option>`;
-                    }
-                    if (newli == '') {
-                        $('input[name=bonus]').val('');
-                        newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
-                    }else{
-                        $('input[name=bonus]').val(list[0].bonus);
-                    }
-                    $("#bonus").html(newli);
-                    
-                } else {
-                    newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
-                    $("#coupon").html(newli);
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-               alert('网络异常,请稍候再试');
-            }
-        });
-    };
+  //礼包接口获取数据并追加到页面
+  var getBonusList = function () {
+      var url = "{:url('api/bonus/getBonusListNoPageApi')}";
+      $.post({
+          url: url,
+          data: {
+          },
+          dataType: 'json',//服务器返回json格式数据
+          type: 'post',//HTTP请求类型
+          timeout: 10000,//超时时间设置为10秒；
+          success: function (data) {
+              if (data.code == 200) {
+                  let list = data.data;
+                  let newli = '';
+                  for (let i in list) {
+                      newli = `<option  value="${list[i].id}" data="${list[i].bonus}">${list[i].bonus}</option>`;
+                  }
+                  if (newli == '') {
+                      $('input[name=target]').val('');
+                      newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
+                  }else{
+                      $('input[name=target]').val(list[0].bonus);
+                  }
+                  $("#bonus").html(newli);
+
+              } else {
+                  $("#bonus").html("<option>没有相关礼品卡券,请先添加相关礼品卡券</option>");
+              }
+          },
+          error: function (xhr, type, errerThrown) {
+              alert('网络异常,请稍候再试');
+          }
+      });
+  };
+
+  //文章接口获取数据并追加到页面
+  var getArticleList = function () {
+      var url = "{:url('api/article/getArticleListByPageApi')}";
+      $.post({
+          url: url,
+          data: {
+              organization_type: 1,
+              organization_id: 0,
+              category: 4,
+              status: 1
+          },
+          dataType: 'json',//服务器返回json格式数据
+          type: 'post',//HTTP请求类型
+          timeout: 10000,//超时时间设置为10秒；
+          success: function (data) {
+              if (data.code == 200) {
+                  var newli = '';
+                  if (data.code == 200) {
+                      for (var i = 0; i <= data.data.data.length - 1; i++) {
+                          newli += '<option  value="' + data.data.data[i].id + '" data="' + data.data.data[i].title + '">' + data.data.data[i].title + '</option>';
+                      }
+                  }
+
+                  if (newli == '') {
+                      $('input[name=target]').val('');
+                      newli = "<option>没有相关文章,请先添加相关文章</option>"
+                  }else{
+                      $('input[name=target]').val(data.data.data[0].title);
+                  }
+                  $("#bonus").html(newli);
+
+              } else {
+                  $("#bonus").html("<option>没有相关文章,请先添加相关文章</option>");
+              }
+          },
+          error: function (xhr, type, errerThrown) {
+              alert('网络异常,请稍候再试');
+          }
+      });
+  };
 
 
-    function selectTargetType(){
-        if($('select[name=target_type] option:selected').val()==-1){
-            console.log(1)
-            $('.bonusDom').show(); 
-            getBonusList(); 
-        }else{
-            $('.bonusDom').hide();
-        }
-    }
+  function selectTargetType(){
+      if($('select[name=target_type] option:selected').val()==-1){
+          $('.bonusDom').show();
+          $('.bonusDom label').text("请选择礼包");
+          getBonusList();
+      }else if($('select[name=target_type] option:selected').val()==4){
+          $('.bonusDom').show();
+          $('.bonusDom label').text("请选择文章");
+          getArticleList();
+      }else{
+          $('.bonusDom').hide();
+      }
+  }
 
 
-    // 选择平台礼包
+
+  // 选择平台礼包
     selectTargetType();
 </script>
 {/block}
