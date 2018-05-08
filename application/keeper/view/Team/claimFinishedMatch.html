@@ -217,12 +217,6 @@
                 opacity: 0;
             }
         }
-
-        /* 底部按钮点击去除背景颜色 */
-
-        .operation .opli a.mui-active {
-            background-color: inherit
-        }
     </style>
 </head>
 
@@ -251,7 +245,7 @@
                         <img src="{$matchInfo.record.away_team_logo}" class="teamLogo awayLogo">
                     </div>
                 </div>
-                
+
                 <div class="mui-row">
                     <div class="mui-col-sm-4 mui-col-xs-4" style="margin-left:13px">
                         <strong class="f16 colororange">{$matchInfo.record.home_team}</strong>
@@ -302,28 +296,16 @@
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
                 <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
             </li>
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-activity-opponent colororange"></span>裁判类型</label>
-                <span class="refereeType">{$matchInfo.referee_type}</span>
-            </li>
-            <li class="mui-table-view-cell listli refereeCount">
-                <label>
-                    <span class="icon iconfont icon-activity-EventLocati colororange"></span>随机安排人数</label>
-                <span class="wd60">{$matchInfo.referee_count}/人</span>
-            </li>
             <li class="mui-table-view-cell listli refereeName">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
-                <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                <div class="hideReferee">
-
-                </div>
+                <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.record.referee},{/volist}</span>
+                <div class="hideReferee"></div>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
-                <span class="wd60 refereeCostBear">{$matchInfo.referee_cost_bear}</span>
+                <span class="wd60 refereeCostBear">{$matchInfo.record.referee_cost_bear}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
@@ -438,7 +420,7 @@
 
             var count = 1;
             isthumbsup(); //点赞状态
-            toSignUpList(); // 报名/参赛队员
+            toMatchMemberList(); // 参赛队员
             toHomeMemberList(); // 球队人员的列表
 
             // 去逗号
@@ -475,23 +457,8 @@
                 $(".courtCostBear").text("客队负责");
             }
 
-            // 裁判列表文字转换中文
-            var referee_type = "{$matchInfo.referee_type}";
-            if (referee_type == 0) {
-                $(".refereeType").text("免裁判");
-                $(".refereeName").hide();
-                $(".refereeCount").hide();
-            } else if (referee_type == 1) {
-                $(".refereeType").text("系统随机安排");
-                $(".refereeName").hide();
-                $(".refereeCount").show();
-            } else if (referee_type == 2) {
-                $(".refereeType").text("自行安排");
-                $(".refereeCount").hide();
-            }
-
             // 付费方式文字转换中文
-            var referee_cost_bear = "{$matchInfo.referee_cost_bear}";
+            var referee_cost_bear = "{$matchInfo.record.referee_cost_bear}";
             if (referee_cost_bear == 0) {
                 $(".refereeCostBear").text("免费");
             } else if (referee_cost_bear == 1) {
@@ -581,17 +548,9 @@
             album = [];
             albumImg();//调用活动花絮图片组好的数组
 
-            referee_str = [];
-            $(".hideReferee input").each(function () {
-                var referee = $(this).attr("data-referee");
-                var referee_id = $(this).attr("data-referee_id");
-                var referee_cost = $(this).attr("data-referee_cost");
-                referee_str.push({ referee: referee, referee_id: referee_id, referee_cost: referee_cost });
-            });
-
             HomeMemberListDel = [];
             HomeMemberList = [];
-            ////////////////////////最终选择的活动队员/////////////////////////////////////////
+            // ////////////////////////最终选择的活动队员/////////////////////////////////////////
             $("#inactiveList input[name=member]").each(function () {
                 member = $(this).attr("data-member");
                 member_id = $(this).attr("data-member_id");
@@ -620,7 +579,9 @@
                 //上面遍历过不存在就添加到最终变动活动队员列表中
                 if (idDelID == "Yes") {
                     var member_id = $(this).attr("data-member_id");
-                    HomeMemberListDel.push({ member_id: member_id, name: name, id: id, status: -1 });
+                    var name = $(this).attr("data-name");
+                    var tmid = $(this).attr("data-tmid");
+                    HomeMemberListDel.push({member_id: member_id, name: name, tmid: tmid, status: -1 });
                 }
                 console.log(HomeMemberListDel)
             });
@@ -631,7 +592,6 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            //objData.referee_str = JSON.stringify(referee_str);
             objData.HomeMemberData = JSON.stringify(HomeMemberList);
             objData.HomeMemberDataDel = JSON.stringify(HomeMemberListDel); //在已选列表中删除了的队员
             objData.album = JSON.stringify(album);
@@ -693,8 +653,8 @@
             });
         }
 
-        //获取已经报名的活动队员列表
-        function toSignUpList() {
+        //获取参赛队员列表
+        function toMatchMemberList() {
             var url = "{:url('api/match/recordmemberlist')}";
             var match_id = "{$matchInfo.id}";
             mui.ajax({
@@ -702,8 +662,7 @@
                 data: {
                     match_id: match_id,
                     status: 1,
-                    team_id : "{$team_id}"
-                    // is_apply: 1
+                    team_id: "{$team_id}"
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -713,18 +672,25 @@
                     console.log(data)
                     if (data.code == 200) {
                         var inactiveDiv = '';
-                        $(".imgShow").empty();
+                        $(".mui-badge").text(data.data.length);
+                        HomeMemberList = [];//报名人员列表数组
+                        $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            $(".signup_num").text(data.data.length);
-                            // 出勤率
-                            var rateNum = data.data.length / "{$countTeamMember}" * 100;
-                            $(".rate").text(parseInt(rateNum) + "%");
-                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="' + data.data[i].team_member_id + '" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-tmid="' + data.data[i].team_member_id + '"></div>'
+                            HomeMemberList.push({ name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, tmid: data.data[i].team_member_id });
                         };
-                        $(".imgShow").append(inactiveDiv);
-                    }
-                    if (data.code == 100) {
-                        $(".imgShow").append('<p class="mui-text-center">还没有参赛队员哦</p>');
+                        console.log(HomeMemberList)
+
+                        $("#inactiveList").append(inactiveDiv);
+                        $("#hideStList").append(inactiveDiv);
+                        $("#hideStListIni").append(inactiveDiv);
+
+                        if ($("#inactiveList").html() == '') {
+                            $(".checkChecked").append('<p class="nohave">没有学员哦</p>');
+                        }
+
+                        changeIndexHome();//调用-更新序号
+                        totalNum = $(".checkboxCont").length;
                     }
                 },
                 error: function (xhr, type, errerThrown) {

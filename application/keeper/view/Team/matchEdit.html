@@ -801,7 +801,7 @@
                 // 获取省市区默认值
                 // 获取省索引值
                 function searchProvince(province) {
-                    for (var i = 0; i <= cityData3.length; i++) {
+                    for (var i = 0; i < cityData3.length; i++) {
                         if (cityData3[i].text == province) {
                             return i;
                         }
@@ -818,20 +818,20 @@
                     }
                 }
                 //  获取区索引值
-                // function searchArea(area) {
-                //     for (var i = 0; i < cityData3.length; i++) {
-                //         for (var j = 0; j < cityData3[i].children.length; j++) {
-                //             for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
-                //                 if (cityData3[i].children[j].children[k].text == area) {
-                //                     return k;
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+                function searchArea(area) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                                if (cityData3[i].children[j].children[k].text == area) {
+                                    return k;
+                                }
+                            }
+                        }
+                    }
+                }
                 cityPicker3.pickers[0].setSelectedIndex(searchProvince('{$matchInfo.province}'));
                 cityPicker3.pickers[1].setSelectedIndex(searchCity('{$matchInfo.city}'));
-                // cityPicker3.pickers[2].setSelectedIndex(searchArea('{$matchInfo.area}'));
+                cityPicker3.pickers[2].setSelectedIndex(searchArea('{$matchInfo.area}'));
 
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
@@ -937,6 +937,8 @@
             $('#courtCostBear option[value="{$matchInfo.court_cost_bear}"]').prop("selected", true);
             // 设置是否约战默认值
             $('#islive option[value="{$matchInfo.islive}"]').prop("selected", true);
+            // 设置裁判付费方式
+            $('#refereeCostBear option[value="{$matchInfo.record.referee_cost_bear}"]').prop("selected", true);
 
 
             // 是否完成录入操作
