@@ -68,7 +68,18 @@ class Member extends Base{
         try {
             $member_id = $this->memberInfo['id'];
             $data = input('post.');
+            // 更新member数据
             $result = $this->MemberService->updateMemberInfo($data, ['id'=>$member_id]);
+            if ($result['code'] == 200) {
+                // 更新member数据成功 同步更新会员所在球队的球员信息
+                $teamS = new TeamService();
+                $teamS->saveTeamMember([
+                    'age' => $result['data']['age'],
+                    'birthday' => $result['data']['birthday'],
+                    'height' => $result['data']['height'],
+                    'weight' => $result['data']['weight'],
+                ], ['member_id' => $result['data']['id'], 'status' => 1]);
+            }
             return json($result);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
