@@ -32,9 +32,12 @@ class Lesson extends Base{
             $camp_id = input('param.camp_id');
             $gradecate_id = input('param.gradecate_id');
             $hot = input('param.hot');
+            $order = 'id desc';
             $map['province']=$province;
             $map['city']=$city;
             $map['area']=$area;
+            $lat = input('param.lat',22.52369);
+            $lng = input('param.lng',114.0261);
             foreach ($map as $key => $value) {
                 if($value == ''|| empty($value) || $value==' '){
                     unset($map[$key]);
@@ -59,7 +62,7 @@ class Lesson extends Base{
                 unset($map['page']);
             }
             $map['isprivate'] = input('param.isprivate', 0);
-            $result = $this->LessonService->getLessonList($map,$page);
+            $result = $this->LessonService->getLessonList($map,$page,$order,10,"*,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(lat*pi()/180)*pow(sin(($lng *pi()/180 - lng*pi()/180)/2),2))) as distance");
             if($result){
                 shuffle($result);
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);

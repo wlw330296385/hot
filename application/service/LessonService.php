@@ -23,8 +23,9 @@ class LessonService {
     }
     
     // 获取所有课程
-    public function getLessonList($map=[],$page = 1,$order='id desc',$paginate = 10) {
-        $result = Lesson::where($map)->order($order)->page($page,$paginate)->select();
+    public function getLessonList($map=[],$page = 1,$order='id desc',$paginate = 10,$field = '') {
+        $result = Lesson::field($field)->where($map)->order($order)->page($page,$paginate)->select();
+
         if($result){
             $res = $result->toArray();
             return $res;
@@ -34,8 +35,8 @@ class LessonService {
     }
 
     // 分页获取课程
-    public function getLessonListByPage($map=[], $order='id desc',$paginate=10){
-        $res = Lesson::where($map)->order($order)->paginate($paginate);
+    public function getLessonListByPage($map=[], $order='id desc',$paginate=10,$field = ''){
+        $res = Lesson::field($field)->where($map)->order($order)->paginate($paginate);
         if($res){
             return $res->toArray();
         }else{
@@ -43,8 +44,8 @@ class LessonService {
         }
     }
 
-    public function getLessonListNoPage($map=[], $order='id desc',$paginate=10){
-        $res = Lesson::where($map)->order($order)->select();
+    public function getLessonListNoPage($map=[], $order='id desc',$paginate=10,$field = ''){
+        $res = Lesson::field($field)->where($map)->order($order)->select();
         if($res){
             return $res->toArray();
         }else{

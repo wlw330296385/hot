@@ -43,6 +43,13 @@ class ScheduleService
         $result = $this->scheduleModel->where($map)->order($order)->paginate($paginate)->each(
             function ($item, $key) {
                 $item->student_strs = unserialize($item->student_str);
+                $item->assistants = unserialize($item->assistant);
+                $item->assistant_str = '';
+                if($item->assistants){
+                    foreach ($item->assistants as $key => $value) {
+                        $item->assistant_str .=','.$value;
+                    }
+                }
             });
         if ($result) {
             $list = $result->toArray();

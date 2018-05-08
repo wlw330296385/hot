@@ -115,6 +115,23 @@ class Message extends Base{
         }
     }
 
+    // 全部已读
+    public function setMessageMemberStatusAllApi(){
+        try{
+  
+            $status = input('param.status');
+            $result = db('message_member')->where(['member_id'=>$this->memberInfo['id']])->update(['status'=>$status]);
+            if($result){
+                return json(['code'=>200,'msg'=>'设置成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'没有这条消息']);
+            }
+            
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 
     // 发送个人消息
     public function sendMessageApi(){
