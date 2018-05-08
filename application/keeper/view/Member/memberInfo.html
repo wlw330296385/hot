@@ -145,6 +145,24 @@
             z-index: 20;
             background-color: #000;
         }
+
+        /* 日期选择器视图 */
+
+        [data-type="month"] .mui-dtpicker-title h5 {
+            width: 100% !important;
+        }
+
+        [data-type="month"] .mui-picker {
+            width: 100% !important;
+        }
+
+        [data-type="month"] [data-id="title-m"] {
+            display: none !important;
+        }
+
+        [data-type="month"] .mui-dtpicker-body [data-id="picker-m"] {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -214,6 +232,10 @@
                                 <span class="birthday">{$memberInfo['birthday']}</span>
                             </div>
                             <div class="mui-input-row">
+                                <label>开始打球时间</label>
+                                <span>{$memberInfo['yearsexp']}</span>
+                            </div>
+                            <div class="mui-input-row">
                                 <label>所属地区</label>
                                 <span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                             </div>
@@ -262,11 +284,11 @@
                         </div>
                         <div class="mui-input-row">
                             <label>姓名</label>
-                            <input type="text" name="" class="member editor" value="{$memberInfo['member']}" style="color: #737373">
+                            <input type="text" name="" class="member" value="{$memberInfo['member']}" style="color: #737373">
                         </div>
                         <div class="mui-input-row">
                             <label>性别</label>
-                            <span class="editor">
+                            <span>
                                 <select class="sex">
                                     <option value="1" {eq name="$memberInfo.sex" value="1" }selected{/eq}>男</option>
                                     <option value="2" {eq name="$memberInfo.sex" value="2" }selected{/eq}>女</option>
@@ -275,15 +297,19 @@
                         </div>
                         <div class="mui-input-row" id="showUserPickerHeight">
                             <label>身高</label>
-                            <span id='userResulth' class="height editor ui-alert">{$memberInfo['height']}</span>
+                            <span id='userResulth' class="height ui-alert">{$memberInfo['height']}</span>
                         </div>
                         <div class="mui-input-row" id="showUserPickerWeight">
                             <label>体重</label>
-                            <span id='userResultw' class="weight editor ui-alert">{$memberInfo['weight']}</span>
+                            <span id='userResultw' class="weight ui-alert">{$memberInfo['weight']}</span>
                         </div>
                         <div class="mui-input-row btn1" id="demo2" data-options='{"type":"date","beginYear":1850,"endYear":2023}'>
                             <label>出生日期</label>
                             <span id="result" class="ui-alert birthday">{$memberInfo['birthday']}</span>
+                        </div>
+                        <div class="mui-input-row  picker btnYearsexp" id="demo6" data-options='{"type":"month","beginYear":1850,"endYear":2023}'>
+                            <label>开始打球时间</label>
+                            <span id="resultYearsexp" class="ui-alert yearsexp">{$memberInfo['yearsexp']}</span>
                         </div>
                         <div class="mui-input-row" id='showCityPicker3'>
                             <label>所属地区</label>
@@ -389,26 +415,26 @@
                     layer: 3
                 });
 
-               // 获取省市区默认值
+                // 获取省市区默认值
                 // 获取省索引值
-                // function searchProvince(province) {
-                //     for (var i = 0; i <= cityData3.length; i++) {
-                //         if (cityData3[i].text == province) {
-                //             return i;
-                //         }
-                //     }
-                // }
-                // //  获取市索引值
-                // function searchCity(city) {
-                //     for (var i = 0; i < cityData3.length; i++) {
-                //         for (var j = 0; j < cityData3[i].children.length; j++) {
-                //             if (cityData3[i].children[j].text == city) {
-                //                 return j;
-                //             }
-                //         }
-                //     }
-                // }
-                // //  获取区索引值
+                function searchProvince(province) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        if (cityData3[i].text == province) {
+                            return i;
+                        }
+                    }
+                }
+                //  获取市索引值
+                function searchCity(city) {
+                    for (var i = 0; i < cityData3.length; i++) {
+                        for (var j = 0; j < cityData3[i].children.length; j++) {
+                            if (cityData3[i].children[j].text == city) {
+                                return j;
+                            }
+                        }
+                    }
+                }
+                //获取区索引值
                 // function searchArea(area) {
                 //     for (var i = 0; i < cityData3.length; i++) {
                 //         for (var j = 0; j < cityData3[i].children.length; j++) {
@@ -420,8 +446,8 @@
                 //         }
                 //     }
                 // }
-                // cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$memberInfo.province}"));
-                // cityPicker3.pickers[1].setSelectedIndex(searchCity("{$memberInfo.city}"));
+                cityPicker3.pickers[0].setSelectedIndex(searchProvince("{$memberInfo.province}"));
+                cityPicker3.pickers[1].setSelectedIndex(searchCity("{$memberInfo.city}"));
                 // cityPicker3.pickers[2].setSelectedIndex(searchArea("{$memberInfo.area}"));
 
                 cityPicker3.pickers[0].setSelectedIndex(18);
@@ -461,6 +487,23 @@
                     }, false);
                 });
 
+                //打球时间
+                var resultYearsexp = $('#resultYearsexp')[0];
+                var btnYearsexp = $('.btnYearsexp');
+                btnYearsexp.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultYearsexp.innerText = rs.y.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
             });
         })(mui, document);
 
@@ -477,20 +520,19 @@
                     var province = $("#editor input[name=province]").val();
                     var city = $("#editor input[name=city]").val();
                     var area = $("#editor input[name=area]").val();
-                    console.log(province)
-                    console.log(city)
-                    console.log(area)
+                    var yearsexp = $("#editor .yearsexp").text();
                     if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
-                                'member': member,
-                                'sex': sex,
-                                'height': height,
-                                'weight': weight,
-                                'birthday': birthday,
-                                'province': province,
-                                'city': city,
-                                'area': area,
+                                member: member,
+                                sex: sex,
+                                height: height,
+                                weight: weight,
+                                birthday: birthday,
+                                province: province,
+                                city: city,
+                                area: area,
+                                yearsexp: yearsexp
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
@@ -499,7 +541,7 @@
                             success: function (data) {
                                 console.log(data)
                                 mui.toast(data.msg)
-                                window.setTimeout("location.reload(viewApi.back())",2500); 
+                                window.setTimeout("location.reload(viewApi.back())", 2500);
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);
