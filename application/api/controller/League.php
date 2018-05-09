@@ -259,4 +259,172 @@ class League extends Base
         }
         return json($res);
     }
+
+    // 平台展示联赛列表
+    public function platformleaguelist() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1);
+            // 查询有联赛组织的比赛 作为联赛记录
+            if ( !array_key_exists('match_org_id', $data) ) {
+                $data['match_org_id'] = ['gt', 0];
+            }
+            // 默认查询所有分类记录
+            if ( array_key_exists('type', $data) && empty($data['type']) ) {
+                unset($data['type']);
+            }
+            // 默认查询city下所有记录
+            if ( array_key_exists('area', $data) && empty($data['area']) ) {
+                unset($data['area']);
+            }
+            // 搜索关键字(联赛名)
+            $keyword = input('keyword');
+            if ( $keyword == null ) {
+                unset($data['keyword']);
+            }
+            if ( !empty($keyword) ) {
+                $data['name'] = ['like', "%$keyword%"];
+                unset($data['keyword']);
+            }
+
+            // 审核通过
+            $data['status'] = 1;
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询条件组合end
+            // 获取联赛列表
+            $matchS = new MatchService();
+            $leagueS = new LeagueService();
+            $result = $matchS->matchList($data, $page);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 平台展示联赛列表（页码）
+    public function platformleaguepage() {
+        try {
+            $data = input('param.');
+            // 查询有联赛组织的比赛 作为联赛记录
+            if ( !array_key_exists('match_org_id', $data) ) {
+                $data['match_org_id'] = ['gt', 0];
+            }
+            // 默认查询所有分类记录
+            if ( array_key_exists('type', $data) && empty($data['type']) ) {
+                unset($data['type']);
+            }
+            // 默认查询city下所有记录
+            if ( array_key_exists('area', $data) && empty($data['area']) ) {
+                unset($data['area']);
+            }
+            // 搜索关键字(联赛名)
+            $keyword = input('keyword');
+            if ( $keyword == null ) {
+                unset($data['keyword']);
+            }
+            if ( !empty($keyword) ) {
+                $data['name'] = ['like', "%$keyword%"];
+                unset($data['keyword']);
+            }
+
+            // 审核通过
+            $data['status'] = 1;
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询条件组合end
+            // 获取联赛列表
+            $matchS = new MatchService();
+            $leagueS = new LeagueService();
+            $result = $matchS->matchListPaginator($data);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 联赛球队列表
+    public function leagueteamlist() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            // 搜索关键字(联赛名)
+            $keyword = input('keyword');
+            if ( $keyword == null ) {
+                unset($data['keyword']);
+            }
+            if ( !empty($keyword) ) {
+                $data['team'] = ['like', "%$keyword%"];
+            }
+            unset($data['keyword']);
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询条件组合end
+
+            // 获取参加联赛的球队列表
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchTeamList($data, $page);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 联赛球队列表（页码）
+    public function leagueteampage() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            // 搜索关键字(联赛名)
+            $keyword = input('keyword');
+            if ( $keyword == null ) {
+                unset($data['keyword']);
+            }
+            if ( !empty($keyword) ) {
+                $data['team'] = ['like', "%$keyword%"];
+            }
+            unset($data['keyword']);
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询条件组合end
+
+            // 获取参加联赛的球队列表
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchTeamPaginator($data);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 球队申请参加联赛
+    public function joinleague() {
+        // 检查会员登录
+        // 检查会员所在球队信息
+        // 检查
+    }
 }

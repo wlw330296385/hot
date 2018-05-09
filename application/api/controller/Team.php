@@ -535,6 +535,8 @@ class Team extends Base
                     return json(['code' => 100, 'msg' => '输入的球衣号码已有同队成员使用了，请输入其他号码']);
                 }
             }
+            // 球龄：提交的是真实球龄数，存进数据库是打开打球时间年份
+            $data['yearsexp'] = empty($data['yearsexp']) ? null : intval(date('Y')-$data['yearsexp']);
             // 更新球员信息
             $res = $teamS->saveTeamMember($data);
             if ($res['code'] == 200) {

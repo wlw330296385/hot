@@ -68,6 +68,8 @@ class Member extends Base{
         try {
             $member_id = $this->memberInfo['id'];
             $data = input('post.');
+            // 打球时间为空处理
+            $data['yearsexp'] = empty($data['yearsexp']) ? null : $data['yearsexp'];
             // 更新member数据
             $result = $this->MemberService->updateMemberInfo($data, ['id'=>$member_id]);
             if ($result['code'] == 200) {
@@ -78,6 +80,7 @@ class Member extends Base{
                     'birthday' => $result['data']['birthday'],
                     'height' => $result['data']['height'],
                     'weight' => $result['data']['weight'],
+                    'yearsexp' => $result['data']['yearsexp']
                 ], ['member_id' => $result['data']['id'], 'status' => 1]);
             }
             return json($result);

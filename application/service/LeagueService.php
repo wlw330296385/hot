@@ -7,6 +7,7 @@ use app\model\Match;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
+use app\model\MatchTeam;
 
 class LeagueService
 {
@@ -183,5 +184,32 @@ class LeagueService
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 获取联赛球队数
+    public function getMatchTeamCount($map) {
+        $model = new MatchTeam();
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
+    }
+
+    // 获取联赛球队列表
+    public function getMatchTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
+        $model = new MatchTeam();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛球队列表（页码）
+    public function getMatchTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
+        $model = new MatchTeam();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 }

@@ -171,5 +171,16 @@ class Article extends Base{
         $this->assign('articleInfo',$articleInfo);
         return view('Article/articleInfoOfLifeStyle');
     }
+
+
+    // 获取会员文章列表
+    public function articleListOfLifeStyle(){
+    	$map = input('post.');
+        $articleList = $this->ArticleService->getArticleList($map);
+
+
+        $this->assign('articleListOfLifeStyle',$articleList);
+		return view('Article/articleListOfLifeStyle');
+    }
    
 }
