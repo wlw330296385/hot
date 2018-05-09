@@ -10,4 +10,14 @@ class MatchTeam extends Model {
     // 软删除
     use SoftDelete;
     protected $deleteTime = 'delete_time';
+
+    // 一对一关联球队
+    public function team() {
+        return $this->belongsTo('Team');
+    }
+
+    // 一对一关联比赛
+    public function match() {
+        return $this->belongsTo('Match');
+    }
 }

@@ -72,9 +72,7 @@ class Coupon extends Backend{
             $data['publish_start'] = strtotime($publishtime[0]);
             $data['publish_end'] = strtotime($publishtime[1]);
             $data['member_id'] = $this->admin['id'];
-            if($data['target_type']<>-1){
-                $data['target_id'] = 0;
-            }
+
             $result = $this->ItemCouponService->updateItemCoupon($data,['id'=>$itemCoupon_id]);
             if($result['code'] == 200){
                 $this->success($result['msg']);
@@ -98,9 +96,9 @@ class Coupon extends Backend{
             $data['publish_start'] = strtotime($publishtime[0]);
             $data['publish_end'] = strtotime($publishtime[1]);
             $data['member_id'] = $this->admin['id'];
-            if($data['target_type']<>-1){
-                $data['target_id'] = 0;
-            }
+//            if($data['target_type']<>-1){
+//                $data['target_id'] = 0;
+//            }
             $result = $this->ItemCouponService->createItemCoupon($data);
             if($result['code'] == 200){
                 $this->success($result['msg']);

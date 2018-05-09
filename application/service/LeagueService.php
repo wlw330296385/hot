@@ -153,6 +153,16 @@ class LeagueService
         return $result;
     }
 
+    // 获取联赛组织人员列表
+    public function getMatchOrgMembers($map) {
+        $model = new MatchOrgMember();
+        $res = $model->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 保存联赛-工作人员关系数据
     public function saveMatchMember($data, $condition=[]) {
         $model = new MatchMember();
@@ -193,6 +203,17 @@ class LeagueService
         return ($res) ? $res : 0;
     }
 
+    // 获取联赛球队详情（关联比赛、球队详细）
+    public function getMatchTeamInfo($map) {
+        $model = new MatchTeam();
+        $res = $model->with('team')->with('match')->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
     // 获取联赛球队列表
     public function getMatchTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
         $model = new MatchTeam();
@@ -207,6 +228,26 @@ class LeagueService
     public function getMatchTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
         $model = new MatchTeam();
         $res = $model->where($map)->order($order)->paginate($limit);
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛球队列表
+    public function getMatchTeamWithTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
+        $model = new MatchTeam();
+        $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛球队列表（页码）
+    public function getMatchTeamWithTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
+        $model = new MatchTeam();
+        $res = $model->with('team')->where($map)->order($order)->paginate($limit);
         if ($res) {
             return $res;
         }
