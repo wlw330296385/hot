@@ -113,7 +113,7 @@
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="linkman" class="data" value="{$memberInfo.member}">
+                        <input type="text" name="linkman" class="data" value="" placeholder="请务必填写联系人姓名">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
@@ -264,7 +264,12 @@ function getStudentList(){
 
 function joinEvent(){
     var objData = {};
-    console.log(studentList);
+
+    var linkman = $('input[name="linkman"]').val();
+    if(linkman==""||linkman==null){
+        alert('请填写联系人姓名，便于工作人员与您联系，谢谢！');
+        return false;
+    }
     if(studentList.length>total){
         alert('参与人员不可大于报名人数['+total+']');
         return false;
@@ -273,6 +278,7 @@ function joinEvent(){
         alert('请选择参与名单');
         return false;
     }
+
     var arrData1 = wooApi.getInputData();
     arrData2 = wooApi.getInputData('textarea','data',arrData1);
     objData = wooApi.arrTOobj(arrData2);

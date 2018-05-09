@@ -51,9 +51,6 @@
             <span class="return">返回</span>
         </a>
         <h1 class="mui-title">{$eventInfo.organization}</h1>
-        <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
-        <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
-        <input type="hidden" name="organization_type" value="1" class="data">
     </header>
 
     <div class="mui-content pt">
@@ -62,6 +59,10 @@
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
             <form action="" class="mui-input-group">
+                <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
+                <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+                <input type="hidden" name="organization_type" value="1" class="data">
+                <input type="hidden" name="is_max" value="{$eventInfo.is_max}" class="data">
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -188,6 +189,13 @@
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
                 </div>
+
+                <div class="mui-input-row">
+                    <label class="colorred">已报名人数</label>
+                    <span class="colorred">{$eventInfo.participator}</span>
+                </div>
+                <!--用于判断是否修改最大人数，如加大了需要改变is_max为1，如改小了需要判断不能小于已报人人数-->
+                <input type="hidden" name="org_participator" value="{$eventInfo.participator}">
 
                 <div class="mui-input-row">
                     <label>联系人</label>
@@ -448,25 +456,23 @@
             return false;
         }
 
+
         //初始化全局变量
         eventDomArr = [];
+        var ePriceForStart = "{$eventInfo.is_free}";
         $("#eventDom .mui-checkbox").each(function () {
             var eDom = $(this).find("input[name='event-dom']").val();
             var eDomPrice = $(this).find("input[name='event-dom_price']").val();
-            var ePrice = $("#eventPrice").val();
             //eventDomArr.push({ name: eDom, price: eDomPrice });
-            if (ePrice == 2) {
+            if (ePriceForStart == "2") {
                 eventDomArr.push({ name: eDom, price: eDomPrice });
             } else {
                 eventDomArr.push({ name: eDom, price: '' });
             }
         });
+        console.log(eventDomArr)
+
         $(function () {
-            //
-            //            var cDoms = $(".hdDoms").text();
-            //            console.log(cDoms)
-            //            cDoms = cDoms.substring(0, cDoms.length - 1);
-            //            $(".hdDoms").text(cDoms);
 
             //获取训练营粉丝列表
             var StudentKeyword = '';
@@ -499,6 +505,16 @@
             $('#eventType option[value="{$eventInfo.event_type}"]').prop("selected", true);
             // 设置收费默认值
             $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
+            // 是否满额中文转数字
+//            var is_max = "{$eventInfo.is_max}";
+//            if(is_max=="已满人"){
+//                $("input[name='is_max']").val("-1")
+//            }else{
+//                $("input[name='is_max']").val("1")
+//            }
+
+
+
 
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").on("change", '', '', function () {
@@ -668,6 +684,20 @@
                 mui.toast("请输入正确的手机格式");
                 return false;
             };
+
+            //判断是否修改最大人数，如加大了需要改变is_max为1，如改小了需要判断不能小于已报人人数
+            var currMax = parseInt($("input[name='max']").val());
+            var orgParticipator = parseInt($("input[name='org_participator']").val());
+            if (currMax == orgParticipator) {
+                $("input[name='is_max']").val("-1");
+                mui.toast("报名人数已满");
+            }else if(currMax < orgParticipator){
+                mui.toast("提交失败，您修改的最多人数不能少于已报名人数。");
+                return false;
+            }else{
+                $("input[name='is_max']").val("1")
+            }
+
 
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();

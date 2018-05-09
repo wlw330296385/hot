@@ -104,11 +104,11 @@
                 <div class="form-group">
                     <label>赠送条件</label>
                     <select name="target_type">
-                        <option value="-1" selected="selected">促销活动专用</option>
-                        <option value="1" selected="selected">购买课程赠送</option>
-                        <option value="2" selected="selected">购买活动赠送</option>
-                        <option value="3" selected="selected">产生订单赠送</option>
-                        <option value="4" selected="selected">文章活动赠送</option>
+                        <option value="-1">促销活动专用</option>
+                        <option value="1">购买课程赠送</option>
+                        <option value="2">购买活动赠送</option>
+                        <option value="3">产生订单赠送</option>
+                        <option value="4">文章活动赠送</option>
                     </select>
                 </div>
 
@@ -170,14 +170,14 @@
     $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY/MM/DD h:m:i'});
     $('#publishtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY/MM/DD h:m:i'});
 
-      // 选择平台礼包/或文章
-      selectTargetType();
 
     //设置默认项目
       $('select[name="status"] option[value="{$itemCouponInfo.status}"]').prop("selected", true);
       $('select[name="target_type"] option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
       $('select[name="target_id"] option[value="{$itemCouponInfo.target_id}"]').prop("selected", true);
 
+      // 选择平台礼包/或文章
+      selectTargetType();
 
      $('select[name=target_type]').on('change',function(){
          selectTargetType()
@@ -271,11 +271,13 @@
 
 
     function selectTargetType(){
-        if($('select[name=target_type] option:selected').val()==-1){
+        var targetType =$('select[name=target_type] option:selected').val();
+        console.log(targetType);
+        if(targetType=="-1"){
             $('.bonusDom').show();
             $('.bonusDom label').text("请选择礼包");
             getBonusList();
-        }else if($('select[name=target_type] option:selected').val()==4){
+        }else if(targetType=="4"){
             $('.bonusDom').show();
             $('.bonusDom label').text("请选择文章");
             getArticleList();

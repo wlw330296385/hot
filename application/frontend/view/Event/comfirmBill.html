@@ -114,7 +114,7 @@
                     </div>
                     <div class="mui-input-row">
                         <label>联系人</label>
-                        <input type="text" name="linkman" class="data" value="{$memberInfo.member}">
+                        <input type="text" name="linkman" class="data" value="" placeholder="请务必填写联系人姓名">
                     </div>
                     <div class="mui-input-row">
                         <label>联系电话</label>
@@ -248,15 +248,8 @@
         }
 
         function joinEvent(){
-            var data = {};
-            if(studentList.length>total){
-                alert('参与人员不可大于报名人数['+total+']');
-                return false;
-            }
-            if(studentList.length<1){
-                alert('请选择参与名单');
-                return false;
-            }
+//            var data = {};
+
             var arrData1 = wooApi.getInputData();
             arrData2 = wooApi.getInputData('textarea','data',arrData1);
             objData = wooApi.arrTOobj(arrData2);
@@ -355,6 +348,22 @@
 
         // 立即支付
         function wxpay(){
+
+            var linkman = $('input[name="linkman"]').val();
+            if(linkman==""||linkman==null){
+                alert('请填写联系人姓名，便于工作人员与您联系，谢谢！');
+                return false;
+            }
+            if(studentList.length>total){
+                alert('参与人员不可大于报名人数['+total+']');
+                return false;
+            }
+            if(studentList.length<1){
+                alert('请选择参与名单');
+                return false;
+            }
+
+
             if(debug != 1){
                 mui.alert(debug);
                 return false;
