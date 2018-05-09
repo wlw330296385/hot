@@ -82,7 +82,7 @@
 
         <div class="list mt55">
 
-            <div class="img4x3" style="background-image:url('{teamInfo.cover}')"></div>
+            <div class="img4x3" style="background-image:url('{$leagueInfo.cover}')"></div>
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli">
@@ -91,7 +91,7 @@
                         <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org}</p>
                         <p>{$leagueInfo.province} {$leagueInfo.city}</p>
                         <p>参赛队：
-                            <strong class="colororange">10</strong>支 | 粉丝：
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
                             <strong class="colororange">350</strong>
                         </p>
                     </div>
@@ -105,22 +105,22 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>联赛开始时间</label>
-                    <span class="wd60">{$leagueInfo.start_time}</span>
+                    <span class="wd60">{$leagueInfo.start_time|date="Y-m-d",###}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>联赛结束时间</label>
-                    <span class="wd60">{$leagueInfo.end_time}</span>
+                    <span class="wd60">{$leagueInfo.end_time|date="Y-m-d",###}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>报名开始时间</label>
-                    <span class="wd60">{$leagueInfo.reg_start_time}</span>
+                    <span class="wd60">{$leagueInfo.reg_start_time|date="Y-m-d H:i",###}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>报名结束时间</label>
-                    <span class="wd60">{$leagueInfo.reg_end_time}</span>
+                    <span class="wd60">{$leagueInfo.reg_end_time|date="Y-m-d H:i",###}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -131,7 +131,7 @@
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>参赛队伍</label>
                     <span>
-                        <font class="colororange">10</font>/{$leagueInfo.teams_max} 支</span>
+                        <font class="colororange">{$leagueInfo.teams_count}</font>/{$leagueInfo.teams_max} 支</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -242,7 +242,7 @@
                     <a href="#fbcomment">评价 </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
-                    <a href="{:url('match/signUpLeague')}">报名</a>
+                    <a href="{:url('match/signUpLeague', ['league_id' => $leagueInfo.id])}">报名</a>
                 </li>
             </ul>
 
