@@ -163,6 +163,16 @@ class LeagueService
         return $res->toArray();
     }
 
+    // 获取联赛组织人员详情
+    public function getMatchOrgMember($map) {
+        $model = new MatchOrgMember();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 保存联赛-工作人员关系数据
     public function saveMatchMember($data, $condition=[]) {
         $model = new MatchMember();
@@ -252,5 +262,29 @@ class LeagueService
             return $res;
         }
         return $res->toArray();
+    }
+
+    // 保存比赛球队数据
+    public function saveMatchTeam($data) {
+        $model = new MatchTeam();
+        // 根据提交的参数有无id 识别执行更新/插入数据
+        if ( array_key_exists('id', $data) ) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 }

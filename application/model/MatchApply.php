@@ -18,4 +18,14 @@ class MatchApply extends Model {
         $status = [1=> '未处理', 2 => '已同意', '3' => '已拒绝'];
         return $status[$value];
     }*/
+
+    // 一对一关联球队
+    public function team() {
+        return $this->belongsTo('team');
+    }
+
+    // 一对一关联比赛
+    public function match() {
+        return $this->belongsTo('match');
+    }
 }

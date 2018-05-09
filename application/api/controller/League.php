@@ -362,6 +362,12 @@ class League extends Base
         try {
             $data = input('param.');
             $page = input('param.page', 1);
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+
             // 搜索关键字(联赛名)
             $keyword = input('keyword');
             if ( $keyword == null ) {
@@ -395,6 +401,12 @@ class League extends Base
         try {
             $data = input('param.');
             $page = input('param.page', 1);
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+
             // 搜索关键字(联赛名)
             $keyword = input('keyword');
             if ( $keyword == null ) {
@@ -517,5 +529,162 @@ class League extends Base
         }
         // 返回结果
         return json($res);
+    }
+
+    // 回复联赛报名球队申请
+    public function replyleaguesignupteam() {
+        // post参数
+        $data = input('post.');
+        // 比传参数验证 apply_id status(状态)
+        if ( !array_key_exists('apply_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').',传入apply_id']);
+        }
+        if ( !array_key_exists('status', $data) || !in_array($data['status'], [2, 3]) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').',传入正确status']);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 查询联赛球队申请数据
+        $matchService = new MatchService();
+        $matchApply = $matchService->getMatchApplyDetail([
+            'id' => $data['apply_id']
+        ]);
+        if (!$matchApply) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 已同意的申请提示
+        if ($matchApply['status'] == 2) {
+            return json(['code' => 100, 'msg' => '此申请已同意了，无需再次操作']);
+        }
+        // 当前会员有无联赛组织人员关系（操作权限）
+        $leagueService = new LeagueService();
+        $matchOrgMember = $leagueService->getMatchOrgMember([
+            'match_org_id' => $matchApply['match']['match_org_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (!$matchOrgMember) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403').'您不是联赛组织人员']);
+        }
+        // 同意status=2/拒绝status=3：更新申请状态,回复消息推送
+        $statusStr = '';
+        if ($data['status'] == 3) {
+            // 拒绝
+            $statusStr = '已拒绝';
+        } else {
+            // 同意
+            $statusStr = '已同意';
+            // 检查联赛球队数是否达到联赛最大球队数
+            if ($matchApply['match']['teams_max'] && $matchApply['match']['teams_count'] == $matchApply['match']['teams_max']) {
+                return json(['code' => 100, 'msg' => '该联赛球队数量已达到联赛设定球队数上限，不能再通过球队报名了']);
+            }
+        }
+        // 回复理由
+        $reply = ( !empty($data['reply']) ) ? '回复说明：'.$data['reply'] : '';
+        // 组合推送消息内容
+        $message = [
+            'title' => '联赛报名申请通知',
+            'content' => '球队 ' . $matchApply['team']['name'] . '报名参加联赛 ' . $matchApply['match']['name'].'申请。申请结果：'.$statusStr,
+            'url' => url('keeper/message/index', '', '', true),
+            'keyword1' => '球队 ' . $matchApply['team']['name'] . '报名参加联赛 ' . $matchApply['match']['name'].'申请',
+            'keyword2' => $statusStr,
+            'remark' => '点击登录平台查看更多信息',
+            'team_id' => $matchApply['team_id'],
+            'steward_type' => 2
+        ];
+        try {
+            // 更新match_apply
+            $result = $matchService->saveMatchApply([
+                'id' => $matchApply['id'],
+                'status' => $data['status'],
+                'reply' => $reply,
+                'remarks' => $statusStr
+            ]);
+
+            if ($result['code'] == 200) {
+                // 同意操作
+                if ($data['status'] == 2) {
+                    // 保存联赛球队数据
+                    $dataMatchTeam = [
+                        'match_id' => $matchApply['match_id'],
+                        'match' => $matchApply['match']['name'],
+                        'team_id' => $matchApply['team_id'],
+                        'team' => $matchApply['team']['name'],
+                        'team_logo' => $matchApply['team']['logo']
+                    ];
+                    $leagueService->saveMatchTeam($dataMatchTeam);
+                    // 联赛球队数+1
+                    db('match')->where('id', $matchApply['match_id'])->setInc('teams_count', 1);
+                    // 发送消息推送
+                    $messageS = new MessageService();
+                    $messageS->sendMessageToMember($matchApply['member_id'], $message, config('wxTemplateID.applyResult'));
+                    // 球队公告
+                    $teamS = new TeamService();
+                    $teamS->saveTeamMessage($message);
+                }
+            }
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
+    }
+
+    // 联赛报名球队列表
+    public function leaguesignupteamlist() {
+        try {
+            $data = input('param.');
+            $page = input('page');
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+
+            $matchService = new MatchService();
+            $result = $matchService->getMatchApplyWithTeamList($data, $page);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 联赛报名球队列表（页码）
+    public function leaguesignupteampage() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+
+            $matchService = new MatchService();
+            $result = $matchService->getMatchApplyWithTeamPaginator($data);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
     }
 }

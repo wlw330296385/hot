@@ -585,7 +585,7 @@ class MatchService {
         }
     }
 
-    // 获取球队参加比赛申请
+    // 获取球队申请比赛详情
     public function getMatchApply($map) {
         $model = new MatchApply();
         $query = $model->where($map)->find();
@@ -596,7 +596,17 @@ class MatchService {
         }
     }
 
-    // 球队参加比赛申请列表（页码）
+    // 获取球队申请比赛详情(关联比赛,球队)
+    public function getMatchApplyDetail($map) {
+        $model = new MatchApply();
+        $res = $model->with('team,match')->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 球队申请比赛列表（页码）
     public function getMatchApplyPaginator($map, $order='id desc', $paginate=10) {
         $model = new MatchApply();
         $query = $model->where($map)->order($order)->paginate($paginate);
@@ -607,10 +617,32 @@ class MatchService {
         }
     }
 
-    // 球队参加比赛申请列表
+    // 球队申请比赛列表
     public function getMatchApplyList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MatchApply();
         $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+    // 球队申请比赛(关联球队）列表（页码）
+    public function getMatchApplyWithTeamPaginator($map, $order='id desc', $paginate=10) {
+        $model = new MatchApply();
+        $query = $model->with('team')->where($map)->order($order)->paginate($paginate);
+        if ($query) {
+            return $query->toArray();
+        } else {
+            return $query;
+        }
+    }
+
+    // 球队申请比赛(关联球队）列表
+    public function getMatchApplyWithTeamList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchApply();
+        $query = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($query) {
             return $query->toArray();
         } else {
