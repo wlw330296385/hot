@@ -320,7 +320,10 @@ class Match extends Base {
 
     // 报名联赛
     public function signUpLeague() {
-        return view('Match/signUpLeague');
+        $league_id = input('league_id');
+        return view('Match/signUpLeague', [
+            'league_id' => $league_id
+        ]);
     }
 
     // 组织管理员
