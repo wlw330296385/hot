@@ -233,18 +233,24 @@ class BillService {
         //结束课程操作
 
         // 记录训练营课程营业额
-        $daytime = $data['pay_time'];
-        $dataCampFinance = [
-            'camp_id' => $data['camp_id'],
-            'camp' => $data['camp'],
-            'type'=>1,
-            'f_id' => $data['id'],
-            's_balance'=>$campInfo['balance'],
-            'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-            'date_str' => date('Ymd', $daytime),
-            'datetime' => $daytime
-        ];
-        CampFinance::create($dataCampFinance);
+        if($data['balance_pay']>0 && $data['status'] == 1){
+                $daytime = $data['pay_time'];
+                $dataCampFinance = [
+                    'money' => $data['balance_pay'],
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>1,
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ];
+                CampFinance::create($dataCampFinance);
+            }
+            
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;
@@ -253,18 +259,25 @@ class BillService {
                 //成为粉丝
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
-            $dataCampFinance = [
-                'camp_id' => $data['camp_id'],
-                'camp' => $data['camp'],
-                'type'=>2,
-                'f_id' => $data['id'],
-                's_balance'=>$campInfo['balance'],
-                'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date_str' => date('Ymd', $daytime),
-                'datetime' => $daytime
-            ];
+            if($data['balance_pay']>0 && $data['status'] == 1){
+                $daytime = $data['pay_time'];
+                $dataCampFinance = [
+                    'money' => $data['balance_pay'],
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>2,
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ];
+            }
+            
             CampFinance::create($dataCampFinance);
-        }   
+        }  
                 
         return 1;
     }
@@ -347,23 +360,29 @@ class BillService {
                 }
                 
             }
-        //结束增加学生数据
-        // 发送模板消息
-        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-            //结束课程操作
-            // 记录训练营课程营业额
-            $daytime = $data['pay_time'];
-            $dataCampFinance = [
-                'camp_id' => $data['camp_id'],
-                'camp' => $data['camp'],
-                'type'=>1,
-                'f_id' => $data['id'],
-                's_balance'=>$campInfo['balance'],
-                'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date_str' => date('Ymd', $daytime),
-                'datetime' => $daytime
-            ];
-            CampFinance::create($dataCampFinance);
+            //结束增加学生数据
+            // 发送模板消息
+            $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+                //结束课程操作
+                // 记录训练营课程营业额
+            if($data['balance_pay']>0 && $data['status'] == 1){
+                $daytime = $data['pay_time'];
+                $dataCampFinance = [
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>1,
+                    'money' => $data['balance_pay'],
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ];
+                CampFinance::create($dataCampFinance);
+            }
+            
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;
@@ -372,16 +391,23 @@ class BillService {
                 //成为粉丝
                 $CampMember->save(['type'=>-1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
             }
-            $dataCampFinance = [
-                'camp_id' => $data['camp_id'],
-                'camp' => $data['camp'],
-                'type'=>2,
-                'f_id' => $data['id'],
-                's_balance'=>$campInfo['balance'],
-                'e_balance'=>$campInfo['balance']+$data['balance_pay'],
-                'date_str' => date('Ymd', $daytime),
-                'datetime' => $daytime
-            ];
+            if($data['balance_pay']>0 && $data['status'] == 1){
+                $daytime = $data['pay_time'];
+                $dataCampFinance = [
+                    'money' => $data['balance_pay'],
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>2,
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ];
+            }
+            
             CampFinance::create($dataCampFinance);
         }   
                 

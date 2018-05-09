@@ -263,15 +263,16 @@
             objData.memberData = JSON.stringify(studentList);
             objData.event = "{$eventInfo.event}";
             var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-            var result = wooApi.asyncF(url+'/total/'+total,objData);
+            let result = wooApi.asyncF(url+'/total/'+total,objData);
             if(result.code == 200){
-                presentItemCoupon()
+                presentItemCoupon();
                 mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
                     window.location.href="{:url('frontend/event/eventList')}";
                 });
             }else{
                 mui.alert(result.msg);
             }
+            
         }
 
 
@@ -330,7 +331,7 @@
             if(result.code == 200){
                 joinEvent();
             }else{
-            mui.toast(result.msg);
+                mui.toast(result.msg);
             }
         }
 

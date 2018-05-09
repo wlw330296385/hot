@@ -627,15 +627,18 @@ class StatisticsCamp extends Camp{
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
-        $goods_type = input('param.goods_type',1);
-         $status = input('param.status');
+        $goods_type = input('param.goods_type');
+        $status = input('param.status');
         $keyword = input('param.keyword');
-        $map = ['camp_id'=>$camp_id,'goods_type'=>$goods_type,'create_time'=>['between',[$month_start,$month_end]]];
+        $map = ['camp_id'=>$camp_id,'create_time'=>['between',[$month_start,$month_end]]];
         if($keyword){
             $map['member|student|goods'] = ['like',"%$keyword%"];
         }
         if($status){
             $map['status'] = $status;
+        }
+        if($goods_type){
+            $map['goods_type'] = $goods_type;
         }
         $Bill = new \app\management\model\Bill;
         $list = $Bill->where($map)->where('delete_time',null)->select();

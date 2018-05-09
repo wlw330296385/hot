@@ -21,12 +21,13 @@ class Finance extends Backend {
     public function billlist() {
         // 搜索筛选
         $map = [];
-        if ($cur_camp = $this->cur_camp) {
-            $map['camp_id'] = $cur_camp['camp_id'];
-        }
         $camp_id = input('camp_id');
         if ($camp_id) {
             $map['camp_id']=$camp_id;
+        }
+        $status = input('status');
+        if ($status) {
+            $map['status']=$status;
         }
         $member = input('member');
         if ($member) {

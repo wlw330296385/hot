@@ -279,17 +279,17 @@ function joinEvent(){
     objData.memberData = JSON.stringify(studentList);
     objData.event = "{$eventInfo.event}";
     var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-    var result = wooApi.asyncF(url+'/total/'+total,objData);
-    
+    let result = wooApi.asyncF(url+'/total/'+total,objData);
     if(result.code == 200){
         presentItemCoupon();
         mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
-            // window.location.href="{:url('frontend/event/eventInfo',['event_id'=>$eventInfo['id']])}";
             window.location.href="{:url('frontend/event/eventList')}";
         });
     }else{
         mui.alert(result.msg);
     }
+    
+    
 }
 
 
@@ -298,8 +298,8 @@ function presentItemCoupon(){
     if({$item_coupon_ids}.length >0){
         var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
             'item_coupon_ids': item_coupon_ids,
-    },function(){});
-}
+        },function(){});
+    }
 }
 </script>    
 </html>

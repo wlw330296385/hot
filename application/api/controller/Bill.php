@@ -91,7 +91,7 @@ class Bill extends Frontend{
             $bill_order = input('param.bill_order');
             $billInfo = db('bill')->where(['bill_order'=>$bill_order])->find();
             if($billInfo){
-                if($billInfo['is_pay']!= 1 || $billInfo['status']!= 1){
+                if($billInfo['is_pay'] <> 1 || $billInfo['status'] <> 1){
                     $data = input('post.');
                     $data['status'] = 1;
                     $data['is_pay'] = 1;

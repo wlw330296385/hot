@@ -110,6 +110,7 @@ class Base extends Frontend {
                 'id' => 0,
                 'member' => '游客',
                 'nickname' => '游客',
+                'openid'=>0,
                 'avatar' => '/static/default/avatar.png',
                 'hp' => 0,
                 'level' => 0,

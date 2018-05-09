@@ -34,14 +34,13 @@ class Wxpay extends Base{
        
         $billInfo = db('bill')->where(['bill_order'=>$data['out_trade_no']])->find();
         if($billInfo){
-            if($billInfo['is_pay']!= 1 || $billInfo['status']!= 1){
+            if($billInfo['is_pay'] <> 1 || $billInfo['status'] <> 1){
                 $billData = [
                     'balance_pay'   =>($data['total_fee']/100),
                     'callback_str'     =>$data['transaction_id'],
                     'status'    =>1,
                     'is_pay'    =>1,
                 ];
-
                 $BillService = new \app\service\BillService;
                 $result = $BillService->pay($billData,['bill_order'=>$data['out_trade_no']]);  
                 if($result===false){

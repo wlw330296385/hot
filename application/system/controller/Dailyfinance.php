@@ -43,6 +43,8 @@ class Dailyfinance extends Base{
             $data = [
                 'camp_id'=>$value['id'],
                 'camp'=>$value['camp'],
+                'rebate_type'=>$value['rebate_type'],
+                'schedule_rebate'=>$value['schedule_rebate'],
                 's_balance'=>$value['balance'],
                 'create_time'=>time(),
                 'date_str'=>date('Ymd'),
