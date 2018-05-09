@@ -28,19 +28,37 @@
         <ul class="mui-table-view list mb">
             <li class="mui-table-view-cell mui-media listli">
                 <a href="javascript:;">
+                    {if !empty($lessonInfo)}
                     <div class="mui-media-body wd45">
                         {$lessonInfo.lesson}
                         <p class="mui-ellipsis">{$lessonInfo.gradecate}</p>
 
                     </div>
+                    {/if}
+                    {if !empty($eventInfo)}
+                    <div class="mui-media-body wd45">
+                    {$eventInfo.event}
+                        <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                        <p class="mui-ellipsis">用户名:{$eventInfo.event_member.member}</p>
+                        <p class="mui-ellipsis">联系人:{$eventInfo.event_member.linkman}</p>
+                        <p class="mui-ellipsis">报名人:{$eventInfo.event_member.student}</p>
+                        <p class="mui-ellipsis">联系电话:{$eventInfo.event_member.contact}</p>
+                        <p class="mui-ellipsis">报名总数:{$eventInfo.event_member.total}</p>
+                        <p class="mui-ellipsis">是否支付:{$eventInfo.event_member.is_pay}</p>
+                        <p class="mui-ellipsis">是否已签到:{$eventInfo.event_member.is_sign}</p>
+                        <p class="mui-ellipsis">备注:{$eventInfo.event_member.remarks}</p>
+                        <p class="mui-ellipsis">活动地点:{$eventInfo.location}</p>
+                    </div>
+                    {/if}
                     <div class="price-frame">
                         <p>合计：<b class="colororange f18">￥{$billInfo.balance_pay}</b></p>
                         <p class="f12">[ {$billInfo['is_pay']} ]</p>
                     </div>
+
                 </a>
             </li>
         </ul>
-        {if !empty($billInfo)}
+        {if !empty($lessonInfo)}
         <ul class="mui-table-view list detalis-list mb">
             <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$billInfo.price}</b> / 元</span></li>
             <li class="mui-table-view-cell listli">所选课量<span><b class="colororange" id="total">{$billInfo.total}</b> / 节</span></li>

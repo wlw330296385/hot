@@ -203,7 +203,7 @@ class EventService {
             $MessageData = [
                 "touser" => session('memberInfo.openid'),
                 "template_id" => config('wxTemplateID.eventJoin'),
-                "url" => url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                "url" => url('frontend/bill/billList',['event_id'=>$event_id],'',true),
                 "topcolor"=>"#FF0000",
                 "data" => [
                     'first' => ['value' => "尊敬的{$member}，您已成功报名{$eventInfo['event']}。"],
@@ -225,7 +225,7 @@ class EventService {
         $saveData2 = [
                         'title'=>"[{$eventInfo['event']}]报名成功",
                         'content'=>$member."报名活动成功",
-                        'url'=>url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                        'url'=>url('frontend/bill/billList',['camp_id'=>$eventInfo['id']],'',true),
                         'member_id'=>$eventInfo['member_id']
                     ];
         // 发布者的member
@@ -233,7 +233,7 @@ class EventService {
         $MessageData2 = [
                 "touser" => $memberInfo['openid'],
                 "template_id" => config('wxTemplateID.eventBook'),
-                "url" => url('frontend/event/eventInfo',['event_id'=>$event_id],'',true),
+                "url" => url('frontend/bill/billList',['camp_id'=>$eventInfo['id']],'',true),
                 "topcolor"=>"#FF0000",
                 "data" => [
                     'first' => ['value' => "{$member}已成功报名{$eventInfo['event']}。"],

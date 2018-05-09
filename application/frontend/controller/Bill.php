@@ -30,6 +30,7 @@ class Bill extends Base{
         }
         $lessonInfo = [];
         $studentInfo = [];
+        $eventInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
             $LessonService = new \app\service\LessonService;
@@ -37,7 +38,15 @@ class Bill extends Base{
             // 学生信息
             $StudentService = new \app\service\StudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
-        }        
+        }
+
+
+        if($billInfo['goods_type'] =='活动'){
+            $EventService = new \app\service\EventService;
+            $eventInfo = $EventService->getEventInfo(['id'=>$billInfo['goods_id']]);
+            // 学生信息
+            $eventInfo['event_member'] = db('event_member')->where(['event_id'=>$eventInfo['id'],'member_id'=>$billInfo['member_id']])->find();
+        }
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
         // 兼职教练不能进入
@@ -47,7 +56,9 @@ class Bill extends Base{
                 $this->error('您没有权限');
             }
         }
+        // dump($eventInfo);
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('eventInfo',$eventInfo);
         $this->assign('studentInfo',$studentInfo);
         $this->assign('power',$isPower);
         $this->assign('billInfo',$billInfo);
