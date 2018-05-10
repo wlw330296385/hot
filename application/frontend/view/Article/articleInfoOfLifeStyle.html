@@ -60,13 +60,13 @@
 
         /* 针对控制台编辑的文章样式问题 */
 
-        .introBox img {
-            width: 100% !important;
-            padding: 0 15px;
+        .introBox {
+            padding:15px !important;
         }
 
-        .list .listli p {
-            padding: 0 15px;
+        .introBox img {
+            width: 100% !important;
+            padding: 5px;
         }
 
         .list .listli span {
@@ -114,23 +114,6 @@
                     </div>
                 </li>
             </ul>
-            {if !empty($ItemCouponList)}
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli">
-                    <a href="#cppopover">
-                        <ul class="mini-coupon">
-                            {volist name="ItemCouponList" id="vol"}
-                            <li>
-                                <div>
-                                    <span>{$vol.coupon}</span>赠券</div>
-                                <i></i>
-                            </li>
-                            {/volist}
-                        </ul>
-                    </a>
-                </li>
-            </ul>
-            {/if}
 
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">摘要</span>
@@ -141,17 +124,49 @@
                 </li>
             </ul>
 
+            {if !empty($ItemCouponList)}
+            <div class="mui-slider border-b">
+                <div class="mui-slider-group mui-slider-loop">
+                    {volist empty="" name="ItemCouponList" id="vol" }
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <ul class="mui-table-view mui-grid-view" style="background-color: #efeff4">
+                            <li class="mui-table-view-cell mui-media mui-col-xs-12 middle-coupon">
+                                <div class="coupon">
+                                    <div class="orangebg">
+                                        <div class="cNum">{$vol.price}
+                                            <span>元</span>
+                                        </div>
+                                        <div class="cName">{$vol.coupon} <span>（领取）</span></div>
+                                        <div class="cDate">{$vol.start|date="Y-m-d",###} 至 {$vol.end|date="Y-m-d",###}</div>
+                                        <i></i>
+                                    </div>
+                                    <div class="tips">
+                                        <span>剩余：{$vol.max-$vol.publish}</span>
+                                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
+                                            <span class="mui-icon mui-icon-forward"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    {/volist}
+
+                </div>
+            </div>
+            {/if}
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">内容</span>
             </div>
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli introBox" style="padding:11px 15px !important;">
+                <li class="mui-table-view-cell listli introBox">
                     {$articleInfo.content}
                 </li>
             </ul>
-            {volist name="ItemCouponList" id="vol"}
-            <?php dump($vol); ?>
-            {/volist}
+
+
+
+
             <!-- 新闻评论 -->
             <div class="page-header border-b">
                 <span class="course wd52">评论</span>
@@ -209,39 +224,6 @@
     </div>
 
 
-    <!-- 卡券弹框 -->
-    <div id="cppopover" class="mui-popover" style="width: 95% !important;">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header explain-title">
-            <span class="course">本文赠送卡券</span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-
-                {volist empty="" name="ItemCouponList" id="vol" }
-
-                <div class="coupon">
-                    <div class="orangebg">
-                        <div class="cNum">{$vol.price}
-                            <span>元</span>
-                        </div>
-                        <div class="cFrom">{$vol.organization}</div>
-                        <div class="cName">{$vol.coupon}</div>
-                        <div class="cDate">{$vol.start|date="Y-m-d",###} 至 {$vol.end|date="Y-m-d",###}</div>
-                        <i></i>
-                    </div>
-                    <div class="tips">
-                        <span>剩余：{$vol.max-$vol.publish}</span>
-                        <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
-                            <span class="mui-icon mui-icon-forward"></span>
-                        </a>
-                    </div>
-                </div>
-                {/volist}
-
-            </div>
-        </div>
-    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
