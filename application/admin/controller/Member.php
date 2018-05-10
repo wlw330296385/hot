@@ -67,6 +67,15 @@ class Member extends Backend{
 
 	public function memberInfo(){
 		$member_id = input('param.member_id');
+		if(request()->isPOst()){
+			$telephone = input('post.telephone');
+			$result = $this->MemberService->updateMemberInfo(['telephone'=>$telephone],['id'=>$member_id]);
+			if($result){
+				$this->success('操作成功');
+			}else{
+				$this->error('操作失败');
+			}
+		}
 		$memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
 		// 教练信息
 		$Coach = new \app\model\Coach;
