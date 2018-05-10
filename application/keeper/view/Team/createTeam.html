@@ -615,9 +615,12 @@
             $(".ching").css("background", "#00eaff");
         };
 
+        var league = '';
         var colors = '';
         var charaterList = ''
         $(function () {
+
+            league = wooApi.GetQueryString('league');
 
             //获取训练营粉丝列表
             var campKeyword = '';
@@ -845,11 +848,16 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
-                    var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
-                    window.top.location.href = goUrl;
+                    if (league == '' || league == null) {
+                        var goUrls = "{:url('match/signupleague')}" + '/league_id/' + ajaxResult.insid;
+                        window.top.location.href = goUrls;
+                    } else {
+                        var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
+                        window.top.location.href = goUrl;
+                    }
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败',function(){
+                mui.alert(ajaxResult.msg, '创建失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑球队介绍</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
