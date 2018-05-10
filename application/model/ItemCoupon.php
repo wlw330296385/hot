@@ -29,4 +29,10 @@ class ItemCoupon extends Model {
     public function getPublishStartAttr($value){
         return date('Y-m-d',$value);    
     }
+
+
+
+    public function itemCouponMember(){
+        return $this->hasOne('item_coupon_member');
+    }
 }

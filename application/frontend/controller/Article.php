@@ -163,8 +163,13 @@ class Article extends Base{
         $isLikes = $this->ArticleService->getLikesInfo(['article_id'=>$article_id,'member_id'=>$this->memberInfo['id']]);
 
         //礼包列表
-        $ItemCouponList = db('item_coupon')->where(['target_type'=>4,'target_id'=>$article_id])->select();
-        
+        // $ItemCouponList = db('item_coupon')->join('item_coupon_member',"item_coupon_member.item_coupon_id=item_coupon.id and item_coupon_member.member_id={$this->memberInfo['id']}",'LEFT')->where(['item_coupon.target_type'=>4,'item_coupon.target_id'=>$article_id,'item_coupon.status'=>1])->order('item_coupon.id desc')->select();
+        $ItemCouponList = [];
+        $ItemCoupon = new \app\model\ItemCoupon;
+        $ItemCouponList = $ItemCoupon->with('item_coupon_member')->where(['item_coupon.target_type'=>4,'item_coupon.target_id'=>$article_id,'item_coupon.status'=>1])->select();
+        if($ItemCouponList){
+            $ItemCouponList = $ItemCouponList->toArray();
+        }
         $this->assign('ItemCouponList',$ItemCouponList);
         $this->assign('isLikes',$isLikes);
         $this->assign('isCollect',$isCollect);
