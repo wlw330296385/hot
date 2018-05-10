@@ -318,7 +318,7 @@ class Match extends Base {
         }
         // 获取球队详细信息
         $teamS = new TeamService();
-        $teamInfo = $teamS->getTeamMemberInfo(['id' => $team_id]);
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
 
         return view('Match/teamInfoSignupLeague', [
             'matchApplyInfo' => $matchApply,
@@ -352,6 +352,10 @@ class Match extends Base {
         return view('Match/signUpLeague', [
             'league_id' => $league_id
         ]);
+    }
+    // 联赛球队报名回复
+    public function teamApplyListOfLeague() {
+        return view('Match/teamApplyListOfLeague');
     }
 
     // 组织管理员
