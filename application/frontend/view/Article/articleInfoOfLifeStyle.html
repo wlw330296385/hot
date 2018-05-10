@@ -132,11 +132,11 @@
                         <ul class="mui-table-view mui-grid-view" style="background-color: #efeff4; padding-bottom: 0px;">
                             <li class="mui-table-view-cell mui-media mui-col-xs-12 middle-coupon">
                                 <div class="coupon">
-                                    <div class="orangebg">
+                                    <div class="orangebg" data-id="{$vol.id}">
                                         <div class="cNum">{$vol.price}
                                             <span>元</span>
                                         </div>
-                                        <div class="cName">{$vol.coupon} <span>（领取）</span></div>
+                                        <div class="cName"><font>{$vol.coupon}</font> <span>（领取）</span></div>
                                         <div class="cDate">{$vol.start|date="Y-m-d",###} 至 {$vol.end|date="Y-m-d",###}</div>
                                         <i></i>
                                     </div>
@@ -357,12 +357,12 @@
 
             //领取卡券功能
             $(".coupon").on('tap','.orangebg', function () {
-                var article = "{$articleInfo.title}";
-                var article_id = "{$articleInfo.id}";
-                mui.ajax("{:url('api/article/collectApi')}", {
+                var coupon_id = $(this).attr("data-id");
+                var conpon_name = $(this).find(".cName font").text();
+                var conpon_title = $(this).find(".cName");
+                mui.ajax("{:url('api/item_coupon/createItemCouponMemberApi')}", {
                     data: {
-                        article: article,
-                        article_id: article_id
+                        item_coupon_id: coupon_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -371,13 +371,8 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            if ($(".collect").text() == '已收藏') {
-                                $(".collect").text('收藏')
-                                mui.toast('取消收藏');
-                            } else {
-                                $(".collect").text('已收藏')
-                                mui.toast('收藏成功');
-                            }
+                            mui.toast('领取成功');
+                            conpon_title.html("<font>"+conpon_name+"</font><span>(已领取)</span>")
                         } else {
                             mui.toast(data.msg);
                         }

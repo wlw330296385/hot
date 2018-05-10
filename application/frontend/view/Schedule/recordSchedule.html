@@ -51,6 +51,19 @@
             padding-right: 30px !important;
         }
 
+        #addStudent {
+            width:95%;
+        }
+        #addStudent label,#addStudent .mui-input-row span {
+            width:49%;
+            text-overflow: ellipsis;
+            white-space:nowrap;
+            overflow: hidden;
+        }
+        #addStudent label font {
+             margin-left: 8px;
+        }
+
         .addStudentList .tips {
             font-size: 12px;
             color: #AAAAAA;
@@ -1269,21 +1282,20 @@
         //获取学员列表
         var toScheduleList = function (keyword, page) {
 
+            var lesson_id = "{$gradeInfo.lesson_id}";
             //判断是否校园课，调用不同api
             var is_school = "{$gradeInfo.is_school}";
             var url = '';
             if(is_school=="1"){
-                url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}/?page=" + page;
+                url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}/?page=" + page + '&keyword='+keyword;
             }else{
-                url = "{:url('api/lesson_member/getSamePriceLessonMemberListByPageApi','','',true)}/?page=" + page;
+                url = "{:url('api/lesson_member/getSamePriceLessonMemberListByPageApi','','',true)}/?page=" + page + '&keyword='+keyword;
             }
 
-            var lesson_id = "{$gradeInfo.lesson_id}";
             mui.ajax({
                 url: url,
                 data: {
                     lesson_id: lesson_id,
-                    keyword: keyword,
                     status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -1295,11 +1307,17 @@
                     console.log(data)
                     var div = '';
                     var tys = '';
+                    var student = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             tys = '';
-                            if (data.data.data[i].type == "2") { tys = '<span class="tips">[ 体验生 ]</span>' }
-                            div = div + '<div class="mui-input-row student"><label>' + data.data.data[i].student + tys + '</label><span data-id="' + data.data.data[i].id + '" data-lesson="' + data.data.data[i].lesson + '" data-lesson_id="' + data.data.data[i].lesson_id + '" data-camp="' + data.data.data[i].camp + '" data-camp_id="' + data.data.data[i].camp_id + '" data-student="' + data.data.data[i].student + '" data-student_id="' + data.data.data[i].student_id + '" data-member="' + data.data.data[i].member + '" data-member_id="' + data.data.data[i].member_id + '" data-lid="' + data.data.data[i].lid + '"  data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
+                            if (data.data.data[i].type == "体验生") { tys = '<font class="tipCorner bgblue">体验生</font>' }
+                            if(is_school=="1"){
+                                student = data.data.data[i].student.student;
+                            }else{
+                                student = data.data.data[i].student;
+                            }
+                            div = div + '<div class="mui-input-row student"><label>' + student + tys + '</label><span data-id="' + data.data.data[i].id + '" data-lesson="' + data.data.data[i].lesson + '" data-lesson_id="' + data.data.data[i].lesson_id + '" data-camp="' + data.data.data[i].camp + '" data-camp_id="' + data.data.data[i].camp_id + '" data-student="' + student + '" data-student_id="' + data.data.data[i].student_id + '" data-member="' + data.data.data[i].member + '" data-member_id="' + data.data.data[i].member_id + '" data-lid="' + data.data.data[i].lesson_id + '"  data-type="' + data.data.data[i].type + '"><b>' + data.data.data[i].lesson + '</b> +</span></div>'
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
@@ -1315,6 +1333,8 @@
                     console.log(type);
                 }
             });
+
+
         };
 
 
