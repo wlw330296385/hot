@@ -810,7 +810,6 @@
 
         // 获取数据并进行提交
         function submitAction() {
-
             var avg_age = $("input[name=avg_age]").val();
             var avg_height = $("input[name=avg_height]").val();
             var avg_weight = $("input[name=avg_weight]").val();
@@ -848,9 +847,8 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
-                    if (league == '' || league == null) {
-                        var goUrls = "{:url('match/signupleague')}" + '/league_id/' + ajaxResult.insid;
-                        window.top.location.href = goUrls;
+                    if (league == 1) {
+                        window.history.go(-1);
                     } else {
                         var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
                         window.top.location.href = goUrl;

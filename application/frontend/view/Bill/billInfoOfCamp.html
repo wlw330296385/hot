@@ -18,14 +18,15 @@
 </head>
 
 <body class=whitebg>
+
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class=" mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('bill/billList')}?camp_id={$billInfo['camp_id']}"><span class="return">训练营订单</span></a>
     <p class="mui-pull-right f12" style="padding-top:10px">订单号：{$billInfo.bill_order}</p>
 </header>
-<div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list grade-list coach mt">
-        <ul class="mui-table-view list mb">
+<div class="mui-content mt55">
+
+        <ul class="mui-table-view list mb" style="margin-top: 5px;">
             <li class="mui-table-view-cell mui-media listli">
                 <a href="javascript:;">
                     {if !empty($lessonInfo)}
@@ -37,17 +38,9 @@
                     {/if}
                     {if !empty($eventInfo)}
                     <div class="mui-media-body wd45">
-                    {$eventInfo.event}
+                        {$eventInfo.event}
                         <p class="mui-ellipsis">{$eventInfo.event_type}</p>
-                        <p class="mui-ellipsis">用户名:{$eventInfo.event_member.member}</p>
-                        <p class="mui-ellipsis">联系人:{$eventInfo.event_member.linkman}</p>
-                        <p class="mui-ellipsis">报名人:{$eventInfo.event_member.student}</p>
-                        <p class="mui-ellipsis">联系电话:{$eventInfo.event_member.contact}</p>
-                        <p class="mui-ellipsis">报名总数:{$eventInfo.event_member.total}</p>
-                        <p class="mui-ellipsis">是否支付:{$eventInfo.event_member.is_pay}</p>
-                        <p class="mui-ellipsis">是否已签到:{$eventInfo.event_member.is_sign}</p>
-                        <p class="mui-ellipsis">备注:{$eventInfo.event_member.remarks}</p>
-                        <p class="mui-ellipsis">活动地点:{$eventInfo.location}</p>
+
                     </div>
                     {/if}
                     <div class="price-frame">
@@ -58,6 +51,22 @@
                 </a>
             </li>
         </ul>
+
+        {if !empty($eventInfo)}
+        <ul class="mui-table-view list detalis-list mb">
+            <li class="mui-table-view-cell listli">用户名<span>{$eventInfo.event_member.member}</span></li>
+            <li class="mui-table-view-cell listli">联系人<span>{$eventInfo.event_member.linkman}</span></li>
+            <li class="mui-table-view-cell listli">报名人<span>{$eventInfo.event_member.student}</span></li>
+            <li class="mui-table-view-cell listli">联系电话<span>{$eventInfo.event_member.contact}</span></li>
+            <li class="mui-table-view-cell listli">报名总数<span>{$eventInfo.event_member.total}</span></li>
+            <li class="mui-table-view-cell listli">是否支付<span>{$eventInfo.event_member.is_pay}</span></li>
+            <li class="mui-table-view-cell listli">是否已签到<span>{$eventInfo.event_member.is_sign}</span></li>
+            <li class="mui-table-view-cell listli">备注<span>{$eventInfo.event_member.remarks}</span></li>
+            <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
+        </ul>
+        {/if}
+
+
         {if !empty($lessonInfo)}
         <ul class="mui-table-view list detalis-list mb">
             <li class="mui-table-view-cell listli">课程单价<span><b class="colororange">￥{$billInfo.price}</b> / 元</span></li>
@@ -85,6 +94,10 @@
             <li class="mui-table-view-cell listli">手机号码<span class="width">{$studentInfo.emergency_telephone}</span></li>
         </ul>
         {/if}
+
+
+
+
         {gt name="power" value="2"}       
         <ul class="mui-table-view operation" style="position: fixed;bottom: 0;width: 100%">
         {switch name="$billInfo['status']" }
@@ -110,7 +123,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
         {/case} 
         {/switch}
-    </ul>
+        </ul>
     {/gt}
     </div>
 

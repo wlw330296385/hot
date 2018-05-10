@@ -318,7 +318,7 @@ class Match extends Base {
         }
         // 获取球队详细信息
         $teamS = new TeamService();
-        $teamInfo = $teamS->getTeamMemberInfo(['id' => $team_id]);
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
 
         return view('Match/teamInfoSignupLeague', [
             'matchApplyInfo' => $matchApply,

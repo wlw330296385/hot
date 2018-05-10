@@ -641,6 +641,8 @@ class League extends Base
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
+            // 不列出status=2（已同意）的数据
+            $data['status'] = ['neq', 2];
             if (input('?page')) {
                 unset($data['page']);
             }
@@ -669,6 +671,8 @@ class League extends Base
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
+            // 不列出status=2（已同意）的数据
+            $data['status'] = ['neq', 2];
             if (input('?page')) {
                 unset($data['page']);
             }

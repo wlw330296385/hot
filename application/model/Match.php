@@ -15,7 +15,23 @@ class Match extends Model {
     public function getMatchTimeAttr($value) {
         return ($value>0) ? date('Y-m-d H:i', $value) : 0;
     }
-    
+
+    public function getStartTimeAttr($value) {
+        return ($value) ? date('Y-m-d', $value) : 0;
+    }
+
+    public function getEndTimeAttr($value) {
+        return ($value) ? date('Y-m-d', $value) : 0;
+    }
+
+    public function getRegStartTimeAttr($value) {
+        return ($value) ? date('Y-m-d H:i', $value) : 0;
+    }
+
+    public function getRegEndTimeAttr($value) {
+        return ($value) ? date('Y-m-d H:i', $value) : 0;
+    }
+
     // type（活动类型）获取器
     public function getTypeAttr($value) {
         $type = [
