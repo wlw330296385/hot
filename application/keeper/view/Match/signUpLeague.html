@@ -40,7 +40,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bgred">
-                <a href="{:url('team/createTeam')}?league=1">
+                <a href="{:url('team/createTeam')}/?league=1">
                     新建球队
                 </a>
             </li>
@@ -144,7 +144,7 @@
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">';
                                 newli += '<div class="mui-slider-handle"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 35px !important;height: 35px !important;"><div class="mui-media-body lineHeight32">' + data.data.data[i].team.name + '</div>';
-                                newli += '<div class="fr"><button type="button" class="btn bgred signup" data-team_id="' + data.data.data[i].team_id + '">加入</button></div></div>';
+                                newli += '<div class="fr"><button type="button" class="btn bgred joinIn" data-team_id="' + data.data.data[i].team_id + '">加入</button></div></div>';
                                 newli += '</li>';
                             }
                         }
@@ -225,6 +225,36 @@
                             mui.toast("报名成功");
                         } else {
                             mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+
+            // 加入球队
+            $(document).on("tap", ".joinIn", function () {
+                var team_id = $(this).attr("data-team_id");
+                mui.ajax("{:url('api/team/applyjointeam')}", {
+                    data: {
+                        team_id: team_id,
+                        remarks: ''
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("操作成功，待球队审核...");
+                            mui('#yqpopover').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#yqpopover').popover('toggle');
                         }
                     },
                     error: function (xhr, type, errorThrown) {
