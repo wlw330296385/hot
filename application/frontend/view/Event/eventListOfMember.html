@@ -23,7 +23,7 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('member/index')}"></a>
-                <a class="mui-control-item mui-active" href="#itemCouponList">礼品券</a>
+                <a class="mui-control-item mui-active" href="#eventList">我的活动</a>
             </div>
         </div>
     </header>
@@ -31,8 +31,10 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <div id="itemCouponList" class="mui-scroll-wrapper mui-control-content mui-active">
-                <div class="mui-scroll" style="padding-top:15px;"></div>
+            <div id="eventList" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll" style="padding-top:15px;">
+                    <ul class="event"></ul>
+                </div>
             </div>
         </div>
 
@@ -59,7 +61,7 @@
         var onCount = 1;
         var offCount = 1;
 
-        mui('#onCouponList').pullRefresh({
+        mui('#eventList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -85,7 +87,7 @@
                 onCount = 1;//刷新并显示第一页
                 var page = onCount;
                 var gType = 1;//代表下拉刷新
-                toList('onCouponList',page,gType,1);//具体取数据的方法
+                toList('eventList',page,gType,1);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -94,7 +96,7 @@
                 onCount++;//翻下一页
                 var page = onCount;
                 var gType =2;//代表上拉加载
-                toList('onCouponList',page,gType,1);//具体取数据的方法
+                toList('eventList',page,gType,1);//具体取数据的方法
             }, 100);
         }
 
@@ -105,7 +107,7 @@
     //接口获取数据并追加到页面
     var toList = function(wList,page,gType,status) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/item_coupon/getItemCouponMemberListByPageApi','','',true)}/?page="+page;
+        var url  = "{:url('api/event_member/getEventMemberListByPageApi','','',true)}/?page="+page;
 
         mui.ajax({
             url:url,
@@ -122,20 +124,31 @@
                 var newli='';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += `<div class="mui-slider-handle"><a href="{:url('frontend/coupon/itemCouponInfo')}/coupon_id/${data.data.data[i].coupon_id}"><p class="fTop"><strong>${data.data.data[i].item_coupon.coupon}(${data.data.data[i].status})`;
+                        console.log(data.data.data[i].event_info);
+                        newli += `<div class="mui-slider-handle">
+                            <a href="{:url('frontend/event/eventInfo')}/event_id/${data.data.data[i].event_id}">
+                                <p class="fTop">
+                                    <strong>${data.data.data[i].event}(${data.data.data[i].status})<strong>
+                                </p>
+                                <p class="fTop">
+                                    开始时间:${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}
+                                </p>
+                            </a>
+                        </div>
+                        `;
                     }
 
                     if(gType==1){
-                        //上拉刷新
-                        $("ul.coupon"+status).empty().append(newli);
+                        //上拉刷新  
+                        $("ul.event").empty().append(newli);
                         mui('#'+wList).pullRefresh().endPulldownToRefresh();
                         mui('#'+wList).pullRefresh().refresh(true);
                         if(newli=='') {
-                            $("ul.coupon"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            $("ul.event").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
                     }else{
                         //下拉加载 gType==2
-                        $("ul.coupon"+status).append(newli);
+                        $("ul.event").append(newli);
                     }
                 }else{
                     mui.toast('数据获取失败,请稍候再试');
@@ -155,61 +168,7 @@
         });
     };
 
-    var optData ={};
 
-    //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_coupon').on('tap', '.mui-btn', function (event) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        var txt = elem.innerHTML;
-        var couponid = elem.parentNode.getAttribute('data-id');
-        var action = elem.getAttribute('data-action');
-        //获取昨天日期
-        var curDate = new Date();
-        curDate.setTime(curDate.getTime()-24*60*60*1000);
-        var preDate =(curDate.setTime(curDate.getTime()))/1000;
-        var deltimestamp = Date.parse(new Date())/1000;
-
-        //组合要提交的字段
-        if(action=="stoppublish"){
-            optData = {publish_end:preDate};
-        }else if(action=="editstatus"){
-            optData = {status:1};
-        }else if(action=="del"){
-            optData = {delete_time:deltimestamp};
-        }else{
-            mui.toast("此卡券已经过了发布期限");
-            return false;
-        }
-
-        mui.confirm('确认该卡券' + txt + '?', '提示', btnArray, function (e) {
-            if (e.index == 0) {
-                var apiurl = "{:url('api/item_coupon/editItemCouponApi')}"+'/item_coupon_id/'+couponid;
-                mui.ajax(apiurl, {
-                    data: optData,
-                    dataType: 'json',
-                    type: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    success: function (data) {
-                        if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            window.location.reload();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    mui.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
 </script>
 </body>
 </html>

@@ -365,4 +365,9 @@ class Event extends Base{
         return view('Event/eventOfSignUpList');
     }
 
+
+    // 用户的活动
+    public function eventListOfMember() {
+        return view('Event/eventListOfMember');
+    }
 }

@@ -13,4 +13,9 @@ class EventMember extends Model {
         return $status[$value];
     }
 
+
+    public function eventInfo(){
+        return $this->hasOne('event','id','event_id',[],'eventinfo');
+    }
+
 }
