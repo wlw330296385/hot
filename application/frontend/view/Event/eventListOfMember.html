@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>卡券管理</title>
+    <title>我的活动</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -22,7 +22,7 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('member/index')}"></a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index')}"></a>
                 <a class="mui-control-item mui-active" href="#eventList">我的活动</a>
             </div>
         </div>
@@ -32,11 +32,12 @@
 
         <div class="tab-pullRefresh">
             <div id="eventList" class="mui-scroll-wrapper mui-control-content mui-active">
-                <div class="mui-scroll" style="padding-top:15px;">
-                    <ul class="event"></ul>
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b event"></ul>
                 </div>
             </div>
         </div>
+
 
     </div>
 
@@ -124,18 +125,42 @@
                 var newli='';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        console.log(data.data.data[i].event_info);
-                        newli += `<div class="mui-slider-handle">
-                            <a href="{:url('frontend/event/eventInfo')}/event_id/${data.data.data[i].event_id}">
-                                <p class="fTop">
-                                    <strong>${data.data.data[i].event}(${data.data.data[i].status})<strong>
-                                </p>
-                                <p class="fTop">
-                                    开始时间:${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}
-                                </p>
-                            </a>
-                        </div>
-                        `;
+
+//                        newli += `<div class="mui-slider-handle">
+//                            <a href="{:url('frontend/event/eventInfo')}/event_id/${data.data.data[i].event_id}">
+//                                <p class="fTop">
+//                                    <strong>${data.data.data[i].event}(${data.data.data[i].status})<strong>
+//                                </p>
+//                                <p class="fTop">
+//                                    开始时间:${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}
+//                                </p>
+//                            </a>
+//                        </div>
+//                        `;
+
+
+
+                        var time = gettime();
+                        //var sTime = "${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}";
+                        var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data.data[i].event_info.id;
+
+                        newli += '<li class="mui-table-view-cell mui-media listli">'
+                        newli += '<div><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].event_info.cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:55%">' + data.data.data[i].event + '';
+                        if (data.data.data[i].event_info.is_max == "已满人") {
+                            newli += '<font class="tipCorner bgred">满人</font>';
+                        }
+                        if (data.data.data[i].event_info.ends < time) {
+                            newli += '<font class="tipCorner bggray">过期</font>';
+                        }
+                        newli += '<p class="mui-ellipsis">开始时间:' + data.data.data[i].event_info.start + '</p></div><div class="price-frame mui-text-center">'
+                        if (data.data.data[i].event_info.is_free == 2) {
+                            newli += '<p class="price">￥<strong>' + data.data.data[i].event_info.price + '</strong></p>';
+                        } else {
+                            newli += '<p class="price" style="color:#59b200;font-size:14px;">免费</p>';
+                        }
+                        newli += '<p class="address">' + data.data.data[i].event_info.area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data.data[i].event_info.is_overdue + '">';
+                        newli += '</li>';
+
                     }
 
                     if(gType==1){
@@ -168,6 +193,21 @@
         });
     };
 
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    //获取时间
+    function gettime() {
+        // 获取当前时间
+        var d = new Date()
+        var minutes = d.getMinutes()
+        var hours = d.getHours()
+        var day = d.getDate()
+        var month = d.getMonth() + 1
+        var year = d.getFullYear()
+        return year + '-' + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
+    }
 
 </script>
 </body>
