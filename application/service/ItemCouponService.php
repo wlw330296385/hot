@@ -220,7 +220,7 @@ class ItemCouponService {
     **/ 
     public function getItemCouponMemberListByPage($map = [],$paginate = 10){
         $result = $this->ItemCouponMemberModel->with('itemCoupon')->where($map)->paginate($paginate);
-        // echo $this->ItemCouponMemberModel->getlastsql();
+
         return $result;
     }
 

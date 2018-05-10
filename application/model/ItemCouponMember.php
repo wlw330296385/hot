@@ -12,6 +12,13 @@ class ItemCouponMember extends Model {
     //                         'type',
     //                         ];
 
+
+
+    public function getStatusAttr($value){
+        $list = [1=>'未使用',2=>'已使用'];
+        return $list[$value];           
+    }
+
 	public function itemCoupon(){
 		return $this->hasOne('item_coupon','id','item_coupon_id',[],'LEFT JOIN');
 	}

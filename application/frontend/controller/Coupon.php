@@ -43,6 +43,12 @@ class Coupon extends Base{
     }
 
 
+    public function couponListOfMember(){
+        
+        
+        return view('Coupon/couponListOfMember');
+    }
+
     public function updateItemCoupon(){   	
     	$itemCoupon_id = input('param.item_coupon_id');
         $lessontList = [];
