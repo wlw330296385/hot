@@ -353,6 +353,10 @@ class Match extends Base {
             'league_id' => $league_id
         ]);
     }
+    // 联赛球队报名回复
+    public function teamApplyListOfLeague() {
+        return view('Match/teamApplyListOfLeague');
+    }
 
     // 组织管理员
     public function adminListOfOrganization() {

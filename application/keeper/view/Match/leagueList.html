@@ -12,93 +12,21 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        @media screen and (min-width: 320px) {
-            .list .listli .mui-media-body {
-                width: 62% !important;
-            }
-            #refreshContainer {
-                margin-top: 250px !important;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .list .listli .mui-media-body {
-                width: 67% !important;
-            }
-            #refreshContainer {
-                margin-top: 283px !important;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            #refreshContainer {
-                margin-top: 308px !important;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            #refreshContainer {
-                margin-top: 529px !important;
-            }
-        }
-
-        .lineHeight20 {
-            line-height: 20px;
-        }
-
-        /* 底部按钮点击去除背景颜色 */
-
-        .operation .opli a.mui-active {
-            background-color: inherit
-        }
-
         .textOverFlow {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 
-
 <body class=whitebg>
 
-    <header class="mui-bar mui-bar-transparent">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    </header>
-    <!--图片轮播-->
-    <div id="slider" class="mui-slider">
-        <div class="mui-slider-group mui-slider-loop">
-            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-            <div class="mui-slider-item mui-slider-item-duplicate">
-                <a href="#">
-                    <img src="/uploads/images/banner/5aaa3794b58b1.jpg">
-                </a>
-            </div>
-            <!-- 第一张 -->
-            <div class="mui-slider-item">
-                <a href="">
-                    <img src="/uploads/images/banner/5aaa37804a107.jpg">
-                </a>
-            </div>
-            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-            <div class="mui-slider-item mui-slider-item-duplicate">
-                <a href="#">
-                    <img src="/uploads/images/banner/5aaa3794b58b1.jpg">
-                </a>
-            </div>
-        </div>
-        <div class="mui-slider-indicator">
-            <div class="mui-indicator mui-active"></div>
-            <div class="mui-indicator"></div>
-            <div class="mui-indicator"></div>
-        </div>
-    </div>
-
-    <div class="mui-content">
-
-        <div class="location-frame">
-            <span class="location"></span>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <div class="location-frame" style="padding:9px 14px;border-bottom:0;">
+            <span class="location" style="margin-top: 4px;"></span>
             <span class="location-choise">
                 <select id="areaSelect">
                     <option value="">全部区域</option>
@@ -115,10 +43,47 @@
                 </select>
             </span>
         </div>
+    </header>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top:230px !important">
+
+    <div class="mui-content">
+
+        <!--图片轮播-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <!-- <img src="/uploads/images/banner/5aaa3794b58b1.jpg"> -->
+                        <img src="/static/frontend/images/1.jpg" alt="">
+                    </a>
+                </div>
+                <!-- 第一张 -->
+                <div class="mui-slider-item">
+                    <a href="">
+                        <!-- <img src="/uploads/images/banner/5aaa37804a107.jpg"> -->
+                        <img src="/static/frontend/images/2.jpg" alt="">
+                    </a>
+                </div>
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <!-- <img src="/uploads/images/banner/5aaa3794b58b1.jpg"> -->
+                        <img src="/static/frontend/images/1.jpg" alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+            </div>
+        </div>
+
+        <!-- 列表信息 -->
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top:257px !important">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b team"></ul>
+                <ul class="mui-table-view detalis-list list border-b league"></ul>
             </div>
         </div>
 
@@ -148,12 +113,9 @@
         $(function () {
             //初始化全局变量
             var count = 1;
-            var sTeamType = '';
+            var sType = '';
             var sArea = '';
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
-            var teamID = wooApi.GetQueryString('team_id');
-            var teamName = wooApi.GetQueryString('team_name');
+            // $('.keyword').val(keyword);
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -161,12 +123,7 @@
             var sProvince = getLocationTB['province'];
             var allArea = getLocationTB['areas'];
             $('.location').text(sCity);
-            if (teamName != '' && teamName != null) {
-                $('.location').text(teamName);
-                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
-                $("#areaSelect").parent().hide();
-            }
-
+      
             //生成区域选择下拉菜单
             var arrArea = allArea.split(',');
             var selectArea = '';
@@ -175,15 +132,15 @@
             });
             $('#areaSelect').append(selectArea);
 
-            //搜索球队
+            //搜索联赛
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
                 searchToList();
             })
 
-            //选择球队类型下拉
-            $("#teamType").on("change", function () {
-                sTeamType = $(this).find("option:checked").val();
+            //选择联赛类型下拉
+            $("#leagueType").on("change", function () {
+                sType = $(this).find("option:checked").val();
                 searchToList();
             });
 
@@ -201,7 +158,7 @@
             }
 
             // 创建联赛 提示无联赛组织询问框
-            $('.create-league').on('tap', function() {
+            $('.create-league').on('tap', function () {
                 var hasOrg = $(this).attr('data-hasorg');
                 if (hasOrg == 0) {
                     mui.confirm('您无联赛组织是否创建？', '提示', ['取消', '创建联赛组织'], function (e) {
@@ -260,7 +217,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/searchteamlist','','',true)}";
+                var url = "{:url('api/league/platformleaguelist','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
@@ -268,8 +225,8 @@
                         province: sProvince,
                         city: sCity,
                         area: sArea,
-                        keyword: keyword,
-                        type: sTeamType,
+                        // keyword: keyword,
+                        type: sType,
                         status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -281,31 +238,31 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('match/leagueInfo')}" + '/match_id/' + data.data[i].id;
+                                var urls = "{:url('match/leagueInfo')}" + '/league_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><h4 class="textOverFlow">' + data.data[i].name + '</h4><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:90px !important;">';
-                                newli += ' <div class="mui-media-body"><p class="mui-ellipsis lineHeight20">2018/12/12-2018/12/18</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;球队：<font class="colororange">15</font></p><p class="mui-ellipsis lineHeight20">' + data.data[i].type;
-                                if (data.data[i].status == "下架") {
-                                    newli += '<font class="tipCorner bggray" style="margin-left: 10px !important;">已结束</font>';
-                                } else if (data.data[i].status == "上架") {
-                                    newli += '<font class="tipCorner bggreen" style="margin-left: 10px !important;">未开始</font>';
-                                } else if (data.data[i].status == 3) {
-                                    newli += '<font class="tipCorner bggreen" style="margin-left: 10px !important;">未开始</font>';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><h4 class="textOverFlow">' + data.data[i].name + '</h4><img class="proportion4x3 mui-pull-left" src="' + data.data[i].cover + '">';
+                                newli += ' <div class="mui-media-body wd66"><p class="mui-ellipsis lineHeight20">' + data.data[i].start_time + '-' + data.data[i].end_time + '</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;球队：<font class="colororange">15</font></p>';
+                                if (data.data[i].is_finished_num == -1) {
+                                    newli += '<p class="mui-ellipsis lineHeight20">' + data.data[i].type + '<font class="tipCorner bggreen" style="margin-left: 10px !important;">报名</font>';
+                                } else if (data.data[i].is_finished_num == 2) {
+                                    newli += '<p class="mui-ellipsis lineHeight20">' + data.data[i].type + '<font class="tipCorner bgred" style="margin-left: 10px !important;">进行中</font>';
+                                } else if (data.data[i].is_finished_num == 3) {
+                                    newli += '<p class="mui-ellipsis lineHeight20">' + data.data[i].type + '<font class="tipCorner bggray" style="margin-left: 10px !important;">已结束</font>';
                                 }
                                 newli += '</p></div></a></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.team").empty().append(newli);
+                            $("ul.league").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.league").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.team").append(newli);
+                            $("ul.league").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -319,7 +276,6 @@
                     }
                 });
             };
-
 
         })
     </script>
