@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\model\MatchRefereeApply;
@@ -573,7 +573,15 @@ class Referee extends Base{
             'status' => 1
         ]);
         if ($matchRefereeInfo) {
-            return json(['code' => 100, 'msg' => '您已是此比赛的裁判员，无需再次操作']);
+            return json(['code' => 100, 'msg' => '您已是此比赛的裁判员']);
+        }
+
+        // 检查裁判员有无在比赛战绩数据裁判名单中，有数据就不需操作
+        if ( $matchRecordInfo['referee1']['referee_id'] == $refereeInfo['id']
+            || $matchRecordInfo['referee2']['referee_id'] == $refereeInfo['id']
+            || $matchRecordInfo['referee3']['referee_id'] == $refereeInfo['id']
+        ) {
+            return json(['code' => 100, 'msg' => '您已是此比赛申请或者邀请的裁判员了']);
         }
 
         // 保存裁判申请执裁比赛数据
