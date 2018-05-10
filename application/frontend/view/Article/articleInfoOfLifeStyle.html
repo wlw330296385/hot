@@ -129,7 +129,7 @@
                 <div class="mui-slider-group mui-slider-loop">
                     {volist empty="" name="ItemCouponList" id="vol" }
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <ul class="mui-table-view mui-grid-view" style="background-color: #efeff4">
+                        <ul class="mui-table-view mui-grid-view" style="background-color: #efeff4; padding-bottom: 0px;">
                             <li class="mui-table-view-cell mui-media mui-col-xs-12 middle-coupon">
                                 <div class="coupon">
                                     <div class="orangebg">
@@ -141,7 +141,7 @@
                                         <i></i>
                                     </div>
                                     <div class="tips">
-                                        <span>剩余：{$vol.max-$vol.publish}</span>
+                                        <span class="fl">剩余领取：{$vol.max-$vol.publish}</span>
                                         <a href="{:url('frontend/Coupon/itemCouponInfo',['item_coupon_id'=>$vol['id']])}">查看卡券详情
                                             <span class="mui-icon mui-icon-forward"></span>
                                         </a>
@@ -354,6 +354,42 @@
                 });
 
             });
+
+            //领取卡券功能
+            $(".coupon").on('tap','.orangebg', function () {
+                var article = "{$articleInfo.title}";
+                var article_id = "{$articleInfo.id}";
+                mui.ajax("{:url('api/article/collectApi')}", {
+                    data: {
+                        article: article,
+                        article_id: article_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            if ($(".collect").text() == '已收藏') {
+                                $(".collect").text('收藏')
+                                mui.toast('取消收藏');
+                            } else {
+                                $(".collect").text('已收藏')
+                                mui.toast('收藏成功');
+                            }
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+
         })
 
         var count = 1;

@@ -1269,7 +1269,15 @@
         //获取学员列表
         var toScheduleList = function (keyword, page) {
 
-            var url = "{:url('api/lesson_member/getSamePriceLessonMemberListByPageApi','','',true)}/?page=" + page;
+            //判断是否校园课，调用不同api
+            var is_school = "{$gradeInfo.is_school}";
+            var url = '';
+            if(is_school=="1"){
+                url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}/?page=" + page;
+            }else{
+                url = "{:url('api/lesson_member/getSamePriceLessonMemberListByPageApi','','',true)}/?page=" + page;
+            }
+
             var lesson_id = "{$gradeInfo.lesson_id}";
             mui.ajax({
                 url: url,
