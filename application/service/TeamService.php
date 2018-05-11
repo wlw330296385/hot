@@ -304,29 +304,34 @@ class TeamService
     {
         $model = new TeamMember();
         $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
-            // 遍历获取成员在球队的角色身份
-            $teammembers = $res->toArray();
-            $roleModel = new TeamMemberRole();
-            foreach ($teammembers as $k => $teammember) {
-                $teammembers[$k]['role_text'] = '';
-                $teammembers[$k]['role_arr'] = [];
-                $memberRole = $roleModel->where([
-                    'member_id' => $teammember['member_id'],
-                    'member' => $teammember['member'],
-                    'name' => $teammember['name'],
-                    'team_id' => $teammember['team_id'],
-                    'status' => 1
-                ])->order('type desc')->select();
-                foreach ($memberRole as $val) {
-                    $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
-                    array_push($teammembers[$k]['role_arr'], $val['type_text']);
-                }
-            }
-            return $teammembers;
-        } else {
+        if (!$res) {
             return $res;
+
         }
+        // 遍历获取成员在球队的角色身份
+        $result = $res->toArray();
+        $roleModel = new TeamMemberRole();
+        foreach ($result as $k => $val) {
+            // 球队成员创建时间戳原始数据 换算入队时间，入队年数(
+            $createTimeStamp = $res[$k]->getData('create_time');
+            $result[$k]['join_date'] = date('Y-m-d', $createTimeStamp);
+            $result[$k]['join_years'] = ceil(date('Y', time())-date('Y', $createTimeStamp));
+            // 获取球队角色
+            $result[$k]['role_text'] = '';
+            $result[$k]['role_arr'] = [];
+            $memberRole = $roleModel->where([
+                'member_id' => $val['member_id'],
+                'member' => $val['member'],
+                'name' => $val['name'],
+                'team_id' => $val['team_id'],
+                'status' => 1
+            ])->order('type desc')->select();
+            foreach ($memberRole as $val2) {
+                $result[$k]['role_text'] .= $val2['type_text'] . ',';
+                array_push($result[$k]['role_arr'], $val2['type_text']);
+            }
+        }
+        return $result;
     }
 
     // 获取球队成员列表（所有数据，关联球队）
@@ -336,7 +341,14 @@ class TeamService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            // 球队成员创建时间戳原始数据 换算入队时间，入队年数(
+            $createTimeStamp = $res[$k]->getData('create_time');
+            $result[$k]['join_date'] = date('Y-m-d', $createTimeStamp);
+            $result[$k]['join_years'] = ceil(date('Y', time())-date('Y', $createTimeStamp));
+        }
+        return $result;
     }
 
     // 获取球队-队员详细
@@ -344,28 +356,31 @@ class TeamService
     {
         $model = new TeamMember();
         $res = $model->where($map)->find();
-        if ($res) {
-            $result = $res->toArray();
-            $result['status_num'] = $res->getData('status');
-            $result['position_num'] = $res->getData('position');
-            // 球龄换算:当前年-yearsexp(开始打球时间)
-            $result['yearsexp'] = !empty($result['yearsexp']) ? date('Y')-$result['yearsexp'] : '';
-            // 获取成员在球队的角色身份
-            $roleModel = new TeamMemberRole();
-            $result['role_text'] = '';
-            $memberRole = $roleModel->where([
-                'member_id' => $result['member_id'],
-                'name' => $result['name'],
-                'team_id' => $result['team_id'],
-                'status' => 1
-            ])->select();
-            foreach ($memberRole as $val) {
-                $result['role_text'] .= $val['type_text'] . ',';
-            }
-            return $result;
-        } else {
+        if (!$res) {
             return $res;
         }
+        $result = $res->toArray();
+        $result['status_num'] = $res->getData('status');
+        $result['position_num'] = $res->getData('position');
+        // 球龄换算:当前年-yearsexp(开始打球时间)
+        $result['yearsexp'] = !empty($result['yearsexp']) ? date('Y')-$result['yearsexp'] : '';
+        // 球队成员创建时间戳原始数据 换算入队时间，入队年数(
+        $createTimeStamp = $res->getData('create_time');
+        $result['join_date'] = date('Y-m-d', $createTimeStamp);
+        $result['join_years'] = ceil(date('Y', time())-date('Y', $createTimeStamp));
+        // 获取成员在球队的角色身份
+        $roleModel = new TeamMemberRole();
+        $result['role_text'] = '';
+        $memberRole = $roleModel->where([
+            'member_id' => $result['member_id'],
+            'name' => $result['name'],
+            'team_id' => $result['team_id'],
+            'status' => 1
+        ])->select();
+        foreach ($memberRole as $val) {
+            $result['role_text'] .= $val['type_text'] . ',';
+        }
+        return $result;
     }
 
     // 获取球队-队员统计数

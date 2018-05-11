@@ -300,12 +300,25 @@
             <p class="pline"></p>
 
             <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>是否公开</label>
+                    <span class="select-row">
+                        <select id="selectStatus" class="data" name="status">
+                            <option value="1">公开</option>
+                            <option value="-1">不公开</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row">
                 <label class="wd36">是否完成录入</label>
                 <div class="mui-switch isRelease">
                     <div class="mui-switch-handle"></div>
                 </div>
                 <input type="hidden" name="is_finished" value="{$matchInfo.is_finished}" class="data">
             </div>
+
 
             <div class="mui-input-row h-auto">
                 <label>备注</label>
@@ -939,7 +952,13 @@
             $('#islive option[value="{$matchInfo.islive}"]').prop("selected", true);
             // 设置裁判付费方式
             $('#refereeCostBear option[value="{$matchInfo.record.referee_cost_bear}"]').prop("selected", true);
-
+            // 设置是否公开
+            if ("{$matchInfo.status}" == "公开") {
+                var status = 1
+            } else {
+                var status = -1;
+            }
+            $('#selectStatus option[value=' + status + ']').prop("selected", true);
 
             // 是否完成录入操作
             var is_finished = "{$matchInfo.is_finished}";
@@ -1824,7 +1843,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    status: 1,
+                    //status: 1,
                     page: page1,
                     keyword: keyword,
                     match_id: match_id,
@@ -1883,7 +1902,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    status: 1,
+                    //status: 1,
                     page: page2,
                     keyword: keyword,
                     match_id: match_id,
@@ -1942,7 +1961,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    status: 1,
+                    //status: 1,
                     page: page3,
                     keyword: keyword,
                     match_id: match_id,
