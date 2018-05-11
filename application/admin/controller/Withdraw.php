@@ -1,17 +1,14 @@
 <?php 
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
-use app\admin\service\WithdrawService;
 class Withdraw extends Backend{
-	protected $WithdrawService;
 	public function _initialize(){
 		parent::_initialize();
-		$this->WithdrawService = new WithdrawService;
 	}
 
     public function index() {
 
-        return view('Withdraw/index');
+        return view('CampWithdraw/index');
     }
 
 
@@ -29,12 +26,12 @@ class Withdraw extends Backend{
             $map['camp_type'] = $camp_type;
         }
 
-        $Withdraw = new \app\model\Withdraw;
+        $CampWithdraw = new \app\model\CampWithdraw;
         if($keyword){
             $hasWhere['camp|goods|student'] = ['like',"%$keyword%"];
-            $campWithdrawList = $Withdraw->where($map)->select();
+            $campWithdrawList = $CampWithdraw->where($map)->select();
         }else{
-            $campWithdrawList = $Withdraw->where($map)->select();
+            $campWithdrawList = $CampWithdraw->where($map)->select();
         }
         
 
@@ -45,7 +42,7 @@ class Withdraw extends Backend{
         }  
 
         $this->assign('campWithdrawList',$campWithdrawList);
-        return $this->fetch('StatisticsCamp/campWithdrawList');
+        return $this->fetch('Withdraw/campWithdrawList');
     }
 
     // 提现处理
@@ -55,8 +52,8 @@ class Withdraw extends Backend{
             $remarks = input('param.remarks');
             $action = input('param.action');//2=同意,3=已打款,4=同意并已打款,-1=拒绝;
             
-            $Withdraw = new \app\model\Withdraw;
-            $campWithdrawInfo = $Withdraw->where(['id'=>$campWithdraw_id])->find();
+            $CampWithdraw = new \app\model\CampWithdraw;
+            $campWithdrawInfo = $CampWithdraw->where(['id'=>$campWithdraw_id])->find();
             if(!$campWithdrawInfo){
                 $this->error('传参错误,找不到退款信息');
             }
@@ -98,26 +95,26 @@ class Withdraw extends Backend{
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
-                $Withdraw->save(['status'=>3,'buffer'=>0],['id'=>$campWithdraw_id]);
+                $CampWithdraw->save(['status'=>3,'buffer'=>0],['id'=>$campWithdraw_id]);
             }elseif ($action == -1) {
                 if($campWithdrawInfo['camp_type'] == 2){
                     $buffer = $campWithdrawInfo['withdraw'];
                 
                     // 解冻资金
-                    $Withdraw->save(['status'=>-1,'buffer'=>0],['id'=>$campWithdraw_id]);
+                    $CampWithdraw->save(['status'=>-1,'buffer'=>0],['id'=>$campWithdraw_id]);
                     db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->inc('balance',$buffer)->update();
                 }
             
                 $this->success('操作成功'); 
             }   
         }else{
-            $Withdraw = new \app\model\Withdraw;
-            $campWithdrawInfo = $Withdraw
+            $CampWithdraw = new \app\model\CampWithdraw;
+            $campWithdrawInfo = $CampWithdraw
                         ->with('bank')
                         ->where(['id'=>$campWithdraw_id])
                         ->find();    
             $this->assign('campWithdrawInfo',$campWithdrawInfo);
-            return $this->fetch('StatisticsCamp/campWithdrawDeal');
+            return $this->fetch('Withdraw/campWithdrawDeal');
         }
         
     }

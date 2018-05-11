@@ -65,6 +65,10 @@ class Camp extends Backend {
             if (empty($request['schedule_rebate'])) {
                 $request['schedule_rebate'] = 0.1;
             }
+            // 保存课时收入平台抽取比例空值
+            if (empty($request['refund_rebate'])) {
+                $request['refund_rebate'] = 0.1;
+            }
             $execute = Db::name('camp')->update($request);
 
             $Auth = new AuthService();

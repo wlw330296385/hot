@@ -92,6 +92,36 @@ class Index extends Base{
         return view('Index/indexOfCamp');
     }
 
+
+
+    // 校园版版首页
+    public function indexOfSchool(){
+        // 重定义homeurl
+        cookie('homeurl', request()->url());
+        // banner图
+        $bannerList = db('banner')->where([
+            'organization_id'=>$this->o_id,
+            'organization_type'=>$this->o_type,
+            'status'=>1,
+            'steward_type' => cookie('steward_type')
+        ])->order('ord asc')->limit(3)->select();
+
+        // 如果banner不够三张
+        if( count($bannerList)<2 ){
+            $res = db('banner')->where([
+                'organization_id'=>0,
+                'organization_type'=>0,
+                'status'=>1,
+                'steward_type' => cookie('steward_type')
+            ])->order('ord asc')->limit((3-count($bannerList)))->select();
+            $bannerList = array_merge($bannerList,$res);
+        }
+        $this->assign('bannerList',$bannerList);
+        return view('Index/indexOfSchool');
+    }
+
+
+
     // 微信授权回调
     public function wxindex() {
         $o_id = input('o_id', 0);

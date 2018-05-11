@@ -99,8 +99,13 @@ class StatisticsCamp extends Camp{
         $list4 = [];//教练工资和平台支出;
         $list_income1 = [];
         $list_income2 = [];
+        $financeList = [];
         // 活动订单收入 
-        $income2 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+        $income2 = db('income')->field("sum(balance_pay) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>2])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+        // 训练营余额
+        $finance = db('daily_camp_finance')->field("e_balance,date_str as days")->where(['camp_id'=>$camp_id])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+        // echo db('daily_camp_finance')-> getlastsql();
+
         if($this->campInfo['rebate_type'] == 1 && $month_end){
             //课时收入
             $income3 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
@@ -122,6 +127,7 @@ class StatisticsCamp extends Camp{
                 $list_1[$i] = ['s_output'=>0];
                 $list1[$i]  = ['s_output'=>0];
                 $list4[$i]  = ['s_s_rebate'=>0,'s_s_salary'=>0];
+                $financeList[$i] = ['e_balance'=>0];
             }
             foreach ($list3 as $key => &$value) {
                 foreach ($income3 as $k => $val) {
@@ -160,6 +166,15 @@ class StatisticsCamp extends Camp{
                     }
                 }
             }
+            foreach ($financeList as $key => &$value) {
+                foreach ($finance as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }
+            // dump($financeList);die;
+            $this->assign('financeList',$financeList);//每日余额
             $this->assign('list4',$list4);//课时收入
             $this->assign('list3',$list3);//课时收入
             $this->assign('list2',$list2);//活动收入
@@ -177,7 +192,7 @@ class StatisticsCamp extends Camp{
 
             $list1 = []; $list2 = []; $list3 = []; $list4 = []; $list_1 = []; $list_income1 = []; $list_income2 = [];
             // 课程订单收入
-            $income1 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income1 = db('income')->field("sum(balance_pay) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 赠课支出
             $output1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时退费
@@ -194,6 +209,7 @@ class StatisticsCamp extends Camp{
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
                 $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00,'s_schedule_income'=>0,'camp_id'=>0];
                 $list_income1[$i] = $list_income2[$i] = ['s_income'=>0.00,'camp_id'=>0];
+                $financeList[$i] = ['e_balance'=>0];
             }
             foreach ($list1 as $key => &$value) {
                 foreach ($output1 as $k => $val) {
@@ -244,6 +260,15 @@ class StatisticsCamp extends Camp{
                     }
                 }
             }
+            foreach ($financeList as $key => &$value) {
+                foreach ($finance as $k => $val) {
+                    if($key == $val['days']){
+                        $value = $val;
+                    }
+                }
+            }
+            // dump($finance);die;
+            $this->assign('financeList',$financeList);//每日余额
             $this->assign('list1',$list1);
             $this->assign('list2',$list2);
             $this->assign('list3',$list3);

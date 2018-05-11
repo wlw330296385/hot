@@ -31,7 +31,7 @@ class Dailyfinance extends Base{
                 'member'=>$value['member'],
                 's_balance'=>$value['balance'],
                 'create_time'=>time(),
-                'date_str'=>date('Ymd'),
+                'date_str'=>date('Ymd',time()),
             ];
             db('daily_member_finance')->insert($data);
         }
@@ -47,7 +47,7 @@ class Dailyfinance extends Base{
                 'schedule_rebate'=>$value['schedule_rebate'],
                 's_balance'=>$value['balance'],
                 'create_time'=>time(),
-                'date_str'=>date('Ymd'),
+                'date_str'=>date('Ymd',time()),
             ];
             db('daily_camp_finance')->insert($data);
         }
@@ -80,7 +80,7 @@ class Dailyfinance extends Base{
                 'update_time'=>time(),
             ];
             db('daily_member_finance')
-            ->where(['member_id'=>$value['member_id'],'date_str'=>date('Ymd')])
+            ->where(['member_id'=>$value['member_id'],'date_str'=>date('Ymd',time())])
             ->update($data);
         }
     }
@@ -94,7 +94,7 @@ class Dailyfinance extends Base{
                 'update_time'=>time(),
             ];
             db('daily_camp_finance')
-            ->where(['camp_id'=>$value['id'],'date_str'=>date('Ymd')])
+            ->where(['camp_id'=>$value['id'],'date_str'=>date('Ymd',time())])
             ->update($data);
         }
     }
@@ -102,17 +102,5 @@ class Dailyfinance extends Base{
 
 
 
-    // 每日平台支出
-    public function dailyOutput(){
-        try{
-            
-            $data = ['crontab'=>'每日平台支出'];
-            $this->record($data);
-        }catch(Exception $e){
-            $data = ['crontab'=>'每日平台支出','status'=>0,'callback_str'=>$e->getMessage()];
-            $this->record($data);
-            trace($e->getMessage(), 'error');
-        }
-    }
 
 }

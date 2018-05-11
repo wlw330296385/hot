@@ -69,6 +69,10 @@ class EventService {
 
     // 软删除
     public function SoftDeleteEvent($id) {
+        $res = db('event_member')->where(['event_id'=>$id])->find();
+        if($res){
+            return [ 'msg' => '已有人报名,不可删除', 'code' => 100 ];
+        }
         $result = Event::destroy($id);
         if (!$result) {
             return [ 'msg' => __lang('MSG_400'), 'code' => 100 ];
