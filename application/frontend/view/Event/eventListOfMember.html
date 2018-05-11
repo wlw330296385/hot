@@ -126,22 +126,9 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
-//                        newli += `<div class="mui-slider-handle">
-//                            <a href="{:url('frontend/event/eventInfo')}/event_id/${data.data.data[i].event_id}">
-//                                <p class="fTop">
-//                                    <strong>${data.data.data[i].event}(${data.data.data[i].status})<strong>
-//                                </p>
-//                                <p class="fTop">
-//                                    开始时间:${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}
-//                                </p>
-//                            </a>
-//                        </div>
-//                        `;
-
-
-
                         var time = gettime();
-                        //var sTime = "${wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start)}";
+                        var sTime = wooApi.dateIt('Y-m-d',data.data.data[i].event_info.start);
+                        var eTime = wooApi.dateIt('Y-m-d',data.data.data[i].event_info.end);
                         var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data.data[i].event_info.id;
 
                         newli += '<li class="mui-table-view-cell mui-media listli">'
@@ -149,10 +136,10 @@
                         if (data.data.data[i].event_info.is_max == "已满人") {
                             newli += '<font class="tipCorner bgred">满人</font>';
                         }
-                        if (data.data.data[i].event_info.ends < time) {
+                        if (eTime < time) {
                             newli += '<font class="tipCorner bggray">过期</font>';
                         }
-                        newli += '<p class="mui-ellipsis">开始时间:' + data.data.data[i].event_info.start + '</p></div><div class="price-frame mui-text-center">'
+                        newli += '<p class="mui-ellipsis">开始时间：' + sTime + '<br />' + data.data.data[i].linkman + '：' + data.data.data[i].contact + '</p></div><div class="price-frame mui-text-center">'
                         if (data.data.data[i].event_info.is_free == 2) {
                             newli += '<p class="price">￥<strong>' + data.data.data[i].event_info.price + '</strong></p>';
                         } else {
@@ -160,7 +147,6 @@
                         }
                         newli += '<p class="address">' + data.data.data[i].event_info.area + '</p></div></a></div><input type="hidden" class="is_overdue" value="' + data.data.data[i].event_info.is_overdue + '">';
                         newli += '</li>';
-
                     }
 
                     if(gType==1){

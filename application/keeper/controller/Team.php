@@ -831,6 +831,9 @@ class Team extends Base
                 "away_team_color" => $matchRecordInfo['home_team_color'],
                 "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
                 "away_score" => $matchRecordInfo['home_score'],
+                'referee1' => json_encode($matchRecordInfo['referee1'], JSON_UNESCAPED_UNICODE),
+                'referee2' => json_encode($matchRecordInfo['referee2'], JSON_UNESCAPED_UNICODE),
+                'referee3' => json_encode($matchRecordInfo['referee3'], JSON_UNESCAPED_UNICODE),
                 'win_team_id' => $matchRecordInfo['win_team_id'],
                 'lose_team_id' => $matchRecordInfo['lose_team_id'],
                 'claim_status' => 0,
@@ -859,11 +862,13 @@ class Team extends Base
 
         // 进入认领编辑页按钮显示判断
         $canClaim = ($matchRecordInfo['away_team_id'] == $this->team_id) ? 1 : 0;
-        // 裁判列表
-        $refereeList = [];
-        if (!empty($matchInfo['referee_str'])) {
-            $refereeList = json_decode($matchInfo['referee_str'], true);
-        }
+        // 裁判列表（出席比赛，有效的比赛-裁判关系数据）
+        $refereeList = $matchService->getMatchReferees([
+            'match_id' => $matchInfo['id'],
+            'is_attend' => 2,
+            'status' => 1
+        ]);
+
 
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount(['team_id' => $this->team_id]);
@@ -1393,11 +1398,12 @@ class Team extends Base
 
         // 在队球队列表
         $teamS = new TeamService();
-        $memberOtherTeamMap = [
+        $memberTeamMap = [
             'member_id' => $memberInfo['id'],
             'status' => 1
         ];
-        $memberTeamList = $teamS->getTeamMemberAllWithTeam($memberOtherTeamMap, ['create_time' => 'asc']);
+        $memberTeamList = $teamS->getTeamMemberAllWithTeam($memberTeamMap, ['create_time' => 'asc']);
+
 
         // 赛季选择列表：从会员加入第一个球队年至当前年
         $seasonList = [];

@@ -764,6 +764,25 @@ class MatchService {
         return $result;
     }
 
+    // 获取比赛-裁判关系列表（无分页）
+    public function getMatchReferees($map) {
+        $model = new MatchReferee();
+        $res = $model->with('match')->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            // 比赛时间戳
+            if ($val['match']['match_time']) {
+                $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+            }
+            // 比赛战绩数据
+            $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
+        }
+        return $result;
+    }
+
     // 获取比赛-裁判关系列表
     public function getMatchRefereeList($map=[], $page=1, $order='id desc', $size=10) {
         $model = new MatchReferee();
