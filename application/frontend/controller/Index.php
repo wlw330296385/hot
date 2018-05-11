@@ -138,9 +138,8 @@ class Index extends Base{
             cache('userinfo_'.$userinfo['openid'], $userinfo);
             $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
             //$avatar = $memberS->downwxavatar($userinfo);
-
-            $dbMember = db('member');
-            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
+            
+            $isMember = $memberS->getMemberInfo(['openid' => $userinfo['openid']]);
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);

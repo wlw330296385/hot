@@ -69,8 +69,8 @@ class Index extends Base{
             $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
             //$avatar = $memberS->downwxavatar($userinfo);
 
-            $dbMember = db('member');
-            $isMember = $dbMember->where(['openid' => $userinfo['openid']])->find();
+            //$dbMember = db('member');
+            $isMember = $memberS->getMemberInfo(['openid' => $userinfo['openid']]);
             if ($isMember) {
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
@@ -109,6 +109,7 @@ class Index extends Base{
                     'balance'   =>0,
                     'remarks'   =>0,
                     'hot_id'=>00000000,
+                    'age' => 0
                 ];
                 cookie('mid', 0);
                 cookie('openid', $userinfo['openid']);
