@@ -25,20 +25,145 @@
 </head>
 
 <body>
-    <div class="mui-content">
-        <ul class="mui-table-view list detalis-list border-b mb">
-            <li class="mui-table-view-cell listli listinitial">
-                <div class="mui-navigate-right goConfirm">
-                    <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-ring"></use>
-                    </svg>
-                    篮球圈
-                </div>
-            </li>
-        </ul>
-        <div class="hot-ads hot-ads mb">
-            <img src="/static/frontend/images/ads1.jpg" />
+    <!--定位、搜索触发-->
+    <header id="header" class="mui-bar mui-bar-nav search1">
+        <div class="mui-pull-left mui-icon mui-icon-location" id="showCityPicker3">
+            <span class="address" id="cityResult3">篮球管家</span>
         </div>
+        <div class="mui-pull-left">
+            <input type="search" id="search-input" placeholder="搜课程/活动/球场等">
+        </div>
+        <span class="mui-icon mui-icon-search searchicon" id="search-Btn"></span>
+    </header>
+    <div class="mui-content">
+
+
+        <!--图片轮播-->
+        <div id="slider" class="mui-slider">
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[0]['url']}">
+                    </a>
+                </div>
+                <!-- 第一张 -->
+                {volist name="bannerList" id="vol"}
+                <div class="mui-slider-item">
+                    <a href="">
+                        <img src="{$vol.url}">
+                    </a>
+                </div>
+                {/volist}
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="{$bannerList[2]['url']}">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+            </div>
+        </div>
+        <!--图文导航-->
+        <div class="nav-list mb">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('match/leagueList')}">
+                        <!-- <div class="goConfirm"> -->
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-game"></use>
+                        </svg>
+                        <div class="mui-media-body">赛事</div>
+                        <!-- </div> -->
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <!-- <a href="{:url('team/eventListOfPlatform')}"> -->
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-activity"></use>
+                        </svg>
+                        <div class="mui-media-body">活动</div>
+                    </div>
+                    <!-- </a> -->
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('Team/teamlist')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-team"></use>
+                        </svg>
+                        <div class="mui-media-body">球队</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('referee/refereeList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-coach"></use>
+                        </svg>
+                        <div class="mui-media-body">裁判</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-task"></use>
+                        </svg>
+                        <div class="mui-media-body">教练</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-equipment"></use>
+                        </svg>
+                        <div class="mui-media-body">新闻</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-VS"></use>
+                        </svg>
+                        <div class="mui-media-body">社区</div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('match/friendlylist')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-VS"></use>
+                        </svg>
+                        <div class="mui-media-body">约赛</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <a href="{:url('frontend/court/courtList')}">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-court"></use>
+                        </svg>
+                        <div class="mui-media-body">球场</div>
+                    </a>
+                </li>
+
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
+                    <div class="goConfirm">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-home-Leaderboards"></use>
+                        </svg>
+                        <div class="mui-media-body">排行榜</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="lifeStyle">
+            LifeStyle
+        </div>
+
         <!--发现列表-->
         <ul class="mui-table-view list detalis-list border-b mb">
             <li class="mui-table-view-cell listli listinitial">
@@ -53,37 +178,27 @@
             <li class="mui-table-view-cell listli listinitial">
                 <div class="mui-navigate-right goConfirm">
                     <svg class="coloricon" aria-hidden="true">
+                        <use xlink:href="#icon-find-ring"></use>
+                    </svg>
+                    篮球生活圈
+                </div>
+            </li>
+            <li class="mui-table-view-cell listli listinitial">
+                <div class="mui-navigate-right goConfirm">
+                    <svg class="coloricon" aria-hidden="true">
                         <use xlink:href="#icon-find-jerseys"></use>
                     </svg>
-                    篮球服订制
+                    赛旅
                 </div>
             </li>
         </ul>
-        <!--<ul class="mui-table-view list detalis-list border-b mb">-->
-        <!--<li class="mui-table-view-cell listli listinitial">-->
-        <!--<div class="mui-navigate-right goConfirm">-->
-        <!--<svg class="coloricon" aria-hidden="true">-->
-        <!--<use xlink:href="#icon-m-VS"></use>-->
-        <!--</svg>-->
-        <!--约战区-->
-        <!--</div>-->
-        <!--</li>-->
-        <!--<li class="mui-table-view-cell listli listinitial">-->
-        <!--<div class="mui-navigate-right goConfirm">-->
-        <!--<svg class="coloricon" aria-hidden="true">-->
-        <!--<use xlink:href="#icon-m-Basketballcourt"></use>-->
-        <!--</svg>-->
-        <!--篮球场-->
-        <!--</div>-->
-        <!--</li>-->
-        <!--</ul>-->
-        <ul class="mui-table-view list detalis-list border-b mb">
+        <ul class="mui-table-view list detalis-list border-b">
             <li class="mui-table-view-cell listli listinitial">
-                <a href="/frontend/event/eventinfo/event_id/18" class="mui-navigate-right">
+                <a href="/frontend" class="mui-navigate-right">
                     <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-photography"></use>
+                        <use xlink:href="#icon-find-detection"></use>
                     </svg>
-                    篮球摄影
+                    青少年篮球培训平台
                 </a>
             </li>
             <li class="mui-table-view-cell listli listinitial">
@@ -94,23 +209,12 @@
                     篮球宝典
                 </div>
             </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="/frontend/event/eventinfo/event_id/16" class="mui-navigate-right">
-                    <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-detection"></use>
-                    </svg>
-                    体质检测
-                </a>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                <a href="/frontend" class="mui-navigate-right">
-                    <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-detection"></use>
-                    </svg>
-                    训练营首页
-                </a>
-            </li>
         </ul>
+        <div class="hot-ads hot-ads mb mb44">
+            <img src="/static/frontend/images/ads1.jpg" />
+        </div>
+
+
     </div>
     <!--底部导航-->
     {layout name="Layout/footer"}

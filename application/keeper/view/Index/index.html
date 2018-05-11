@@ -86,6 +86,14 @@
             vertical-align: middle;
             color: #999;
         }
+
+        .nav-list .nav-list-frame .navli {
+            width: 25%;
+        }
+
+        .mui-grid-view.mui-grid-9 .mui-table-view-cell {
+            border-right: 0 !important;
+        }
     </style>
 </head>
 
@@ -104,127 +112,95 @@
         </header>
 
         <div id="tabbar" class="mui-control-content mui-active">
-            <!--图片轮播-->
-            <div id="slider" class="mui-slider">
-                <div class="mui-slider-group mui-slider-loop">
-                    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="{$bannerList[0]['url']}">
-                        </a>
+
+            <!-- xin -->
+            <div class="personalFrame">
+                <!-- 没数据 -->
+                <div class="mui-text-center hide NoMember">
+                    <div style="font-size: 35px;padding-top: 20px;">
+                        <svg class="coloricon" aria-hidden="true">
+                            <use xlink:href="#icon-p-efficiency"></use>
+                        </svg>
                     </div>
-                    <!-- 第一张 -->
-                    {volist name="bannerList" id="vol"}
-                    <div class="mui-slider-item">
-                        <a href="">
-                            <img src="{$vol.url}">
-                        </a>
-                    </div>
-                    {/volist}
-                    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-                    <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="{$bannerList[2]['url']}">
-                        </a>
-                    </div>
+                    <button class="bgred cjButton">创建您的球员档案</button>
+                    <p class="openText">开启你的篮球生涯</p>
                 </div>
-                <div class="mui-slider-indicator">
-                    <div class="mui-indicator mui-active"></div>
-                    <div class="mui-indicator"></div>
-                    <div class="mui-indicator"></div>
+
+                <!-- 有数据 -->
+                <div class="mui-row hide hasMember">
+                    <div class="mui-col-sm-8 mui-col-xs-8 tmFrameLeft">
+                        <img src="{$memberInfo.avatar}" alt="" class="avatarImg">
+                        <div class="nameFrame">
+                            <span class="tmName">{$memberInfo.member}</span>
+                            <em class="colorred">
+                                <strong>VIP-1</strong>
+                            </em>
+                        </div>
+                        <p>{$memberInfo.city} {$memberInfo.area}</p>
+                        <p>年龄
+                            <text class="colororange">{$memberInfo.age}</text> 身高
+                            <text class="colororange">{$memberInfo.height}</text> 体重
+                            <text class="colororange">{$memberInfo.weight}</text>
+                        </p>
+                        <p>粉丝
+                            <text class="colororange">322</text>
+                        </p>
+                    </div>
+                    <div class="mui-col-sm-4 mui-col-xs-4 tmFrameRight">
+                        <div class="tmIntegral">
+                            <span class="integralNum">674</span>
+                        </div>
+                        <p class="integral">球员积分</p>
+                        <div class="guide">
+                            <span class="guideIcon">?</span>
+                            <span>用户指南</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             <!--图文导航-->
             <div class="nav-list">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <div class="goConfirm">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('team/teamList')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-equipment"></use>
+                                <use xlink:href="#icon-p-efficiency"></use>
                             </svg>
-                            <div class="mui-media-body">新闻</div>
-                        </div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <!-- <a href="{:url('team/eventListOfPlatform')}"> -->
-                        <div class="goConfirm">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-activity"></use>
-                            </svg>
-                            <div class="mui-media-body">活动</div>
-                        </div>
-                        <!-- </a> -->
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('match/leagueList')}">
-                        <!-- <div class="goConfirm"> -->
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-game"></use>
-                            </svg>
-                            <div class="mui-media-body">联赛</div>
-                        <!-- </div> -->
+                            <span class="f14" style="display: block;">球队</span>
+                            <div class="mui-media-body f18 colororange efficiency">0</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('match/friendlylist')}">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('index/latelyMatchList')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-VS"></use>
+                                <use xlink:href="#icon-p-game"></use>
                             </svg>
-                            <div class="mui-media-body">约战</div>
+                            <span class="f14" style="display: block;">比赛</span>
+                            <div class="mui-media-body f18 colororange match_number">0</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('frontend/court/courtList')}">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a>
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-court"></use>
+                                <use xlink:href="#icon-p-workout"></use>
                             </svg>
-                            <div class="mui-media-body">球场</div>
+                            <span class="f14" style="display: block;">锻炼</span>
+                            <div class="mui-media-body f18 colororange">0</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <div class="goConfirm">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a>
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-Leaderboards"></use>
+                                <use xlink:href="#icon-p-constitution"></use>
                             </svg>
-                            <div class="mui-media-body">排行榜</div>
-                        </div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <div class="goConfirm">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-task"></use>
-                            </svg>
-                            <div class="mui-media-body">任务</div>
-                        </div>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('Team/teamlist')}">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-team"></use>
-                            </svg>
-                            <div class="mui-media-body">球队</div>
+                            <span class="f14" style="display: block;">等级</span>
+                            <div class="mui-media-body f18 colororange">0</div>
                         </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="{:url('referee/refereeList')}">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-coach"></use>
-                            </svg>
-                            <div class="mui-media-body">裁判</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <div class="goConfirm">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-treasurechest"></use>
-                            </svg>
-                            <div class="mui-media-body">百宝箱</div>
-                        </div>
                     </li>
                 </ul>
             </div>
-
             <!-- 文章 -->
             <!-- <div class="show-list">
             <div class="mui-content" style="background-color:#fff">
@@ -433,6 +409,7 @@
         });
 
         $(function () {
+
             //未开发提示
             $(".goConfirm").click(function () {
                 mui.toast('暂未开放，敬请期待');
@@ -455,11 +432,14 @@
 
             //提示框
             if ($('input[name=mid]').val() == 0) {
+                $(".NoMember").show();
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                     if (e.index === 1) {
                         window.location.href = "{$fasturl}";
                     }
                 });
+            } else {
+                $(".hasMember").show();
             }
 
             //搜索子页：类型选择
