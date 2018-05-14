@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>训练营设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <!-- webuploader -->
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="mui-bar mui-bar-nav for-tab">
+    <div class="camp-lesson-list">
+        <div id="segmentedControl" class="mui-segmented-control mb">
+            <a class="mui-control-item mui-icon mui-icon-left-nav backToPage" href="{:url('member/index')}"></a>
+            <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>1])}">基本信息</a>
+            <a class="mui-control-item" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>2])}">认证信息</a>
+            <a class="mui-control-item mui-active" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}">账号信息</a>
+        </div>
+    </div>
+</header>
+    <div class="mui-content">
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+
+            {if $campBankcard}
+
+            <!--账号更新：开始-->
+            <form id="editForm" action="" class="mui-input-group">
+                <div class="mui-input-row">
+                    <label>训练营名称</label>
+                    <span>{$campInfo.camp}</span>
+                    <input type="hidden" name="campid" value="{$campInfo.id}">
+                </div>
+                <div class="mui-input-row">
+                    <label>账户名称</label>
+                    <input type="text" class="" name="account" value="{$campBankcard.account}" placeholder="请输入公司或个人账号名称">
+                </div>
+                <div class="mui-input-row">
+                    <a href="#bankList" class="mui-navigate-right" style="padding-right: 20px;">
+                        <label>开户银行</label>
+                        <input type="text" name="bank" class="bank" value="{$campBankcard.bank}" placeholder="请输入开户银行名称">
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <label>支行名称</label>
+                    <input type="text" name="bank_branch" class="bank_branch" value="{$campBankcard.bank_branch}" placeholder="请输入开户银行支行名称">
+                </div>
+                <div class="mui-input-row">
+                    <label>银行账号</label>
+                    <input type="number" name="bankcard" value="{$campBankcard.bank_card}" placeholder="请输入开户银行账号">
+                </div>
+                <div class="mui-input-row">
+                    <label>预留电话</label>
+                    <input type="number" id="telephone" name="telephone" value="{$campBankcard.telephone}" placeholder="请输入预留手机号码">
+                </div>
+                <div class="mui-input-row">
+                    <label>短信验证码</label>
+                    <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
+                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：<br />1.如是机构，账号名称（对公账户）需跟主体证件上的机构名称保持一致；<br />2.我们会给该账户汇入一笔非常小的金额和备注信息，后续审核人员会致电您确认。<br />3.为了提高到账效率，请尽量填写开户银行支行名称</span>
+                </div>
+            </form>
+            <span class="tip-box validate-result"></span>
+
+            <div class="tjbtn mb44">
+                <button type="button" class="mui-btn btn" id="submit-form">修改</button>
+            </div>
+            <!--账号更新：结束-->
+
+            {else /}
+
+            <!--账号添加：开始-->
+            <form id="addForm" action="" class="mui-input-group">
+                <div class="mui-input-row">
+                    <label>训练营名称</label>
+                    <span>{$campInfo.camp}</span>
+                    <input type="hidden" name="campid" value="{$campInfo.id}">
+                </div>
+                <div class="mui-input-row">
+                    <label>账户名称</label>
+                    <input type="text" class="" name="account" value="" placeholder="请输入公司或个人账号名称">
+                </div>
+                <div class="mui-input-row">
+                    <a href="#bankList" class="mui-navigate-right" style="padding-right: 20px;">
+                        <label>开户银行</label>
+                        <input type="text" name="bank" class="bank" value="" placeholder="请输入开户银行名称">
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <label>支行名称</label>
+                    <input type="text" name="bank_branch" class="bank_branch" value="" placeholder="请输入开户银行支行名称">
+                </div>
+                <div class="mui-input-row">
+                    <label>银行账号</label>
+                    <input type="number" name="bankcard" value="" placeholder="请输入开户银行账号">
+                </div>
+                <div class="mui-input-row">
+                    <label>预留电话</label>
+                    <input type="number" id="telephone" name="telephone" value="" placeholder="请输入预留手机号码">
+                </div>
+                <div class="mui-input-row">
+                    <label>短信验证码</label>
+                    <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
+                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
+                </div>
+
+                <div class="page-header" style="background: #efeff4;">
+                    <span class="f12">温馨提示：<br />1.如是机构，账号名称（对公账户）需跟主体证件上的机构名称保持一致；<br />2.我们会给该账户汇入一笔非常小的金额和备注信息，后续审核人员会致电您确认。<br />3.为了提高到账效率，请尽量填写开户银行支行名称</span>
+                </div>
+            </form>
+            <span class="tip-box validate-result"></span>
+
+            <div class="tjbtn mb44">
+                <button type="button" class="mui-btn btn" id="submit-form">添加</button>
+            </div>
+            <!--账号添加：结束-->
+
+            {/if}
+
+
+        </div>
+    </div>
+
+<!--银行选择-->
+<div id="bankList" class="mui-popover whitebg">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header border-b">
+            <span class="course">
+                <strong>请选择开户银行</strong>
+            </span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <ul class="mui-table-view list whitebg">
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国银行">
+                        <img src="/static/frontend/images/bank/zs4.png" height="35" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国工商银行">
+                        <img src="/static/frontend/images/bank/zs3.png" height="32" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国建设银行">
+                        <img src="/static/frontend/images/bank/zs2.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="招商银行">
+                        <img src="/static/frontend/images/bank/zs12.png" height="32" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国农业银行">
+                        <img src="/static/frontend/images/bank/zs1.png" height="32" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国民生银行">
+                        <img src="/static/frontend/images/bank/zs7.png" height="28" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国邮政储蓄银行">
+                        <img src="/static/frontend/images/bank/zs13.png" height="35" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="交通银行">
+                        <img src="/static/frontend/images/bank/zs10.png" height="32" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中国光大银行">
+                        <img src="/static/frontend/images/bank/zs5.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="华夏银行">
+                        <img src="/static/frontend/images/bank/zs6.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="平安银行">
+                        <img src="/static/frontend/images/bank/zs8.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="兴业银行">
+                        <img src="/static/frontend/images/bank/zs9.png" height="26" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="浦发银行">
+                        <img src="/static/frontend/images/bank/zs11.png" height="35" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="中信银行">
+                        <img src="/static/frontend/images/bank/zs14.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="宁波银行">
+                        <img src="/static/frontend/images/bank/zs15.png" height="35" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="北京银行">
+                        <img src="/static/frontend/images/bank/zs16.png" height="28" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="广发银行">
+                        <img src="/static/frontend/images/bank/zs17.png" height="32" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="上海银行">
+                        <img src="/static/frontend/images/bank/zs18.png" height="35" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="深圳发展银行">
+                        <img src="/static/frontend/images/bank/zs21.png" height="30" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="汇丰银行">
+                        <img src="/static/frontend/images/bank/zs19.png" height="20" alt=""/>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli detalisli">
+                    <a href="#" title="东亚银行">
+                        <img src="/static/frontend/images/bank/zs20.png" height="22" alt=""/>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("header").on("tap", "a.mui-control-item", function () {
+        window.top.location.href = this.href;
+    });
+
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+    })(mui);
+
+    $(function () {
+
+        //判断从哪里进入设置页面
+        var getBackLink = wooApi.GetQueryString('from');
+        if(getBackLink!=""&&getBackLink!=null){
+            localStorage.campSettingBackTo = getBackLink;
+        }
+        if(localStorage.campSettingBackTo!=""&&localStorage.campSettingBackTo!=null){
+            $(".backToPage").attr("href",localStorage.campSettingBackTo)
+        }
+
+
+
+        //提交/修改账号信息
+        $('#submit-form').on("tap",function(){
+
+            //短信验证
+            var code = document.getElementById('code').value;
+            var codeReg = /^\d{6,6}$/;
+
+            $('.validate-result span').remove('.code_yz');
+            //console.log(code);
+            if(!codeReg.test(code)){
+                $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
+                return false;
+            }else{
+                var telephone = document.getElementById('telephone').value;
+                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                if(result.code == 200){
+                    mui.toast(result.msg);
+                }else{
+                    $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
+                    return false;
+                }
+            }
+
+            //获取表单提交
+            var campid = "{$campInfo.id}";
+            var camp = "{$campInfo.camp}";
+            var account = $('input[name=account]').val();
+            var bank = $('input[name=bank]').val();
+            var bank_branch = $('input[name=bank_branch]').val();
+            var bankcard = $('input[name=bankcard]').val();
+            var telephone = $('input[name=telephone]').val();
+            var smscode = $('.reg_code').val();
+
+            var validateResult = $(".validate-result span").text();
+            if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
+                mui.toast("提交失败，请填写完整并保证信息格式正确！");
+                return false;
+            }
+
+            var url="";
+            {if $campBankcard}
+                url = "{:url('api/camp_bankcard/updateCampBankcardApi')}?camp_bankcard_id={$campBankcard.id}";
+            {else /}
+                url = "{:url('api/camp_bankcard/createCampBankcardApi')}";
+            {/if}
+
+            mui.ajax(url, {
+                data: {
+                    camp_id: campid,
+                    camp: camp,
+                    account: account,
+                    bank: bank,
+                    bank_branch: bank_branch,
+                    bank_card: bankcard,
+                    telephone: telephone
+                },
+                dataType: 'json',
+                type: 'post',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    if (res.code == 200) {
+                        mui.alert("提交成功", function () {
+                            window.location.href = "{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}";
+                        });
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        });
+
+
+        //银行选择
+        $('#bankList a').on("click","",function(){
+            var bank = $(this).attr("title");
+            console.log(bank)
+            $("input[name=bank]").val(bank);
+            mui("#bankList").popover("toggle");
+        });
+
+
+    });
+
+
+
+    // 发送短信验证码
+    function sendCode(obj){
+        $('.validate-result span').remove('.mobile_yz');
+        var telephone = document.getElementById('telephone').value;
+        var telephoneReg = /^\d{11,11}$/;
+        if(telephoneReg.test(telephone)){
+            var result = smsCode.getMobileCodeApi(obj,telephone,"{:url('api/sms/getMobileCodeApi','','',true)}");
+            if(result.code == 200){
+                mui.toast(result.msg);
+            }else{
+                mui.toast(result.msg);
+            }
+        }else{
+            $('.validate-result').append('<span class="mobile_yz">请输入正确的手机格式</span>');
+        }
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加场地</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .previewList {
+            overflow: hidden;
+            padding: 0 10px;
+        }
+
+        .previewList li {
+            float: left;
+            width: 17%;
+            position: relative;
+            display: flex;
+            margin-right: 8px;
+        }
+
+        .previewList i {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #f00;
+        }
+
+        .previewList img {
+            width: 55px;
+            height: 55px;
+            margin-right: 0
+        }
+
+        #container {
+            width: 100%;
+            height: 250px;
+            margin-top: 30px;
+        }
+
+        #mapFrame {
+            height: 250px;
+            padding-bottom: 0px;
+        }
+
+        #map {
+            background-color: #EEE;
+        }
+
+        #map input[type=button] {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 20%;
+            height: 40px !important;
+            text-align: center;
+            color: #FFF;
+        }
+
+        #map .mui-icon-location {
+            width: 10%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 40px !important;
+            line-height: 35px;
+            background-color: #EEE;
+            font-size: 20px;
+            padding-right: 0px !important;
+            text-align: center;
+        }
+
+        #tip {
+            color: #333;
+            position: absolute;
+            top: 0px;
+            left: 10%;
+            overflow: hidden;
+            width: 90%;
+        }
+
+        #tip input[type="text"] {
+            background-color: #EEE;
+            border: 0;
+            padding-left: 0px;
+            width: 100%;
+            height: 40px !important;
+            outline: none;
+            text-align: left;
+        }
+
+        span.getFromMap {
+            width: 60%;
+            line-height: 18px !important;
+        }
+
+        .albumImg {
+            position: relative;
+        }
+
+        .albumImg .delbtn {
+            font-size: 16px;
+            right: 12px;
+            position: absolute;
+            top: 2px;
+            color: #fff;
+        }
+
+        .albumImg img {
+            float: left;
+            margin-right: 10px;
+            margin-bottom: 5px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mui-content">
+
+        <header id="header" class="mui-bar mui-bar-nav subheader">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+            <h1 class="mui-title">添加训练营场地</h1>
+        </header>
+        <div class="mui-content pt">
+            <div class="register">
+                <form action="" class="mui-input-group">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                    <!-- map -->
+                    <div class="mui-input-row h-auto" id="mapFrame">
+                        <div id="map">                        
+                            <div id="container"></div>
+                            <span class="mui-icon mui-icon-location"></span>
+                            <div id="tip">
+                                <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址后从下拉菜单中选择（或直接点击地图）" />
+                            </div>
+                            <!--<input type="button" class="bgblue" id="mapConfirm" value="确认" />-->
+                        </div>
+                    </div>
+                    
+                    <div class="mui-input-row h-auto">
+                        <label>场地定位</label>
+                        <span class="getFromMap">请查询或点选地图获取定位</span>
+                        <input type="hidden" name="location" value="" class="location getFromMap">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>场地名称</label>
+                        <input type="text" class="court" placeholder="请输入训练场地名称">
+                        <input type="hidden" name="camp_id" value="{$campInfo['id']}">
+                        <input type="hidden" name="camp" value="{$campInfo['camp']}">
+                    </div>
+
+                    <div class="mui-input-row" id='showCityPicker3'>
+                        <a href="#" class="mui-navigate-right">
+                            <label>所属地区</label>
+                            <span id="cityResult3" class="ui-alert address province city area"></span>
+                        </a>
+                    </div>
+
+                    <div class="mui-input-row h-auto">
+                        <label>营业时间</label>
+                        <textarea rows="2" class="open_time" placeholder="请输入营业时间"></textarea>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>联系电话</label>
+                        <input type="text" class="contract" placeholder="请填写手机号或区号加固话">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>联系人</label>
+                        <input type="text" class="principal" placeholder="请输入联系人">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>散场（次）</label>
+                        <input type="text" class="chip_rent checkNum" placeholder="请输入散场价格">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label class="wd45">包半场（小时)</label>
+                        <input type="text" class="half_rent checkNum wd52" placeholder="请输入半场价格">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label class="wd45">包全场（小时）</label>
+                        <input type="text" class="full_rent checkNum wd52" placeholder="请输入全场价格">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>场地类型</label>
+                        <span>
+                            <input type="radio" class="outdoors" name="outdoors" value="1" data-name="室内" /> 室内
+                            <input type="radio" class="outdoors" name="outdoors" value="2" data-name="室外" /> 室外
+                            <input type="radio" class="outdoors" name="outdoors" value="3" data-name="室内|室外" /> 室内|室外
+                        </span>
+                    </div>
+
+                    <div class="mui-input-row h-auto">
+                        <label>温馨提示</label>
+                        <textarea rows="4" class="remarks" placeholder="温馨提示内容"></textarea>
+                    </div>
+
+                    <ul class="mui-table-view mt55">
+                        <li class="mui-table-view-cell listli detalisli f14" style="line-height: 40px; color: #737373;">
+                            <span class="h-auto">场地环境</span>
+                            <a class="mui-navigate-right fr wd60">
+                                <div id="uploader-demo1" class="fr pdr15">
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePickerOne">选择图片</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell listli albumBox"></li>
+                    </ul>
+
+                    <ul class="mui-table-view operation list">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen createBtn" style="color: #fff">提交场地</li>
+                    </ul>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'court'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script>
+        var lng = '';
+        var lat = '';
+        // map(选择具体地址)
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13,
+            // center:[];
+        });
+
+        //点击获取地址
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
+
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+
+            map.on('click', function (e) {
+                marker.setPosition(e.lnglat);
+                geocoder.getAddress(e.lnglat, function (status, result) {
+                    if (status == 'complete') {
+                        var glocation = result.regeocode.formattedAddress;
+                        console.log(e.lnglat)
+                        // alert(result.regeocode.formattedAddress)
+                        if (window.confirm('你确定定位到【' + glocation + '】吗？')) {
+                            $(".getFromMap").val(glocation);
+                            $(".getFromMap").text(glocation);
+                            lng = e.lnglat.lng;
+                            lat = e.lnglat.lat;
+                        } else {
+                            return false;
+                        }
+                    }
+                })
+            })
+
+            var autoOptions = {
+                city: "深圳市", //城市，默认全国
+                input: "keyword"//使用联想输入的input的id
+            };
+            autocomplete = new AMap.Autocomplete(autoOptions);
+            var placeSearch = new AMap.PlaceSearch({
+                city: '',
+                map: map
+            })
+            AMap.event.addListener(autocomplete, "select", function (e) {
+                //TODO 针对选中的poi实现自己的功能
+                placeSearch.setCity(e.poi.adcode);
+                placeSearch.search(e.poi.name);
+                console.log(e.poi)
+                console.log(e.poi.location.lng)
+                console.log(e.poi.location.lat)
+                if (e.poi.location.lng == undefined || e.poi.location.lat == undefined || e.poi.location.lng === '' || e.poi.location.lat === '') {
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                } else {
+                    lng = e.poi.location.lng;
+                    lat = e.poi.location.lat;
+                    $(".getFromMap").val(e.poi.name);
+                    $(".getFromMap").text(e.poi.name);
+                }
+            });
+        });
+
+//        // map(选择具体地址)
+//        $("#mapConfirm").on('tap', '', function () {
+//
+//            var mapkeyword = $("input[name='keyword']").val();
+//            $(".getFromMap").val(mapkeyword);
+//            $(".getFromMap").text(mapkeyword);
+//
+//        });
+
+    </script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                    });
+                }, false);
+            });
+        })(mui, document);
+
+        var covers = [];
+        $(function () {
+
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+            //检测输入是否为数字
+            $(".checkNum").blur(function () {
+                var num = $(this).val();
+                if (isNaN(num)) {
+                    mui.toast("请填写数字");
+                    return false;
+                }
+            });
+
+            //创建场地
+            $(".createBtn").click(function () {
+                var covers = [];
+                $(".albumImg img").each(function () {
+                    var src = $(this).attr('src')
+                    covers.push(src);
+                }).get().join(",");
+                // 上面获取图片地址
+                var court = $(".court").val();
+                var address = $(".address").text();
+                var province = getProvince;
+                var city = getCity;
+                var area = getArea;
+                var location = $(".location").val();
+                var open_time = $(".open_time").val();
+                var contract = $(".contract").val();
+                var principal = $(".principal").val();
+                var outdoors = $("input.outdoors:radio:checked").val();
+                var chip_rent = $(".chip_rent").val();
+                var half_rent = $(".half_rent").val();
+                var full_rent = $(".full_rent").val();
+                var remarks = $(".remarks").val();
+                var camp_id = "{$campInfo['id']}";
+                var camp = "{$campInfo['camp']}";
+                var token = $('input[name=__token__]').val();
+                console.log(covers)
+
+                if (contract != '' && !(/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$|^400[0-9]{7}/).test(contract)) {
+                    mui.alert('请填写正确的手机号码或区号加固话（例：0755-26650702）');
+                    return false;
+                };
+                if (isNaN(chip_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+                if (isNaN(half_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+                if (isNaN(full_rent)) {
+                    mui.toast("请填写正确的价格");
+                    return false;
+                };
+
+                if (lng == undefined || lat == undefined || lng === '' || lat === '') {
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                    return false;
+                }
+
+                mui.ajax("{:url('api/court/createCourtApi')}", {
+                    data: {
+                        court: court,
+                        province: getProvince,
+                        city: getCity,
+                        area: getArea,
+                        location: location,
+                        open_time: open_time,
+                        contract: contract,
+                        principal: principal,
+                        chip_rent: chip_rent,
+                        half_rent: half_rent,
+                        full_rent: full_rent,
+                        outdoors: outdoors,
+                        remarks: remarks,
+                        covers: covers,
+                        camp_id: camp_id,
+                        camp: camp,
+                        lng: lng,
+                        lat: lat,
+                        __token__ : token
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data)
+                        if (data.code == 200) {
+                            mui.alert('创建成功。', function () {
+                                window.location.href = "{:url('camp/courtlistofcamp',['camp_id'=>$campInfo['id']])}";
+                            });
+                        } else {
+                            mui.toast(data.msg);
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
+                                }
+                            }, 'json');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+        })
+    </script>
+
+</body>
+
+</html>

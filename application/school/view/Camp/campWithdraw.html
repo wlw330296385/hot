@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提现</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+</head>
+
+<body class=whitebg>
+<header id="header" class="mui-bar mui-bar-nav subheader">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('camp/campWallet',['camp_id'=>$campInfo['id']])}"></a>
+    <h1 class="mui-title">{$campInfo.camp} - 提现操作</h1>
+</header>
+<div class="mui-content">
+
+    <div class="list camp-list camp-lesson-list detalis-list coach">
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>训练营余额</label>
+                <span class="colororange">￥{$campInfo.balance}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>提现金额</label>
+                <input type="text" name="withdraw" class="data" value="" placeholder="￥0.00">
+            </div>
+            {if $campInfo.rebate_type == 2}
+            <div class="mui-input-row">
+                <label class="wd36">提现手续费 <a href="#rebateTips"><i class="mui-icon mui-icon-info" style="font-size: 16px !important;"></i></a></label>
+                <span id="t_rebate"></span>
+            </div>
+            {/if}
+            <div class="mui-input-row">
+                <label>提现备注</label>
+                <input type="text" name="remarks" class="remarks data" value="" placeholder="选填">>
+            </div>
+        </form>
+
+        <!-- 账户 -->
+        {if $campBankcard}
+        <input type="hidden" name="camp_id" class="data" value="{$campInfo.id}">
+        <input type="hidden" name="camp" class="data" value="{$campInfo.camp}">
+        <input type="hidden" name="bank_id" class="data" value="{$campBankcard.id}">
+        <div class="page-header">
+            <span class="course">提现账号信息</span>
+        </div>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell listli">收款人
+                <span>{$campBankcard.account}</span>
+            </li>
+            <li class="mui-table-view-cell listli">收款账号
+                <span>{$campBankcard.bank_card}</span>
+            </li>
+            <li class="mui-table-view-cell listli">收款银行
+                <span>{$campBankcard.bank}</span>
+            </li>
+            <li class="mui-table-view-cell listli">银行支行
+                <span>{$campBankcard.bank_branch}</span>
+            </li>
+            <li class="mui-table-view-cell listli mui-text-center f12">
+                <br />
+                温馨提示：如需更换收款账号，请到“训练营设置”<br />页面的“账号信息”中进行修改。
+            </li>
+        </ul>
+        {else /}
+        <div class="page-header">
+            <span class="course">提现账号信息</span>
+        </div>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell listli mui-text-center">
+                <br />
+                <p>您的收款账号信息未完善无法提现， <br />请完善后再进行提现操作。</p>
+                <br />
+                <p><a class="mui-btn mui-btn-primary" href="{:url('camp/campsetting', ['camp_id' => $campInfo['id'],'step'=>3])}?from={:url('camp/campWithdraw',['camp_id'=>$campInfo.id])}">立即完善账号信息</a></p>
+            </li>
+        </ul>
+        {/if}
+    </div>
+
+    {if $campBankcard}
+    <ul class="mui-table-view operation">
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgblue" id="submitBtn">
+            确定提现
+        </li>
+    </ul>
+    {/if}
+</div>
+
+
+
+<!--手续费说明-->
+<div id="rebateTips" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header explain-title">
+        <span class="course">手续费说明</span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="mine">
+                <div class="explain">
+                    <div class="explain-cont">
+                        <p>根据合同规定，营业额版训练营提现手续费为：提现金额 x {$campInfo.schedule_rebate*100}%。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
+
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    var ok = false;
+    $(function(){
+
+        {if $campBankcard}
+        /////////////////////////////////////////////////////////有银行账号信息才能调用
+        $('#submitBtn').on('click',function(){
+            validWithDraw();
+            var data1 = wooApi.getInputData();
+            var objData = wooApi.arrTOobj(data1);
+
+            if(ok == true){
+                mui.confirm('确定发起提现申请吗？', '提示', ['取消', '确定'], function (e) {
+                    if (e.index === 1) {
+                        var result = wooApi.asyncF("{:url('api/camp_withdraw/createCampWithdrawApi')}",objData);
+                        mui.toast(result.msg);
+                        if(result.code == 200){
+                            window.location.href="{:url('camp/campWallet',['camp_id'=>$campInfo.id])}";
+                        }
+                    }
+                });
+            }else{
+                mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
+            }
+        })
+        //////////////////////////////////////////////////////////////////
+        {/if}
+
+        // 提现金额
+        $('input[name=withdraw]').on('blur',function(){
+            validWithDraw();
+            if(ok == false){
+                mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
+            }
+        })
+    })
+
+    function validWithDraw(){
+        var withdraw = parseFloat($('input[name=withdraw]').val());
+        var balance = parseFloat("{$campInfo.balance}");
+        var rebate = parseFloat("{$campInfo.schedule_rebate}");
+        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+        if(withdraw<=0||withdraw>balance||!reg.test(withdraw)){
+            ok = false;
+            return false;
+        }else{
+            var fee = withdraw*rebate;
+            $("#t_rebate").text("￥"+fee.toFixed(2));
+            ok = true;
+        }
+    }
+</script>

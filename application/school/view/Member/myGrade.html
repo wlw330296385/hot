@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>我的班级</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body>
+
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index')}"></a>
+                <a class="mui-control-item mui-active" href="#onStudentList">学员</a>
+                <a class="mui-control-item" href="#onLeaderList">领队</a>
+                <a class="mui-control-item" href="#onTeacherList">班主任</a>
+                <a class="mui-control-item tabCoach" href="#onCoachList">教练</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <!--学员 -->
+            <div id="onStudentList" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade1">
+                    </ul>
+                </div>
+            </div>
+            <!-- 领队 -->
+            <div id="onLeaderList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade2">
+                    </ul>
+                </div>
+            </div>
+            <!--班主任 -->
+            <div id="onTeacherList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade3">
+                    </ul>
+                </div>
+            </div>
+            <!--教练 -->
+            <div id="onCoachList" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list grade4">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        mui("body").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+
+        $(function () {
+            //初始化全局变量
+            var onStudent = 1;
+            var onLeader = 1;
+            var onTeacher = 1;
+            var onCoach = 1;
+
+            mui('#onStudentList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshStudent
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshStudent
+                }
+            });
+
+            mui('#onLeaderList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshLeader
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshLeader
+                }
+            });
+
+            mui('#onTeacherList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshTeacher
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshTeacher
+                }
+            });
+
+            mui('#onCoachList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshCoach
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshCoach
+                }
+            });
+
+
+            //1下拉刷新具体业务实现（学员）
+            function pulldownRefreshStudent() {
+                setTimeout(function () {
+                    onStudent = 1;//刷新并显示第一页
+                    var page = onStudent;
+                    var gType = 1;//代表下拉刷新
+                    toStudentList('onStudentList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //1上拉加载具体业务实现（学员）
+            function pullupRefreshStudent() {
+                setTimeout(function () {
+                    onStudent++;//翻下一页
+                    var page = onStudent;
+                    var gType = 2;//代表上拉加载
+                    toStudentList('onStudentList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //2下拉刷新具体业务实现（领队）
+            function pulldownRefreshLeader() {
+                setTimeout(function () {
+                    onLeader = 1;//刷新并显示第一页
+                    var page = onLeader;
+                    var gType = 1;//代表下拉刷新
+                    toLeaderList('onLeaderList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //上拉加载具体业务实现（领队）
+            function pullupRefreshLeader() {
+                setTimeout(function () {
+                    onLeader++;//翻下一页
+                    var page = onLeader;
+                    var gType = 2;//代表上拉加载
+                    toLeaderList('onLeaderList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //3下拉刷新具体业务实现（班主任）
+            function pulldownRefreshTeacher() {
+                setTimeout(function () {
+                    onTeacher = 1;//刷新并显示第一页
+                    var page = onTeacher;
+                    var gType = 1;//代表下拉刷新
+                    toTeacherList('onTeacherList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //3上拉加载具体业务实现（班主任）
+            function pullupRefreshTeacher() {
+                setTimeout(function () {
+                    onTeacher++;//翻下一页
+                    var page = onTeacher;
+                    var gType = 2;//代表上拉加载
+                    toTeacherList('onTeacherList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //4下拉刷新具体业务实现（教练）
+            function pulldownRefreshCoach() {
+                setTimeout(function () {
+                    onCoach = 1;//刷新并显示第一页
+                    var page = onCoach;
+                    var gType = 1;//代表下拉刷新
+                    toCoachList('onCoachList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //4上拉加载具体业务实现（教练）
+            function pullupRefreshCoach() {
+                setTimeout(function () {
+                    onCoach++;//翻下一页
+                    var page = onCoach;
+                    var gType = 2;//代表上拉加载
+                    toCoachList('onCoachList', page, gType);//具体取数据的方法
+                }, 100);
+            }
+        });
+
+        //学员
+        var toStudentList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/grade_member/getGradeMemberListWithGradeNoPageApi','','',true)}/?page=" + page;
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: "{$memberInfo.id}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].grade_id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data[i].grade.grade + '</strong><span>' + data.data[i].camp + '</span></p><p class="fMiddle">' + data.data[i].grade.student_str + '</p><p class="fBottom">学员：'+ data.data[i].grade.students+' 人<span class="fr">'+data.data[i].lesson+'</span></p></a></div></li>';
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.grade1").empty().append(newli);
+                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                            mui('#' + wList).pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.grade1").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.grade1").append(newli);
+                        }
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //领队
+        var toLeaderList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/grade/getGradeListApi','','',true)}/?page=" + page;
+            mui.ajax({
+                url: url,
+                data: {
+                    leader_id: "{$memberInfo.id}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data[i].grade + '</strong><span>' + data.data[i].camp + '</span></p><p class="fMiddle">' + data.data[i].student_str + '</p><p class="fBottom">场地：' + data.data[i].court + '&nbsp;&nbsp;学员：' + data.data[i].students + ' 人</p></a></div></li>';
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.grade2").empty().append(newli);
+                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                            mui('#' + wList).pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.grade2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.grade2").append(newli);
+                        }
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //班主任
+        var toTeacherList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/grade/getGradeListApi','','',true)}/?page=" + page;
+            mui.ajax({
+                url: url,
+                data: {
+                    teacher_id: "{$memberInfo.id}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data[i].id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data[i].grade + '</strong><span>' + data.data[i].camp + '</span></p><p class="fMiddle">' + data.data[i].student_str + '</p><p class="fBottom">场地：' + data.data[i].court + '&nbsp;&nbsp;学员：' + data.data[i].students + ' 人</p></a></div></li>';
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.grade3").empty().append(newli);
+                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                            mui('#' + wList).pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.grade3").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.grade3").append(newli);
+                        }
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+
+        //教练
+        var toCoachList = function (wList, page, gType) {
+            //判断用户是否为教练
+            var urla = "{:url('api/coach/iscoach','','',true)}";
+            mui.ajax({
+                url: urla,
+                data: {
+                    member_id: "{$memberInfo.id}",
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    if (data.data != '') {
+                        console.log(data)
+                        coach_id = data.data.id;
+                        //搜索关键字不能完全为空，否则查询为空
+                        var url = "{:url('api/coach/getcoachgradelist','','',true)}/?page=" + page;
+                        mui.ajax({
+                            url: url,
+                            data: {
+                                coach_id: coach_id,
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                var newli = '';
+                                if (data.code == 200) {
+                                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                        var urls = "{:url('grade/gradeInfo')}" + '/grade_id/' + data.data.data[i].id;
+                                        newli = newli + '<li class="mui-table-view-cell mui-media listli fulllist"><div class="mui-slider-handle"><a href="' + urls + '"><p class="fTop"><strong>' + data.data.data[i].grade + '</strong><span>' + data.data.data[i].camp + '</span></p><p class="fMiddle">' + data.data.data[i].student_str + '</p><p class="fBottom">场地：' + data.data.data[i].court + '&nbsp;&nbsp;学员：' + data.data.data[i].students + ' 人</p></a></div></li>';
+                                    }
+                                    if (gType == 1) {
+                                        //上拉刷新
+                                        $("ul.grade4").empty().append(newli);
+                                        mui('#' + wList).pullRefresh().endPulldownToRefresh(false);
+                                        mui('#' + wList).pullRefresh().refresh(true);
+                                    } else {
+                                        //下拉加载 gType==2
+                                        $("ul.grade4").append(newli);
+                                    }
+                                } else {
+                                    // mui.toast('数据获取失败,请稍候再试');
+                                }
+
+                                if (newli != '') {
+                                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                                } else {
+                                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                                }
+
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                            }
+                        });
+
+                    } else {
+                        $(".tabCoach").hide();
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+
+        };
+    </script>
+</body>
+
+</html>

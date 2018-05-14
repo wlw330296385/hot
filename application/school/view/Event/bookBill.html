@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>活动订单支付</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+    <style>
+        .mui-popover {
+            height: 300px;
+        }
+        .mui-input-group .mui-input-row .students{
+            width:60% !important;
+        }
+        .show {
+            display: block;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">确认订单</h1>
+    </header>
+    <div class="mui-content">
+
+        <div class="list">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell mui-media listli mb">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left" src="{$eventInfo.cover}">
+                        <div class="mui-media-body wd45">
+                            {$eventInfo.event}
+                            <p class="mui-ellipsis">{$eventInfo.event_type}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price"><span class="nofloat">已报名{$eventInfo.participator}人</span></p>
+                            <p class="price"><span class="nofloat">剩余名额</span></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <span class="course">活动信息</span>
+            </div>
+
+            <ul class="mui-table-view">
+                <input type="hidden" name="target_type" value="{$eventInfo.target_type}">
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='2||3'}show{else/}hide{/eq}">所属训练营<span>{$eventInfo.organization}</span></li>
+                {if !empty($couponListOfSystem)|| !empty($couponListOfCamp)}
+                    <li class="mui-table-view-cell listli">
+                        赠送卡券
+                        <span>
+                            <a href="#cppopover">
+                            <ul class="mini-coupon">
+
+                            {volist empty="" name="couponListOfSystem" id="vol" }
+                                <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                            {/volist}
+
+                            {volist empty="" name="couponListOfCamp" id="vol" }
+                                <li><div><span>{$vol.coupon}</span>赠券</div><i></i></li>
+                            {/volist}
+
+                            </ul>
+                            </a>
+                        </span>
+                    </li>
+                    {/if}
+                <li class="mui-table-view-cell listli">
+                    {volist name="couponListOfCamp" id="vol" }
+                        <img src="{$vol.image_url}"  style="border:2px red">
+                    {/volist}
+                </li>
+                <li class="mui-table-view-cell listli {eq name='eventInfo.organization' value='3'}show{else/}hide{/eq}">所属班级<span>{$eventInfo.target}</span></li>
+                <li class="mui-table-view-cell listli">活动单价<span><b class="colororange">￥{$eventInfo.price}</b>（元）</span></li>
+                <li class="mui-table-view-cell listli">活动开始时间<span>{$eventInfo.starts}</span></li>
+                <li class="mui-table-view-cell listli">活动结束时间<span>{$eventInfo.ends}</span></li>
+                <li class="mui-table-view-cell listli">活动地点<span>{$eventInfo.location}</span></li>
+                <li class="mui-table-view-cell listli">所属地区<span>{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span></li>
+
+            </ul>
+            <div class="page-header">
+                <span class="course">报名信息</span>
+            </div>
+
+            <div class="mui-input-group mb44">
+
+                <div id="oldStudent">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                    <div class="mui-input-row">
+                        <label>报名人数</label>
+                        <input type="text" name="participator" value="" class="eventNum" readonly>
+                    </div>
+                    <div class="mui-input-row">
+                    <a href="#student" id="setStudentCBox" class="mui-navigate-right" style="display: flex">
+                        <label>选择参与人员</label>
+                        <span class="studentCont students" name="student_str" >{$memberInfo.member}</span>
+                    </a>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>联系人</label>
+                        <input type="text" name="linkman" class="data" value="" placeholder="请务必填写联系人姓名">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>联系电话</label>
+                        <input type="text" name="contact" class="data" value="{$memberInfo.telephone}">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>备注</label>
+                        <textarea rows="2" name="remarks" class="data" value="" placeholder="备注信息填写"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="joinEvent()">立即报名</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!--学员名单-->
+    <!--<div id="student" class="mui-popover">-->
+        <!--<div class="mui-popover-arrow"></div>-->
+        <!--<div class="page-header">-->
+            <!--<span class="course wd36"><strong>报名名单</strong></span>-->
+            <!--<span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>-->
+        <!--</div>-->
+        <!--<div class="mui-scroll-wrapper">-->
+            <!--<div class="mui-scroll">-->
+                <!--<form  class="mui-input-group">-->
+                    <!--<div class="mui-input-row mui-checkbox mui-left" id="newdiv">-->
+                        <!--<label for="member">{$memberInfo.member}</label><input name="memebr" class="student" value="{$memberInfo.member}" type="checkbox" checked="checked" data-student_id="{$memberInfo.id}">-->
+                    <!--</div>-->
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--学员名单-->
+    <div id="student" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd36"><strong>学员名单</strong></span>
+            <span class="fr"><button class="mui-btn-blue" id="studentConfirm">确认</button></span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>{$memberInfo.member}</label>
+                        <input name="" class="student" value="{$memberInfo.member}" type="checkbox" data-student_id="0" data-student="0" data-member="{$memberInfo.member}" data-member_id="{$memberInfo.id}" checked="checked" >
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script type="text/javascript" src="/static/frontend/js/wooApi.js"></script>
+<script>
+//初始化
+mui.init({
+    swipeBack: true //启用右滑关闭功能
+});
+
+//弹出菜单
+mui('.mui-scroll-wrapper').scroll();
+
+var total=wooApi.GetQueryString('total');
+var total_fee = "{$eventInfo.price}"*total;
+var studentList = [{ student: "{$memberInfo.member}", student_id: "0", member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+// var studentList = new Array();
+var item_coupon_ids = JSON.stringify({$item_coupon_ids});
+$(function () {
+    $('.eventNum').val(total);
+
+    //学员列表复选框赋值
+    $("#setStudentCBox").on('tap', '', function () {
+        //每次打开先清空所有选择
+        $("input[name='checkbox-student']").prop("checked", false);
+        //然后遍历出对应所选
+        var getStudentIDs = studentList[0].student_id.split(',');
+        for (var ii = 0; ii <= getStudentIDs.length - 1; ii++) {
+            $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                return $(this).attr("data-student_id") == getStudentIDs[ii]
+            }).prop("checked", true);
+        }
+    });
+
+    // 学员名单
+    $("#studentConfirm").on('tap', '', function () {
+        var studentIDs = "";
+        var studentNames = "";
+        studentList = [];
+        if($("input[type=checkbox]:checked").length>total){
+            alert('参与人员不可大于报名人数['+total+']');
+            debug = '参与人员不可大于报名人数['+total+']';
+            return false;
+        }else if($("input[type=checkbox]:checked").length==0){
+            alert('请至少选取一个人，谢谢！');
+            return false;
+        }else{
+            $("input[type=checkbox]:checked").each(function (i) {
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).val();
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                //                    studentStr = { student: student, student_id: student_id, member:member, member_id:member_id, event:"{$eventInfo.event}", event_id:"{$eventInfo.id}"}
+                studentIDs += student_id + ',';
+                studentNames += student + ',';
+                //                    studentList.push(studentStr);
+            });
+            studentIDs = studentIDs.substring(0, studentIDs.length - 1);
+            studentNames = studentNames.substring(0, studentNames.length - 1);
+            $(".studentCont").text(studentNames)
+            var studentStr = { student: studentNames, student_id: studentIDs, total:total, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"};
+            studentList.push(studentStr);
+        }
+        console.log(studentList)
+        debug = 1;
+
+        mui('#student').popover('toggle');
+    })
+
+
+    // 获取学生数据
+    getStudentList();
+
+});
+
+
+
+// 获取学生数据
+function getStudentList(){
+    // 获取学生列表
+    var result = wooApi.asyncF("{:url('api/Student/getStudentListApi')}");
+    
+    var div = '';
+    if (result.code == 200) {
+        for (var i = 0; i <= result.data.length - 1; i++) {
+            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + result.data[i].student  + '</label><input name="checkbox-student" class="student" value="' + result.data[i].student + '" type="checkbox" data-student_id="' + result.data[i].id + '" data-student="' + result.data[i].student +'" data-member="'+ result.data[i].member +'" data-member_id="'+ result.data[i].member_id + '"></div>'
+        }
+        $("#newdiv").append(div);
+    }
+
+}
+
+function joinEvent(){
+    var objData = {};
+
+    var linkman = $('input[name="linkman"]').val();
+    if(linkman==""||linkman==null){
+        alert('请填写联系人姓名，便于工作人员与您联系，谢谢！');
+        return false;
+    }
+    if(studentList.length>total){
+        alert('参与人员不可大于报名人数['+total+']');
+        return false;
+    }
+    if(studentList.length<1){
+        alert('请选择参与名单');
+        return false;
+    }
+
+    var arrData1 = wooApi.getInputData();
+    arrData2 = wooApi.getInputData('textarea','data',arrData1);
+    objData = wooApi.arrTOobj(arrData2);
+    objData.memberData = JSON.stringify(studentList);
+    objData.event = "{$eventInfo.event}";
+    var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+    let result = wooApi.asyncF(url+'/total/'+total,objData);
+    if(result.code == 200){
+        presentItemCoupon();
+        mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+            window.location.href="{:url('frontend/event/eventList')}";
+        });
+    }else{
+        mui.alert(result.msg);
+    }
+    
+    
+}
+
+
+// 赠送卡券操作
+function presentItemCoupon(){
+    if({$item_coupon_ids}.length >0){
+        var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+            'item_coupon_ids': item_coupon_ids,
+        },function(){});
+    }
+}
+</script>    
+</html>

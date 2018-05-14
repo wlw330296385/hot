@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>招募详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-popover .mui-table-view {
+            max-height: none;
+        }
+
+        .desimg img {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <!--招募详情页-->
+    <div class="mui-content" style="padding: 0">
+        <div class="list mb44">
+            <div class="img4x3" style="background-image:url('{$recruitmentInfo.cover}')"></div>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <div class="mui-media-body wd52">
+                            <strong>{$recruitmentInfo.recruitment}</strong>
+                            <p class="mui-ellipsis">{$recruitmentInfo.recruitment_type}</p>
+                        </div>
+                        <div class="price-frame">
+                            <p class="price">{if $recruitmentInfo.min ==0 && $recruitmentInfo.max == 0}
+                                <font class="f14">薪酬面议</font>{else /}￥
+                                <strong>{$recruitmentInfo.min}</strong> - ￥
+                                <strong>{$recruitmentInfo.max}</strong>{/if}</span>
+                            </p>
+                            <p class="price">
+                                <span class="nofloat">已报名{$recruitmentInfo.participator}人</span>
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli">所属训练营
+                    <span>{$recruitmentInfo.organization}</span>
+                </li>
+                <li class="mui-table-view-cell listli">招募人数
+                    <span>{if $recruitmentInfo.recruit_number ==0}不限{else /}{$recruitmentInfo.recruit_number}{/if}</span>
+                </li>
+                <li class="mui-table-view-cell listli">薪资范围
+                    <span>￥{$recruitmentInfo.min} 至 ￥{$recruitmentInfo.max}</span>
+                </li>
+                <li class="mui-table-view-cell listli">截至日期
+                    <span>{$recruitmentInfo.deadlines}</span>
+                </li>
+                <li class="mui-table-view-cell listli">所属地区
+                    <span>{$recruitmentInfo.province} {$recruitmentInfo.city} {$recruitmentInfo.area}</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系人
+                    <span>{$recruitmentInfo.contact}</span>
+                </li>
+                <li class="mui-table-view-cell listli">联系电话
+                    <span>{$recruitmentInfo.telephone}</span>
+                </li>
+                <li class="mui-table-view-cell listli">招募简介
+                    <span class="mui-text-left desimg">{$recruitmentInfo.recruitment_des}</span>
+                </li>
+                <li class="mui-table-view-cell listli">招募要求
+                    <span class="mui-text-left desimg">{$recruitmentInfo.requirement}</span>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-2 opli">
+                    <a href="{$homeurl}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-xs-2 opli">
+                    <a href="#shareGuide">分享</a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                    <a href="tel:{$recruitmentInfo.telephone}">电话咨询</a>
+                </li>
+                {if condition="$recruitmentInfo.deadline
+                <time() && $recruitmentInfo.deadline>1"}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggray">已结束</li>
+                    {else /} {if condition="$recruitmentInfo.is_max == -1"}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgorange">已满人</li>
+                    {else /} {switch name="recruitmentInfo.status"} {case value="上架"}
+                    <a href="#signupPop">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggreen">
+                            {if empty($recruitmentMember)} 立即报名 {else /} 已报名 {/if}
+                        </li>
+                    </a>
+                    {/case} {case value="下架"}
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bggray">已下架</li>
+                    {/case} {/switch} {/if} {/if}
+            </ul>
+
+        </div>
+    </div>
+
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+    <!-- 报名弹框 -->
+    <div id="signupPop" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5>
+                    <span>我要报名</span>
+                    <a href="#pjpopover" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                {if !empty($recruitmentMember)}
+                <li class="mui-table-view-cell listli">
+                    <input type="hidden" name="id" class="data" value="{$recruitmentMember.id}" />
+                    <input type="hidden" name="recruitment" class="data" value="{$recruitmentInfo.recruitment}" />
+                    <input type="hidden" name="recruitment_id" class="data" value="{$recruitmentInfo.id}" />
+                    <input type="text" name="linkman" class="data" value="{$recruitmentMember.member}" placeholder="请输入报名人姓名" />
+                    <input type="text" name="contact" class="data" value="{$recruitmentMember.contact}" placeholder="请输入联系电话" />
+                    <textarea rows="4" name="remarks" class="data">{$recruitmentMember.remarks}</textarea>
+                </li>
+                {else /}
+                <li class="mui-table-view-cell listli">
+                    <input type="hidden" name="recruitment" class="data" value="{$recruitmentInfo.recruitment}" />
+                    <input type="hidden" name="recruitment_id" class="data" value="{$recruitmentInfo.id}" />
+                    <input type="text" name="linkman" class="data" value="" placeholder="请输入报名人姓名" />
+                    <input type="text" name="contact" class="data" value="" placeholder="请输入联系电话" />
+                    <textarea rows="4" name="remarks" class="data"></textarea>
+                </li>
+                {/if}
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="signupSubmit">提交</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+
+            //报名活动
+            $('#signupSubmit').on('tap', '', function () {
+
+                var mID = "{$memberInfo.id}";
+                if (mID <= 0) {
+                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', btnArray);
+                } else {
+                    var data1 = wooApi.getInputData();
+                    var data2 = wooApi.getInputData('textarea', 'data', data1);
+                    var objData = wooApi.arrTOobj(data2);
+                    console.log(objData)
+                    for (var i in objData) {
+                        if (objData[i] == '' || objData[i] == 'undefinded' || !objData[i]) {
+                            mui.toast("请填写完整报名信息");
+                            return false;
+                        }
+                    }
+                    var result = wooApi.asyncF("{:url('api/recruitment/joinRecruitmentApi',['recruitment_id'=>$recruitmentInfo.id])}", objData);
+                    if (result.code == 200) {
+                        mui.toast(result.msg);
+                        mui('#signupPop').popover('toggle');
+                    } else {
+                        mui.alert("提交失败，" + result.msg);
+                        return false;
+                    }
+
+                }
+
+            })
+        });
+    </script>
+</body>
+
+</html>
