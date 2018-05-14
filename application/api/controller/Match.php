@@ -155,8 +155,8 @@ class Match extends Base
                             'keyword2' => $this->memberInfo['member'],
                             'keyword3' => date('Y-m-d h:i', time()),
                             'remark' => '请登录平台进入球队管理-》约战申请回复处理',
-                            // 比赛发布球队id
-                            'team_id' => $data['team_id'],
+                            // 收到球队公告的球队id（比赛对手球队）
+                            'team_id' => $data['away_team_id'],
                             'steward_type' => 2
                         ];
                         // 推送消息给发布比赛的球队领队
@@ -164,6 +164,20 @@ class Match extends Base
                         // 保存球队公告
                         $teamS->saveTeamMessage($dataMessage);
                     }
+                }
+
+                // 本队球队公告
+                if ( array_key_exists('send_message', $data) && $data['send_message'] == 1 ) {
+                    // 公告内容数据组合
+                    $content = '球队发起比赛，';
+                    $content .= (empty($data['match_time'])) ? '时间待定' : '时间：'.date('Y-m-d H:i',$data['match_time']).'；';
+                    $content .= (empty($data['court'])) ? '地点待定' : '地点：'.$data['court'] .'；';
+                    $content .= (empty($data['away_team'])) ? '比赛对手球队待定' : '比赛对手：'.$data['away_team'];
+                    $teamS->saveTeamMessage([
+                        'team_id' => $data['team_id'],
+                        'title' => '球队发起比赛',
+                        'content' => $content
+                    ]);
                 }
             }
         } catch (Exception $e) {
@@ -317,11 +331,11 @@ class Match extends Base
             // dataMatchRecord[win_team_id]: 比赛胜利球队id
             if ($homeScore > 0 && $awayScore > 0) {
                 if ($homeScore >= $awayScore) {
-                    $recordData['win_team_id'] = $homeTeamId;
-                    $recordData['lose_team_id'] = $awayTeamId;
+                    $dataMatchRecord['win_team_id'] = $homeTeamId;
+                    $dataMatchRecord['lose_team_id'] = $awayTeamId;
                 } else {
-                    $recordData['win_team_id'] = $awayTeamId;
-                    $recordData['lose_team_id'] = $homeTeamId;
+                    $dataMatchRecord['win_team_id'] = $awayTeamId;
+                    $dataMatchRecord['lose_team_id'] = $homeTeamId;
                 }
             }
         }
@@ -517,6 +531,19 @@ class Match extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         // 保存match_record数据 后续业务
+        // 本队球队公告
+        if ( array_key_exists('send_message', $data) && $data['send_message'] == 1 ) {
+            // 公告内容数据组合
+            $content = '球队发起比赛，';
+            $content .= (empty($data['match_time'])) ? '时间待定' : '时间：'.date('Y-m-d H:i',$data['match_time']).'；';
+            $content .= (empty($data['court'])) ? '地点待定' : '地点：'.$data['court'] .'；';
+            $content .= (empty($data['away_team'])) ? '比赛对手球队待定' : '比赛对手：'.$data['away_team'];
+            $teamS->saveTeamMessage([
+                'team_id' => $data['team_id'],
+                'title' => '球队发起比赛',
+                'content' => $content
+            ]);
+        }
         // 执行裁判消息通知业务
         $this->setMatchReferee($data, $match_id, $matchRecordId, $inviteeRefereeIds, $sendMatchToRefereeByCost);
         // 未完成比赛 撤销邀请的裁判数据更新
@@ -623,12 +650,12 @@ class Match extends Base
                 'match_record_id' => $matchRecord['id'],
                 'status' => 1
             ]);
+
+            // 更新球队胜场数、比赛场数
+            $matchS->countTeamMatchNum($homeTeamId);
+            $matchS->countTeamMatchNum($awayTeamId);
         }
         // 比赛完成的操作 end
-
-        // 更新球队胜场数、比赛场数
-        $matchS->countTeamMatchNum($homeTeamId);
-        $matchS->countTeamMatchNum($awayTeamId);
         return json($resultSaveMatch);
     }
 

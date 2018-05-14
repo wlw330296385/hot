@@ -26,7 +26,7 @@ class FollowService {
                 $data['status'] = 1;
                 $msg = '关注成功';
             }
-            $result = $model->allowField(true)->isUpdate()->save($data);
+            $result = $model->allowField(true)->isUpdate(false)->save($data);
             if ($result) {
                 $response = ['code' => 200, 'msg' => $msg];
             } else {
@@ -34,6 +34,24 @@ class FollowService {
             }
         }
         return $response;
+    }
+
+    // 设置关注数据
+    public function setFollow($data) {
+        $model = new Follow();
+        // 查询有无follow数据
+        $follow = $model->where(['type' => $data['type'], 'follow_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
+        if ($follow) {
+            $follow = $follow->toArray();
+            // 更新原数据为正常
+            if ($follow['status'] != 1) {
+                $model->allowField(true)->isUpdate(true)->save(['id' => $follow['id'], 'status' => 1]);
+            }
+        } else {
+            // 插入新数据
+            $data['status'] = 1;
+            $model->allowField(true)->save($data);
+        }
     }
 
     // 关注列表

@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 
+use app\service\FollowService;
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\MessageService;
@@ -414,24 +415,16 @@ class Team extends Base
                     }
                     $dataTeamMember['status'] = 1;
                     $teamS->saveTeamMember($dataTeamMember);
-                    // 更新球队统计字段
-                    // $teamS->autoUpdateTeam($applyInfo['organization_id']);
+                    // 更新team 成员数member_nums +1
+                    db('team')->where('id',  $applyInfo['organization_id'])->setInc('member_num', 1);
 
-                    // 查询有无关注数据保存关注数据
-                    $followDb = db('follow');
-                    $follow = $followDb->where(['type' => 4, 'follow_id' => $teamMemberInfo['team_id'], 'member_id' => $teamMemberInfo['member_id']])->find();
-                    if ($follow) {
-                        if ($follow['status'] != 1) {
-                            $followDb->where('id', $follow['id'])->update(['status' => 1, 'update_time' => time()]);
-                        }
-                    } else {
-                        $followDb->insert([
-                            'type' => 4, 'follow_id' => $teamMemberInfo['team_id'], 'follow_name' => $teamMemberInfo['team'],
-                            'follow_avatar' => ($teamInfo['logo']) ? $teamInfo['logo'] : '',
-                            'member_id' => $teamMemberInfo['member_id'], 'member' => $teamMemberInfo['member'], 'member_avatar' => $teamMemberInfo['avatar'],
-                            'status' => 1, 'create_time' => time()
-                        ]);
-                    }
+                    // 设置会员关注球队
+                    $followS = new FollowService();
+                    $followS->setFollow([
+                        'type' => 4, 'follow_id' => $teamMemberInfo['team_id'], 'follow_name' => $teamMemberInfo['team'],
+                        'follow_avatar' => ($teamInfo['logo']) ? $teamInfo['logo'] : '',
+                        'member_id' => $teamMemberInfo['member_id'], 'member' => $teamMemberInfo['member'], 'member_avatar' => $teamMemberInfo['avatar'],
+                    ]);
                 }
                 $replystr = '已通过';
             }
