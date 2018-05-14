@@ -379,6 +379,9 @@
                 <div class="mui-scroll">
                     <div class="page-header">
                         <div class="course">密码设置</div>
+                        <div class="fr">
+                            <a href="#forgetPassWord" class="forgetPW" style="padding: 0 !important">忘记密码</a>
+                        </div>
                     </div>
                     <form action="" class="mui-input-group ">
                         <div class="mui-input-row">
@@ -394,7 +397,7 @@
                             <input type="password" name="confirm" class="reg_confirm" placeholder="请输入确认密码">
                         </div>
                     </form>
-                   
+
                     <span class="tipspan password_hint confirm_hint newpassword_hint"></span>
                     <div class="tjbtn tjbtn-next">
                         <button type="sumbit" class="btn passwordBtn">
@@ -402,7 +405,7 @@
                         </button>
 
                     </div>
-                    <a href="#forgetPassWord" class="forgetPW">忘记密码</a>
+
                 </div>
             </div>
         </div>
@@ -592,10 +595,10 @@
 
 
             // 忘记密码
-            $('.forgetPWBtn').on('tap','',function(){
+            $('.forgetPWBtn').on('tap', '', function () {
                 mui.ajax("{:url('api/member/forgetPassword')}", {
                     data: {
-                        
+
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -672,6 +675,8 @@
                                 mui.toast(data.msg);
                                 location.reload();
                                 viewApi.back();
+                            } else {
+                                mui.toast(data.msg);
                             }
                         },
                         error: function (xhr, type, errorThrown) {

@@ -29,6 +29,11 @@
         .number {
             width: 20% !important;
         }
+
+        #articleEditor p {
+            margin-bottom: 0;
+            color: initial;
+        }
     </style>
 </head>
 
@@ -43,90 +48,90 @@
 
     <div class="mui-content list mb44">
 
-            <form action="" class="mui-input-group">
-                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <form action="" class="mui-input-group">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
 
-                <ul class="mui-table-view border-b">
-                    <li class="mui-table-view-cell listli">
-                            <div class="mui-media-body wd83">
-                                <strong class="grade domData" name="event">活动主题：{$eventInfo.event}</strong>
-                                <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">活动类型：{$eventInfo.event_type}</p>
-                                <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
-                                <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
-                                <input type="hidden" name="event" value="{$eventInfo.event}" class="data">
-                                <input type="hidden" name="event_id" value="{$eventInfo.id}" class="data">
-                                <input type="hidden" name="organization_type" value="{$eventInfo.organization_type}" class="data">
-                            </div>
-                    </li>
-                </ul>
-
-                <div class="mui-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
-                    <a href="#target" class="mui-navigate-right">
-                        <label>具体对象</label>
-                        <span class="targetCont" name="target">{$eventInfo.target}</span>
-                        <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="">
-                    </a>
-                </div>
-
-                <div class="mui-input-row picker btn" id="demo3">
-                    <div class="mui-navigate-right">
-                        <label>活动时间</label>
-                        <span id="result" class="ui-alert domData" name="event_times">{neq name="eventInfo.event_time" value="0"}{$eventInfo.event_times}{/neq}</span>
+            <ul class="mui-table-view border-b">
+                <li class="mui-table-view-cell listli">
+                    <div class="mui-media-body wd83">
+                        <strong class="grade domData" name="event">活动主题：{$eventInfo.event}</strong>
+                        <p class="mui-ellipsis" style="text-indent: 0" data-id="{eventInfo.organization_id}">活动类型：{$eventInfo.event_type}</p>
+                        <input type="hidden" name="organization" value="{$eventInfo.organization}" class="data">
+                        <input type="hidden" name="organization_id" value="{$eventInfo.organization_id}" class="data">
+                        <input type="hidden" name="event" value="{$eventInfo.event}" class="data">
+                        <input type="hidden" name="event_id" value="{$eventInfo.id}" class="data">
+                        <input type="hidden" name="organization_type" value="{$eventInfo.organization_type}" class="data">
                     </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>活动地点</label>
-                    <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
-                </div>
-
-                <div class="mui-input-row" id='showCityPicker3'>
-                    <div class="mui-navigate-right">
-                        <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>联系人</label>
-                    <input type="text" name="contact" class="data" value="{$eventInfo.contact}" placeholder="请输入联系人">
-                </div>
-
-                <div class="mui-input-row">
-                    <label>联系电话</label>
-                    <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
-                </div>
-
-
-                <div class="operation-box border-b">
-                    <div class="mui-input-row">
-                        <label>活动人员</label>
-                    </div>
-                    <div class="box" id="inactiveList"></div>
-                    <div class="box" id="hideStList" style="display: none"></div>
-                    <div class="box" id="hideStListIni" style="display: none"></div>
-                    <div class="operation-btn">
-                        <span class="mui-badge"></span>
-                        <a class="all">全选</a>
-                        <a class="cancel">取消</a>
-                        <a class="del">[删除]</a>
-                        <a href="#addMember" id="setMemberBox" class="mui-icon mui-icon-personadd add"></a>
-                    </div>
-                </div>
-
-                <div class="page-header bggray2">
-                    <span class="course">备注</span>
-                </div>
-                <textarea name="remarks" class="data remarks" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro">{$eventInfo.remarks}</div>
-
-            </form>
-
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-col-xs-12 opli bggreen operationBtn">
-                    提交录入
                 </li>
             </ul>
+
+            <div class="mui-input-row {eq name='eventInfo.target_type' value='3'}show{else/}hide{/eq}">
+                <a href="#target" class="mui-navigate-right">
+                    <label>具体对象</label>
+                    <span class="targetCont" name="target">{$eventInfo.target}</span>
+                    <input type="hidden" name="target_id" value="{$eventInfo.target_id}" class="">
+                </a>
+            </div>
+
+            <div class="mui-input-row picker btn" id="demo3">
+                <div class="mui-navigate-right">
+                    <label>活动时间</label>
+                    <span id="result" class="ui-alert domData" name="event_times">{neq name="eventInfo.event_time" value="0"}{$eventInfo.event_times}{/neq}</span>
+                </div>
+            </div>
+
+            <div class="mui-input-row">
+                <label>活动地点</label>
+                <input type="text" name="location" value="{$eventInfo.location}" class="data location" placeholder="请输入活动地点">
+            </div>
+
+            <div class="mui-input-row" id='showCityPicker3'>
+                <div class="mui-navigate-right">
+                    <label>所属地区</label>
+                    <span id="cityResult3" class="ui-alert domData" name="address">{$eventInfo.province} {$eventInfo.city} {$eventInfo.area}</span>
+                </div>
+            </div>
+
+            <div class="mui-input-row">
+                <label>联系人</label>
+                <input type="text" name="contact" class="data" value="{$eventInfo.contact}" placeholder="请输入联系人">
+            </div>
+
+            <div class="mui-input-row">
+                <label>联系电话</label>
+                <input type="text" name="telephone" class="data" value="{$eventInfo.telephone}" placeholder="请输入联系电话">
+            </div>
+
+
+            <div class="operation-box border-b">
+                <div class="mui-input-row">
+                    <label>活动人员</label>
+                </div>
+                <div class="box" id="inactiveList"></div>
+                <div class="box" id="hideStList" style="display: none"></div>
+                <div class="box" id="hideStListIni" style="display: none"></div>
+                <div class="operation-btn">
+                    <span class="mui-badge"></span>
+                    <a class="all">全选</a>
+                    <a class="cancel">取消</a>
+                    <a class="del">[删除]</a>
+                    <a href="#addMember" id="setMemberBox" class="mui-icon mui-icon-personadd add"></a>
+                </div>
+            </div>
+
+            <div class="page-header bggray2">
+                <span class="course">备注</span>
+            </div>
+            <textarea name="remarks" class="data remarks" style="display: none"></textarea>
+            <div id="articleEditor" class="tuwenIntro">{$eventInfo.remarks}</div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen operationBtn">
+                提交录入
+            </li>
+        </ul>
 
 
     </div>
@@ -422,7 +427,7 @@
                         window.location.href = "{:url('frontend/event/eventListOfCamp',['organization_id'=>$eventInfo['organization_id']])}";
                     })
                 } else {
-                    mui.alert(ajaxResult.msg, '创建失败',function(){
+                    mui.alert(ajaxResult.msg, '创建失败', function () {
                         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
                     });
                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
