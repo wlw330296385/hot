@@ -1,5 +1,5 @@
 <?php
-namespace app\frontend\controller;
+namespace app\school\controller;
 
 
 use think\Db;

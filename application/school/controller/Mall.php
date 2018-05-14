@@ -1,6 +1,6 @@
 <?php 
-namespace app\frontend\controller;
-use app\frontend\controller\Frontend;
+namespace app\school\controller;
+use app\school\controller\Frontend;
 
 class Mall extends Frontend{
 	

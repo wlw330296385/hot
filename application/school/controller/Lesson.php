@@ -1,6 +1,6 @@
 <?php 
 namespace app\frontend\controller;
-use app\frontend\controller\Base;
+use app\school\controller\Base;
 use app\service\LessonService;
 use app\service\GradeService;
 use app\service\WechatService;

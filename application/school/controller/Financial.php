@@ -1,5 +1,5 @@
 <?php
-namespace app\frontend\controller;
+namespace app\school\controller;
 use app\service\BillService;
 use app\service\CampService;
 

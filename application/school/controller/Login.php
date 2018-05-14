@@ -1,5 +1,5 @@
 <?php 
-namespace app\frontend\controller;
+namespace app\school\controller;
 use think\Controller;
 use app\service\WechatService;
 use app\service\MemberService;

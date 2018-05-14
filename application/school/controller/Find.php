@@ -1,6 +1,6 @@
 <?php 
-namespace app\frontend\controller;
-use app\frontend\controller\Base;
+namespace app\school\controller;
+use app\school\controller\Base;
 
 class Find extends Base{
 	
