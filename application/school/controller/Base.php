@@ -136,7 +136,8 @@ class Base extends Frontend {
                 'balance'   =>0,
                 'remarks'   =>0,
                 'hot_id'=>00000000,
-                'age' => 0
+                'age' => 0,
+                'fans' => 0
             ];
             cookie('mid', 0);
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );

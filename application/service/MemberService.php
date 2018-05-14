@@ -19,6 +19,8 @@ class MemberService{
         $result = $res->toArray();
 		// 年龄换算
         $result['age'] = getAgeByBirthday($result['birthday']);
+        // 粉丝数
+        $result['fans'] = getfansnum($result['id'], 1);
         return $result;
 	}
 
