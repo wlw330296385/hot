@@ -1465,7 +1465,8 @@ class Team extends Base
                         foreach ($memberInTeam as $team) {
                             array_push($teamIds, $team['team_id']);
                         }
-                        $map['match_record.home_team_id|match_record.away_team_id|match_record.team_id'] = ['in', $teamIds];
+                        $map['match_record.home_team_id|match_record.away_team_id'] = ['in', $teamIds];
+                        $map['match_record.team_id'] = ['in', $teamIds];
                     } else {
                         // 会员无参加任何球队 返回无数据
                         return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1475,7 +1476,7 @@ class Team extends Base
             }
 
             // 默认查询上架比赛(status=1)
-            $map['status'] = input('param.staus', 1);
+            $map['status'] = input('param.status', 1);
             // 比赛时间小于当前时间：过期比赛
             //$map['match_record.match_time'] = ['gt', time()];
             // 查询条件组合end

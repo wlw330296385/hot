@@ -1403,6 +1403,7 @@ class Match extends Base
                     $homeMember[$k]['status'] = 1;
                     $homeMember[$k]['is_checkin'] = 1;
                     $homeMember[$k]['is_attend'] = 1;
+                    $homeMember[$k]['match_time'] = $matchRecord['match_time'];
 
                     // 批量更新team_member 比赛数match_num
                     if ($matchRecordMember['is_checkin'] == 1) {
