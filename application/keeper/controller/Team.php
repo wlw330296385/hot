@@ -548,7 +548,11 @@ class Team extends Base
         $matchInfo = $matchS->getMatch(['id' => $match_id]);
 
         // 输出比赛战绩数据
-        $matchRecordInfo = $matchS->getMatchRecord(['match_id' => $matchInfo['id']]);
+        $map['match_id'] = $matchInfo['id'];
+        if ($this->team_id) {
+            $map['team_id'] = $this->team_id;
+        }
+        $matchRecordInfo = $matchS->getMatchRecord($map);
         if ($matchRecordInfo) {
             if (!empty($matchRecordInfo['album'])) {
                 $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
