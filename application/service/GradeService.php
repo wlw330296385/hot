@@ -144,15 +144,19 @@ class GradeService{
         if(!$validate->scene('edit')->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        if($data['assistants']){
-                $assistan_list = explode(',', $data['assistants']);
-                $seria = serialize($assistan_list);
-                $data['assistant'] = $seria;
-            }
-        if($data['assistant_ids']){
+        if(!empty($data['assistants']) ){
+            $assistan_list = explode(',', $data['assistants']);
+            $seria = serialize($assistan_list);
+            $data['assistant'] = $seria;
+        } else {
+            $data['assistant'] = '';
+        }
+        if(!empty($data['assistant_ids']) ){
             $assistan_list = explode(',', $data['assistant_ids']);
             $seria = serialize($assistan_list);
             $data['assistant_id'] = $seria;
+        } else {
+            $data['assistant_id'] = '';
         }
         $result = $this->GradeModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
