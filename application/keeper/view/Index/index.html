@@ -164,21 +164,21 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('team/teamList')}">
+                        <a href="{:url('index/latelymatchlist')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-p-game"></use>
                             </svg>
                             <span class="f14" style="display: block;">比赛</span>
-                            <div class="mui-media-body f18 colororange efficiency">0</div>
+                            <div class="mui-media-body f18 colororange match_number">0</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('index/latelyMatchList')}">
+                        <a >
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-p-efficiency "></use>
                             </svg>
                             <span class="f14" style="display: block;">效率</span>
-                            <div class="mui-media-body f18 colororange match_number">0</div>
+                            <div class="mui-media-body f18 colororange efficiency">0</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -429,6 +429,7 @@
             toCheckReferee(); //是否有裁判身份
             toRecordEventList(); //活动纪录
             toRecordMatchList(); //赛事纪录
+            teamMemberData(); // 球队数据
 
             //提示框
             if ($('input[name=mid]').val() == 0) {
@@ -865,6 +866,32 @@
                 }
             });
         };
+
+
+        // 获取赛季球员数据
+        function teamMemberData() {
+            var member_id = "{$memberInfo.id}";
+            mui.ajax("{:url('api/matchdata/playerseasonstatis')}", {
+                data: {
+                    member_id: member_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".match_number").text(data.data.match_number);
+                        $(".efficiency").text(data.data.efficiency);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         //创建补0函数
         function p(s) {

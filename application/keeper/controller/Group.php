@@ -9,10 +9,12 @@ class Group extends Base{
 	}
 
     public function index() {
-
         return view('Group/index');
     }
 
+    public function groupInfo() {
+        return view('Group/groupInfo');
+    }
 
 
 }

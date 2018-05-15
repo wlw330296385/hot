@@ -55,6 +55,7 @@
             padding: 2px 0;
             border: 0;
         }
+
         svg.coloricon {
             margin-right: 5px;
         }
@@ -143,20 +144,20 @@
                     <div class="mui-navigate-right goConfirm" data-href="{:url('member/memberInfo')}">
                         <svg class="coloricon" aria-hidden="true">
                             <use xlink:href="#icon-find-mall"></use>
-                        </svg>球队档案
+                        </svg>球员档案
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <div class="mui-navigate-right goConfirm" data-href="{:url('member/photoAlbum',['member_id'=>$memberInfo['id']])}">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-find-ring"></use>
+                            <use xlink:href="#icon-find-photography"></use>
                         </svg>相册
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <div class="mui-navigate-right goConfirm" data-href="#">
                         <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-find-jerseys"></use>
+                            <use xlink:href="#icon-find-collection"></use>
                         </svg> 收藏
                     </div>
                 </li>
@@ -168,7 +169,7 @@
                         <svg class="coloricon" aria-hidden="true">
                             <use xlink:href="#icon-find-detection"></use>
                         </svg>消息
-                        <span class="mui-badge mui-badge-danger" style="width:7%;color: #fff;margin-top: 5px;">15</span>
+                        <text class="mui-badge mui-badge-danger fr messageBadge" style="margin: 5px 15px 0 0    ;">0</text>
                     </div>
                 </li>
                 <li class="mui-table-view-cell listli">
@@ -253,6 +254,31 @@
                 window.top.location.href = goUrl;
             }
         })
+
+
+        // 获取消息数量
+        mui.ajax("{:url('api/message/getMessageMmeberCountApi')}", {
+            data: {
+                status: 1,
+                steward_type: 2
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    $(".messageBadge").text(data.data);
+                } else {
+                    $(".messageBadge").hide();
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
 
     })
 
