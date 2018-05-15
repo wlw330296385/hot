@@ -181,7 +181,7 @@
                 <div class="mui-input-row">
                     <a href="#assistantCoach" id="setAsCoach" class="mui-navigate-right">
                         <label>助理教练</label>
-                        <input type="text" name="assistants" value="{$gradeInfo.assistants}" class="data assistants " placeholder="选填">
+                        <input type="text" name="assistants" value="{$gradeInfo.assistants}" class="data assistants" placeholder="选填">
                         <input type="hidden" name="assistant_ids" value="{$gradeInfo.assistant_ids}" class="data">
                     </a>
                 </div>
@@ -254,7 +254,7 @@
                 <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>合照封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="">
+                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$gradeInfo.logo}">
                         <input type="hidden" name="logo" value='{$gradeInfo.logo}' class="data">
                     </a>
                 </div>
@@ -671,11 +671,10 @@
         })(mui, document);
 
 
+        //初始化全局变量
+        var studentList = [];
 
         $(function () {
-
-            //初始化全局变量
-            var studentList = [];
 
             //获取训练营教案表
             toPlanList();
@@ -823,7 +822,7 @@
                 if (asID == mainID) {
                     mui.alert(asName + "已是主教练，请不要重复选择！");
                     $(this).find("input[name='checkbox-assistant']").prop("checked", false);
-                    return;
+                    return false;
                 }
             })
 
@@ -1021,57 +1020,6 @@
                     return false;
                 } else {
 
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 20180419考虑去除只传【新增、删除】学员处理：丽文只要提交最终名单（最终名单在选择学员确认时已经组合数组）
-//                    studentList = [];
-//
-//                    var idNewID = ""
-//                    //新增学员
-//                    $("#hideStList input").each(function (i) {
-//                        var sid = $(this).attr("data-student_id");
-//                        //默认为新添加学员
-//                        idNewID = "Yes";
-//                        //该学员遍历原学生表判断是否存在
-//                        $("#hideStListIni input").each(function () {
-//                            if (sid == $(this).attr("data-student_id")) {
-//                                console.log($(this).attr("data-student_id"))
-//                                idNewID = "No";
-//                                return false;
-//                            }
-//                        });
-//                        //上面遍历过不存在就添加到最终变动学员列表中
-//                        if (idNewID == "Yes") {
-//                            var student_id = $(this).attr("data-student_id");
-//                            var student = $(this).attr("data-student");
-//                            var student_typenum = $(this).attr("data-student_typenum");
-//                            var camp = $(this).attr("data-camp");
-//                            var camp_id = $(this).attr("data-camp_id");
-//                            var lesson = $(this).attr("data-lesson");
-//                            var lesson_id = $(this).attr("data-lesson_id");
-//                            var member = $(this).attr("data-member");
-//                            var member_id = $(this).attr("data-member_id");
-//                            studentList.push({ student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, grade: "{$gradeInfo.grade}", grade_id: "{$gradeInfo.id}", status: 1 });
-//                        }
-//                    });
-//
-//                    var idDelID = ""
-//                    //去除学员
-//                    $("#hideStListIni input").each(function (i) {
-//                        var dsid = $(this).attr("data-student_id");
-//                        //默认为要去除的学员
-//                        idDelID = "Yes";
-//                        //该学员遍历新编辑的学生表判断是否存在
-//                        $("#hideStList input").each(function () {
-//                            if (dsid == $(this).attr("data-student_id")) {
-//                                idDelID = "No";
-//                                return false;
-//                            }
-//                        });
-//                        //上面遍历过不存在就添加到最终变动学员列表中
-//                        if (idDelID == "Yes") {
-//                            var id = $(this).attr("data-id");
-//                            studentList.push({ id: id, status: 2 });
-//                        }
-//                    });
                     var coach_salary = $('input[name="coach_salary"]').val();
                     var coach_salaryIni = "{$gradeInfo.coach_salary}";
                     var assistant_salary = $('input[name="assistant_salary"]').val();
@@ -1082,61 +1030,42 @@
                     if (coach_salary != coach_salaryIni || assistant_salary != assistant_salaryIni || salary_base != salary_baseIni) {
                         mui.confirm("修改主教底薪，助教底薪或者提成基数三者的任何一项，未审课时的数值也会跟着改变!", '', btnArray, function (e) {
                             if (e.index == 1) {
-                                var data = wooApi.getInputData('input', 'data');
-                                datas = wooApi.getInputData('select', 'data', data);
-                                // 获取其他标签值
-                                arrData = wooApi.getDomData('domData', datas);
-                                var objData = wooApi.arrTOobj(arrData);
-                                // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
-                                objData.studentData = JSON.stringify(studentList);
-                                console.log(studentList);
-                                console.log(objData);
-                                // return;
-                                var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
-                                var ajaxResult = wooApi.asyncF(url, objData);
-                                console.log(ajaxResult);
-                                if (ajaxResult.code == 200) {
-                                    mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                                        window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                                    })
-                                } else {
-                                    mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
-
-                                    })
-                                }
-                            } else {
-                                return false;
+                                finalSubmit()
                             }
                         });
+                    }else{
+                        finalSubmit()
                     }
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    var data = wooApi.getInputData('input', 'data');
-                    datas = wooApi.getInputData('select', 'data', data);
-                    // 获取其他标签值
-                    arrData = wooApi.getDomData('domData', datas);
-                    var objData = wooApi.arrTOobj(arrData);
-                    // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
-                    objData.studentData = JSON.stringify(studentList);
-                    console.log(studentList);
-                    console.log(objData);
-                    //return false;
-                    var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
-                    var ajaxResult = wooApi.asyncF(url, objData);
-                    console.log(ajaxResult);
-                    if (ajaxResult.code == 200) {
-                        mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                            window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
-                        })
-                    } else {
-                        mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
-
-                        })
-                    }
-
                 }
             })
 
-        })
+        });
+
+        //最终提交表单
+        var finalSubmit = function () {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            // var studentList = [{student:1,student_id:1,id:1},{student:2,student_id:2,id:2}];
+            objData.studentData = JSON.stringify(studentList);
+            console.log(studentList);
+            console.log(objData);
+            //return false;
+            var url = "{:url('api/grade/updateGradeApi',['grade_id'=>$gradeInfo['id']])}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                    window.location.href = "{:url('frontend/grade/gradeInfoOfCamp',['grade_id'=>$gradeInfo['id']])}";
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败', '确定', function () {
+
+                })
+            }
+        }
 
         //根据默助教遍历出对应所选
         var toAssistantCheckbox = function () {

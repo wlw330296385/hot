@@ -118,6 +118,9 @@
             font-weight: normal;
             color: #999999;
         }
+        .mui-scroll p.tips {
+            padding: 20px;
+        }
     </style>
 </head>
 
@@ -642,6 +645,14 @@
 
         $(function () {
 
+            //判断是否原本没助教，如没有不能临时添加（助教底薪问题）
+            var haveAS ="{$gradeInfo.assistants}";
+            if(haveAS==''||haveAS==null){
+                $("#assistantCoach form").hide();
+                $("#assistantCoach .mui-scroll").append('<p class="tips">该班级没配助教，并没有设定助教底薪，请联系管理人员（营主、教务）添加助教并设定助教底薪。<br /><br />温馨提示：您可以暂时不录入此项，先完成本次录入，待管理人员完善后再编辑此课时补加助教。（请及时沟通在审课前进行补加，否则将无法修改。）</p>');
+            }
+
+
             //训练项目列表复选框赋值
             $("#setExercisesBox").on('tap', '', function () {
                 //每次打开先清空所有选择
@@ -739,7 +750,7 @@
                 if (asID == mainID) {
                     mui.alert(asName + "已是主教练，请不要重复选择！");
                     $(this).find("input[name='checkbox-assistant']").prop("checked", false);
-                    return;
+                    return false;
                 }
             })
 
