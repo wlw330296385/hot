@@ -832,7 +832,12 @@
                 var btnArray = ['确定', '取消'];
                 mui.prompt('请输入您要加入的课量：', '', '课量添加', btnArray, function (e) {
                     if (e.index == 0) {
-                        $("#lessonDom form").prepend("<div class='mui-input-row mui-checkbox mui-left'><label>" + e.value + " 课时</label><input name='checkbox-dom' value='" + e.value + "' type='checkbox'></div>");
+                        $("#lessonDom form").append("<div class='mui-input-row mui-checkbox mui-left'><label>" + e.value + " 课时</label><input name='checkbox-dom' value='" + e.value + "' type='checkbox'></div>");
+                        var domScroll = mui('#lessonDom .mui-scroll-wrapper').scroll();
+                        //重新计算布局值，最大滚动的高度等等
+                        domScroll.reLayout();
+                        //滚动到底部
+                        domScroll.scrollToBottom(100);
                     }
                 })
             });
