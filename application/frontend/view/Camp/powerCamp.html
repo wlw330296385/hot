@@ -23,6 +23,9 @@
         .mui-grid-view.mui-grid-9 .mui-table-view-cell {
             padding: 11px 9px !important;
         }
+        #haveStudent{
+            display: none;
+        }
     </style>
 </head>
 
@@ -38,7 +41,7 @@
             <a href="{:url('camp/index')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
             <span class="more"> {$campInfo['camp']}管理</span>
         </div>
-        <div class="nav-list" style="margin-bottom: 7px;">
+        <div class="nav-list" style="margin-bottom: 5px;">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                     <a href="#">
@@ -82,6 +85,16 @@
                     </a>
                 </li>
             </ul>
+        </div>
+
+        <!--学生身份入口-->
+        <div class="page-header mb f12">
+            基本管理版块
+            <a href="{:url('camp/clientOfcamp',['camp_id'=>$campInfo['id']])}" id="haveStudent">
+                <!--<span class="mui-icon mui-icon-contact"></span>-->
+                <span class="more fr">我的学生身份数据</span>
+                <span class="mui-navigate-right"></span>
+            </a>
         </div>
 
         <!--操作模块-->
@@ -309,13 +322,52 @@
 
 
     {layout name="Layout/footer"}
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(function () {
+            toList()
+        });
+
+
+        var toList = function () {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/lesson_member/getLessonMemberListByPageApi','','',true)}";
+            var campID = "{$campInfo['id']}";
+            var memberID = "{$memberInfo.id}";
+            console.log(campID)
+            console.log(memberID)
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    member_id: memberID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                //processData:false,
+                success: function (data) {
+
+                    if (data.code == 200) {
+                        console.log(data.data.data.length)
+                        if(data.data.data.length>0){
+                            $("#haveStudent").show();
+                        }
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常');
+                }
+            });
+        };
+    </script>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-</script>
 
 </html>
