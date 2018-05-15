@@ -45,6 +45,39 @@
             fill: currentColor;
             overflow: hidden;
         }
+
+        .labelNum {
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        @media screen and (min-width: 320px) {
+            .about {
+                width: 76% !important
+            }
+            .labelNum {
+                width: 19%;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .about {
+                width: 80% !important
+            }
+            .labelNum {
+                width: 16%;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            .about {
+                width: 82% !important
+            }
+            .labelNum {
+                width: 14%;
+            }
+        }
     </style>
 </head>
 
@@ -70,7 +103,9 @@
                     <div class="mui-col-sm-6 mui-col-xs-6 tmcRight">
                         <img src="/static/frontend/images/teamMemberCircle.png" class="teamMemberCircle" />
                         <!-- <img src="/static/frontend/images/unknown.png" class="unknown" /> -->
-                        <h4 class="tmValueNum"><span>845</span></h4>
+                        <h4 class="tmValueNum">
+                            <span>845</span>
+                        </h4>
                         <p class="tmValue">球员价值</p>
                     </div>
                 </div>
@@ -101,7 +136,8 @@
 
             <!--个人宣言-->
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli detalisli">个人宣言
+                <li class="mui-table-view-cell listli">
+                    <label class="mui-text-center labelNum">#{$teamMemberInfo.number}</label>
                     <span class="about mui-text-left description">{$teamMemberInfo.description}</span>
                 </li>
             </ul>
@@ -117,11 +153,13 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-p-game"></use>
-                        </svg>
-                        <span class="f14" style="display: block;">比赛</span>
-                        <div class="mui-media-body f18 colororange match_number">0</div>
+                        <a href="{:url('team/personalMatchList',['team_id'=>$teamInfo['id'],'id'=>$teamMemberInfo.id])}" style="height: 83px;">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-game"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">比赛</span>
+                            <div class="mui-media-body f18 colororange match_number" style="margin-top: 6px;">0</div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <svg class="coloricon" aria-hidden="true">
@@ -151,7 +189,7 @@
             <div class="page-header">
                 <span class="course">赛季场均数据</span>
                 <span class="more pdr15">
-                    <a href="{:url('team/personalMatchList',['team_id'=>$teamInfo['id'],'id'=>$teamMemberInfo.id])}" class="mui-navigate-right">单场数据</a>
+                    <a href="{:url('team/personalMatchList',['team_id'=>$teamInfo['id'],'id'=>$teamMemberInfo.id])}" class="mui-navigate-right f14">单场数据</a>
                 </span>
             </div>
             <div class="nav-list">
@@ -353,13 +391,13 @@
                     分享
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgblue">
-                <a href="#fbcomment">评论</a>
-            </li>
             <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit">
                 <a href="{:url('team/teamMemberEdit',['team_id'=>$teamInfo['id'],'id'=>$teamMemberInfo['id']])}">
                     编辑
                 </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgblue">
+                <a href="#fbcomment">评论</a>
             </li>
         </ul>
 
@@ -451,13 +489,13 @@
             //个人宣言内容
             var description = '{$teamMemberInfo.description}';
             if (description == '') {
-                $(".description").text("暂无数据");
+                $(".description").text("暂无");
             }
 
             //球员介绍内容
             var introduction = '{$teamMemberInfo.introduction}';
             if (introduction == '') {
-                $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无数据）");
+                $(".introBox").parent().prev(".introduction").find(".noDataTip").append("（暂无）");
                 $(".introBox").hide();
             }
 
@@ -469,7 +507,7 @@
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
             if (tips == '') {
-                $(".teammember").prev(".teamList").find(".noDataTip").append("（暂无数据）");
+                $(".teammember").prev(".teamList").find(".noDataTip").append("（暂无）");
                 $(".teammember").hide();
             }
 
@@ -760,7 +798,7 @@
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     } else {
-                        $(".comment-list").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".comment-list").prev().find(".noDataTip").append("（暂无）");
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -901,7 +939,7 @@
                         $(".tagCommentList").empty().show();
                         $(".tagCommentList").append(div);
                     } else {
-                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无）");
                         $(".tagCommentList").hide();
                     }
                 },
@@ -936,13 +974,13 @@
                             var yearNum = date.getFullYear(honor_time);
                             newli += '<li class="mui-table-view-cell mui-collapse listli">';
                             newli += '<a class="mui-navigate-right"><p class="fl">' + yearNum + '</p><p class="fr pdr15">' + data.data[i].team_honor.name + '</p></a>';
-                            newli += '<div class="mui-collapse-content"><a href=""><p>赛事名称：' + data.data[i].team_honor.match + '</p><p>授奖单位：' + data.data[i].team_honor.award_org + '</p><p>授奖时间：' + data.data[i].team_honor.honor_time + '</p></a></div>';
+                            newli += '<div class="mui-collapse-content"><a href=""><p><text class="colororange" style="margin-right:10px;">' + data.data[i].team_honor.name + '</text>/所在球队：' + data.data[i].team_honor.author_team + '</p><p>授奖单位：' + data.data[i].team_honor.award_org + '</p><p>授奖时间：' + data.data[i].team_honor.honor_time + '</p></a></div>';
                             newli += '</li>';
                         }
                     }
                     $("ul.honorList").empty().append(newli);
                     if (newli == '') {
-                        $(".honorList").prev().find(".noDataTip").append("（暂无数据）");
+                        $(".honorList").prev().find(".noDataTip").append("（暂无）");
                     }
                 },
                 error: function (xhr, type, errerThrown) {

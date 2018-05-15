@@ -48,6 +48,9 @@ var numberData = [{
     text: "15"
 }, {
     value: "16",
+    text: "16"
+}, {
+    value: "17",
     text: "17"
 }, {
     value: "18",

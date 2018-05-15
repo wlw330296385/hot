@@ -931,6 +931,13 @@
                 mui("#awayTeam").popover("toggle");
             })
             //搜索球队
+            // 失去焦点搜索
+            $(".keywordHM").on("blur", function () {
+                var keyword = $(".keywordHM").val();
+                var pageHM = 1;
+                toTeamList(keyword, "awayTeam", pageHM);
+            })
+            // 点击搜索
             $("#searchHM").on("tap", function () {
                 var keyword = $(".keywordHM").val();
                 var pageHM = 1;
@@ -971,6 +978,11 @@
                 mui("#awayTeam").popover("toggle");
             })
             //搜索球队
+            $(".keywordHi").on("blur", function () {
+                var keywordHi = $(".keywordHi").val();
+                var pageHi = 1;
+                toTeamListHistory(keywordHi, "awayTeam", pageHi);
+            })
             $("#searchHi").on("tap", function () {
                 var keywordHi = $(".keywordHi").val();
                 var pageHi = 1;
@@ -1027,6 +1039,11 @@
                 mui("#court").popover("toggle");
             })
             //搜索常驻球场
+            $(".keywordLD").on("blur", function () {
+                var keyword = $(".keywordLD").val();
+                var pageCR = 1;
+                toCourtList(keyword, "court", pageCR);
+            })
             $("#searchCR").on("tap", function () {
                 var keyword = $(".keywordLD").val();
                 var pageCR = 1;
@@ -1168,7 +1185,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请填写要添加的球队" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1216,7 +1233,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<p class="nohave">没有查找到数据哦</p>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1260,7 +1277,7 @@
                             newli = newli + '<li class="mui-table-view-cell listli detalisli" data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
                         }
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addNewcourt">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="输入比赛地点" /><button class="mui-btn addNewcourt">确认</button></div>'
                         }
                         $(wCourtList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
