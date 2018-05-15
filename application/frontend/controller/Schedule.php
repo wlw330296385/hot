@@ -2,6 +2,7 @@
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
 use app\service\CampService;
+use app\service\GradeService;
 use app\service\LessonService;
 use app\service\ScheduleService;
 use think\Db;
@@ -231,6 +232,10 @@ class Schedule extends Base
             }
         }
 
+        // 获取课时的班级信息
+        $gradeService = new GradeService();
+        $gradeInfo = $gradeService->getGradeInfo(['id' => $scheduleInfo['grade_id']]);
+
  		$studentList = [];
         if ($scheduleInfo['student_str']) {
             $studentList = unserialize($scheduleInfo['student_str']);
@@ -266,12 +271,12 @@ class Schedule extends Base
             }
         }
         
-        
 		$this->assign('planInfo',$planInfo);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
         $this->assign('hideDisplay', $hideDisplay);
+        $this->assign('gradeInfo', $gradeInfo);
 		return view('Schedule/updateSchedule');
 	}
 
