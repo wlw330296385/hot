@@ -4,6 +4,7 @@ namespace app\service;
 
 
 use app\model\Match;
+use app\model\MatchGroup;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
@@ -206,6 +207,23 @@ class LeagueService
         }
     }
 
+    // 获取联赛-工作人员详情
+    public function getMatchMember($map) {
+        $model = new MatchMember();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取会员的联赛工作人员角色权限
+    public function getMatchMemberType($map) {
+        $model = new MatchMember();
+        $res = $model->where($map)->value('type');
+        return ($res) ? $res : 0;
+    }
+
     // 获取联赛球队数
     public function getMatchTeamCount($map) {
         $model = new MatchTeam();
@@ -286,5 +304,54 @@ class LeagueService
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 保存联赛分组球队数据
+    public function saveMatchGroup($data) {
+        $model = new MatchGroup();
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res == false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res == false) {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
+    // 获取联赛分组详情
+    public function getMatchGroup($map) {
+        $model = new MatchGroup();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛分组列表
+    public function getMatchGroupList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchGroup();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛分组列表（页码）
+    public function getMatchGroupPaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchGroup();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 }

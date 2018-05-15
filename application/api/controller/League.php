@@ -691,4 +691,170 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
+
+    // 创建联赛分组
+    public function addleaguegroup() {
+        $data = input('post.');
+        // 数据验证
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入match_id']);
+        }
+        if ( !array_key_exists('name', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入name']);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['match_id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他联赛']);
+        }
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 查询分组名是否已存在
+        $checkMatchGroup = $leagueS->getMatchGroup([
+            'match_id' => $data['match_id'],
+            'name' => $data['name']
+        ]);
+        if ($checkMatchGroup) {
+            return json(['code' => 100, 'msg' => '分组名不能重复，请输入其他分组名']);
+        }
+        try {
+            $data['match'] = $match['name'];
+            $data['status'] = 1;
+            $result = $leagueS->saveMatchGroup($data);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $result]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 编辑联赛分组
+    public function updateleaguegroup() {
+        $data = input('post.');
+        // 数据验证
+        if ( !array_key_exists('id', $data) ) {
+            // match_group id
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入id']);
+        }
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入match_id']);
+        }
+        if ( !array_key_exists('name', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入name']);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['match_id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他联赛']);
+        }
+        // 获取分组信息
+        $matchGroup = $leagueS->getMatchGroup(['id' => $data['id']]);
+        if (!$matchGroup) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 查询分组名是否已存在
+        $checkMatchGroup = $leagueS->getMatchGroup([
+            'match_id' => $data['match_id'],
+            'name' => $data['name']
+        ]);
+        if ($checkMatchGroup) {
+            return json(['code' => 100, 'msg' => '分组名不能重复，请输入其他分组名']);
+        }
+        try {
+            $result = $leagueS->saveMatchGroup($data);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 联赛分组列表
+    public function leaguegrouplist() {
+        try {
+            $data = input('param.');
+            $page = input('page');
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchGroupList($data, $page);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 联赛分组列表（页码）
+    public function leaguegrouppage() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchGroupPaginator($data);
+            // 返回结果
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
 }
