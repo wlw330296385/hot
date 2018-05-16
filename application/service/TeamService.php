@@ -1029,12 +1029,12 @@ class TeamService
     public function delComment($id) {
         $model = new TeamComment();
         // 清空comment comment_time内容
-        $res = $model->save([
+        $res = $model->isUpdate(true)->save([
             'id' => $id,
-            'comment' => '',
+            'comment' => null,
             'comment_time' => null
         ]);
-        if ($res === false) {
+        if ($res == false) {
             trace('error message:'.$model->getError().'; \n sql:'.$model->getLastSql().'');
             return false;
         }
