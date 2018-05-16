@@ -221,6 +221,7 @@
 
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
+                    <span class="fr more" id="emptyIntro">[ 清空简介 ]</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro">{$eventInfo.event_des}</div>
@@ -487,6 +488,17 @@
             toCampGradeList(); //调用训练营班级列表
             isFree();  //判断是否收费显示data
 
+
+
+            //清除简介
+            $("#emptyIntro").on('click', '', function () {
+                mui.confirm('确定清空当前简介内容吗？', '提示', ['取消', '确定'], function (e) {
+                    if (e.index === 1) {
+                        $("#articleEditor").empty();
+                        $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
+                    }
+                });
+            })
 
             //判断只有大热俱乐部可以收费
             var organization_id = $("input[name=organization_id]").val();
