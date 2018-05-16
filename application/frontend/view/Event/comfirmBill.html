@@ -96,6 +96,7 @@
             </ul>
             <div class="page-header">
                 <span class="course">报名信息</span>
+                <span class="fr"><span id="addBtn" class="mui-btn mui-btn-blue">添加人员</span></span>
             </div>
 
             <div class="mui-input-group mb44">
@@ -227,10 +228,83 @@
             })
 
 
+
+            // 添加学生
+            $('#addBtn').on('click', '', function () {
+                var mID = "{$memberInfo.id}";
+                if (mID <= 0) {
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function(e) {
+                        if (e.index===1) {
+                            window.location.href="{$fasturl}";
+                        }
+                    });
+                } else {
+                    var btnArray = ['确定', '取消'];
+                    var addForm = '<div class="mui-popup-input"><span class="colororange">请勿同时填写多名学员姓名</span><input type="text" name="student" class="data" placeholder="参加人员姓名" autofocus=""><input type="text" name="parent" class="data" placeholder="家长姓名"><input type="text" name="emergency_telephone" class="data telephone" placeholder="联系电话" value="{$memberInfo.telephone}"></div>'
+                    mui.confirm(addForm, '添加参与人员信息', btnArray, function (e) {
+                        if (e.index == 0) {
+                            //确定添加，进行提交
+                            var telephone = $('.telephone').val();
+                            var codeRegTelephone = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/;
+                            if (!codeRegTelephone.test(telephone)) {
+                                mui.toast('请填写正确的手机号码');
+                                return false;
+                            }
+                            var getStudent = $('input[name="student"]').val();
+                            var codeRegStudent = /^(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]{2,20}$/;
+                            if (!codeRegStudent.test(getStudent)) {
+                                mui.toast('姓名只能包含汉字、字母、数字！');
+                                return false;
+                            } else {
+                                if (isExistOption(getStudent)) {
+                                    mui.toast(getStudent + "已经存在，请 [ 取消 ] 返回选择！");
+                                    return false;
+                                }
+                                var arrData = wooApi.getInputData();
+                                var objData = wooApi.arrTOobj(arrData);
+                                objData.student_province = "{$eventInfo.province}";
+                                objData.student_city = "{$eventInfo.city}";
+                                objData.student_area = "{$eventInfo.area}";
+                                var url = "{:url('api/student/createStudentApi')}";
+                                var ajaxResult = wooApi.asyncF(url, objData);
+                                // console.log(ajaxResult);
+
+                                if (ajaxResult.code == 200) {
+                                    mui.toast(ajaxResult.msg);
+                                    location.reload()
+                                } else {
+                                    mui.toast(ajaxResult.msg);
+                                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                        if (data.code === 200) {
+                                            $('input[name=__token__]').val(data.data);
+                                        }
+                                    }, 'json');
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+
+
             // 获取学生数据
             getStudentList();
 
         });
+
+        //判断要新添加的学生是否存在
+        function isExistOption(newName){
+            var isExist = false;
+            var optName ='';
+            $("input.student").each(function () {
+                optName = $(this).val();
+                if(newName==optName){
+                    isExist = true;
+                    return false;
+                }
+            });
+            return isExist;
+        }
 
         // 获取学生数据
         function getStudentList(){
