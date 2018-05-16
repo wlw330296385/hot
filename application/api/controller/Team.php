@@ -2467,7 +2467,7 @@ class Team extends Base
             // 点赞字段值
             $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
             // 点赞数统计
-            $thumbupCount = $teamS->getCommentThumbCount([
+            $thumbupCount = $teamS->getCommentThumbsCount([
                 'comment_type' => $comment_type,
                 'commented_id' => $commented_id,
             ]);
