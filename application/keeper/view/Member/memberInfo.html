@@ -240,6 +240,10 @@
                                 <span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
                             </div>
                             <div class="mui-input-row">
+                                <label>个人宣言</label>
+                                <span>{$memberInfo.descri}</span>
+                            </div>
+                            <div class="mui-input-row">
                                 <label>注册时间</label>
                                 <span class="">{$memberInfo['create_time']}</span>
                             </div>
@@ -317,6 +321,10 @@
                             <input type="hidden" name="province" value="{$memberInfo['province']}" id="province">
                             <input type="hidden" name="city" value="{$memberInfo['city']}" id="city">
                             <input type="hidden" name="area" value="{$memberInfo['area']}" id="area">
+                        </div>
+                        <div class="mui-input-row h-auto">
+                            <label>个人宣言</label>
+                            <textarea rows="3" name="descri" class="descri" value="{$memberInfo.descri}" placeholder="个人宣言">{$memberInfo.descri}</textarea>
                         </div>
                         <div class="mui-input-row">
                             <label>注册时间</label>
@@ -521,6 +529,7 @@
                     var city = $("#editor input[name=city]").val();
                     var area = $("#editor input[name=area]").val();
                     var yearsexp = $("#editor .yearsexp").text();
+                    var descri = $("#editor .descri").val();
                     if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
@@ -532,7 +541,8 @@
                                 province: province,
                                 city: city,
                                 area: area,
-                                yearsexp: yearsexp
+                                yearsexp: yearsexp,
+                                descri: descri
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型

@@ -1434,4 +1434,9 @@ class Team extends Base
             'endYear' => $endYear
         ]);
     }
+
+    // 球队章程
+    public function constitutionOfTeam() {
+        return view('Team/constitutionOfTeam');
+    }
 }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>章程</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">章程</h1>
+    </header>
+
+    <div class="mui-content list mt44">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <form action="" class="mui-input-group">
+            <textarea name="constitution" class="data constitution" style="display: none"></textarea>
+            <div id="articleEditor" class="tuwenIntro"></div>
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
+        </ul>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'constitution'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script>
+        var Edr = new Eleditor({
+            el: '#articleEditor', //容器
+            upload: {
+                server: uploadApiUrl, //填写你的后端上传路径
+                fileSizeLimit: 2 //限制图片上传大小，单位M
+            },
+            placeHolder: '点击编辑章程',
+        });
+    </script>
+    <script>
+        // 获取数据并进行提交
+        function submitAction() {
+
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
+            //获取最终含简单html标签的图文内容
+            var introHtml = $("#articleEditor").html();
+            $(".constitution_des").val(introHtml);
+            console.log(introHtml)
+
+            // var data = wooApi.getInputData('input', 'data');
+            // datas = wooApi.getInputData('select', 'data', data);
+            // // 获取其他标签值
+            // arrData = wooApi.getDomData('domData', datas);
+            // var objData = wooApi.arrTOobj(arrData);
+
+            // var constitution_des = $('textarea.constitution_des').val();
+            // objData.constitution_des = constitution_des; 
+
+            // var url = "{:url('api/team/constitution')}";
+            // var ajaxResult = wooApi.asyncF(url, objData);
+
+            // if (ajaxResult.code == 200) {
+            //     mui.alert(ajaxResult.msg, '章程创建成功', '确定', function () {
+            //         var goUrl = "{:url('team/teamManage')}/" + '/team_id/' + "{$team_id}";
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '章程创建失败', function () {
+            //         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑章程</p>");
+            //     });
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //             $('input[name=__token__]').val(data.data);
+            //         }
+            //     }, 'json');
+            // }
+        };
+    </script>
+</body>
+
+</html>

@@ -161,6 +161,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -189,9 +190,11 @@
 
         $(function () {
 
+
             //初始化全局变量
             var count = 1;
             var sYear = '';
+            var statics = wooApi.GetQueryString('statics');
 
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
@@ -255,14 +258,25 @@
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
                 var team_id = "{$team_id}"
+                if (statics == '' || statics == null) {
+                    var data = {
+                        team_id: team_id,
+                        is_finished: 1,
+                        status: 1,
+                        year: sYear,
+                    }
+                } else {
+                    var data = {
+                        team_id: team_id,
+                        is_finished: 1,
+                        status: 1,
+                        year: sYear,
+                        has_statics:1
+                    }
+                }
                 mui.ajax({
                     url: url,
-                    data: {
-                        team_id: team_id,
-                        is_finished:1,
-                        status:1,
-                        year: sYear,
-                    },
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -271,6 +285,7 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
+                            
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
                                 var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
