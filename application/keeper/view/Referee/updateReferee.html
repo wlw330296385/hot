@@ -49,49 +49,25 @@
                     <input type="text" name="referee" class="input realname data" placeholder="请输入真实姓名" value="{$refereeInfo.referee}">
                 </div>
 
-                <!-- {if !empty($idcard)} -->
                 <!-- 有上传身份证 -->
                 <div class="mui-input-row">
                     <label>身份证号码</label>
-                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码" value="{$idcard.cert_no}">
+                    <input type="text" class="input wd54 data" name="idno" placeholder="请输入身份证号码" value="{if $idcard}{$idcard.cert_no}{/if}">
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                         <label>身份证正面</label>
-                        <img id="preview_1" class="refereeicon icon01 upload-preview" src="{$idcard.photo_positive}" alt="">
-                        <input type="hidden" class="data" name="photo_positive" value="{$idcard.photo_positive}">
+                        <img id="preview_1" class="refereeicon icon01 upload-preview" {if $idcard}src="{$idcard.photo_positive}"{/if} alt="">
+                        <input type="hidden" class="data" name="photo_positive" value="{if $idcard}{$idcard.photo_positive}{/if}">
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
-                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="{$idcard.photo_back}" alt="">
-                        <input type="hidden" class="data" name="photo_back" value="{$idcard.photo_back}">
+                        <img id="preview_2" class="refereeicon icon01 upload-preview" {if $idcard}src="{$idcard.photo_back}"{/if} alt="">
+                        <input type="hidden" class="data" name="photo_back" value="{if $idcard}{$idcard.photo_back}{/if}">
                     </a>
                 </div>
-
-                <!-- {else /} -->
-                <!-- 没上传身份证 -->
-                <!-- <div class="mui-input-row">
-                    <label>身份证号码</label>
-                    <input type="text" name="idno" class="input wd54 idno data" placeholder="请输入身份证号码">
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(1)">
-                        <label>身份证正面</label>
-                        <img id="preview_1" class="refereeicon icon01 upload-preview" src="" alt="">
-                        <input type="hidden" name="photo_positive" class="data" value="">
-                    </a>
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(2)">
-                        <label>身份证反面</label>
-                        <img id="preview_2" class="refereeicon icon01 upload-preview" src="" alt="">
-                        <input type="hidden" name="photo_back" class="data" value="">
-                    </a>
-                </div> -->
-                <!-- {/if} -->
-
 
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
@@ -116,25 +92,15 @@
                         </select>
                     </span>
                 </div>
-                <!-- {if !empty($license)} -->
+
                 <!-- 有资质证明 -->
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(4)">
                         <label>资质证明</label>
-                        <img id="preview_4" class="refereeicon icon01 upload-preview" src="{$license.photo_positive}">
-                        <input type="hidden" class="data" name="cert" value="{$license.photo_positive}">
+                        <img id="preview_4" class="refereeicon icon01 upload-preview" {if $license}src="{$license.photo_positive}"{/if}>
+                        <input type="hidden" class="data" name="cert" value="{if $license}{$license.photo_positive}{/if}">
                     </a>
                 </div>
-                <!-- {else /} -->
-                <!-- 无资质证明 -->
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
-                        <label>资质证明</label>
-                        <img id="preview_4" class="refereeicon icon01 upload-preview" src="" alt="">
-                        <input type="hidden" class="data" name="cert" value="">
-                    </a>
-                </div>
-                {/if} -->
 
                 <div class="mui-input-row">
                     <label>执裁经验</label>
