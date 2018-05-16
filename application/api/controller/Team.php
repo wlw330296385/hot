@@ -2366,7 +2366,7 @@ class Team extends Base
         $canDel = 0;
         // 评论所属球队队委角色以上
         if ($comment['team_id']) {
-            $teamrole = $teamS->checkMemberTeamRole($val['team_id'], $this->memberInfo['id']);
+            $teamrole = $teamS->checkMemberTeamRole($comment['team_id'], $this->memberInfo['id']);
             if ($teamrole) {
                 $canDel = 1;
             }
@@ -2432,7 +2432,7 @@ class Team extends Base
             $result = $teamS->saveComment($data);
             if ($result['code'] == 200) {
                 // 返回最新的点赞数统计
-                $thumbsupCount = $teamS->getCommentThumbCount([
+                $thumbsupCount = $teamS->getCommentThumbsCount([
                     'comment_type' => $comment_type,
                     'commented_id' => $commented_id,
                 ]);
