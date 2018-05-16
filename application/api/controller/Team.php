@@ -2229,9 +2229,24 @@ class Team extends Base
             // 返回结果
             $result = $teamS->getCommentList($map, $page);
             if ($result) {
+                // 评论列表数据删除按钮标识：
+                foreach ($result as $k => $val) {
+                    $result[$k]['can_delete'] = 0;
+                    // 评论发布者可删自己的评论记录，
+                    if ( $this->memberInfo['id'] == $val['member_id'] ) {
+                        $result[$k]['can_delete'] = 1;
+                    }
+                    // 评论所属球队队委角色以上
+                    if ($val['team_id']) {
+                        $teamrole = $teamS->checkMemberTeamRole($val['team_id'], $this->memberInfo['id']);
+                        if ($teamrole) {
+                            $result[$k]['can_delete'] = 1;
+                        }
+                    }
+                }
                 // 返回点赞数
-                $thumbupCount = $teamS->getCommentThumbCount($map);
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+                $thumbupsCount = $teamS->getCommentThumbsCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupsCount];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
@@ -2258,9 +2273,24 @@ class Team extends Base
             // 返回结果
             $result = $teamS->getCommentPaginator($map);
             if ($result) {
+                // 评论列表数据删除按钮标识：
+                foreach ($result['data'] as $k => $val) {
+                    $result['data'][$k]['can_delete'] = 0;
+                    // 评论发布者可删自己的评论记录，
+                    if ( $this->memberInfo['id'] == $val['member_id'] ) {
+                        $result['data'][$k]['can_delete'] = 1;
+                    }
+                    // 评论所属球队队委角色以上
+                    if ($val['team_id']) {
+                        $teamrole = $teamS->checkMemberTeamRole($val['team_id'], $this->memberInfo['id']);
+                        if ($teamrole) {
+                            $result['data'][$k]['can_delete'] = 1;
+                        }
+                    }
+                }
                 // 返回点赞数
-                $thumbupCount = $teamS->getCommentThumbCount($map);
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupCount];
+                $thumbupsCount = $teamS->getCommentThumbsCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupsCount];
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
             }
@@ -2317,6 +2347,47 @@ class Team extends Base
             return json($res);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 删除球队评论
+    public function delteamcomment() {
+        $id  = input('post.id');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询评论数据
+        $teamS = new TeamService();
+        $comment = $teamS->getCommentInfo(['id' => $id]);
+        if (!$comment) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 可删除数据标识
+        $canDel = 0;
+        // 评论所属球队队委角色以上
+        if ($comment['team_id']) {
+            $teamrole = $teamS->checkMemberTeamRole($val['team_id'], $this->memberInfo['id']);
+            if ($teamrole) {
+                $canDel = 1;
+            }
+        }
+        // 评论发布者可删自己的评论记录，
+        if ($comment['member_id'] == $this->memberInfo['id']) {
+            $canDel = 1;
+        }
+        // 无权限删除
+        if (!$canDel) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $res = $teamS->delComment($comment['id']);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if ($res) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
 

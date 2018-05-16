@@ -981,7 +981,7 @@ class TeamService
     }
 
     // 球队模块点赞数统计
-    public function getCommentThumbCount($map)
+    public function getCommentThumbsCount($map)
     {
         $model = new TeamComment();
         $map['thumbsup'] = 1;
@@ -1023,6 +1023,22 @@ class TeamService
         } else {
             return $res;
         }
+    }
+
+    // 删除评论内容
+    public function delComment($id) {
+        $model = new TeamComment();
+        // 清空comment comment_time内容
+        $res = $model->save([
+            'id' => $id,
+            'comment' => '',
+            'comment_time' => null
+        ]);
+        if ($res === false) {
+            trace('error message:'.$model->getError().'; \n sql:'.$model->getLastSql().'');
+            return false;
+        }
+        return $res;
     }
 
     // 保存球队公告信息
