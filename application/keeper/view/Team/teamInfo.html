@@ -538,7 +538,8 @@
 
     <!-- 删除评论弹框 -->
     <div id="deletepl" class="mui-popover">
-        <p class="commemtDeleteBtn">删除</p>
+        <p class="commemtDeleteBtn">
+            <input type="hidden" class="checkDelId" value="">删除</p>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -690,10 +691,58 @@
             });
 
 
+            // 点击评论赋值标记
+            $(document).on("tap", ".comment-list li", function () {
+                $(".checkDelId").val($(this).attr("data-id"))
+            })
             // 删除评论
-            // $(document).on("tap", ".comment-list li", function () {
-            //     mui.toast("123")
-            // })
+            // $(document).on("tap", ".commemtDeleteBtn", function () {
+            //     var thisID = $(this).children().val();
+            //     console.log(thisID)
+            //     var liId = ''
+            //     $(".comment-list li").each(function () {
+            //         liId = $(this).attr("data-id");
+            //         console.log(thisID)
+            //         if (thisID == liId) {
+            //             $(this).remove();
+            //         }
+            //     })
+            //     mui('#deletepl').popover('toggle');
+            // });
+
+            //删除评论功能
+            $(document).on("tap", ".commemtDeleteBtn", function () {
+                var thisID = $(this).children().val();
+                var liId = ''
+                mui.ajax("{:url('api/team/delteamcomment')}", {
+                    data: {
+                        id: thisID,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".comment-list li").each(function () {
+                                liId = $(this).attr("data-id");
+                                if (thisID == liId) {
+                                    $(this).remove();
+                                }
+                            })
+                            mui('#deletepl').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#deletepl').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             // 发表印象标签
             $(".impressBtn").on("tap", '', function () {
@@ -1042,7 +1091,7 @@
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli"><a href="#deletepl"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '"><a href="#deletepl"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
                         }
                     } else {
                         $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
