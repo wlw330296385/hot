@@ -108,9 +108,11 @@
                             <i class="tip">*</i>
                         </label>
                         <span class="location-choise max">
+                            {eq name="onlycamptype" value="1"}
+                            训练营<input type="hidden" class="data" name="type" value="1">
+                            {else/}
                             <select id="teamType" class="data" name="type">
                                 <option value="">--请选择--</option>
-                                <option value="1">训练营</option>
                                 <option value="2">企事业单位</option>
                                 <option value="3">业余组织</option>
                                 <option value="4">大学生</option>
@@ -118,10 +120,11 @@
                                 <option value="6">初中生</option>
                                 <option value="7">小学生</option>
                             </select>
+                            {/eq}
                         </span>
                     </div>
                 </div>
-
+                {eq name="onlycamptype" value="1"}
                 <div class="mui-input-row camp-input-row">
                     <a href="#camp" class="mui-navigate-right">
                         <label class="wd36">所属训练营
@@ -131,7 +134,7 @@
                         <input type="hidden" name="camp_id" value="" class="camp_id data">
                     </a>
                 </div>
-
+                {/eq}
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <div class="mui-navigate-right">
@@ -868,7 +871,7 @@
 
         //训练营列表接口获取数据并追加到页面
         var toCampList = function (keyword, wCamp, page) {
-            var url = "{:url('api/camp_member/getCampMemberListByPageApi','','',true)}/?page=" + page;
+            var url = "{:url('api/camp_member/getcampworkerpage','','',true)}/?page=" + page;
             var wCampList = "ul.campList";
             var currPage = ".currPage";
             var totalPage = ".camptotalPage";

@@ -11,6 +11,7 @@ use app\service\MatchService;
 use app\service\MemberService;
 use app\service\RefereeService;
 use app\service\TeamService;
+use think\Cookie;
 
 class Team extends Base
 {
@@ -48,7 +49,11 @@ class Team extends Base
     // 创建球队
     public function createteam()
     {
-        return view('Team/createTeam');
+        // 球队类型只能“训练营”标识
+        $onlycamptype = ( Cookie::has('module') && Cookie::get('module') == 'frontend' ) ? 1 : 0;
+        return view('Team/createTeam', [
+            'onlycamptype' => $onlycamptype
+        ]);
     }
 
     // 球队管理
@@ -57,7 +62,7 @@ class Team extends Base
         // 获取会员在球队角色身份
         $teamS = new TeamService();
         $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
-        //dump($teamrole);
+
         $this->assign('teamrole', $teamrole);
         return view('Team/teamManage');
     }
@@ -100,9 +105,14 @@ class Team extends Base
         $roleslist['committee_ids'] = rtrim($roleslist['committee_ids'], ',');
         // 教练、队委名单集合组合 end
 
-        $this->assign('rolemembers', $rolemembers);
-        $this->assign('roleslist', $roleslist);
-        return view('Team/teamEdit');
+        // 球队类型只能“训练营”标识
+        $onlycamptype = ( Cookie::has('module') || Cookie::get('module') == 'frontend' ) ? 1 : 0;
+
+        return view('Team/teamEdit', [
+            'rolemembers' => $rolemembers,
+            'roleslist' => $roleslist,
+            'onlycamptype' => $onlycamptype
+        ]);
     }
 
     // 球队首页

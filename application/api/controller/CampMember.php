@@ -807,5 +807,76 @@ class CampMember extends Base
         }
     }
 
+    // 训练营工作人员列表
+    public function getcampworkerlist() {
+        try {
+            $map = input('param.');
+            $page = input('page', 1);
+            $map['type'] = ['gt', 1];
+            if ( array_key_exists('keyword', $map) ) {
+                $keyword = $map['keyword'];
+                if ( $keyword == null ) {
+                    unset($map['keyword']);
+                }
+                if ( !empty($keyword) || !ctype_space($keyword) ) {
+                    $map['camp|member'] = ['like', '%'.$keyword.'%'];
+                }
+                unset($map['keyword']);
+            }
+            if ( input('?page') ) {
+                unset($map['page']);
+            }
+            $result = db('camp_member')
+                ->where($map)
+                ->whereNull('delete_time')
+                ->order(['id'=>'desc'])
+                ->page($page)
+                ->limit(10)
+                ->select();
+            if ($result) {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            } else {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 训练营工作人员列表
+    public function getcampworkerpage() {
+        try {
+            $map = input('param.');
+            $page = input('page', 1);
+            $map['type'] = ['gt', 1];
+            if ( array_key_exists('keyword', $map) ) {
+                $keyword = $map['keyword'];
+                if ( $keyword == null ) {
+                    unset($map['keyword']);
+                }
+                if ( !empty($keyword) || !ctype_space($keyword) ) {
+                    $map['camp|member'] = ['like', '%'.$keyword.'%'];
+                }
+                unset($map['keyword']);
+            }
+            if ( input('?page') ) {
+                unset($map['page']);
+            }
+            $result = db('camp_member')
+                ->where($map)
+                ->whereNull('delete_time')
+                ->order(['id'=>'desc'])
+                ->paginate(10);
+            if ($result) {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            } else {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
 }
 
