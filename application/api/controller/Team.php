@@ -106,6 +106,35 @@ class Team extends Base
         }
     }
 
+    // 设置球队章程
+    public function setconstitution() {
+        $data = input('post.');
+        if ( !array_key_exists('id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 根据id获取球队信息
+        $teamS = new TeamService();
+        $team = $teamS->getTeam(['id' => $data['id']]);
+        if (!$team) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查球队角色
+        if ( $this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $teamrole = $teamS->checkMemberTeamRole($team['id'], $this->memberInfo['id']);
+        if (!$teamrole) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $teamS->updateTeam($data, $team['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
+    }
+
     // 球队列表有分页页码
     public function teamlistpage()
     {

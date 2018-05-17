@@ -23,9 +23,10 @@
 
     <div class="mui-content list mb44">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
         <form action="" class="mui-input-group">
             <textarea name="constitution" class="data constitution" style="display: none"></textarea>
-            <div id="articleEditor" class="tuwenIntro"></div>
+            <div id="articleEditor" class="tuwenIntro">{$teamInfo.constitution}</div>
         </form>
 
         <ul class="mui-table-view operation">
@@ -61,36 +62,36 @@
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
             var introHtml = $("#articleEditor").html();
-            $(".constitution_des").val(introHtml);
+            $(".constitution").val(introHtml);
             console.log(introHtml)
 
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
 
-            // var constitution_des = $('textarea.constitution_des').val();
-            // objData.constitution_des = constitution_des; 
+            var constitution = $('textarea.constitution').val();
+            objData.constitution = constitution;
 
-            // var url = "{:url('api/team/constitution')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
+            var url = "{:url('api/team/setconstitution')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
 
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '章程创建成功', '确定', function () {
-            //         var goUrl = "{:url('team/teamManage')}/" + '/team_id/' + "{$team_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '章程创建失败', function () {
-            //         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑章程</p>");
-            //     });
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '章程创建成功', '确定', function () {
+                    var goUrl = "{:url('team/teamManage')}/" + '/team_id/' + "{$team_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '章程创建失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑章程</p>");
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
 </body>
