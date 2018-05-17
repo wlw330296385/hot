@@ -284,4 +284,19 @@ class Member extends Base{
         return view('Member/collectList');
     }
 
+    // 我的球队
+    public function myTeam(){
+        return view('Member/myTeam');
+    }
+
+     // 我的比赛
+     public function myMatch(){
+        return view('Member/myMatch');
+    }
+
+     // 首页收集会员资料页面（登记简单资料）
+     public function registerInfo(){
+        return view('Member/registerInfo');
+    }
+
 }
