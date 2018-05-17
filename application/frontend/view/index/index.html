@@ -93,7 +93,24 @@
                 width: 78% !important;
             }
         }
+
+        .dragClass {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            position: fixed;
+            background-color: #e21c15;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            top: 160px;
+            right: 0;
+            color: #fff;
+            box-shadow: 0 0 10px 0 #000;
+            z-index: 11;
+        }
     </style>
+
 </head>
 
 <body class="mt44 mt55">
@@ -257,7 +274,8 @@
 
             <!-- 最新消息 -->
             <div class="page-header whitebg mb">
-                <span class="course" style="width: 100% !important">欢迎<text class="colororange">{$memberInfo.member}</text>使用篮球管家－培训服务平台</span>
+                <span class="course" style="width: 100% !important">欢迎
+                    <text class="colororange">{$memberInfo.member}</text>使用篮球管家－培训服务平台</span>
                 <!-- <span class="more">
                     <a href="" class="mui-navigate-right">更多</a>
                 </span> -->
@@ -362,6 +380,8 @@
 
     </div>
 
+    <div class="dragClass" id="drag">我要学球</div>
+
     <div id="menu-wrapper" class="menu-wrapper hidden">
         <div id="menu" class="menu search">
             <!--搜索执行-->
@@ -427,6 +447,7 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/common.js?v={:time()}"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
+
     <script>
         //初始化
         mui.init({
@@ -482,7 +503,7 @@
         mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-        
+
         var member_id = "{$memberInfo.id}";
         $(function () {
 
@@ -1099,14 +1120,70 @@
         })
     </script> {/if}
 
-
     <!-- 平台礼包结束 -->
 
+    <!-- 悬浮拖动按钮 -->
+    <script>
+        window.onload = function () {
+            var flag = 0; //标记是拖曳还是点击
+            var oDiv = document.getElementById('drag');
+            var disX, moveX, L, T, starX, starY, starXEnd, starYEnd;
+            oDiv.addEventListener('touchstart', function (e) {
+                flag = 0;
+                e.preventDefault();//阻止触摸时页面的滚动，缩放
+                disX = e.touches[0].clientX - this.offsetLeft;
+                disY = e.touches[0].clientY - this.offsetTop;
+                //手指按下时的坐标
+                starX = e.touches[0].clientX;
+                starY = e.touches[0].clientY;
+                //console.log(disX);
+            });
+            oDiv.addEventListener('touchmove', function (e) {
+                flag = 1;
+                L = e.touches[0].clientX - disX;
+                T = e.touches[0].clientY - disY;
+                //移动时 当前位置与起始位置之间的差值
+                starXEnd = e.touches[0].clientX - starX;
+                starYEnd = e.touches[0].clientY - starY;
+                //console.log(L);
+                if (L < 0) {
+                    //限制拖拽的X范围，不能拖出屏幕
+                    L = 0;
+                } else if (L > document.documentElement.clientWidth - this.offsetWidth) {
+                    L = document.documentElement.clientWidth - this.offsetWidth;
+                }
+                if (T < 0) {
+                    //限制拖拽的Y范围，不能拖出屏幕
+                    T = 0;
+                } else if (T > document.documentElement.clientHeight - this.offsetHeight) {
+                    T = document.documentElement.clientHeight - this.offsetHeight;
+                }
+                moveX = L + 'px';
+                moveY = T + 'px';
+                //console.log(moveX);
+                this.style.left = moveX;
+                this.style.top = moveY;
+            });
+            // window.addEventListener('touchend', function (e) {
+            //     //alert(parseInt(moveX))
+            //     //判断滑动方向
+            //     if (flag === 0) {
+            //         //点击
+
+            //     }
+            // });
+        }
+
+        $("#drag").on("tap", "", function () {
+            if ($('input[name=mid]').val() == 0) {
+                window.location.href = "{$fasturl}";
+            } else {
+                window.location.href = "{:url('Member/registerInfo')}";
+            }
+        })
+    </script>
 
 
 </body>
-
-
-
 
 </html>
