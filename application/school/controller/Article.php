@@ -1,6 +1,6 @@
 <?php 
 namespace app\school\controller;
-use app\frontend\controller\Base;
+use app\school\controller\Base;
 use app\service\ArticleService;
 use app\service\WechatService;
 class Article extends Base{

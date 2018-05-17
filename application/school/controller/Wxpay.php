@@ -1,5 +1,5 @@
 <?php 
-namespace frontend\Controller;
+namespace app\school\Controller;
 
 use Think\Controller;
 use Think\Log;

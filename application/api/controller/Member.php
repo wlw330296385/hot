@@ -73,6 +73,16 @@ class Member extends Base{
             // 更新member数据
             $result = $this->MemberService->updateMemberInfo($data, ['id'=>$member_id]);
             if ($result['code'] == 200) {
+                // 性别发生更新：教练、裁判更新
+                if ( $data['sex'] != $this->memberInfo['sex'] ) {
+                    $coachS = new \app\service\CoachService();
+                    $coach = $coachS->coachInfo(['member_id' => $member_id]);
+                    if ($coach) {
+                        $coachS->updateCoach([
+                            'sex' => $data['sex']
+                        ], $coach['id']);
+                    }
+                }
                 // 更新member数据成功 同步更新会员所在球队的球员信息
                 $teamS = new TeamService();
                 $teamS->saveTeamMember([

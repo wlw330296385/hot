@@ -1,6 +1,6 @@
 <?php 
 namespace app\school\controller;
-use app\frontend\controller\Base;
+use app\school\controller\Base;
 use app\service\BillService;
 use app\service\WechatService;
 class Bill extends Base{

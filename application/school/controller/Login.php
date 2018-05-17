@@ -66,10 +66,10 @@ class Login extends Controller{
                      cookie('url',null);
                      $this->redirect( $url );
                  }else{
-                     $this->redirect('frontend/Index/index');
+                     $this->redirect('school/Index/index');
                  }
                 // } else {
-//                    $this->redirect('frontend/Index/index');
+//                    $this->redirect('school/Index/index');
                 // }
             } else {
                 $member = [
@@ -83,11 +83,11 @@ class Login extends Controller{
                     'telephone' =>'',
                     'email' =>'',
                     'realname'  =>'',
-                    'province'  =>'',
-                    'city'  =>'',
+                    'province'  => ($userinfo['province']) ? $userinfo['province'] : '',
+                    'city'  => ($userinfo['province']) ? $userinfo['province'] : '',
                     'area'  =>'',
                     'location'  =>'',
-                    'sex'   =>0,
+                    'sex'   => $userinfo['sex'],
                     'height'    =>0,
                     'weight'    =>0,
                     'charater'  =>'',
@@ -102,6 +102,8 @@ class Login extends Controller{
                     'balance'   =>0,
                     'remarks'   =>0,
                     'hot_id'=>00000000,
+                    'age' => 0,
+                    'fans' => 0
                 ];
                 cookie('mid', 0);
                 cookie('openid', $userinfo['openid']);
@@ -113,14 +115,14 @@ class Login extends Controller{
                      cookie('url',null);
                      $this->redirect( $url );
                  }else{
-                    $this->redirect('frontend/Index/index');
+                    $this->redirect('school/Index/index');
                  }
                 // } else {
-//                    $this->redirect('frontend/Index/index');
+//                    $this->redirect('school/Index/index');
                 // }
             }
         } else {
-            $this->redirect('frontend/index/index');
+            $this->redirect('school/index/index');
         }
     }
 
@@ -143,11 +145,11 @@ class Login extends Controller{
                 'telephone' =>'',
                 'email' =>'',
                 'realname'  =>'',
-                'province'  =>'',
-                'city'  =>'',
+                'province'  => ($userinfo['province']) ? $userinfo['province'] : '',
+                'city'  => ($userinfo['province']) ? $userinfo['province'] : '',
                 'area'  =>'',
                 'location'  =>'',
-                'sex'   =>0,
+                'sex'   => $userinfo['sex'],
                 'height'    =>0,
                 'weight'    =>0,
                 'charater'  =>'',
@@ -162,6 +164,8 @@ class Login extends Controller{
                 'balance'   =>0,
                 'remarks'   =>0,
                 'hot_id'=>00000000,
+                'age' => 0,
+                'fans' => 0
             ];
             cookie('mid', 0);
             cookie('openid', $userinfo['openid']);
@@ -170,7 +174,7 @@ class Login extends Controller{
         }
         $pid = cookie('pid');
         if($pid){
-            $memberInfoP = db('member')->where(['id'=>$pid])->find();
+            $memberInfoP =  $memberS->getMemberInfo(['id' => $pid]);
         }else{
             $memberInfoP = [];
         }

@@ -143,6 +143,7 @@ class Referee extends Base{
             $request = $this->request->post();
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
+            $request['sex'] = $this->memberInfo['sex'];
             $request['status'] = 0;
             $request['portraits'] = empty($request['portraits']) ? $this->memberInfo['avatar'] : $request['portraits'];
 
@@ -226,7 +227,6 @@ class Referee extends Base{
             if ( $license && ($request['cert'] != $license['photo_positive']) ) {
                 $certdata['id'] = $license['id'];
                 $certdata['status'] = 0;
-                $request['status'] = 0;
             }
             $cert = $certS->saveCert($certdata);
             if ($cert['code'] == 100) {

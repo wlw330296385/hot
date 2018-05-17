@@ -110,8 +110,7 @@ class Base extends Frontend {
                 'id' => 0,
                 'member' => '游客',
                 'nickname' => '游客',
-                'openid'=>0,
-                'avatar' => '/static/default/avatar.png',
+                'avatar' => config('default_image.member_avatar'),
                 'hp' => 0,
                 'level' => 0,
                 'telephone' =>'',
@@ -143,13 +142,9 @@ class Base extends Frontend {
             cookie('member', md5($member['id'].$member['member'].config('salekey')) );
             session('memberInfo', $member, 'think');
             $this->memberInfo = session('memberInfo', '', 'think');
-            //if (cookie('url')) {
-                $url = cookie('url');
-                cookie('url',null);
-                $this->redirect( $url );
-//            } else {
-//                $this->redirect( 'frontend/index/index' );
-//            }
+            $url = cookie('url');
+            cookie('url',null);
+            $this->redirect( $url );
         }
 	}
 
