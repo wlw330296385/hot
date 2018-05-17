@@ -78,9 +78,12 @@ class Member extends Base{
                     $coachS = new \app\service\CoachService();
                     $coach = $coachS->coachInfo(['member_id' => $member_id]);
                     if ($coach) {
-                        $coachS->updateCoach([
-                            'sex' => $data['sex']
-                        ], $coach['id']);
+                       db('coach')->update(['id' => $coach['id'], 'sex' => $data['sex']]);
+                    }
+                    $refereeS = new \app\service\RefereeService();
+                    $referee = $refereeS->getRefereeInfo(['member_id' => $member_id]);
+                    if ($referee) {
+                        db('referee')->update(['id' => $referee['id'], 'sex' => $data['sex']]);
                     }
                 }
                 // 更新member数据成功 同步更新会员所在球队的球员信息

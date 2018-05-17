@@ -175,6 +175,7 @@ class Coach extends Base{
                 'coach' => input('post.coach'),
                 'member_id' => $this->memberInfo['id'],
                 'member' => $this->memberInfo['member'],
+                'sex' => $this->memberInfo['sex'],
                 'coach_year' => input('post.coach_year'),
                 'experience' => input('post.experience'),
                 'introduction' => input('post.introduction'),
