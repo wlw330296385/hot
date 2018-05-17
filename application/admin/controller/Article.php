@@ -31,17 +31,17 @@ class Article extends Backend {
         $articleList = $this->ArticleService->getArticleListByPage($map);
         $this->assign('field',$field);
         $this->assign('articleList',$articleList);    
-        return view('Article/articleList');
+        return view('article/articleList');
     	
     }
 
     public function articleInfo(){
         $article_id = input('param.article_id');
-        $map['id'] = $article_id;
+        $map['id'] = $araticle_id;
         $articleInfo = $this->ArticleService->getArticleInfo($map);
 
         $this->assign('articleInfo',$articleInfo);
-        return  view('Article/articleInfo');
+        return  view('article/articleInfo');
     }
 
     public function createArticle(){
@@ -57,7 +57,7 @@ class Article extends Backend {
             }
         }
 
-        return view('Article/createArticle');
+        return view('article/createArticle');
     }
 
 
@@ -84,7 +84,7 @@ class Article extends Backend {
 
         $this->assign('articleInfo',$articleInfo);
 
-        return view('Article/updateArticle');
+        return view('article/updateArticle');
     }
 
 }
