@@ -716,7 +716,11 @@
                                 if (thisID == liId) {
                                     $(this).remove();
                                 }
+                                if ($(".comment-list").html() == '') {
+                                    $(".comment-list").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                                }
                             })
+                            toCommentList();
                             mui('#deletepl').popover('toggle');
                         } else {
                             mui.toast(data.msg);
@@ -1082,6 +1086,7 @@
                         }
                     } else {
                         $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        $(".comment_count").text("0");
                     }
                     if (gType == 1) {
                         //上拉刷新

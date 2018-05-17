@@ -118,7 +118,7 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view mb">
+            <ul class="mui-table-view mb memberDescri">
                 <li class="mui-table-view-cell listli detalisli">
                     <span class="about mui-text-left">{$memberInfo.descri}</span>
                 </li>
@@ -435,7 +435,7 @@
         var id = "{$memberInfo.id}";
         var sYear = '';
         $(function () {
-            
+
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
             if (tips == '') {
@@ -458,6 +458,11 @@
             $(document).on("tap", '.myimpress', function () {
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
+            
+            // 个人宣言有无判断
+            if ("{$memberInfo.descri}" == '') {
+                $(".memberDescri").hide();
+            }
 
             // 关注会员
             $(".follow").on("tap", '', function () {

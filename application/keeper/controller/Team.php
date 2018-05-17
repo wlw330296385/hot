@@ -1446,6 +1446,11 @@ class Team extends Base
     }
 
     // 球队章程
+    public function myTeamList() {
+        return view('Team/myTeamList');
+    }
+
+    // 球队章程
     public function constitutionOfTeam() {
         return view('Team/constitutionOfTeam');
     }
