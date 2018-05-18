@@ -14,9 +14,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
 </head>
 
-<body class=whitebg>
+<body>
 
-    <header id="header" class="mui-bar mui-bar-transparent">
+    <header class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
     <!--活动详情页-->
@@ -36,7 +36,8 @@
                                 <span class="nofloat"> / 人</span>
                             </p>
                             <p class="price">
-                                <span class="nofloat">已报名<font class="participator">{$eventInfo.participator}</font>人</span>
+                                <span class="nofloat">已报名
+                                    <font class="participator">{$eventInfo.participator}</font>人</span>
                             </p>
                         </div>
                     </a>
@@ -124,11 +125,11 @@
                 </li>
             </ul>
 
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header">
                 <span class="course">活动简介</span>
             </div>
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli introBox">{$eventInfo.event_des}</li>
+                <li class="mui-table-view-cell listli desimg">{$eventInfo.event_des}</li>
             </ul>
 
             <!--推荐人信息-->
@@ -182,14 +183,14 @@
         </ul>
     </div>
 
-     <!--分享-->
-     <div id="shareGuide" class="mui-popover">
-            <div class="shareGuideText">1、点击右上角的
-                <span class="shareEllipsis">···</span>
-                <img src="/static/frontend/images/esp.png" alt="">
-            </div>
-            <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
         </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
 
     <!-- 卡券弹框 -->
     <div id="cppopover" class="mui-popover" style="width: 95% !important;">
@@ -260,8 +261,8 @@
         $(function () {
 
             var eID = "{$eventInfo.id}";
-            if(eID=="29"){
-                var getParticipator = parseInt($(".participator").text())+20;
+            if (eID == "29") {
+                var getParticipator = parseInt($(".participator").text()) + 20;
                 $(".participator").text(getParticipator)
             }
 
@@ -290,8 +291,8 @@
             })
 
             var surplus = "{$eventInfo.max}" - "{$eventInfo.participator}";
-            if(eID=="29"){
-                surplus = surplus-20;
+            if (eID == "29") {
+                surplus = surplus - 20;
             }
             $(".surplus").text(surplus)
 
