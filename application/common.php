@@ -213,32 +213,31 @@ function getMemberOpenid($memberid) {
 }
 
 // 生日日期计算年龄
-function getAgeByBirthday($birthdate) {
+function getAgeByBirthday($birthday) {
     $iage = 0;
-    // 检查生日日期是否是一个合法date格式
-    if (checkDatetimeIsValid($birthdate)) {
-        $birthday_timestamp = strtotime($birthdate);
-        //格式化出生时间年月日
-        $birth_y = date('Y', $birthday_timestamp);
-        $birth_m = date('m', $birthday_timestamp);
-        $birth_d = date('d', $birthday_timestamp);
-        //格式化当前时间年月日
-        $now_y = date('Y');
-        $now_m = date('m');
-        $now_d = date('d');
-        //开始计算年龄
-        $iage = $now_y-$birth_y;
-        if ($iage > 0) {
-            if ($birth_m > $now_m || $birth_m == $now_m && $birth_d > $now_d) {
-                $iage--;
-            }
-        } else { //年龄数字非负
-            $iage = 0;
+    if ( checkDatetimeIsValid($birthday) ) {
+        list($by, $bm, $bd) = explode('-', $birthday);
+        $cm=date('n');
+        $cd=date('j');
+        $iage=date('Y')-$by-1;
+        if ($cm>$bm || $cm==$bm && $cd>$bd) {
+            $iage++;
         }
         return $iage;
     } else {
         return 0;
     }
+}
+
+// 检查日期格式是否正确
+function checkDatetimeIsValid($date) {
+    // strtotime格式是否正确
+    $unixtimestamp = strtotime($date);
+    if (($unixtimestamp = strtotime($unixtimestamp)) === false) {
+        return false;
+    }
+    $arr = explode('-', date('Y-m-d', $unixtimestamp));
+    return checkdate($arr[1], $arr[2], $arr[0]) ? true : false;
 }
 
 // 数字验证码 用于server-sent事件 生成guid
@@ -348,22 +347,6 @@ function getStartAndEndUnixTimestamp($year = 0, $month = 0, $day = 0)
     return array('start' => $startTimestamp, 'end' => $endTimestamp);
 }
 
-// 检查日期格式是否正确
-function checkDatetimeIsValid($date) {
-    //strtotime转换不对，代表日期格式不对。
-    $unixTime = strtotime($date);
-    if (!$unixTime) {
-        return false;
-    } else {
-        return true;
-    }
-    // 检查日期格式是否有效
-    if (date('Y-m-d', $unixTime) == $date) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 // 下载远程图片保存到本地
 function download($url, $path = 'images/')

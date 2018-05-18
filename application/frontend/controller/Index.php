@@ -178,6 +178,8 @@ class Index extends Base{
                     'balance'   =>0,
                     'remarks'   =>0,
                     'hot_id'=>00000000,
+                    'age' => 0,
+                    'fans' => 0,
                 ];
                 cookie('mid', 0);
                 cookie('openid', $userinfo['openid']);

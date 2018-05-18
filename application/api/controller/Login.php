@@ -41,7 +41,8 @@ class Login extends Base{
                     $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
                 }
             }
-
+            // 性别获取wxuserinfo
+            $data['sex'] = $memberInfo['sex'];
         	$response = $memberS->saveMemberInfo($data);
         	if ($response['code'] ==200) {
                 $result = $memberS->saveLogin($response['id']);
