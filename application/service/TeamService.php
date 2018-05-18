@@ -22,10 +22,17 @@ class TeamService
     {
         $model = new TeamMember();
         $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
+        if (!$res) {
             return $res;
+        } else {
+            $result = $res->toArray();
+            foreach ($result as $k => $val) {
+                $modelTeam = new Team();
+                $team = $modelTeam->get(['id' => $val['team_id']]);
+                $getDataTeam = $team->getData();
+                $result[$k]['team']['type_num'] = $getDataTeam['type'];
+            }
+            return $result;
         }
     }
 

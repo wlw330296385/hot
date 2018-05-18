@@ -486,12 +486,37 @@ class Team extends Base
             $map = input('param.');
             $map['member_id'] = $this->memberInfo['id'];
             $page = input('page', 1);
+            if (input('?page')) {
+                unset($map['page']);
+            }
+            // 是否训练营球队标识
+            if ( array_key_exists('iscamp', $map) ) {
+                $iscamp = input('iscamp', 0, 'intval');
+                unset($map['iscamp']);
+            }
+
             $teamS = new TeamService();
             $result = $teamS->myTeamList($map, $page);
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
+            if (!$result) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            } else {
+                if (isset($iscamp)) {
+                    // 只输出type_num=1的球队数据
+                    if ($iscamp == 1) {
+                        foreach ($result as $k => $val) {
+                            if ($val['team']['type_num'] !=1) {
+                                unset($result[$k]);
+                            }
+                        }
+                    } elseif ($iscamp == 0) {
+                        foreach ($result as $k => $val) {
+                            if ($val['team']['type_num'] ==1) {
+                                unset($result[$k]);
+                            }
+                        }
+                    }
+                }
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             }
             return json($response);
         } catch (Exception $e) {
