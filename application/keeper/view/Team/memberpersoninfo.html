@@ -401,6 +401,12 @@
         </ul>
     </div>
 
+    <!-- 删除评论弹框 -->
+    <div id="deletepl" class="mui-popover">
+        <p class="commemtDeleteBtn">
+            <input type="hidden" class="checkDelId" value="">删除</p>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.view.js "></script>
@@ -458,7 +464,7 @@
             $(document).on("tap", '.myimpress', function () {
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
-            
+
             // 个人宣言有无判断
             if ("{$memberInfo.descri}" == '') {
                 $(".memberDescri").hide();
@@ -578,6 +584,50 @@
                 });
             });
 
+            // 点击评论赋值标记+判断是否可以删除
+            $(document).on("tap", ".comment-list li", function () {
+                $(".checkDelId").val($(this).attr("data-id"));
+                can_delete = $(this).attr("data-can_delete");
+                if (can_delete == 0) {
+                    $(this).children("a").removeAttr("href");
+                }
+            })
+            //删除评论功能
+            $(document).on("tap", ".commemtDeleteBtn", function () {
+                var thisID = $(this).children().val();
+                var liId = ''
+                mui.ajax("{:url('api/team/delteamcomment')}", {
+                    data: {
+                        id: thisID,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".comment-list li").each(function () {
+                                liId = $(this).attr("data-id");
+                                if (thisID == liId) {
+                                    $(this).remove();
+                                    $(".comment-list").empty();
+                                    toCommentList();
+                                }
+                            })
+                            mui('#deletepl').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#deletepl').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
@@ -617,8 +667,6 @@
                 url: url,
                 data: {
                     page: page,
-                    //commented: tm_name,
-                    //commented_id: id,
                     commented_member_id: member_id,
                     comment_type: 4,
                 },
@@ -630,12 +678,14 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
+                        $(".comment-list").prev().find(".noDataTip").text("")
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '" data-can_delete="' + data.data[i].can_delete + '"><a href="#deletepl"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
                         }
                     } else {
                         $(".comment-list").prev().find(".noDataTip").append("（暂无）");
+                        $(".comment_count").text("0");
                     }
                     if (gType == 1) {
                         //上拉刷新
