@@ -215,7 +215,7 @@ function getMemberOpenid($memberid) {
 // 生日日期计算年龄
 function getAgeByBirthday($birthday) {
     $iage = 0;
-    if ( checkDatetimeIsValid($birthday) ) {
+    if ( checkDatetimeIsValid($birthday, 'Y-m-d') ) {
         list($by, $bm, $bd) = explode('-', $birthday);
         $cm=date('n');
         $cd=date('j');
@@ -230,10 +230,9 @@ function getAgeByBirthday($birthday) {
 }
 
 // 检查日期格式是否正确
-function checkDatetimeIsValid($date)
+function checkDatetimeIsValid($date, $format="Y-m-d H:i")
 {
-    $arr = explode('-', $date);
-    return checkdate($arr[1],$arr[2],$arr[0]) ? true : false;
+    return date($format, strtotime($date)) === $date;
 }
 
 // 数字验证码 用于server-sent事件 生成guid
