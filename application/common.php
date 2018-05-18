@@ -230,15 +230,10 @@ function getAgeByBirthday($birthday) {
 }
 
 // 检查日期格式是否正确
-function checkDatetimeIsValid($date) {
-    // strtotime格式是否正确
-    $timestamp = strtotime($date);
-    if (strtotime(date('Y-m-d H:i:s',$timestamp)) === $timestamp) {
-        $arr = explode('-', date('Y-m-d', $timestamp));
-        return checkdate($arr[1], $arr[2], $arr[0]) ? true : false;
-    } else {
-        return false;
-    }
+function checkDatetimeIsValid($date)
+{
+    $arr = explode('-', $date);
+    return checkdate($arr[1],$arr[2],$arr[0]) ? true : false;
 }
 
 // 数字验证码 用于server-sent事件 生成guid
