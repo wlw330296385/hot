@@ -9,23 +9,21 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class=whitebg>
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+<body>
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">我的组织</h1>
     </header>
+
     <div class="mui-content">
 
-        <div class="list camp-list camp-lesson-list detalis-list coach">
-            <div class="nav-list mb mt">
+        <div class="list mb44">
+
+            <div class="nav-list mt borderStyle">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="#">
@@ -47,45 +45,47 @@
                     </li>
                 </ul>
             </div>
+
             <div class="page-header">
                 <span class="course">
                     <b>您推荐的人</b>
+                    <span class="noDataTip"></span>
                 </span>
             </div>
-            <ul class="mui-table-view">
+            <ul class="mui-table-view" id="tuijian">
                 {volist name="$myGroupList['groupList']" id="vol"}
-                <li class="mui-table-view-cell listli listinitial">
+                <li class="mui-table-view-cell listli">
                     {$vol.member}
                     <span class="wd66">{$vol['count']}</span>
                     <!--  <ul class="mui-table-view">
-                {notempty name="vol[0]"}
-                    {volist name="vol.groupList" id="v"}
-                     <li class="mui-table-view-cell listli listinitial">
-                        |-- {$v.member}<span class="wd66">{$v.count}</span>
-                        <ul class="mui-table-view">
-                            {volist name="v.groupList" id="vv"}
-                             <li class="mui-table-view-cell listli listinitial">
-                                |-- {$vv.member}<span>{$vv.count}</span>
-                             </li>
-                             {/volist}
-                        </ul>
-                     </li>
-                     {/volist}
-                {/notempty}}
-                </ul> -->
+                    {notempty name="vol[0]"}
+                        {volist name="vol.groupList" id="v"}
+                        <li class="mui-table-view-cell listli listinitial">
+                            |-- {$v.member}<span class="wd66">{$v.count}</span>
+                            <ul class="mui-table-view">
+                                {volist name="v.groupList" id="vv"}
+                                <li class="mui-table-view-cell listli listinitial">
+                                    |-- {$vv.member}<span>{$vv.count}</span>
+                                </li>
+                                {/volist}
+                            </ul>
+                        </li>
+                        {/volist}
+                    {/notempty}}
+                    </ul> -->
                 </li>
                 {/volist}
             </ul>
+
+            <!--底部操作-->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bggreen">
+                    <a href="{:url('member/share')}">推荐给好友</a>
+                </li>
+            </ul>
         </div>
     </div>
-
+    <script src="/static/frontend/js/mui.min.js"></script>
 </body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-</script>
 
 </html>

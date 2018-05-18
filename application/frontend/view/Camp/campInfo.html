@@ -41,12 +41,12 @@
 </head>
 
 <body>
-    <header id="header" class="mui-bar mui-bar-transparent">
+    <header class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list coach  mt55">
+        <div class="list camp-list detalis-list coach  mb44">
             <div class="img4x3" style="background-image:url('{$campInfo.banner}')"></div>
 
             <ul class="mui-table-view mb" style="margin-top: -4px">
@@ -80,10 +80,8 @@
                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
                     </div>
                 </li>
-                <li class="mui-table-view-cell listli detalisli">训练营宣言
-                    <span class="about">{$campInfo.camp_description}
-                        <a href="javascript:void(0)">......全文展示</a>
-                    </span>
+                <li class="mui-table-view-cell listli detalisli declaration">训练营宣言
+                    <span class="about">{$campInfo.camp_description}</span>
                 </li>
             </ul>
 
@@ -131,11 +129,11 @@
             <ul class="mui-table-view list mainInfo newList"></ul>
 
 
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header">
                 <span class="course">训练营介绍</span>
             </div>
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli introBox">{$campInfo.camp_introduction}</li>
+                <li class="mui-table-view-cell listli desimg">{$campInfo.camp_introduction}</li>
             </ul>
 
             <div class="page-header">
@@ -278,14 +276,19 @@
         $(function () {
 
             //判断训练营宣言长度是否超过30字符
-            var aboutlen = $(".about").text();
-            if (aboutlen.length < 42) {
-                $(".about a").hide();
-            }
-            //展示训练营介绍全文
-            $(".about a").click(function () {
-                $(".about").css("height", "auto");
-                $(this).hide();
+            // var aboutlen = $(".about").text();
+            // if (aboutlen.length < 42) {
+            //     $(".about a").hide();
+            // }
+            // //展示训练营介绍全文
+            // $(".about a").click(function () {
+            //     $(".about").css("height", "auto");
+            //     $(this).hide();
+            // });
+
+             //宣言全文展示
+             $(document).on("tap", '.declaration', function () {
+                $(this).children(".about").css("max-height", "initial");
             });
 
             // 星星显示
@@ -579,7 +582,7 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('lesson/lessonInfo')}" + '/lesson_id/' + data.data[i].id;
-                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd52">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></li>'
+                            newli = newli + '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="proportion4x3 mui-pull-left" src="' + data.data[i].cover + '"><div class="mui-media-body wd52">' + data.data[i].lesson + '<p class="mui-ellipsis">' + data.data[i].gradecate + '</p></div><div class="price-frame"><p class="price">￥' + data.data[i].cost + '</p><p class="address">' + data.data[i].area + '</p></div></a></li>'
                         }
                         if (data.data.length <= 10) {
                             $(".moreLesson").hide();
