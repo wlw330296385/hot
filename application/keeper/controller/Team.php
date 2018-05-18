@@ -1420,20 +1420,25 @@ class Team extends Base
 
 
         // 赛季选择列表：从会员加入第一个球队年至当前年
-        $seasonList = [];
-        $teamMemberCreateYear = checkDatetimeIsValid($memberTeamList[0]['create_time']) ? strtotime($memberTeamList[0]['create_time']) : $memberTeamList[0]['create_time'];
-        $teamMemberCreateYear = intval(date('Y', $teamMemberCreateYear));
         // 当前年份
         $curYear = intval(date('Y', time()));
-        if ($teamMemberCreateYear != $curYear) {
-            $i = 0;
-            while ($teamMemberCreateYear <= $curYear) {
-                $seasonList[$i] = $teamMemberCreateYear++;
-                $i++;
+        $seasonList = [];
+        if ($memberTeamList) {
+            $teamMemberCreateYear = checkDatetimeIsValid($memberTeamList[0]['create_time']) ? strtotime($memberTeamList[0]['create_time']) : $memberTeamList[0]['create_time'];
+            $teamMemberCreateYear = intval(date('Y', $teamMemberCreateYear));
+            if ($teamMemberCreateYear != $curYear) {
+                $i = 0;
+                while ($teamMemberCreateYear <= $curYear) {
+                    $seasonList[$i] = $teamMemberCreateYear++;
+                    $i++;
+                }
+            } else {
+                $seasonList[] = $curYear;
             }
         } else {
             $seasonList[] = $curYear;
         }
+
         $beginYear = current($seasonList);
         $endYear = end($seasonList);
 
