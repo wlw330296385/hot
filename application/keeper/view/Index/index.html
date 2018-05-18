@@ -137,7 +137,7 @@
                                 <strong class="f14">VIP-1</strong>
                             </em>
                         </div>
-                        <p>{$memberInfo.city} {$memberInfo.area}</p>
+                        <p class="region">{$memberInfo.city} {$memberInfo.area}</p>
                         <p>年龄
                             <text class="colororange">{$memberInfo.age}</text> 身高
                             <text class="colororange">{$memberInfo.height}</text> 体重
@@ -294,7 +294,9 @@
             <!--搜索执行-->
             <header id="header-search" class="mui-bar mui-bar-nav search1" style="position: relative !important;">
                 <div class="mui-pull-left mui-icon mui-icon-back" id="close-search"></div>
-                <div class="mui-pull-left searchType">搜<span>球队</span></div>
+                <div class="mui-pull-left searchType">搜
+                    <span>球队</span>
+                </div>
                 <div class="mui-pull-left">
                     <input type="search" id="searchInput" class="mui-input-clear" placeholder="请输入搜索关键字">
                 </div>
@@ -451,6 +453,10 @@
                     window.top.location.href = searchUrl;
                 }
             })
+
+            if ("{$memberInfo.city}" == '' && "{$memberInfo.area}" == '') {
+                $(".region").text("暂无设置地区")
+            }
 
             //比赛报名功能
             $(document).on('tap', '.signupMatchBtn', function () {

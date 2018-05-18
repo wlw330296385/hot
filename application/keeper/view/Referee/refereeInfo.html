@@ -21,11 +21,12 @@
         .choiseFont .bgorange {
             color: #fff !important
         }
+
         .desimg img {
-                width: 100%;
-            }
+            width: 100%;
+        }
     </style>
-           
+
 </head>
 
 
@@ -39,7 +40,7 @@
     </header>
     <div class="mui-content">
 
-        <div class="list camp-list detalis-list referee mt55">
+        <div class="list camp-list detalis-list referee mb44">
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
@@ -68,10 +69,8 @@
             </ul>
 
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli listinitial">裁判宣言
-                    <span class="description about">{$refereeInfo.description}
-                        <a href="javascript:void(0)">......全文展示</a>
-                    </span>
+                <li class="mui-table-view-cell listli detalisli refereeDesciption">裁判宣言
+                    <span class="description about">{$refereeInfo.description}</span>
                 </li>
             </ul>
 
@@ -98,19 +97,23 @@
 
             <!--裁判印象-->
             <div class="page-header">
-                <span class="course">裁判印象</span>
+                <span class="course">裁判印象
+                    <span class="noDataTip"></span>
+                </span>
                 <span class="more pdr15">
                     <a href="#Impress" class="mui-navigate-right myimpress">发表我的印象</a>
                 </span>
             </div>
-            <div class="impress whitebg tagCommentList mb"></div>
+            <div class="impress whitebg tagCommentList"></div>
 
             <!-- 裁判员简介-->
             <div class="page-header" style="background: #efeff4;">
-                <span class="course">裁判员简介</span>
+                <span class="course">裁判员简介
+                    <span class="noDataTip"></span>
+                </span>
             </div>
             <ul class="mui-table-view">
-                <li class="mui-table-view-cell listli desimg" >{$refereeInfo.introduction}</li>
+                <li class="mui-table-view-cell listli refereeIntro desimg">{$refereeInfo.introduction}</li>
             </ul>
 
             <!-- 会员评价 -->
@@ -270,11 +273,6 @@
 
         $(function () {
 
-            var introduction = "{$refereeInfo.introduction}";
-            if (introduction == '') {
-                $(".introBox").append("<p class='nohave'>还没有简介哦</p>")
-            }
-
             // 裁判等级文字数字转换
             var level = "{$refereeInfo.level}"
             if (level == 1) {
@@ -304,16 +302,17 @@
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
 
-            //判断训练营宣言长度是否超过30字符
-            var aboutlen = $(".about").text()
-            if (aboutlen.length < 36) {
-                $(".about a").hide();
-            }
-            //展示训练营介绍全文
-            $(".about a").click(function () {
-                $(".about").css("height", "auto");
-                $(this).hide();
+            // 裁判宣言全文展示
+            $(document).on("tap", '.refereeDesciption', function () {
+                $(this).children(".about").css("max-height", "initial");
             });
+
+            // 裁判简介
+            if ("{$refereeInfo.introduction}" == '') {
+                $(".refereeIntro").hide();
+                $(".refereeIntro").parent().addClass("border-b")
+                $(".refereeIntro").parent().prev().find(".noDataTip").append("（暂无）");
+            }
 
             //发表评论
             $("#commentSubmit").on('click', function () {
@@ -499,7 +498,9 @@
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
                     } else {
-                        $(".tagCommentList").append('<p class="mui-text-center">还没有印象标签哦</p>');
+                        $(".tagCommentList").hide();
+                        $(".tagCommentList").prev().addClass("border-b");
+                        $(".tagCommentList").prev().find(".noDataTip").append("（暂无）");
                     }
                 },
                 error: function (xhr, type, errorThrown) {
