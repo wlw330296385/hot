@@ -105,8 +105,8 @@
                             <strong>VIP-1</strong>
                         </em> -->
                         <img class="mui-media-object mui-pull-left logostyle" src="{$memberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
-                        <p class="mui-ellipsis" style="line-height:20px">{$memberInfo.city} {$memberInfo.area}</p>
-                        <p class="mui-ellipsis" style="line-height:20px ">年龄:
+                        <p class="mui-ellipsis lineHeight20 region">{$memberInfo.city} {$memberInfo.area}</p>
+                        <p class="mui-ellipsis lineHeight20">年龄:
                             <text class="colororange">{$memberInfo.age}</text> 身高:
                             <text class="colororange">{$memberInfo.height}</text> 体重:
                             <text class="colororange">{$memberInfo.weight}</text>
@@ -470,6 +470,10 @@
                 $(".memberDescri").hide();
             }
 
+            if ("{$memberInfo.city}" == '' && "{$memberInfo.area}" == '') {
+                $(".region").text("暂无设置地区")
+            }
+
             // 关注会员
             $(".follow").on("tap", '', function () {
                 mui.ajax("{:url('api/follow/focus')}", {
@@ -516,8 +520,6 @@
                 mui.ajax("{:url('api/tag/addtagcomment')}", {
                     data: {
                         comment_type: 1,
-                        //commented_id: id,
-                        //commented: member,
                         commented_member: member,
                         commented_member_id: member_id,
                         tags: tags,
@@ -554,10 +556,8 @@
                 }
                 mui.ajax("{:url('api/team/addteamcomment')}", {
                     data: {
-                        //commented_id: id,
                         comment_type: 4,
                         comment: comment,
-                        //commented: member,
                         commented_member_id: id,
                         commented_member: member,
                     },
@@ -587,10 +587,6 @@
             // 点击评论赋值标记+判断是否可以删除
             $(document).on("tap", ".comment-list li", function () {
                 $(".checkDelId").val($(this).attr("data-id"));
-                can_delete = $(this).attr("data-can_delete");
-                if (can_delete == 0) {
-                    $(this).children("a").removeAttr("href");
-                }
             })
             //删除评论功能
             $(document).on("tap", ".commemtDeleteBtn", function () {
@@ -681,7 +677,13 @@
                         $(".comment-list").prev().find(".noDataTip").text("")
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '" data-can_delete="' + data.data[i].can_delete + '"><a href="#deletepl"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '">';
+                            if (data.data[i].can_delete == 0) {
+                                newli += '<a>';
+                            } else {
+                                newli += '<a href="#deletepl">';
+                            }
+                            newli += '<div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
                         }
                     } else {
                         $(".comment-list").prev().find(".noDataTip").append("（暂无）");
