@@ -512,4 +512,25 @@ class Member extends Base{
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
     }
+
+    // 创建会员学球意向登记
+    public function createstudyinterion() {
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['status'] = 1;
+        // 数据验证器
+        $validate = validate('StudyInterionVal');
+        if ( !$validate->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        $memberS = new MemberService();
+        try {
+            $result = $memberS->savestudyinterion($data);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
+    }
 }

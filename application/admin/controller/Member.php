@@ -172,4 +172,25 @@ class Member extends Backend{
 		$this->assign('memberList', $memberList);
 		return	$this->fetch('member/addReferer');
 	}
+
+	// 会员学球意向登记列表
+    public function studyinterionlist() {
+	    $model = new \app\model\StudyInterion();
+	    $list = $model->order(['id' => 'desc'])->paginate(10);
+        return view('member/studyinterionlist', [
+            'list' => $list
+        ]);
+    }
+
+    public function studyinteriondetail() {
+	    $id = input('param.id');
+        $model = new \app\model\StudyInterion();
+        $interion = $model->with('member')->where('id', $id)->find();
+        if ($interion) {
+            $interion = $interion->toArray();
+        }
+        return view('member/studyinteriondetail', [
+            'interion' => $interion
+        ]);
+    }
 }

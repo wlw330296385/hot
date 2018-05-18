@@ -22,35 +22,35 @@
 
     <div class="mui-content">
         <form action="" class="mui-input-group mb44">
-
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <div class="mui-input-row">
                 <label>姓名</label>
-                <input type="text" name="name" value="" placeholder="姓名">
+                <input type="text" class="data" name="name" value="" placeholder="姓名">
             </div>
 
             <div class="mui-input-row">
                 <label>年龄</label>
-                <input type="text" name="age" value="" placeholder="年龄">
+                <input type="text" class="data" name="age" value="" placeholder="年龄">
             </div>
 
             <div class="mui-input-row">
                 <label>学校</label>
-                <input type="text" name="school" value="" placeholder="学校">
+                <input type="text" class="data" name="school" value="" placeholder="学校">
             </div>
 
             <div class="mui-input-row">
                 <label>住所</label>
-                <input type="text" name="address" value="" placeholder="住所">
+                <input type="text" class="data" name="address" value="" placeholder="住所">
             </div>
 
             <div class="mui-input-row">
                 <label>电话</label>
-                <input type="text" name="telephone" value="" placeholder="电话">
+                <input type="text" class="data" name="telephone" value="" placeholder="电话">
             </div>
 
             <div class="mui-input-row">
                 <label>备注</label>
-                <input type="text" name="remarks" value="" placeholder="备注">
+                <input type="text" class="data" name="remarks" value="" placeholder="备注">
             </div>
 
         </form>
@@ -64,6 +64,8 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -71,28 +73,27 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            mui.toast("信息登记成功，工作人员将会尽快与您联系，请耐心等待。")
-            window.setTimeout("location.href='{:url('index/index')}'", 2500)
-            // mui.ajax("{:url('')}", {
-            //     data: {},
-            //     dataType: 'json',//服务器返回json格式数据
-            //     type: 'post',//HTTP请求类型
-            //     timeout: 10000,//超时时间设置为10秒；
-            //     headers: { 'Content-Type': 'application/json' },
-            //     success: function (data) {
-            //         //服务器返回响应，根据响应结果，分析是否登录成功；
-            //         console.log(data);
-            //         if (data.code == 200) {
-            //             mui.toast(data.msg);
-            //         } else {
-            //             mui.toast(data.msg);
-            //         }
-            //     },
-            //     error: function (xhr, type, errorThrown) {
-            //         //异常处理；
-            //         console.log(type);
-            //     }
-            // });
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+
+            var url = "{:url('api/member/createstudyinterion')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.toast("信息登记成功，工作人员将会尽快与您联系，请耐心等待。")
+                window.setTimeout("location.href='{:url('index/index')}'", 2500)
+            } else {
+                mui.alert(ajaxResult.msg, '提交失败',function(){
+
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
 
     </script>

@@ -5,6 +5,8 @@ use app\model\CampMember;
 use app\model\Coach;
 use app\model\Member;
 use app\common\validate\MemberVal;
+use app\model\StudyInterion;
+
 class MemberService{
 	private $memberModel;	
 	public function __construct(){
@@ -258,5 +260,27 @@ class MemberService{
             return DS.$dirName.DS.$savefilename;
         }
         return 0;
+    }
+
+    // 保存学习意向登记
+    public function savestudyinterion($data) {
+        $model = new StudyInterion();
+        if ( array_key_exists('id', $data) ) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:'.$model->getError().'; \n sql:'.$model->getLastSql());
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            } else {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 }
