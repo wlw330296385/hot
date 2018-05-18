@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>轨迹</title>
+    <title>我的</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -40,6 +40,11 @@
             width: auto;
             font-size: 12px;
         }
+        .success-frame button{
+            width: 42%;
+            margin:0 2%;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -74,11 +79,11 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
-                        <a href="{:url('/keeper/Team/myteam')}">
+                        <a href="{:url('event/eventListOfMember')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-mine-team"></use>
                             </svg>
-                            <div class="mui-media-body">球队</div>
+                            <div class="mui-media-body">活动</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli">
@@ -115,21 +120,15 @@
                     <span class="more">更多</span>
                 </a>
             </div>
-            <!--我的活动-->
-            <div class="page-header mb" style="background-color: #FFF;">
-                <a href="{:url('event/eventListOfMember')}">
-                    <span class="course wd83">我参与的活动</span>
-                    <span class="mui-navigate-right"></span>
-                </a>
-            </div>
 
             <!-- 机构训练营主页 -->
             {if $o_id!=0 }
             <ul class="mui-table-view list mb myCamp hide">
                 <li class="mui-table-view-cell listli">
                     <a href="{:url('camp/campInfo',['camp_id'=>$o_id])}">
-                        <img src="{$orgCampInfo.logo}" class="img24">{$orgCampInfo.camp}
-                        <span class="mui-navigate-right">训练营主页</span>
+                        <!--<img src="{$orgCampInfo.logo}" class="img24">-->
+                        {$orgCampInfo.camp}
+                        <span class="mui-navigate-right">简介</span>
                     </a>
                 </li>
             </ul>
@@ -144,7 +143,7 @@
                         <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id']])}">
                             {/if}
                             <li class="mui-table-view-cell listli" style="padding:15px;">
-                                <img src="{$vol.camp.logo}" class="img24"> {$vol.camp.camp}
+                                <img src="{$vol.camp.logo}" class="img24"> <!--{$vol.camp.camp}-->
                                 <span class="mui-navigate-right">{$vol.type}</span>
                             </li>
                         </a>
@@ -154,7 +153,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="{:url('camp/campInfo',['camp_id'=>$vol['camp_id']])}">
                             <span class="icon iconfont icon-training-camp"></span>
-                            <div class="mui-media-body">训练营介绍</div>
+                            <div class="mui-media-body">介绍</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -174,7 +173,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="{:url('camp/powerCamp',['camp_id'=>$vol['camp_id']])}">
                             <span class="icon iconfont icon-training-camp"></span>
-                            <div class="mui-media-body">训练营管理</div>
+                            <div class="mui-media-body">管理后台</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -193,15 +192,20 @@
                     {/if}
                 </ul>
             </div>
-            {/volist} {if $o_id==0 }
+            {/volist}
+
             <div class="success-frame success-frame2">
-                <div class="choise">
-                    <a href="{:url('camp/camplist')}">
-                        <button type="button" class="mui-btn" style="font-size: 16px;">找训练营/俱乐部</button>
+
+                    <a href="{:url('lesson/lessonListOfOrganization')}">
+                        <button type="button" class="mui-btn" style="font-size: 16px;">报名课程</button>
                     </a>
-                </div>
+                    <a href="{:url('event/eventListOfOrganization')}">
+                        <button type="button" class="mui-btn" style="font-size: 16px;">报名活动</button>
+                    </a>
+
             </div>
-            {/if}
+
+
         </div>
 
 
