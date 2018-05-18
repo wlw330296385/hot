@@ -73,7 +73,7 @@ class Base extends Frontend {
 			],
 			[
 				'name'=>'我的',
-				'icon'=>'icon iconfont icon-nav-Camp',
+				'icon'=>'icon iconfont icon-nav-my',
 				'action'=>'index',
 				'controller'=>'Camp',
                 'module' => $module
