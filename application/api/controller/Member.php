@@ -583,6 +583,9 @@ class Member extends Base{
         if ($memberHonor['member_id'] != $this->memberInfo['id']) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+        // 时间格式转换
+        $data['honor_time'] = strtotime($data['honor_time']);
+
         try {
             $result = $memberS->saveMemberHonor($data);
         } catch (Exception $e) {
@@ -590,6 +593,32 @@ class Member extends Base{
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($result);
+    }
+
+    // 删除会员荣誉
+    public function deletememberhonor() {
+        $id = input('post.id');
+        // 查询数据
+        $memberS = new MemberService();
+        $memberHonor = $memberS->getMemberHonor(['id' => $data['id']]);
+        // 无符合数据
+        if (!$memberHonor) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        if ($memberHonor['member_id'] != $this->memberInfo['id']) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $memberS->delMemberHonor($memberHonor['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
     }
 
     // 会员荣誉列表

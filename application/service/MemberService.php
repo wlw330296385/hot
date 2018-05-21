@@ -336,4 +336,9 @@ class MemberService{
         }
         return $res->toArray();
     }
+
+    // 删除会员荣誉
+    public function delMemberHonor($id) {
+        return MemberHonor::destroy($id);
+    }
 }
