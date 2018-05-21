@@ -106,7 +106,7 @@ class Team extends Base
         // 教练、队委名单集合组合 end
 
         // 球队类型只能“训练营”标识
-        $onlycamptype = ( Cookie::has('module') || Cookie::get('module') == 'frontend' ) ? 1 : 0;
+        $onlycamptype = ( Cookie::has('module') && Cookie::get('module') == 'frontend' ) ? 1 : 0;
 
         return view('Team/teamEdit', [
             'rolemembers' => $rolemembers,
