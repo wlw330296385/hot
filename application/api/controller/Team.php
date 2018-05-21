@@ -1872,8 +1872,11 @@ class Team extends Base
                 $request['end_time'] = strtotime(input('end_time'));
             }
             // 活动完成标识
+            // 活动完成标识
+            $isFinished = 0;
             if (isset($request['is_finished'])) {
                 if ($request['is_finished'] == 1) {
+                    $isFinished = 1;
                     $memberStatus = 3;
                 }
             }
@@ -1919,6 +1922,13 @@ class Team extends Base
             }
             // 修改球队活动主表数据
             $resUpdateTeamEvent = $teamS->updateTeamEvent($request);
+            if ($resUpdateTeamEvent['code'] == 200) {
+                // 活动完成
+                if ($isFinished == 1) {
+                    // 球队活动数+1
+                    db('team')->where('id', $team_id)->setInc('event_num', 1);
+                }
+            }
             return json($resUpdateTeamEvent);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -1943,8 +1953,10 @@ class Team extends Base
                 $data['end_time'] = strtotime(input('end_time'));
             }
             // 活动完成标识
+            $isFinished = 0;
             if (isset($data['is_finished'])) {
                 if ($data['is_finished'] == 1) {
+                    $isFinished = 1;
                     $memberStatus = 3;
                 }
             }
@@ -1963,6 +1975,11 @@ class Team extends Base
                         $memberArr[$k]['status'] = $memberStatus;
                     }
                     $teamS->saveAllTeamEventMember($memberArr);
+                }
+                // 活动完成
+                if ($isFinished == 1) {
+                    // 球队活动数+1
+                    db('team')->where('id', $data['team_id'])->setInc('event_num', 1);
                 }
             }
             return json($resCreateTeamEvent);
@@ -2110,36 +2127,24 @@ class Team extends Base
             // 根据活动当前状态(1上架,-1下架)+不允许操作条件
             // 根据action参数 editstatus执行上下架/del删除操作
             // 更新数据 返回结果
-            switch ($event['status_num']) {
-                case 1 : {
-                    if ($action == 'editstatus') {
-                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => -1], 1);
+            switch ($action) {
+                case 'del': {
+                    // 软删除活动记录
+                    $delRes = $teamS->deleteTeamEvent($event['id']);
+                    if ($delRes) {
+                        // 球队活动数统计-1
+                        db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
+                        $response = ['code' => 200, 'msg' => __lang('MSG_200')];
                     } else {
-                        $delRes = $teamS->deleteTeamEvent($event['id']);
-                        if ($delRes) {
-                            // 球队活动数统计-1
-                            db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
-                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-                        } else {
-                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-                        }
+                        $response = ['code' => 100, 'msg' => __lang('MSG_400')];
                     }
                     return json($response);
                     break;
                 }
-                case -1 : {
-                    if ($action == 'editstatus') {
-                        $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => 1], 1);
-                    } else {
-                        $delRes = $teamS->deleteTeamEvent($event['id']);
-                        if ($delRes) {
-                            // 球队活动数统计-1
-                            db('team')->where(['id' => $event['team_id']])->setDec('event_num', 1);
-                            $response = ['code' => 200, 'msg' => __lang('MSG_200')];
-                        } else {
-                            $response = ['code' => 100, 'msg' => __lang('MSG_400')];
-                        }
-                    }
+                case 'editstatus': {
+                    // 更新活动数据status
+                    $statuTo = ($event['status_num'] == 1) ? -1 : 1;
+                    $response = $teamS->updateTeamEvent(['id' => $event['id'], 'status' => $statuTo], 1);
                     return json($response);
                     break;
                 }
@@ -2634,6 +2639,8 @@ class Team extends Base
                     }
                     $teamS->saveAllTeamHonorMember($prizeMemberData);
                 }
+                // 球队荣誉统计+1
+                db('team')->where('id', $data['team_id'])->setInc('honor_num', 1);
             }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
@@ -2807,6 +2814,8 @@ class Team extends Base
                     'team_honor_id' => $id
                 ]);
                 $response = ['code' => 200, 'msg' => __lang('MSG_200')];
+                // 球队荣誉统计+1
+                db('team')->where('id', $teamHonor['author_team_id'])->setDec('honor_num', 1);
             } else {
                 $response = ['code' => 100, 'msg' => __lang('MSG_400')];
             }
