@@ -533,4 +533,135 @@ class Member extends Base{
         }
         return json($result);
     }
+
+    // 创建会员荣誉
+    public function creatememberhonor() {
+        // 接收请求变量
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_avatar'] = $this->memberInfo['avatar'];
+        // 验证器
+        $validate = validate('MemberHonorVal');
+        if (!$validate->scene('add')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 时间格式转换
+        $data['honor_time'] = strtotime($data['honor_time']);
+        $data['status'] = 1;
+
+        // 插入数据
+        $memberS = new MemberService();
+        try {
+            $result = $memberS->saveMemberHonor($data);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
+    }
+
+    // 编辑会员荣誉
+    public function updatememberhonor() {
+        // 接收请求变量
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_avatar'] = $this->memberInfo['avatar'];
+        // 验证器
+        $validate = validate('MemberHonorVal');
+        if (!$validate->scene('edit')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 查询数据
+        $memberS = new MemberService();
+        $memberHonor = $memberS->getMemberHonor(['id' => $data['id']]);
+        // 无符合数据
+        if (!$memberHonor) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        if ($memberHonor['member_id'] != $this->memberInfo['id']) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 时间格式转换
+        $data['honor_time'] = strtotime($data['honor_time']);
+
+        try {
+            $result = $memberS->saveMemberHonor($data);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
+    }
+
+    // 删除会员荣誉
+    public function deletememberhonor() {
+        $id = input('post.id');
+        // 查询数据
+        $memberS = new MemberService();
+        $memberHonor = $memberS->getMemberHonor(['id' => $data['id']]);
+        // 无符合数据
+        if (!$memberHonor) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        if ($memberHonor['member_id'] != $this->memberInfo['id']) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $memberS->delMemberHonor($memberHonor['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
+    }
+
+    // 会员荣誉列表
+    public function getmemberhonorlist() {
+        try {
+            $data = input('param.');
+            $page = input('param.page');
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询数据
+            $memberS = new MemberService();
+            $result = $memberS->getMemberHonorList($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 会员荣誉列表(页码）
+    public function getmemberhonorpage() {
+        try {
+            $data = input('param.');
+            $page = input('param.page');
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询数据
+            $memberS = new MemberService();
+            $result = $memberS->getMemberHonorPaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
 }

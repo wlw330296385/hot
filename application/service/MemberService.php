@@ -5,6 +5,7 @@ use app\model\CampMember;
 use app\model\Coach;
 use app\model\Member;
 use app\common\validate\MemberVal;
+use app\model\MemberHonor;
 use app\model\StudyInterion;
 
 class MemberService{
@@ -282,5 +283,62 @@ class MemberService{
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 保存会员荣誉记录
+    public function saveMemberHonor($data) {
+        $model = new MemberHonor();
+        if ( array_key_exists('id', $data) ) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:'.$model->getError().'; \n sql:'.$model->getLastSql());
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            } else {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 会员荣誉详情
+    public function getMemberHonor($map) {
+        $model = new MemberHonor();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 会员荣誉列表
+    public function getMemberHonorList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MemberHonor();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 会员荣誉列表（页码）
+    public function getMemberHonorPaginator($map, $order='id desc', $limit=10) {
+        $model = new MemberHonor();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 删除会员荣誉
+    public function delMemberHonor($id) {
+        return MemberHonor::destroy($id);
     }
 }

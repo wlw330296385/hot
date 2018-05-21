@@ -515,6 +515,8 @@ class Team extends Base
                             }
                         }
                     }
+                    // 数组重新排序
+                    $result = array_values($result);
                 }
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             }

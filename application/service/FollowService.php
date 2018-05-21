@@ -9,7 +9,7 @@ class FollowService {
         $hadFollow = $model->where(['type' => $data['type'], 'follow_id' => $data['follow_id'], 'member_id' => $data['member_id']])->find();
         if (!$hadFollow) {
             $data['status'] = 1;
-            $result = $model->allowField(true)->save($data);
+            $result = $model->allowField(true)->isUpdate(false)->save($data);
             if ($result) {
                 $response = ['code' => 200, 'msg' => '关注成功', 'data' => $model->id];
             } else {
@@ -26,7 +26,7 @@ class FollowService {
                 $data['status'] = 1;
                 $msg = '关注成功';
             }
-            $result = $model->allowField(true)->isUpdate(false)->save($data);
+            $result = $model->allowField(true)->isUpdate(true)->save($data);
             if ($result) {
                 $response = ['code' => 200, 'msg' => $msg];
             } else {

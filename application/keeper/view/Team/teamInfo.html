@@ -554,6 +554,9 @@
                 indicators: true //是否显示滚动条
             });
         })(mui);
+
+
+        var team_id = "{$teamInfo.id}";
         $(function () {
             var count = 1;
             var can_delete = '';
@@ -589,7 +592,6 @@
 
             // 关注球队
             $(".follow").on("tap", '', function () {
-                var team_id = "{$teamInfo.id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
                         type: 4,
@@ -618,7 +620,6 @@
 
             // 申请加入球队
             $(".joinBtn").on("tap", '', function () {
-                var team_id = "{$teamInfo.id}";
                 var remarks = $(".remarks").val();
 
                 if (remarks == '') {
@@ -844,7 +845,7 @@
                     data: {
                         commented_id: commented_id,
                         comment_type: 1,
-                        team_id: "{$teamInfo.id}"
+                        team_id: team_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -914,7 +915,6 @@
 
         // 判断当前的关注状态
         function followStatus() {
-            var team_id = "{$teamInfo.id}"
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 4,
@@ -944,7 +944,6 @@
         //自定义获取球员列表
         function teamMemberlist() {
             var url = "{:url('api/team/teammemberlist','','',true)}";
-            var team_id = "{$teamInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -1112,7 +1111,6 @@
         var eventid = ''
         //获取最新活动列表
         function toLastEventList() {
-            var team_id = "{$teamInfo.id}";
             mui.ajax("{:url('api/team/lastevent')}", {
                 data: {
                     team_id: team_id,
@@ -1163,7 +1161,6 @@
         //获取活动纪录列表
         function toRecordEventList() {
             var url = "{:url('api/team/teameventlist','','',true)}";
-            var team_id = "{$teamInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -1207,7 +1204,6 @@
         var matchid = ''
         //获取最新比赛列表
         function toLastMatchList() {
-            var team_id = "{$teamInfo.id}";
             mui.ajax("{:url('api/team/lastmatch')}", {
                 data: {
                     team_id: team_id,
@@ -1264,7 +1260,6 @@
         //获取赛事纪录列表
         function toRecordMatchList() {
             var url = "{:url('api/match/matchrecordlist','','',true)}";
-            var team_id = "{$teamInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -1330,7 +1325,9 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
+                            if (data.data[i].team_id != team_id) {
+                                newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
+                            }
                         }
                         $(newli).insertAfter(".choiseTeam");
                     }
@@ -1404,7 +1401,6 @@
         //获取荣誉列表
         function toHonorList() {
             var url = "{:url('api/team/lastteamhonorlist','','',true)}";
-            var team_id = "{$teamInfo.id}";
             mui.ajax({
                 url: url,
                 data: {

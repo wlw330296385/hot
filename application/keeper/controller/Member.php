@@ -294,4 +294,49 @@ class Member extends Base{
         return view('Member/memberCenter');
     }
 
+    // 个人荣誉列表
+    public function memberHonorList(){
+        return view('Member/memberHonorList');
+    }
+
+    // 个人荣誉创建
+    public function createMemberHonor(){
+        return view('Member/createMemberHonor');
+    }
+
+    // 个人荣誉详情
+    public function memberHonorInfo(){
+	    $id = input('id', 0, 'intval');
+	    if (!$id) {
+	        $this->error(__lang('MSG_402'));
+        }
+        $memberS = new MemberService();
+	    $honorInfo = $memberS->getMemberHonor(['id' => $id]);
+	    if (!$honorInfo) {
+	        $this->error(__lang('MSG_404'));
+        }
+        return view('Member/memberHonorInfo', [
+            'honorInfo' => $honorInfo
+        ]);
+    }
+
+    // 个人荣誉编辑
+    public function memberHonorEdit(){
+        $id = input('id', 0, 'intval');
+        if (!$id) {
+            $this->error(__lang('MSG_402'));
+        }
+        $memberS = new MemberService();
+        $honorInfo = $memberS->getMemberHonor(['id' => $id]);
+        if (!$honorInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        if ($honorInfo['member_id'] != $this->memberInfo['id']) {
+            $this->error(__lang('MSG_403'));
+        }
+        return view('Member/memberHonorEdit', [
+            'honorInfo' => $honorInfo
+        ]);
+    }
+
 }
