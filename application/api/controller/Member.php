@@ -600,7 +600,7 @@ class Member extends Base{
         $id = input('post.id');
         // 查询数据
         $memberS = new MemberService();
-        $memberHonor = $memberS->getMemberHonor(['id' => $data['id']]);
+        $memberHonor = $memberS->getMemberHonor(['id' => $id]);
         // 无符合数据
         if (!$memberHonor) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
