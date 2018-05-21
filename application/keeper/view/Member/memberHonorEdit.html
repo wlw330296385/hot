@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加荣誉</title>
+    <title>荣誉编辑</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -15,12 +15,6 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
-    <style>
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
-    </style>
 </head>
 
 <body>
@@ -29,16 +23,14 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">{$teamInfo.name}</h1>
+        <h1 class="mui-title"></h1>
     </header>
 
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="team_id" value="{$team_id}" class="data">
-        <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
 
-        <form action="" class="mui-input-group mt55">
+        <form action="" class="mui-input-group mb44">
 
             <div class="mui-input-row">
                 <label>奖项名称</label>
@@ -61,15 +53,6 @@
                     <span id="result" class="ui-alert domData" name="honor_time"></span>
                 </div>
             </div>
-            
-            <div class="mui-input-row price-input-row h-auto">
-                <a href="#honorMember" id="setCoachBox" class="mui-navigate-right">
-                    <label>获奖者</label>
-                    <span class="honorMember" style="width: 60%"></span>
-                    <div id="hideList"></div>
-                    <input type="hidden" name="prize_team_member" value="" class="data">
-                </a>
-            </div>
 
             <div class="page-header bggray2">
                 <span class="course">荣誉简介</span>
@@ -81,31 +64,10 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
-                创建荣誉
+                提交
             </li>
         </ul>
 
-    </div>
-
-    <!--授奖人-->
-    <div id="honorMember" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course  wd45">
-                <strong>获奖者</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn-blue" id="honorMemberConfirm">确认</button>
-            </span>
-            <span class="fr">
-                <button class="mui-btn qxBtn">全选</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="honorMemberDiv" class="mui-input-group honorMemberList"></form>
-            </div>
-        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -138,28 +100,13 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        //弹出框滚动必须写在mui专用的初始化
-        (function ($) {
-            $(".mui-scroll-wrapper").scroll({
-                //bounce: false,//滚动条是否有弹力默认是true
-                indicators: true //是否显示滚动条,默认是true
-            });
-            // 关闭弹出菜单
-            $("body").on('tap', '.mui-backdrop', function () {
-                mui(".mui-popover.mui-active").popover("toggle");
-            })
-        })(mui);
 
         //选择器
-        var getProvince = '';
-        var getCity = '';
-        var getArea = '';
         (function ($, doc) {
             $.ready(function () {
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
-                //开始时间
                 var result = $('#result')[0];
                 var btn = $('.btn');
                 btn.each(function (i, btn) {
@@ -179,48 +126,9 @@
             });
         })(mui, document);
 
-
-
-        $(function () {
-            TeamMemberOfList();
-
-            // 选择授奖人
-            $("#honorMemberConfirm").on('tap', '', function () {
-                $(".honorMember").empty();
-                $("input[name=prize_team_member]").val("");
-                $("#hideList").empty();
-                var honorMember = "";
-                var honorMember_id = "";
-                var honorMemberList = "";
-                $(".honorMemberList input[type=checkbox]:checked").each(function () {
-                    var member = $(this).attr("data-member");
-                    var member_id = $(this).attr("data-member_id");
-                    var name = $(this).attr("data-name");
-                    var id = $(this).attr("data-id");
-                    honorMember += name + ','
-                    honorMember_id += id + ','
-                    $(".honorMember").text(honorMember.substring(0, honorMember.length - 1));
-                    $("input[name=prize_team_member]").val(honorMember_id.substring(0, honorMember_id.length - 1));
-                    honorMemberList += '<input type="hidden" class="honorMemberList" data-member="' + member + '" data-member_id="' + member_id + '" data-name="' + name + '" data-id="' + id + '">';
-                });
-                $("#hideList").html(honorMemberList);
-                mui("#honorMember").popover("toggle");
-            });
-
-            // 反选
-            $(".qxBtn").on("tap", "", function () {
-                var checked = $("input[name='checkbox-honor']").prop("checked");
-                if (checked == false) {
-                    $("input[name='checkbox-honor']").prop("checked", true);
-                } else {
-                    $("input[name='checkbox-honor']").prop("checked", false);
-                }
-            })
-        })
-
         // 获取数据并进行提交
         function submitAction() {
-                
+
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
@@ -237,12 +145,12 @@
             var url = "{:url('api/team/createteamhonor')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建荣誉成功', '确定', function () {
-                    var goUrl = "{:url('team/honorlistOfTeam')}/team_id/" + "{$team_id}";
+                mui.alert(ajaxResult.msg, '修改荣誉成功', '确定', function () {
+                    var goUrl = "{:url('team/honorlistOfTeam')}/member_id/" + "{$memberInfo.id}";
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败',function(){
+                mui.alert(ajaxResult.msg, '修改失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑荣誉简介</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -251,43 +159,6 @@
                     }
                 }, 'json');
             }
-        };
-
-        //自定义获取球员列表
-        var TeamMemberOfList = function () {
-            var url = "{:url('api/team/teammemberlist','','',true)}";
-            var team_id = "{$teamInfo.id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    team_id: team_id,
-                    status: 1
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
-                        }
-                        $("#honorMemberDiv").empty();
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $("#honorMemberDiv").append(newli);
-
-                    } else {
-                        mui.toast('数据获取失败,请稍候再试');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
         };
 
     </script>

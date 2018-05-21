@@ -294,4 +294,24 @@ class Member extends Base{
         return view('Member/memberCenter');
     }
 
+    // 个人荣誉列表
+    public function memberHonorList(){
+        return view('Member/memberHonorList');
+    }
+
+    // 个人荣誉创建
+    public function createMemberHonor(){
+        return view('Member/createMemberHonor');
+    }
+
+    // 个人荣誉详情
+    public function memberHonorInfo(){
+        return view('Member/memberHonorInfo');
+    }
+
+    // 个人荣誉编辑
+    public function memberHonorEdit(){
+        return view('Member/memberHonorEdit');
+    }
+
 }

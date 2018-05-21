@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>荣誉列表</title>
+    <title>我的荣誉</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -16,28 +16,26 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">荣誉列表</h1>
+        <h1 class="mui-title">我的荣誉</h1>
     </header>
 
     <div class="mui-content">
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b honor OA_task_honor"></ul>
+                <ul class="mui-table-view detalis-list list border-b honor"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation mt">
+        <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('team/teamInfo',['team_id'=>$teamInfo['id']])}">
+                <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
-                <a href="{:url('team/createHonor',['team_id'=>$teamInfo['id']])}">创建荣誉</a>
+                <a href="{:url('Member/createMemberHonor')}">创建个人荣誉</a>
             </li>
         </ul>
     </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
@@ -105,13 +103,12 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/getteamhonorlist','','',true)}" + '/?page=' + page;
-                var team_id = "{$teamInfo.id}"
+                var url = "{:url('api/team/lastteamhonorlist','','',true)}" + '/?page=' + page;
+                var member_id = "{$memberInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
-                        author_team_id: team_id,
-                        status: 1
+                        member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -123,11 +120,9 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].id + '/team_id/' + data.data[i].author_team_id;
-                                newli += '<li class="mui-table-view-cell listli">';
-                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '">';
+                                newli += '<li class="mui-table-view-cell listli"><a href="' + urls + '">';
                                 newli += '<div class="mui-media-body wd83">奖项名称：<strong class="colororange f16"> ' + data.data[i].name + '</strong><p class="mui-ellipsis lineHeight20" >授奖单位： ' + data.data[i].award_org + '</p ><p class="mui-ellipsis lineHeight20">授奖日期：' + data.data[i].honor_time + '</p></div >'
-                                newli += '</a></div></li>';
+                                newli += '</a></li >';
                             }
                         }
                         if (gType == 1) {
@@ -155,44 +150,6 @@
                     }
                 });
             };
-        });
-
-        //拖拽后显示操作图标，点击操作图标删除元素；
-        $('.OA_task_honor').on('tap', '.mui-btn', function () {
-            var elem = this;
-            var li = elem.parentNode.parentNode;
-            var btnArray = ['确认', '取消'];
-            var txt = elem.innerHTML;
-            var id = elem.parentNode.getAttribute('data-id');
-            var action = elem.getAttribute('data-action');
-            mui.confirm('确认删除该荣誉', '提示', btnArray, function (e) {
-                if (e.index == 0) {
-                    var apiurl = "{:url('api/team/delteamhonor')}";
-                    mui.ajax(apiurl, {
-                        data: {
-                            honor_id: id,
-                        },
-                        dataType: 'json',
-                        type: 'post',
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            if (data.code == 200) {
-                                li.parentNode.removeChild(li);
-                                location.reload();
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errotThrown) {
-                            mui.toast('网络异常,请稍候再试');
-                        }
-                    });
-                } else {
-                    setTimeout(function () {
-                        mui.swipeoutClose(li);
-                    }, 0);
-                }
-            });
         });
 
     </script>

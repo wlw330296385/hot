@@ -345,6 +345,19 @@
             </div>
             <ul class="mui-table-view list mainInfo newCampEvent"></ul>
 
+            <!--热门活动-->
+            <div class="show-list mt">
+                <div class="page-header border-b">
+                    <span class="course">热门活动
+                        <span class="noDataTip"></span>
+                    </span>
+                    <span class="more">
+                        <a href="{:url('event/eventList')}" class="mui-navigate-right">更多</a>
+                    </span>
+                </div>
+                <ul class="mui-table-view mui-grid-view show-list-cont border-b" id="hot-event"></ul>
+            </div>
+
             <!--热门课程-->
             <div class="show-list mt">
                 <div class="page-header border-b">
@@ -384,7 +397,8 @@
 
     </div>
 
-    <div class="dragClass" id="drag">我要<br />学球</div>
+    <div class="dragClass" id="drag">我要
+        <br />学球</div>
 
     <div id="menu-wrapper" class="menu-wrapper hidden">
         <div id="menu" class="menu search">
@@ -485,6 +499,8 @@
                         localStorage.currentCity = _getParam(items[1], 'text');
                         localStorage.currentProvince = _getParam(items[0], 'text');
                         localStorage.currentAreas = areas;
+                        //获取热门活动
+                        toEventList(localStorage.currentCity, localStorage.currentProvince);
                         //获取热门课程
                         toLessonList(localStorage.currentCity, localStorage.currentProvince);
                         //获取热门训练营
@@ -525,6 +541,8 @@
             var sProvince = getLocationTB['province'];
             $(".address").text(sCity);
 
+            //获取热门活动
+            toEventList(sCity, sProvince);
             //获取热门课程
             toLessonList(sCity, sProvince);
             //获取热门训练营
@@ -915,6 +933,45 @@
             var year = _time.getFullYear();
             return p(year) + "年";
         }
+
+        //获取热门活动并追加到页面
+        var toEventList = function (sCity, sProvince) {
+            var url = "{:url('api/lesson/getHotLessonListApi','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    province: sProvince,
+                    city: sCity,
+                    status: 1,
+                    hot: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
+                            newli = newli + '<li class="mui-table-view-cell mui-media mui-col-xs-6"><a href="' + urls + '"><div class="img4x3" style="background-image:url(' + data.data[i].cover + ')"></div><div class="mui-media-body typename">' + data.data[i].lesson + '</div><div class="frame"><span class="typename-num">已报名：' + data.data[i].students + '</span><span class="typename-money">￥' + data.data[i].cost + '</span></div></a></li>'
+                        }
+                        if (newli == '') {
+                            newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        }
+                        $("ul#hot-event").html(newli);
+
+                    } else {
+                        newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
+                        $("ul#hot-event").html(newli);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
         //获取热门课程并追加到页面
         var toLessonList = function (sCity, sProvince) {
