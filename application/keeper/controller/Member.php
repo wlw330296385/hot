@@ -306,12 +306,37 @@ class Member extends Base{
 
     // 个人荣誉详情
     public function memberHonorInfo(){
-        return view('Member/memberHonorInfo');
+	    $id = input('id', 0, 'intval');
+	    if (!$id) {
+	        $this->error(__lang('MSG_402'));
+        }
+        $memberS = new MemberService();
+	    $honorInfo = $memberS->getMemberHonor(['id' => $id]);
+	    if (!$honorInfo) {
+	        $this->error(__lang('MSG_404'));
+        }
+        return view('Member/memberHonorInfo', [
+            'honorInfo' => $honorInfo
+        ]);
     }
 
     // 个人荣誉编辑
     public function memberHonorEdit(){
-        return view('Member/memberHonorEdit');
+        $id = input('id', 0, 'intval');
+        if (!$id) {
+            $this->error(__lang('MSG_402'));
+        }
+        $memberS = new MemberService();
+        $honorInfo = $memberS->getMemberHonor(['id' => $id]);
+        if (!$honorInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        if ($honorInfo['member_id'] != $this->memberInfo['id']) {
+            $this->error(__lang('MSG_403'));
+        }
+        return view('Member/memberHonorEdit', [
+            'honorInfo' => $honorInfo
+        ]);
     }
 
 }
