@@ -170,7 +170,7 @@
                         var urls = "{:url('article/articleInfoOfCamp')}" + '/article_id/' + data.data.data[i].id + '/organization_id/' + "{$campInfo.id}";
                         newli += '<li class="mui-table-view-cell mui-media listli">'
                         if (status == 1) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus" data-status="' + data.data.data[i].status + '">设为下架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         } else if (status == -1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为上架</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
@@ -213,16 +213,34 @@
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var eventid = elem.parentNode.getAttribute('data-id');
+        var article_id = elem.parentNode.getAttribute('data-id');
         var action = elem.getAttribute('data-action');
+        var status = elem.getAttribute('data-status');
+
+        let data = {};
+        if(action=='del'){
+            var timestamp = Date.parse(new Date());
+            data = {
+                article_id:article_id,
+                delete_time: timestamp
+            }
+        }else{
+            if(status==1){
+                status=-1;
+            }else{
+                status=1;
+            }
+            data = {
+                article_id:article_id,
+                status: status
+            }
+        }
+
         mui.confirm('确认该活动' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
-                var apiurl = "{:url('api/article/removearticle')}";
+                var apiurl = "{:url('api/article/updateArticleApi')}";
                 mui.ajax(apiurl, {
-                    data: {
-                        eventid: eventid,
-                        action: action
-                    },
+                    data:data,
                     dataType: 'json',
                     type: 'post',
                     headers: { 'Content-Type': 'application/json' },
