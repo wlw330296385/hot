@@ -224,7 +224,7 @@ class Event extends Base{
             if($isPower<3){
                 $event_id = input('post.event_id');
                 $status = input('post.status');
-                $result = db('Event')->save(['status'=>$status],$event_id);
+                $result = db('event')->save(['status'=>$status],$event_id);
                 if($result){
                     return json(['code'=>200,'msg'=>__lang('MSG_200')]);
                 }else{

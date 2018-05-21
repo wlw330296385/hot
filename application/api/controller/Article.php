@@ -52,17 +52,17 @@ class Article extends Base{
      }
 
     public function updateArticleApi(){
-         try{
-             $data = input('post.');
+        try{
+            $data = input('post.');
             $article_id = input('param.article_id');
-             $data['member_id'] = $this->memberInfo['id'];
-             $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->ArticleService->updateArticle($data,['id'=>$article_id]);
-             return json($result);
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-         }
-     }
+            return json($result);
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
  
     public function createArticleApi(){
         try{
@@ -170,4 +170,24 @@ class Article extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    public function editArticleApi() {
+        try {
+            // 接收参数，检查参数是否符合
+            $article_id = input('param.article_id');
+            $data = input('post.');
+            $result = db('article')->where(['id'=>$article_id])->update($data);
+            if($result){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
+            }
+        } catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
 }
