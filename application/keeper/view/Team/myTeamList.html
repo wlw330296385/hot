@@ -46,6 +46,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -54,7 +55,7 @@
         $(function () {
             //初始化全局变量
             var count = 1;
-
+            var teamId = wooApi.GetQueryString('team_id');
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -101,15 +102,25 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/searchteamlist','','',true)}";
+                var url = "{:url('api/team/myteamlist','','',true)}";
                 var member_id = "{$memberInfo.id}"
-                mui.ajax({
-                    url: url,
-                    data: {
+                if (teamId == '' || teamId == null) {
+                    var data = {
                         page: page,
                         status: 1,
                         member_id: member_id,
-                    },
+                        iscamp: 1
+                    }
+                } else {
+                    var data = {
+                        page: page,
+                        status: 1,
+                        member_id: member_id,
+                    }
+                }
+                mui.ajax({
+                    url: url,
+                    data: data,
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
@@ -119,10 +130,10 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('/keeper/team/teamInfo')}" + '/team_id/' + data.data[i].id;
+                                var urls = "{:url('/keeper/team/teamInfo')}" + '/team_id/' + data.data[i].team.id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].name + '</font>';
-                                newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].member_num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].area + '</p></div></a>'
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].team.logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].team.name + '</font>';
+                                newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].team.member_num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].team.avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].team.avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].team.area + '</p></div></a>'
                                 newli += '</li>';
                             }
                         }
