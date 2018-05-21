@@ -68,9 +68,19 @@
                                         <td>{$vol.create_time}</td>
                                         <td style="color:red">{$vol.status}</td>
                                         <td>
-                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>-1])}" title="拒绝" class="btn btn-xs btn-danger del-btn"><i class="fa fa-close"></i></a>
-                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>2])}" title="同意" class="btn btn-xs btn-success del-btn"><i class="fa fa-check"></i></a>
-                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>3])}" class="btn btn-xs btn-danger" title="已打款" ><i class="fa fa-check"></i></a>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info">操作</button>
+                                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><button data-href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>-1])}" title="拒绝" class="btn btn-block btn-danger"><i class="fa fa-close"></i> 拒绝</button></li>
+                                                    <li><button data-href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>2])}" title="同意" class="btn btn-block btn-success"><i class="fa  fa-check"></i> 同意</button></li>
+                                                    <li><button data-href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>3])}" title="已打款" class="btn btn-block btn-success" ><i class="fa fa-cc-mastercard"></i> 已打款</button></li>
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                     {/volist}
@@ -92,6 +102,16 @@
 {/block}
 
 {block name='js'}
+<script type="text/javascript">
+    $(function(){
+        $('.dropdown-menu button').click(function() {
+            var gotoUrl = $(this).attr('data-href');
+            var getTitle = $(this).attr('title');
 
+            window.top.location.href = gotoUrl;
+        });
+
+    })
+</script>
 
 {/block}
