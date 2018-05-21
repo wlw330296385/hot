@@ -71,7 +71,6 @@ class CampWithdrawService {
 
     // 新增提现记录
     public function createCampWithdraw($data){
-        
         $data['status'] = 1;
         $validate = validate('CampWithdrawVal');
         if(!$validate->scene('add')->check($data)){

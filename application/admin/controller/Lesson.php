@@ -113,7 +113,6 @@ class Lesson extends Backend {
             try{
                 $postData = input('post.');
                 $lessonInfo = db('lesson')->where(['id'=>$postData['lesson_id']])->find();
-
                 // 生成订单号
                 $billOrder = '1'.date('YmdHis',time()).rand(0000,9999);
                 $billInfo = [

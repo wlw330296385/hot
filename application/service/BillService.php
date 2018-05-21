@@ -112,11 +112,13 @@ class BillService {
     public function payNoNotice($data,$map){
         $data['pay_time'] = time();
         $data['expire'] = 0;
-        $result = $this->Bill->save($data,$map);      
+        $result = $this->Bill->save($data,$map); 
+  
         if($result){
             $billInfo = $this->Bill->where($map)->find();
             $billData = $billInfo->toArray();
             $res = $this->finishBillNoNotic($billData);
+
             return $res;
         }else{
             return false;
@@ -135,10 +137,11 @@ class BillService {
         $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
         $schedule_rebate = $campInfo['schedule_rebate'];
         $campBlance = $data['balance_pay'];
-        $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-        if($ress){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
+        if($campInfo['rebate_type'] == 2){
+            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
         }
+        db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
+        
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
@@ -160,7 +163,7 @@ class BillService {
                     'keyword2' => ['value' => $data['bill_order']],
                     'keyword3' => ['value' => $data['balance_pay'].'元'],
                     'keyword4' => ['value' => $data['goods_des']],
-                    'remark' => ['value' => '篮球管家']
+                    'remark' => ['value' => '篮球管家']                                 
                 ]
             ];
             $saveData = [
@@ -294,11 +297,14 @@ class BillService {
         $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
         $schedule_rebate = $campInfo['schedule_rebate'];
         $campBlance = $data['balance_pay'];
-        $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-
-        if($ress){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
+        if($campInfo['rebate_type'] == 2){
+            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
         }
+        
+
+
+        db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay']*(1-$schedule_rebate),'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type']]);
+    
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
@@ -340,7 +346,7 @@ class BillService {
             // lesson_member操作
             $LessonMember = new LessonMember;
             $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->find();
-            
+    
             //添加一条学生数据
             if(!$is_student2){
                     $re = $LessonMember->save(['camp_id'=>$data['camp_id'],'camp'=>$data['camp'],'member_id'=>$data['member_id'],'member'=>$data['member'],'status'=>1,'student_id'=>$data['student_id'],'student'=>$data['student'],'lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'rest_schedule'=>$data['total'],'total_schedule'=>$data['total'],'type'=>1]);
@@ -351,7 +357,8 @@ class BillService {
                     }
             }else{
                 // 课量增加
-                $re = db('lesson _member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status'=>1,'update_time'=>time()]);
+                $re = db('lesson_member')->where(['lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status'=>1,'update_time'=>time()]);
+
                 $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->inc('total_schedule',$data['total'])->update();
                 if(!$re){
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);

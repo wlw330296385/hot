@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql
+ Source Server         : 29
  Source Server Type    : MySQL
- Source Server Version : 50553
+ Source Server Version : 100123
  Source Host           : localhost:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 50553
+ Target Server Version : 100123
  File Encoding         : 65001
 
- Date: 11/05/2018 15:09:18
+ Date: 21/05/2018 15:31:51
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `admin_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 143 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 161 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -133,7 +133,7 @@ INSERT INTO `admin_menu` VALUES (91, 4, 'admin', '提现列表', 'fa fa-cog', 0,
 INSERT INTO `admin_menu` VALUES (92, 4, 'admin', '提现详情', 'fa fa-cog', 0, 'admin/finance/salaryOutInfo', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (93, 4, 'admin', '手动新增提现', 'fa fa-cog', 0, 'admin/finance/createSalaryOut', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (94, 4, 'admin', '操作提现申请', 'fa fa-cog', 0, 'admin/finance/updateSalaryOut', '_self', 0, 0, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (118, 0, 'admin', '新财务管理', 'fa fa-cog', 0, '', '_self', 1, 13, 0, 0, 0);
+INSERT INTO `admin_menu` VALUES (118, 0, 'admin', '新财务管理', 'fa fa-cog', 0, '', '_self', 0, 13, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (95, 0, 'admin', '卡券管理', 'fa fa-cog', 0, '', '_self', 1, 4, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (96, 95, 'admin', '卡券列表', 'fa fa-cog', 0, 'admin/Coupon/itemCouponList', '_self', 1, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (97, 95, 'admin', '添加卡券', 'fa fa-cog', 0, 'admin/Coupon/createitemCoupon', '_self', 0, 0, 1, 0, 0);
@@ -152,33 +152,49 @@ INSERT INTO `admin_menu` VALUES (109, 106, 'admin', '礼包详情', 'fa fa-cog',
 INSERT INTO `admin_menu` VALUES (110, 106, 'admin', '编辑礼包', 'fa fa-cog', 0, 'admin/Bonus/updateBonus', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (111, 95, 'admin', '编辑卡券', 'fa fa-cog', 0, 'admin/Coupon/updateitemCoupon', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (112, 0, 'admin', '球队管理', 'fa fa-cog', 0, 'admin/Team/index', '_self', 1, 10, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (113, 0, 'admin', '裁判员管理', 'fa fa-cog', 0, 'admin/Keeper/Referee', '_self', 1, 11, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (114, 113, 'admin', '裁判员列表', 'fa fa-cog', 0, 'admin/Referee/RefereeList', '_self', 1, 0, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (115, 113, 'admin', '裁判员详情', 'fa fa-cog', 0, 'admin/Referee/RefereeInfo', '_self', 0, 0, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (116, 113, 'admin', '编辑裁判员', 'fa fa-cog', 0, 'admin/Referee/UpdateReferee', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (113, 0, 'admin', '裁判员管理', 'fa fa-cog', 0, 'admin/Referee/index', '_self', 1, 11, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (114, 113, 'admin', '裁判员列表', 'fa fa-cog', 0, 'admin/Referee/index', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (115, 113, 'admin', '裁判员详情', 'fa fa-cog', 0, 'admin/Referee/refereeInfo', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (116, 113, 'admin', '编辑裁判员', 'fa fa-cog', 0, 'admin/Referee/updateRefereeStatus', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (117, 3, 'admin', '编辑场地', 'fa fa-cog', 0, 'admin/court/edit', '_self', 0, 36, 1, 6, 6);
-INSERT INTO `admin_menu` VALUES (119, 0, 'admin', '教练员财务管理', 'fa fa-cog', 0, '', '_self', 1, 13, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (121, 119, 'admin', '资金账单', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachBill', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (122, 119, 'admin', '收益统计', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachIncome', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (123, 119, 'admin', '课时收益详情', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSchedule', '_self', 0, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (124, 119, 'admin', 'DEMO', 'fa fa-cog', 0, 'admin/Statistics_Coach/demo', '_self', 1, 10, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (125, 0, 'admin', '训练营财务管理', 'fa fa-cog', 0, '', '_self', 1, 13, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (126, 125, 'admin', '资金账单', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBill', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (127, 125, 'admin', '收益统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campIncome', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (128, 125, 'admin', '营业额统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campTurnover', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (129, 125, 'admin', '每月图表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campChart', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (130, 125, 'admin', '每月报表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campStatistics', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (131, 125, 'admin', '课时统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campScheduleStatistics', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (132, 125, 'admin', '课时结算表', 'fa fa-cog', 0, 'admin/Statistics_Camp/lessonSchedule', '_self', 1, 4, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (133, 125, 'admin', '课时列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campSchedule', '_self', 1, 1, 0, 0, 0);
-INSERT INTO `admin_menu` VALUES (134, 125, 'admin', '赠课记录', 'fa fa-cog', 0, 'admin/Statistics_Camp/campGift', '_self', 1, 6, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (135, 125, 'admin', '订单列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBillList', '_self', 1, 5, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (136, 125, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campWithdraw', '_self', 1, 7, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (137, 125, 'admin', '教练工资月表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalaryMth', '_self', 1, 2, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (138, 119, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachWithdraw', '_self', 1, 4, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (139, 119, 'admin', '返利列表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachRebate', '_self', 1, 3, 0, 0, 0);
-INSERT INTO `admin_menu` VALUES (140, 119, 'admin', '课时收入表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSalary', '_self', 1, 2, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (141, 125, 'admin', '教练工资明细', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalary', '_self', 1, 3, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (142, 125, 'admin', '训练营概览', 'fa fa-cog', 0, 'admin/Statistics_Camp/campIndex', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (119, 118, 'admin', '教练工资收入', 'fa fa-cog', 0, 'admin/Salaryin/coach', '_self', 0, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (120, 118, 'admin', '训练营收入', 'fa fa-cog', 0, 'admin/Income/camp', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (121, 118, 'admin', 'demo', 'fa fa-cog', 0, 'admin/salaryin/demo', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (122, 118, 'admin', '训练营资金账单', 'fa fa-cog', 0, 'admin/output/index', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (123, 23, 'admin', 'Banner管理', 'fa fa-cog', 0, 'admin/banner/index', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (124, 23, 'admin', 'Banner编辑', 'fa fa-cog', 0, 'admin/banner/edit', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (125, 23, 'admin', 'Banner删除', 'fa fa-cog', 0, 'admin/banner/delete', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (126, 23, 'admin', 'Banner添加', 'fa fa-cog', 0, 'admin/banner/add', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (127, 3, 'admin', '训练营机构版链接', 'fa fa-cog', 0, 'admin/camp/wxindex', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (128, 129, 'admin', '问题反馈详情', 'fa fa-cog', 0, 'admin/feedback/detail', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (129, 0, 'admin', '问题反馈列表', 'fa fa-cog', 0, 'admin/feedback/index', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (130, 0, 'admin', '联赛管理', 'fa fa-cog', 0, '#', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (131, 130, 'admin', '联赛列表', 'fa fa-cog', 0, 'admin/league/index', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (132, 130, 'admin', '联赛详情', 'fa fa-cog', 0, 'admin/league/detail', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (133, 130, 'admin', '联赛审核', 'fa fa-cog', 0, 'admin/league/audit', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (135, 0, 'admin', '训练营财务管理', 'fa fa-cog', 0, '', '_self', 1, 13, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (136, 135, 'admin', '教练工资明细', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalary', '_self', 1, 3, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (137, 135, 'admin', '教练工资月表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalaryMth', '_self', 1, 2, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (138, 135, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campWithdraw', '_self', 1, 7, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (139, 135, 'admin', '订单列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBillList', '_self', 1, 5, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (140, 135, 'admin', '赠课记录', 'fa fa-cog', 0, 'admin/Statistics_Camp/campGift', '_self', 1, 6, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (141, 135, 'admin', '课时结算表', 'fa fa-cog', 0, 'admin/Statistics_Camp/lessonSchedule', '_self', 1, 4, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (142, 135, 'admin', '课时统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campScheduleStatistics', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (143, 135, 'admin', '每月报表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campStatistics', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (144, 135, 'admin', '每月图表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campChart', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (145, 135, 'admin', '营业额统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campTurnover', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (146, 135, 'admin', '收益统计', 'fa fa-cog', 0, 'admin/Statistics_Camp/campIncome', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (147, 135, 'admin', '资金账单', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBill', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (148, 135, 'admin', '训练营概览', 'fa fa-cog', 0, 'admin/Statistics_Camp/campIndex', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (149, 0, 'admin', '教练员财务管理', 'fa fa-cog', 0, '', '_self', 1, 12, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (150, 149, 'admin', 'DEMO', 'fa fa-cog', 0, 'admin/Statistics_Coach/demo', '_self', 1, 10, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (151, 149, 'admin', '课时收入表', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSalary', '_self', 1, 2, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (152, 149, 'admin', '课时收益详情', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachSchedule', '_self', 0, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (153, 149, 'admin', '收益统计', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachIncome', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (154, 149, 'admin', '资金账单', 'fa fa-cog', 0, 'admin/Statistics_Coach/coachBill', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (155, 4, 'admin', '训练营提现列表', 'fa fa-cog', 0, 'admin/Withdraw/campWithdrawList', '_self', 1, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (156, 4, 'admin', '训练营提现处理', 'fa fa-cog', 0, 'admin/Withdraw/campWithdrawDeal', '_self', 0, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (157, 5, 'admin', '会员学球意向', 'fa fa-user', 0, 'admin/member/studyinterionlist', '_self', 1, 1, 1, 1526631852, 0);
+INSERT INTO `admin_menu` VALUES (158, 157, 'admin', '会员学球意向详情', 'fa fa-user', 0, 'admin/member/studyinteriondetail', '_self', 0, 1, 1, 1526631852, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

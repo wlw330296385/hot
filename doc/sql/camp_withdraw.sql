@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql
+ Source Server         : 29
  Source Server Type    : MySQL
- Source Server Version : 50553
+ Source Server Version : 100123
  Source Host           : localhost:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 50553
+ Target Server Version : 100123
  File Encoding         : 65001
 
- Date: 27/04/2018 17:04:22
+ Date: 21/05/2018 16:03:55
 */
 
 SET NAMES utf8mb4;
@@ -30,6 +30,7 @@ CREATE TABLE `camp_withdraw`  (
   `member_id` int(11) NOT NULL,
   `member` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `buffer` decimal(12, 2) NOT NULL COMMENT '冻结资金',
+  `camp_withdraw_fee` decimal(8, 2) NOT NULL COMMENT '平台手续费',
   `s_balance` decimal(12, 2) NOT NULL COMMENT '训练营余额(开始)',
   `e_balance` decimal(12, 2) NOT NULL COMMENT '训练营余额(结束)',
   `bank_id` int(11) NOT NULL COMMENT '关联的收款账号id',
@@ -42,6 +43,16 @@ CREATE TABLE `camp_withdraw`  (
   `update_time` int(11) NOT NULL,
   `delete_time` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '训练营提现详情表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '训练营提现详情表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of camp_withdraw
+-- ----------------------------
+INSERT INTO `camp_withdraw` VALUES (1, 0.00, 0, 4, '准行者训练营', 6, 'legend', 0.00, 0.00, 9.20, 9.20, 1, 2, 0, '', -2, '', 1524825418, 1524826130, NULL);
+INSERT INTO `camp_withdraw` VALUES (2, 2.00, 0, 4, '准行者训练营', 6, 'legend', 0.00, 0.00, 9.20, 9.20, 1, 2, 0, '', -2, '', 1524826121, 1524826923, NULL);
+INSERT INTO `camp_withdraw` VALUES (3, 2.00, 0, 4, '准行者训练营', 6, 'legend', 2.00, 0.00, 9.20, 9.20, 1, 2, 0, '测试', 1, '', 1524826939, 1524826939, NULL);
+INSERT INTO `camp_withdraw` VALUES (4, 3.00, 0, 4, '准行者训练营', 6, 'legend', 3.00, 0.00, 7.20, 7.20, 1, 2, 0, '测试', 1, '', 1524826999, 1524826999, NULL);
+INSERT INTO `camp_withdraw` VALUES (5, 3.00, 0, 4, '准行者训练营', 6, 'legend', 0.00, 0.30, 4.20, 4.20, 1, 2, 0, '', -2, '', 1524827359, 1524827394, NULL);
+INSERT INTO `camp_withdraw` VALUES (6, 232800.00, 0, 9, '大热篮球俱乐部', 2, 'Hot-basketball2', 256080.00, 23280.00, 273445.00, 273445.00, 3, 2, 1, '', 1, '', 1526031579, 1526031579, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

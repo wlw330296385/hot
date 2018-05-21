@@ -1,0 +1,120 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>提现列表</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="bootstrap-table">
+            <div class="search-form">
+                <form action="" class="form-inline" method="post">
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="control-label">搜索</label>
+                            <input class="form-control" type="text" name="keyword" >
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-success btn-flat">搜索</button>
+                                <button type="reset" class="btn btn-default btn-flat">重置</button>
+                            </div>
+                        </div>
+                        
+                    </fieldset>
+
+                </form>
+            </div>
+
+            <div class="fixed-table-container no-border">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box no-border">
+                            <div class="box-body">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>提现金额</th>
+                                        <th>冻结金额</th> 
+                                        <th>银行</th>
+                                        <th>银行支行</th>
+                                        <th>银行卡号</th>
+                                        <th>账户名</th>
+                                        <th>训练营</th>
+                                        <th>手续费</th>
+                                        <th>训练营类型</th>
+                                        <th>申请时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {volist name="campWithdrawList" id="vol"}
+                                    <tr>
+                                        <td>{$vol.id}</td>
+                                        <td>{$vol.withdraw}</td>
+                                        <td>{$vol.buffer}</td>
+
+                                        <td>{$vol.bank.bank}</td>
+                                        <td>{$vol.bank.bank_branch}</td>
+                                        <td>{$vol.bank.bank_card}</td>
+                                        <td>{$vol.bank.account}</td>
+                                        <td>{$vol.camp}</td>
+                                        <td>{$vol.camp_withdraw_fee}</td>
+                                        <td>{$vol.rebate_type}</td>
+                                        <td>{$vol.create_time}</td>
+                                        <td style="color:red">{$vol.status}</td>
+                                        <td>
+                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>-1])}" title="拒绝" class="btn btn-xs btn-danger del-btn"><i class="fa fa-close"></i></a>
+                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>2])}" title="同意" class="btn btn-xs btn-success del-btn"><i class="fa fa-check"></i></a>
+                                            <a href="{:url('admin/withdraw/campWithdrawDeal', ['campWithdraw_id' => $vol['id'],'action'=>3])}" class="btn btn-xs btn-danger" title="已打款" ><i class="fa fa-check"></i></a>
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-footer clearfix">
+                                {$campWithdrawList->render()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name='js'}
+<script type="text/javascript">
+    $(function(){
+        $('.pop-iframe').click(function() {
+            var iframeurl = $(this).attr('data-href');
+            // alert(iframeurl);return;
+            var title = $(this).text();
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: title,
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['900px', '650px'],
+                    content: iframeurl
+                });
+            });
+        });
+
+    }) 
+</script>
+
+{/block}
