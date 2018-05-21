@@ -236,7 +236,7 @@ class BillService {
         //结束课程操作
 
         // 记录训练营课程营业额
-        if($data['balance_pay']>0 && $data['status'] == 1){
+        if($data['balance_pay']>0 && $data['status'] == 1 && $campInfo['rebate_type'] == 2){
                 $daytime = $data['pay_time'];
                 $dataCampFinance = [
                     'money' => $data['balance_pay'],
@@ -370,15 +370,15 @@ class BillService {
             //结束增加学生数据
             // 发送模板消息
             $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-                //结束课程操作
-                // 记录训练营课程营业额
-            if($data['balance_pay']>0 && $data['status'] == 1){
+            //结束课程操作
+            // 记录训练营课程营业额
+            if($data['balance_pay']>0 && $data['status'] == 1 && $campInfo['rebate_type'] == 2){
                 $daytime = $data['pay_time'];
                 $dataCampFinance = [
+                    'money' => $data['balance_pay'],
                     'camp_id' => $data['camp_id'],
                     'camp' => $data['camp'],
                     'type'=>1,
-                    'money' => $data['balance_pay'],
                     'f_id' => $data['id'],
                     'rebate_type'=>$campInfo['rebate_type'],
                     'schedule_rebate'=>$campInfo['schedule_rebate'],
