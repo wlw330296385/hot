@@ -1380,6 +1380,19 @@ class Team extends Base
                 unset($map['member_id']);
             }
 
+            // 关键字搜索比赛名称
+            if ( array_key_exists('keyword', $map) ) {
+                $keyword = input('keyword');
+                if ( !empty($keyword) ) {
+                    $map['match'] = ['like', "%$keyword%"];
+                    unset($map['keyword']);
+                }
+                // 排除值为null
+                if ( $keyword == null ) {
+                    unset($map['keyword']);
+                }
+            }
+
             // 默认查询上架比赛(status=1)
             $map['status'] = input('param.status', 1);
             // 比赛时间小于当前时间：过期比赛
@@ -1458,6 +1471,18 @@ class Team extends Base
             }
             // 比赛时间小于当前时间：过期比赛
             //$map['match_record.match_time'] = ['gt', time()];
+            // 关键字搜索比赛名称
+            if ( array_key_exists('keyword', $map) ) {
+                $keyword = input('keyword');
+                if ( !empty($keyword) ) {
+                    $map['match'] = ['like', "%$keyword%"];
+                    unset($map['keyword']);
+                }
+                // 排除值为null
+                if ( $keyword == null ) {
+                    unset($map['keyword']);
+                }
+            }
             // 查询条件组合end
             if (input('?param.page')) {
                 unset($map['page']);
@@ -1535,6 +1560,18 @@ class Team extends Base
             $map['status'] = input('param.status', 1);
             // 比赛时间小于当前时间：过期比赛
             //$map['match_record.match_time'] = ['gt', time()];
+            // 关键字搜索比赛名称
+            if ( array_key_exists('keyword', $map) ) {
+                $keyword = input('keyword');
+                if ( !empty($keyword) ) {
+                    $map['match'] = ['like', "%$keyword%"];
+                    unset($map['keyword']);
+                }
+                // 排除值为null
+                if ( $keyword == null ) {
+                    unset($map['keyword']);
+                }
+            }
             // 查询条件组合end
 
             if (input('?param.page')) {

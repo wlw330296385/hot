@@ -1043,7 +1043,7 @@ class Match extends Base
                 // 关键字内容
                 if ($keyword != null) {
                     if (!empty($keyword) || !ctype_space($keyword)) {
-                        $map['team'] = ['like', "%$keyword%"];
+                        $map['name'] = ['like', "%$keyword%"];
                     }
                 }
             }
@@ -1145,7 +1145,7 @@ class Match extends Base
                 } else {
                     if (!empty($keyword)) {
                         if (!ctype_space($keyword)) {
-                            $map['team'] = ['like', "%$keyword%"];
+                            $map['name'] = ['like', "%$keyword%"];
                         }
                     }
                 }
@@ -1222,7 +1222,7 @@ class Match extends Base
                 } else {
                     if (!empty($keyword)) {
                         if (!ctype_space($keyword)) {
-                            $data['team'] = ['like', "%$keyword%"];
+                            $data['match'] = ['like', "%$keyword%"];
                         }
                     }
                 }
