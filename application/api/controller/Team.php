@@ -2633,6 +2633,11 @@ class Team extends Base
                         $prizeMemberData[$k]['team_honor'] = $data['name'];
                         $prizeMemberData[$k]['team_id'] = $data['team_id'];
                         $prizeMemberData[$k]['team'] = $data['team'];
+                        $prizeMemberData[$k]['match'] = $data['match'];
+                        //$prizeMemberData[$k]['match_id'] = $data['match_id'];
+                        $prizeMemberData[$k]['award_org'] = $data['award_org'];
+                        //$prizeMemberData[$k]['award_org_id'] = $data['award_org_id'];
+                        $prizeMemberData[$k]['honor_time'] = $data['honor_time'];
                         $prizeMemberData[$k]['status'] = 1;
                         $prizeMemberData[$k]['team_member_id'] = $val['id'];
                         unset($prizeMemberData[$k]['id']);
@@ -2701,22 +2706,26 @@ class Team extends Base
                         // 更新原有数据
                         if ($teamHonorMember) {
                             $prizeMemberData[$k]['id'] = $teamHonorMember['id'];
-                            $prizeMemberData[$k]['status'] = 1;
                         } else {
-                            // 插入新数据
-                            $prizeMemberData[$k]['team_honor_id'] = $honorId;
-                            $prizeMemberData[$k]['team_honor'] = $data['name'];
-                            $prizeMemberData[$k]['team_id'] = $data['team_id'];
-                            $prizeMemberData[$k]['team'] = $data['team'];
-                            $prizeMemberData[$k]['status'] = 1;
-                            $prizeMemberData[$k]['team_member_id'] = $val['id'];
                             unset($prizeMemberData[$k]['id']);
                         }
+                        $prizeMemberData[$k]['team_honor_id'] = $honorId;
+                        $prizeMemberData[$k]['team_honor'] = $data['name'];
+                        $prizeMemberData[$k]['team_id'] = $data['team_id'];
+                        $prizeMemberData[$k]['team'] = $data['team'];
+                        $prizeMemberData[$k]['match'] = $data['match'];
+                        //$prizeMemberData[$k]['match_id'] = $data['match_id'];
+                        $prizeMemberData[$k]['award_org'] = $data['award_org'];
+                        //$prizeMemberData[$k]['award_org_id'] = $data['award_org_id'];
+                        $prizeMemberData[$k]['honor_time'] = $data['honor_time'];
+                        $prizeMemberData[$k]['status'] = 1;
+                        $prizeMemberData[$k]['team_member_id'] = $val['id'];
                     }
                     $teamS->saveAllTeamHonorMember($prizeMemberData);
                 }
             }
         } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($resSaveTeamHonor);
