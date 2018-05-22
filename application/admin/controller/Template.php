@@ -1,15 +1,12 @@
 <?php
 namespace app\admin\controller;
-
+use app\admin\service\TemplateService;
 use app\admin\controller\base\Backend;
-use app\service\ArticleService;
-class Article extends Backend {
-    private $ArticleListService; 
+class Template extends Backend {
 	public function _initialize(){
 		parent::_initialize();
-        $this->ArticleService = new ArticleService();
 	}
-    public function articleList() {
+    public function templateList() {
         $field = '请选择搜索关键词';
         $map = [];
 
@@ -24,67 +21,65 @@ class Article extends Backend {
             }else{
                 $field = '请选择搜索关键词';
                 $map = function($query) use ($keyword){
-                    $query->where(['title'=>['like',"%$keyword%"]]);
+                    $query->where(['template'=>['like',"%$keyword%"]]);
                 };
             }
         }
-        $articleList = $this->ArticleService->getArticleListByPage($map);
+        $templateList = $this->TemplateService->getTemplateListByPage($map);
         $this->assign('field',$field);
-        $this->assign('articleList',$articleList);    
-        return view('article/articleList');
+        $this->assign('templateList',$templateList);    
+        return view('template/templateList');
     	
     }
 
-    public function articleInfo(){
-        $article_id = input('param.article_id');
+    public function templateInfo(){
+        $template_id = input('param.template_id');
         $map['id'] = $araticle_id;
-        $articleInfo = $this->ArticleService->getArticleInfo($map);
+        $templateInfo = $this->TemplateService->getTemplateInfo($map);
 
-        $this->assign('articleInfo',$articleInfo);
-        return  view('article/articleInfo');
+        $this->assign('templateInfo',$templateInfo);
+        return  view('template/templateInfo');
     }
 
-    public function createArticle(){
+    public function createTemplate(){
         if(request()->isPost()){
             $data = input('post.');
             $data['member_id']=$this->admin['id'];
             $data['member'] = $this->admin['username'];
-            $result = $this->ArticleService->createArticle($data);
+            $result = $this->TemplateService->createTemplate($data);
             if($result['code'] == 200){
-                $this->success($result['msg'],'/admin/Article/articleList');
+                $this->success($result['msg'],'/admin/Template/templateList');
             }else{
                 $this->error($result['msg']);
             }
         }
 
-        return view('article/createArticle');
+        return view('template/createTemplate');
     }
 
 
-    public function updateArticle(){
-        $article_id = input('param.article_id');
-        $map['id'] = $article_id;
-        $articleInfo = $this->ArticleService->getArticleInfo($map);
+    public function updateTemplate(){
+        $template_id = input('param.template_id');
+        $map['id'] = $template_id;
+        $templateInfo = $this->TemplateService->getTemplateInfo($map);
 
 
         if(request()->isPost()){
             $data = input('post.');
             $id = $data['id'];
 
-            $data['member_id']=$this->admin['id'];
-            $data['member'] = $this->admin['username'];
-            $result = $this->ArticleService->updateArticle($data,['id'=>$id]);
+            $result = $this->TemplateService->updateTemplate($data,['id'=>$id]);
             if($result['code'] == 200){
-                $this->success($result['msg'],url('admin/Article/articleInfo',['article_id'=>$article_id]));
+                $this->success($result['msg'],url('admin/Template/templateInfo',['template_id'=>$template_id]));
             }else{
                 $this->error($result['msg']);
             }
         }
 
 
-        $this->assign('articleInfo',$articleInfo);
+        $this->assign('templateInfo',$templateInfo);
 
-        return view('article/updateArticle');
+        return view('template/updateTemplate');
     }
 
 }
