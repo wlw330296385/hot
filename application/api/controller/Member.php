@@ -8,6 +8,7 @@ use app\service\MatchDataService;
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\ScheduleMemberService;
+use app\service\TeamService;
 use app\service\WechatService;
 use think\Exception;
 use think\Validate;
@@ -610,6 +611,14 @@ class Member extends Base{
         }
         try {
             $result = $memberS->delMemberHonor($memberHonor['id']);
+            if ($result) {
+                // 删除相关的会员评论点赞数据
+                db('member_comment')
+                    ->where([
+                        'comment_type' => 2,
+                        'commented_id' => $memberHonor['id']
+                    ])->delete();
+            }
         } catch (Exception $e) {
             trace('error:'.$e->getMessage(),'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
@@ -665,7 +674,42 @@ class Member extends Base{
         }
     }
 
-    // 球队模块评论列表
+    // 会员的个人荣誉与球队荣誉总和列表
+    public function getmemberandteamhonorlist() {
+        try {
+            $data = input('param.');
+            $page = input('param.page');
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 默认查询正常状态的数据
+            $data['status'] = input('param.status', 1);
+            // 查询条件组合end
+            // 获取会员荣誉数据
+            $memberS = new MemberService();
+            $memberHonors = $memberS->getMemberHonorAll($data);
+            // 获取会员球队荣誉数据
+            $teamS = new TeamService();
+            $memberTeamHonors = $teamS->getTeamHonorMemberAll($data);
+            // 合并到一个新数组
+            $list = array_merge($memberHonors, $memberTeamHonors);
+            if (!$list) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            // 数组以honor_time倒序排序
+            array_multisort( array_column($list, 'honor_time'), SORT_DESC, $list );
+            $limit = 10;
+            $list = page_array($limit, $page, $list);
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $list]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(),'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+
+
+    // 会员业务评论列表
     public function membercommentlist()
     {
         try {
@@ -676,7 +720,7 @@ class Member extends Base{
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 组合传参作查询条件
-            $map = input('post.');
+            $map = input('param.');
             // 页码参数
             $page = input('page', 1);
             unset($map['page']);
@@ -704,13 +748,13 @@ class Member extends Base{
         }
     }
 
-    // 球队模块评论列表（有页码）
+    // 会员业务评论列表（有页码）
     public function membercommentpage()
     {
         try {
             // 判断必传参数
             // 评论类型
-            $comment_type = input('post.comment_type');
+            $comment_type = input('param.comment_type');
             if (!$comment_type) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
@@ -741,7 +785,7 @@ class Member extends Base{
         }
     }
 
-    // 发布球队模块评论
+    // 发布会员业务评论
     public function addmembercomment()
     {
         try {
@@ -802,7 +846,7 @@ class Member extends Base{
         }
     }
 
-    // 删除球队评论
+    // 删除会员业务评论
     public function delmembercomment() {
         $id  = input('post.id');
         if (!$id) {
@@ -836,7 +880,7 @@ class Member extends Base{
         }
     }
 
-    // 球队模块点赞
+    // 会员业务点赞
     public function dianzan()
     {
         try {
@@ -884,6 +928,7 @@ class Member extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['member_avatar'] = $this->memberInfo['avatar'];
+            $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1)) ? 0 : 1;
             $result = $memberS->saveComment($data);
             if ($result['code'] == 200) {
                 // 返回最新的点赞数统计
@@ -899,15 +944,15 @@ class Member extends Base{
         }
     }
 
-    // 获取会员在球队模块活动、比赛当前点赞信息
+    // 获取会员相关业务当前点赞信息
     public function isthumbup()
     {
         try {
             // 判断必传参数
             // 评论类型
-            $comment_type = input('post.comment_type');
+            $comment_type = input('param.comment_type');
             // 被评论实体id
-            $commented_id = input('post.commented_id');
+            $commented_id = input('param.commented_id');
             if (!$comment_type || !$commented_id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }

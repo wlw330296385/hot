@@ -428,3 +428,24 @@ function base64_image_content($image_content,$path){
         }
     }
 }
+
+/** 数组分页(array_splice)
+ * @param $count 每页数据条数
+ * @param $page 当前页数
+ * @param $array 进入分页的数据数组
+ * @return array
+ */
+function page_array($count, $page, $array) {
+    // 当前页 默认第1页
+    $page = empty($page) ? 1 : $page;
+    // 每次分页开始位置
+    $start = ($page-1)*$count;
+    // 总条数
+    $totals = count($array);
+    // 计算总页数
+    $countpage = ceil($totals/$count);
+    $pagedata = array();
+    // 利用array_slice对数组进行分割
+    $pagedata = array_slice($array, $start, $count);
+    return $pagedata;
+}
