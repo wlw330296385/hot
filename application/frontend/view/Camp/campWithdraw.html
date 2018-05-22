@@ -26,6 +26,7 @@
 
     <div class="list camp-list camp-lesson-list detalis-list coach">
         <form action="" class="mui-input-group">
+            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <div class="mui-input-row">
                 <label>训练营余额</label>
                 <span class="colororange">￥{$campInfo.balance}</span>
@@ -148,6 +149,13 @@
                         mui.toast(result.msg);
                         if(result.code == 200){
                             window.location.href="{:url('camp/campWallet',['camp_id'=>$campInfo.id])}";
+                        } else {
+                            mui.alert(ajaxResult.msg, '提交ai失败');
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
+                                }
+                            }, 'json');
                         }
                     }
                 });
