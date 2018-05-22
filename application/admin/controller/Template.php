@@ -28,7 +28,7 @@ class Template extends Backend {
         $templateList = $this->TemplateService->getTemplateListByPage($map);
         $this->assign('field',$field);
         $this->assign('templateList',$templateList);    
-        return view('template/templateList');
+        return view('Template/templateList');
     	
     }
 
@@ -54,7 +54,7 @@ class Template extends Backend {
             }
         }
 
-        return view('template/createTemplate');
+        return view('Template/createTemplate');
     }
 
 
@@ -79,7 +79,7 @@ class Template extends Backend {
 
         $this->assign('templateInfo',$templateInfo);
 
-        return view('template/updateTemplate');
+        return view('Template/updateTemplate');
     }
 
 }
