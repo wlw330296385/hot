@@ -842,7 +842,7 @@
 
         //获取荣誉列表
         function toHonorList() {
-            
+
             var url = "{:url('api/member/getmemberandteamhonorlist','','',true)}";
             mui.ajax({
                 url: url,
@@ -858,13 +858,20 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
-                            var urls = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].id + '/team_id/' + data.data[i].author_team_id;
-                            var honor_time = data.data[i].team_honor.honor_time;
+                            var urls = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].id;
+                            var honor_time = data.data[i].honor_time;
                             var date = new Date();
                             var yearNum = date.getFullYear(honor_time);
                             newli += '<li class="mui-table-view-cell mui-collapse listli">';
-                            newli += '<a class="mui-navigate-right"><p class="fl">' + yearNum + '</p><p class="fr pdr15">' + data.data[i].team_honor.name + '</p></a>';
-                            newli += '<div class="mui-collapse-content"><a href=""><p><text class="colororange" style="margin-right:10px;">' + data.data[i].team_honor.name + '</text>/所在球队：' + data.data[i].team_honor.author_team + '</p><p>授奖单位：' + data.data[i].team_honor.award_org + '</p><p>授奖时间：' + data.data[i].team_honor.honor_time + '</p></a></div>';
+                            newli += '<a class="mui-navigate-right"><p class="fl">' + yearNum + '</p><p class="fr pdr15">' + data.data[i].name + '</p></a>';
+                            newli += '<div class="mui-collapse-content"><a href="">';
+                            // if () {
+                                newli += '<p><text class="colororange" style="margin-right:10px;">' + data.data[i].name + '</text>/所在球队：' + data.data[i].author_team + '';
+                            // } else {
+                                // newli += '<p><text class="colororange" style="margin-right:10px;">' + data.data[i].name + '</text>';
+                            // }
+
+                            newli += '</p><p>授奖单位：' + data.data[i].award_org + '</p><p>授奖时间：' + data.data[i].honor_time + '</p></a></div>';
                             newli += '</li>';
                         }
                     }

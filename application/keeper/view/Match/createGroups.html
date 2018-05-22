@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>创建比赛</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title fenpei">
+            <button type="button" class="bgred" style="margin-top: 6px;">分配</button>
+        </h1>
+    </header>
+
+    <div class="mui-content">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+        <form action="" class="mui-input-group mt55">
+
+            <div class="mui-input-row">
+                <label>球队数</label>
+                <span class="totalNum">6</span>
+            </div>
+            <div class="mui-input-row">
+                <label>分组数</label>
+                <input type="text" name="groupNum" value="" class="data" placeholder="请输入组数">
+            </div>
+            <ul class="mui-table-view detalis-list list border-b frame"></ul>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen">
+                创建/编辑分组
+            </li>
+        </ul>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // var arr = [1, 2, 3, 4, 5];
+        // console.log(arr.sort(function () { return Math.random() - 0.5; })); //结果：[4, 2, 1, 5, 3];
+
+        // var data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        // var result = split_array(data, 5);
+        // function split_array(arr, len) {
+        //     var a_len = arr.length; var result = [];
+        //     for (var i = 0; i < a_len; i += len) {
+        //         result.push(arr.slice(i, i + len));
+        //     }
+        //     return result;
+
+        // }
+        // console.log(result)
+
+        // var li = ''
+        // for (var i = 0; i < result.length; i++) {
+        //     li += '<p>' + result[i] + '</p>'
+        //     li += '<div class="page-header border-b bggray2"><span class="course">组' + ((result.slice(0, i).length + 1)) + '</span></div>';
+        //     for (var j = 0; j < result[i].length; j++) {
+        //         li += '<ul class="mui-table-view detalis-list list border-b"><li class="mui-table-view-cell mui-media listli coach">';
+        //         li += '<a href=""><img class="mui-media-object mui-pull-left coachicon" src="" style="width: 40px !important;height: 40px !important;"><div class="mui-media-body lineHeight20"><p class="f16" style="font-eright:bold">' + result[i][j] + '</p><p>0人</p></div>';
+        //         li += '</li></ul>';
+        //     }
+        // }
+        // $(".frame").append(li)
+
+        $(".fenpei").on("tap", '', function () {
+            var league_id = "{$leagueInfo.id}";
+            var totalNum = $(".totalNum").text();
+            var groupNum = $("input[name=groupNum]").val()
+            if (totalNum < groupNum) {
+                mui.toast("分组数不能大于球队总数");
+                return false;
+            }
+            mui.ajax("{:url('api/league/leagueteamlist')}", {
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    var newli = ''
+                    if (data.code == 200) {
+                        var fenzuNum = totalNum / groupNum; //取值分组数
+                        var result = split_array(data.data, fenzuNum);
+                        function split_array(arr, len) {
+                            var a_len = arr.length; var result = [];
+                            for (var i = 0; i < a_len; i += len) {
+                                result.push(arr.slice(i, i + len));
+                            }
+                            return result;
+                        }
+                        console.log(result)
+                        result.sort(function () { return Math.random() - 0.5; }); //乱序方法
+                        for (var i = 0; i < result.length; i++) {
+                            newli += '<div class="page-header border-b bggray2"><input type="text" class="course" value="第' + ((result.slice(0, i).length + 1)) + '组" /></div>';
+                            for (var j = 0; j < result[i].length; j++) {
+                                newli += '<li class="mui-table-view-cell mui-media listli coach">';
+                                newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + result[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + result[i][j].team.name + '</p><p>' + result[i][j].team.member_num + '人</p></div>';
+                                newli += '</li>';
+                            }
+                        }
+                        $(".frame").empty().append(newli)
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+
+
+    </script>
+</body>
+
+</html>

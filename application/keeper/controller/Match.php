@@ -382,5 +382,15 @@ class Match extends Base {
     public function dataListOfLeague() {
         return view('Match/dataListOfLeague');
     }
+
+    // 联赛分组列表
+    public function groupsListOfLeague() {
+        return view('Match/groupsListOfLeague');
+    }
+    
+    // 联赛创建分组
+    public function createGroups() {
+        return view('Match/createGroups');
+    }
     
 }
