@@ -102,7 +102,7 @@ class Withdraw extends Backend{
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,100行');
                 }
-                $res = $CampWithdraw->save(['status'=>$status,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if($res){
                     db('camp_finance')->insert([
                         'money'        => -($campWithdrawInfo['buffer']),
@@ -119,10 +119,10 @@ class Withdraw extends Backend{
                 }else{
                     $this->error('操作失败,请务必截图并联系woo,117行');
                 }
-                $this->record("{$this->admin['admin']}同意了{$campWithdrawInfo['camp']}的提现申请");
+                $this->record("{$this->admin['username']}同意了{$campWithdrawInfo['camp']}的提现申请");
             }elseif ($action == -1) {
                 // 解冻资金
-                $res = $CampWithdraw->save(['status'=>$status,'buffer'=>0,'e_balance'=>($campInfo['balance']+$campWithdrawInfo['buffer']),'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'e_balance'=>($campInfo['balance']+$campWithdrawInfo['buffer']),'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,124行');
                 }else{
@@ -131,12 +131,13 @@ class Withdraw extends Backend{
                         $this->error('操作失败,请务必截图并联系woo,128行');
                     }
                 }
-                $this->record("{$this->admin['admin']}拒绝了{$campWithdrawInfo['camp']}的提现申请");
+                $this->record("{$this->admin['username']}拒绝了{$campWithdrawInfo['camp']}的提现申请");
             }elseif ($action == 3) {
-                $res = $CampWithdraw->save(['status'=>$status,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>$action,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if(!$res){
                         $this->error('操作失败,请务必截图并联系woo,139行');
                     }
+                    $this->record("{$this->admin['username']}打款{$campWithdrawInfo['camp']}的提现申请");
             }
             Db::commit();
             $this->success('操作成功');

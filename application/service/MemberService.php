@@ -318,6 +318,16 @@ class MemberService{
         return $res->toArray();
     }
 
+    // 会员荣誉列表（不分页）
+    public function getMemberHonorAll($map, $order='id desc') {
+        $model = new MemberHonor();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 会员荣誉列表
     public function getMemberHonorList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MemberHonor();
@@ -381,7 +391,7 @@ class MemberService{
     // 保存球队模块评论、点赞数据
     public function saveComment($data)
     {
-        $model = new TeamComment();
+        $model = new MemberComment();
         // 根据传参 有id字段更新数据否则新增数据
         if (isset($data['id'])) {
             // 更新数据

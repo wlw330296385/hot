@@ -32,11 +32,10 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>提现金额</th>
-                                        <th>冻结金额</th> 
-                                        <th>银行</th>
-                                        <th>银行支行</th>
-                                        <th>银行卡号</th>
-                                        <th>账户名</th>
+                                        <th>冻结金额</th>
+                                        <th>银行账户信息</th>
+                                        <th>提现备注</th>
+                                        <th>系统备注</th>
                                         <th>训练营</th>
                                         <th>手续费</th>
                                         <th>训练营类型</th>
@@ -52,15 +51,17 @@
                                         <td>{$vol.withdraw}</td>
                                         <td>{$vol.buffer}</td>
 
-                                        <td>{$vol.bank.bank}</td>
-                                        <td>{$vol.bank.bank_branch}</td>
-                                        <td>{$vol.bank.bank_card}</td>
-                                        <td>{$vol.bank.account}</td>
+                                        <td>账户：{$vol.bank.account}<br/>
+                                            卡号：{$vol.bank.bank_card}<br/>
+                                            银行：{$vol.bank.bank}<br/>
+                                            分支：{$vol.bank.bank_branch}</td>
+                                        <td>{$vol.remarks}</td>
+                                        <td>{$vol.system_remarks}</td>
                                         <td class="camp">{$vol.camp}</td>
                                         <td>{$vol.camp_withdraw_fee}</td>
                                         <td>{$vol.rebate_type}</td>
                                         <td>{$vol.create_time}</td>
-                                        <td style="color:red">{$vol.status}</td>
+                                        <td class="status" style="color:red">{if $vol.status == -1}已拒绝{/if}{if $vol.status == -2}已撤销{/if}{if $vol.status == 1}申请中{/if}{if $vol.status == 2}已同意{/if}{if $vol.status == 3}已打款{/if}</td>
                                         <td>
 
                                             <div class="btn-group">
@@ -95,12 +96,12 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">拒绝训练营提现申请</h4>
+                <h4 class="modal-title">提交操作备注</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <input type="hidden" id="withdraw_id" data-href="" />
-                    <textarea class="form-control" name="remarks" id="remarks" rows="3" placeholder="请填写您的拒绝理由..."></textarea>
+                    <input type="hidden" id="withdraw_id" data-href="" data-title="" />
+                    <textarea class="form-control" name="remarks" id="remarks" rows="3" placeholder="请填写您的拒绝|同意|已打款理由..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -122,21 +123,29 @@
 
         //提现申请的操作
         $('.dropdown-menu button').click(function() {
-            var getCamp = $(this).parentsUntil('tr').parent().find(".camp").text();
+            var getStatusCN = $(this).parentsUntil('tr').parent().find(".status").text();
             var getStatus = $(this).attr('data-status');
             var gotoUrl = $(this).attr('data-href');
             var getTitle = $(this).attr('title');
-            if(getStatus=="1"){
-                if(getTitle=="拒绝"){
-                    $('#withdraw_id').attr('data-href',gotoUrl);
-                    $('#modal-remarks').modal('show');
-                }else{
-                    if(confirm("确认"+getTitle+getCamp+"的提现申请吗")){
-                        window.top.location.href = gotoUrl;
-                    }
-                }
+            if(getStatus=="-2"||getStatus=="-1"||getStatus=="3") {
+                alert(getStatusCN+"，不允许再操作！");
+                return false;
             }else{
-                alert("已操作过，无法改变状态！");
+                if(getStatus=="2"&&getTitle!="已打款"){
+                    alert("已同意后，只能操作已打款！");
+                    return false;
+                }
+                $('#withdraw_id').attr('data-href',gotoUrl);
+                $('#withdraw_id').attr('data-title',getTitle);
+                $('#remarks').val("");
+                if(getTitle=="同意"){
+                    $('#remarks').val("提现申请已被同意");
+                }
+                if(getTitle=="已打款"){
+                    $('#remarks').val("提现申请已同意并已打款");
+                }
+                $('#remarks').attr('placeholder',"请填写您的"+getTitle+"备注...");
+                $('#modal-remarks').modal('show');
             }
         });
 
@@ -144,8 +153,22 @@
         $('#submitRemark').click(function() {
             var remarks = $('#remarks').val();
             var gotoUrl = $('#withdraw_id').attr('data-href');
-            if(confirm("确认拒绝此提现申请吗")){
-                window.top.location.href = gotoUrl+'/?remarks='+remarks;
+            var title = $('#withdraw_id').attr('data-title');
+            if(title=="拒绝"&&remarks==""){
+                alert("请填写拒绝理由，谢谢！");
+                return false;
+            }else{
+                if(remarks==""){
+                    if(title=="同意"){
+                        remarks = "提现申请已被同意";
+                    }else{
+                        remarks = "提现申请已同意并已打款";
+                    }
+                }
+            }
+
+            if(confirm("确认提交该操作吗")){
+                window.top.location.href = gotoUrl+'/?system_remarks='+remarks;
             }
         });
 

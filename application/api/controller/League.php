@@ -363,7 +363,7 @@ class League extends Base
             $data = input('param.');
             $page = input('param.page', 1);
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
@@ -402,7 +402,7 @@ class League extends Base
             $data = input('param.');
             $page = input('param.page', 1);
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
@@ -637,7 +637,7 @@ class League extends Base
             $data = input('param.');
             $page = input('page');
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
@@ -667,7 +667,7 @@ class League extends Base
         try {
             $data = input('param.');
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
@@ -807,7 +807,7 @@ class League extends Base
             $data = input('param.');
             $page = input('page');
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
@@ -835,7 +835,7 @@ class League extends Base
         try {
             $data = input('param.');
             // 参数league_id -> match_id
-            if (input('param.league_id')) {
+            if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
