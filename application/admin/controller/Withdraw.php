@@ -45,7 +45,7 @@ class Withdraw extends Backend{
         try{
             $campWithdraw_id = input('param.campWithdraw_id');
 
-            $remarks = input('param.remarks','略');
+            $system_remarks = input('param.system_remarks','略');
             $action = input('param.action');//2=同意,3=已打款,4=同意并已打款,-1=拒绝;
             
             $CampWithdraw = new \app\model\CampWithdraw;
@@ -77,7 +77,7 @@ class Withdraw extends Backend{
                         'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee']),
                         's_balance'     =>$campInfo['balance'],
                         'f_id'          =>$campWithdrawInfo['id'],
-                        'system_remarks'=>$remarks,
+                        'system_remarks'=>$system_remarks,
                         'create_time'   => time(),
                         'update_time'   => time(),
                     ]);
@@ -95,24 +95,24 @@ class Withdraw extends Backend{
                     'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee'] - $campWithdrawInfo['withdraw']),
                     's_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee']),
                     'f_id'          =>$campWithdrawInfo['id'],
-                    'system_remarks'=>$remarks,
+                    'system_remarks'=>$system_remarks,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,100行');
                 }
-                $res = $CampWithdraw->save(['status'=>2,'buffer'=>0],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>2,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if($res){
                     db('camp_finance')->insert([
-                        'money'        => $campWithdrawInfo['buffer'],
+                        'money'        => -($campWithdrawInfo['buffer']),
                         'camp_id'       => $campWithdrawInfo['camp_id'],
                         'camp'          => $campWithdrawInfo['camp'],
                         'type'          => -4,
                         'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['buffer']),
                         's_balance'     =>($campInfo['balance']),
                         'f_id'          =>$campWithdrawInfo['id'],
-                        'system_remarks'=>$remarks,
+                        'system_remarks'=>$system_remarks,
                         'create_time'   => time(),
                         'update_time'   => time(),
                     ]);
@@ -122,7 +122,7 @@ class Withdraw extends Backend{
                 $this->record("{$this->admin['admin']}同意了{$campWithdrawInfo['camp']}的提现申请");
             }elseif ($action == -1) {
                 // 解冻资金
-                $res = $CampWithdraw->save(['status'=>-1,'buffer'=>0,'e_balance'=>($campInfo['balance']+$campWithdrawInfo['buffer'])],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>-1,'buffer'=>0,'e_balance'=>($campInfo['balance']+$campWithdrawInfo['buffer']),'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,124行');
                 }else{
