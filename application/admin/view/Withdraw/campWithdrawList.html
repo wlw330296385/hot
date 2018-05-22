@@ -61,7 +61,13 @@
                                         <td>{$vol.camp_withdraw_fee}</td>
                                         <td>{$vol.rebate_type}</td>
                                         <td>{$vol.create_time}</td>
-                                        <td style="color:red">{$vol.status}</td>
+                                        <td style="color:red">
+                                            {if $vol.status == -1}已拒绝{/if}
+                                            {if $vol.status == -2}已撤销{/if}
+                                            {if $vol.status == 1}申请中{/if}
+                                            {if $vol.status == 2}已同意{/if}
+                                            {if $vol.status == 3}已打款{/if}
+                                        </td>
                                         <td>
 
                                             <div class="btn-group">
@@ -127,17 +133,8 @@
             var getStatus = $(this).attr('data-status');
             var gotoUrl = $(this).attr('data-href');
             var getTitle = $(this).attr('title');
-            if(getStatus=="1"){
-                if(getTitle=="拒绝"){
-                    $('#withdraw_id').attr('data-href',gotoUrl);
-                    $('#modal-remarks').modal('show');
-                }else{
-                    if(confirm("确认"+getTitle+getCamp+"的提现申请吗")){
-                        window.top.location.href = gotoUrl;
-                    }
-                }
-            }else{
-                alert("已操作过，无法改变状态！");
+            if(confirm("确认"+getTitle+getCamp+"的提现申请吗")){
+                window.top.location.href = gotoUrl;
             }
         });
 
@@ -146,7 +143,7 @@
             var remarks = $('#remarks').val();
             var gotoUrl = $('#withdraw_id').attr('data-href');
             if(confirm("确认拒绝此提现申请吗")){
-                window.top.location.href = gotoUrl+'/remarks/'+remarks;
+                window.top.location.href = gotoUrl+'/?system_remarks='+remarks;
             }
         });
 
