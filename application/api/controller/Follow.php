@@ -3,6 +3,7 @@ namespace app\api\controller;
 use app\service\CampService;
 use app\service\FollowService;
 use app\service\GradeService;
+use app\service\LeagueService;
 use app\service\MemberService;
 use app\service\TeamService;
 use think\Exception;
@@ -108,6 +109,28 @@ class Follow extends Base {
                         'follow_id' => $followTeamInfo['id'],
                         'follow_name' => $followTeamInfo['name'],
                         'follow_avatar' => $followTeamInfo['logo'],
+                        'member_id' => $this->memberInfo['id'],
+                        'member' => $this->memberInfo['member'],
+                        'member_avatar' => $this->memberInfo['avatar'],
+                    ];
+                    break;
+                }
+                case 5: {
+                    // 关注联赛
+                    $league_id = input('param.league_id');
+                    if (!$league_id) {
+                        return json(['code' => 100, 'msg' => '关注联赛'.__lang('MSG_402')]);
+                    }
+                    $leagueS = new LeagueService();
+                    $leagueInfo = $leagueS->getMatchWithOrg(['id' => $league_id]);
+                    if (!$leagueInfo || $leagueInfo['status_num'] != 1) {
+                        return json(['code' => 100, 'msg' => '没有联赛信息']);
+                    }
+                    $followData = [
+                        'type' => $type,
+                        'follow_id' => $leagueInfo['id'],
+                        'follow_name' => $leagueInfo['name'],
+                        'follow_avatar' => $leagueInfo['logo'],
                         'member_id' => $this->memberInfo['id'],
                         'member' => $this->memberInfo['member'],
                         'member_avatar' => $this->memberInfo['avatar'],
