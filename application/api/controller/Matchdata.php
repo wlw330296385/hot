@@ -251,6 +251,8 @@ class Matchdata extends Base
                 'has_statics' => 1,
                 'statics_time' => time()
             ]);
+            // 球队录入比赛统计数据次数+1
+            db('team')->where('id', $data['team_id'])->setInc('statics_num', 1);
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
     }
@@ -305,6 +307,8 @@ class Matchdata extends Base
                 'has_statics' => 0,
                 'statics_time' => null
             ]);
+            // 球队录入比赛统计数据次数-1
+            db('team')->where('id', $matchRecordInfo['team_id'])->setDec('statics_num', 1);
         } catch (\Exception $e) {
             trace($e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);

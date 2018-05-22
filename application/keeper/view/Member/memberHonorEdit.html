@@ -29,36 +29,36 @@
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-
+        <input type="hidden" class="data" value="{$honorInfo.id}" name="id">
         <form action="" class="mui-input-group mb44">
 
             <div class="mui-input-row">
                 <label>奖项名称</label>
-                <input type="text" name="name" class="data" value="" placeholder="奖项名称">
+                <input type="text" name="name" class="data" value="{$honorInfo.name}" placeholder="奖项名称">
             </div>
 
             <div class="mui-input-row">
                 <label>赛事名称</label>
-                <input type="text" name="match" class="data" value="" placeholder="赛事名称">
+                <input type="text" name="match" class="data" value="{$honorInfo.match}" placeholder="赛事名称">
             </div>
 
             <div class="mui-input-row">
                 <label>授奖单位</label>
-                <input type="text" name="award_org" class="data" value="" placeholder="授奖单位">
+                <input type="text" name="award_org" class="data" value="{$honorInfo.award_org}" placeholder="授奖单位">
             </div>
 
             <div class="mui-input-row picker btn" id="demo4" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>授奖时间</label>
-                    <span id="result" class="ui-alert domData" name="honor_time"></span>
+                    <span id="result" class="ui-alert domData" name="honor_time">{$honorInfo.honor_time}</span>
                 </div>
             </div>
 
             <div class="page-header bggray2">
                 <span class="course">荣誉简介</span>
             </div>
-            <textarea name="introduction" class="data introduction" style="display: none"></textarea>
-            <div id="articleEditor" class="tuwenIntro"></div>
+            <textarea name="introduction" class="data introduction" style="display: none">{$honorInfo.introduction}</textarea>
+            <div id="articleEditor" class="tuwenIntro">{$honorInfo.introduction}</div>
 
         </form>
 
@@ -142,11 +142,11 @@
             var objData = wooApi.arrTOobj(arrData);
             var introduction = $('textarea.introduction').val();
             objData.introduction = introduction;
-            var url = "{:url('api/team/createteamhonor')}";
+            var url = "{:url('api/member/updatememberhonor')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '修改荣誉成功', '确定', function () {
-                    var goUrl = "{:url('team/honorlistOfTeam')}/member_id/" + "{$memberInfo.id}";
+                    var goUrl = "{:url('Member/memberHonorList')}/member_id/" + "{$memberInfo.id}";
                     window.top.location.href = goUrl;
                 })
             } else {

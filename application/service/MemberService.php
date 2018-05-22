@@ -5,6 +5,7 @@ use app\model\CampMember;
 use app\model\Coach;
 use app\model\Member;
 use app\common\validate\MemberVal;
+use app\model\MemberComment;
 use app\model\MemberHonor;
 use app\model\StudyInterion;
 
@@ -340,5 +341,92 @@ class MemberService{
     // 删除会员荣誉
     public function delMemberHonor($id) {
         return MemberHonor::destroy($id);
+    }
+
+    // 球队模块评论列表分页
+    public function getCommentPaginator($map, $order = 'id desc', $paginate = 10)
+    {
+        $model = new MemberComment();
+        // 只列出有评论文字内容的数据
+        $res = $model->where($map)->whereNotNull('comment')->order($order)->paginate($paginate);
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队模块评论列表
+    public function getCommentList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
+        $model = new MemberComment();
+        // 只列出有评论文字内容的数据
+        $res = $model->where($map)->whereNotNull('comment')->order($order)->page($page, $limit)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 球队模块点赞数统计
+    public function getCommentThumbsCount($map)
+    {
+        $model = new MemberComment();
+        $map['thumbsup'] = 1;
+        $res = $model->where($map)->count();
+        return $res;
+    }
+
+    // 保存球队模块评论、点赞数据
+    public function saveComment($data)
+    {
+        $model = new TeamComment();
+        // 根据传参 有id字段更新数据否则新增数据
+        if (isset($data['id'])) {
+            // 更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 新增数据
+            $res = $model->allowField(true)->isUpdate(false)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+    }
+
+    // 获取球队模块评论详情
+    public function getCommentInfo($map)
+    {
+        $model = new MemberComment();
+        $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    // 删除评论内容
+    public function delComment($id) {
+        $model = new MemberComment();
+        // 清空comment comment_time内容
+        $res = $model->isUpdate(true)->save([
+            'id' => $id,
+            'comment' => null,
+            'comment_time' => null
+        ]);
+        if ($res == false) {
+            trace('error message:'.$model->getError().'; \n sql:'.$model->getLastSql().'');
+            return false;
+        }
+        return $res;
     }
 }
