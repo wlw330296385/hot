@@ -15,4 +15,9 @@ class TeamHonorMember extends Model
     public function TeamHonor() {
         return $this->belongsTo('teamHonor');
     }
+
+    // 获取器
+    public function getHonorTimeAttr($value) {
+        return ($value>0) ? date("Y-m-d", $value) : '';
+    }
 }

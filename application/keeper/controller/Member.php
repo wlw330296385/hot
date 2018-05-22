@@ -315,8 +315,11 @@ class Member extends Base{
 	    if (!$honorInfo) {
 	        $this->error(__lang('MSG_404'));
         }
+        // 荣誉相关的会员信息
+        $memberInfo = $memberS->getMemberInfo(['id' => $honorInfo['member_id']]);
         return view('Member/memberHonorInfo', [
-            'honorInfo' => $honorInfo
+            'honorInfo' => $honorInfo,
+            'memberInfo' => $memberInfo
         ]);
     }
 
