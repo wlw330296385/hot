@@ -82,4 +82,11 @@ class Template extends Backend {
         return view('Template/updateTemplate');
     }
 
+
+    public function templatePlatformList(){
+
+        
+        return view('Template/templatePlatformList');
+    }
+
 }
