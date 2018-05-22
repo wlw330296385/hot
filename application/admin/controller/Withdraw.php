@@ -133,8 +133,9 @@ class Withdraw extends Backend{
                 }
                 $this->record("{$this->admin['admin']}拒绝了{$campWithdrawInfo['camp']}的提现申请");
             }
-            $this->success('操作成功');
             Db::commit();
+            $this->success('操作成功');
+            
         }catch(Exception $e){
             Db::rollback();
             dump($e->getMessage());
