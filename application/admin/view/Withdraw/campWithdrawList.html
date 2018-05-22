@@ -32,11 +32,10 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>提现金额</th>
-                                        <th>冻结金额</th> 
-                                        <th>银行</th>
-                                        <th>银行支行</th>
-                                        <th>银行卡号</th>
-                                        <th>账户名</th>
+                                        <th>冻结金额</th>
+                                        <th>银行账户信息</th>
+                                        <th>提现备注</th>
+                                        <th>系统备注</th>
                                         <th>训练营</th>
                                         <th>手续费</th>
                                         <th>训练营类型</th>
@@ -52,10 +51,12 @@
                                         <td>{$vol.withdraw}</td>
                                         <td>{$vol.buffer}</td>
 
-                                        <td>{$vol.bank.bank}</td>
-                                        <td>{$vol.bank.bank_branch}</td>
-                                        <td>{$vol.bank.bank_card}</td>
-                                        <td>{$vol.bank.account}</td>
+                                        <td>账户：{$vol.bank.account}<br/>
+                                            卡号：{$vol.bank.bank_card}<br/>
+                                            银行：{$vol.bank.bank}<br/>
+                                            分支：{$vol.bank.bank_branch}</td>
+                                        <td>{$vol.remarks}</td>
+                                        <td>{$vol.system_remarks}</td>
                                         <td class="camp">{$vol.camp}</td>
                                         <td>{$vol.camp_withdraw_fee}</td>
                                         <td>{$vol.rebate_type}</td>
@@ -145,7 +146,7 @@
             var remarks = $('#remarks').val();
             var gotoUrl = $('#withdraw_id').attr('data-href');
             if(confirm("确认拒绝此提现申请吗")){
-                window.top.location.href = gotoUrl+'/?remarks='+remarks;
+                window.top.location.href = gotoUrl+'/remarks/'+remarks;
             }
         });
 
