@@ -5,18 +5,15 @@ namespace app\admin\controller\base;
 use app\model\Camp;
 use app\service\SystemService;
 use app\admin\controller\base\Base;
-use app\service\AuthService;
 use think\Cookie;
 use app\admin\model\AdminMenu as MenuModel;
 class Backend extends Base {
     public $cur_camp;
     public $site;
-    public $AuthService;
     public $admin;
     public function _initialize() {
         parent::_initialize();
         // 检查控制台登录
-        $this->AuthService = new AuthService();
         if ( !$this->AuthService->islogin() ) {
             //$this->error('请登录后操作', url('Login/index'));
             $this->redirect('Login/index');

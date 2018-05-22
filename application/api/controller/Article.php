@@ -176,6 +176,19 @@ class Article extends Base{
         try {
             // 接收参数，检查参数是否符合
             $article_id = input('param.article_id');
+            $articleInfo = db('article')->where(['id'=>$article_id])->find();
+            if(!$articleInfo){
+                return json(['code'=>100,'msg'=>'传参错误']);
+            }
+            if($articleInfo['organization_type'] == 2){
+                $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
+                if($isPower<2){
+                    return json(['code'=>100,'msg'=>'权限不足']);
+                }
+            }elseif ($articleInfo['organization_type'] == 1) {
+                return json(['code'=>100,'msg'=>'系统文章不允许操作']);
+            }
+            
             $data = input('post.');
             $result = db('article')->where(['id'=>$article_id])->update($data);
             if($result){
