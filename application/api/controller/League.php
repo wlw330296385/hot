@@ -857,4 +857,84 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
+
+    // 创建联赛球队分组数据
+    public function createleaguegroup() {
+        // 接收请求变量
+        $data = input('post.');
+        //dump($data);
+        // 数据验证
+        if ( !array_key_exists('league_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'传入league_id']);
+        }
+
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['league_id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他联赛']);
+        }
+        // 验证会员有无操作权限
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 检查分组数据有效性
+        if ( !array_key_exists('groupList', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'groupList分组球队名单']);
+        }
+        if ( empty($data['groupList']) && $data['groupList'] == "[]" ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').'groupList分组球队名单']);
+        }
+        // 解析post提交的球队分组数据
+        $groups = json_decode($data['groupList'], true);
+        if (is_null($groups)) {
+            return json(['code' => 100, 'msg' => '数据不合法']);
+        }
+        try {
+            foreach ($groups as $k => $group) {
+                //dump($group);
+                // 保存分组数据
+                $groupData = [
+                    'match_id' => $match['id'],
+                    'match' => $match['name'],
+                    'name' => $group['groupName']
+                ];
+                $groupId = $leagueS->saveMatchGroup($groupData);
+                // 保存分组球队数据
+                foreach ($group['groupTeam'] as $j => $team) {
+                    //dump($team);
+                    $groupTeamData = [
+                        'match_id' => $match['id'],
+                        'match' => $match['name'],
+                        'match_logo' => $match['logo'],
+                        'team_id' => $team['team_id'],
+                        'team' => $team['team']['name'],
+                        'team_logo' => $team['team_logo'],
+                        'group_id' => $groupId,
+                        'group_name' => $group['groupName'],
+                        'group_number' => $j+1,
+                        'status' => 1,
+                        'win_num' => 0,
+                        'lost_num' => 0,
+                        'points' => 0
+                    ];
+                    $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
+                }
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
 }
