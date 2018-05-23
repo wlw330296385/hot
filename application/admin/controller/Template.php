@@ -88,7 +88,16 @@ class Template extends Backend {
 
     public function templatePlatformList(){
 
-        
+        $template_id = input('param.template_id');
+        $map['id'] = $template_id;
+        $templateInfo = $this->TemplateService->getTemplateInfo($map);
+
+        $platformList = db('template_platform')->where(['template_id'=>$template_id])->select();
+
+        $this->assign('templateInfo',$templateInfo);
+
+
+        $this->assign('platformList',$platformList);
         return view('Template/templatePlatformList');
     }
 
