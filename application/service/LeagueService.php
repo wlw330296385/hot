@@ -5,6 +5,7 @@ namespace app\service;
 
 use app\model\Match;
 use app\model\MatchGroup;
+use app\model\MatchGroupTeam;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
@@ -353,5 +354,24 @@ class LeagueService
             return $res;
         }
         return $res->toArray();
+    }
+
+    // 保存联赛-分组-球队数据
+    public function saveMatchGroupTeam($data) {
+        $model = new MatchGroupTeam();
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res == false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res == false) {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+        }
+        return $model->id;
     }
 }
