@@ -459,8 +459,8 @@ class Member extends Base{
                 $result['bmi'] = round($result['weight']/(pow($height, 2)), 1);
             }
             // 参加球队数
-            $memberS = new MemberService();
-            $result['team_num'] = $memberS->getTeamMemberCount(['member_id' => $result['id'], 'status' => 1]);
+            $teamS = new TeamService();
+            $result['team_num'] = $teamS->getTeamMemberCount(['member_id' => $result['id'], 'status' => 1]);
 
             // 获取年（默认当前年）
             $year = input('param.year', date('Y'));
