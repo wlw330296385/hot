@@ -48,7 +48,7 @@
 
             <div class="mui-input-row">
                 <label>球队数</label>
-                <span class="totalNum">6</span>
+                <span class="totalNum">{$teamcount}</span>
             </div>
             <div class="mui-input-row">
                 <label>分组数</label>
@@ -148,21 +148,22 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.groupList = JSON.stringify(groupList);
-            var url = "{:url('')}";
+            var url = "{:url('api/league/createleaguegroup')}";
             var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
-            //         var goUrl = "{:url('match/groupListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+                    var goUrl = "{:url('match/groupListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
 
         };
 
