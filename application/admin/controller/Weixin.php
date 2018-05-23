@@ -82,7 +82,7 @@ class Weixin extends Backend {
 
             if ( $res ) {
                 // dump($menuData);
-                $this->success(__lang('MSG_200'), 'weixin/menu');
+                $this->success(__lang('MSG_200'), 'Weixin/menu');
             } else {
                 $this->error(__lang('MSG_400'));
             }
@@ -98,6 +98,36 @@ class Weixin extends Backend {
         dump($menu);*/
 
 
-        return view('weixin/menu');
+        return view('Weixin/menu');
     }
+
+
+
+    //微信公众号列表
+    public function wechatList(){
+
+
+
+        $this->assign('wechatList',$wechatList);
+        return view('Weixin/wechatList');
+    }
+
+    //添加微信公众号
+    public function createWechat(){
+
+        
+
+        return view('Weixin/createWechat');
+    }
+
+
+    //编辑微信公众号
+    public function updateWechat(){
+
+        
+
+        return view('Weixin/updateWechat');
+    }
+
+    
 }
