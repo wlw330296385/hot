@@ -11,7 +11,7 @@
  Target Server Version : 100123
  File Encoding         : 65001
 
- Date: 21/05/2018 15:31:51
+ Date: 23/05/2018 14:21:03
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `admin_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 161 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 165 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -196,5 +196,9 @@ INSERT INTO `admin_menu` VALUES (155, 4, 'admin', '训练营提现列表', 'fa f
 INSERT INTO `admin_menu` VALUES (156, 4, 'admin', '训练营提现处理', 'fa fa-cog', 0, 'admin/Withdraw/campWithdrawDeal', '_self', 0, 1, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (157, 5, 'admin', '会员学球意向', 'fa fa-user', 0, 'admin/member/studyinterionlist', '_self', 1, 1, 1, 1526631852, 0);
 INSERT INTO `admin_menu` VALUES (158, 157, 'admin', '会员学球意向详情', 'fa fa-user', 0, 'admin/member/studyinteriondetail', '_self', 0, 1, 1, 1526631852, 0);
+INSERT INTO `admin_menu` VALUES (162, 2, 'admin', '编辑模板消息', 'fa fa-cog', 0, 'admin/template/updateTemplate', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (161, 2, 'admin', '创建模板消息', 'fa fa-cog', 0, 'admin/template/createTemplate', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (163, 2, 'admin', '模板消息', 'fa fa-cog', 0, 'admin/template/templateList', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (164, 2, 'admin', '模板消息关系表', 'fa fa-cog', 0, 'admin/template/templatePlatformList', '_self', 0, 0, 1, 0, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
