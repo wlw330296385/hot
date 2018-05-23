@@ -43,7 +43,7 @@
 
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-
+        <input type="hidden" name="league_id" class="data" value="{$leagueInfo.id}">
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
@@ -55,7 +55,6 @@
                 <input type="text" name="groupNum" value="" class="data" placeholder="请输入组数">
             </div>
             <div class="frame"></div>
-            <!-- <ul class="mui-table-view detalis-list list border-b"></ul> -->
 
         </form>
 
@@ -67,15 +66,15 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/Tdrag.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
+        var teams = '';
         $(function () {
-            var result = '';
+
             $(".fenpei").on("tap", '', function () {
                 var league_id = "{$leagueInfo.id}";
                 var totalNum = $(".totalNum").text();
@@ -98,28 +97,23 @@
                         var newli = ''
                         if (data.code == 200) {
                             var fenzuNum = totalNum / groupNum; //取值分组数
-                            result = split_array(data.data, fenzuNum);
-                            function split_array(arr, len) {
-                                var a_len = arr.length; var result = [];
-                                for (var i = 0; i < a_len; i += len) {
-                                    result.push(arr.slice(i, i + len));
+                            teams = split_array(data.data, fenzuNum);
+                            // console.log(teams)
+                            teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
+                            for (var i = 0; i < teams.length; i++) {
+                                newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" /></div>';
+                                for (var j = 0; j < teams[i].length; j++) {
+                                    newli += '<li class="mui-table-view-cell mui-media listli coach">';
+                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>' + teams[i][j].team.member_num + '人</p></div>';
+                                    newli += '</li>';
                                 }
-                                return result;
-                            }
-                            console.log(result)
-                            result.sort(function () { return Math.random() - 0.5; }); //乱序方法
-                            for (var i = 0; i < result.length; i++) {
-                                newli += '<div class="page-header border-b bggray2"><input type="text" class="course" value="第' + ((result.slice(0, i).length + 1)) + '组" /></div>';
-                                for (var j = 0; j < result[i].length; j++) {
-                                    newli += '<ul class="mui-table-view detalis-list list border-b"><li class="mui-table-view-cell mui-media listli coach">';
-                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + result[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + result[i][j].team.name + '</p><p>' + result[i][j].team.member_num + '人</p></div>';
-                                    newli += '</li></ul>';
-                                }
+                                newli += '</ul>'
                             }
                             $(".frame").empty().append(newli)
                         } else {
                             mui.toast(data.msg);
                         }
+
                     },
                     error: function (xhr, type, errorThrown) {
                         //异常处理；
@@ -127,45 +121,49 @@
                     }
                 });
             });
-
         })
+
+        function split_array(arr, len) {
+            var a_len = arr.length;
+            var return1 = [];
+            for (var i = 0; i < a_len; i += len) {
+                return1.push(arr.slice(i, i + len));
+            }
+            return return1;
+        }
 
         // 获取数据并进行提交
         function submitAction() {
-
-            var groupList = {};
-            var group = [];
-            $(".frame li").each(function(){
-                var team = $(this).find(".f14").text();
-                group.push({team})
+            var groupList = [];
+            $(".frame input[name=groupName]").each(function (i) {
+                var groupTeam = teams[i];
+                var groupName = $(this).val();
+                groupList.push({ groupName, groupTeam })
             })
-            console.log(group)
+            console.log(groupList)
 
-
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // var introduction = $('textarea.introduction').val();
-            // objData.introduction = introduction;
-            // var url = "{:url('api/team/createteamhonor')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.groupList = JSON.stringify(groupList);
+            var url = "{:url('')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
             // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '创建荣誉成功', '确定', function () {
-            //         var goUrl = "{:url('team/honorlistOfTeam')}/team_id/" + "{team_id}";
+            //     mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+            //         var goUrl = "{:url('match/groupListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
             //         window.top.location.href = goUrl;
             //     })
             // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败', function () {
-            //         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑荣誉简介</p>");
-            //     });
+            //     mui.alert(ajaxResult.msg, '创建失败');
             //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
             //         if (data.code === 200) {
             //             $('input[name=__token__]').val(data.data);
             //         }
             //     }, 'json');
             // }
+
         };
 
     </script>
