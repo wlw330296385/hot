@@ -392,5 +392,4 @@ class Match extends Base {
     public function createGroups() {
         return view('Match/createGroups');
     }
-    
 }
