@@ -110,7 +110,15 @@
 
     $(function () {
 
-        ////////////////////////////////////////////////////////////////////////机构模板关联表添加
+        //搜索训练营
+        $("#allCheckbox").on("click", function () {
+            if(this.checked){
+                $(".tBox").attr("checked",true);}
+            else{
+                $(".tBox").attr("checked",false);}
+            });
+        });
+
         //搜索训练营
         $("#searchCampBtn").on("click", function () {
             var keyword = $(".campKeyword").val();
@@ -127,7 +135,7 @@
             var template_id = '';
             var template = '';
             var tr = '';
-            $(".tBox").each(function () {
+            $(".tBox:checked").each(function () {
                 template_id = $(this).attr("data-template_id");
                 template = $(this).attr("data-template");
                 tr += '<tr data-template_id="'+template_id+'" data-template="'+template+'" data-platform_id="'+camp_id+'" data-platform="'+camp+'"><td></td><td>'+template+'</td><td>'+camp_id+'</td><td>'+camp+'</td><td><input type="text" name="t_id" placeholder="请输入模板ID..."></td><td><input type="text" name="remarks" placeholder="请输入备注..."></td></tr>';
