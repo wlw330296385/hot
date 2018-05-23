@@ -1,185 +1,275 @@
 {extend name="layout/common"/}
 {block name="page-content"}
-	
-
-
-<div class="panel panel-default panel-intro">
-    <div class="panel-heading">
-        <div class="panel-lead">
-            <em>卡券管理</em>
+<!--<div class="wrapper">-->
+<div class="row col-lg-4 col-xs-12">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">模板消息详情</h3>
+            <div class="box-tools"><a href="{:url('admin/template/updateTemplate', ['template_id' => $templateInfo.id])}" class="btn btn-block">编辑</a></div>
         </div>
+        <table class="table table-striped table-bordered table-hover">
+            <tbody>
+            <tr>
+                <th width="100">ID</th>
+                <td>{$vol.id}</td>
+            </tr>
+            <tr>
+                <th>模板名称</th>
+                <td>{$vol.template}</td>
+            </tr>
+            <tr>
+                <th>模板编号</th>
+                <td>{$vol.code}</td>
+            </tr>
+            <tr>
+                <th>内容示例</th>
+                <td>{$vol.description}</td>
+            </tr>
+            <tr>
+                <th>应用场景</th>
+                <td>{$vol.scene}</td>
+            </tr>
+            <tr>
+                <th>备注</th>
+                <td>{$vol.remarks}</td>
+            </tr>
+            <tr>
+                <th>状态</th>
+                <td>{$vol.status}</td>
+            </tr>
+            <tr>
+                <th>创建时间</th>
+                <td>{$vol.create_time}</td>
+            </tr>
+            <tr>
+                <th>更新时间</th>
+                <td>{$vol.update_time}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="panel-body">
-        <div class="box no-border">
-        	<div class="row">
-	        	<!-- 搜索框 -->
-	        	<div class="search-form col-md-10 col-md-offset-1">
-	                <form class="form-inline schedule-list" method="get">
-	                    <fieldset>
-	                         <div class="btn-group">
-			                  <button type="button" class="btn btn-success" id="field">{$field}</button>
-			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-			                    <span class="caret"></span>
-			                    <span class="sr-only">Toggle Dropdown</span>
-			                  </button>
-			                  <ul class="dropdown-menu search_opt" role="menu">
-			                    <li data = 'coupon'><a href="#">名称</a></li>
-			                    <li data = 'price' ><a href="#">价格</a></li>
-			                    <li data = 'telephone'><a href="#">电话号码</a></li>
-			                    <li class="divider" ></li>
-			                    <li data = 'member'><a href="#" >发行人</a></li>
-			                  </ul>
-			                </div>
-	                        <div class="form-group">
-	                            <input class="form-control" type="text" name="keyword" required="required">
-	                            <input type="hidden" name="field" value="">
-	                        </div>
-	                        <div class="form-group">
-	                            <div class="col-sm-12 text-center">
-	                                <input type="submit" class="btn btn-success btn-flat btn-sub search" value="搜索">
-	                                <input type="reset" class="btn btn-default btn-flat" value="重置">
-	                            </div>
-	                        </div>
-	                        <div class="form-group">
-	                        <div class="col-sm-12 text-center col-md-12">
-	                            <p>Tips:点击标题可以排序</p>
-                            </div>
-                        	</div>
-	                        <!-- 添加卡券 -->
-	                        <a class="btn btn-warning  btn-flat btn-sub pull-right pop-iframe" data-href="{:url('admin/Coupon/createItemCoupon')}" href="{:url('admin/Coupon/createItemCoupon')}">添加卡券&nbsp;<i class="fa fa-user-plus"></i></a>
-	                    </fieldset>
-	                </form>
+</div>
+<div class="row col-lg-8 col-xs-12">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">关联的机构列表</h3>
+            <div class="box-tools"><a href="#" class="btn btn-block" data-toggle="modal" data-target="#campModal">添加</a></div>
+        </div>
+        <table class="table table-striped table-bordered table-hover" id="platformList">
+            <thead>
+                <tr>
+                    <th>机构ID</th>
+                    <th>机构名称</th>
+                    <th>模板ID</th>
+                    <th>备注</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{$vol.platform_id}</td>
+                <td>{$vol.platform}</td>
+                <td>{$vol.t_id}</td>
+                <td>{$vol.remarks}</td>
+                <td><a href="#" class="btn btn-block edit" data-id="{$vol.id}" data-platform_id="{$vol.platform_id}" data-platform="{$vol.platform}" data-t_id="{$vol.t_id}" data-remarks="{$vol.remarks}" >编辑</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--</div>-->
 
-	            </div>
-	            
-            </div>	
-            <!-- 主体 -->
-            <div class="box-body">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="text-center order_by" data-order = 'coupon'>卡券名称</th>
 
-                        <th class="text-center order_by" data-order = 'image_url'>卡券图片</th>
-                        <th class="text-center order_by" data-order = 'target_type'>卡券类型</th>
-                        <th class="text-center order_by" data-order = 'organization'>卡券所属</th>
-                        <th class="text-center order_by" data-order = 'price'>卡券价格</th>
-                        <th class="text-center order_by" data-order = 'start'>卡券开始期</th>
-
-                        <th class="text-center order_by" data-order = 'end'>卡券结束期</th>
-                        <th class="text-center order_by" data-order = 'max'>发行量</th>
-                        <th class="text-center order_by" data-order = 'publish'>已领取</th>
-                        <th class="text-center order_by" data-order = 'used'>使用量</th>
-                        <th class="text-center order_by" data-order = 'status'>状态</th>
-                        <th class="text-center">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {volist name="itemCouponList" id="vo"}
-                    <tr>
-                        <td class="text-center">{$vo.coupon}</td>
-                        <td>
-                        	<div class="text-center">
-                        		<img src="{$vo.image_url}" class="img-lg " >
-                        	</div>
-                    	</td>
-                        <td class="text-center">{$vo.target_type}</td>
-                        <td class="text-center">
-                        	{$vo.organization}
-                        </td>
-                        <td class="text-center">
-                            {$vo.price}
-                        </td>
-                        
-                        <td class="text-center">{$vo.start}</td>
-                        <td class="text-center">
-                        	{$vo.end}
-                        </td>
-                        <td class="text-center">
-                            {$vo.max}
-                        </td>
-                        <td class="text-center">
-                            {$vo.publish}
-                        </td>
-                        <td>
-                        	{$vo.used}
-                        </td>
-                         <td>
-
-                         	{if $vo.status == -1}
-                        	已下架
-                        	{else /}
-                        	已上架
-                        	{/if}
-                        </td>
-                        <td class="text-center">
-                        	<button type="button" class="btn btn-info">详细</button>
-                            <div class="btn-group">
-			                  <button type="button" class="btn btn-success">卡券操作</button>
-			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-			                    <span class="caret"></span>
-			                    <span class="sr-only">Toggle Dropdown</span>
-			                  </button>
-			                  <ul class="dropdown-menu" role="menu">
-			                    <li><a class="pop-iframe" href="{:url('coupon/updateItemCoupon',['itemCoupon_id'=>$vo.id])}">编辑卡券</a></li>
-			                    <li class="divider"></li>
-			                    <li><a href="#">预留功能</a></li>
-			                  </ul>
-			                </div>
-                        </td>
-                        
-                    </tr>
-                    {/volist}
-                    </tbody>
-                </table>
+<!-- Modal : Camp & AddForm -->
+<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">添加机构模板消息</h4>
             </div>
-            {$itemCouponList->render()}
+            <div class="modal-body">
+                <div id="searchCamp">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称...">
+                        <span class="input-group-btn">
+                          <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                        </span>
+                    </div>
+                    <div class="tableScroll">
+                        <table id="campList" class="table table-bordered table-striped dataTable">
+                            <thead>
+                            <tr role="row">
+                                <th>训练营名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr role="row" class="nodata"><td colspan="4">请先搜索您要添加模板消息的训练营</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="addForm" style="display: none;">
+                    <form name="template_add" action="">
+                        <div class="form-group">
+                            <input type="text" name="platform" class="form-control" value="" readonly="readonly">
+                            <input type="hidden" name="platform_id" class="form-control" value="">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="t_id" class="form-control" value="" placeholder="请输入模板ID...">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3" name="remarks" placeholder="请输入备注..."></textarea>
+                        </div>
+                        <div class="form-group" style="text-align: center">
+                            <input type="submit" name="t_id" class="btn btn-success" value="提交" /> &nbsp;
+                            <input type="button" name="back" id="backCamp" class="btn btn-default" value="返回" />
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>
-	
+
+
+<!-- Modal : Camp & AddForm -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改机构模板消息</h4>
+            </div>
+            <div class="modal-body">
+                <div id="editForm">
+                <form name="template_edit" action="">
+                    <input type="hidden" name="id" class="form-control" value="">
+                    <div class="form-group">
+                        <input type="text" name="platform" class="form-control" value="" readonly="readonly">
+                        <input type="hidden" name="platform_id" class="form-control" value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="t_id" class="form-control" value="" placeholder="请输入模板ID...">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" name="remarks" placeholder="请输入备注..."></textarea>
+                    </div>
+                    <div class="form-group" style="text-align: center">
+                        <input type="submit" name="t_id" class="btn btn-success" value="提交" />
+
+                    </div>
+                </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
 {/block}
-
-
-
-
 {block name='js'}
-<script type="text/javascript">
-	$(function(){
-		// $('.pop-iframe').click(function() {
-	 //        var iframeurl = $(this).attr('data-href');
-	 //        // alert(iframeurl);return;
-	 //        var title = $(this).text();
-	 //        layui.use('layer', function() {
-	 //            var layer = layui.layer;
-	            	
-	 //                layer.open({
-	 //                skin:'layui-layer-lan',
-	 //                type: 2,
-	 //                title: title,
-	 //                shadeClose: true,
-	 //                shade: false,
-	 //                maxmin: true, //开启最大化最小化按钮
-	 //                area: ['900px', '650px'],
-	 //                content: iframeurl
-	 //            });
-	 //        });
-	 //    });
+<!-- JQ -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script>
+    $(function () {
 
-	})
-	
-	var field = 'woo';
-	$('.search_opt li').on('click',function(){
-		field = $(this).attr('data');
-		console.log(field);
-		$('#field').text(field);
-		$('input[type=hidden]').val(field)
-	})
 
-	$('input[type=reset]').on('click',function(){
-		$('input[type=hidden]').val('woo');
-		window.location.href="{:url('admin/coupon/itemCouponList')}";
-	})
+        ////////////////////////////////////////////////////////////////////////机构模板关联表添加
+        //搜索训练营
+        $("#searchCampBtn").on("click", function () {
+            var keyword = $(".campKeyword").val();
+            if(keyword==""){
+                alert("请输入训练营名称！");
+            }else{
+                toCampList(keyword);
+            }
+        })
+
+        $("#campList tbody").on("click",".btn", function () {
+            var camp_id = $(this).attr("data-id");
+            var camp = $(this).attr("data-camp");
+            $("#addForm input[name=platform_id]").val(camp_id);
+            $("#addForm input[name=platform]").val(camp);
+
+            $('#searchCamp').hide();
+            $('#addForm').show();
+        })
+
+        $("#backCamp").on("click","", function () {
+            $('#searchCamp').show();
+            $('#addForm').hide();
+        })
+
+        ////////////////////////////////////////////////////////////////////////机构模板关联表编辑
+        $("#platformList").on("click",".edit", function () {
+            var id = $(this).attr("data-id");
+            var platform_id = $(this).attr("data-platform_id");
+            var platform = $(this).attr("data-platform");
+            var t_id = $(this).attr("data-t_id");
+            var remarks = $(this).attr("data-remarks");
+
+            $("#editForm input[name=id]").val(id);
+            $("#editForm input[name=platform_id]").val(platform_id);
+            $("#editForm input[name=platform]").val(platform);
+            $("#editForm input[name=t_id]").val(t_id);
+            $("#editForm input[name=remarks]").val(remarks);
+
+            $('#editModal').modal('show');
+
+        })
+
+    });
+
+
+    //接口获取数据并追加到页面
+    var toCampList = function (keyword) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
+        $.ajax({
+            url: url,
+            data: {
+                status: 1,
+                keyword: keyword
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
+                    }
+                }
+                if (newli == '') {
+                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                }else{
+                    $("#campList tbody").empty().append(newli);
+                }
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                alert('网络异常,请稍候再试');
+            }
+        });
+    };
 
 </script>
 {/block}
+
+
