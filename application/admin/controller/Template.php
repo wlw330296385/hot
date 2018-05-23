@@ -3,8 +3,10 @@ namespace app\admin\controller;
 use app\admin\service\TemplateService;
 use app\admin\controller\base\Backend;
 class Template extends Backend {
+    private $TemplateService;
 	public function _initialize(){
 		parent::_initialize();
+        $this->TemplateService = new TemplateService;
 	}
     public function templateList() {
         $field = '请选择搜索关键词';
@@ -25,6 +27,7 @@ class Template extends Backend {
                 };
             }
         }
+        
         $templateList = $this->TemplateService->getTemplateListByPage($map);
         $this->assign('field',$field);
         $this->assign('templateList',$templateList);    
