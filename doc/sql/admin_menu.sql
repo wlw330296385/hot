@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 29
+ Source Server         : 32
  Source Server Type    : MySQL
- Source Server Version : 100123
- Source Host           : localhost:3306
+ Source Server Version : 100126
+ Source Host           : 127.0.0.1:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 100123
+ Target Server Version : 100126
  File Encoding         : 65001
 
- Date: 23/05/2018 14:21:03
+ Date: 24/05/2018 18:03:59
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `admin_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 165 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 171 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -197,8 +197,14 @@ INSERT INTO `admin_menu` VALUES (156, 4, 'admin', '训练营提现处理', 'fa f
 INSERT INTO `admin_menu` VALUES (157, 5, 'admin', '会员学球意向', 'fa fa-user', 0, 'admin/member/studyinterionlist', '_self', 1, 1, 1, 1526631852, 0);
 INSERT INTO `admin_menu` VALUES (158, 157, 'admin', '会员学球意向详情', 'fa fa-user', 0, 'admin/member/studyinteriondetail', '_self', 0, 1, 1, 1526631852, 0);
 INSERT INTO `admin_menu` VALUES (162, 2, 'admin', '编辑模板消息', 'fa fa-cog', 0, 'admin/template/updateTemplate', '_self', 0, 0, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (161, 2, 'admin', '创建模板消息', 'fa fa-cog', 0, 'admin/template/createTemplate', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (161, 2, 'admin', '创建模板消息', 'fa fa-cog', 0, 'admin/template/createTemplate', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (163, 2, 'admin', '模板消息', 'fa fa-cog', 0, 'admin/template/templateList', '_self', 1, 0, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (164, 2, 'admin', '模板消息关系表', 'fa fa-cog', 0, 'admin/template/templatePlatformList', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (164, 2, 'admin', '模板详情及对接表', 'fa fa-cog', 0, 'admin/template/templatePlatformList', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (165, 2, 'admin', '公众号批量对接模板', 'fa fa-cog', 0, 'admin/template/templatePlatformBatch', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (166, 2, 'admin', '公众号列表', 'fa fa-cog', 0, 'admin/platform/platformList', '_self', 1, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (167, 2, 'admin', '创建公众号', 'fa fa-cog', 0, 'admin/platform/createPlatform', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (168, 2, 'admin', '编辑公众号', 'fa fa-cog', 0, 'admin/platform/updatePlatform', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (169, 2, 'admin', '添加公众号与模板的对接', 'fa fa-cog', 0, 'admin/template/createTemplatePlatformApi', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (170, 2, 'admin', '编辑公众号与模板的对接', 'fa fa-cog', 0, 'admin/template/updateTemplatePlatformApi', '_self', 0, 0, 1, 0, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -233,10 +233,12 @@ class Template extends Backend {
     public function createTemplatePlatformApi(){
         try{
             $data = input('post.');
-            $res = $this->TemplatePlatform->where(['platform_id'=>$data['platform_id'],'template_id'=>$template_id])->find();
+           
+            $res = $this->TemplatePlatform->where(['platform_id'=>$data['platform_id'],'template_id'=>$data['template_id']])->find();
             if($res){
                 return json(['code'=>100,'msg'=>'重复关联']);
             }
+             dump($data);
             $result = $this->TemplatePlatform->save($data);
             if($result){
                 return json(['code'=>200,'msg'=>'关联成功','data'=>$this->TemplatePlatform->id]);
