@@ -21,7 +21,7 @@
                 <tbody>
                 {volist name="templateList" id="vol"}
                 <tr>
-                    <td><input type="checkbox" class="tBox" data-template="{$vol.template}" data-template_id="{$vol.template_id}" /></td>
+                    <td><input type="checkbox" class="tBox" data-template="{$vol.template}" data-template_id="{$vol.id}" /></td>
                     <td>{$vol.template}</td>
                     <td>{$vol.scene}</td>
                     <td>{$vol.remarks}</td>
@@ -84,14 +84,21 @@
                         <table id="campList" class="table table-bordered table-striped dataTable">
                             <thead>
                             <tr role="row">
-                                <th>机构名称</th>
-                                <th>所属地区</th>
+                                <th>公众号</th>
+                                <th>备注说明</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr role="row" class="nodata"><td colspan="4">请先搜索您要添加模板消息的机构</td></tr>
+                            {volist name="$platformList" id="vol"}
+                            <tr>
+                                <td>{$vol.platform}</td>
+                                <td>{$vol.remarks}</td>
+                                <td><a href="{:url('admin/platform/updatePlatform', ['platform_id' => $vol['id']])}">查看详情</a></td>
+                                <td><span class="btn btn-xs btn-info" data-camp="{$vol.platform}" data-id="{$vol.id}">确定</span></td>
+                            </tr>
+                            {/volist}
                             </tbody>
                         </table>
                     </div>
