@@ -1,0 +1,130 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+<!--<div class="wrapper">-->
+<div class="row col-lg-6 col-xs-12">
+    <div class="box">
+        <form role="form" action="" method="post">
+            {:token()}
+            <div class="box-body">
+                <div class="form-group">
+                    <label>公众号名称</label>
+                    <input type="text" class="form-control" placeholder="请输入公众号名称" name="platform" value="{$platformInfo.platform}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>公司名称</label>
+                    <input type="text" class="form-control" placeholder="请输入公司名称" name="company" value="{$platformInfo.company}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>appsecret</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入appsecret" name="appsecret" value="{$platformInfo.appsecret}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>appid</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入appid" name="appid" value="{$platformInfo.appid}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>encodingaeskey</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入encodingaeskey" name="encodingaeskey" value="{$platformInfo.encodingaeskey}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>mchid</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入mchid" name="mchid" value="{$platformInfo.mchid}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>key</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入key" name="key" value="{$platformInfo.key}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>sslcert_path</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入sslcert_path" name="sslcert_path" value="{$platformInfo.sslcert_path}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>sslkey_path</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入sslkey_path" name="sslkey_path" value="{$platformInfo.sslkey_path}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>sms_appid</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入sms_appid" name="sms_appid" value="{$platformInfo.sms_appid}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>sms_secret</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入sms_secret" name="sms_secret" value="{$platformInfo.sms_secret}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>账号名</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入账号名" name="username" value="{$platformInfo.username}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入密码" name="password" value="{$platformInfo.password}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>微信号授权</label>
+                    <!-- Main content -->
+                    <input type="text" class="form-control" placeholder="请输入微信号授权" name="wechat" value="{$platformInfo.wechat}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <!-- Main content -->
+                    <textarea class="textarea" name="remarks" placeholder="请输入备注..." value="{$platformInfo.remarks}" required="required"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select name="status">
+                        <option value="1" selected="selected">正常</option>
+                        <option value="-1">禁用</option>
+                    </select>
+                    <div style="float:right">创建时间：{$platformInfo.create_time} &nbsp;&nbsp; 更新时间：{$platformInfo.update_time}</div>
+                </div>
+
+            </div>
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success" style="width: 100px; padding: 5px;">保  存</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!--</div>-->
+
+</body>
+{/block}
+{block name='js'}
+<!-- JQ -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- CK Editor -->
+<script src="/static/plugins/ckeditor/ckeditor.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script>
+    $(function () {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.replace('description',{ toolbarCanCollapse:true, toolbarStartupExpanded:false, height:120 });
+        CKEDITOR.replace('scene',{ toolbarCanCollapse:true, toolbarStartupExpanded:false, height:80 });
+        CKEDITOR.replace('remarks',{ toolbarCanCollapse:true, toolbarStartupExpanded:false, height:80 });
+        //bootstrap WYSIHTML5 - text editor
+//    $(".textarea").wysihtml5();
+
+
+        //设置默认项目
+        $('select[name="status"] option[value="{$templateInfo.status}"]').prop("selected", true);
+
+
+    });
+
+</script>
+{/block}
+
+
