@@ -61,6 +61,16 @@
 
         </form>
 
+        <!-- 球队登记参加联赛球员名单 -->
+        <div class="page-header">
+            <span class="course">参赛成员</span>
+            <span>
+                <button class="mui-btn" type="button" onclick="sendCompleteMembers()">提示完善参赛成员</button>
+            </span>
+        </div>
+        <ul class="mui-table-view mb list team-players"></ul>
+        <!-- end/球队登记参加联赛球员名单  -->
+
         <ul class="mui-table-view mb" style="margin-top: -4px">
             <li class="mui-table-view-cell mui-media listli coach" style="padding:11px 15px;">
                 <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
@@ -251,6 +261,7 @@
             isthumbsup() //点赞状态
             teamMemberlist(); //自定义获取球员列表
             toCommentList(); //获取评论列表
+            toPlayerList(); //获取球队参赛球员列表
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
@@ -476,6 +487,80 @@
                             mui.toast("你拒绝了球队申请")
                             window.setTimeout("history.go(-1)", 2000);
                         }
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
+        }
+
+        // 球队登记参加联赛球员名单
+        function toPlayerList() {
+            var url = "{:url('api/league/getmatchteammembers','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            var apply_id = "{$matchApplyInfo.id}";
+            var match_id = "{$matchApplyInfo.match_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id,
+                    match_apply_id: apply_id,
+                    match_id: match_id,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i=0; i<data.data.length; i++) {
+                            var urls = "#";
+                            newli += '<li class="mui-table-view-cell mui-media listli">';
+                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].name + '</font></div></a>';
+                            //newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].area + '</p></div></a>'
+                            newli += '</li>';
+                        }
+                        if (newli == '') {
+                            $("ul.team-players").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                        } else {
+                            $("ul.team-players").empty().append(newli);
+                        }
+                    } else {
+                        $("ul.team-players").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+        // 推送完善参赛球员信息
+        function sendCompleteMembers() {
+            var apply_id = document.getElementById('applyid').value;
+            var team_id = "{$matchApplyInfo.team_id}";
+            mui.ajax("{:url('api/league/noticeteamcompleteplayer')}", {
+                data: {
+                    apply_id: apply_id,
+                    team_id:team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    if (res.code == 200) {
+                        mui.toast(res.msg);
                     } else {
                         mui.toast(res.msg);
                     }

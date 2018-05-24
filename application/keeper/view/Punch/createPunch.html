@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>打卡</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style type="text/css">
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .coloricon {
+            width: 2.3em;
+            height: 2.3em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+
+        .sportTypeActive {
+            background: #ff7f00;
+            color: #fff;
+            border: none
+        }
+
+        .sportType {
+            padding: 5px 10px;
+            margin-top: 7px;
+            font-size: 12px;
+            text-align: center !important;
+            border-bottom-right-radius: 10px !important;
+            border-bottom-left-radius: 10px !important;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+            width: initial !important;
+            display: initial !important;
+        }
+
+        .publicTip {
+            padding: 15px;
+        }
+
+        .publicTip .publicTitle {
+            vertical-align: middle;
+            display: inline-flex;
+            line-height: 35px;
+        }
+
+        .publicTip .publicTitle strong {
+            line-height: 40px;
+        }
+
+        .publicTip .publicTitle img {
+            width: 15%;
+            height: 15%;
+        }
+
+        .publicTip .publicText p {
+            margin-bottom: 0;
+            font-size: 12px
+        }
+
+        .secondUl {
+            margin: 0 !important;
+            padding: 11px !important;
+        }
+
+        .secondUl li {
+            padding-left: 11px !important;
+        }
+
+        .secondUl li:after {
+            left: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mui-content">
+        <div class="list">
+
+            <ul class="mui-table-view mb border-b">
+                <li class="mui-table-view-cell listli">
+                    <img class="mui-media-object mui-pull-left img45" src="{$memberInfo.avatar}">
+                    <div class="mui-media-body wd45">
+                        <strong class="f16">{$memberInfo.member}</strong>
+                        <p class="mui-ellipsis lineHeight20">{$memberInfo.city} {$memberInfo.area}</p>
+                    </div>
+                    <div class="price-frame f12" style="margin-top: 19px;">
+                        本月打卡
+                        <text class="colororange f18">12</text>
+                    </div>
+                </li>
+            </ul>
+
+
+            <form action="" class="mui-input-group">
+
+                <div class="mui-input-row">
+                    <label class="wd49">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>打开时间
+                    </label>
+                    <span>2018-5-24</span>
+                </div>
+
+                <!-- <div class="mui-input-row">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动类型
+                    </label>
+                    <span>
+                        <a href="#train" id="demo1" class="sportType sportTypeActive train">训练</a>
+                        <a href="#match" id="demo2" class="sportType match">比赛</a>
+                    </span>
+                </div> -->
+
+                <div class="mui-input-row">
+                    <a href="#sportType" class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择运动类型</label>
+                        <span class="domData wd45"></span>
+                        <input type="hidden" name="" value="" class="data">
+                    </a>
+                </div>
+
+                <div class="mui-input-row">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
+                    </label>
+                    <input type="text" class="data wd52" name="sportEvent" value="" placeholder="运动项目" />
+                    <input type="hidden" class="data" value="" name="sportEvent_id">
+                </div>
+
+                <div class="mui-input-row">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>匿名打卡
+                    </label>
+                    <div class="mui-switch mui-switch-mini">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                        <label>
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>上传照片</label>
+                        <img id="preview_1" class="upload-preview" src="" alt="">
+                        <input type="hidden" name="" value="" class="data">
+                    </a>
+                </div>
+
+                <!-- <div class="mui-input-row h-auto">
+                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                        <label>
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>使用默认图片</label>
+                        <img id="preview_2" class="upload-preview" src="" alt="">
+                        <input type="hidden" name="" value="" class="data">
+                    </a>
+                </div> -->
+
+                <div class="mui-input-row">
+                    <a href="#groups" class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择社群</label>
+                        <span class="domData wd45"></span>
+                        <input type="hidden" name="" value="" class="data">
+                    </a>
+                </div>
+
+            </form>
+
+            <div class="publicTip mb44">
+                <p class="publicTitle">
+                    <img src="/static/frontend/images/hot.png" alt="">
+                    <strong class="f16">温馨提示</strong>
+                </p>
+                <div class="publicText">
+                    <p>1、开启匿名打卡、本次打卡将隐藏个人信息，但会正常进行统计，仅自己可见。</p>
+                    <p>2、每次打卡多选所在社群</p>
+                </div>
+            </div>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
+                    提交打卡
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <!--选择运动类型-->
+    <div id="sportType" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>选择运动类型</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="trainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell mui-collapse listli">
+                        <a class="mui-navigate-right">
+                            <p class="fl">训练</p>
+                        </a>
+                        <div class="mui-collapse-content" style="padding: 0">
+                            <ul class="mui-table-view list secondUl">
+                                <li class="mui-table-view-cell listli">跑步</li>
+                                <li class="mui-table-view-cell listli">健身</li>
+                                <li class="mui-table-view-cell listli">游泳</li>
+                                <li class="mui-table-view-cell listli">球类</li>
+                                <li class="mui-table-view-cell listli">综合</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell mui-collapse listli">
+                        <a class="mui-navigate-right">
+                            <p class="fl">比赛</p>
+                        </a>
+                        <div class="mui-collapse-content" style="padding: 0">
+                            <ul class="mui-table-view list secondUl">
+                                <li class="mui-table-view-cell listli">球类</li>
+                                <li class="mui-table-view-cell listli">综合</li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--选择训练-->
+    <!-- <div id="train" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>选择训练</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="trainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli">跑步</li>
+                    <li class="mui-table-view-cell listli">健身</li>
+                    <li class="mui-table-view-cell listli">游泳</li>
+                    <li class="mui-table-view-cell listli">球类</li>
+                    <li class="mui-table-view-cell listli">综合</li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+    <!--选择比赛-->
+    <!-- <div id="match" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>选择比赛</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="matchDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli">比赛</li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+
+    <!--选择社群-->
+    <div id="groups" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>请选择社群</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="groupsDel">清除</button>
+            </span>
+        </div>
+        <div class="page-header bggray2">
+            <span class="course wd45">
+                <strong>社群名称</strong>
+            </span>
+            <span class="fr f14 pdr15">
+                消耗
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list groupslist"></ul>
+            </div>
+        </div>
+        <div class="page-header">
+            <span class="course wd73">
+                <i class="icon iconfont icon-activity-Startingtim colororange"></i>
+                本次打卡消耗
+                <text class="colororange 16">3</text>H币
+            </span>
+            <span class="fr">
+                <button class="mui-btn bgred">确认</button>
+            </span>
+        </div>
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'punch'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        $(function () {
+
+            //训练比赛选择
+            // $(".sportType").on("tap", function () {
+            //     if (!$(this).hasClass("sportTypeActive")) {
+            //         $(this).siblings().removeClass("sportTypeActive")
+            //         $(this).addClass("sportTypeActive");
+            //     }
+            // });
+
+            // //清除训练
+            // $("#trainDel").on('tap', '', function () {
+            //     $("input[name=sportEvent]").val("");
+            //     mui("#train").popover("toggle");
+            // });
+            // // 选择训练
+            // $("#train").on('tap', 'li', function () {
+            //     var train = $(this).text();
+            //     $("input[name=sportEvent]").val(train);
+            //     mui("#train").popover("toggle");
+            // });
+
+            // //清除比赛
+            // $("#matchDel").on('tap', '', function () {
+            //     $("input[name=sportEvent]").val("");
+            //     mui("#match").popover("toggle");
+            // });
+            // // 选择比赛
+            // $("#match").on('tap', 'li', function () {
+            //     var match = $(this).text();
+            //     var match_id = $(this).attr("data-match_id");
+            //     $("input[name=sportEvent]").val(match);
+            //     $("input[name=sportEvent_id]").val(match_id);
+            //     mui("#match").popover("toggle");
+            // });
+
+
+        })
+    </script>
+</body>
+
+</html>
