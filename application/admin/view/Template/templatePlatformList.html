@@ -150,12 +150,26 @@
             var remarks = tr.find('input[name="remarks"]').val();
             var url = '';
 
+            if(t_id==""||remarks==""){
+                alert("请填写模板ID和备注！");
+                return false;
+            }
+
             //判断是添加还是编辑
             if(tp_id==""||tp_id==null){
-                url = "{:url('admin/template/createTemplatePlatformApi'}";
+                url = "{:url('admin/template/createTemplatePlatformApi')}";
             }else{
-                url = "{:url('admin/template/updateTemplatePlatformApi'}"+"/template_plat_id/"+tp_id;
+                url = "{:url('admin/template/updateTemplatePlatformApi')}"+"/template_plat_id/"+tp_id;
             }
+
+            console.log(template_id);
+            console.log(template);
+            console.log(tp_id);
+            console.log(platform_id);
+            console.log(platform);
+            console.log(t_id);
+            console.log(remarks);
+
             $.ajax({
                 url: url,
                 data: {
