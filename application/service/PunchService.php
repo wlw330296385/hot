@@ -10,7 +10,7 @@ class PunchService {
         $this->Punch = new Punch;
     }
 
-    public static function getPunchInfo($map) {
+    public function getPunchInfo($map) {
         $result = $this->Punch->where($map)->find();
         return $result;
     }

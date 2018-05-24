@@ -49,7 +49,7 @@ class Punch extends Base{
     	//本月打卡
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
 
-    	$groupList = 
+    	$groupList = [];
     	$this->assign('monthPunch',$monthPunch);
     	return view('Punch/createPunch');
     }
