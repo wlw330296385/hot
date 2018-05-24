@@ -73,7 +73,7 @@ class Template extends Backend {
 
             $result = $this->TemplateService->updateTemplate($data,['id'=>$id]);
             if($result['code'] == 200){
-                $this->success($result['msg'],url('admin/Template/templateInfo',['template_id'=>$template_id]));
+                $this->success($result['msg'],url('admin/Template/templatePlatformList',['template_id'=>$template_id]));
             }else{
                 $this->error($result['msg']);
             }

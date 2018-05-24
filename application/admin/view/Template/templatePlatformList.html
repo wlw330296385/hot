@@ -1,70 +1,83 @@
 {extend name="layout/common"/}
 {block name="page-content"}
 <!--<div class="wrapper">-->
-<div class="row col-lg-4 col-xs-12">
+<div class="col-lg-4 col-xs-12">
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">模板消息详情</h3>
             <div class="box-tools"><a href="{:url('admin/template/updateTemplate', ['template_id' => $templateInfo.id])}" class="btn btn-block">编辑</a></div>
         </div>
-        <table class="table table-striped table-bordered table-hover">
-            <tbody>
+        <div class="box-body">
+            <table class="table table-striped table-bordered table-hover">
+                <tbody>
 
-            <tr>
-                <th width="100">ID</th>
-                <td>{$templateInfo.id}</td>
-            </tr>
-            <tr>
-                <th>模板名称</th>
-                <td>{$templateInfo.template}</td>
-            </tr>
-            <tr>
-                <th>模板编号</th>
-                <td>{$templateInfo.code}</td>
-            </tr>
-            <tr>
-                <th>内容示例</th>
-                <td>{$templateInfo.description}</td>
-            </tr>
-            <tr>
-                <th>应用场景</th>
-                <td>{$templateInfo.scene}</td>
-            </tr>
-            <tr>
-                <th>备注</th>
-                <td>{$templateInfo.remarks}</td>
-            </tr>
-            <tr>
-                <th>状态</th>
-                <td>{$templateInfo.status}</td>
-            </tr>
-            <tr>
-                <th>创建时间</th>
-                <td>{$templateInfo.create_time}</td>
-            </tr>
-            <tr>
-                <th>更新时间</th>
-                <td>{$templateInfo.update_time}</td>
-            </tr>
-            </tbody>
-        </table>
+                <tr>
+                    <th width="100">ID</th>
+                    <td>{$templateInfo.id}</td>
+                </tr>
+                <tr>
+                    <th>模板名称</th>
+                    <td>{$templateInfo.template}</td>
+                </tr>
+                <tr>
+                    <th>模板编号</th>
+                    <td>{$templateInfo.code}</td>
+                </tr>
+                <tr>
+                    <th>内容示例</th>
+                    <td>{$templateInfo.description}</td>
+                </tr>
+                <tr>
+                    <th>应用场景</th>
+                    <td>{$templateInfo.scene}</td>
+                </tr>
+                <tr>
+                    <th>备注</th>
+                    <td>{$templateInfo.remarks}</td>
+                </tr>
+                <tr>
+                    <th>状态</th>
+                    <td>{$templateInfo.status}</td>
+                </tr>
+                <tr>
+                    <th>创建时间</th>
+                    <td>{$templateInfo.create_time}</td>
+                </tr>
+                <tr>
+                    <th>更新时间</th>
+                    <td>{$templateInfo.update_time}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-<div class="row col-lg-8 col-xs-12">
+<div class="col-lg-8 col-xs-12">
     <div class="box">
         <div class="box-header with-border">
-            <h3 class="box-title">关联的机构列表</h3>
-            <div class="box-tools"><a href="#" class="btn btn-block" data-toggle="modal" data-target="#campModal">添加</a></div>
+            <h3 class="box-title">机构公众号列表</h3>
         </div>
-        <table class="table table-striped table-bordered table-hover" id="platformList">
-            <thead>
+        <div class="box-body">
+            <table class="table table-striped table-bordered table-hover" id="platformList">
+                <thead>
+                    <tr>
+                        <th>机构ID</th>
+                        <th>机构名称</th>
+                        <th>模板ID</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {volist name='platformList' id="vol"}
                 <tr>
-                    <th>机构ID</th>
-                    <th>机构名称</th>
-                    <th>模板ID</th>
-                    <th>备注</th>
-                    <th>操作</th>
+                    <td>{$vol.platform_id}</td>
+                    <td>{$vol.platform}</td>
+                    <td>{$vol.t_id}</td>
+                    <td>{$vol.remarks}</td>
+                    <td><a href="#" class="btn btn-block edit" data-platform_id="{$templateInfo.platform_id}" data-platform="{$templateInfo.platform}" data-t_id="{$templateInfo.t_id}" data-remarks="{$templateInfo.remarks}" >编辑</a></td>
                 </tr>
+<<<<<<< HEAD
             </thead>
             <tbody>
             <tr>
@@ -75,109 +88,16 @@
                 <td>{$vol.t_id}</td>
                 <td>{$vol.remarks}</td>
                 <td><a href="#" class="btn btn-block edit" data-id="{$templateInfo.id}" data-platform_id="{$vol.id}" data-platform="{$vol.platform}" data-t_id="{$templateInfo.t_id}" data-remarks="{$vol.remarks}" >编辑</a></td>
+=======
+>>>>>>> 7572eec25c97181b61ddf324406eb3512b243636
                 {/volist}
-            </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <!--</div>-->
 
-<!-- Modal : Camp & AddForm -->
-<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">添加机构模板消息</h4>
-            </div>
-            <div class="modal-body">
-                <div id="searchCamp">
-                    <div class="input-group input-group-sm">
-                        <input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入机构名称...">
-                        <span class="input-group-btn">
-                          <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
-                        </span>
-                    </div>
-                    <div class="tableScroll">
-                        <table id="campList" class="table table-bordered table-striped dataTable">
-                            <thead>
-                            <tr role="row">
-                                <th>机构名称</th>
-                                <th>所属地区</th>
-                                <th>详情</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr role="row" class="nodata"><td colspan="4">请先搜索您要添加模板消息的机构</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="addForm" style="display: none;">
-                    <form name="template_add" action="">
-                        <div class="form-group">
-                            <input type="text" name="platform" class="form-control" value="" readonly="readonly">
-                            <input type="hidden" name="platform_id" class="form-control" value="">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="t_id" class="form-control" value="" placeholder="请输入模板ID...">
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" rows="3" name="remarks" placeholder="请输入备注..."></textarea>
-                        </div>
-                        <div class="form-group" style="text-align: center">
-                            <input type="submit" name="t_id" class="btn btn-success" value="提交" /> &nbsp;
-                            <input type="button" name="back" id="backCamp" class="btn btn-default" value="返回" />
-
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Modal : Camp & AddForm -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">修改机构模板消息</h4>
-            </div>
-            <div class="modal-body">
-                <div id="editForm">
-                <form name="template_edit" action="">
-                    <input type="hidden" name="id" class="form-control" value="">
-                    <div class="form-group">
-                        <input type="text" name="platform" class="form-control" value="" readonly="readonly">
-                        <input type="hidden" name="platform_id" class="form-control" value="">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="t_id" class="form-control" value="" placeholder="请输入模板ID...">
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-control" rows="3" name="remarks" placeholder="请输入备注..."></textarea>
-                    </div>
-                    <div class="form-group" style="text-align: center">
-                        <input type="submit" name="t_id" class="btn btn-success" value="提交" />
-
-                    </div>
-                </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {/block}
 {block name='js'}
@@ -215,61 +135,28 @@
 
         ////////////////////////////////////////////////////////////////////////机构模板关联表编辑
         $("#platformList").on("click",".edit", function () {
-            var id = $(this).attr("data-id");
+            var template_id = "{$templateInfo.id}";
+            var template = "{$templateInfo.template}";
             var platform_id = $(this).attr("data-platform_id");
             var platform = $(this).attr("data-platform");
             var t_id = $(this).attr("data-t_id");
             var remarks = $(this).attr("data-remarks");
+            var tr = '';
+            //拼接编辑表单
+            tr += '<td><input type="text" name="platform_id" value="'+platform_id+'" readonly="readonly"></td>';
+            tr += '<td><input type="text" name="platform" value="'+platform+'" readonly="readonly"></td>';
+            tr += '<td><input type="text" name="t_id" value="'+t_id+'"></td>';
+            tr += '<td><input type="text" name="remarks" value="'+remarks+'"></td>';
+            tr += '<td><input type="hidden" name="template_id" value="'+template_id+'"><input type="hidden" name="template" value="'+template+'"><input type="button" class="btn btn-block btn-success" value="保存"></td>';
 
-            $("#editForm input[name=id]").val(id);
-            $("#editForm input[name=platform_id]").val(platform_id);
-            $("#editForm input[name=platform]").val(platform);
-            $("#editForm input[name=t_id]").val(t_id);
-            $("#editForm input[name=remarks]").val(remarks);
+            $(this).parentsUntil("tr").parent().empty().append(tr);
 
-            $('#editModal').modal('show');
 
         })
 
     });
 
 
-    //接口获取数据并追加到页面
-    var toCampList = function (keyword) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                status: 1,
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#campList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
 
 </script>
 {/block}

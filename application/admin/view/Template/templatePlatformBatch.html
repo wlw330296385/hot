@@ -1,58 +1,62 @@
 {extend name="layout/common"/}
 {block name="page-content"}
 <!--<div class="wrapper">-->
-<div class="row col-lg-6 col-xs-12">
+<div class="col-lg-6 col-xs-12">
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">选择主模板消息（可多选）</h3>
         </div>
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
-            <tr>
-                <th><input type="checkbox" id="allCheckbox" /></th>
-                <th>模板名称</th>
-                <th>应用场景</th>
-                <th>备注</th>
-                <th>状态</th>
-                <th>详情</th>
-            </tr>
-            </thead>
-            <tbody>
-            {volist name="templateList" id="vol"}
-            <tr>
-                <td><input type="checkbox" class="tBox" data-template="{$vol.template}" data-template_id="{$vol.template_id}" /></td>
-                <td>{$vol.template}</td>
-                <td>{$vol.scene}</td>
-                <td>{$vol.remarks}</td>
-                <td class="status" style="color:red">{if $vol.status == -1}已停用{/if}{if $vol.status == 1}已启用{/if}</td>
-                <td>
-                    <a href="{:url('admin/template/templatePlatform', ['template_id' => $vol['id']])}" class="btn btn-info">详情</a>
-                </td>
-            </tr>
-            {/volist}
-            </tbody>
-        </table>
+        <div class="box-body">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="allCheckbox" /></th>
+                    <th>模板名称</th>
+                    <th>应用场景</th>
+                    <th>备注</th>
+                    <th>状态</th>
+                    <th>详情</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="templateList" id="vol"}
+                <tr>
+                    <td><input type="checkbox" class="tBox" data-template="{$vol.template}" data-template_id="{$vol.template_id}" /></td>
+                    <td>{$vol.template}</td>
+                    <td>{$vol.scene}</td>
+                    <td>{$vol.remarks}</td>
+                    <td class="status" style="color:red">{if $vol.status == -1}已停用{/if}{if $vol.status == 1}已启用{/if}</td>
+                    <td>
+                        <a href="{:url('admin/template/templatePlatform', ['template_id' => $vol['id']])}" class="btn btn-info">详情</a>
+                    </td>
+                </tr>
+                {/volist}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-<div class="row col-lg-6 col-xs-12">
+<div class="col-lg-6 col-xs-12">
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">添加机构模板消息</h3>
             <div class="box-tools"><a href="#" class="btn btn-block btn-info" data-toggle="modal" data-target="#campModal">选择机构</a></div>
         </div>
-        <table class="table table-striped table-bordered table-hover" id="platformList">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>模板名称</th>
-                    <th>机构ID</th>
-                    <th>机构名称</th>
-                    <th>模板ID</th>
-                    <th>备注</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="box-body">
+            <table class="table table-striped table-bordered table-hover" id="platformList">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>模板名称</th>
+                        <th>机构ID</th>
+                        <th>机构名称</th>
+                        <th>模板ID</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
         <div class="box-footer">
             <button type="button" class="btn btn-success" id="submitBatch">提交批处理</button>
         </div>
