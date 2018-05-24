@@ -336,6 +336,23 @@ class LeagueService
         return $res->toArray();
     }
 
+    // 获取联赛分组数
+    public function getMatchGroupCount($map) {
+        $model = new MatchGroup();
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
+    }
+
+    // 获取联赛分组列表（无分页）
+    public function getMatchGroups($map, $order='id desc') {
+        $model = new MatchGroup();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 获取联赛分组列表
     public function getMatchGroupList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MatchGroup();
@@ -373,5 +390,15 @@ class LeagueService
             trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
         }
         return $model->id;
+    }
+
+    // 获取联赛分组球队列表（无分页）
+    public function getMatchGroupTeams($map, $order='id desc') {
+        $model = new MatchGroupTeam();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 }

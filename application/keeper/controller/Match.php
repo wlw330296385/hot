@@ -391,17 +391,42 @@ class Match extends Base {
 
     // 联赛分组列表
     public function groupsListOfLeague() {
-        return view('Match/groupsListOfLeague');
+        // 获取联赛有无分组数据
+        $leagueS = new LeagueService();
+        // 创建/编辑分组 控制标识：0创建/1编辑
+        $btnEditAction = 0;
+        $matchGroups = $leagueS->getMatchGroups(['match_id' => $this->league_id]);
+        if ($matchGroups) {
+            $btnEditAction = 1;
+        }
+        return view('Match/groupsListOfLeague', [
+            'btnEditAction' => $btnEditAction
+        ]);
     }
     
     // 联赛创建分组
     public function createGroups() {
         // 联赛正式球队数
         $leagueS = new LeagueService();
-        $teamcount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
+        $teamCount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
 
         return view('Match/createGroups', [
-            'teamcount' => $teamcount
+            'teamCount' => $teamCount
+        ]);
+    }
+
+    // 编辑联赛某个分组
+    public function editgroups() {
+        // 联赛正式球队数
+        $leagueS = new LeagueService();
+        // 联赛正式球队数
+        $teamCount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
+        // 联赛分组数
+        $groupCount = $leagueS->getMatchGroupCount(['match_id' => $this->league_id]);
+
+        return view('Match/editGroups', [
+            'teamCount' => $teamCount,
+            'groupCount' => $groupCount
         ]);
     }
 }

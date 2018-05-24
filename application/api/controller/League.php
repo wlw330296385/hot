@@ -821,12 +821,12 @@ class League extends Base
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             }
             return json($response);
         } catch (Exception $e) {
             trace($e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
 
@@ -842,19 +842,110 @@ class League extends Base
             if (input('?page')) {
                 unset($data['page']);
             }
-
+            // 获取数据
             $leagueService = new LeagueService();
             $result = $leagueService->getMatchGroupPaginator($data);
             // 返回结果
             if ($result) {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             }
             return json($response);
         } catch (Exception $e) {
             trace($e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 联赛分组包含组内球队列表（不分页）
+    public function leaguegroupwithteams() {
+        try {
+            $data = input('param.');
+            //页数
+            $page = input('page');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 获取分组列表数据
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchGroups($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            foreach ($result as $k => $val) {
+                // 遍历获取分组下球队列表数据
+                $result[$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 联赛分组包含组内球队列表
+    public function leaguegroupwithteamslist() {
+        try {
+            $data = input('param.');
+            //页数
+            $page = input('page');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 获取分组列表数据
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchGroupList($data, $page);
+            if (!$result) {
+               return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            foreach ($result as $k => $val) {
+                // 遍历获取分组下球队列表数据
+                $result[$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 联赛分组包含组内球队列表（页码）
+    public function leaguegroupwithteamspage() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 获取数据
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchGroupPaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            foreach ($result['data'] as $k => $val) {
+                // 遍历获取分组下球队列表数据
+                $result['data'][$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
 
@@ -935,6 +1026,10 @@ class League extends Base
             trace('error:'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
-        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        if ($groupTeamId) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
     }
 }
