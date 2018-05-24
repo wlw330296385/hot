@@ -92,7 +92,11 @@ class Template extends Backend {
         $map['id'] = $template_id;
         $templateInfo = $this->TemplateService->getTemplateInfo($map);
 
-        $platformList = db('platform')->join('template_platform','')->where(['template_id'=>$template_id])->select();
+        $platformList = db('platform')
+        ->join('template_platform','platform.id = template_platform.platform_id','left')
+        ->where(['template_id'=>$template_id])
+        ->order('template_platform.id desc')
+        ->select();
 
 
 
