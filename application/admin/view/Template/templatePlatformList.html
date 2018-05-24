@@ -65,40 +65,18 @@
                         <th>机构名称</th>
                         <th>模板ID</th>
                         <th>备注</th>
-                        <th>操作</th>
+                        <th width="100">操作</th>
                     </tr>
-<<<<<<< HEAD
                 </thead>
                 <tbody>
-                <tr>
-                    <td>11</td>
-                    <td>22</td>
-                    <td>33</td>
-                    <td>44</td>
-                    <td><a href="#" class="btn btn-block edit" data-platform_id="11" data-platform="22" data-t_id="33" data-remarks="44" >编辑</a></td>
-                </tr>
                 {volist name='platformList' id="vol"}
                 <tr>
-                    {:dump($vol)}
-                    <td>{$vol.camp}</td>
+                    <td>{$vol.id}</td>
                     <td>{$vol.platform}</td>
                     <td>{$vol.t_id}</td>
-                    <td>{$vol.remarks}</td>
-                    <td><a href="#" class="btn btn-block edit" data-id="{$templateInfo.id}" data-platform_id="{$vol.id}" data-platform="{$vol.platform}" data-t_id="{$templateInfo.t_id}" data-remarks="{$vol.remarks}" >编辑</a></td>
+                    <td>{$vol.tp_remarks}</td>
+                    <td><a href="#" class="btn btn-block edit" data-tp_id="{$vol.tp_id}" data-platform_id="{$vol.id}" data-platform="{$vol.platform}" data-t_id="{$vol.t_id}" data-remarks="{$vol.tp_remarks}" >编辑</a></td>
                 </tr>
-=======
-
-            </thead>
-            <tbody>
-            <tr>
-                {volist name='platformList' id="vol"}
-                {:dump($vol)}
-                <td>{$vol.id}</td>
-                <td>{$vol.platform}</td>
-                <td>{$vol.t_id}</td>
-                <td>{$vol.remarks}</td>
-                <td><a href="#" class="btn btn-block edit" data-id="{$templateInfo.id}" data-platform_id="{$vol.id}" data-platform="{$vol.platform}" data-t_id="{$templateInfo.t_id}" data-remarks="{$vol.remarks}" >编辑</a></td>
->>>>>>> b5d766d79a16cb65867a7cc7de9435f58085f39f
                 {/volist}
                 </tbody>
             </table>
@@ -113,47 +91,28 @@
 <!-- JQ -->
 <script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script>
+    //全局变量，保存编辑前的数据,取消时使用
+    var trOrg = '';
+
     $(function () {
 
 
-        ////////////////////////////////////////////////////////////////////////机构模板关联表添加
-        //搜索训练营
-        $("#searchCampBtn").on("click", function () {
-            var keyword = $(".campKeyword").val();
-            if(keyword==""){
-                alert("请输入机构名称！");
-            }else{
-                toCampList(keyword);
-            }
-        })
-
-        $("#campList tbody").on("click",".btn", function () {
-            var camp_id = $(this).attr("data-id");
-            var camp = $(this).attr("data-camp");
-            $("#addForm input[name=platform_id]").val(camp_id);
-            $("#addForm input[name=platform]").val(camp);
-
-            $('#searchCamp').hide();
-            $('#addForm').show();
-        })
-
-        $("#backCamp").on("click","", function () {
-            $('#searchCamp').show();
-            $('#addForm').hide();
-        })
-
-
-
-
-
-
+        //激活编辑状态
         $("#platformList").on("click",".edit", function () {
+
+            //判断是否有其他激活状态的数据，有则还原
+            var isActive = $("#platformList tbody tr.active").length;
+            if(isActive>0){
+                $("#platformList tbody tr.active").empty().append(trOrg);
+            }
 
             //激活当前选中的行
             var tr = $(this).parentsUntil("tr").parent();
+            tr.addClass("active");
+            //保存原始数据
+            trOrg = tr.html();
 
-            var template_id = "{$templateInfo.id}";
-            var template = "{$templateInfo.template}";
+            var tp_id = $(this).attr("data-tp_id");
             var platform_id = $(this).attr("data-platform_id");
             var platform = $(this).attr("data-platform");
             var t_id = $(this).attr("data-t_id");
@@ -164,12 +123,64 @@
             trStr += '<td><input type="text" name="platform" value="'+platform+'" readonly="readonly"></td>';
             trStr += '<td><input type="text" name="t_id" value="'+t_id+'"></td>';
             trStr += '<td><input type="text" name="remarks" value="'+remarks+'"></td>';
-            trStr += '<td><input type="hidden" name="template_id" value="'+template_id+'"><input type="hidden" name="template" value="'+template+'"><input type="button" class="btn btn-block btn-success" value="保存"></td>';
+            trStr += '<td><input type="hidden" name="tp_id" value="'+tp_id+'"><input type="button" class="btn btn-block btn-success" id="saveEdit" value="保存"><input type="button" class="btn btn-block" id="cancelEdit" value="取消"></td>';
 
             tr.empty().append(trStr);
 
+        });
 
-        })
+        //取消编辑状态
+        $("#platformList").on("click","#cancelEdit", function () {
+            $("#platformList tbody tr.active").empty().append(trOrg);
+            $("#platformList tbody tr").removeClass("active");
+        });
+
+
+        //保存编辑状态
+        $("#platformList").on("click","#saveEdit", function () {
+
+            var tr = $(this).parentsUntil("tr").parent();
+
+            var template_id = '{$templateInfo.id}';
+            var template = '{$templateInfo.template}';
+            var tp_id = tr.find('input[name="tp_id"]').val();
+            var platform_id = tr.find('input[name="platform_id"]').val();
+            var platform = tr.find('input[name="platform"]').val();
+            var t_id = tr.find('input[name="t_id"]').val();
+            var remarks = tr.find('input[name="remarks"]').val();
+            var url = '';
+
+            //判断是添加还是编辑
+            if(tp_id==""||tp_id==null){
+                url = "{:url('admin/template/createTemplatePlatformApi'}";
+            }else{
+                url = "{:url('admin/template/updateTemplatePlatformApi'}"+"/template_plat_id/"+tp_id;
+            }
+            $.ajax({
+                url: url,
+                data: {
+                    template_id: template_id,
+                    template: template,
+                    platform_id: platform_id,
+                    platform: platform,
+                    t_id: t_id,
+                    remarks: remarks
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                //processData:false,
+                success: function (data) {
+                    //取消激活状态清空原始数据
+                    window.location.reload()
+                },
+                error: function (xhr, type, errerThrown) {
+                    alert('网络异常,请稍候再试');
+                }
+            });
+
+        });
 
     });
 
