@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 32
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 100126
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50553
+ Source Host           : localhost:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 100126
+ Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 22/05/2018 17:55:09
+ Date: 24/05/2018 14:38:57
 */
 
 SET NAMES utf8mb4;
@@ -33,6 +33,6 @@ CREATE TABLE `template_platform`  (
   `update_time` int(11) NOT NULL,
   `delete_time` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
