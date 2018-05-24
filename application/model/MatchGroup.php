@@ -10,4 +10,9 @@ class MatchGroup extends Model
     // 软删除
     use SoftDelete;
     protected $deleteTime = 'delete_time';
+
+    // 分组下球队（一对多）
+    public function teams() {
+        return $this->hasMany('match_group_team', 'group_id', 'id');
+    }
 }
