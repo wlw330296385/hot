@@ -1,21 +1,21 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\GroupService;
-class Group extends Base{
-   protected $GroupService;
+use app\service\PoolService;
+class Pool extends Base{
+   protected $PoolService;
  
     public function _initialize(){
         parent::_initialize();
-       $this->GroupService = new GroupService;
+       $this->PoolService = new PoolService;
     }
  
-    // 获取社群列表
-    public function (){
+    // 获取擂台列表
+    public function getPoolListApi(){
          try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1; 
-            $result = $this->GroupService->getGroupList($map,$page);  
+            $result = $this->PoolService->getPoolList($map,$page);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
@@ -26,11 +26,11 @@ class Group extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
-     // 获取社群列表 无page
-    public function getGroupListNoPageApi(){
+     // 获取擂台列表 无page
+    public function getPoolListNoPageApi(){
          try{
             $map = input('post.');
-            $result = $this->GroupService->getGroupListNoPage($map);  
+            $result = $this->PoolService->getPoolListNoPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -41,11 +41,11 @@ class Group extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
-    // 获取社群列表带page
-     public function getGroupListByPageApi(){
+    // 获取擂台列表带page
+     public function getPoolListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->GroupService->getGroupListByPage($map);  
+            $result = $this->PoolService->getPoolListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -58,11 +58,11 @@ class Group extends Base{
     }
 
 
-    // 获取用户社群带page
-    public function getGroupMemberListByPageApi(){
+    // 获取用户擂台带page
+    public function getPoolMemberListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->GroupService->getGroupMemberListByPage($map);  
+            $result = $this->PoolService->getPoolMemberListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -75,34 +75,34 @@ class Group extends Base{
     }
 
 
-    // 编辑社群
-    public function updateGroupApi(){
+    // 编辑擂台
+    public function updatePoolApi(){
          try{
             $data = input('post.');
-            $group_id = input('param.group_id');
+            $pool_id = input('param.pool_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             if(isset($data['starts'])){
-                $data['start'] = strtotime($data['starts']);
+                $data['start'] = strtotime($data['starts'])+86399;
             }
             if(isset($data['ends'])){
-                $data['end'] = strtotime($data['ends'])+86399;
+                $data['end'] = strtotime($data['ends']);
             }
-            $result = $this->GroupService->updateGroup($data,['id'=>$group_id]);
+            $result = $this->PoolService->updatePool($data,['id'=>$pool_id]);
             return json($result);
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
 
-    // 操作社群
-    public function editGroupApi(){
+    // 操作擂台
+    public function editPoolApi(){
         try{
            $data = input('post.');
-           $group_id = input('param.group_id');
+           $pool_id = input('param.pool_id');
            $data['member_id'] = $this->memberInfo['id'];
            $data['member'] = $this->memberInfo['member'];
-           $result = db('group')->where(['id'=>$group_id])->update($data);
+           $result = db('pool')->where(['id'=>$pool_id])->update($data);
            if($result){
                 return json(['code'=>200,'msg'=>'ok']);
             }
@@ -112,20 +112,20 @@ class Group extends Base{
         }
     }
 
-    //创建社群
-    public function createGroupApi(){
+    //创建擂台
+    public function createPoolApi(){
          try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             if( $data['starts'] || isset($data['starts'])){
-                $data['start'] = strtotime($data['starts']);
+                $data['start'] = strtotime($data['starts'])+86399;
             }
             if(isset($data['ends'])){
-                $data['end'] = strtotime($data['ends'])+86399;
+                $data['end'] = strtotime($data['ends']);
             }
 
-            $result = $this->GroupService->createGroup($data);
+            $result = $this->PoolService->createPool($data);
              return json($result);   
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -134,30 +134,7 @@ class Group extends Base{
 
 
  
-    //加入社群
-    public function createGroupMemberApi(){
-         try{
-            $group_id = input('param.group_id');
-            $member_id = $this->memberInfo['id'];
-            $member = $this->memberInfo['member'];
-            $result = $this->GroupService->createGroupMember($member_id,$member,$group_id);
-             return json($result);   
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
+   
 
-
-
-    //退出社群
-    public function dropGroup(){
-        try{
-            $member_id = $this->memberInfo['id'];
-            $group_id = input('param.group_id');
-            $result = $this->GroupService->useGroup($member_id,$group_id);
-             return json($result);   
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
+    
 }

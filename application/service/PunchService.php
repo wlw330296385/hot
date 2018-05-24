@@ -26,7 +26,7 @@ class PunchService {
         return $result;
     }
 
-    // 新增退款
+    // 新增打卡
     public function createPunch($data){
         $result = $this->Punch->save($data);
         if($result){
@@ -37,18 +37,8 @@ class PunchService {
 
     }
 
-    // 操作退款
-    public function updatePunch($data,$id){
-        $result = $this->Punch->save($data,['id'=>$id]);
-        if($result){
-            return ['code'=>200,'msg'=>'修改成功','data'=>$result];
-        }else{
-            return ['code'=>100,'msg'=>'修改失败','data'=>$result];
-        }
-    }
-
- 
-    public function savePunch($request) {
+    // 产生打卡-社群关系
+    public function saveGroupPunch($data) {
         
     }
 }

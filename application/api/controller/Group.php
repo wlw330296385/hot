@@ -11,7 +11,7 @@ class Group extends Base{
     }
  
     // 获取社群列表
-    public function (){
+    public function getGroupListApi(){
          try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1; 
