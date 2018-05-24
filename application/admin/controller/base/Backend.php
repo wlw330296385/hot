@@ -2,7 +2,7 @@
 // admin模块 控制器基类
 namespace app\admin\controller\base;
 
-use app\model\Camp;
+
 use app\service\SystemService;
 use app\admin\controller\base\Base;
 use think\Cookie;
@@ -13,14 +13,12 @@ class Backend extends Base {
     public $admin;
     public function _initialize() {
         parent::_initialize();
-        // 检查控制台登录
-        if ( !$this->AuthService->islogin() ) {
-            //$this->error('请登录后操作', url('Login/index'));
-            $this->redirect('Login/index');
-        }else{
-            $this->admin = session('admin');
-            $this->assign('admin',$this->admin);
-        }
+        // 获取平台数据
+        $SystemS = new SystemService();
+        $site = $SystemS->getSite();
+        $this->site = $site;
+        $this->assign('site', $site);
+        $this->assign('admin', session('admin') );
         if(config('develop_mode') == 0){
             //存储权限节点
             // dump($_SESSION);
