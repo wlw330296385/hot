@@ -102,8 +102,6 @@ class Template extends Backend {
 
 
         $this->assign('templateInfo',$templateInfo);
-
-
         $this->assign('platformList',$platformList);
         return view('Template/templatePlatformList');
     }
@@ -161,14 +159,14 @@ class Template extends Backend {
  
     public function updateTemplateApi(){
          try{
-             $data = input('post.');
+            $data = input('post.');
             $bankcard_id = input('param.bankcard_id');
-             $data['member_id'] = $this->memberInfo['id'];
-             $data['member'] = $this->memberInfo['member'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $result = $this->TemplateService->updateTemplate($data,['id'=>$bankcard_id]);
-             return json($result);
+            return json($result);
          }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
  
@@ -215,23 +213,36 @@ class Template extends Backend {
          }
     }
 
- 
+    //修改关联
     public function updateTemplatePlatformApi(){
          try{
             $data = input('post.');
             $template_plat_id = input('param.template_plat_id');
             $result = $this->TemplatePlatform->save($data,['id'=>$template_plat_id]);
-             return json($result);
+            if($result){
+                return json(['code'=>200,'msg'=>'修改成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
+            }
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
     }
  
+    // 新关联
     public function createTemplatePlatformApi(){
         try{
             $data = input('post.');
+            $res = $this->TemplatePlatform->where(['platform_id'=>$data['platform_id'],'template_id'=>$template_id])->find();
+            if($res){
+                return json(['code'=>100,'msg'=>'重复关联']);
+            }
             $result = $this->TemplatePlatform->save($data);
-            return json($result);   
+            if($result){
+                return json(['code'=>200,'msg'=>'关联成功','data'=>$this->TemplatePlatform->id]);
+            }else{
+                return json(['code'=>100,'msg'=>'关联失败']);
+            }
         }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
