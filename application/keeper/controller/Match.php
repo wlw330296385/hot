@@ -322,6 +322,7 @@ class Match extends Base {
         if (!$matchApply) {
             $this->error(__lang('MSG_404'));
         }
+
         // 获取球队详细信息
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
@@ -428,5 +429,10 @@ class Match extends Base {
             'teamCount' => $teamCount,
             'groupCount' => $groupCount
         ]);
+    }
+
+    // 球队登记联赛参赛球员
+    public function completeplayerbyteam() {
+        return view('Match/completePlayerByTeam');
     }
 }

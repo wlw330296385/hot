@@ -631,6 +631,60 @@ class League extends Base
         return json($result);
     }
 
+    // 通知报名联赛的球队完善信息
+    public function noticeteamcompleteplayer() {
+        // post参数
+        $data = input('post.');
+        // 比传参数验证 apply_id
+        if ( !array_key_exists('apply_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').',传入apply_id']);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 查询联赛球队申请数据
+        $matchService = new MatchService();
+        $matchApply = $matchService->getMatchApplyDetail([
+            'id' => $data['apply_id']
+        ]);
+        if (!$matchApply) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 当前会员有无联赛组织人员关系（操作权限）
+        $leagueService = new LeagueService();
+        $matchOrgMember = $leagueService->getMatchOrgMember([
+            'match_org_id' => $matchApply['match']['match_org_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (!$matchOrgMember) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403').'您不是联赛组织人员']);
+        }
+        // 组合推送消息内容
+        $message = [
+            'title' => '报名联赛信息完善通知',
+            'content' => '您好，您的球队 ' . $matchApply['team']['name'] . '未按要求提交参赛球员名单，请及时完善信息 ',
+            'url' => url('keeper/match/completeplayerbyteam', ['match_id' => $matchApply['match_id'], 'team_id' => $matchApply['team_id']], '', true),
+            'keyword1' => '您好，您的球队 ' . $matchApply['team']['name'] . '未按要求提交参赛球员名单，请及时完善信息 ',
+            'keyword2' => '完善参赛球员名单',
+            'remark' => '点击登录平台查看更多信息',
+            'team_id' => $matchApply['team_id'],
+            'steward_type' => 2
+        ];
+        try {
+            // 发送消息推送
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($matchApply['member_id'], $message, config('wxTemplateID.applyResult'));
+            // 球队公告
+            $teamS = new TeamService();
+            $teamS->saveTeamMessage($message);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
     // 联赛报名球队列表
     public function leaguesignupteamlist() {
         try {
@@ -862,19 +916,14 @@ class League extends Base
     public function leaguegroupwithteams() {
         try {
             $data = input('param.');
-            //页数
-            $page = input('page');
             // 参数league_id -> match_id
             if (input('?param.league_id')) {
                 unset($data['league_id']);
                 $data['match_id'] = input('param.league_id');
             }
-            if (input('?page')) {
-                unset($data['page']);
-            }
             // 获取分组列表数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroups($data, $page);
+            $result = $leagueService->getMatchGroups($data);
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
@@ -1030,6 +1079,80 @@ class League extends Base
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         } else {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 获取联赛球队成员列表（无分页）
+    public function getmatchteammembers() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            // 获取分组列表数据
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchTeamMembers($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 获取联赛球队成员列表
+    public function getmatchteammemberlist() {
+        try {
+            $data = input('param.');
+            $page = input('param.page');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchTeamMemberList($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 获取联赛球队成员列表（页码）
+    public function getmatchteammemberpage() {
+        try {
+            $data = input('param.');
+            $page = input('param.page');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+
+            $leagueService = new LeagueService();
+            $result = $leagueService->getMatchTeamMemberPaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
 }

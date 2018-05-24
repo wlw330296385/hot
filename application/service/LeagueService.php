@@ -10,6 +10,7 @@ use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 use app\model\MatchTeam;
+use app\model\MatchTeamMember;
 
 class LeagueService
 {
@@ -396,6 +397,36 @@ class LeagueService
     public function getMatchGroupTeams($map, $order='id desc') {
         $model = new MatchGroupTeam();
         $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛球队球员列表（无分页）
+    public function getMatchTeamMembers($map, $order='id desc') {
+        $model = new MatchTeamMember();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛球队球员列表
+    public function getMatchTeamMemberList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchTeamMember();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛分组列表（页码）
+    public function getMatchTeamMemberPaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchTeamMember();
+        $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
             return $res;
         }
