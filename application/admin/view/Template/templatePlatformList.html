@@ -69,6 +69,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td>11</td>
+                    <td>22</td>
+                    <td>33</td>
+                    <td>44</td>
+                    <td><a href="#" class="btn btn-block edit" data-platform_id="11" data-platform="22" data-t_id="33" data-remarks="44" >编辑</a></td>
+                </tr>
                 {volist name='platformList' id="vol"}
                 <tr>
                     <td>{$vol.platform_id}</td>
@@ -120,23 +127,31 @@
             $('#addForm').hide();
         })
 
-        ////////////////////////////////////////////////////////////////////////机构模板关联表编辑
+
+
+
+
+
         $("#platformList").on("click",".edit", function () {
+
+            //激活当前选中的行
+            var tr = $(this).parentsUntil("tr").parent();
+
             var template_id = "{$templateInfo.id}";
             var template = "{$templateInfo.template}";
             var platform_id = $(this).attr("data-platform_id");
             var platform = $(this).attr("data-platform");
             var t_id = $(this).attr("data-t_id");
             var remarks = $(this).attr("data-remarks");
-            var tr = '';
+            var trStr = '';
             //拼接编辑表单
-            tr += '<td><input type="text" name="platform_id" value="'+platform_id+'" readonly="readonly"></td>';
-            tr += '<td><input type="text" name="platform" value="'+platform+'" readonly="readonly"></td>';
-            tr += '<td><input type="text" name="t_id" value="'+t_id+'"></td>';
-            tr += '<td><input type="text" name="remarks" value="'+remarks+'"></td>';
-            tr += '<td><input type="hidden" name="template_id" value="'+template_id+'"><input type="hidden" name="template" value="'+template+'"><input type="button" class="btn btn-block btn-success" value="保存"></td>';
+            trStr += '<td><input type="text" name="platform_id" value="'+platform_id+'" readonly="readonly"></td>';
+            trStr += '<td><input type="text" name="platform" value="'+platform+'" readonly="readonly"></td>';
+            trStr += '<td><input type="text" name="t_id" value="'+t_id+'"></td>';
+            trStr += '<td><input type="text" name="remarks" value="'+remarks+'"></td>';
+            trStr += '<td><input type="hidden" name="template_id" value="'+template_id+'"><input type="hidden" name="template" value="'+template+'"><input type="button" class="btn btn-block btn-success" value="保存"></td>';
 
-            $(this).parentsUntil("tr").parent().empty().append(tr);
+            tr.empty().append(trStr);
 
 
         })
