@@ -14,8 +14,11 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu search_opt" role="menu">
-                            <li data = 'template'><a href="#">模板名称</a></li>
-                            <li data = 'code' ><a href="#">模板编号</a></li>
+                            <li data = 'platform'><a href="#">公众号名称</a></li>
+                            <li data = 'company' ><a href="#">公司名称</a></li>
+                            <li data = 'username' ><a href="#">账号名</a></li>
+                            <li data = 'appid' ><a href="#">appid</a></li>
+                            <li data = 'sms_appid' ><a href="#">sms_appid</a></li>
                         </ul>
                     </div>
                     <div class="form-group">
@@ -40,10 +43,10 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>模板名称</th>
-                        <th>模板编号</th>
-                        <th>内容示例</th>
-                        <th>应用场景</th>
+                        <th>公众号名称</th>
+                        <th>公司名称</th>
+                        <th>id相关</th>
+                        <th>账号名</th>
                         <th>备注</th>
                         <th>状态</th>
                         <th>创建时间</th>
@@ -52,20 +55,19 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {volist name="templateList" id="vol"}
+                    {volist name="platformList" id="vol"}
                     <tr>
                         <td>{$vol.id}</td>
-                        <td>{$vol.template}</td>
-                        <td>{$vol.code}</td>
-                        <td>{$vol.description}</td>
-                        <td>{$vol.scene}</td>
+                        <td>{$vol.platform}</td>
+                        <td>{$vol.company}</td>
+                        <td>appid：{$vol.appid}<br />mchid：{$vol.mchid}<br />sms_appid：{$vol.sms_appid}</td>
+                        <td>{$vol.username}</td>
                         <td>{$vol.remarks}</td>
                         <td class="status" style="color:red">{if $vol.status == -1}已停用{/if}{if $vol.status == 1}已启用{/if}</td>
                         <td>{$vol.create_time}</td>
                         <td>{$vol.update_time}</td>
                         <td>
-                            <a href="{:url('admin/template/templatePlatform', ['template_id' => $vol['id']])}" class="btn btn-info">详情</a>
-                            <a href="{:url('admin/template/updateTemplate', ['template_id' => $vol['id']])}" class="btn btn-info">编辑</a>
+                            <a href="{:url('admin/platform/updatePlatform', ['template_id' => $vol['id']])}" class="btn btn-info">详情|编辑</a>
                         </td>
                     </tr>
                     {/volist}
@@ -74,20 +76,13 @@
             </div>
             <br />
             <div class="box-footer clearfix">
-                {$templateList->render()}
+                {$platformList->render()}
             </div>
         </div>
     </div>
 </div>
 
-
-
-
 {/block}
-
-
-
-
 {block name='js'}
 <script type="text/javascript">
 	$(function(){
