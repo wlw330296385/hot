@@ -32,5 +32,21 @@ class Group extends Base{
         return view('Group/groupEdit');
     }
 
+    
+    // 创建奖金池
+    public function createPool() {
+        return view('Group/createPool');
+    }
+
+    // 奖金池详情
+    public function poolInfo() {
+        return view('Group/poolInfo');
+    }
+
+    // 编辑奖金池
+    public function poolEdit() {
+        return view('Group/poolEdit');
+    }
+
 
 }
