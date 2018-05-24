@@ -93,13 +93,12 @@ class Template extends Backend {
         $templateInfo = $this->TemplateService->getTemplateInfo($map);
 
         $platformList = db('platform')
+        ->field('platform.*,template_platform.t_id,template_platform.template,template_platform.template_id,template_platform.remarks')
         ->join('template_platform','platform.id = template_platform.platform_id','left')
         ->order('template_platform.id desc')
         ->select();
 
 
-
-        // dump($platformList);die;
         $this->assign('templateInfo',$templateInfo);
 
 
