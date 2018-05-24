@@ -51,7 +51,7 @@ class Punch extends Base{
 
     	$groupList = 
     	$this->assign('monthPunch',$monthPunch);
-    	return view('Punch/punchInfo');
+    	return view('Punch/createPunch');
     }
 
 }
