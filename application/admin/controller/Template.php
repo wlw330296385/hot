@@ -95,7 +95,7 @@ class Template extends Backend {
         $templateInfo = $this->TemplateService->getTemplateInfo($map);
 
         $platformList = db('platform')
-        ->field('platform.*,template_platform.t_id,template_platform.template,template_platform.template_id,template_platform.remarks as tp_remarks')
+        ->field('platform.*,template_platform.t_id,template_platform.template,template_platform.template_id,template_platform.remarks as tp_remarks,template_platform.id as tp_id')
         ->join('template_platform','platform.id = template_platform.platform_id','left')
         ->order('template_platform.id desc')
         ->select();
@@ -218,11 +218,9 @@ class Template extends Backend {
  
     public function updateTemplatePlatformApi(){
          try{
-             $data = input('post.');
-            $bankcard_id = input('param.bankcard_id');
-             $data['member_id'] = $this->memberInfo['id'];
-             $data['member'] = $this->memberInfo['member'];
-            $result = $this->TemplatePlatform->save($data,['id'=>$bankcard_id]);
+            $data = input('post.');
+            $template_plat_id = input('param.template_plat_id');
+            $result = $this->TemplatePlatform->save($data,['id'=>$template_plat_id]);
              return json($result);
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
