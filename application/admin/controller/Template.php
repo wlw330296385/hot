@@ -238,7 +238,6 @@ class Template extends Backend {
             if($res){
                 return json(['code'=>100,'msg'=>'重复关联']);
             }
-             dump($data);
             $result = $this->TemplatePlatform->save($data);
             if($result){
                 return json(['code'=>200,'msg'=>'关联成功','data'=>$this->TemplatePlatform->id]);
