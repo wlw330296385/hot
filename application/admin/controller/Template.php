@@ -108,6 +108,15 @@ class Template extends Backend {
 
 
 
+    public function templatePlatformBatch(){
+        $map = [];
+        $templateList = db('template')->where($map)->select();
+        $platformList = db('platform')->where($map)->select();
+        $this->assign('templateList',$templateList);
+        $this->assign('platformList',$platformList);
+        return view('Template/templatePlatformBatch');
+    }
+
 
 
 

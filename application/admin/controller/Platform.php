@@ -73,7 +73,7 @@ class Platform extends Backend {
 
             $result = $this->PlatformService->updatePlatform($data,['id'=>$id]);
             if($result['code'] == 200){
-                $this->success($result['msg'],url('admin/Platform/platformPlatformList',['platform_id'=>$platform_id]));
+                $this->success($result['msg'],url('admin/Platform/platformList',['platform_id'=>$platform_id]));
             }else{
                 $this->error($result['msg']);
             }
