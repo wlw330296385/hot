@@ -94,13 +94,12 @@ class Template extends Backend {
 
         $platformList = db('platform')
         ->join('template_platform','platform.id = template_platform.platform_id','left')
-        ->where(['template_id'=>$template_id])
         ->order('template_platform.id desc')
         ->select();
 
 
 
-
+        // dump($platformList);die;
         $this->assign('templateInfo',$templateInfo);
 
 
