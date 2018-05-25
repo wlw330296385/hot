@@ -1,7 +1,7 @@
 {extend name="layout/common"/}
 {block name="page-content"}
 <!--<div class="wrapper">-->
-<div class="row col-lg-6 col-xs-12">
+<div class="row col-lg-4 col-xs-12">
     <div class="box">
         <div id="platformInfo">
             <div class="box-header with-border">
@@ -187,13 +187,13 @@
     </div>
 </div>
 
-<div class="col-lg-6 col-xs-12">
+<div class="col-lg-8 col-xs-12">
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">模板消息对接列表</h3>
         </div>
         <div class="box-body">
-            <table class="table table-striped table-bordered table-hover" id="platformList">
+            <table class="table table-striped table-bordered table-hover" id="templateList">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -207,7 +207,7 @@
                 {volist name='templateList' id="vol"}
                 <tr class="t{$vol.id}">
                     <td>{$vol.id}</td>
-                    <td><a href="{:url('admin/template/templatePlatformList', ['template_id' => $vol['id']])}" target="_blank">{$vol.template}</a></td>
+                    <td><a href="{:url('admin/template/templatetemplateList', ['template_id' => $vol['id']])}" target="_blank">{$vol.template}</a></td>
                     <td class="t_id"></td>
                     <td class="remarks"></td>
                     <td><a href="#" class="btn btn-block edit" data-tp_id="" data-t_id="" data-remarks="" data-template_id="{$vol.id}" data-template="{$vol.template}" >编辑</a></td>
@@ -222,7 +222,7 @@
 <!--</div>-->
 <div class="clearfix"></div>
 
-<div id="templateplatformList">
+<div id="templateplatformList" style="display: none;">
     <ul>
         {volist name='templateplatformList' id="vol"}
         <li>
@@ -243,6 +243,10 @@
 <!-- Bootstrap WYSIHTML5 -->
 <script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <script>
+
+    //全局变量，保存编辑前的数据,取消时使用
+    var trOrg = '';
+
     $(function () {
         // Replace the <textarea id="editor1"> with a CKEditor
         // instance, using default configuration.
@@ -269,7 +273,7 @@
 
         var tID = "";
         $("#templateplatformList li").each(function () {
-            tID = "."+$(this).find(".template_id").text();
+            tID = ".t"+$(this).find(".template_id").text();
 
             $(tID).find(".t_id").text($(this).find(".t_id").text());
             $(tID).find(".remarks").text($(this).find(".remarks").text());
@@ -278,6 +282,103 @@
             $(tID).find(".edit").attr("data-remarks",$(this).find(".remarks").text());
         });
 
+
+
+
+        //激活编辑状态
+        $("#templateList").on("click",".edit", function () {
+
+            //判断是否有其他激活状态的数据，有则还原
+            var isActive = $("#templateList tbody tr.active").length;
+            if(isActive>0){
+                $("#templateList tbody tr.active").empty().append(trOrg);
+                $("#templateList tbody tr").removeClass("active");
+            }
+
+            //激活当前选中的行
+            var tr = $(this).parentsUntil("tr").parent();
+            tr.addClass("active");
+            //保存原始数据
+            trOrg = tr.html();
+
+            var tp_id = $(this).attr("data-tp_id");
+            var template_id = $(this).attr("data-template_id");
+            var template = $(this).attr("data-template");
+            var t_id = $(this).attr("data-t_id");
+            var remarks = $(this).attr("data-remarks");
+            var trStr = '';
+            //拼接编辑表单
+            trStr += '<td><input type="text" name="template_id" value="'+template_id+'" readonly="readonly"></td>';
+            trStr += '<td><input type="text" name="template" value="'+template+'" readonly="readonly"></td>';
+            trStr += '<td><input type="text" name="t_id" value="'+t_id+'"></td>';
+            trStr += '<td><input type="text" name="remarks" value="'+remarks+'"></td>';
+            trStr += '<td><input type="hidden" name="tp_id" value="'+tp_id+'"><input type="button" class="btn btn-block btn-success" id="saveEdit" value="保存"><input type="button" class="btn btn-block" id="cancelEdit" value="取消"></td>';
+
+            tr.empty().append(trStr);
+
+        });
+
+        //取消编辑状态
+        $("#templateList").on("click","#cancelEdit", function () {
+            $("#templateList tbody tr.active").empty().append(trOrg);
+            $("#templateList tbody tr").removeClass("active");
+        });
+
+
+        //保存编辑状态
+        $("#templateList").on("click","#saveEdit", function () {
+
+            var tr = $(this).parentsUntil("tr").parent();
+
+            var platform_id = '{$platformInfo.id}';
+            var platform = '{$platformInfo.platform}';
+            var tp_id = tr.find('input[name="tp_id"]').val();
+            var template_id = tr.find('input[name="template_id"]').val();
+            var template = tr.find('input[name="template"]').val();
+            var t_id = tr.find('input[name="t_id"]').val();
+            var remarks = tr.find('input[name="remarks"]').val();
+            var url = '';
+
+            if(t_id==""||remarks==""){
+                alert("请填写模板ID和备注！");
+                return false;
+            }
+
+            //判断是添加还是编辑
+            if(tp_id==""||tp_id==null){
+                url = "{:url('admin/template/createTemplatePlatformApi')}";
+            }else{
+                url = "{:url('admin/template/updateTemplatePlatformApi')}"+"/template_plat_id/"+tp_id;
+            }
+
+            $.ajax({
+                url: url,
+                data: {
+                    template_id: template_id,
+                    template: template,
+                    platform_id: platform_id,
+                    platform: platform,
+                    t_id: t_id,
+                    remarks: remarks
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                //processData:false,
+                success: function (data) {
+                    if(data.code == 200) {
+                        window.location.reload()
+                    }else{
+                        alert(data.msg);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    alert('网络异常,请稍候再试');
+                }
+            });
+
+        });
 
 
     });
