@@ -30,33 +30,42 @@
     </header>
 
     <div class="mui-content">
-
+        <input type="hidden" class="data" name="group" value="测试桑拿房三分">
+        <input type="hidden" class="data" name="group_id" value="5">
         <form action="" class="mui-input-group">
-            <div class="mui-input-row">
+            <div class="mui-input-row h-auto">
                 <label>奖金池名称</label>
-                <input type="text" name="pool" class="data" value="" placeholder="奖金池名称">
+                <input type="text" name="poo;" class="data" value="" placeholder="">
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>公告</label>
+                <textarea name="notice" rows="3" value="" class="notice" placeholder="请填写内容"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>规则</label>
+                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
             </div>
             <div class="mui-input-row">
-                <label>下注金额</label>
-                <input type="text" name="stake" class="data" value="" placeholder="下注金额">
+                <label>金额/每卡</label>
+                <input type="text" name="stake" class="data" value="" placeholder="金额/每卡">
             </div>
             <div class="mui-input-row picker btnStart" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>开始时间</label>
-                    <span id="resultStart" class="ui-alert domData" name="star"></span>
+                    <span id="resultStart" class="ui-alert domData" name="starts"></span>
                 </div>
             </div>
-
             <div class="mui-input-row picker btnEnd" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>结束时间</label>
-                    <span id="resultEnd" class="ui-alert domData" name="end"></span>
+                    <span id="resultEnd" class="ui-alert domData" name="ends"></span>
                 </div>
             </div>
+
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen">
+            <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
                 创建奖金池
             </li>
         </ul>
@@ -113,118 +122,32 @@
             });
         })(mui, document);
 
-        $(function () {
+        // 获取数据并进行提交
+        function submitAction() {
 
-            //初始化全局变量
-            var count = 1;
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
-
-            //搜索活动
-            $("#searchBtn").on("tap", function () {
-                keyword = $(".keyword").val();
-                searchToList();
-            })
-
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
-
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.notice = $(".notice").val();
+            objData.rule = $(".rule").val();
+            var url = "{:url('api/pool/createPoolApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
+                    var goUrl = "{:url('group/index')}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
                     }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1;//刷新并显示第一页
-                    var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
+                }, 'json');
             }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
+        };
 
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
-                mui.ajax({
-                    url: url,
-                    data: {
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli += '<div class="mui-input-row mui-checkbox"><label><img class="mui-pull-left img24" src="' + data.data.data[i].avatar + '" >' + data.data.data[i].member + '</label><input name="checkbox1" value="Item 3" type="checkbox"></div>'
-                            }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $(".memberList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $(".memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $(".memberList").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-                });
-
-
-            };
-        })
 
     </script>
 </body>

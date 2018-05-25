@@ -87,6 +87,14 @@
         .secondUl li:after {
             left: 0 !important;
         }
+
+        .showHbin {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            background: #fff;
+            border-top: 1px solid #ddd;
+        }
     </style>
 </head>
 
@@ -94,7 +102,9 @@
 
     <div class="mui-content">
         <div class="list">
-
+            <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
+            <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
+            <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
                     <img class="mui-media-object mui-pull-left img45" src="{$memberInfo.avatar}">
@@ -111,30 +121,22 @@
 
 
             <form action="" class="mui-input-group">
+                <p> {volist name="groupList" id="vol"} {$vol.group} {$vol.id} {/volist}
+                </p>
 
                 <div class="mui-input-row">
                     <label class="wd49">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>打开时间
                     </label>
-                    <span>2018-5-24</span>
+                    <span class="domData" name="punch_time">2018-5-25</span>
                 </div>
-
-                <!-- <div class="mui-input-row">
-                    <label class="wd45">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动类型
-                    </label>
-                    <span>
-                        <a href="#train" id="demo1" class="sportType sportTypeActive train">训练</a>
-                        <a href="#match" id="demo2" class="sportType match">比赛</a>
-                    </span>
-                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
                         <label class="wd45">
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择运动类型</label>
-                        <span class="domData wd45"></span>
-                        <input type="hidden" name="" value="" class="data">
+                        <span class="domData wd45" name="punch_category"></span>
+                        <input type="hidden" name="punch_category" value="" class="data">
                     </a>
                 </div>
 
@@ -142,17 +144,18 @@
                     <label class="wd45">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
                     </label>
-                    <input type="text" class="data wd52" name="sportEvent" value="" placeholder="运动项目" />
-                    <input type="hidden" class="data" value="" name="sportEvent_id">
+                    <input type="text" class="data wd52" name="name" value="" placeholder="运动项目" />
+                    <input type="hidden" class="data" value="" name="name">
                 </div>
 
                 <div class="mui-input-row">
                     <label class="wd45">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>匿名打卡
                     </label>
-                    <div class="mui-switch mui-switch-mini">
+                    <div class="mui-switch mui-switch-mini isAnonymous">
                         <div class="mui-switch-handle"></div>
                     </div>
+                    <input type="hidden" name="is_anonymous" value="1" class="data">
                 </div>
 
                 <div class="mui-input-row h-auto">
@@ -160,18 +163,9 @@
                         <label>
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>上传照片</label>
                         <img id="preview_1" class="upload-preview" src="" alt="">
-                        <input type="hidden" name="" value="" class="data">
+                        <input type="hidden" name="image_url" value="" class="data">
                     </a>
                 </div>
-
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
-                        <label>
-                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>使用默认图片</label>
-                        <img id="preview_2" class="upload-preview" src="" alt="">
-                        <input type="hidden" name="" value="" class="data">
-                    </a>
-                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#groups" class="mui-navigate-right">
@@ -181,6 +175,22 @@
                         <input type="hidden" name="" value="" class="data">
                     </a>
                 </div>
+                <div class="operation-box border-b">
+                    <div class="mui-input-row">
+                        <label>社群名单</label>
+                    </div>
+                    <div class="box" id="inactiveList"></div>
+                    <div class="box" id="hideStList" style="display: none"></div>
+                    <div class="box" id="hideStListIni" style="display: none"></div>
+                    <div class="operation-btn">
+                        <span class="mui-badge">0</span>
+                        <a class="all">全选</a>
+                        <a class="cancel">取消</a>
+                        <a class="del">[删除]</a>
+                        <a href="#groups" id="setGroupBox" class="mui-icon mui-icon-personadd add"></a>
+                    </div>
+                </div>
+
 
             </form>
 
@@ -248,49 +258,6 @@
         </div>
     </div>
 
-    <!--选择训练-->
-    <!-- <div id="train" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd45">
-                <strong>选择训练</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="trainDel">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli">跑步</li>
-                    <li class="mui-table-view-cell listli">健身</li>
-                    <li class="mui-table-view-cell listli">游泳</li>
-                    <li class="mui-table-view-cell listli">球类</li>
-                    <li class="mui-table-view-cell listli">综合</li>
-                </ul>
-            </div>
-        </div>
-    </div> -->
-    <!--选择比赛-->
-    <!-- <div id="match" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd45">
-                <strong>选择比赛</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="matchDel">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli">比赛</li>
-                </ul>
-            </div>
-        </div>
-    </div> -->
-
     <!--选择社群-->
     <div id="groups" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -306,25 +273,43 @@
             <span class="course wd45">
                 <strong>社群名称</strong>
             </span>
-            <span class="fr f14 pdr15">
+            <span class="fr f14">
                 消耗
             </span>
         </div>
         <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
-                <ul class="mui-table-view list groupslist"></ul>
+                <form class="mui-input-group groupslist mb44">
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label class="lineHeight20 groupName" style="width:85%">社群1</label>
+                        <span style="width:15%">1</span>
+                        <input name="checkbox1" value="" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label class="lineHeight20 groupName" style="width:85%">社群2</label>
+                        <span style="width:15%">1</span>
+                        <input name="checkbox1" value="" type="checkbox">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label class="lineHeight20 groupName" style="width:85%">社群3</label>
+                        <span style="width:15%">1</span>
+                        <input name="checkbox1" value="" type="checkbox">
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="page-header">
+        <div class="page-header showHbin">
             <span class="course wd73">
                 <i class="icon iconfont icon-activity-Startingtim colororange"></i>
                 本次打卡消耗
                 <text class="colororange 16">3</text>H币
             </span>
             <span class="fr">
-                <button class="mui-btn bgred">确认</button>
+                <button class="mui-btn bgred" id="groupConfirm">确认</button>
             </span>
+
         </div>
+
     </div>
 
 
@@ -360,44 +345,112 @@
             })
         })(mui);
 
+        //更新学员序号
+        function changeIndex() {
+            var i = 1;
+            $(".checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        }
+
+        var totalNum = '';//序号总和的变量
+        groupList = [];
+
         $(function () {
+            // 是否发布通知
+            $(".isAnonymous").on("tap", '', function () {
+                var is_anonymous = $("input[name=is_anonymous]");
+                if (is_anonymous.val() == "1") {
+                    is_anonymous.val("-1");
+                } else {
+                    is_anonymous.val("1");
+                }
+            });
 
-            //训练比赛选择
-            // $(".sportType").on("tap", function () {
-            //     if (!$(this).hasClass("sportTypeActive")) {
-            //         $(this).siblings().removeClass("sportTypeActive")
-            //         $(this).addClass("sportTypeActive");
-            //     }
-            // });
+            //全选
+            $(".all").click(function () {
+                $(".checkboxCont").find('input').prop('checked', true)
+            })
 
-            // //清除训练
-            // $("#trainDel").on('tap', '', function () {
-            //     $("input[name=sportEvent]").val("");
-            //     mui("#train").popover("toggle");
-            // });
-            // // 选择训练
-            // $("#train").on('tap', 'li', function () {
-            //     var train = $(this).text();
-            //     $("input[name=sportEvent]").val(train);
-            //     mui("#train").popover("toggle");
-            // });
+            //取消全选
+            $(".cancel").click(function () {
+                $(".checkboxCont").find('input').prop('checked', false)
+            })
 
-            // //清除比赛
-            // $("#matchDel").on('tap', '', function () {
-            //     $("input[name=sportEvent]").val("");
-            //     mui("#match").popover("toggle");
-            // });
-            // // 选择比赛
-            // $("#match").on('tap', 'li', function () {
-            //     var match = $(this).text();
-            //     var match_id = $(this).attr("data-match_id");
-            //     $("input[name=sportEvent]").val(match);
-            //     $("input[name=sportEvent_id]").val(match_id);
-            //     mui("#match").popover("toggle");
-            // });
+            //删除
+            $(".del").click(function () {
+                $("input[name='member']:checked").parents(".checkboxCont").remove();
+                changeIndex();
+                $("#hideStList").empty();
+                $("#inactiveList input[type=checkbox]").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var id = $(this).attr("data-id");
+                    groupList.push({ id, group, group_id, punch, punch_id, pool });
+                    $("#hideStList").append(str);
+                })
 
+            });
 
+            //社群列表复选框赋值
+            $("#setGroupBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-group']").prop("checked", false);
+                //然后遍历出对应所选
+                $(".stdList").each(function (i) {
+                    var id = $(this).attr("data-id");
+                    $("#newdiv").find("input[name='checkbox-group']").filter(function (index) {
+                        return $(this).attr("data-id") == id
+                    }).prop("checked", true);
+                });
+            });
+
+            //角标随checkboxCont的数量变化
+            $(document).on('click', '.del', function () {
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+            });
+
+            // 选择添加社群点击事件
+            $("#groupConfirm").on('click', function () {
+                $("#inactiveList").empty();
+                $("#hideStList").empty();
+                $(".groupslist input[type=checkbox]:checked").each(function () {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font>' + $(this).siblings(".groupName").text() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '"type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
+                });
+
+                changeIndex();//调用-更新序号
+                mui("#groups").popover("toggle");
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+            });
         })
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/punch/createPunchApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
+                    var goUrl = "{:url('group/index')}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                    }
+                }, 'json');
+            }
+        };
+
     </script>
 </body>
 
