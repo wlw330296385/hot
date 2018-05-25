@@ -14,7 +14,19 @@ class Pool extends Base{
     public function getPoolListApi(){
          try{
             $map = input('post.');
+            $keyword = input('param.keyword');
             $page = input('param.page')?input('param.page'):1; 
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['camp'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
             $result = $this->PoolService->getPoolList($map,$page);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
