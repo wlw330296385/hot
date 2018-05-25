@@ -108,12 +108,12 @@ class GroupService {
     * @param $group_id 主表id
     **/ 
     public function createGroupMember($member_id,$member,$group_id){
-        $itemGroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
+        $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
         $data = [
             'member_id'         =>$member_id,
             'member'            =>$member,
-            'group_id'    =>$itemGroupInfo['id'],
-            'group'       =>$itemGroupInfo['coupon'],
+            'group_id'    =>$GroupInfo['id'],
+            'group'       =>$GroupInfo['coupon'],
             'status'            =>1,
         ];
 

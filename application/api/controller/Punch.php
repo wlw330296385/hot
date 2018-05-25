@@ -2,6 +2,7 @@
 namespace app\api\controller;
 use app\api\controller\Base;
 use app\service\PunchService;
+use think\Db;
 class Punch extends Base{
    protected $PunchService;
  
