@@ -52,7 +52,7 @@ class Punch extends Base{
     	$groupList = db('group_member')
             ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status')
             ->join('pool','pool.group_id = group_member.group_id','left')
-            ->where(['group_member.member_id'=>$this->memberInfo['id'],'status'=>1])
+            ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
             ->where(['pool.status'=>1])
             ->order('group_member.id desc')
             ->select();
