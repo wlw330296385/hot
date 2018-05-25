@@ -1,11 +1,12 @@
 <?php 
 namespace app\keeper\controller;
 use app\keeper\controller\Base;
-use app\service\BannerService;
+use app\service\GroupService;
 class Group extends Base{
-	
+	   private $GroupService;
 	public function _initialize(){
 		parent::_initialize();
+        $this->GroupService = new GroupService;
 	}
 
     // 群组列表
@@ -17,6 +18,13 @@ class Group extends Base{
     // 群组详情
     public function groupInfo() {
 
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+
+
+
+
+        $this->assign('groupInfo',$groupInfo);
         return view('Group/groupInfo');
     }
 
