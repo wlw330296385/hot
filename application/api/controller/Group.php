@@ -136,15 +136,15 @@ class Group extends Base{
 
 
 
-    //退出社群
+    //退出社群/踢出社群
     public function dropGroup(){
         try{
-            $member_id = $this->memberInfo['id'];
+            $member_id = input('param.member_id',$this->memberInfo['id']);
             $group_id = input('param.group_id');
-            $result = $this->GroupService->useGroup($member_id,$group_id);
-             return json($result);   
+            $result = $this->GroupService->dropGroup($member_id,$group_id);
+            return json($result);   
          }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 }

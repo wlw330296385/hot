@@ -109,11 +109,14 @@ class GroupService {
     **/ 
     public function createGroupMember($member_id,$member,$group_id){
         $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
+        if($GroupInfo['members']>=$GroupInfo['max']){
+            return ['msg'=>'已满人,不允许加入', 'code' => 100];
+        }
         $data = [
             'member_id'         =>$member_id,
             'member'            =>$member,
-            'group_id'    =>$GroupInfo['id'],
-            'group'       =>$GroupInfo['coupon'],
+            'group_id'          =>$GroupInfo['id'],
+            'group'             =>$GroupInfo['group'],
             'status'            =>1,
         ];
 
@@ -132,7 +135,35 @@ class GroupService {
     }
 
     
+    // 踢出社群/退出社群
+    public function dropGroup($member_id,$group_id){
+        $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
+        if($member_id == $GroupInfo['member_id']){
+            return ['msg'=>'群主不可退出', 'code' => 100];
+        }
+        if($member_id<>session('memberInfo.id') && $member_id <> $GroupInfo['member_id']){
+            return ['msg'=>'非群主不可将他人踢出社群', 'code' => 100];
+        }
 
+        if($member_id<>session('memberInfo.id')){
+            $status = -1;//被踢
+        }else{
+            $status = -2;//自己退出
+        }
+
+        $result = $this->GroupMemberModel->save(['status'=>$status],['member_id'=>$member_id,'group_id'=>$group_id]);
+        if($result){
+            $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',1);
+            if(!$res){
+                return ['msg'=>'网络错误', 'code' => 100];
+            }
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+        
+        return ['msg'=>'操作成功', 'code' => 200];
+        
+    }
 
 
 }
