@@ -30,9 +30,9 @@ class PunchService {
     public function createPunch($data){
         $result = $this->Punch->save($data);
         if($result){
-            return ['code'=>200,'msg'=>'创建成功','data'=>$result];
+            return ['code'=>200,'msg'=>'创建成功','data'=>$this->Punch->id];
         }else{
-            return ['code'=>100,'msg'=>'创建失败','data'=>$result];
+            return ['code'=>100,'msg'=>'创建失败'];
         }
 
     }

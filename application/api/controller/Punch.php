@@ -101,9 +101,12 @@ class Punch extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $result = $this->PunchService->createPunch($data);
-
+            
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
-
+                foreach ($data['groupList'] as $key => &$value) {
+                    $value['punch'] = $data['punch'];
+                    $value['punch_id'] = $result['data'];
+                }
                 $groupList = json_decode($data['groupList'],true);
                 $GroupPunch = new \app\model\GroupPunch;
                 $GroupPunch->saveAll($groupList);
