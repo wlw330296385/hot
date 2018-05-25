@@ -7,7 +7,7 @@
             <h3 class="box-title">选择主模板消息（可多选）</h3>
         </div>
         <div class="box-body">
-            <table class="table table-striped table-bordered table-hover">
+            <table class="table table-striped table-bordered table-hover" id="templateList">
                 <thead>
                 <tr>
                     <th><input type="checkbox" id="allCheckbox" /></th>
@@ -38,9 +38,9 @@
 </div>
 <div class="col-lg-6 col-xs-12">
     <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">添加机构模板消息</h3>
-            <div class="box-tools"><a href="#" class="btn btn-block btn-info" data-toggle="modal" data-target="#campModal">选择机构</a></div>
+        <div class="box-header with-border" style="padding-bottom: 15px;">
+            <h3 class="box-title">批量添加公众号模板消息</h3>
+            <div class="box-tools"><a href="#" class="btn btn-block btn-info" data-toggle="modal" data-target="#campModal">选择公众号</a></div>
         </div>
         <div class="box-body">
             <table class="table table-striped table-bordered table-hover" id="platformList">
@@ -48,8 +48,8 @@
                     <tr>
                         <th></th>
                         <th>模板名称</th>
-                        <th>机构ID</th>
-                        <th>机构名称</th>
+                        <th>公众号ID</th>
+                        <th>公众号</th>
                         <th>模板ID</th>
                         <th>备注</th>
                     </tr>
@@ -57,10 +57,11 @@
                 <tbody></tbody>
             </table>
         </div>
-        <div class="box-footer">
+        <div class="box-footer" style="text-align: right">
             <button type="button" class="btn btn-success" id="submitBatch">提交批处理</button>
         </div>
     </div>
+
 </div>
 <!--</div>-->
 
@@ -71,15 +72,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">请选择要添加的机构</h4>
+                <h4 class="modal-title">请选择要添加的公众号</h4>
             </div>
             <div class="modal-body">
-                    <div class="input-group input-group-sm">
-                        <input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入机构名称...">
-                        <span class="input-group-btn">
-                          <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
-                        </span>
-                    </div>
+                    <!--<div class="input-group input-group-sm">-->
+                        <!--<input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入机构名称...">-->
+                        <!--<span class="input-group-btn">-->
+                          <!--<button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>-->
+                        <!--</span>-->
+                    <!--</div>-->
                     <div class="tableScroll">
                         <table id="campList" class="table table-bordered table-striped dataTable">
                             <thead>
@@ -95,7 +96,7 @@
                             <tr>
                                 <td>{$vol.platform}</td>
                                 <td>{$vol.remarks}</td>
-                                <td><a href="{:url('admin/platform/updatePlatform', ['platform_id' => $vol['id']])}">查看详情</a></td>
+                                <td><a href="{:url('admin/platform/updatePlatform', ['platform_id' => $vol['id']])}" target="_blank">查看详情</a></td>
                                 <td><span class="btn btn-xs btn-info" data-camp="{$vol.platform}" data-id="{$vol.id}">确定</span></td>
                             </tr>
                             {/volist}
@@ -111,35 +112,53 @@
 </div>
 
 
+<!-- Modal : Camp & AddForm -->
+<div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel" aria-hidden=”true” data-backdrop=”static”>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress progress-sm active" style="margin: 30px 10px 10px;">
+                    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                    </div>
+                </div>
+                <h4 class="modal-title" style="text-align: center">批量数据处理中...</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {/block}
 {block name='js'}
-<!-- JQ -->
-<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <script>
 
 
     $(function () {
 
-        //搜索训练营
-        $("#allCheckbox").on("click", function () {
-            if(this.checked){
-                $(".tBox").attr("checked",true);}
+
+        //全选模板消息列表
+        $("#templateList").on("click","#allCheckbox", function () {
+            if($(this).is(":checked")){
+                $(".tBox").prop("checked",true);}
             else{
-                $(".tBox").attr("checked",false);}
-            });
+                $(".tBox").prop("checked",false);}
         });
 
         //搜索训练营
-        $("#searchCampBtn").on("click", function () {
-            var keyword = $(".campKeyword").val();
-            if(keyword==""){
-                alert("请输入机构名称！");
-            }else{
-                toCampList(keyword);
-            }
-        });
+//        $("#searchCampBtn").on("click", function () {
+//            var keyword = $(".campKeyword").val();
+//            if(keyword==""){
+//                alert("请输入机构名称！");
+//            }else{
+//                toCampList(keyword);
+//            }
+//        });
 
         $("#campList tbody").on("click",".btn", function () {
+            if($(".tBox:checked").length==0){
+                alert("没有选定模板消息，请先从左边的模板消息列表进行选择！");
+                return false;
+            }
             var camp_id = $(this).attr("data-id");
             var camp = $(this).attr("data-camp");
             var template_id = '';
@@ -164,6 +183,7 @@
                 alert("请指定机构并填写模板ID和备注，谢谢！");
                 return false;
             }
+
             var platform_id = '';
             var platform = '';
             var template_id = '';
@@ -189,10 +209,43 @@
             });
             //最终判断没漏填就提交
             if(isPass==true){
-                console.log(tPlatformList);
+
+                $('#progressModal').modal({backdrop: 'static', keyboard: false});
+                var ps = 0;
+                for(var k=0;k<tPlatformList.length;k++){
+
+                    $.ajax({
+                        url: "{:url('admin/template/createTemplatePlatformApi')}",
+                        data: {
+                            template_id: tPlatformList[k].template_id,
+                            template: tPlatformList[k].template,
+                            platform_id: tPlatformList[k].platform_id,
+                            platform: tPlatformList[k].platform,
+                            t_id: tPlatformList[k].t_id,
+                            remarks: tPlatformList[k].remarks
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                        //processData:false,
+                        success: function (data) {
+                            if(data.code == 200) {
+                                ps = parseInt((k+1)*100/tPlatformList.length)+"%";
+                                $(".progress-bar").css("width",ps);
+                            }else{
+                                alert(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            alert('网络异常,请稍候再试');
+                        }
+                    });
+                }
+                $('#progressModal').modal("hide");
+                location.href = "{:url('admin/platform/updatePlatform')}"+"/platform_id/"+platform_id;
             }
 
-            $('#campModal').modal('hide');
         });
 
 
@@ -200,41 +253,41 @@
 
 
     //接口获取数据并追加到页面
-    var toCampList = function (keyword) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
-        $.ajax({
-            url: url,
-            data: {
-                status: 1,
-                keyword: keyword
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            //processData:false,
-            success: function (data) {
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
-                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
-                    }
-                }
-                if (newli == '') {
-                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
-                }else{
-                    $("#campList tbody").empty().append(newli);
-                }
-
-
-            },
-            error: function (xhr, type, errerThrown) {
-                alert('网络异常,请稍候再试');
-            }
-        });
-    };
+//    var toCampList = function (keyword) {
+//        //搜索关键字不能完全为空，否则查询为空
+//        var url = "{:url('api/camp/searchCampListAllApi','','',true)}";
+//        $.ajax({
+//            url: url,
+//            data: {
+//                status: 1,
+//                keyword: keyword
+//            },
+//            dataType: 'json',//服务器返回json格式数据
+//            type: 'post',//HTTP请求类型
+//            timeout: 10000,//超时时间设置为10秒；
+//            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+//            //processData:false,
+//            success: function (data) {
+//                var newli = '';
+//                if (data.code == 200) {
+//                    for (var i = 0; i <= data.data.length - 1; i++) {
+//                        var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
+//                        newli += '<tr role="row" class="odd"><td>' + data.data[i].camp + '</td><td>' + data.data[i].city + '</td><td><a href="' + urls + '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-camp="' + data.data[i].camp + '" data-id="' + data.data[i].id + '">确定</span></td></tr>';
+//                    }
+//                }
+//                if (newli == '') {
+//                    $("#campList tbody").html('<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+//                }else{
+//                    $("#campList tbody").empty().append(newli);
+//                }
+//
+//
+//            },
+//            error: function (xhr, type, errerThrown) {
+//                alert('网络异常,请稍候再试');
+//            }
+//        });
+//    };
 
 </script>
 {/block}
