@@ -50,7 +50,7 @@ class Punch extends Base{
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
 
     	$groupList = db('group_member')
-            ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status')
+            ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id')
             ->join('pool','pool.group_id = group_member.group_id','left')
             ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
             ->where(['pool.status'=>1])

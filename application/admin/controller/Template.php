@@ -97,6 +97,7 @@ class Template extends Backend {
         $platformList = db('platform')
         ->field('platform.*,template_platform.t_id,template_platform.template,template_platform.template_id,template_platform.remarks as tp_remarks,template_platform.id as tp_id')
         ->join('template_platform','platform.id = template_platform.platform_id','left')
+        ->where(['template_platform.template_id'=>$template_id])
         ->order('template_platform.id desc')
         ->select();
 
