@@ -101,7 +101,7 @@ class Template extends Backend {
         ->order('template_platform.id desc')
         ->select();
 
-
+        
         $this->assign('templateInfo',$templateInfo);
         $this->assign('platformList',$platformList);
         return view('Template/templatePlatformList');

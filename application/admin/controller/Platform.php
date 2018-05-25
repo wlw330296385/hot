@@ -66,6 +66,7 @@ class Platform extends Backend {
         $map['id'] = $platform_id;
         $platformInfo = $this->PlatformService->getPlatformInfo($map);
 
+        $platformTemplateList = db('template_platform')->where(['platform_id'=>$platform_id])->select();
 
         if(request()->isPost()){
             $data = input('post.');
@@ -81,28 +82,12 @@ class Platform extends Backend {
 
 
         $this->assign('platformInfo',$platformInfo);
-
+        $this->assign('platformTemplateList',$platformTemplateList);
         return view('Platform/updatePlatform');
     }
 
 
-    public function platformPlatformList(){
 
-        $platform_id = input('param.platform_id');
-        $map['id'] = $platform_id;
-        $platformInfo = $this->PlatformService->getPlatformInfo($map);
-
-        $platformList = db('platform')
-        ->field('platform.*,platform_platform.t_id,platform_platform.platform,platform_platform.platform_id,platform_platform.remarks as tp_remarks,platform_platform.id as tp_id')
-        ->join('platform_platform','platform.id = platform_platform.platform_id','left')
-        ->order('platform_platform.id desc')
-        ->select();
-
-
-        $this->assign('platformInfo',$platformInfo);
-        $this->assign('platformList',$platformList);
-        return view('Platform/platformPlatformList');
-    }
 
 
 
