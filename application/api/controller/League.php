@@ -1155,4 +1155,76 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
+
+    // 球队提交参赛成员名单
+    public function savematchteammemberfromteam() {
+        $data = $this->request->post();
+        // 验证器
+        $validate = validate('MatchTeamMemberVal');
+        if (!$validate->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 正常球员数据
+        if ( !array_key_exists('TeamMemberData', $data) || $data['TeamMemberData'] == '[]' ) {
+            return json(['code' => 100, 'msg' => '请选择参赛球员']);
+        }
+        $normalTeamMembers = json_decode($data['TeamMemberData'], true);
+        if ( array_key_exists('TeamMemberDataDel', $data) && $data['TeamMemberDataDel'] != '[]' ) {
+            $delTeamMembers = json_decode($data['TeamMemberDataDel'], true);
+        }
+        $leagueS = new LeagueService();
+        // 组合match_team_member进表数据
+        try {
+            // 删除数据更新
+            if ( isset($delTeamMembers) ) {
+                foreach ($delTeamMembers as $k => $val) {
+                    // 查询match_team_member有无原数据
+                    $matchTeamMember = $leagueS->getMatchTeamMember([
+                        'match_id' => $data['match_id'],
+                        'team_id' => $data['team_id'],
+                        'team_member_id' => $val['team_member_id']
+                    ]);
+                    if (isset($data['match_team_id'])) {
+                        $delTeamMembers[$k]['match_team_id'] = $data['match_team_id'];
+                    }
+                    $delTeamMembers[$k]['match_apply_id'] = $data['match_apply_id'];
+                    if ($matchTeamMember) {
+                        $leagueS->delMatchTeamMember($matchTeamMember['id'], true);
+                    }
+                }
+            }
+            // 正常数据保存数据
+            foreach ($normalTeamMembers as $k => $val) {
+                // 查询match_team_member有无原数据
+                $matchTeamMember = $leagueS->getMatchTeamMember([
+                    'match_id' => $data['match_id'],
+                    'team_id' => $data['team_id'],
+                    'team_member_id' => $val['team_member_id']
+                ]);
+                if ($matchTeamMember) {
+                    $normalTeamMembers[$k]['id'] = $matchTeamMember['id'];
+                }
+                if (isset($data['match_team_id'])) {
+                    $normalTeamMembers[$k]['match_team_id'] = $data['match_team_id'];
+                }
+                $normalTeamMembers[$k]['match_apply_id'] = $data['match_apply_id'];
+                $normalTeamMembers[$k]['match_id'] = $data['match_id'];
+                $normalTeamMembers[$k]['match'] = $data['match'];
+                $normalTeamMembers[$k]['team_id'] = $data['team_id'];
+                $normalTeamMembers[$k]['team'] = $data['team'];
+                $normalTeamMembers[$k]['team_logo'] = $data['team_logo'];
+                $normalTeamMembers[$k]['status'] = 1;
+            }
+            $result = $leagueS->saveAllMatchTeamMember($normalTeamMembers);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        // 返回响应结果
+        if ($result === false) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
 }

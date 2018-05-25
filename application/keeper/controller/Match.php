@@ -433,6 +433,30 @@ class Match extends Base {
 
     // 球队登记联赛参赛球员
     public function completeplayerbyteam() {
-        return view('Match/completePlayerByTeam');
+        $team_id = input('team_id', 0, 'intval');
+        $apply_id = input('apply_id', 0, 'intval');
+        $teamS = new TeamService();
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据（已初始化）
+        // 查询球队申请参加联赛数据
+        if ($apply_id) {
+            $matchApplyInfo = $matchS->getMatchApply(['id' => $apply_id]);
+        } else {
+            $matchApplyInfo = $matchS->getMatchApply(['match_id' => $this->league_id, 'team_id' => $team_id]);
+        }
+        if (!$matchApplyInfo) {
+            $this->error('无报名联赛数据');
+        }
+        // 查询球队-联赛关系数据
+        $matchTeamInfo = $leagueS->getMatchTeamInfo(['team_id' => $team_id, 'match_id' => $this->league_id]);
+        // 获取球队数据
+        $teamInfo = $teamS->getTeam(['id' => $team_id]);
+
+        return view('Match/completePlayerByTeam', [
+            'matchApplyInfo' => $matchApplyInfo,
+            'matchTeamInfo' => $matchTeamInfo,
+            'teamInfo' => $teamInfo
+        ]);
     }
 }
