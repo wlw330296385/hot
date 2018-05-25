@@ -10,7 +10,7 @@ class Pool extends Base{
        $this->PoolService = new PoolService;
     }
  
-    // 获取擂台列表
+    // 获取打卡列表
     public function getPoolListApi(){
          try{
             $map = input('post.');
@@ -26,7 +26,7 @@ class Pool extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
-     // 获取擂台列表 无page
+     // 获取打卡列表 无page
     public function getPoolListNoPageApi(){
          try{
             $map = input('post.');
@@ -41,7 +41,7 @@ class Pool extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
-    // 获取擂台列表带page
+    // 获取打卡列表带page
      public function getPoolListByPageApi(){
         try{
             $map = input('post.');
@@ -58,7 +58,7 @@ class Pool extends Base{
     }
 
 
-    // 获取擂台用户带page
+    // 获取用户打卡带page
     public function getPoolMemberListByPageApi(){
         try{
             $map = input('post.');
@@ -68,26 +68,19 @@ class Pool extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'查询有误']);
             }  
-
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
 
-    // 编辑擂台
+    // 编辑打卡
     public function updatePoolApi(){
          try{
             $data = input('post.');
             $pool_id = input('param.pool_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if(isset($data['starts'])){
-                $data['start'] = strtotime($data['starts'])+86399;
-            }
-            if(isset($data['ends'])){
-                $data['end'] = strtotime($data['ends']);
-            }
             $result = $this->PoolService->updatePool($data,['id'=>$pool_id]);
             return json($result);
          }catch (Exception $e){
@@ -95,7 +88,7 @@ class Pool extends Base{
          }
      }
 
-    // 操作擂台
+    // 操作打卡
     public function editPoolApi(){
         try{
            $data = input('post.');
@@ -112,18 +105,12 @@ class Pool extends Base{
         }
     }
 
-    //创建擂台
+    //创建打卡
     public function createPoolApi(){
          try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if( $data['starts'] || isset($data['starts'])){
-                $data['start'] = strtotime($data['starts'])+86399;
-            }
-            if(isset($data['ends'])){
-                $data['end'] = strtotime($data['ends']);
-            }
 
             $result = $this->PoolService->createPool($data);
              return json($result);   
@@ -134,7 +121,30 @@ class Pool extends Base{
 
 
  
-   
+    //加入打卡
+    public function createPoolMemberApi(){
+         try{
+            $pool_id = input('param.pool_id');
+            $member_id = $this->memberInfo['id'];
+            $member = $this->memberInfo['member'];
+            $result = $this->PoolService->createPoolMember($member_id,$member,$pool_id);
+             return json($result);   
+         }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
-    
+
+
+    //退出打卡
+    public function dropPool(){
+        try{
+            $member_id = $this->memberInfo['id'];
+            $pool_id = input('param.pool_id');
+            $result = $this->PoolService->usePool($member_id,$pool_id);
+             return json($result);   
+         }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
