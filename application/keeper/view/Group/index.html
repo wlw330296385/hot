@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>社群</title>
+    <title>社群详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,85 +11,56 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        @media screen and (min-width: 320px) {
+            .list .listli .mui-media-body {
+                width: 62% !important;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            .list .listli .mui-media-body {
+                width: 67% !important;
+            }
+        }
+    </style>
 </head>
 
-<body>
-    <header class="mui-bar mui-bar-nav search2">
+
+<body class=whitebg>
+
+    <header id="header" class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">
-            <input type="search" class="mui-input-clear keyword" placeholder="请输入社群名称">
+            <input type="search" class="mui-input-clear keyword" placeholder="请输入社群名称搜索">
         </h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
     </header>
 
     <div class="mui-content">
 
-        <div class="list mb44">
-
-            <div class="page-header">
-                <span class="course">我的社群（
-                    <text class="colororange">2</text>）</span>
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
+            <div class="mui-scroll">
+                <div class="page-header bggray2">
+                    <span class="course">我的社群（
+                        <text class="colororange myGroupNum">0</text>）</span>
+                </div>
+                <ul class="mui-table-view detalis-list list border-b myGroup"></ul>
+                <div class="page-header bggray2">
+                    <span class="course">其他社群（
+                        <text class="colororange otherGroupNum">0</text>）</span>
+                </div>
+                <ul class="mui-table-view detalis-list list border-b otherGroup"></ul>
             </div>
-            <ul class="mui-table-view detalis-list list border-b">
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="{:url('Group/groupInfo')}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left" src="/uploads/images/team/2018/05/thumb_5af4079e720a7.jpg" style="width:45px !important;height:45px !important; border-radius: 50%;">
-                        <div class="mui-media-body wd60">
-                            <h5>我的社群</h5>
-                            <p>成员：
-                                <text class="colororange">15</text>&nbsp;&nbsp;奖金池：
-                                <text class="colororange">20</text>
-                            </p>
-                        </div>
-                        <div class="fr pdr15 f12" style="line-height: 52px;">南山区</div>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="page-header">
-                <span class="course">其他社群</span>
-            </div>
-            <ul class="mui-table-view detalis-list list border-b">
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left" src="/uploads/images/team/2018/05/thumb_5af4079e720a7.jpg" style="width:45px !important;height:45px !important; border-radius: 50%;">
-                        <div class="mui-media-body wd60">
-                            <h5>社群名称</h5>
-                            <p>成员：
-                                <text class="colororange">15</text>&nbsp;&nbsp;奖金池：
-                                <text class="colororange">20</text>
-                            </p>
-                        </div>
-                        <div class="fr pdr15 f12" style="line-height: 52px;">南山区</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left" src="/uploads/images/team/2018/05/thumb_5af4079e720a7.jpg" style="width:45px !important;height:45px !important; border-radius: 50%;">
-                        <div class="mui-media-body wd60">
-                            <h5>社群名称</h5>
-                            <p>成员：
-                                <text class="colororange">15</text>&nbsp;&nbsp;奖金池：
-                                <text class="colororange">20</text>
-                            </p>
-                        </div>
-                        <div class="fr pdr15 f12" style="line-height: 52px;">南山区</div>
-                    </a>
-                </li>
-            </ul>
-
-            <!--底部操作-->
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="{$homeurl}">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgred">
-                    <a href="{:url('Group/createGroup')}">创建社群</a>
-                </li>
-            </ul>
         </div>
+
+        <ul class="mui-table-view operation">
+            <a href="{:url('group/createGroup')}">
+                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
+                    创建社群
+                </li>
+            </a>
+        </ul>
 
     </div>
 
@@ -98,58 +69,21 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script>
-        //初始化
-        mui.init({
-            swipeBack: true //启用右滑关闭功能
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
         });
 
         $(function () {
             //初始化全局变量
             var count = 1;
-            var sTeamType = '';
-            var sArea = '';
             var keyword = wooApi.GetQueryString('keyword');
             $('.keyword').val(keyword);
-            var teamID = wooApi.GetQueryString('team_id');
-            var teamName = wooApi.GetQueryString('team_name');
-
-            //获取定位省市区
-            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
-            var sCity = getLocationTB['city'];
-            var sProvince = getLocationTB['province'];
-            var allArea = getLocationTB['areas'];
-            $('.location').text(sCity);
-            if (teamName != '' && teamName != null) {
-                $('.location').text(teamName);
-                $('.keyword').attr('placeholder', '请输入' + teamName + '球队名称');
-                $("#areaSelect").parent().hide();
-            }
-
-            //生成区域选择下拉菜单
-            var arrArea = allArea.split(',');
-            var selectArea = '';
-            $.each(arrArea, function (i, areaName) {
-                selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
-            });
-            $('#areaSelect').append(selectArea);
 
             //搜索球队
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
-                // searchToList();
+                searchToList();
             })
-
-            //选择球队类型下拉
-            $("#teamType").on("change", function () {
-                sTeamType = $(this).find("option:checked").val();
-                // searchToList();
-            });
-
-            //选择地区下拉
-            $("#areaSelect").on("change", function () {
-                sArea = $(this).val();
-                // searchToList();
-            });
             //搜索、下拉刷选后触发
             function searchToList() {
                 count = 1;//显示第一页
@@ -204,16 +138,11 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/searchteamlist','','',true)}";
+                var url = "{:url('api/group/getGroupListApi','','',true)}/?page=" + page;
                 mui.ajax({
                     url: url,
                     data: {
-                        page: page,
-                        province: sProvince,
-                        city: sCity,
-                        area: sArea,
-                        keyword: keyword,
-                        type: sTeamType,
+                        // keyword: keyword,
                         status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -224,25 +153,26 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
+                            $(".myGroupNum").text(data.data.length)
+                            console.log(data.data.length)
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/teaminfo')}" + '/team_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].name + '</font>';
-                                newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].member_num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].area + '</p></div></a>'
-                                newli += '</li>';
+                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data[i].id;
+                                newli += '<li class="mui-table-view-cell mui-media listli">'
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
+                                newli += '<div class="mui-media-body wd60"><h5>' + data.data[i].group + '</h5><p>成员：<text class="colororange">' + data.data[i].members + '</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data[i].bonus + '</text></p></div></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.team").empty().append(newli);
+                            $("ul.myGroup").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                                $("ul.myGroup").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.team").append(newli);
+                            $("ul.myGroup").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -259,7 +189,6 @@
 
 
         })
-
     </script>
 </body>
 

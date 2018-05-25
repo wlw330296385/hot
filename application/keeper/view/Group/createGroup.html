@@ -11,21 +11,19 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-        .memberList label {
-            padding: 9px 15px;
-            line-height: 30px;
+        .mui-input-row a {
+            display: table;
+            width: 100%;
         }
 
-        .memberList .mui-input-row {
-            height: 48px;
-        }
-
-        .memberList img {
-            width: 30px;
-            height: 30px;
-            float: left;
-            margin-right: 10px;
+        .mui-input-group img {
+            width: 50px;
+            height: 50px;
+            float: right;
+            margin-right: 35px;
+            margin-top: -4px;
         }
     </style>
 
@@ -33,32 +31,60 @@
 
 <body>
 
-    <header class="mui-bar mui-bar-nav search2">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">
-            <input type="search" class="mui-input-clear keyword" placeholder="请输入会员名称或手机号">
-        </h1>
-        <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
-    <div class="mui-content coach">
+    <div class="mui-content">
 
-        <form action="" class="mui-input-group mt">
+        <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>社群名称</label>
-                <input type="text" name="group_name" class="data" value="" placeholder="社群名称">
+                <input type="text" name="group" class="data" value="" placeholder="社群名称">
             </div>
+            <div class="mui-input-row h-auto">
+                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                    <label>社群Logo</label>
+                    <img id="preview_1" class="upload-preview" alt="">
+                    <input type="hidden" name="logo" value="" class="data">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>社群类型</label>
+                    <span class="select-row">
+                        <select id="groupType" class="data" name="type">
+                            <option value="">请选择</option>
+                            <option value="1">单位</option>
+                            <option value="2">球队</option>
+                            <option value="3">同学</option>
+                            <option value="4">朋友</option>
+                            <option value="5">家族</option>
+                            <option value="6">其他</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="mui-input-row">
+                <label>最大人数</label>
+                <input type="text" name="max" class="data" value="" placeholder="最大人数">
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>社群宗旨</label>
+                <textarea name="purpose" rows="3" value="" class="purpose" placeholder="请填写内容"></textarea>
+            </div>
+            <!-- <div class="mui-input-row h-auto">
+                <label>社群公告</label>
+                <textarea name="notice" rows="3" value="" class="notice" placeholder="请填写内容"></textarea>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>社群规则</label>
+                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
+            </div> -->
         </form>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 95px">
-            <div class="mui-scroll">
-                <form class="mui-input-group memberList"></form>
-            </div>
-        </div>
-
-
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen">
+            <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
                 创建社群
             </li>
         </ul>
@@ -68,124 +94,39 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'group'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script>
+        // 获取数据并进行提交
+        function submitAction() {
 
-        $(function () {
-
-            //初始化全局变量
-            var count = 1;
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
-
-            //搜索活动
-            $("#searchBtn").on("tap", function () {
-                keyword = $(".keyword").val();
-                searchToList();
-            })
-
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
-
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.purpose = $(".purpose").val();
+            // objData.notice = $(".notice").val();
+            // objData.rule = $(".rule").val();
+            var url = "{:url('api/group/createGroupApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
+                    var goUrl = "{:url('group/index')}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
                     }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1;//刷新并显示第一页
-                    var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
+                }, 'json');
             }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
-                mui.ajax({
-                    url: url,
-                    data: {
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli += '<div class="mui-input-row mui-checkbox"><label><img class="mui-pull-left img24" src="' + data.data.data[i].avatar + '" >' + data.data.data[i].member + '</label><input name="checkbox1" value="Item 3" type="checkbox"></div>'
-                            }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $(".memberList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $(".memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $(".memberList").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-                });
-
-
-            };
-        })
+        };
 
     </script>
 </body>
