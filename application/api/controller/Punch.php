@@ -1,21 +1,21 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\PoolService;
-class Pool extends Base{
-   protected $PoolService;
+use app\service\PunchService;
+class Punch extends Base{
+   protected $PunchService;
  
     public function _initialize(){
         parent::_initialize();
-       $this->PoolService = new PoolService;
+       $this->PunchService = new PunchService;
     }
  
     // 获取打卡列表
-    public function getPoolListApi(){
+    public function getPunchListApi(){
          try{
             $map = input('post.');
             $page = input('param.page')?input('param.page'):1; 
-            $result = $this->PoolService->getPoolList($map,$page);  
+            $result = $this->PunchService->getPunchList($map,$page);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
@@ -27,10 +27,10 @@ class Pool extends Base{
          }
      }
      // 获取打卡列表 无page
-    public function getPoolListNoPageApi(){
+    public function getPunchListNoPageApi(){
          try{
             $map = input('post.');
-            $result = $this->PoolService->getPoolListNoPage($map);  
+            $result = $this->PunchService->getPunchListNoPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -42,10 +42,10 @@ class Pool extends Base{
          }
      }
     // 获取打卡列表带page
-     public function getPoolListByPageApi(){
+     public function getPunchListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->PoolService->getPoolListByPage($map);  
+            $result = $this->PunchService->getPunchListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -58,11 +58,11 @@ class Pool extends Base{
     }
 
 
-    // 获取用户打卡带page
-    public function getPoolMemberListByPageApi(){
+    // 获取社群打卡带page
+    public function getGroupPunchListByPageApi(){
         try{
             $map = input('post.');
-            $result = $this->PoolService->getPoolMemberListByPage($map);  
+            $result = $this->PunchService->getGroupPunchListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
             }else{
@@ -74,28 +74,15 @@ class Pool extends Base{
     }
 
 
-    // 编辑打卡
-    public function updatePoolApi(){
-         try{
-            $data = input('post.');
-            $pool_id = input('param.pool_id');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $result = $this->PoolService->updatePool($data,['id'=>$pool_id]);
-            return json($result);
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-         }
-     }
 
     // 操作打卡
-    public function editPoolApi(){
+    public function editPunchApi(){
         try{
            $data = input('post.');
-           $pool_id = input('param.pool_id');
+           $punch_id = input('param.punch_id');
            $data['member_id'] = $this->memberInfo['id'];
            $data['member'] = $this->memberInfo['member'];
-           $result = db('pool')->where(['id'=>$pool_id])->update($data);
+           $result = db('punch')->where(['id'=>$punch_id])->update($data);
            if($result){
                 return json(['code'=>200,'msg'=>'ok']);
             }
@@ -106,28 +93,37 @@ class Pool extends Base{
     }
 
     //创建打卡
-    public function createPoolApi(){
+    public function createPunchApi(){
+        Db::startTrans();
          try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $result = $this->PunchService->createPunch($data);
 
-            $result = $this->PoolService->createPool($data);
-             return json($result);   
+            if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
+
+                $groupList = json_decode($data['groupList'],true);
+                $GroupPunch = new \app\model\GroupPunch;
+                $GroupPunch->saveAll($groupList);
+            }
+            Db::commit();   
+            return json($result);   
          }catch (Exception $e){
+            Db::rollback();
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
 
  
-    //加入打卡
-    public function createPoolMemberApi(){
+    //打卡关联社群
+    public function createPunchMemberApi(){
          try{
-            $pool_id = input('param.pool_id');
+            $punch_id = input('param.punch_id');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
-            $result = $this->PoolService->createPoolMember($member_id,$member,$pool_id);
+            $result = $this->PunchService->createPunchMember($member_id,$member,$punch_id);
              return json($result);   
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -136,15 +132,5 @@ class Pool extends Base{
 
 
 
-    //退出打卡
-    public function dropPool(){
-        try{
-            $member_id = $this->memberInfo['id'];
-            $pool_id = input('param.pool_id');
-            $result = $this->PoolService->usePool($member_id,$pool_id);
-             return json($result);   
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
+    
 }

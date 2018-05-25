@@ -3,7 +3,7 @@
 namespace app\service;
 
 use app\model\Punch;
-
+use think\Db;
 class PunchService {
     protected $Punch;
     public function __construct(){
@@ -21,7 +21,7 @@ class PunchService {
     }
 
 
-    public function getPunchListByPage($map,$paginate = 1,$p= 10){
+    public function getPunchListByPage($map,$paginate = 10){
         $result = $this->Punch->where($map)->paginate($paginate);
         return $result;
     }
@@ -37,8 +37,11 @@ class PunchService {
 
     }
 
-    // 产生打卡-社群关系
-    public function saveGroupPunch($data) {
-        
+
+
+    public function getGroupPunchListByPage($map,$paginate = 10){
+        $GroupPunch = new \app\model\GroupPunch;
+        $result = $GroupPunch->where($map)->paginate($paginate);
+        return $result;
     }
 }
