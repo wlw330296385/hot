@@ -105,7 +105,7 @@
             <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
             <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
             <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
-            
+
             <input type="hidden" class="data" name="punch" value="{:date('Y-m-d',time())}">
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
@@ -165,16 +165,16 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <a href="#groups" class="mui-navigate-right">
                         <label class="wd45">
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择社群</label>
                         <span class="wd45"></span>
                     </a>
-                </div>
+                </div> -->
                 <div class="operation-box border-b">
                     <div class="mui-input-row">
-                        <label>社群名单</label>
+                        <label>选择社群</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="box" id="hideStList" style="display: none"></div>
@@ -292,7 +292,7 @@
             <span class="course wd73">
                 <i class="icon iconfont icon-activity-Startingtim colororange"></i>
                 本次打卡消耗
-                <text class="colororange 16">3</text>H币
+                <text class="colororange 16 skates">0</text>H币
             </span>
             <span class="fr">
                 <button class="mui-btn bgred" id="groupConfirm">确认</button>
@@ -357,9 +357,18 @@
                 }
             });
 
+            //清除社群
+            $("#groupsDel").on('tap', '', function () {
+                $("#inactiveList").html('');
+                $(".mui-badge").text(0);
+                mui("#groups").popover("toggle");
+            });
+
             //清除训练
             $("#trainDel").on('tap', '', function () {
-                $("input[name=sportEvent]").val("");
+                $("input[name=name]").val('');
+                $(".punch_category").text('');
+                $("input[name=punch_category]").val('');
                 mui("#sportType").popover("toggle");
             });
             // 选择训练
@@ -375,7 +384,6 @@
                 }
                 mui("#sportType").popover("toggle");
             });
-
 
             //全选
             $(".all").click(function () {
@@ -427,6 +435,18 @@
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
+
+            $(".groupName").on("tap", "", function () {
+                var thisSkate = ''
+                var aaa = $(this).siblings("input[type='checkbox']").is(':checked')
+                thisSkate = $(this).siblings("span").text();
+                if (aaa == true) {
+                    $(".skates").text(thisSkate)
+                } else {
+                    $(".skates").text(thisSkate)
+                    console.log(123)
+                }
+            })
         })
 
         // 获取数据并进行提交
