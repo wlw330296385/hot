@@ -104,7 +104,7 @@ class Punch extends Base{
 
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
                 $groupList = json_decode($data['groupList'],true);
-                foreach ($data['groupList'] as $key => &$value) {
+                foreach ($groupList as $key => &$value) {
                     $value['punch'] = $data['punch'];
                     $value['punch_id'] = $result['data'];
                 }

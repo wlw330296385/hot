@@ -105,6 +105,8 @@
             <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
             <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
             <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
+            
+            <input type="hidden" class="data" name="punch" value="{:date('Y-m-d',time())}">
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
                     <img class="mui-media-object mui-pull-left img45" src="{$memberInfo.avatar}">
@@ -119,10 +121,7 @@
                 </li>
             </ul>
 
-
             <form action="" class="mui-input-group">
-                <p> {volist name="groupList" id="vol"} {$vol.group} {$vol.id} {/volist}
-                </p>
 
                 <div class="mui-input-row">
                     <label class="wd49">
@@ -135,7 +134,7 @@
                     <a href="#sportType" class="mui-navigate-right">
                         <label class="wd45">
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择运动类型</label>
-                        <span class="domData wd45" name="punch_category"></span>
+                        <span class="wd45 punch_category"></span>
                         <input type="hidden" name="punch_category" value="" class="data">
                     </a>
                 </div>
@@ -145,7 +144,6 @@
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
                     </label>
                     <input type="text" class="data wd52" name="name" value="" placeholder="运动项目" />
-                    <input type="hidden" class="data" value="" name="name">
                 </div>
 
                 <div class="mui-input-row">
@@ -171,8 +169,7 @@
                     <a href="#groups" class="mui-navigate-right">
                         <label class="wd45">
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择社群</label>
-                        <span class="domData wd45"></span>
-                        <input type="hidden" name="" value="" class="data">
+                        <span class="wd45"></span>
                     </a>
                 </div>
                 <div class="operation-box border-b">
@@ -280,21 +277,14 @@
         <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
                 <form class="mui-input-group groupslist mb44">
+                    {volist name="groupList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="lineHeight20 groupName" style="width:85%">社群1</label>
-                        <span style="width:15%">1</span>
-                        <input name="checkbox1" value="" type="checkbox">
+                        <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
+                        <span style="width:15%"> {$vol.stake}</span>
+                        <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
+                            data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}">
                     </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="lineHeight20 groupName" style="width:85%">社群2</label>
-                        <span style="width:15%">1</span>
-                        <input name="checkbox1" value="" type="checkbox">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="lineHeight20 groupName" style="width:85%">社群3</label>
-                        <span style="width:15%">1</span>
-                        <input name="checkbox1" value="" type="checkbox">
-                    </div>
+                    {/volist}
                 </form>
             </div>
         </div>
@@ -367,6 +357,26 @@
                 }
             });
 
+            //清除训练
+            $("#trainDel").on('tap', '', function () {
+                $("input[name=sportEvent]").val("");
+                mui("#sportType").popover("toggle");
+            });
+            // 选择训练
+            $(".secondUl").on('tap', 'li', function () {
+                var name = $(this).text();
+                var punch_category = $(this).parent().parent().siblings().children().text();
+                $("input[name=name]").val(name);
+                $(".punch_category").text(punch_category);
+                if (punch_category == "训练") {
+                    $("input[name=punch_category]").val(1);
+                } else {
+                    $("input[name=punch_category]").val(2);
+                }
+                mui("#sportType").popover("toggle");
+            });
+
+
             //全选
             $(".all").click(function () {
                 $(".checkboxCont").find('input').prop('checked', true)
@@ -379,47 +389,39 @@
 
             //删除
             $(".del").click(function () {
-                $("input[name='member']:checked").parents(".checkboxCont").remove();
+                $("input[name='group']:checked").parents(".checkboxCont").remove();
                 changeIndex();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
-                    var id = $(this).attr("data-id");
-                    groupList.push({ id, group, group_id, punch, punch_id, pool });
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font>' + $(this).val() + '</font><input name="group" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var group = $(this).siblings("font").text();
+                    var group_id = $(this).attr("data-group_id");
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    var pool = $(this).attr("data-pool");
+                    var pool_id = $(this).attr("data-pool_id");
+                    var stake = $(this).attr("data-stake");
+                    groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
                     $("#hideStList").append(str);
                 })
 
             });
 
-            //社群列表复选框赋值
-            $("#setGroupBox").on('tap', '', function () {
-                //每次打开先清空所有选择
-                $("input[name='checkbox-group']").prop("checked", false);
-                //然后遍历出对应所选
-                $(".stdList").each(function (i) {
-                    var id = $(this).attr("data-id");
-                    $("#newdiv").find("input[name='checkbox-group']").filter(function (index) {
-                        return $(this).attr("data-id") == id
-                    }).prop("checked", true);
-                });
-            });
-
             //角标随checkboxCont的数量变化
-            $(document).on('click', '.del', function () {
+            $(document).on('tap', '.del', function () {
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
 
             // 选择添加社群点击事件
-            $("#groupConfirm").on('click', function () {
+            $("#groupConfirm").on('tap', function () {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".groupslist input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font>' + $(this).siblings(".groupName").text() + '</font><input name="member" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '"type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font>' + $(this).siblings(".groupName").text() + '</font><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                 });
-
                 changeIndex();//调用-更新序号
                 mui("#groups").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
@@ -429,12 +431,24 @@
 
         // 获取数据并进行提交
         function submitAction() {
+            $("#hideStList input[name=group]").each(function (i) {
+                var group = $(this).siblings("font").text();
+                var group_id = $(this).attr("data-group_id");
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                var pool = $(this).attr("data-pool");
+                var pool_id = $(this).attr("data-pool_id");
+                var stake = $(this).attr("data-stake");
+                groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
+                console.log(groupList)
+            });
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
+            objData.groupList = JSON.stringify(groupList);
             var url = "{:url('api/punch/createPunchApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

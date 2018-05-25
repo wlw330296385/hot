@@ -122,7 +122,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('Group/index')}">
+                        <a href="">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-home-activity"></use>
                             </svg>
@@ -156,34 +156,8 @@
                     <a href="" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view mb punchList">
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="{:url('punch/punchInfo')}" class="mui-navigate-right">
-                        <img class="mui-pull-left img45" src="/uploads/images/avatar/c65ece035fcfc2de5e3c38f7bb70d69834f28f25">
-                        <div class="mui-media-body wd f16">
-                            <text style="font-weight: bold;">陈易</text> | 打比赛
-                            <p class="lineHeight20">
-                                <i class="icon iconfont icon-activity-Startingtim colororange f14"></i>2018-05-15 &nbsp;打卡金
-                                <text class="colororange">1</text> &nbsp;打赏
-                                <text class="colororange">0</text>
-                            </p>
-                        </div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media listli">
-                    <a href="" class="mui-navigate-right">
-                        <img class="mui-pull-left img45" src="/uploads/images/avatar/c65ece035fcfc2de5e3c38f7bb70d69834f28f25">
-                        <div class="mui-media-body wd f16">
-                            <text style="font-weight: bold;">陈易</text> | 打比赛
-                            <p class="lineHeight20">
-                                <i class="icon iconfont icon-activity-Startingtim colororange f14"></i>2018-05-15 &nbsp;打卡金
-                                <text class="colororange">1</text> &nbsp;打赏
-                                <text class="colororange">0</text>
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+
+            <ul class="mui-table-view mb punchList"></ul>
 
             <a href="{:url('Punch/createPunch')}">
                 <button class="bgred sportDk">
@@ -204,19 +178,19 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/mobile_date.js"></script>
-<script>
+<script>    
+    var count = 1
     $(function () {
-        //     var date = ''
-        //     $(".date .dateClass li").each(function () {
-        //         date = $(this).attr("data-date");
-        //         console.log(date)
-        //         if (date == "2018-5-28") {
-        //             $(this).addClass("endDK");
-        //         }
-        //     });
+        // var date = ''
+        // $(".date .dateClass li").each(function () {
+        //     date = $(this).attr("data-date");
+        //     console.log(date)
+        //     if (date == "2018-5-28") {
+        //         $(this).addClass("endDK");
+        //     }
+        // });
         toCommentList(); //获取评论列表
     })
-
     //下拉刷新具体业务实现
     function pulldownRefresh() {
         setTimeout(function () {
@@ -238,9 +212,11 @@
     //获取评论列表
     function toCommentList(page, gType) {
         var url = "{:url('api/punch/getPunchListApi','','',true)}";
+        var member_id = "{$memberInfo.id}"
         mui.ajax({
             url: url,
             data: {
+                member_id: member_id,
                 page: page,
             },
             dataType: 'json',//服务器返回json格式数据
@@ -249,19 +225,26 @@
             headers: { 'Content-Type': 'application/json' },
             success: function (data) {
                 console.log(data)
-                var newli = '';
+                var newli = "";
+                // var thisDate = '';
+                // var date = ''
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '">';
-                        if (data.data[i].can_delete == 0) {
-                            newli += '<a>';
-                        } else {
-                            newli += '<a href="#deletepl">';
-                        }
-                        newli += '<div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
+
+                        // thisDate = data.data[i].punch_time;
+                        // $(".date .dateClass li").each(function () {
+                        //     date = $(this).attr("data-date");
+                        //     if (date == "thisDate") {
+                        //         $(this).addClass("endDK");
+                        //     }
+                        // });
+                        var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
+                        newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_urls + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
+                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">1</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                        newli += '</div></a></li>'
                     }
                     if (newli == '') {
-                        console.log(213)
                         $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
                     }
                 }
