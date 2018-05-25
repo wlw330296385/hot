@@ -12,5 +12,8 @@ class Template extends Model {
     //                         'type',
     //                         ];
 
+	public function templateplatform(){
+		return $this->hasOne('TemplatePlatform','template_id','id');
+	}
 
 }

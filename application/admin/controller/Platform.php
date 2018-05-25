@@ -65,8 +65,8 @@ class Platform extends Backend {
         $platform_id = input('param.platform_id');
         $map['id'] = $platform_id;
         $platformInfo = $this->PlatformService->getPlatformInfo($map);
-
-        $platformTemplateList = db('template_platform')->where(['platform_id'=>$platform_id])->select();
+        $Template = new \app\admin\model\Template;
+        $templateList = $Template->with('templateplatform')->select();
 
         if(request()->isPost()){
             $data = input('post.');
@@ -82,7 +82,7 @@ class Platform extends Backend {
 
 
         $this->assign('platformInfo',$platformInfo);
-        $this->assign('platformTemplateList',$platformTemplateList);
+        $this->assign('templateList',$templateList);
         return view('Platform/updatePlatform');
     }
 
