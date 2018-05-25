@@ -36,7 +36,13 @@ class Group extends Base{
 
     // 编辑群组
     public function groupEdit() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
+
+
+
+        $this->assign('groupInfo',$groupInfo);
         return view('Group/groupEdit');
     }
 
