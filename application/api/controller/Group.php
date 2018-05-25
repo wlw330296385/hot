@@ -12,7 +12,7 @@ class Group extends Base{
  
     // 获取社群列表
     public function getGroupListApi(){
-         try{
+        try{
             $map = input('post.');
             $keyword = input('param.keyword');
             $page = input('param.page')?input('param.page'):1; 
@@ -33,14 +33,14 @@ class Group extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'无数据']);
             }  
-            
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-         }
-     }
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
      // 获取社群列表 无page
     public function getGroupListNoPageApi(){
-         try{
+        try{
             $map = input('post.');
             $result = $this->GroupService->getGroupListNoPage($map);  
             if($result){
@@ -49,17 +49,66 @@ class Group extends Base{
                 return json(['code'=>100,'msg'=>'无数据']);
             }  
             
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-         }
-     }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
     // 获取社群列表带page
-     public function getGroupListByPageApi(){
+    public function getGroupListByPageApi(){
         try{
             $map = input('post.');
             $result = $this->GroupService->getGroupListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }  
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 获取社群详情
+    public function getGroupInfoApi(){
+        try{
+            $map = input('post.');
+            $result = $this->GroupService->getGroupInfo($map);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }  
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    // 获取member没参加的社群/其他社群list
+    public function getOtherGroupListApi(){
+        try{
+            $map = input('post.');
+            $keyword = input('param.keyword');
+            $page = input('param.page')?input('param.page'):1; 
+            foreach ($map as $key => $value) {
+                if($value == ''|| empty($value) || $value==' '){
+                    unset($map[$key]);
+                }
+            }
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['group'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+
+            $ids = db('group_member')->where(['member_id'=>$this->memberInfo['id']])->column('group_id');
+            $map['id'] = ['not in',$ids];
+            $result = $this->GroupService->getGroupList($map,$page);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'无数据']);
             }  

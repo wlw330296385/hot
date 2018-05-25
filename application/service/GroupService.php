@@ -46,12 +46,7 @@ class GroupService {
     // 获取一个社群
     public function getGroupInfo($map) {
         $result = $this->GroupModel->where($map)->find();
-        if ($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     // 获取一个社群-用户
