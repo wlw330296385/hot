@@ -66,7 +66,21 @@ class Platform extends Backend {
         $map['id'] = $platform_id;
         $platformInfo = $this->PlatformService->getPlatformInfo($map);
         $Template = new \app\admin\model\Template;
-        $templateList = $Template->with('templateplatform')->select();
+        // $templateList = $Template->with('templateplatforms')->select();
+        // $templateList = $templateList->toArray();
+        // foreach ($templateList as $key => &$value) {
+        //     $value['templateplatforms'] = $value['templateplatforms']->toArray();
+        //     foreach ($value['templateplatforms'] as $k => &$val) {
+                
+        //         if($val['platform_id']<>$platform_id){
+        //             unset($value['templateplatforms'][$k]);
+        //         }
+        //     }
+        // }
+
+        $templateList = $Template->select();
+        $TemplatePlatform = new \app\admin\model\TemplatePlatform;
+        $templateplatformList = $TemplatePlatform->where(['platform_id'=>$platform_id])->select();
 
         if(request()->isPost()){
             $data = input('post.');
@@ -80,9 +94,10 @@ class Platform extends Backend {
             }
         }
 
-
+        
         $this->assign('platformInfo',$platformInfo);
         $this->assign('templateList',$templateList);
+        $this->assign('templateplatformList',$templateplatformList);
         return view('Platform/updatePlatform');
     }
 
