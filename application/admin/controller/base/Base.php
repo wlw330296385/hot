@@ -21,4 +21,7 @@ class Base extends Controller {
         }
     }
 
+    protected function record($do){
+        $this->AuthService->record($do);
+    }
 }
