@@ -12,4 +12,12 @@ class Pool extends Model {
     //                         'type',
     //    
 
+
+	public function getStartAttr($value){
+		return date('Y-m-d',$value);
+	}
+
+	public function getEndAttr($value){
+		return date('Y-m-d',$value);
+	}
 }
