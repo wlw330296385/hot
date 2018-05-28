@@ -66,6 +66,7 @@ class Group extends Base{
 
     // 编辑奖金池
     public function poolEdit() {
+        
         return view('Group/poolEdit');
     }
 
