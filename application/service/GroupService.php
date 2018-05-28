@@ -5,6 +5,7 @@ namespace app\service;
 use app\model\Group;
 use app\model\GroupMember;
 use think\Db;
+use app\demol\Pool;
 class GroupService {
     private $GroupModel;
     private $GroupMemberModel;
@@ -166,6 +167,18 @@ class GroupService {
         $result = $this->GroupMemberModel->where($map)->paginate($paginate);
         return $result;
     }
+
+
+
+
+    public function getPoolInfo($map){
+        $Pool = new Pool;
+        $result = $Pool->where($map)->find();
+        return $result;
+    }
+
+
+
 
 }
 

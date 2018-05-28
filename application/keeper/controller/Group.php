@@ -61,11 +61,28 @@ class Group extends Base{
 
     // 奖金池详情
     public function poolInfo() {
+
+        $pool_id = input('param.pool_id');
+        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$group_id]);
+
+
+
+
+        $this->assign('poolInfo',$poolInfo);
+        
+
         return view('Group/poolInfo');
     }
 
     // 编辑奖金池
     public function poolEdit() {
+        $pool_id = input('param.pool_id');
+        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$group_id]);
+
+
+
+
+        $this->assign('poolInfo',$poolInfo);
         
         return view('Group/poolEdit');
     }
