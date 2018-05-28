@@ -26,7 +26,7 @@
         .sportDk {
             position: fixed;
             bottom: 60px;
-            padding: 5px 10px;
+            padding: 12px;
             left: 0;
             right: 0;
             margin: 0 auto;
@@ -34,10 +34,10 @@
             text-align: center;
         }
 
-        .sportDkText {
+        /* .sportDkText {
             vertical-align: middle;
             display: inline-flex;
-        }
+        } */
 
         .sportDkText img {
             width: 30px;
@@ -162,7 +162,7 @@
             <a href="{:url('Punch/createPunch')}">
                 <button class="bgred sportDk">
                     <div class="sportDkText">
-                        <img src="/static/frontend/images/M-dui.png">
+                        <!-- <img src="/static/frontend/images/M-dui.png"> -->
                         <span>运动打卡</span>
                     </div>
                 </button>
@@ -189,11 +189,7 @@
         //         $(this).addClass("endDK");
         //     }
         // });
-<<<<<<< HEAD
-        toCommentList(); //获取评论列表
-=======
         toPunchList(); //获取我的打卡记录列表
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
     })
     //下拉刷新具体业务实现
     function pulldownRefresh() {
@@ -230,35 +226,28 @@
             success: function (data) {
                 console.log(data)
                 var newli = "";
-                // var thisDate = '';
-                // var date = ''
+                var thisDate = '';
+                var date = ''
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-
-                        // thisDate = data.data[i].punch_time;
-                        // $(".date .dateClass li").each(function () {
-                        //     date = $(this).attr("data-date");
-                        //     if (date == "thisDate") {
-                        //         $(this).addClass("endDK");
-                        //     }
-                        // });
+                        thisDate = data.data[i].punch_time;
+                        console.log(typeof(thisDate))
+                        console.log(String(data.data[i].punch_time))
+                        $(".date .dateClass li").each(function () {
+                            date = $(this).attr("data-date");
+                            if (date == String(thisDate)) {
+                                console.log(123)
+                                $(this).addClass("endDK");
+                            }
+                        });
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-<<<<<<< HEAD
-                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_urls + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">1</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
-                        newli += '</div></a></li>'
-                    }
-                    if (newli == '') {
-                        $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
-=======
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">0</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {
                         $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                     }
                 }
 
