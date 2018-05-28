@@ -452,6 +452,33 @@ class LeagueService
         return $res;
     }
 
+    // 保存联赛参赛球队球员数据
+    public function saveMatchTeamMember($data, $condi=[]) {
+        $model = new MatchTeamMember();
+        if ( !empty($condi) && is_array($condi) ) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
     // 删除联赛参赛球队球员数据 $force 是否强制删除
     public function delMatchTeamMember($data, $force=false) {
         return MatchTeamMember::destroy($data, $force);
