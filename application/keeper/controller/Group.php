@@ -49,6 +49,13 @@ class Group extends Base{
     
     // 创建奖金池
     public function createPool() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+
+
+
+
+        $this->assign('groupInfo',$groupInfo);
         return view('Group/createPool');
     }
 
@@ -62,5 +69,9 @@ class Group extends Base{
         return view('Group/poolEdit');
     }
 
+    // 奖金池列表
+    public function poolList() {
+        return view('Group/poolList');
+    }
 
 }

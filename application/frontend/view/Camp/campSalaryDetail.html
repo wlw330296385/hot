@@ -243,118 +243,19 @@
     })
 
 
-    //获取收入明细表
-    var toSalaryInList = function (wList, page, gType, status) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salaryin/getSalaryInListByPageApi','','',true)}?page="+page;
-        var camp_id = "{$campInfo.id}";
-        mui.ajax({
-            url: url,
-            data: {
-                camp_id: camp_id
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
 
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].grade + '</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">+' + data.data.data[i].salary + '</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">课时收入金额<span>' + data.data.data[i].salary + '</span></li><li class="mui-table-view-cell listli">课时提成金额<span>' + data.data.data[i].push_salary + '</span></li><li class="mui-table-view-cell listli">训练营<span>' + data.data.data[i].camp + '</span></li><li class="mui-table-view-cell listli">课程<span>' + data.data.data[i].lesson + '</span></li><li class="mui-table-view-cell listli">角色<span>' + data.data.data[i].member_type + '</span></li></ul></div></div></li>';
-                    }
-                }
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.salaryIn").empty().append(newli);
-                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                    mui('#' + wList).pullRefresh().refresh(true);
-                    if (newli == '') {
-                        $("ul.salaryIn").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                    }
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.salaryIn").append(newli);
-                }
-
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
-
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-            }
-        });
-    };
-
-
-    //获取支出明细表
-    var toSalaryOutList = function (wList, page, gType, status) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salary_out/getSalaryoutListByPageApi','','',true)}?page="+page;
-        var camp_id = "{$campInfo.id}";
-        mui.ajax({
-            url: url,
-            data: {
-                camp_id: camp_id
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var salary = '';
-                        if(data.data.data[i].salary>0){salary='-'+data.data.data[i].salary}
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>提现</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">'+salary+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">冻结金额<span>' + data.data.data[i].buffer + '</span></li><li class="mui-table-view-cell listli">出账平台<span>' + data.data.data[i].bank + '</span></li><li class="mui-table-view-cell listli">出账账号<span>' + data.data.data[i].bank_card + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data.data[i].fee + '</span></li><li class="mui-table-view-cell listli">交易单号<span>' + data.data.data[i].tid + '</span></li><li class="mui-table-view-cell listli">状态<span>' + data.data.data[i].status + '</span></li></ul></div></div></li>';
-                    }
-                }
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.salaryOut").empty().append(newli);
-                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                    mui('#' + wList).pullRefresh().refresh(true);
-                    if (newli == '') {
-                        $("ul.salaryOut").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                    }
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.salaryOut").append(newli);
-                }
-
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
-
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-            }
-        });
-    };
 
 
 
     //获取提现明细表
     var toWithdrawList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/camp_withdraw/getCampWithdrawListApi',['camp_id'=>$campInfo.id],'',true)}?page="+page;
+        var url  = "{:url('api/camp_withdraw/getCampWithdrawListApi')}?page="+page;
         mui.ajax({
             url: url,
-            data: {},
+            data: {
+                camp_id:{$campInfo.id}
+            },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；

@@ -423,7 +423,7 @@ class LeagueService
         return $res->toArray();
     }
 
-    // 获取联赛分组列表（页码）
+    // 获取联赛球队球员列表（页码）
     public function getMatchTeamMemberPaginator($map, $order='id desc', $limit=10) {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->paginate($limit);
@@ -431,5 +431,27 @@ class LeagueService
             return $res;
         }
         return $res->toArray();
+    }
+
+    // 获取联赛球队球员详情
+    public function getMatchTeamMember($map) {
+        $model = new MatchTeamMember();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 批量保存联赛参赛球队球员数据
+    public function saveAllMatchTeamMember($data) {
+        $model = new MatchTeamMember();
+        $res = $model->allowField(true)->saveAll($data);
+        return $res;
+    }
+
+    // 删除联赛参赛球队球员数据 $force 是否强制删除
+    public function delMatchTeamMember($data, $force=false) {
+        return MatchTeamMember::destroy($data, $force);
     }
 }

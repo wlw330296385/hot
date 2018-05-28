@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>社群详情</title>
+    <title>奖金池详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,17 +31,12 @@
             font-size: 14px;
             border-radius: 3px;
         }
-
-        .mui-grid-view.mui-grid-9 .mui-table-view-cell {
-            border: none;
-        }
     </style>
 </head>
-
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">社群详情</h1>
+        <h1 class="mui-title">奖金池详情</h1>
     </header>
 
     <div class="mui-content">
@@ -50,15 +45,16 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli" id="logoframe">
                     <div class="mui-media-body  wd66">
-                        <strong class="f16 tmName">{$groupInfo.group}</strong>
+                        <strong class="f16 tmName">社群名称</strong>
                         <img class="mui-media-object mui-pull-left logostyle" src="{$memberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
-                        <p class="mui-ellipsis lineHeight20">发起人：{$groupInfo.member}</p>
+                        <p class="mui-ellipsis lineHeight20">发起人：{$memberInfo.member}</p>
                         <p class="mui-ellipsis lineHeight20">成员:
-                            <text class="colororange">{$groupInfo.members}</text>
+                            <text class="colororange">20</text>
+
                         </p>
                     </div>
                     <div class="price-frame">
-                        <button class="mui-btn bgred joinGropu" style="margin-top:26px">加入</button>
+                        <button class="mui-btn bgred follow" style="margin-top:26px">加入</button>
                     </div>
                 </li>
             </ul>
@@ -120,8 +116,8 @@
                     <a href="" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view mb punchList">
-                <!-- <li class="mui-table-view-cell mui-media listli">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell mui-media listli">
                     <a href="" class="mui-navigate-right">
                         <img class="mui-pull-left img45" src="/uploads/images/avatar/c65ece035fcfc2de5e3c38f7bb70d69834f28f25">
                         <div class="mui-media-body wd f16">
@@ -146,14 +142,8 @@
                             </p>
                         </div>
                     </a>
-                </li> -->
+                </li>
             </ul>
-
-            <div class="success-frame mt55">
-                <div class="choise">
-                    <button type="button" class="mui-btn mui-btn-danger f16 outGroup">退出社群</button>
-                </div>
-            </div>
 
             <!--底部操作-->
             <ul class="mui-table-view operation">
@@ -166,10 +156,10 @@
                     <a href="">分享</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli">
-                    <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">群管理</a>
+                    <a href="">群管理</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bgred">
-                    <a href="{:url('punch/createPunch')}">打卡</a>
+                    <a href="">打卡</a>
                 </li>
             </ul>
 
@@ -177,136 +167,11 @@
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
-    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        var count = 1;
-        $(function () {
-            var group_id = "{$groupInfo.id}";
-            var member_id = "{$groupInfo.member_id}";
-            // 加入社群
-            $(".joinGropu").on("tap", '', function () {
-                mui.ajax("{:url('api/group/createGroupMemberApi')}", {
-                    data: {
-                        group_id: group_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("申请加入成功，待管理员审核...");
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            //退出社群
-            $(".outGroup").on('tap', function () {
-                mui.confirm("确认退出社群？", "提示", function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/group/dropGroup')}", {
-                            data: {
-                                member_id: member_id,
-                                group_id: group_id,
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data);
-                                if (data.code == 200) {
-
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
-                            }
-                        });
-                    }
-                })
-            });
-
-            toPunchList(); //获取我的打卡记录列表
-        })
-
-        //下拉刷新具体业务实现
-        function pulldownRefresh() {
-            setTimeout(function () {
-                count = 1;//刷新并显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toPunchList(page, gType);//具体取数据的方法
-            }, 100);
-        }
-        //上拉加载具体业务实现
-        function pullupRefresh() {
-            setTimeout(function () {
-                count++;//翻下一页
-                var page = count;
-                var gType = 2;//代表上拉加载
-                toPunchList(page, gType);//具体取数据的方法
-            }, 100);
-        }
-        //获取我的打卡记录列表
-        function toPunchList(page, gType) {
-            var url = "{:url('api/punch/getPunchListApi','','',true)}";
-            mui.ajax({
-                url: url,
-                data: {
-                    page: page,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var newli = "";
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
-                            newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">0</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
-                            newli += '</div></a></li>'
-                        }
-                        if (newli == '') {
-                            $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                        }
-                    }
-
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.punchList").empty().append(newli);
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.punchList").append(newli);
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
-
     </script>
 </body>
 

@@ -99,13 +99,20 @@
 </head>
 
 <body>
-
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">打卡</h1>
+    </header>
     <div class="mui-content">
         <div class="list">
             <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
             <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
             <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
             <input type="hidden" class="data" name="punch" value="{:date('Y-m-d',time())}">
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
@@ -116,7 +123,7 @@
                     </div>
                     <div class="price-frame f12" style="margin-top: 19px;">
                         本月打卡
-                        <text class="colororange f18">12</text>
+                        <text class="colororange f18">0</text>
                     </div>
                 </li>
             </ul>
@@ -125,9 +132,9 @@
 
                 <div class="mui-input-row">
                     <label class="wd49">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>打开时间
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>打卡时间
                     </label>
-                    <span class="domData" name="punch_time">2018-5-25</span>
+                    <span class="domData punch_time" name="punch_time">2018-5-25</span>
                 </div>
 
                 <div class="mui-input-row">
@@ -165,16 +172,16 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <a href="#groups" class="mui-navigate-right">
                         <label class="wd45">
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择社群</label>
                         <span class="wd45"></span>
                     </a>
-                </div>
+                </div> -->
                 <div class="operation-box border-b">
                     <div class="mui-input-row">
-                        <label>社群名单</label>
+                        <label>选择社群</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="box" id="hideStList" style="display: none"></div>
@@ -292,7 +299,7 @@
             <span class="course wd73">
                 <i class="icon iconfont icon-activity-Startingtim colororange"></i>
                 本次打卡消耗
-                <text class="colororange 16">3</text>H币
+                <text class="colororange 16 skates">0</text>H币
             </span>
             <span class="fr">
                 <button class="mui-btn bgred" id="groupConfirm">确认</button>
@@ -347,6 +354,14 @@
         groupList = [];
 
         $(function () {
+
+            // 获取当前时间为打卡时间
+			var year = new Date().getFullYear();
+			var month = new Date().getMonth() + 1;
+			var day = new Date().getDate();
+			var time = year + '-' + month + '-' + day
+            $(".punch_time").text(time)
+
             // 是否发布通知
             $(".isAnonymous").on("tap", '', function () {
                 var is_anonymous = $("input[name=is_anonymous]");
@@ -357,9 +372,24 @@
                 }
             });
 
+<<<<<<< HEAD
             //清除训练
             $("#trainDel").on('tap', '', function () {
                 $("input[name=sportEvent]").val("");
+=======
+            //清除社群
+            $("#groupsDel").on('tap', '', function () {
+                $("#inactiveList").html('');
+                $(".mui-badge").text(0);
+                mui("#groups").popover("toggle");
+            });
+
+            //清除训练
+            $("#trainDel").on('tap', '', function () {
+                $("input[name=name]").val('');
+                $(".punch_category").text('');
+                $("input[name=punch_category]").val('');
+>>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                 mui("#sportType").popover("toggle");
             });
             // 选择训练
@@ -376,7 +406,10 @@
                 mui("#sportType").popover("toggle");
             });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
             //全选
             $(".all").click(function () {
                 $(".checkboxCont").find('input').prop('checked', true)
@@ -427,6 +460,18 @@
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
+
+            $(".groupName").on("tap", "", function () {
+                var thisSkate = ''
+                var aaa = $(this).siblings("input[type='checkbox']").is(':checked')
+                thisSkate = $(this).siblings("span").text();
+                if (aaa == true) {
+                    $(".skates").text(thisSkate)
+                } else {
+                    $(".skates").text(thisSkate)
+                    console.log(123)
+                }
+            })
         })
 
         // 获取数据并进行提交
@@ -452,8 +497,8 @@
             var url = "{:url('api/punch/createPunchApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
-                    var goUrl = "{:url('group/index')}";
+                mui.alert(ajaxResult.msg, '提示', '确定', function () {
+                    var goUrl = "{:url('punch/punchInfo')}"+ '/punch_id/' + ajaxResult.data;
                     window.top.location.href = goUrl;
                 })
             } else {

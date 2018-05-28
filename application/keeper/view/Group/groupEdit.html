@@ -57,67 +57,7 @@
                 <li class="mui-table-view-cell navli">
                     <a href="">
                         <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$memberInfo.member}</p>
+                        <p class="mui-ellipsis">{$groupInfo.member}</p>
                     </a>
                 </li>
                 <li class="mui-table-view-cell navli">
@@ -138,6 +78,7 @@
         </div>
 
         <form action="" class="mui-input-group mt">
+            <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
             <div class="mui-input-row">
                 <label>社群名称</label>
                 <input type="text" name="group" class="data" value="{$groupInfo.group}" placeholder="社群名称">
@@ -149,13 +90,29 @@
                     <input type="hidden" name="logo" value="{$groupInfo.logo}" class="data">
                 </a>
             </div>
-            <div class="mui-input-row h-auto">
-                <label>社群公告</label>
-                <textarea name="notice" rows="3" value="{$groupInfo.notice}" placeholder="请填写内容">{$groupInfo.notice}</textarea>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>社群类型</label>
+                    <span class="select-row">
+                        <select id="groupType" class="data" name="type">
+                            <option value="">请选择</option>
+                            <option value="1">单位</option>
+                            <option value="2">球队</option>
+                            <option value="3">同学</option>
+                            <option value="4">朋友</option>
+                            <option value="5">家族</option>
+                            <option value="6">其他</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="mui-input-row">
+                <label>最大人数</label>
+                <input type="text" name="max" class="data" value="{$groupInfo.max}" placeholder="最大人数">
             </div>
             <div class="mui-input-row h-auto">
-                <label>社群规则</label>
-                <textarea name="rule" rows="3" value="{$groupInfo.rule}" placeholder="请填写内容">{$groupInfo.rule}</textarea>
+                <label>社群宗旨</label>
+                <textarea name="purpose" rows="3" value="" class="purpose" placeholder="请填写内容"></textarea>
             </div>
         </form>
 
@@ -163,7 +120,7 @@
             <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred">
                 删除并退出
             </li>
-            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bggreen">
+            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bggreen" onclick="submitAction()">
                 保存修改
             </li>
         </ul>
@@ -180,6 +137,9 @@
         });
 
         $(function () {
+
+            // 设置社群类型默认值
+            $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
 
             //初始化全局变量
             var count = 1;
@@ -291,6 +251,31 @@
 
             };
         })
+
+        // 获取数据并进行提交
+        function submitAction() {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.purpose = $(".purpose").val();
+            var url = "{:url('api/group/updateGroupApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult)
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                    var goUrl = "{:url('group/groupInfo')}" + "/group_id/" + "{$groupInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                    }
+                }, 'json');
+            }
+        };
 
     </script>
 </body>

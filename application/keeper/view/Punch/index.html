@@ -106,7 +106,7 @@
                         <img src="{$memberInfo.avatar}" class="img24">
                         <text style="margin-left: 5px;">{$memberInfo.member}</text>
                         <span class="mui-navigate-right wd49 pdr15">本月打卡
-                            <text class="colororange">12</text>次</span>
+                            <text class="colororange">0</text>次</span>
                     </a>
                 </li>
             </ul>
@@ -189,7 +189,11 @@
         //         $(this).addClass("endDK");
         //     }
         // });
+<<<<<<< HEAD
         toCommentList(); //获取评论列表
+=======
+        toPunchList(); //获取我的打卡记录列表
+>>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
     })
     //下拉刷新具体业务实现
     function pulldownRefresh() {
@@ -197,7 +201,7 @@
             count = 1;//刷新并显示第一页
             var page = count;
             var gType = 1;//代表下拉刷新
-            toCommentList(page, gType);//具体取数据的方法
+            toPunchList(page, gType);//具体取数据的方法
         }, 100);
     }
     //上拉加载具体业务实现
@@ -206,11 +210,11 @@
             count++;//翻下一页
             var page = count;
             var gType = 2;//代表上拉加载
-            toCommentList(page, gType);//具体取数据的方法
+            toPunchList(page, gType);//具体取数据的方法
         }, 100);
     }
-    //获取评论列表
-    function toCommentList(page, gType) {
+    //获取我的打卡记录列表
+    function toPunchList(page, gType) {
         var url = "{:url('api/punch/getPunchListApi','','',true)}";
         var member_id = "{$memberInfo.id}"
         mui.ajax({
@@ -240,12 +244,21 @@
                         // });
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+<<<<<<< HEAD
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_urls + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
                         newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">1</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {
                         $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+=======
+                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
+                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">0</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                        newli += '</div></a></li>'
+                    }
+                    if (newli == '') {
+                        $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+>>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                     }
                 }
 
