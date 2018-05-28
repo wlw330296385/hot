@@ -20,12 +20,8 @@ class PoolService {
     public function getPoolList($map=[],$page = 1,$order='',$paginate = 10) {
         $result = $this->PoolModel->where($map)->order($order)->page($page,$paginate)->select();
 
-        if($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
+        
     }
 
     // 分页获取奖金池\擂台
@@ -47,12 +43,7 @@ class PoolService {
     // 获取一个奖金池\擂台
     public function getPoolInfo($map) {
         $result = $this->PoolModel->where($map)->find();
-        if ($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     
