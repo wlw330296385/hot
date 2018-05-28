@@ -1204,6 +1204,21 @@ class League extends Base
             $delTeamMembers = json_decode($data['TeamMemberDataDel'], true);
         }
         $leagueS = new LeagueService();
+
+        // 检查球员有无在联赛登记在其他球队数据
+        foreach ($normalTeamMembers as $k => $val) {
+            $checkMatchTeamMember = $leagueS->getMatchTeamMember([
+                'match_id' => $data['match_id'],
+                'team_id' => ['neq', $data['team_id']],
+                'member_id' => $val['member_id'],
+                'name' => $val['name']
+            ]);
+            if ($checkMatchTeamMember) {
+                return json(['code' => 100, 'msg' => $val['name'].'已登记在其他球队参加此联赛']);
+                continue;
+            }
+        }
+
         // 组合match_team_member进表数据
         try {
             // 删除数据更新
