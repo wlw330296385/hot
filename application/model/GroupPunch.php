@@ -14,7 +14,7 @@ class GroupPunch extends Model {
 
 
     public function punch(){
-    	return $this->hasOne('punch');
+    	return $this->hasOne('punch','id','punch_id');
     }
 
 }
