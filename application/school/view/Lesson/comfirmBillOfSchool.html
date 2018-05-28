@@ -236,7 +236,7 @@
         
         let result = createBill();
         if(result.code == 200){
-          pay('校园课程');
+          pay('校园课程预约');
         }else{
             mui.toast(result.msg);
             location.reload();
@@ -257,7 +257,12 @@
         objBillInfo.balance_pay = 0;
         objBillInfo.__token__ = "{$Request.token}";
         var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}", objBillInfo);
-        return result;
+        if(result.code == 200){
+            console.log(1);
+            pay('免费校园课');
+        }else{
+            mui.toast(result.msg);
+        }
     }
 
 
@@ -269,7 +274,7 @@
         if (result.code == 200) {
             mui.alert('欢迎报名校园课程，请留意课程消息及公告。', '报名成功', '确定', function () {
                 followCamp();
-                window.location.href = "{:url('frontend/camp/index')}";
+                window.location.href = "{:url('school/camp/index')}";
             })
         }else {
             mui.toast(result.msg);
