@@ -232,6 +232,19 @@
         });
         ////////////////////////在已选列表中删除了的人员/////////////////////////////////////////
 
+        // 提交的最终球员数与联赛要求的球队成员上/下限数
+        var match_max_members = "{$leagueInfo.max_teammembers}";
+        var match_min_members = "{$leagueInfo.min_teammembers}";
+        match_max_members = parseInt(match_max_members);
+        match_min_members = parseInt(match_min_members);
+        if ( match_max_members > 0 && TeamMemberData.length > match_max_members ) {
+            mui.alert('球员人数不能超过'+match_max_members+'人');
+            return false;
+        }
+        if ( match_max_members > 0 && TeamMemberData.length < match_min_members ) {
+            mui.alert('球员人数不能少过'+match_min_members+'人');
+            return false;
+        }
 
         var data = wooApi.getInputData('input', 'data');
         datas = wooApi.getInputData('select', 'data', data);
