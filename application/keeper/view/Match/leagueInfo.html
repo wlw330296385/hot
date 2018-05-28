@@ -96,11 +96,11 @@
                         <p>{$leagueInfo.province} {$leagueInfo.city}</p>
                         <p>参赛队：
                             <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
-                            <strong class="colororange">350</strong>
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong>
                         </p>
                     </div>
                     <div class="price-frame" style="padding-top:17px">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">取消关注</button>
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
             </ul>
@@ -306,11 +306,11 @@
 
             // 关注球队
             $(".follow").on("tap", '', function () {
-                var team_id = "{teamInfo.id}";
+                var league_id = "{$league_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        type: 4,
-                        team_id: team_id
+                        type: 5,
+                        league_id: league_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -440,11 +440,11 @@
 
         // 判断当前的关注状态
         function followStatus() {
-            var team_id = "{teamInfo.id}"
+            var league_id = "{$league_id}";
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
-                    type: 4,
-                    team_id: team_id
+                    type: 5,
+                    team_id: league_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型

@@ -153,6 +153,8 @@ class LeagueService
         $result = $res->toArray();
         // 组合原始数据
         $result['status_num'] = $getData['status'];
+        // 粉丝数
+        $result['fans_num'] = getfansnum($result['id'], 5);
         return $result;
     }
 

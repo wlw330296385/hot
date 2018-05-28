@@ -48,6 +48,8 @@ class MatchService {
             $result['status_num'] = $res->getData('status');
             $result['apply_status_num'] = $res->getData('apply_status');
             $result['match_timestamp'] = $res->getData('match_time');
+            // 粉丝数
+            $result['fans_num'] = getfansnum($result['id'], 5);
             return $result;
         } else {
             return $res;
@@ -78,33 +80,37 @@ class MatchService {
     // 比赛列表
     public function matchList($map, $page=1, $order='id desc', $limit=10) {
         $model = new Match();
-        $query = $model->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($query) {
-            //return $res->toArray();
-            $res = $query->toArray();
-            // 获取器原始数据
-            foreach ($res as $k => $val) {
-                $getData = $model->where('id', $val['id'])->find()->getData();
-                $res[$k]['type_num'] = $getData['type'];
-                $res[$k]['is_finished_num'] = $getData['is_finished'];
-                $res[$k]['status_num'] = $getData['status'];
-                $res[$k]['apply_status_num'] = $getData['apply_status'];
-            }
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
             return $res;
-        } else {
-            return $query;
         }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $getData = $model->where('id', $val['id'])->find()->getData();
+            $result[$k]['type_num'] = $getData['type'];
+            $result[$k]['is_finished_num'] = $getData['is_finished'];
+            $result[$k]['status_num'] = $getData['status'];
+            $result[$k]['apply_status_num'] = $getData['apply_status'];
+        }
+        return $result;
     }
 
     // 比赛列表（所有数据）
     public function matchListAll($map, $order='id desc') {
         $model = new Match();
         $res = $model->where($map)->order($order)->select();
-        if ($res) {
-            return $res->toArray();
-        } else {
+        if (!$res) {
             return $res;
         }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $getData = $model->where('id', $val['id'])->find()->getData();
+            $result[$k]['type_num'] = $getData['type'];
+            $result[$k]['is_finished_num'] = $getData['is_finished'];
+            $result[$k]['status_num'] = $getData['status'];
+            $result[$k]['apply_status_num'] = $getData['apply_status'];
+        }
+        return $result;
     }
     
     // 软删除比赛记录
