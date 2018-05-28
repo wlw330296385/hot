@@ -21,9 +21,11 @@ class Group extends Base{
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
+        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
+        $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
 
-
-
+        $this->assign('lastPool',$lastPool);
+        $this->assign('nowPool',$nowPool);
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupInfo');
     }
