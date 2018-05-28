@@ -5,7 +5,7 @@ namespace app\service;
 use app\model\Group;
 use app\model\GroupMember;
 use think\Db;
-use app\demol\Pool;
+use app\model\Pool;
 class GroupService {
     private $GroupModel;
     private $GroupMemberModel;
