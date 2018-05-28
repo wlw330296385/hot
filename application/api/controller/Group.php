@@ -168,13 +168,16 @@ class Group extends Base{
 
     //创建社群
     public function createGroupApi(){
-         try{
+        try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
 
             $result = $this->GroupService->createGroup($data);
-             return json($result);   
+            if($result['code'] == 200){
+                $res = $this->GroupService->createGroupMember($this->memberInfo['id'],$this->memberInfo['member'],$result['data']);
+            }
+            return json($result);   
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -184,13 +187,13 @@ class Group extends Base{
  
     //加入社群
     public function createGroupMemberApi(){
-         try{
+        try{
             $group_id = input('param.group_id');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
             $result = $this->GroupService->createGroupMember($member_id,$member,$group_id);
-             return json($result);   
-         }catch (Exception $e){
+            return json($result);   
+        }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }

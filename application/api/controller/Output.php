@@ -1,19 +1,19 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\IncomeService;
+use app\service\OutputService;
 use think\Db;
 
-class Income extends Base{
-    protected $IncomeService;
+class Output extends Base{
+    protected $OutputService;
 	public function _initialize(){
 		parent::_initialize();
-        $this->IncomeService = new IncomeService;
+        $this->OutputService = new OutputService;
 	}
 
 
 
-    public function getIncomeListByPageApi(){
+    public function getOutputListByPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
@@ -23,10 +23,7 @@ class Income extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            if(!isset($map['camp_id'])){
-                return json(['code'=>100,'msg'=>'缺少必填参数']);
-            }
-            $result = $this->IncomeService->getIncomeListByPage($map);    
+            $result = $this->OutputService->getOutputListByPage($map);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -39,7 +36,7 @@ class Income extends Base{
 
    
     // 不带page
-    public function getIncomeListNoPageApi(){
+    public function getOutputListNoPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
@@ -49,11 +46,8 @@ class Income extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            if(!isset($map['camp_id'])){
-                return json(['code'=>100,'msg'=>'缺少必填参数']);
-            }
-            $Income = new \app\model\Income;
-            $result = $Income->where($map)->select();
+            $Output = new \app\model\Output;
+            $result = $Output->where($map)->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result->toArray()]);
             }else{
