@@ -71,16 +71,8 @@
             </div>
             <div class="mui-input-row h-auto">
                 <label>社群宗旨</label>
-                <textarea name="purpose" rows="3" value="" class="purpose" placeholder="请填写内容"></textarea>
+                <textarea name="tenet" rows="3" value="" class="tenet" placeholder="请填写内容"></textarea>
             </div>
-            <!-- <div class="mui-input-row h-auto">
-                <label>社群公告</label>
-                <textarea name="notice" rows="3" value="" class="notice" placeholder="请填写内容"></textarea>
-            </div>
-            <div class="mui-input-row h-auto">
-                <label>社群规则</label>
-                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
-            </div> -->
         </form>
 
         <ul class="mui-table-view operation">
@@ -109,14 +101,12 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.purpose = $(".purpose").val();
-            // objData.notice = $(".notice").val();
-            // objData.rule = $(".rule").val();
+            objData.tenet = $(".tenet").val();
             var url = "{:url('api/group/createGroupApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
-                    var goUrl = "{:url('group/index')}";
+                    var goUrl = "{:url('group/groupInfo')}" + "/group_id/" + ajaxResult.data;
                     window.top.location.href = goUrl;
                 })
             } else {

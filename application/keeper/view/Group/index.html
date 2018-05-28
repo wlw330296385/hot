@@ -42,11 +42,13 @@
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
                 <div class="page-header bggray2">
-                    <span class="course">我的社群（<text class="colororange myGroupNum">0</text>）</span>
+                    <span class="course">我的社群（
+                        <text class="colororange myGroupNum">0</text>）</span>
                 </div>
                 <ul class="mui-table-view detalis-list list border-b myGroup"></ul>
                 <div class="page-header bggray2">
-                    <span class="course">其他社群（<text class="colororange otherGroupNum">0</text>）</span>
+                    <span class="course">其他社群（
+                        <text class="colororange otherGroupNum">0</text>）</span>
                 </div>
                 <ul class="mui-table-view detalis-list list border-b otherGroup"></ul>
             </div>
@@ -75,9 +77,10 @@
             //初始化全局变量
             var count = 1;
             var other = 1;
-            var keyword = wooApi.GetQueryString('keyword');
+            // var keyword = wooApi.GetQueryString('keyword');
+            var keyword = $(".keyword").val();
             toList();
-            //搜索球队
+            //搜索社群
             $("#searchBtn").on("click", function () {
                 keyword = $(".keyword").val();
                 searchToList();
@@ -88,7 +91,7 @@
                 toList();//具体取数据的方法
             }
             function toList() {
-                var url = "{:url('api/group/getGroupListApi','','',true)}";
+                var url = "{:url('api/group/getGroupMemberListByPageApi','','',true)}";
                 var member_id = "{$memberInfo.id}"
                 mui.ajax({
                     url: url,
@@ -105,12 +108,12 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
-                            $(".myGroupNum").text(data.data.length)
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data[i].id;
+                            $(".myGroupNum").text(data.data.data.length)
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
-                                newli += '<div class="mui-media-body wd60"><h5>' + data.data[i].group + '</h5><p>成员：<text class="colororange">' + data.data[i].members + '</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data[i].bonus + '</text></p></div></li>'
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
+                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group + '</h5><p>成员：<text class="colororange">' + data.data.data[i].members + '</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].bonus + '</text></p></div></li>'
                             }
                         }
                         $("ul.myGroup").empty().append(newli);
@@ -179,21 +182,12 @@
             //接口获取数据并追加到页面
             var toOtherList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-<<<<<<< HEAD
-                var url = "{:url('api/group/getGroupListApi','','',true)}/?page=" + page;
-                var member_id = "{$memberInfo.id}"
-=======
                 var url = "{:url('api/group/getOtherGroupListApi','','',true)}/?page=" + page;
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                 mui.ajax({
                     url: url,
                     data: {
                         keyword: keyword,
                         status: 1,
-<<<<<<< HEAD
-                        member_id: member_id
-=======
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型

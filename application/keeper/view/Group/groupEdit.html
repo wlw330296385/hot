@@ -14,22 +14,6 @@
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
-        .memberList label {
-            padding: 9px 15px;
-            line-height: 30px;
-        }
-
-        .memberList .mui-input-row {
-            height: 48px;
-        }
-
-        .memberList img {
-            width: 30px;
-            height: 30px;
-            float: left;
-            margin-right: 10px;
-        }
-
         .borderStyle img {
             width: 70%;
         }
@@ -54,13 +38,13 @@
 
         <div class="nav-list borderStyle mb12">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
-                <li class="mui-table-view-cell navli">
+                <!-- <li class="mui-table-view-cell navli">
                     <a href="">
                         <img src="{$memberInfo.avatar}" alt="">
                         <p class="mui-ellipsis">{$groupInfo.member}</p>
                     </a>
-                </li>
-                <li class="mui-table-view-cell navli">
+                </li> -->
+                <li class="mui-table-view-cell navli memberList">
                     <a href="">
                         <p>
                             <i class="mui-icon mui-icon-plusempty" style="font-size: 2.7rem;border: 1px solid #ddd;"></i>
@@ -112,12 +96,12 @@
             </div>
             <div class="mui-input-row h-auto">
                 <label>社群宗旨</label>
-                <textarea name="purpose" rows="3" value="" class="purpose" placeholder="请填写内容"></textarea>
+                <textarea name="tenet" rows="3" value="{$groupInfo.tenet}" class="tenet" placeholder="请填写内容">{$groupInfo.tenet}</textarea>
             </div>
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred">
+            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred deleteOut">
                 删除并退出
             </li>
             <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bggreen" onclick="submitAction()">
@@ -141,116 +125,75 @@
             // 设置社群类型默认值
             $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
 
-            //初始化全局变量
-            var count = 1;
-            var keyword = wooApi.GetQueryString('keyword');
-            $('.keyword').val(keyword);
-
-            //搜索活动
-            $("#searchBtn").on("tap", function () {
-                keyword = $(".keyword").val();
-                searchToList();
-            })
-
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
-
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
-                    }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1;//刷新并显示第一页
-                    var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
-
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
-                mui.ajax({
-                    url: url,
-                    data: {
-                        keyword: keyword,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                newli += '<div class="mui-input-row mui-checkbox"><label><img class="mui-pull-left img24" src="' + data.data.data[i].avatar + '" >' + data.data.data[i].member + '</label><input name="checkbox1" value="Item 3" type="checkbox"></div>'
+            //删除并退出
+            $(".deleteOut").on('tap', function () {
+                mui.confirm("确认删除并退出社群吗？", "提示", function (e) {
+                    if (e.index == 1) {
+                        var group_id = "{$groupInfo.id}";
+                        var member_id = "{$groupInfo.member_id}"
+                        mui.ajax("{:url('api/group/dropGroup')}", {
+                            data: {
+                                group_id: group_id,
+                                member_id: member_id
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
                             }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $(".memberList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $(".memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $(".memberList").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        });
                     }
                 });
+            });
+            groupMember();
 
-
-            };
         })
+
+        //自定义列表
+        function groupMember() {
+            var url = "{:url('api/group/getGroupMemberListByPageApi','','',true)}";
+            var group_id = "{$groupInfo.id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    group_id: group_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell navli">'
+                            newli += '<a href=""><img src = "{$memberInfo.avatar}" alt = "" ><p class="mui-ellipsis">' + data.data.data[i].member + '</p></a></li>';
+                        }
+                        $(".memberList").before(newli);
+
+
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
         // 获取数据并进行提交
         function submitAction() {
@@ -259,7 +202,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.purpose = $(".purpose").val();
+            objData.tenet = $(".tenet").val();
             var url = "{:url('api/group/updateGroupApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             console.log(ajaxResult)

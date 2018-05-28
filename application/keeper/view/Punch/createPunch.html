@@ -108,11 +108,7 @@
             <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
             <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
             <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
             <input type="hidden" class="data" name="punch" value="{:date('Y-m-d',time())}">
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
@@ -182,6 +178,8 @@
                 <div class="operation-box border-b">
                     <div class="mui-input-row">
                         <label>选择社群</label>
+                        <span>本次消耗
+                            <text class="colororange Hbin domData" name="stakes">0</text>H币</span>
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="box" id="hideStList" style="display: none"></div>
@@ -243,6 +241,7 @@
                                 <li class="mui-table-view-cell listli">游泳</li>
                                 <li class="mui-table-view-cell listli">球类</li>
                                 <li class="mui-table-view-cell listli">综合</li>
+                                <li class="mui-table-view-cell otherChoise">自填</li>
                             </ul>
                         </div>
                     </li>
@@ -284,6 +283,16 @@
         <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
                 <form class="mui-input-group groupslist mb44">
+                    <!-- <div class="mui-input-row mui-checkbox mui-left">
+                        <label class="lineHeight20 groupName" style="width:85%">A</label>
+                        <span style="width:15%"> 1</span>
+                        <input name="checkbox1" value="" type="checkbox" data-stake="1">
+                    </div>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label class="lineHeight20 groupName" style="width:85%">B</label>
+                        <span style="width:15%"> 2</span>
+                        <input name="checkbox1" value="" type="checkbox" data-stake="2">
+                    </div> -->
                     {volist name="groupList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
@@ -292,6 +301,7 @@
                             data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}">
                     </div>
                     {/volist}
+
                 </form>
             </div>
         </div>
@@ -356,10 +366,10 @@
         $(function () {
 
             // 获取当前时间为打卡时间
-			var year = new Date().getFullYear();
-			var month = new Date().getMonth() + 1;
-			var day = new Date().getDate();
-			var time = year + '-' + month + '-' + day
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            var day = new Date().getDate();
+            var time = year + '-' + month + '-' + day
             $(".punch_time").text(time)
 
             // 是否发布通知
@@ -372,11 +382,6 @@
                 }
             });
 
-<<<<<<< HEAD
-            //清除训练
-            $("#trainDel").on('tap', '', function () {
-                $("input[name=sportEvent]").val("");
-=======
             //清除社群
             $("#groupsDel").on('tap', '', function () {
                 $("#inactiveList").html('');
@@ -389,11 +394,10 @@
                 $("input[name=name]").val('');
                 $(".punch_category").text('');
                 $("input[name=punch_category]").val('');
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
                 mui("#sportType").popover("toggle");
             });
             // 选择训练
-            $(".secondUl").on('tap', 'li', function () {
+            $(".secondUl").on('tap', '.listli', function () {
                 var name = $(this).text();
                 var punch_category = $(this).parent().parent().siblings().children().text();
                 $("input[name=name]").val(name);
@@ -405,11 +409,11 @@
                 }
                 mui("#sportType").popover("toggle");
             });
+            $(".otherChoise").on("tap", "", function () {
+                $("input[name=name]").val('');
+                mui("#sportType").popover("toggle");
+            })
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 18daa39ed21a8e093004888f7778c76d0c8c2b2f
             //全选
             $(".all").click(function () {
                 $(".checkboxCont").find('input').prop('checked', true)
@@ -426,7 +430,7 @@
                 changeIndex();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font>' + $(this).val() + '</font><input name="group" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font class="f14">' + $(this).val() + '</font><input name="group" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                     var group = $(this).siblings("font").text();
                     var group_id = $(this).attr("data-group_id");
                     var member = $(this).attr("data-member");
@@ -450,32 +454,42 @@
             $("#groupConfirm").on('tap', function () {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
+                var SumNum = 0
                 $(".groupslist input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font>' + $(this).siblings(".groupName").text() + '</font><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
+                    var stake = $(this).attr("data-stake");
+                    SumNum += parseInt(stake)
                 });
+                $(".Hbin").text(SumNum)
                 changeIndex();//调用-更新序号
                 mui("#groups").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
 
-            $(".groupName").on("tap", "", function () {
-                var thisSkate = ''
-                var aaa = $(this).siblings("input[type='checkbox']").is(':checked')
-                thisSkate = $(this).siblings("span").text();
-                if (aaa == true) {
-                    $(".skates").text(thisSkate)
-                } else {
-                    $(".skates").text(thisSkate)
-                    console.log(123)
-                }
-            })
+            // $(".groupName").on("tap", "", function () {
+            //     var thisSkate = ''
+            //     var aaa = $(this).siblings("input[type='checkbox']").is(':checked')
+            //     thisSkate = $(this).siblings("span").text();
+            //     if (aaa == true) {
+            //         $(".skates").text(thisSkate)
+            //     } else {
+            //         $(".skates").text(thisSkate)
+            //         console.log(123)
+            //     }
+            // })
         })
 
         // 获取数据并进行提交
         function submitAction() {
+
+            if ($(".punch_category").text() == '') {
+                mui.toast("请选择运动类型");
+                return false;
+            }
+
             $("#hideStList input[name=group]").each(function (i) {
                 var group = $(this).siblings("font").text();
                 var group_id = $(this).attr("data-group_id");
@@ -498,7 +512,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '提示', '确定', function () {
-                    var goUrl = "{:url('punch/punchInfo')}"+ '/punch_id/' + ajaxResult.data;
+                    var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data;
                     window.top.location.href = goUrl;
                 })
             } else {
