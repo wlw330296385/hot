@@ -468,6 +468,21 @@
         function check_status(value) {
             var apply_id = document.getElementById('applyid').value;
             var reply = $(".reply").val();
+            if (value == 2) {
+                // 点击“同意” 检查球员名单是否符合要求：球员人数与参赛球队球员上/下限数比较
+                var teammemberscount = $('.team-players .listli').length;
+                var max_teammember_num = "{$leagueInfo.max_teammembers}";
+                var min_teammember_num = "{$leagueInfo.min_teammembers}";
+                if ( parseInt(min_teammember_num) > 0 && teammemberscount < parseInt(min_teammember_num) ) {
+                    mui.alert('该球队登记的参赛球员人数不足'+min_teammember_num+'人的要求');
+                    return;
+                }
+                if ( parseInt(min_teammember_num) > 0 && teammemberscount > parseInt(max_teammember_num) ) {
+                    mui.alert('该球队登记的参赛球员人数超过'+max_teammember_num+'人的要求');
+                    return;
+                }
+            }
+
             mui.ajax("{:url('api/league/replyleaguesignupteam')}", {
                 data: {
                     apply_id: apply_id,

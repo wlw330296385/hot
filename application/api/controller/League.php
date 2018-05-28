@@ -607,6 +607,12 @@ class League extends Base
             if ($result['code'] == 200) {
                 // 同意操作
                 if ($data['status'] == 2) {
+                    // 查询球队的参赛球员数据
+                    $matchTeamMembers = $leagueService->getmatchteammembers([
+                        'match_apply_id' => $matchApply['id'],
+                        'match_id' => $matchApply['match_id'],
+                        'team_id' => $matchApply['team_id']
+                    ]);
                     // 保存联赛球队数据
                     $dataMatchTeam = [
                         'match_id' => $matchApply['match_id'],
@@ -615,21 +621,21 @@ class League extends Base
                         'team' => $matchApply['team']['name'],
                         'team_logo' => $matchApply['team']['logo']
                     ];
+                    // 组合联赛球队球员信息字段
+                    if ($matchTeamMembers) {
+                        $dataMatchTeam['members_num'] = count($matchTeamMembers);
+                        $members = [];
+                        foreach ($matchTeamMembers as $k => $val) {
+                            $members[$k]['id'] = $val['id'];
+                            $members[$k]['name'] = $val['name'];
+                            $members[$k]['member_id'] = $val['member_id'];
+                            $members[$k]['member'] = $val['member'];
+                            $members[$k]['avatar'] = $val['avatar'];
+                        }
+                        $dataMatchTeam['members'] = json_encode($members, JSON_UNESCAPED_UNICODE);
+                    }
                     $matchTeamId = $leagueService->saveMatchTeam($dataMatchTeam);
-                    // 联赛球队数+1
-                    db('match')->where('id', $matchApply['match_id'])->setInc('teams_count', 1);
-                    // 发送消息推送
-                    $messageS = new MessageService();
-                    $messageS->sendMessageToMember($matchApply['member_id'], $message, config('wxTemplateID.applyResult'));
-                    // 球队公告
-                    $teamS = new TeamService();
-                    $teamS->saveTeamMessage($message);
-                    // 查询球队的参赛球员数据，更新match_team_id
-                    $matchTeamMembers = $leagueService->getmatchteammembers([
-                        'match_apply_id' => $matchApply['id'],
-                        'match_id' => $matchApply['match_id'],
-                        'team_id' => $matchApply['team_id']
-                    ]);
+                    // 更新参赛球员数据
                     if ($matchTeamMembers) {
                         $leagueService->saveMatchTeamMember([
                             'match_team_id' => $matchTeamId['data']
@@ -639,6 +645,14 @@ class League extends Base
                             'team_id' => $matchApply['team_id']
                         ]);
                     }
+                    // 联赛球队数+1
+                    db('match')->where('id', $matchApply['match_id'])->setInc('teams_count', 1);
+                    // 发送消息推送
+                    $messageS = new MessageService();
+                    $messageS->sendMessageToMember($matchApply['member_id'], $message, config('wxTemplateID.applyResult'));
+                    // 球队公告
+                    $teamS = new TeamService();
+                    $teamS->saveTeamMessage($message);
                 }
             }
         } catch (Exception $e) {
