@@ -594,6 +594,7 @@ class League extends Base
             'team_id' => $matchApply['team_id'],
             'steward_type' => 2
         ];
+
         try {
             // 更新match_apply
             $result = $matchService->saveMatchApply([
@@ -614,7 +615,7 @@ class League extends Base
                         'team' => $matchApply['team']['name'],
                         'team_logo' => $matchApply['team']['logo']
                     ];
-                    $leagueService->saveMatchTeam($dataMatchTeam);
+                    $matchTeamId = $leagueService->saveMatchTeam($dataMatchTeam);
                     // 联赛球队数+1
                     db('match')->where('id', $matchApply['match_id'])->setInc('teams_count', 1);
                     // 发送消息推送
@@ -623,6 +624,21 @@ class League extends Base
                     // 球队公告
                     $teamS = new TeamService();
                     $teamS->saveTeamMessage($message);
+                    // 查询球队的参赛球员数据，更新match_team_id
+                    $matchTeamMembers = $leagueService->getmatchteammembers([
+                        'match_apply_id' => $matchApply['id'],
+                        'match_id' => $matchApply['match_id'],
+                        'team_id' => $matchApply['team_id']
+                    ]);
+                    if ($matchTeamMembers) {
+                        $leagueService->saveMatchTeamMember([
+                            'match_team_id' => $matchTeamId['data']
+                        ], [
+                            'match_apply_id' => $matchApply['id'],
+                            'match_id' => $matchApply['match_id'],
+                            'team_id' => $matchApply['team_id']
+                        ]);
+                    }
                 }
             }
         } catch (Exception $e) {
