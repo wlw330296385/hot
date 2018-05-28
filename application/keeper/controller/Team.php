@@ -1459,4 +1459,9 @@ class Team extends Base
     public function constitutionOfTeam() {
         return view('Team/constitutionOfTeam');
     }
+
+    // 球队参与的联赛列表
+    public function leaguelistofteam() {
+        return view('Team/leaguelistOfTeam');
+    }
 }

@@ -222,7 +222,15 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
-                            mui.toast("报名成功");
+                            //mui.toast("报名成功");
+                            var apply_id = data.data;
+                            // 询问框 进入填写参赛球员名单
+                            mui.confirm('是否现在提交参赛球员名单','报名成功', ['稍后完善', '是'], function(e) {
+                                if (e.index==1) {
+                                    // 前往填写参赛球员页
+                                    window.location.href = "{:url('keeper/match/completeplayerbyteam')}/apply_id/"+apply_id+"/team_id/"+team_id+"/league_id/"+league_id;
+                                }
+                            })
                         } else {
                             mui.toast(data.msg);
                         }
