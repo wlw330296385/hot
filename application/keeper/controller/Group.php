@@ -66,11 +66,19 @@ class Group extends Base{
 
     // 编辑奖金池
     public function poolEdit() {
+        
         return view('Group/poolEdit');
     }
 
     // 奖金池列表
     public function poolList() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+
+
+
+
+        $this->assign('groupInfo',$groupInfo);
         return view('Group/poolList');
     }
 
