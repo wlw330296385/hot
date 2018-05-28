@@ -111,7 +111,7 @@
                     </li>
                 </ul>
             </div>
-
+            <!-- {$lastPool}{$nowPool} -->
             <div class="page-header">
                 <span class="course">
                     打卡记录
@@ -162,12 +162,12 @@
             swipeBack: true //启用右滑关闭功能
         });
         var count = 1;
+        var group_member = "{$groupInfo.member}";
+        var member = "{$memberInfo.member}";
+        var member_id = "{$memberInfo.id}";
+        var group_id = "{$groupInfo.id}";
+        var group_member_id = "{$groupInfo.member_id}";
         $(function () {
-            var group_member = "{$groupInfo.member}";
-            var member = "{$memberInfo.member}";
-            var member_id = "{$memberInfo.id}";
-            var group_id = "{$groupInfo.id}";
-            var group_member_id = "{$groupInfo.member_id}";
 
             if (group_member != member) {
                 $(".outGroup").show();
@@ -217,7 +217,7 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
-                                    window.setTimeout("window.location='{group/index}'", 2000);
+                                    window.setTimeout("window.location='group/index'", 2000);
                                 } else {
                                     mui.toast(data.msg);
                                 }
@@ -259,6 +259,7 @@
                 url: url,
                 data: {
                     page: page,
+                    group_id: group_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -271,8 +272,8 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id;
                             newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].name + '</text>';
-                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">0</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].rewords_money + '</text></p>';
+                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
+                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewords_money + '</text></p>';
                             newli += '</div></a></li>'
                         }
                         if (newli == '') {
