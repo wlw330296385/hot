@@ -63,7 +63,7 @@ class Group extends Base{
     public function poolInfo() {
 
         $pool_id = input('param.pool_id');
-        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$group_id]);
+        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
 
 
 
@@ -77,7 +77,7 @@ class Group extends Base{
     // 编辑奖金池
     public function poolEdit() {
         $pool_id = input('param.pool_id');
-        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$group_id]);
+        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
 
 
 
