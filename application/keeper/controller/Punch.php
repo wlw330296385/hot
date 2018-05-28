@@ -60,6 +60,11 @@ class Punch extends Base{
     	$this->assign('monthPunch',$monthPunch);
         $this->assign('groupList',$groupList);
     	return view('Punch/createPunch');
+	}
+	
+	// 打卡列表
+	public function punchList() {
+        return view('Punch/punchList');
     }
 
 }
