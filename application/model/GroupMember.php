@@ -12,4 +12,8 @@ class GroupMember extends Model {
     //                         'type',
     //    
 
+
+	public function group(){
+		return $this->hasOne('group','id','group_id');
+	}
 }

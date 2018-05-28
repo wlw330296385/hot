@@ -164,7 +164,7 @@ class GroupService {
 
 
     public function getGroupMemberListByPage($map,$paginate = 10){
-        $result = $this->GroupMemberModel->where($map)->paginate($paginate);
+        $result = $this->GroupMemberModel->with('group')->where($map)->paginate($paginate);
         return $result;
     }
 
