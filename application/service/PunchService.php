@@ -41,7 +41,7 @@ class PunchService {
 
     public function getGroupPunchListByPage($map,$paginate = 10){
         $GroupPunch = new \app\model\GroupPunch;
-        $result = $GroupPunch->where($map)->paginate($paginate);
+        $result = $GroupPunch->with('punch')->where($map)->paginate($paginate);
         return $result;
     }
 }

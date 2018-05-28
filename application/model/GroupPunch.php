@@ -12,4 +12,9 @@ class GroupPunch extends Model {
     //                         'type',
     //    
 
+
+    public function punch(){
+    	return $this->hasOne('punch');
+    }
+
 }
