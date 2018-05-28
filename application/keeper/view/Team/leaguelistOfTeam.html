@@ -1,10 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>球队参与联赛</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
+
 <body>
-球队参与的联赛列表
+
+<header class="mui-bar mui-bar-nav for-tab">
+    <div class="camp-lesson-list">
+        <div class="mui-segmented-control mb">
+            <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('team/teamManage',['team_id' => $team_id])}"></a>
+            <a class="mui-control-item mui-active" href="#passList">球队参与联赛</a>
+            <a class="mui-control-item" href="#signUpList">球队报名联赛</a>
+        </div>
+    </div>
+</header>
+
+<div class="mui-content">
+
+    <div class="tab-pullRefresh">
+        <div id="passList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b passList"></ul>
+            </div>
+        </div>
+        <div id="signUpList" class="mui-scroll-wrapper mui-control-content">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b signUpList"></ul>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui("body").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    $(function () {
+
+        //初始化全局变量
+        var onCount = 1;
+        var offCount = 1;
+
+        mui('#passList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        mui('#signUpList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOff
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOff
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1;//刷新并显示第一页
+                var page = onCount;
+                var gType = 1;//代表下拉刷新
+                toPassList('passList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++;//翻下一页
+                var page = onCount;
+                var gType = 2;//代表上拉加载
+                toPassList('passList', page, gType, 1);//具体取数据的方法
+            }, 100);
+        }
+
+        //下拉刷新具体业务实现（下架）
+        function pulldownRefreshOff() {
+            setTimeout(function () {
+                offCount = 1;//刷新并显示第一页
+                var page = offCount;
+                var gType = 1;//代表下拉刷新
+                toSignUpList('signUpList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（下架）
+        function pullupRefreshOff() {
+            setTimeout(function () {
+                offCount++;//翻下一页
+                var page = offCount;
+                var gType = 2;//代表上拉加载
+                toSignUpList('signUpList', page, gType, -1);//具体取数据的方法
+            }, 100);
+        }
+
+    })
+
+    var team_id = "{$team_id}";
+
+    // 接口获取数据并追加到页面
+    var toPassList = function (wList, page, gType, status) {
+        var url = "{:url('api/league/leagueteampage')}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('match/leagueinfo')}" + '/league_id/' + data.data.data[i].match_id;
+                        newli += '<li class="mui-table-view-cell mui-media listli coach">';
+                        newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].match.logo + '" style="width: 40px !important;height: 40px !important;"><div class="mui-media-body lineHeight20"><p class="f14" style="font-weight:bold">' + data.data.data[i].match.name + '</p><p>' + data.data.data[i].match.type + '</p></div>';
+                        newli += '</li>';
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.passList").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.passList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.passList").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    // 接口获取数据并追加到页面
+    var toSignUpList = function (wList, page, gType, status) {
+        var url = "{:url('api/league/leaguesignupteampage')}" + '/?page=' + page;
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                is_league: 1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('match/completeplayerbyteam')}" + '/team_id/' + data.data.data[i].team.id + '/league_id/' + data.data.data[i].match_id;
+                        newli += '<li class="mui-table-view-cell mui-media listli coach">';
+                        newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].match.logo + '" style="width: 40px !important;height: 40px !important;"><div class="mui-media-body lineHeight20"><p class="f16" style="font-eright:bold">' + data.data.data[i].match.name + '</p><p>' + data.data.data[i].match.type + '</p></div>';
+                        if (data.data.data[i].status == 1) {
+                            newli += '<div class="fr lineHeight32 colororange">未回复</div>'
+                        } else if (data.data.data[i].status == 2) {
+                            newli += '<div class="fr lineHeight32 colororange">已同意</div>'
+                        } else if (data.data.data[i].status == 3) {
+                            newli += '<div class="fr lineHeight32 colororange">已拒绝</div>'
+                        }
+                        newli += '</li>';
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.signUpList").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.signUpList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.signUpList").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+
+
+</script>
+
 </html>

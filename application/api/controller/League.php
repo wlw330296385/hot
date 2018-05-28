@@ -489,6 +489,7 @@ class League extends Base
         $dataMatchApply = [
             'match_id' => $league['id'],
             'match' => $league['name'],
+            'is_league' => 1,
             'team_id' => $teamMember['team_id'],
             'team' => $teamMember['team'],
             'telephone' => empty($teamMember['telephone']) ? $this->memberInfo['telephone'] : $teamMember['telephone'],

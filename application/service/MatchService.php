@@ -637,7 +637,7 @@ class MatchService {
     // 球队申请比赛(关联球队）列表（页码）
     public function getMatchApplyWithTeamPaginator($map, $order='id desc', $paginate=10) {
         $model = new MatchApply();
-        $query = $model->with('team')->where($map)->order($order)->paginate($paginate);
+        $query = $model->with('team,match')->where($map)->order($order)->paginate($paginate);
         if ($query) {
             return $query->toArray();
         } else {

@@ -269,7 +269,7 @@ class LeagueService
     // 获取联赛球队列表
     public function getMatchTeamWithTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
         $model = new MatchTeam();
-        $res = $model->with('team')->where($map)->order($order)->page($page)->limit($limit)->select();
+        $res = $model->with('team,match')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
             return $res;
         }
@@ -279,7 +279,7 @@ class LeagueService
     // 获取联赛球队列表（页码）
     public function getMatchTeamWithTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
         $model = new MatchTeam();
-        $res = $model->with('team')->where($map)->order($order)->paginate($limit);
+        $res = $model->with('team,match')->where($map)->order($order)->paginate($limit);
         if ($res) {
             return $res;
         }
