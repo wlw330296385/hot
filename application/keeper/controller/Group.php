@@ -62,5 +62,9 @@ class Group extends Base{
         return view('Group/poolEdit');
     }
 
+    // 奖金池列表
+    public function poolList() {
+        return view('Group/poolList');
+    }
 
 }
