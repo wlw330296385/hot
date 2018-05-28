@@ -123,6 +123,15 @@ class Group extends Base{
     public function getGroupMemberListByPageApi(){
         try{
             $map = input('post.');
+            $keyword = input('param.keyword');
+
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['group'] = ['LIKE','%'.$keyword.'%'];
+            }
+            if( isset($map['keyword']) ){
+                unset($map['keyword']);
+            }
+
             $result = $this->GroupService->getGroupMemberListByPage($map);  
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result->toArray()]);
