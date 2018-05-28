@@ -519,10 +519,7 @@ class BillService {
             }
             
             //结束增加学生数据
-        
         //结束课程操作
-
-        
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
             $CampMember = new CampMember;

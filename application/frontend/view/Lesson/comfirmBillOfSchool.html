@@ -90,7 +90,7 @@
     </div>
 
     <ul class="mui-table-view operation">
-        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="bookLeeson()">提交报名</li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="createBill()">提交报名</li>
     </ul>
 
 </div>
@@ -226,23 +226,6 @@
     }
 
 
-    // 购买成功提交数据
-    function bookLeeson(){
-        //条件1判断是否没数据
-        if(!isStudent){
-             mui.alert('请先 [ 添加学生 ] 信息，谢谢！');
-             return false;
-        }
-        
-        let result = createBill();
-        if(result.code == 200){
-          pay('校园课程');
-        }else{
-            mui.toast(result.msg);
-            location.reload();
-        }
-    }
-
     //创建订单
     function createBill() {
         var remarks = $('.remarks').val();
@@ -257,7 +240,11 @@
         objBillInfo.balance_pay = 0;
         objBillInfo.__token__ = "{$Request.token}";
         var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}", objBillInfo);
-        return result;
+        if(result.code == 200){
+            pay('免费校园课');
+        }else{
+            mui.toast(result.msg);
+        }
     }
 
 
