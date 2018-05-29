@@ -2,10 +2,13 @@
 namespace app\keeper\controller;
 use app\keeper\controller\Base;
 use app\service\BannerService;
+use think\Cookie;
+
 class Find extends Base{
 	
 	public function _initialize(){
 		parent::_initialize();
+        Cookie::set('steward_type', 2);
 	}
 
     public function index() {
@@ -43,6 +46,7 @@ class Find extends Base{
         }
         //平台礼包结束
         $this->assign('bannerList',$bannerList);
+        $this->assign('lastBanner', end($bannerList));
         $this->assign('ArticleList',$ArticleList);
         $this->assign('bonusInfo',$bonusInfo);
         $this->assign('bonusInfo',$bonusInfo);

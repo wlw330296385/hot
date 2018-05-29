@@ -134,33 +134,43 @@
         <div id="tabbar" class="mui-control-content mui-active">
             <!--图片轮播-->
             <div id="slider" class="mui-slider">
-                <div class="mui-slider-group mui-slider-loop">
+                {if condition="count($bannerList) gt 1"}
+                <div class="mui-slider-group mui-slider-loop morePic">
                     <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="{$bannerList[0]['url']}">
+                        <a href="{$lastBanner.url}">
+                            <img src="{$lastBanner.image}">
                         </a>
                     </div>
                     <!-- 第一张 -->
                     {volist name="bannerList" id="vol"}
                     <div class="mui-slider-item">
-                        <a href="">
-                            <img src="{$vol.url}">
+                        <a href="{$vol.url}">
+                            <img src="{$vol.image}">
                         </a>
                     </div>
                     {/volist}
                     <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
                     <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="#">
-                            <img src="{$bannerList[2]['url']}">
+                        <a href="{$bannerList[0]['url']}">
+                            <img src="{$bannerList[0]['image']}">
                         </a>
                     </div>
                 </div>
                 <div class="mui-slider-indicator">
-                    <div class="mui-indicator mui-active"></div>
+                    {volist name="bannerList" id="vol"}
                     <div class="mui-indicator"></div>
-                    <div class="mui-indicator"></div>
+                    {/volist}
                 </div>
+                {else/}
+                <div class="mui-slider-group mui-slider-loop onePic">
+                    <div class="mui-slider-item">
+                        <a href="{$bannerList[0]['url']}">
+                            <img src="{$bannerList[0]['image']}">
+                        </a>
+                    </div>
+                </div>
+                {/if}
             </div>
 
             <!--图文导航-->
@@ -526,7 +536,8 @@
 
         var member_id = "{$memberInfo.id}";
         $(function () {
-
+            // banner第一个点点焦点样式
+            $('.mui-slider-indicator .mui-indicator').eq(0).addClass('mui-active');
             //未开发提示
             $(".goConfirm").click(function () {
                 mui.toast('暂未开放，敬请期待');

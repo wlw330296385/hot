@@ -25,15 +25,27 @@ class Index extends Base{
         $this->o_type = $o_type;
         cookie('o_id', $o_id);
         cookie('o_type', $o_type);
-        //$bannerList = db('banner')->where(['organization_id'=>0,'organization_type'=>0,'status'=>1,'steward_type' => 1])->order('ord asc')->limit(3)->select();
-        // 培训管家banner
-        $bannerService = new BannerService();
-        $bannerList = $bannerService->bannerList([
-            'organization_id'=>0,
-            'organization_type'=>0,
+        // 重定义homeurl
+        cookie('homeurl', request()->url());
+        // banner图
+        $bannerList = db('banner')->where([
+            'organization_id'=>$this->o_id,
+            'organization_type'=>$this->o_type,
             'status'=>1,
             'steward_type' => cookie('steward_type')
-        ], 'ord desc', 3);
+        ])->order('ord asc')->limit(3)->select();
+
+        // 如果banner不够三张
+        if( count($bannerList)<2 ){
+            $res = db('banner')->where([
+                'organization_id'=>0,
+                'organization_type'=>0,
+                'status'=>1,
+                'steward_type' => cookie('steward_type')
+            ])->order('ord asc')->limit((3-count($bannerList)))->select();
+            $bannerList = array_merge($bannerList,$res);
+        }
+        $this->assign('bannerList',$bannerList);
   
     	// 热门文章
         $ArticleService= new \app\service\ArticleService;
@@ -62,6 +74,7 @@ class Index extends Base{
         //平台礼包结束
         $this->assign('bonusInfo',$bonusInfo);
     	$this->assign('bannerList',$bannerList);
+    	$this->assign('lastBanner', end($bannerList));
     	$this->assign('ArticleList',$ArticleList);
         return view('Index/index');
     }
@@ -89,6 +102,7 @@ class Index extends Base{
             $bannerList = array_merge($bannerList,$res);
         }
         $this->assign('bannerList',$bannerList);
+        $this->assign('lastBanner', end($bannerList));
         return view('Index/indexOfCamp');
     }
 
@@ -117,6 +131,7 @@ class Index extends Base{
             $bannerList = array_merge($bannerList,$res);
         }
         $this->assign('bannerList',$bannerList);
+        $this->assign('lastBanner', end($bannerList));
         return view('Index/indexOfSchool');
     }
 
