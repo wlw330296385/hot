@@ -176,13 +176,13 @@
             // });
 
             $("#memberDel").on('tap', function () {
-                var idList = [];
-                var groupMember_id = ''
+                let list = [];
+                let groupMember_id = ''
                 $(".delMemberList input[type=checkbox]:checked").each(function (i) {
                     groupMember_id = $(this).val();
-                    idList[i] = groupMember_id;
+                    list.push(groupMember_id);
                 })
-                console.log(idList)
+                let idList = JSON.stringify(list);
                 mui.confirm("确认删除选中成员吗？", "提示", function (e) {
                     if (e.index == 1) {
                         mui.ajax("{:url('api/group/dropGroups')}", {
