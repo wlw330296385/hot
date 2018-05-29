@@ -30,11 +30,11 @@
     </header>
 
     <div class="mui-content">
-        <input type="hidden" class="data" name="pool_id" value="6">
+        <input type="hidden" class="data" name="pool_id" value="{$poolInfo.id}">
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>奖金池名称</label>
-                <input type="text" name="pool" class="data" value="{$poolInfo.pool}" placeholder="奖金池名称">
+                <span>{$poolInfo.group}</span>
             </div>
             <div class="mui-input-row">
                 <label>下注金额</label>
@@ -126,7 +126,7 @@
             console.log(ajaxResult)
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                    var goUrl = "{:url('group/poolInfo')}" + "/pool_id/" + ajaxResult.data;
+                    var goUrl = "{:url('group/poolInfo')}" + "/pool_id/" + "{$poolInfo.id}";
                     window.top.location.href = goUrl;
                 })
             } else {

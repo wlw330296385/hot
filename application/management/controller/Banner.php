@@ -29,7 +29,7 @@ class Banner extends Camp
     public function add() {
         if ($this->request->isPost()) {
             $data = input('post.');
-            if (empty($data['url'])) {
+            if (empty($data['image'])) {
                 $this->error('请上传图片');
             }
             $bannerS = new BannerService();
@@ -49,7 +49,7 @@ class Banner extends Camp
     public function edit() {
         if ($this->request->isPost()) {
             $data = input('post.');
-            if (empty($data['url'])) {
+            if (empty($data['image'])) {
                 $this->error('请上传图片');
             }
             $bannerS = new BannerService();
@@ -76,7 +76,7 @@ class Banner extends Camp
             $this->error(__lang('MSG_402'));
         }
         $bannerInfo = $this->model->where('id', $id)->find();
-        if (!$bannerInfo) {
+        if (!$bannerInfo || $bannerInfo->organization_id != $this->campInfo['id']) {
             $this->error(__lang('MSG_404'));
         }
         if ($bannerInfo['status'] == 1) {

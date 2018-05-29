@@ -108,8 +108,8 @@
             <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
             <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
             <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
-
             <input type="hidden" class="data" name="punch" value="{:date('Y-m-d',time())}">
+            
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
                     <img class="mui-media-object mui-pull-left img45" src="{$memberInfo.avatar}">
@@ -132,12 +132,6 @@
                         <span id="result" class="ui-alert domData punch_time" name="punch_time"></span>
                     </div>
                 </div>
-                <!-- <div class="mui-input-row">
-                    <label class="wd49">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>打卡时间
-                    </label>
-                    <span class="domData punch_time" name="punch_time">2018-5-25</span>
-                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
@@ -164,27 +158,28 @@
                     </div>
                     <input type="hidden" name="is_anonymous" value="1" class="data">
                 </div>
-
                 <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label><i class="icon iconfont icon-activity-Startingtim colororange"></i>上传运动照</label>
+                        <div id="view" style="width: 51px;"></div>
+                    </a>
+                    <input type="hidden" name="image_url" value="" class="data">
+                </div>
+                <!-- <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>
                             <i class="icon iconfont icon-activity-Startingtim colororange"></i>上传照片</label>
                         <img id="preview_1" class="upload-preview" src="" alt="">
                         <input type="hidden" name="image_url" value="" class="data">
                     </a>
-                </div>
-
-                <!-- <div class="mui-input-row">
-                    <a href="#groups" class="mui-navigate-right">
-                        <label class="wd45">
-                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择社群</label>
-                        <span class="wd45"></span>
-                    </a>
                 </div> -->
+
                 <div class="operation-box border-b">
                     <div class="mui-input-row">
-                        <label>选择社群</label>
-                        <span>本次消耗
+                        <label class="wd49 lineHeight20">选择社群
+                            <text style="color: #c7c7c7">(可不选)</text>
+                        </label>
+                        <span>本次打卡消耗
                             <text class="colororange Hbin domData" name="stakes">0</text>H币</span>
                     </div>
                     <div class="box" id="inactiveList"></div>
@@ -238,7 +233,7 @@
                 <ul class="mui-table-view list">
                     <li class="mui-table-view-cell mui-collapse listli">
                         <a class="mui-navigate-right">
-                            <p class="fl">训练</p>
+                            <p class="fl colororange">训练</p>
                         </a>
                         <div class="mui-collapse-content" style="padding: 0">
                             <ul class="mui-table-view list secondUl">
@@ -253,7 +248,7 @@
                     </li>
                     <li class="mui-table-view-cell mui-collapse listli">
                         <a class="mui-navigate-right">
-                            <p class="fl">比赛</p>
+                            <p class="fl colororange">比赛</p>
                         </a>
                         <div class="mui-collapse-content" style="padding: 0">
                             <ul class="mui-table-view list secondUl matchList"></ul>
@@ -312,7 +307,14 @@
 
     </div>
 
-
+    <!-- 头像截图弹框 -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" id="file">
+        </div>
+        <button id="clipBtn">截取</button>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/common.js"></script>
@@ -328,6 +330,12 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -517,13 +525,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell listli">' + data.data[i].match + '</li>'
                         }
-                        $(".matchList").empty();
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
-                        $(".matchList").append(newli);
+                        $(".matchList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".matchList").append('<p class="mui-text-center">暂无数据</p>')
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -574,6 +578,43 @@
                 }, 'json');
             }
         };
+
+    </script>
+    <script>
+        var imgurl = '';
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            //adaptive: ['60%', '80%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurl = res.path;
+                    $("input[name=image_url]").val(imgurl)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
+    // 加载的图片必须要与本程序同源，否则无法截图
+    //        pc.load('img/mm.jpg');
 
     </script>
 </body>
