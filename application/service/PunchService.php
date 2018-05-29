@@ -48,7 +48,7 @@ class PunchService {
                     'type'      =>-1,
                     'status'    =>1,
                     'f_id'      =>$this->Punch->id,
-                    'create_time'=>time();
+                    'create_time'=>time(),
                 ]
             );
             return ['code'=>200,'msg'=>'创建成功','data'=>$this->Punch->id];

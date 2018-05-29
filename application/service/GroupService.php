@@ -164,6 +164,30 @@ class GroupService {
 
 
 
+    // 踢出社群/退出社群
+    public function dropGroups($member_id,$group_id,$ids){
+        $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
+        if($member_id <> $GroupInfo['member_id']){
+            return ['msg'=>'只有群主可操作', 'code' => 100];
+        }
+
+
+        $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->delete();
+        if($result){
+            $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',count($ids));
+            if(!$res){
+                return ['msg'=>'网络错误', 'code' => 100];
+            }
+        }else{
+            return ['msg'=>'操作失败', 'code' => 100];
+        }
+        
+        return ['msg'=>'操作成功', 'code' => 200];
+        
+    }
+
+
+
     public function getGroupMemberListByPage($map,$paginate = 10){
         $result = $this->GroupMemberModel->with('group')->where($map)->paginate($paginate);
         return $result;

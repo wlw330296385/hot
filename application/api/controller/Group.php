@@ -221,4 +221,21 @@ class Group extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+
+
+    //将多人批量踢出社群
+    public function dropGroups(){
+        try{
+            $idList = input('param.idList');
+            $ids = json_decode($idList);
+            $member_id = input('param.member_id',$this->memberInfo['id']);
+            $group_id = input('param.group_id');
+            $result = $this->GroupService->dropGroups($member_id,$group_id,$ids);
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
