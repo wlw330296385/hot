@@ -172,7 +172,7 @@ class GroupService {
         }
 
 
-        $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->update('status'=>-1);
+        $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->update(['status'=>-1]);
         if($result){
             $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',count($ids));
             if(!$res){

@@ -138,5 +138,76 @@ class Punch extends Base{
 
 
 
+    public function commentApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+            $comment_id = input('param.comment_id');
+            if($comment_id){
+                $result = $this->PunchService->updateComment($data,['id'=>$comment_id]);
+            }else{
+                $result = $this->PunchService->createComment($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }   
+    }
+
+    // 获取评论列表
+    public function getCommentListApi(){
+        try{
+            $map = input('post.');
+            $result = $this->PunchService->getCommentList($map);
+            if($result){
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
+            }else{
+                return json(['msg'=>'获取失败', 'code' => 100]);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        } 
+    }
+    // 获取评论列表byPage
+    public function getCommentListByPageApi(){
+        try{
+            $map = input('post.');
+
+            $result = $this->PunchService->getCommentListByPage($map);
+            if($result){
+                return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
+            }else{
+                return json(['msg'=>'获取失败', 'code' => 100]);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        } 
+    }
+
+
+    public function likesApi(){
+        try{
+            $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            
+            $likesInfo = $this->PunchService->getLikesInfo(['article_id'=>$data['article_id'],'member_id'=>$data['member_id']]);
+            if($likesInfo){
+                if($likesInfo['status'] == 1){
+                    $result = $this->PunchService->updateLikes(['status'=>-1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                }else{
+                    $result = $this->PunchService->updateLikes(['status'=>1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                }
+            }else{
+                $result = $this->PunchService->createLikes($data);
+            }
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     
 }
