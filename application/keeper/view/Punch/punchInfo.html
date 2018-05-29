@@ -62,9 +62,6 @@
             font-size: 14px;
             text-align: center;
         }
-        .punchImg img{
-            min-height: 200px;
-        }
     </style>
 </head>
 
@@ -110,7 +107,7 @@
             <div class="page-header border-b">
                 <span class="course wd52">评论</span>
                 <span class="more" style="padding-right: 0">打卡
-                    <span class="colororange">0</span> HT&nbsp;&nbsp; 打赏
+                    <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
                     <span class="colororange">{$punchInfo.rewords_money}</span> HT
                 </span>
             </div>
@@ -202,47 +199,47 @@
             })
 
             //评论功能
-            $(".commentBtn").on('tap', function () {
-                var commented_id = "{honorInfo.id}";
-                var commented = "{honorInfo.name}";
-                var team_id = "{honorInfo.prize_team_id}";
-                var comment = $(".comment").val();
+            // $(".commentBtn").on('tap', function () {
+            //     var commented_id = "{honorInfo.id}";
+            //     var commented = "{honorInfo.name}";
+            //     var team_id = "{honorInfo.prize_team_id}";
+            //     var comment = $(".comment").val();
 
-                if (comment == '') {
-                    mui.toast("评价内容不能为空哦");
-                    return false;
-                }
+            //     if (comment == '') {
+            //         mui.toast("评价内容不能为空哦");
+            //         return false;
+            //     }
 
-                mui.ajax("{:url('api/team/addteamcomment')}", {
-                    data: {
-                        commented_id: commented_id,
-                        comment_type: 5,
-                        comment: comment,
-                        commented: commented,
-                        team_id: team_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast('评价成功，感谢你的评价！');
-                            $(".comment-list").empty();
-                            toCommentList();
-                            mui('#fbcomment').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#fbcomment').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
+            //     mui.ajax("{:url('')}", {
+            //         data: {
+            //             commented_id: commented_id,
+            //             comment_type: 5,
+            //             comment: comment,
+            //             commented: commented,
+            //             team_id: team_id
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.toast('评价成功，感谢你的评价！');
+            //                 $(".comment-list").empty();
+            //                 toCommentList();
+            //                 mui('#fbcomment').popover('toggle');
+            //             } else {
+            //                 mui.toast(data.msg);
+            //                 mui('#fbcomment').popover('toggle');
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
 
             pulldownRefresh(); //页面打开时获取一次最新评论信息
         });

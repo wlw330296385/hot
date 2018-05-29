@@ -53,8 +53,8 @@
         });
         var count = 1;
         $(function () {
+            var group_id = wooApi.GetQueryString('group_id');
             //初始化全局变量
-
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -100,53 +100,106 @@
 
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/punch/getPunchListApi','','',true)}" + '/?page=' + page;
-                var member_id = "{$memberInfo.id}"
-                mui.ajax({
-                    url: url,
-                    data: {
-                        member_id: member_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
-                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                                newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
-                                newli += '</div></a></li>'
+                if (group_id == '' || group_id == null) {
+                    // 打卡首页的打卡记录列表
+                    var url = "{:url('api/punch/getPunchListApi','','',true)}" + '/?page=' + page;
+                    var member_id = "{$memberInfo.id}"
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            member_id: member_id
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            var newli = '';
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.length - 1; i++) {
+                                    var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
+                                    newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                                    newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
+                                    newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                                    newli += '</div></a></li>'
+                                }
                             }
-                        }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.punchList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            if (gType == 1) {
+                                //上拉刷新
+                                $("ul.punchList").empty().append(newli);
+                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                                mui('#refreshContainer').pullRefresh().refresh(true);
+                                if (newli == '') {
+                                    $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                }
+                            } else {
+                                //下拉加载 gType==2
+                                $("ul.punchList").append(newli);
                             }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.punchList").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
+                            if (newli != '') {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            } else {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
-                });
+                    });
+                } else {
+                    // 社群详情的打卡记录列表
+                    var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}" + '/?page=' + page;
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            group_id: group_id
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            var newli = '';
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                    var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id;
+                                    newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                                    newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
+                                    newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewords_money + '</text></p>';
+                                    newli += '</div></a></li>'
+                                }
+                                if (newli == '') {
+                                    $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                }
+                            }
+                            if (gType == 1) {
+                                //上拉刷新
+                                $("ul.punchList").empty().append(newli);
+                                mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                                mui('#refreshContainer').pullRefresh().refresh(true);
+                                if (newli == '') {
+                                    $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                }
+                            } else {
+                                //下拉加载 gType==2
+                                $("ul.punchList").append(newli);
+                            }
+                            if (newli != '') {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            } else {
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+                    });
+                }
+
             };
         })
     </script>

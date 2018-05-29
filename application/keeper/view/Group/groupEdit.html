@@ -38,12 +38,6 @@
 
         <div class="nav-list borderStyle mb12">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
-                <!-- <li class="mui-table-view-cell navli">
-                    <a href="">
-                        <img src="{$memberInfo.avatar}" alt="">
-                        <p class="mui-ellipsis">{$groupInfo.member}</p>
-                    </a>
-                </li> -->
                 <li class="mui-table-view-cell navli memberList">
                     <a href="">
                         <p>
@@ -52,7 +46,7 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell navli">
-                    <a href="">
+                    <a href="#groupMember">
                         <p>
                             <i class="mui-icon mui-icon-minus" style="font-size: 2.7rem;border: 1px solid #ddd;"></i>
                         </p>
@@ -98,6 +92,10 @@
                 <label>社群宗旨</label>
                 <textarea name="tenet" rows="3" value="{$groupInfo.tenet}" class="tenet" placeholder="请填写内容">{$groupInfo.tenet}</textarea>
             </div>
+            <div class="mui-input-row h-auto">
+                <label>公告</label>
+                <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice" placeholder="请填写内容">{$groupInfo.notice}</textarea>
+            </div>
         </form>
 
         <ul class="mui-table-view operation">
@@ -111,6 +109,25 @@
 
     </div>
 
+
+    <!--删除成员-->
+    <div id="groupMember" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>社群成员</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn bgred" id="memberDel">删除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:50px !important;">
+            <div class="mui-scroll">
+                <form class="mui-input-group delMemberList mb44"></form>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
@@ -121,20 +138,57 @@
         });
 
         $(function () {
-
+            var group_id = "{$groupInfo.id}";
+            var member_id = "{$groupInfo.member_id}"
             // 设置社群类型默认值
             $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
 
             //删除并退出
-            $(".deleteOut").on('tap', function () {
-                mui.confirm("确认删除并退出社群吗？", "提示", function (e) {
+            // $(".deleteOut").on('tap', function () {
+            //     mui.confirm("确认删除并退出社群吗？", "提示", function (e) {
+            //         if (e.index == 1) {
+            //             var group_id = "{$groupInfo.id}";
+            //             var member_id = "{$groupInfo.member_id}"
+            //             mui.ajax("{:url('api/group/dropGroup')}", {
+            //                 data: {
+            //                     group_id: group_id,
+            //                     member_id: member_id
+            //                 },
+            //                 dataType: 'json',//服务器返回json格式数据
+            //                 type: 'post',//HTTP请求类型
+            //                 timeout: 10000,//超时时间设置为10秒；
+            //                 headers: { 'Content-Type': 'application/json' },
+            //                 success: function (data) {
+            //                     console.log(data);
+            //                     if (data.code == 200) {
+            //                         mui.toast(data.msg);
+            //                     } else {
+            //                         mui.toast(data.msg);
+            //                     }
+            //                 },
+            //                 error: function (xhr, type, errorThrown) {
+            //                     //异常处理；
+            //                     console.log(type);
+            //                 }
+            //             });
+            //         }
+            //     });
+            // });
+
+            $("#memberDel").on('tap', function () {
+                var idList = [];
+                var groupMember_id = ''
+                $(".delMemberList input[type=checkbox]:checked").each(function (i) {
+                    groupMember_id = $(this).val();
+                    idList[i] = groupMember_id;
+                })
+                console.log(idList)
+                mui.confirm("确认删除选中成员吗？", "提示", function (e) {
                     if (e.index == 1) {
-                        var group_id = "{$groupInfo.id}";
-                        var member_id = "{$groupInfo.member_id}"
-                        mui.ajax("{:url('api/group/dropGroup')}", {
+                        mui.ajax("{:url('api/group/dropGroups')}", {
                             data: {
                                 group_id: group_id,
-                                member_id: member_id
+                                idList: idList
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
@@ -156,6 +210,7 @@
                     }
                 });
             });
+
             groupMember();
 
         })
@@ -178,13 +233,13 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
+                        var div = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell navli">'
-                            newli += '<a href=""><img src = "{$memberInfo.avatar}" alt = "" ><p class="mui-ellipsis">' + data.data.data[i].member + '</p></a></li>';
+                            newli += '<li class="mui-table-view-cell navli"><a href=""><img src="' + data.data.data[i].avatar + '" alt=""><p class="mui-ellipsis">' + data.data.data[i].member + '</p></a></li>'
+                            div += '<div class="mui-input-row mui-checkbox mui-left"><label class="lineHeight20" style="width:85%">' + data.data.data[i].member + '</label><input name="checkbox1" value="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" type="checkbox"></div>';
                         }
                         $(".memberList").before(newli);
-
-
+                        $(".delMemberList").append(div);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -203,6 +258,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.tenet = $(".tenet").val();
+            objData.notice = $(".notice").val();
             var url = "{:url('api/group/updateGroupApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             console.log(ajaxResult)

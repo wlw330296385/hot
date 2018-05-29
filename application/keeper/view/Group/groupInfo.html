@@ -41,7 +41,11 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">社群详情</h1>
+        <h1 class="mui-text-right">
+            <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}" class="colororange">
+                <button class="groupAdmin hide" style="margin-right: 5px;">管理</button>
+            </a>
+        </h1>
     </header>
 
     <div class="mui-content">
@@ -66,9 +70,11 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>上期擂主：
-                        <text class="colororange">擂主名称</text>
+                        <text class="colororange winer">擂主名称</text>
                     </label>
-                    <span class="wd45 pdr15 mui-navigate-right">往届</span>
+                    <span class="wd45 pdr15 mui-navigate-right">
+                        <a href="#">往届</a>
+                    </span>
                 </li>
             </ul>
 
@@ -88,7 +94,7 @@
                                 <use xlink:href="#icon-home-game"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">个人</div>
-                            <h3 class=" colororange">12</h3>
+                            <h3 class=" colororange">0</h3>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -97,7 +103,7 @@
                                 <use xlink:href="#icon-home-activity"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">社群</div>
-                            <h3 class=" colororange">1123</h3>
+                            <h3 class=" colororange">0</h3>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -111,45 +117,48 @@
                     </li>
                 </ul>
             </div>
-            <!-- {$lastPool}{$nowPool} -->
+
             <div class="page-header">
                 <span class="course">
                     打卡记录
                 </span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">更多</a>
+                    <a href="{:url('punch/punchList')}/?group_id={$groupInfo.id}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view mb punchList"></ul>
 
-            <!-- <div class="success-frame mt55">
+            <div class="success-frame mt55 hide outGroup">
                 <div class="choise">
-                    <button type="button" class="mui-btn mui-btn-danger f16 outGroup">退出社群</button>
+                    <button type="button" class="mui-btn mui-btn-danger f16">退出社群</button>
                 </div>
-            </div> -->
+            </div>
 
             <!--底部操作-->
-            <ul class="mui-table-view operation">
+            <ul class="mui-table-view operation ">
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="{$homeurl}">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli ">
-                    <a href="">分享</a>
+                    <a href="#shareGuide">分享</a>
                 </li>
-                <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli outGroup hide">
-                    退出社群
-                </li>
-                <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli groupEdit hide">
-                    <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">群管理</a>
-                </li>
-                <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bgred">
+                <li class="mui-table-view-cell mui-col-xs-7 mui-col-sm-7 opli bgred">
                     <a href="{:url('punch/createPunch')}">打卡</a>
                 </li>
             </ul>
 
         </div>
+    </div>
+
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -169,10 +178,19 @@
         var group_member_id = "{$groupInfo.member_id}";
         $(function () {
 
+            // 判断底部按钮退出与管理 
             if (group_member != member) {
                 $(".outGroup").show();
+            }else{
+                $(".groupAdmin").show();
+            }
+            // 判断擂主名称显示
+            var nowPool = "{$nowPool.winer}"
+            var lastPool = "{$lastPool.winer}"
+            if (nowPool != '') {
+                $(".winer").text(nowPool);
             } else {
-                $(".groupEdit").show();
+                $(".winer").text(lastPool);
             }
 
             // 加入社群
@@ -217,7 +235,7 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
-                                    window.setTimeout("window.location='group/index'", 2000);
+                                    window.setTimeout("window.location.href='{:url('group/index')}'", 1500);
                                 } else {
                                     mui.toast(data.msg);
                                 }
