@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>奖金池</title>
+    <title>打卡列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,22 +31,16 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">奖金池</h1>
+        <h1 class="mui-title">打卡列表</h1>
     </header>
 
     <div class="mui-content">
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b pool"></ul>
+                <ul class="mui-table-view detalis-list list border-b punchList"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred">
-                <a href="{:url('group/createPool',['group_id'=>$groupInfo.id])}">创建奖金池</a>
-            </li>
-        </ul>
 
     </div>
 
@@ -57,11 +51,10 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-
+        var count = 1;
         $(function () {
             //初始化全局变量
-            var count = 1;
-            var teamId = wooApi.GetQueryString('team_id');
+
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -108,13 +101,12 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/pool/getPoolListApi','','',true)}" + '/?page=' + page;
-                var group_id = "{$groupInfo.id}"
+                var url = "{:url('api/punch/getPunchListApi','','',true)}" + '/?page=' + page;
+                var member_id = "{$memberInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
-                        status: 1,
-                        group_id: group_id
+                        member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -125,23 +117,24 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('group/poolInfo')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><label>' + data.data[i].pool + '</label><span class="wd25">' + data.data[i].stake + '</sapn>';
-                                newli += '</li>';
+                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id;
+                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
+                                newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                                newli += '</div></a></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.pool").empty().append(newli);
+                            $("ul.punchList").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.pool").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.pool").append(newli);
+                            $("ul.punchList").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

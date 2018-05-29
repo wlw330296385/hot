@@ -125,13 +125,19 @@
             </ul>
 
             <form action="" class="mui-input-group">
-
-                <div class="mui-input-row">
+                <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>打卡时间</label>
+                        <span id="result" class="ui-alert domData punch_time" name="punch_time"></span>
+                    </div>
+                </div>
+                <!-- <div class="mui-input-row">
                     <label class="wd49">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>打卡时间
                     </label>
                     <span class="domData punch_time" name="punch_time">2018-5-25</span>
-                </div>
+                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
@@ -250,10 +256,7 @@
                             <p class="fl">比赛</p>
                         </a>
                         <div class="mui-collapse-content" style="padding: 0">
-                            <ul class="mui-table-view list secondUl">
-                                <li class="mui-table-view-cell listli">球类</li>
-                                <li class="mui-table-view-cell listli">综合</li>
-                            </ul>
+                            <ul class="mui-table-view list secondUl matchList"></ul>
                         </div>
                     </li>
                 </ul>
@@ -280,19 +283,9 @@
                 消耗
             </span>
         </div>
-        <div class="mui-scroll-wrapper" style="top:88px !important;">
+        <div class="mui-scroll-wrapper" style="top:93px !important;">
             <div class="mui-scroll">
                 <form class="mui-input-group groupslist mb44">
-                    <!-- <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="lineHeight20 groupName" style="width:85%">A</label>
-                        <span style="width:15%"> 1</span>
-                        <input name="checkbox1" value="" type="checkbox" data-stake="1">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="lineHeight20 groupName" style="width:85%">B</label>
-                        <span style="width:15%"> 2</span>
-                        <input name="checkbox1" value="" type="checkbox" data-stake="2">
-                    </div> -->
                     {volist name="groupList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
@@ -351,6 +344,26 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             })
         })(mui);
+
+
+        (function ($, doc) {
+            $.ready(function () {
+                var result = $('#result')[0];
+                var btn = $('.btn');
+                btn.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+                        picker.show(function (rs) {
+                            result.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+            });
+        })(mui, document);
 
         //更新学员序号
         function changeIndex() {
@@ -480,7 +493,45 @@
             //         console.log(123)
             //     }
             // })
+            matchList();
         })
+
+        //自定义获取球员列表
+        function matchList() {
+            var url = "{:url('api/team/lastmatchlist','','',true)}";
+            var member_id = "{$memberInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: member_id,
+                    // keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell listli">' + data.data[i].match + '</li>'
+                        }
+                        $(".matchList").empty();
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $(".matchList").append(newli);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
 
         // 获取数据并进行提交
         function submitAction() {

@@ -42,13 +42,11 @@
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
             <div class="mui-scroll">
                 <div class="page-header bggray2">
-                    <span class="course">我的社群（
-                        <text class="colororange myGroupNum">0</text>）</span>
+                    <span class="course">我的社群（<text class="colororange myGroupNum">0</text>）</span>
                 </div>
                 <ul class="mui-table-view detalis-list list border-b myGroup"></ul>
                 <div class="page-header bggray2">
-                    <span class="course">其他社群（
-                        <text class="colororange otherGroupNum">0</text>）</span>
+                    <span class="course">其他社群（<text class="colororange otherGroupNum">0</text>）</span>
                 </div>
                 <ul class="mui-table-view detalis-list list border-b otherGroup"></ul>
             </div>
@@ -77,7 +75,6 @@
             //初始化全局变量
             var count = 1;
             var other = 1;
-            // var keyword = wooApi.GetQueryString('keyword');
             var keyword = $(".keyword").val();
             toList();
             //搜索社群
@@ -110,10 +107,10 @@
                         if (data.code == 200) {
                             $(".myGroupNum").text(data.data.data.length)
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data.data[i].id;
+                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data.data[i].group_id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
-                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group + '</h5><p>成员：<text class="colororange">' + data.data.data[i].members + '</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].bonus + '</text></p></div></li>'
+                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group.group + '</h5><p>成员：<text class="colororange">' + data.data.data[i].group.members + '</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].group.bonus + '</text></p></div></li>'
                             }
                         }
                         $("ul.myGroup").empty().append(newli);
@@ -135,7 +132,6 @@
                 var gType = 1;//代表下拉刷新
                 toOtherList(page, gType);//具体取数据的方法
             }
-
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
