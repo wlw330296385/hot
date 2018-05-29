@@ -137,7 +137,7 @@ class Punch extends Base{
     }
 
 
-
+    // 打卡评论
     public function commentApi(){
         try{
             $data = input('post.');
@@ -186,19 +186,19 @@ class Punch extends Base{
         } 
     }
 
-
+    // 点赞评论
     public function likesApi(){
         try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             
-            $likesInfo = $this->PunchService->getLikesInfo(['article_id'=>$data['article_id'],'member_id'=>$data['member_id']]);
+            $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$data['punch_id'],'member_id'=>$data['member_id']]);
             if($likesInfo){
                 if($likesInfo['status'] == 1){
-                    $result = $this->PunchService->updateLikes(['status'=>-1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                    $result = $this->PunchService->updateLikes(['status'=>-1,'punch_id'=>$data['punch_id']],['id'=>$likesInfo['id']]);
                 }else{
-                    $result = $this->PunchService->updateLikes(['status'=>1,'article_id'=>$data['article_id']],['id'=>$likesInfo['id']]);
+                    $result = $this->PunchService->updateLikes(['status'=>1,'punch_id'=>$data['punch_id']],['id'=>$likesInfo['id']]);
                 }
             }else{
                 $result = $this->PunchService->createLikes($data);
