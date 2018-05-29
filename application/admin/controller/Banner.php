@@ -28,7 +28,7 @@ class Banner extends Backend
     public function add() {
         if ($this->request->isPost()) {
             $data = input('post.');
-            if (empty($data['url'])) {
+            if (empty($data['image'])) {
                 $this->error('请上传图片');
             }
             if (empty($data['steward_type'])) {
@@ -52,7 +52,7 @@ class Banner extends Backend
     public function edit() {
         if ($this->request->isPost()) {
             $data = input('post.');
-            if (empty($data['url'])) {
+            if (empty($data['image'])) {
                 $this->error('请上传图片');
             }
             if (empty($data['steward_type'])) {

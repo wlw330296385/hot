@@ -44,33 +44,43 @@
 
         <!--图片轮播-->
         <div id="slider" class="mui-slider">
-            <div class="mui-slider-group mui-slider-loop">
+            {if condition="count($bannerList) gt 1"}
+            <div class="mui-slider-group mui-slider-loop morePic">
                 <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
                 <div class="mui-slider-item mui-slider-item-duplicate">
-                    <a href="#">
-                        <img src="{$bannerList[0]['url']}">
+                    <a href="{$lastBanner.url}">
+                        <img src="{$lastBanner.image}">
                     </a>
                 </div>
                 <!-- 第一张 -->
                 {volist name="bannerList" id="vol"}
                 <div class="mui-slider-item">
-                    <a href="">
-                        <img src="{$vol.url}">
+                    <a href="{$vol.url}">
+                        <img src="{$vol.image}">
                     </a>
                 </div>
                 {/volist}
                 <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
                 <div class="mui-slider-item mui-slider-item-duplicate">
-                    <a href="#">
-                        <img src="{$bannerList[2]['url']}">
+                    <a href="{$bannerList[0]['url']}">
+                        <img src="{$bannerList[0]['image']}">
                     </a>
                 </div>
             </div>
             <div class="mui-slider-indicator">
-                <div class="mui-indicator mui-active"></div>
+                {volist name="bannerList" id="vol"}
                 <div class="mui-indicator"></div>
-                <div class="mui-indicator"></div>
+                {/volist}
             </div>
+            {else/}
+            <div class="mui-slider-group mui-slider-loop onePic">
+                <div class="mui-slider-item">
+                    <a href="{$bannerList[0]['url']}">
+                        <img src="{$bannerList[0]['image']}">
+                    </a>
+                </div>
+            </div>
+            {/if}
         </div>
         <!--图文导航-->
         <div class="nav-list borderStyle">
@@ -187,7 +197,7 @@
             <li class="mui-table-view-cell listli">
                 <div class="mui-navigate-right goConfirm">
                     <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-travel"></use>
+                        <use xlink:href="#icon-find-jerseys"></use>
                     </svg>
                     赛旅
                 </div>
@@ -195,7 +205,7 @@
             <li class="mui-table-view-cell listli">
                 <div class="mui-navigate-right goConfirm">
                     <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-housekeeper"></use>
+                        <use xlink:href="#icon-find-jerseys"></use>
                     </svg>
                     管家服务
                 </div>
@@ -205,7 +215,7 @@
             <li class="mui-table-view-cell listli">
                 <div class="mui-navigate-right goConfirm">
                     <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-VS"></use>
+                        <use xlink:href="#icon-find-detection"></use>
                     </svg>
                     HBCL篮球排行榜
                 </div>
@@ -213,7 +223,7 @@
             <li class="mui-table-view-cell listli">
                 <a href="/frontend" class="mui-navigate-right">
                     <svg class="coloricon" aria-hidden="true">
-                        <use xlink:href="#icon-find-jerseys"></use>
+                        <use xlink:href="#icon-find-detection"></use>
                     </svg>
                     青少年篮球培训平台
                 </a>
@@ -379,8 +389,16 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+        //轮播
+        var slider = mui("#slider");
+        slider.slider({
+            interval: 5000
+        });
 
         $(function () {
+            // banner第一个点点焦点样式
+            $('.mui-slider-indicator .mui-indicator').eq(0).addClass('mui-active');
+
             //搜索子页：类型选择
             $(".mui-segmented-control").find(".choise-segment").click(function () {
                 $(".searchType span").text($(this).text());
