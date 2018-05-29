@@ -15,48 +15,56 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .charge-form {
+            width: 80%;
+            margin: 30px auto;
+            font-size: 14px;
+            color: #737373;
+        }
+        .charge-form input[type=text]{
+            margin-top: 10px;
+            padding: 30px 35px;
+            font-size: 32px;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #EEE;
+        }
+        .charge-form .hot-input { position: relative; }
+        .charge-form .hot-input .money{ position: absolute; font-size: 32px; top:30px; }
+    </style>
 </head>
 
-<body class=whitebg>
+<body class="whitebg">
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <a class="mui-icon mui-icon-closeempty mui-pull-left"></a>
     <h1 class="mui-title">钱包充值</h1>
 </header>
-<div class="mui-content">
+<div class="mui-content whitebg">
 
-    <div class="mt25">
-        <form action="" class="mui-input-group">
-            <div class="mui-input-row">
+        <form action="" class="charge-form">
                 <label>充值金额</label>
-                <input type="text" class="input" placeholder="￥0.00">
-            </div>
-            <div class="mui-input-row">
-                <label>支付方式</label>
-                <span class="mui-navigate-right">
-                        <select class="select" style="direction:rtl;width:33%">
-                            <option>微信支付</option>
-                            <option>银行卡支付</option>
-                        </select>
-                </span>
-            </div>
+                <div class="hot-input"><span class="money">￥</span><input type="text" class="input" placeholder="0.00"></div>
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block">提交充值</button>
         </form>
-
-        <span class="tip-box user_hint mobile_hint"></span>
-        <div class="tjbtn tjbtn-next">
-            <button type="button" class="btn btn1">
-                充值
-            </button>
-        </div>
-    </div>
 
 </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+
+        $(".mui-icon-close").click(function () {
+            window.parent.closeWindow();
+        })
+
+    })
 </script>
 </html>
