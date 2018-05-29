@@ -133,7 +133,7 @@ class GroupService {
 
     
     // 踢出社群/退出社群
-    public function dropGroup($member_id,$group_id){
+    public function dropGroup($member_id,$group_id,$id){
         $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
         if($member_id == $GroupInfo['member_id']){
             return ['msg'=>'群主不可退出', 'code' => 100];
@@ -148,7 +148,7 @@ class GroupService {
             $status = -2;//自己退出
         }
 
-        $result = $this->GroupMemberModel->save(['status'=>$status],['member_id'=>$member_id,'group_id'=>$group_id]);
+        $result = $this->GroupMemberModel->save(['status'=>$status],['id'=>$id]);
         if($result){
             $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',1);
             if(!$res){
@@ -172,7 +172,7 @@ class GroupService {
         }
 
 
-        $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->delete();
+        $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->update('status'=>-1);
         if($result){
             $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',count($ids));
             if(!$res){
