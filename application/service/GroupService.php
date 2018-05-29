@@ -103,7 +103,7 @@ class GroupService {
     * @param $member_id $member
     * @param $group_id 主表id
     **/ 
-    public function createGroupMember($member_id,$member,$group_id){
+    public function createGroupMember($member_id,$member,$avatar,$group_id){
         $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
         if($GroupInfo['members']>=$GroupInfo['max']){
             return ['msg'=>'已满人,不允许加入', 'code' => 100];
@@ -113,6 +113,7 @@ class GroupService {
             'member'            =>$member,
             'group_id'          =>$GroupInfo['id'],
             'group'             =>$GroupInfo['group'],
+            'avatar'            =>$avatar,
             'status'            =>1,
         ];
 

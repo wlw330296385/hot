@@ -100,6 +100,7 @@ class Punch extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            
             $result = $this->PunchService->createPunch($data);
 
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){

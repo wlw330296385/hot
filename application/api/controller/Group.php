@@ -200,7 +200,8 @@ class Group extends Base{
             $group_id = input('param.group_id');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
-            $result = $this->GroupService->createGroupMember($member_id,$member,$group_id);
+            $avatar = $this->memberInfo['avatar'];
+            $result = $this->GroupService->createGroupMember($member_id,$member,$avatar,$group_id);
             return json($result);   
         }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -216,7 +217,7 @@ class Group extends Base{
             $group_id = input('param.group_id');
             $result = $this->GroupService->dropGroup($member_id,$group_id);
             return json($result);   
-         }catch (Exception $e){
+        }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
