@@ -190,7 +190,7 @@
         var count = 1;
         $(function () {
 
-            if($(".punchImg").html()==''){
+            if ($(".punchImg").html() == '') {
                 $(".punchImg").html("<p style=''min-height:200px;background:#ddd></p>")
             }
 
@@ -199,47 +199,42 @@
             })
 
             //评论功能
-            // $(".commentBtn").on('tap', function () {
-            //     var commented_id = "{honorInfo.id}";
-            //     var commented = "{honorInfo.name}";
-            //     var team_id = "{honorInfo.prize_team_id}";
-            //     var comment = $(".comment").val();
-
-            //     if (comment == '') {
-            //         mui.toast("评价内容不能为空哦");
-            //         return false;
-            //     }
-
-            //     mui.ajax("{:url('')}", {
-            //         data: {
-            //             commented_id: commented_id,
-            //             comment_type: 5,
-            //             comment: comment,
-            //             commented: commented,
-            //             team_id: team_id
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 mui.toast('评价成功，感谢你的评价！');
-            //                 $(".comment-list").empty();
-            //                 toCommentList();
-            //                 mui('#fbcomment').popover('toggle');
-            //             } else {
-            //                 mui.toast(data.msg);
-            //                 mui('#fbcomment').popover('toggle');
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
+            $(".commentBtn").on('tap', function () {
+                var punch = "{$punchInfo.punch}"
+                var punch_id = "{$punchInfo.id}";
+                var comment = $(".comment").val();
+                if (comment == '') {
+                    mui.toast("评价内容不能为空");
+                    return false;
+                }
+                mui.ajax("{:url('api/punch/commentApi')}", {
+                    data: {
+                        punch: punch,
+                        punch_id: punch_id,
+                        comment: comment,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             pulldownRefresh(); //页面打开时获取一次最新评论信息
         });
@@ -264,13 +259,12 @@
         }
         //获取评论列表
         function toCommentList(page, gType) {
-            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{honorInfo.id}";
+            var url = "{:url('api/punch/getCommentListApi','','',true)}/?page=" + page;
+            var punch_id = "{$punchInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    commented_id: commented_id,
-                    comment_type: 5,
+                    punch_id: punch_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -280,7 +274,7 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        $(".comment_count").text(data.data.length);
+                        // $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
