@@ -222,6 +222,12 @@ class League extends Base
         if ( !$validate->scene('league_edit')->check($data) ) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
+        // 获取联赛信息
+        $matchS = new MatchService();
+        $league = $matchS->getMatch(['id' => $data['id']]);
+        if (!$league) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
         // 时间格式转换
         $data['start_time'] = strtotime($data['start_time']);
         $data['end_time'] = strtotime($data['end_time']);
@@ -229,16 +235,16 @@ class League extends Base
         $data['reg_end_time'] = strtotime($data['reg_end_time']);
         // 时间字段严谨性校验
         $newTime = time();
-        if ($data['start_time'] <= $newTime) {
+        if ( $data['start_time'] != strtotime($league['start_time']) && $data['start_time'] <= $newTime) {
             return json(['code' => 100, 'msg' => '联赛开始时间不能大于当前时间']);
         }
-        if ($data['end_time'] <= $newTime) {
+        if ( $data['end_time'] != strtotime($league['end_time']) && $data['end_time'] <= $newTime) {
             return json(['code' => 100, 'msg' => '联赛结束时间不能大于当前时间']);
         }
-        if ($data['reg_start_time'] <= $newTime) {
+        if ( $data['reg_start_time'] != strtotime($league['reg_start_time']) && $data['reg_start_time'] <= $newTime) {
             return json(['code' => 100, 'msg' => '报名开始时间不能大于当前时间']);
         }
-        if ($data['reg_end_time'] <= $newTime) {
+        if ( $data['reg_end_time'] != strtotime($league['reg_end_time']) && $data['reg_end_time'] <= $newTime) {
             return json(['code' => 100, 'msg' => '报名结束时间不能大于当前时间']);
         }
         if ($data['start_time'] >= $data['end_time']) {
@@ -252,7 +258,6 @@ class League extends Base
             return json(['code' => 100, 'msg' => '报名时间不能大于联赛开始时间']);
         }
 
-        $matchS = new MatchService();
         try {
             // 保存联赛信息
             $res = $matchS->saveMatch($data);
@@ -960,7 +965,14 @@ class League extends Base
             }
             foreach ($result as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $result[$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                if ($groupTeams) {
+                    foreach ($groupTeams as $k1 => $val1) {
+                        $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
+                        $groupTeams[$k1]['team'] = $matchteam;
+                    }
+                }
+                $result[$k]['group_teams'] = $groupTeams;
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
@@ -991,7 +1003,14 @@ class League extends Base
             }
             foreach ($result as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $result[$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                if ($groupTeams) {
+                    foreach ($groupTeams as $k1 => $val1) {
+                        $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
+                        $groupTeams[$k1]['team'] = $matchteam;
+                    }
+                }
+                $result[$k]['group_teams'] = $groupTeams;
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {
@@ -1020,7 +1039,14 @@ class League extends Base
             }
             foreach ($result['data'] as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $result['data'][$k]['group_teams'] = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                if ($groupTeams) {
+                    foreach ($groupTeams as $k1 => $val1) {
+                        $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
+                        $groupTeams[$k1]['team'] = $matchteam;
+                    }
+                }
+                $result['data'][$k]['group_teams'] = $groupTeams;
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } catch (Exception $e) {

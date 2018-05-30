@@ -36,16 +36,16 @@
             color: #fff;
             box-shadow: 0 0 10px 0 #000;
             text-shadow: 1px 1px #000;
-            z-index: 11;
+            z-index: 0;
         }
 
         .classHFrame {
-            position: fixed;
-            background: #fff;
-            height: 55px;
-            overflow: hidden;
-            bottom: 43px;
-            width: 100%;
+            /* position: fixed; */
+            /* background: #fff; */
+            /* height: 55px; */
+            /* overflow: hidden; */
+            /* bottom: 43px; */
+            /* width: 100%; */
             padding: 10px;
             text-align: center;
             line-height: 34px;
@@ -57,10 +57,23 @@
             border-bottom-right-radius: 15px;
             border-top-left-radius: 15px;
             border-top-right-radius: 15px;
-            border: 1px solid #a9a5a5;
+            border: 1px solid #e0e0e0;
             color: #ff7f00;
             font-size: 14px;
             text-align: center;
+        }
+
+        .classHFrame .classActive {
+            background: #ff7f00;
+            color: #fff;
+            border: none;
+        }
+
+        .mui-iframe-wrapper {
+            display: none;
+            z-index: 9999;
+            height: 286px !important;
+            position: fixed;
         }
     </style>
 </head>
@@ -79,13 +92,13 @@
                     <img class="mui-media-object mui-pull-left img45" src="{$punchInfo.avatar}">
                     <div class="mui-media-body wd45">
                         <strong class="f16">{$punchInfo.member}</strong>
-                        <p class="mui-ellipsis lineHeight20">{$memberInfo.city} {$memberInfo.area}</p>
+                        <p class="mui-ellipsis lineHeight20">{$punchInfo.city} {$punchInfo.area}</p>
                     </div>
                     <div class="price-frame mui-text-left" style="padding-top: 5px;">
                         <p class="f12">本月打卡
-                            <text class="colororange f18">0</text>
+                            <text class="colororange f18">{$monthPunch}</text>
                         </p>
-                        <p class="f12">累计打卡 0</p>
+                        <p class="f12">累计打卡 {$totalPunch}</p>
 
                     </div>
                 </li>
@@ -105,28 +118,14 @@
                 <div class="dragClass" id="drag">{$punchInfo.rewords_money}</div>
             </div>
             <div class="page-header border-b">
-                <span class="course wd52">评论</span>
+                <span class="course wd52">评论（
+                    <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
                     <span class="colororange">{$punchInfo.rewords_money}</span> HT
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
-
-            <div class="mui-row classHFrame hide">
-                <div class="mui-col-sm-3 mui-col-xs-3">
-                    <span class="classH">1H币</span>
-                </div>
-                <div class="mui-col-sm-3 mui-col-xs-3">
-                    <span class="classH">2H币</span>
-                </div>
-                <div class="mui-col-sm-3 mui-col-xs-3">
-                    <span class="classH">5H币</span>
-                </div>
-                <div class="mui-col-sm-3 mui-col-xs-3">
-                    <span class="classH">10H币</span>
-                </div>
-            </div>
 
             <!--底部操作-->
             <ul class="mui-table-view operation">
@@ -140,8 +139,10 @@
                         分享
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bggreen reward">
-                    打赏
+                <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                    <a href="#reward">
+                        打赏
+                    </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bgblue">
                     <a href="#fbcomment">
@@ -160,6 +161,40 @@
             <img src="/static/frontend/images/esp.png" alt="">
         </div>
         <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+    <!-- 打赏 -->
+    <div id="reward" class="mui-popover mui-popover-action mui-popover-bottom actionsheet whitebg" style="height: 270px;">
+        <div class="list">
+            <h5 class="mui-text-left">
+                <span class="type ">打赏</span>
+                <a href="#reward" class="mui-icon mui-icon-closeempty"></a>
+            </h5>
+            <form action="" class="mui-input-group">
+                <div class="mui-row classHFrame">
+                    <div class="mui-col-sm-6 mui-col-xs-6">
+                        <span class="classH classActive">1H币</span>
+                    </div>
+                    <div class="mui-col-sm-6 mui-col-xs-6">
+                        <span class="classH">2H币</span>
+                    </div>
+                </div>
+                <div class="mui-row classHFrame">
+                    <div class="mui-col-sm-6 mui-col-xs-6">
+                        <span class="classH">5H币</span>
+                    </div>
+                    <div class="mui-col-sm-6 mui-col-xs-6">
+                        <span class="classH">10H币</span>
+                    </div>
+                </div>
+                <div class="success-frame">
+                    <div class="choise">
+                        <button type="button" class="mui-btn mui-btn-danger f16 bgblue">确认打赏</button>
+                    </div>
+                </div>
+                <p class="goCharge mui-text-center">充值H币</p>
+            </form>
+        </div>
     </div>
 
     <!-- 发表评论 -->
@@ -182,11 +217,49 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
+
         //初始化
         mui.init({
-            swipeBack: true //启用右滑关闭功能
+            swipeBack: false,
+            statusBarBackground: '#f7f7f7',
+            gestureConfig: {
+                doubletap: true
+            },
+            subpages: [{
+                id: "charge",
+                url: "{:url('member/charge')}",
+                styles: {
+                    top: 'auto',
+                    bottom: '0',
+                    bounce: 'vertical',
+                }
+            }]
         });
 
+        var mask = mui.createMask(function () {
+            $('.mui-iframe-wrapper').hide();
+        });
+
+        $(function () {
+
+            $(document).on('tap', ".goCharge", function () {
+                mui('#reward').popover('toggle');
+                mask.show();
+                $('.mui-iframe-wrapper').show();
+            })
+
+        });
+
+        var closeWindow = function () {
+            mask.close();
+            $('.mui-iframe-wrapper').hide();
+        };
+
+        var reloadWindow = function () {
+            location.reload();
+        };
+
+        // /////////////////////////////////////////////
         var count = 1;
         $(function () {
 
@@ -194,8 +267,13 @@
                 $(".punchImg").html("<p style=''min-height:200px;background:#ddd></p>")
             }
 
-            $(".reward").on("tap", "", function () {
-                $(".classHFrame").show();
+            // 选择打赏币
+            $(document).on("tap", ".classH", function () {
+                var isChecked = $(this).hasClass("classActive");
+                if (isChecked == false) {
+                    $(".classH").removeClass("classActive");
+                    $(this).addClass("classActive");
+                }
             })
 
             //评论功能
@@ -212,7 +290,7 @@
                         punch: punch,
                         punch_id: punch_id,
                         comment: comment,
-                        status:1
+                        status: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -275,9 +353,9 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        // $(".comment_count").text(data.data.length);
+                        $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
                     if (gType == 1) {
