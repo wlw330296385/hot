@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>个人信息详情</title>
+    <title>回复详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,6 +19,7 @@
         .operationFrame button {
             padding: 8px 14px
         }
+
         .mui-popup-button {
             font-size: 15px !important;
         }
@@ -27,58 +28,27 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
     <div class="mui-content list ">
 
-
         <form action="" class="mui-input-group mb">
-            <input id="applyid" type="hidden" value="{applyInfo.id}">
+            <input id="applyid" type="hidden" value="{$groupInfo.id}">
             <div class="mui-input-row h-auto">
                 <label>申请的内容：</label>
-                <textarea disabled>{applyInfo.remarks}</textarea>
+                <textarea disabled>{$groupApplyInfo.remarks}</textarea>
             </div>
             <div class="mui-input-row h-auto">
                 <label>回复的内容：</label>
                 <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
             </div>
             <div class="mui-button-row h-auto operationFrame">
-                <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
-                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+                <button class="mui-btn mui-btn-danger agree" type="button">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn refuse" type="button">拒绝</button>
             </div>
 
-            <p class="pline"></p>
-
-            <div class="mui-input-row h-auto">
-                <label>头像</label>
-                <img src="{applyInfo.member.avatar}" alt="头像" style="margin-right: 18px;width:42px !important;">
-            </div>
-            <div class="mui-input-row">
-                <label>姓名</label>
-                <span class="name">{applyInfo.member.member}</span>
-            </div>
-            <div class="mui-input-row">
-                <label>性别</label>
-                <span class="sex"></span>
-            </div>
-            <div class="mui-input-row">
-                <label>身高</label>
-                <span class="height">{applyInfo.member.height}cm</span>
-            </div>
-            <div class="mui-input-row">
-                <label>体重</label>
-                <span class="weight">{applyInfo.member.weight}kg</span>
-            </div>
-            <div class="mui-input-row">
-                <label>出生日期</label>
-                <span class="birthday">{applyInfo.member.birthday}</span>
-            </div>
-            <div class="mui-input-row">
-                <label>所属地区</label>
-                <span>{applyInfo.member.province} {applyInfo.member.city} {applyInfo.member.area}</span>
-            </div>
         </form>
     </div>
 
@@ -90,65 +60,42 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        $(function () {
-            var sex = "{$applyInfo.member.sex}";
-            if (sex == 1) {
-                $(".sex").text("男");
-            } else {
-                $(".sex").text("女");
-            }
-        })
+        // 同意
+        $(".agree").on("tap", '', function () {
+            joinGropu()
+        });
+        // 拒绝
+        $(".refuse").on("tap", '', function () {
+            mui.toast("您已拒绝该成员的申请");
+            window.setTimeout("window.location.href='{:url('group/groupInfo')}/group_id/{$groupInfo.id}'", 2000)
+        });
 
-        // 审核操作
-        function check_status(value) {
-            var member = "{pplyInfo.member.member}";
-            var team = "{teamInfo.name}";
-            var apply_id = document.getElementById('applyid').value;
-            var reply = $(".reply").val();
-            mui.ajax("{:url('api/team/applyreply')}", {
+        // 加入
+        function joinGropu() {
+            var group_id = "{$groupInfo.id}"
+            mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
                 data: {
-                    apply_id: apply_id,
-                    status: value,
-                    reply: reply
+                    group_id: group_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
-                success: function (res) {
-                    if (res.code == 200) {
-                        var btnArray = ['返回首页', '球队主页'];
-                        var urlToTeam = "{:url('team/teamInfo')}/team_id/{teamInfo.id}";
-                        var urlToIndex = "{:url('/keeper')}";
-                        if (value == 2) {
-                            mui.confirm('欢迎“' + member + '”成为“' + team + '”球队的一员', '', btnArray, function (e) {
-                                if (e.index == 1) {
-                                    window.location.href = urlToTeam;
-                                } else {
-                                    window.location.href = urlToIndex;
-                                }
-                            });
-                        } else {
-                            mui.confirm('你拒绝了“' + member + '”的申请', '', btnArray, function (e) {
-                                if (e.index == 1) {
-                                    window.location.href = urlToTeam;
-                                } else {
-                                    window.location.href = urlToIndex;
-                                }
-                            });
-                        }
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("操作成功");
+                        window.setTimeout("window.location.href='{:url('group/groupInfo')}/group_id/{$groupInfo.id}'", 2000)
                     } else {
-                        mui.toast(res.msg);
+                        mui.toast(data.msg);
                     }
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
                     console.log(type);
-                    mui.toast('网络异常');
                 }
             });
         }
-
     </script>
 
 </body>

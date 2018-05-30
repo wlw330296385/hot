@@ -9,54 +9,78 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .charge-form {
+            width: 80%;
+            margin: 30px auto;
+            font-size: 14px;
+            color: #737373;
+        }
+        .charge-form input[type=number]{
+            margin-top: 10px;
+            padding: 30px 35px;
+            font-size: 34px;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #EEE;
+        }
+        .charge-form .hot-input { position: relative; }
+        .charge-form .hot-input .money{ position: absolute; font-size: 28px; top:30px; }
+        .mui-btn-block{
+            padding: 10px 0;
+            font-size: 16px;
+        }
+        .tips{
+            font-size: 12px;
+            color:#999;
+            text-align: center;
+        }
+    </style>
 </head>
 
-<body class=whitebg>
+<body class="whitebg">
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    <a class="mui-icon mui-icon-closeempty mui-pull-left"></a>
     <h1 class="mui-title">钱包充值</h1>
 </header>
-<div class="mui-content">
+<div class="mui-content whitebg">
 
-    <div class="mt25">
-        <form action="" class="mui-input-group">
-            <div class="mui-input-row">
+        <form action="" class="charge-form">
                 <label>充值金额</label>
-                <input type="text" class="input" placeholder="￥0.00">
-            </div>
-            <div class="mui-input-row">
-                <label>支付方式</label>
-                <span class="mui-navigate-right">
-                        <select class="select" style="direction:rtl;width:33%">
-                            <option>微信支付</option>
-                            <option>银行卡支付</option>
-                        </select>
-                </span>
-            </div>
+                <div class="hot-input"><span class="money">￥</span><input type="number" name="sum" class="input" placeholder=""></div>
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="submitCharge">提交充值</button>
+                <div class="tips">暂只支持微信支付</div>
         </form>
-
-        <span class="tip-box user_hint mobile_hint"></span>
-        <div class="tjbtn tjbtn-next">
-            <button type="button" class="btn btn1">
-                充值
-            </button>
-        </div>
-    </div>
 
 </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script>
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    $(function () {
+
+        $(".mui-icon-closeempty").click(function () {
+            window.parent.closeWindow();
+        });
+
+
+        $("#submitCharge").click(function () {
+            var sum = $("input[name='sum']").val();
+            if(!(/^[1-9]+?[0-9]*$/).test(sum)){
+                mui.alert("请填写数值大于零的整数，谢谢！");
+                return false;
+            }
+            location.href = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&title=钱包充值';
+        });
+
+    })
 </script>
 </html>
