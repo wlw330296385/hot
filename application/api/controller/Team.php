@@ -107,7 +107,7 @@ class Team extends Base
     }
 
     // 设置球队章程
-    public function setconstitution() {
+    public function setregulation() {
         $data = input('post.');
         if ( !array_key_exists('id', $data) ) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
