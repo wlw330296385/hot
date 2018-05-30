@@ -29,7 +29,7 @@ class GroupApplyService{
     // 插入一条数据
     public function createGroupApply($data){
         $res = $this->GroupApplyModel->where(['member_id'=>$data['member_id'],'group_id'=>$data['group_id'],'status'=>1])->find();
-        $res = $res->toArray();
+
         if(!empty($res)){
             return ['code'=>100,'msg'=>'重复申请'];
         }

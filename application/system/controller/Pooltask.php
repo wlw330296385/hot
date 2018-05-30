@@ -11,12 +11,12 @@ class Pooltask extends Base{
     	parent::_initialize();
     }
 
-   //find winner
+   //find winner每日晚上22点;
     public function lottery(){
     	try{
     		
-            
-            
+
+
 	    	$data = ['crontab'=>'每日擂台开奖'];
             $this->record($data);
     	}catch(Exception $e){
