@@ -106,7 +106,7 @@ class Punch extends Base{
             $data['area'] = $this->memberInfo['area'];
 
             $data['month_str'] = date('Ym',time());
-            $data['date_str'] = date('Ymd',time());
+            $data['date_str'] = date('Ym',time());
             $result = $this->PunchService->createPunch($data);
 
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
@@ -114,6 +114,8 @@ class Punch extends Base{
                 foreach ($groupList as $key => &$value) {
                     $value['punch'] = $data['punch'];
                     $value['punch_id'] = $result['data'];
+                    $value['month_str'] = date('Ym',time());
+                    $value['date_str'] = date('Ymd',time());
                 }
                 
                 $GroupPunch = new \app\model\GroupPunch;

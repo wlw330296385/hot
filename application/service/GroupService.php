@@ -171,7 +171,7 @@ class GroupService {
             return ['msg'=>'只有群主可操作', 'code' => 100];
         }
 
-
+        
         $result = $this->GroupMemberModel->where(['id'=>['in',$ids]])->update(['status'=>-1]);
         if($result){
             $res = $this->GroupModel->where(['id'=>$group_id])->setDec('members',count($ids));
