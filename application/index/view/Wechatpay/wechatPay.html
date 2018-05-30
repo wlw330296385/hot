@@ -1,11 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>支付弹框</title>
-</head>
-<body>
-	这里是支付
 
-	<button>确定支付</button>
+<head>
+	<meta charset="utf-8">
+	<title>微信支付</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+	<!--自定义style.css-->
+	<link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+	<style>
+		.charge-form {
+			width: 80%;
+			margin: 30px auto;
+			font-size: 14px;
+			color: #737373;
+			text-align: center;
+		}
+		.charge-form .sum{
+			padding: 30px 35px;
+			font-size: 30px;
+		}
+		.charge-form .sum span{
+			font-size: 36px;
+		}
+		.mui-btn-block{
+			padding: 10px 0;
+			font-size: 16px;
+		}
+		.tips{
+			font-size: 12px;
+			color:#999;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body class="whitebg">
+<header id="header" class="mui-bar mui-bar-nav subheader">
+	<a class="mui-icon mui-icon-closeempty mui-pull-left"></a>
+	<h1 class="mui-title">微信支付</h1>
+</header>
+<div class="mui-content whitebg">
+
+	<form action="" class="charge-form">
+		<label></label>
+		<div class="sum colororange">￥<span></span></div>
+		<button type="button" class="mui-btn mui-btn-block bggreen" id="submit">确定支付</button>
+		<a class="mui-action-back tips">返回修改金额</a>
+	</form>
+
+</div>
+
 </body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script>
+
+
+    var total = wooApi.GetQueryString('total');
+    var title = wooApi.GetQueryString('title');
+
+    $(function () {
+
+        $(".charge-form label").text(title+'金额');
+        $(".sum span").text(total);
+
+        $(".mui-icon-close").click(function () {
+            window.parent.closeWindow();
+        });
+
+
+        $("#submit").click(function () {
+            mui.alert("微信支付");
+        });
+
+    })
+</script>
 </html>

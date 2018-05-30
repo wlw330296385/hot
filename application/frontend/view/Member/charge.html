@@ -9,10 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <style>
@@ -22,16 +18,25 @@
             font-size: 14px;
             color: #737373;
         }
-        .charge-form input[type=text]{
+        .charge-form input[type=number]{
             margin-top: 10px;
             padding: 30px 35px;
-            font-size: 32px;
+            font-size: 34px;
             border: none;
             border-radius: 0;
             border-bottom: 1px solid #EEE;
         }
         .charge-form .hot-input { position: relative; }
-        .charge-form .hot-input .money{ position: absolute; font-size: 32px; top:30px; }
+        .charge-form .hot-input .money{ position: absolute; font-size: 28px; top:30px; }
+        .mui-btn-block{
+            padding: 10px 0;
+            font-size: 16px;
+        }
+        .tips{
+            font-size: 12px;
+            color:#999;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -44,8 +49,9 @@
 
         <form action="" class="charge-form">
                 <label>充值金额</label>
-                <div class="hot-input"><span class="money">￥</span><input type="text" class="input" placeholder="0.00"></div>
-                <button type="button" class="mui-btn mui-btn-primary mui-btn-block">提交充值</button>
+                <div class="hot-input"><span class="money">￥</span><input type="number" name="sum" class="input" placeholder="0.00"></div>
+                <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="submitCharge">提交充值</button>
+                <div class="tips">暂只支持微信支付</div>
         </form>
 
 </div>
@@ -63,7 +69,17 @@
 
         $(".mui-icon-close").click(function () {
             window.parent.closeWindow();
-        })
+        });
+
+
+        $("#submitCharge").click(function () {
+            var sum = $("input[name='sum']").val();
+            if(!(/^[1-9]+?[0-9]*$/).test(sum)){
+                mui.alert("请填写数值大于零的纯数字，谢谢！");
+                return false;
+            }
+            location.href = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&title=钱包充值';
+        });
 
     })
 </script>
