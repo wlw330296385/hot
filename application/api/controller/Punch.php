@@ -100,7 +100,11 @@ class Punch extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            
+            $data['avatar'] = $this->memberInfo['avatar'];
+            $data['province'] = $this->memberInfo['province'];
+            $data['city'] = $this->memberInfo['city'];
+            $data['area'] = $this->memberInfo['area'];
+
             $result = $this->PunchService->createPunch($data);
 
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
@@ -160,7 +164,8 @@ class Punch extends Base{
     public function getCommentListApi(){
         try{
             $map = input('post.');
-            $result = $this->PunchService->getCommentList($map);
+            $page = input('param.page',1);
+            $result = $this->PunchService->getCommentList($map,$page);
             if($result){
                 return json(['msg' => '获取成功', 'code' => 200, 'data' => $result]);
             }else{
