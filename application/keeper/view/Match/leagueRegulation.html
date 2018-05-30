@@ -112,39 +112,38 @@
 
         <div class="list coach mt55 ">
 
-            <div class="img4x3" style="background-image:url('{teamInfo.cover}')"></div>
-
+            <div class="img4x3" style="background-image:url('{$leagueInfo.cover}')"></div>
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli">
-                    <h4>2018深圳宝安城市学院篮球联赛</h4>
+                    <h4>{$leagueInfo.name}</h4>
                     <div class="mui-media-body wd73" style="line-height:20px !important">
-                        <p class="mui-ellipsis">主办单位：深圳市大热篮球体育文化有限公司</p>
-                        <p>深圳市 南山区</p>
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org}</p>
+                        <p>{$leagueInfo.province} {$leagueInfo.city}</p>
                         <p>参赛队：
-                            <strong class="colororange">32</strong>支 | 粉丝：
-                            <strong class="colororange">350</strong>
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong>
                         </p>
                     </div>
-                    <div class="price-frame" style="padding-top:22px">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 6px 7px;">取消关注</button>
+                    <div class="price-frame" style="padding-top:17px">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
             </ul>
 
             <nav class="mui-bar-tab leagueNav">
-                <a class="mui-tab-item mui-active" href="{:url('match/leagueGulations')}">
+                <a class="mui-tab-item mui-active" href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-home"></span>
                     <span class="mui-tab-label">章程</span>
                 </a>
-                <a class="mui-tab-item" href="{:url('match/leagueSchedule')}">
+                <a class="mui-tab-item" href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-email"></span>
                     <span class="mui-tab-label">赛程</span>
                 </a>
-                <a class="mui-tab-item" href="{:url('match/leagueRecord')}">
+                <a class="mui-tab-item" href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-contact"></span>
                     <span class="mui-tab-label">战绩</span>
                 </a>
-                <a class="mui-tab-item" href="{:url('match/leagueData')}">
+                <a class="mui-tab-item" href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-gear"></span>
                     <span class="mui-tab-label">数据</span>
                 </a>
@@ -156,6 +155,7 @@
                     <span class="noDataTip"></span>
                 </span>
             </div>
+            <div>{$leagueInfo.regulation}</div>
 
             <!--参赛队分组表-->
             <div class="page-header border-b">
@@ -258,15 +258,19 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-        $(function () {
 
-            var team_id = "{teamInfo.id}";
+
+        $(function () {
+            followStatus();
+
+            var league_id = "{$league_id}";
             // 关注联赛
             $(".follow").on("tap", '', function () {
+                var league_id = "{$league_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        type: 4,
-                        team_id: team_id
+                        type: 5,
+                        league_id: league_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -289,31 +293,34 @@
                 });
             });
 
-            // 关注状态
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 4,
-                    team_id: team_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("取消关注");
-                        } else {
-                            $(".follow").text("关注");
+            // 判断当前的关注状态
+            function followStatus() {
+                var league_id = "{$league_id}";
+                mui.ajax("{:url('api/follow/getfollow')}", {
+                    data: {
+                        type: 5,
+                        team_id: league_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            if (data.data === 1) {
+                                $(".follow").text("取消关注");
+                            } else {
+                                $(".follow").text("关注");
+                            }
                         }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
+                });
+            }
         });
 
     </script>
