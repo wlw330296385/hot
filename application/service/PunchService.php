@@ -33,7 +33,7 @@ class PunchService {
     // 新增打卡
     public function createPunch($data){
         $stakes = ceil($data['stakes']);
-        if($stakes < $this->memberInfo['hot_coin']){
+        if($stakes < session('memberInfo.hot_coin')){
             return json(['code'=>100,'msg'=>'热币不足']);
         }
         $res = db('member')->where(['id'=>$data['member_id']])->dec('hot_coin',$stakes)->update();
