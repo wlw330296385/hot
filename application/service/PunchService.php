@@ -102,12 +102,12 @@ class PunchService {
 
     // 文章字段加加减减
     public function incPunch($map,$field){
-        $this->PunchModel->where($map)->setInc($field);
+        $this->Punch->where($map)->setInc($field);
     }
 
     // 文章字段加加减减
     public function decPunch($map,$field){
-        $this->PunchModel->where($map)->setDec($field);
+        $this->Punch->where($map)->setDec($field);
     }
 
     public function getCommentList($map,$paginate= 10,$order = 'id desc'){
