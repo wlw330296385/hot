@@ -105,6 +105,8 @@ class Punch extends Base{
             $data['city'] = $this->memberInfo['city'];
             $data['area'] = $this->memberInfo['area'];
 
+            $data['month_str'] = date('Ym',time());
+            $data['date_str'] = date('Ymd',time());
             $result = $this->PunchService->createPunch($data);
 
             if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){

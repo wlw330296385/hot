@@ -31,7 +31,7 @@ class GroupApplyService{
         $res = $this->GroupApplyModel->where(['member_id'=>$data['member_id'],'group_id'=>$data['group_id'],'status'=>1])->find();
 
         if(!empty($res)){
-            return ['code'=>100,'msg'=>'重复申请'];
+            return ['code'=>100,'msg'=>'请不要重复申请'];
         }
         $result = $this->GroupApplyModel->save($data);
         if($result){
