@@ -15,41 +15,59 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        .mui-input-row .select{
+            width: auto;
+            padding-right: 15px;
+        }
+        .mui-btn-block{
+            width: 80%;
+            margin: 30px auto;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">添加银行卡|支付宝</h1>
+    <h1 class="mui-title">添加银行卡 | 支付宝</h1>
 </header>
 <div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list coach">
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli listinitial" id="">
-               <label for="">平台类型</label> 
+
+    <form action="" class="mui-input-group">
+        <div class="mui-input-row">
+            <label>平台类型</label>
+            <span class="mui-navigate-right">
                 <select name="bank_type" class="select data">
-                    <option value="1">支付宝</option>
                     <option value="2">银行</option>
+                    <option value="1">支付宝</option>
                 </select>
-            </li>
-            <li class="mui-table-view-cell listli listinitial" id="bank" style="display: none">名称<input type="text" class="input data" placeholder="请输入银行名称" value="支付宝" name="bank"></li>
-            <li class="mui-table-view-cell listli listinitial">
-                账号<input type="text" class="input data" name="bank_card" placeholder="请输入银行账号">
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                收款人姓名<input type="text" class="input data"  name="realname" placeholder="请输入收款人姓名">
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                预留电话<input type="text" class="input data" name="telephone" placeholder="请输入预留电话">
-            </li>
-            <div class="tjbtn tjbtn-next">
-                <button type="button" class="btn">
-                    添加
-                </button>
-            </div>
-        </ul>
-    </div>
+             </span>
+        </div>
+
+        <div class="mui-input-row" id="bank">
+            <label>名称</label>
+            <input type="text" class="input data" name="bank" placeholder="请输入银行名称">
+        </div>
+        <div class="mui-input-row">
+            <label>账号</label>
+            <input type="text" class="input data" name="bank_card" placeholder="请输入银行账号">
+        </div>
+        <div class="mui-input-row">
+            <label>收款人姓名</label>
+            <input type="text" class="input data"  name="realname" placeholder="请输入收款人姓名">
+        </div>
+        <div class="mui-input-row">
+            <label>预留电话</label>
+            <input type="text" class="input data" name="telephone" placeholder="请输入预留电话">
+        </div>
+
+        <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="submitBtn">添加</button>
+    </form>
+
 </div>
 
 </body>
@@ -61,37 +79,47 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui('body').on('tap', 'a', function () {
-        window.top.location.href = this.href;
-    });
+//    mui('body').on('tap', 'a', function () {
+//        window.top.location.href = this.href;
+//    });
 
     $(function(){
         $('select[name=bank_type]').on('change',function(i){
             var bank_type = $(this).val();
             if(bank_type == 2){
                 $('input[name=bank]').val('');
+                $('input[name=bank_card]').attr("placeholder","请输入银行账号");
                 $('#bank').show();
             }else{
                 $('input[name=bank]').val('支付宝');
+                $('input[name=bank_card]').attr("placeholder","请输入支付宝账号");
                 $('#bank').hide();
             }
         });
 
 
-        $('button').on('click',function(){
-            var data1 = wooApi.getInputData();
-            var data2 = wooApi.getInputData('select','data',data1);
-            var objData = wooApi.arrTOobj(data2);
-            console.log(objData);
-            var result = wooApi.asyncF("{:url('api/Bankcard/createBankcardApi')}",objData);
-            if(result.code == 200){
-                mui.alert('提示',result.msg,function(){
-                    history.back()
-                })
-            }else{
-                mui.alert('提示',result.msg,function(){
-                    // history.back()
-                })
+        $('#submitBtn').on('click',function(){
+
+
+            if($('input[name=bank_card]').val()==""||$('input[name=bank_type]').val()==""||$('input[name=bank]').val()==""||$('input[name=realname]').val()==""||$('input[name=telephone]').val()==""){
+                mui.alert("请完整填账号表单，谢谢！");
+                return false;
+            }else {
+
+                var data1 = wooApi.getInputData();
+                var data2 = wooApi.getInputData('select', 'data', data1);
+                var objData = wooApi.arrTOobj(data2);
+                console.log(objData);
+                var result = wooApi.asyncF("{:url('api/Bankcard/createBankcardApi')}", objData);
+                if (result.code == 200) {
+                    mui.alert('提示', result.msg, function () {
+                        history.back()
+                    })
+                } else {
+                    mui.alert('提示', result.msg, function () {
+                        // history.back()
+                    })
+                }
             }
         })
     })
