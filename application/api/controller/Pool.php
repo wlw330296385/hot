@@ -99,6 +99,7 @@ class Pool extends Base{
             }
             if(isset($data['ends'])){
                 $data['end'] = strtotime($data['ends']);
+                $data['end_str'] = date('Ymd',$data['end']);
             }
             $result = $this->PoolService->updatePool($data,['id'=>$pool_id]);
             return json($result);
@@ -130,11 +131,12 @@ class Pool extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if( $data['starts'] || isset($data['starts'])){
+            if(isset($data['starts'])){
                 $data['start'] = strtotime($data['starts'])+86399;
             }
             if(isset($data['ends'])){
                 $data['end'] = strtotime($data['ends']);
+                $data['end_str'] = date('Ymd',$data['end']);
             }
 
             $result = $this->PoolService->createPool($data);

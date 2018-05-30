@@ -3,6 +3,7 @@
 namespace app\service;
 
 use app\model\Pool;
+use app\common\validate\PoolVal;
 use think\Db;
 class PoolService {
     private $PoolModel;

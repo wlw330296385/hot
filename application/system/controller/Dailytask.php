@@ -1,7 +1,10 @@
 <?php
 namespace app\system\controller;
 use app\system\controller\Base;
-
+/**
+ * 每日学生数\场地数
+ * @param  
+ */
 class Dailytask extends Base{
  
     public function _initialize(){

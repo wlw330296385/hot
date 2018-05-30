@@ -1,7 +1,10 @@
 <?php
 namespace app\system\controller;
 use app\system\controller\Base;
-
+/**
+ * 每日余额
+ * @param  
+ */
 class Dailyfinance extends Base{
  
     public function _initialize() {

@@ -28,6 +28,11 @@ class GroupApplyService{
     
     // 插入一条数据
     public function createGroupApply($data){
+        $res = $this->GroupApplyModel->where(['member_id'=>$data['member_id'],'group_id'=>$data['group_id'],'status'=>1])->find();
+        $res = $res->toArray();
+        if(!empty($res)){
+            return ['code'=>100,'msg'=>'重复申请'];
+        }
         $result = $this->GroupApplyModel->save($data);
         if($result){
             return ['code'=>200,'msg'=>'操作成功','data'=>$this->GroupApplyModel->id];
@@ -39,7 +44,7 @@ class GroupApplyService{
 
     //更新一条数据
     public function updateGroupApply($data,$apply_id){
-        
+
         $result = $this->GroupApplyModel->save($data,['id'=>$apply_id]);
         if($result){
             return ['code'=>200,'msg'=>'操作成功'];

@@ -11,7 +11,10 @@ use app\model\Output;
 use app\model\CampFinance;
 use think\Db;
 use app\system\controller\Base;
-
+/**
+ * 课时结算
+ * @param  跑循环条件不一;
+ */
 class Crontabwoorun extends Base {
     public $setting;
 

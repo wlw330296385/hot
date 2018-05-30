@@ -11,7 +11,10 @@ use app\model\Output;
 use app\model\CampFinance;
 use think\Db;
 use app\system\controller\Base;
-
+/**
+ * 课时结算
+ * @param  正式
+ */
 class Crontabwoo extends Base {
     public $setting;
 

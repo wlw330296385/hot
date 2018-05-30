@@ -2,6 +2,10 @@
 namespace app\system\controller;
 use app\system\controller\Base;
 use think\Db;
+/**
+ * 系统收支
+ * @param  
+ */
 class Dailysys extends Base{
  
     public function _initialize(){
