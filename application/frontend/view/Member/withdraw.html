@@ -54,7 +54,7 @@
             <span class="mui-navigate-right">
                         <select class="bankcard_select" style="padding-right: 15px;">
                             {volist name="bankcardList" id="vol"}
-                                <option data-action="select" data-bank-card="{$vol.bank_card}" data-bank="{$vol.bank}" data-bank-type ="{$vol.bank_type}" data-bank="{$vol.bank}" data-realname ="{$vol.realname}" data-telephone ="{$vol.telephone}">{$vol.bank}({$vol.bank_card|substr=-4}) 提现手续费0.1%</option>
+                                <option data-action="select" data-bank-card="{$vol.bank_card}" data-bank="{$vol.bank}" data-bank-type ="{$vol.bank_type}" data-bank="{$vol.bank}" data-realname ="{$vol.realname}" data-telephone ="{$vol.telephone}">{$vol.bank} （提现手续费0.1%）</option>
                             {/volist}
                                 <option data-action="add" data-url="{:url('member/createBankCard')}">添加新账号</option>
                         </select>
@@ -122,33 +122,31 @@
             var realname ="{$bankcardList.0.realname}";
             var telephone = "{$bankcardList.0.telephone}";
 
+            var typeCN = '';
+            if(bank_type==1){
+                typeCN = "支付宝";
+            }else{
+                typeCN = "银行";
+            }
+            var card = bank_card.substring(0,bank_card.length-8) + "********"
+
             $('input[name=bank_card]').val(bank_card);
             $('input[name=bank_type]').val(bank_type);
             $('input[name=bank]').val(bank);
             $('input[name=realname]').val(realname);
             $('input[name=telephone]').val(telephone);
-            $('.bank_card').text(bank_card);
-            $('.bank_type').text(bank_type);
+            $('.bank_card').text(card);
+            $('.bank_type').text(typeCN);
             $('.bank').text(bank);
             $('.realname').text(realname);
             $('.telephone').text(telephone);
+            $('.bankcard_select option:eq(0)').prop("selected", true);
 
         {/if}
 
 
         $('.bankcard_select').on('change',function(){
 
-            //下来选择一变化先清空一下（如操作跳转到添加银行卡页面后返回，有可能保留了原值）
-            $('input[name=bank_card]').val("");
-            $('input[name=bank_type]').val("");
-            $('input[name=bank]').val("");
-            $('input[name=realname]').val("");
-            $('input[name=telephone]').val("");
-            $('.bank_card').text("");
-            $('.bank_type').text("");
-            $('.bank').text("");
-            $('.realname').text("");
-            $('.telephone').text("");
 
             var action = $(this).find("option:selected").attr('data-action');
             if(action=="add"){
@@ -159,8 +157,16 @@
                 $('input[name=bank]').val($(this).find("option:selected").attr('data-bank'));
                 $('input[name=realname]').val($(this).find("option:selected").attr('data-realname'));
                 $('input[name=telephone]').val($(this).find("option:selected").attr('data-telephone'));
-                $('.bank_card').text($(this).find("option:selected").attr('data-bank-card'));
-                $('.bank_type').text($(this).find("option:selected").attr('data-bank-type'));
+
+                var typeCN = '';
+                if($(this).find("option:selected").attr('data-bank-type')==1){
+                    typeCN = "支付宝";
+                }else{
+                    typeCN = "银行";
+                }
+                var card = $(this).find("option:selected").attr('data-bank-card').substring(0,$(this).find("option:selected").attr('data-bank-card').length-8) + "********"
+                $('.bank_card').text(card);
+                $('.bank_type').text(typeCN);
                 $('.bank').text($(this).find("option:selected").attr('data-bank'));
                 $('.realname').text($(this).find("option:selected").attr('data-realname'));
                 $('.telephone').text($(this).find("option:selected").attr('data-telephone'));
