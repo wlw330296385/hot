@@ -110,8 +110,9 @@ class PunchService {
         $this->Punch->where($map)->setDec($field);
     }
 
-    public function getCommentList($map,$paginate= 10,$order = 'id desc'){
-        $result = $this->PunchCommentModel->where($map)->order($order)->page($paginate)->select();
+    public function getCommentList($map,$page= 1,$order = 'id desc'){
+        $result = $this->PunchCommentModel->where($map)->order($order)->page($page)->select();
+
         return $result;
         
     }
@@ -119,6 +120,7 @@ class PunchService {
 
     public function getCommentListByPage($map,$paginate= 10,$order = 'id desc'){
         $result = $this->PunchCommentModel->where($map)->order($order)->paginate($paginate);
+
         return $result;
         
     }
