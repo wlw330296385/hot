@@ -259,8 +259,8 @@ class Match extends Base {
     }
 
     // 联赛章程
-    public function leagueGulations() {
-        return view('Match/leagueGulations');
+    public function leagueregulation() {
+        return view('Match/leagueRegulation');
     }
 
     // 联赛赛程
@@ -282,6 +282,8 @@ class Match extends Base {
     public function leagueDynamicList() {
         return view('Match/leagueDynamicList');
     }
+
+    /*=======以上是外部展示页，以下是管理操作页=======*/
 
     // 联赛球队
     public function teamListOfLeague() {
@@ -351,6 +353,11 @@ class Match extends Base {
     // 联赛编辑比赛
     public function matchEditOfLeague() {
         return view('Match/matchEditOfLeague');
+    }
+
+    // 联赛章程编辑
+    public function regulationofleague() {
+        return view('Match/regulationOfLeague');
     }
 
     // 报名联赛

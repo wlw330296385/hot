@@ -1450,14 +1450,14 @@ class Team extends Base
         ]);
     }
 
-    // 球队章程
+    // 我的球队列表
     public function myTeamList() {
         return view('Team/myTeamList');
     }
 
     // 球队章程
-    public function constitutionOfTeam() {
-        return view('Team/constitutionOfTeam');
+    public function regulationOfTeam() {
+        return view('Team/regulationOfTeam');
     }
 
     // 球队参与的联赛列表

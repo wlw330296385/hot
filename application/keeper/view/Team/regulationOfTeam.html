@@ -25,8 +25,8 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
         <form action="" class="mui-input-group">
-            <textarea name="constitution" class="data constitution" style="display: none"></textarea>
-            <div id="articleEditor" class="tuwenIntro">{$teamInfo.constitution}</div>
+            <textarea name="regulation" class="data regulation" style="display: none"></textarea>
+            <div id="articleEditor" class="tuwenIntro">{$teamInfo.regulation}</div>
         </form>
 
         <ul class="mui-table-view operation">
@@ -39,7 +39,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.min.js"></script>
     <script>
-        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'constitution'])}";
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'regulation'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
@@ -62,7 +62,7 @@
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
             var introHtml = $("#articleEditor").html();
-            $(".constitution").val(introHtml);
+            $(".regulation").val(introHtml);
             console.log(introHtml)
 
             var data = wooApi.getInputData('input', 'data');
@@ -71,19 +71,19 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
 
-            var constitution = $('textarea.constitution').val();
-            objData.constitution = constitution;
+            var regulation = $('textarea.regulation').val();
+            objData.regulation = regulation;
 
-            var url = "{:url('api/team/setconstitution')}";
+            var url = "{:url('api/team/setregulation')}";
             var ajaxResult = wooApi.asyncF(url, objData);
 
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '章程创建成功', '确定', function () {
-                    var goUrl = "{:url('team/teamManage')}/" + '/team_id/' + "{$team_id}";
+                mui.alert(ajaxResult.msg, '章程编辑成功', '确定', function () {
+                    var goUrl = "{:url('team/teamManage')}" + '/team_id/' + "{$team_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '章程创建失败', function () {
+                mui.alert(ajaxResult.msg, '章程编辑失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑章程</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {

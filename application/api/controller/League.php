@@ -1033,7 +1033,6 @@ class League extends Base
     public function createleaguegroup() {
         // 接收请求变量
         $data = input('post.');
-        //dump($data);
         // 数据验证
         if ( !array_key_exists('league_id', $data) ) {
             return json(['code' => 100, 'msg' => __lang('MSG_402').'传入league_id']);
@@ -1272,5 +1271,37 @@ class League extends Base
         } else {
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
+    }
+
+    // 设置章程
+    public function setregulation() {
+        // 接收请求变量
+        $data = $this->request->post();
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404').'请选择其他联赛']);
+        }
+        // 验证会员有无操作权限
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $matchS->saveMatch($data);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($result);
     }
 }

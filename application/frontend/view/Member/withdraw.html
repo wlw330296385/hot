@@ -15,58 +15,79 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+
+        .mui-btn-block{
+            width: 80%;
+            margin: 30px auto;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+    </style>
 </head>
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">钱包提现</h1>
+    <h1 class="mui-title">钱包余额提现</h1>
 </header>
 <div class="mui-content">
 
-    <div class="list camp-list camp-lesson-list detalis-list coach">
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli listinitial">
-                <span>钱包余额￥{$memberInfo['balance']}</span>
-            </li>
-            <li class="mui-table-view-cell listli listinitial">
-                提现金额<input type="text" class="data" name="salary" placeholder="￥0.00">
-            </li>
-            <input type="hidden" name="tid" class="data" value="{$tid}">
+    <form action="" class="mui-input-group">
+        <input type="hidden" name="tid" class="data" value="{$tid}">
+        <input type="hidden" name="bank_card" class="data" value="">
+        <input type="hidden" name="bank" class="data" value="">
+        <input type="hidden" name="bank_type" class="data" value="">
+        <input type="hidden" name="realname" class="data" value="">
+        <input type="hidden" name="telephone" class="data" value="">
+        <div class="mui-input-row">
+            <span>钱包余额 <b class="colororange">￥{$memberInfo['balance']}</b></span>
+        </div>
+        <div class="mui-input-row">
+            <label>提现金额</label>
+            <input type="text" class="data" name="salary" placeholder="￥0.00">
+        </div>
+        <div class="mui-input-row">
+            <label>到账账号</label>
+            {if condition="$bankcardList"}
+            <span class="mui-navigate-right">
+                        <select class="bankcard_select" style="padding-right: 15px;">
+                            {volist name="bankcardList" id="vol"}
+                                <option data-action="select" data-bank-card="{$vol.bank_card}" data-bank="{$vol.bank}" data-bank-type ="{$vol.bank_type}" data-bank="{$vol.bank}" data-realname ="{$vol.realname}" data-telephone ="{$vol.telephone}">{$vol.bank} （提现手续费0.1%）</option>
+                            {/volist}
+                                <option data-action="add" data-url="{:url('member/createBankCard')}">添加新账号</option>
+                        </select>
+             </span>
+            {else /}
+            <a href="{:url('member/createBankCard')}" class="mui-navigate-right"><span>添加新账号</span></a>
+            {/if}
+        </div>
 
-            <li class="mui-table-view-cell mui-collapse listli listinitial">
-                <a href="#" class="mui-navigate-right bankcard">
-                    到账
-                    账号{if condition="$bankcardList"}<span>{$bankcardList.0.bank}({$bankcardList.0.bank_card|substr=-4})</span>
-                    <input type="hidden" name="bank_card" class="data" value="{$bankcardList.0.bank_card}">
-                    <input type="hidden" name="bank" class="data" value="{$bankcardList.0.bank}">
-                    <input type="hidden" name="bank_type" class="data" value="{$bankcardList.0.bank_type}">
-                    <input type="hidden" name="realname" class="data" value="{$bankcardList.0.realname}">               
-                    {/if}
-                </a>
-                <div class="mui-collapse-content">
-                    <ul class="mui-table-view"">
-                        {volist name="bankcardList" id="vol"}
-                            <li class="mui-table-view-cell item-list listli listinitial bankcard_select" data-bank-card="{$vol.bank_card}" data-bank="{$vol.bank}" data-bank-type ="{$vol.bank_type}" data-bank="{$vol.bank}" data-realname ="{$vol.realname}" >
-                                <div class="list-cont">
-                                    <h4>{$vol.bank}({$vol.bank_card|substr=-4})</h4>
-                                    <p>提现手续费0.1%</p>
-                                </div>
-                            </li> {/volist}
+        <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="submitBtn">提现</button>
+        <br />
+    </form>
 
-                            <li class="mui-table-view-cell listli listinitial border-b">
-                                <a href="{:url('member/createBankCard')}">添加新账号</a>
-                            </li>
-                        </ul>
-                </div>
+    <div class="list">
+        <div class="page-header">
+            <span class="course">当前提现账号信息</span>
+        </div>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell listli">收款人
+                <span class="realname"></span>
             </li>
-           
-            
-            <div class="tjbtn tjbtn-next">
-                <button type="button" class="btn btn1 " id="submitBtn">
-                    提现
-                </button>
-            </div>
+            <li class="mui-table-view-cell listli">预留电话
+                <span class="telephone"></span>
+            </li>
+            <li class="mui-table-view-cell listli">收款账号
+                <span class="bank_card"></span>
+            </li>
+            <li class="mui-table-view-cell listli">收款银行
+                <span class="bank"></span>
+            </li>
+            <li class="mui-table-view-cell listli">账号类型
+                <span class="bank_type"></span>
+            </li>
         </ul>
     </div>
 </div>
@@ -85,55 +106,114 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    mui('body').on('tap', 'a', function () {
+    mui('.mui-content').on('tap', 'a', function () {
         window.top.location.href = this.href;
     });
 
     var ok = true;
-    $(function(){
-        var bankcard = $('.bankcard span').text();
 
-        $('.bankcard_select').on('click',function(){
-            console.log(bankcard);
-            bankcard = $(this).children().find('h4').text();
-            $('.bankcard span').text(bankcard);
-            $('input[name=bank_card]').val($(this).attr('data-bank-card'));
-            $('input[name=bank_type]').val($(this).attr('data-bank-type'));
-            $('input[name=bank]').val($(this).attr('data-bank'));
-            $('input[name=realname]').val($(this).attr('data-realname'));
+    $(function(){
+
+        {if condition="$bankcardList"}
+
+            var bank_card = "{$bankcardList.0.bank_card}";
+            var bank= "{$bankcardList.0.bank}";
+            var bank_type = "{$bankcardList.0.bank_type}";
+            var realname ="{$bankcardList.0.realname}";
+            var telephone = "{$bankcardList.0.telephone}";
+
+            var typeCN = '';
+            if(bank_type==1){
+                typeCN = "支付宝";
+            }else{
+                typeCN = "银行";
+            }
+            var card = bank_card.substring(0,bank_card.length-8) + "********"
+
+            $('input[name=bank_card]').val(bank_card);
+            $('input[name=bank_type]').val(bank_type);
+            $('input[name=bank]').val(bank);
+            $('input[name=realname]').val(realname);
+            $('input[name=telephone]').val(telephone);
+            $('.bank_card').text(card);
+            $('.bank_type').text(typeCN);
+            $('.bank').text(bank);
+            $('.realname').text(realname);
+            $('.telephone').text(telephone);
+            $('.bankcard_select option:eq(0)').prop("selected", true);
+
+        {/if}
+
+
+        $('.bankcard_select').on('change',function(){
+
+
+            var action = $(this).find("option:selected").attr('data-action');
+            if(action=="add"){
+                location.href = "{:url('member/createBankCard')}";
+            }else if(action=="select"){
+                $('input[name=bank_card]').val($(this).find("option:selected").attr('data-bank-card'));
+                $('input[name=bank_type]').val($(this).find("option:selected").attr('data-bank-type'));
+                $('input[name=bank]').val($(this).find("option:selected").attr('data-bank'));
+                $('input[name=realname]').val($(this).find("option:selected").attr('data-realname'));
+                $('input[name=telephone]').val($(this).find("option:selected").attr('data-telephone'));
+
+                var typeCN = '';
+                if($(this).find("option:selected").attr('data-bank-type')==1){
+                    typeCN = "支付宝";
+                }else{
+                    typeCN = "银行";
+                }
+                var card = $(this).find("option:selected").attr('data-bank-card').substring(0,$(this).find("option:selected").attr('data-bank-card').length-8) + "********"
+                $('.bank_card').text(card);
+                $('.bank_type').text(typeCN);
+                $('.bank').text($(this).find("option:selected").attr('data-bank'));
+                $('.realname').text($(this).find("option:selected").attr('data-realname'));
+                $('.telephone').text($(this).find("option:selected").attr('data-telephone'));
+            }
+
         })
 
         $('#submitBtn').on('click',function(){
-            var data1 = wooApi.getInputData();
-            var objData = wooApi.arrTOobj(data1);
-            if(!objData.salary){
-                mui.toast('请输入金额');
-                ok = false
+
+            if(ok == false||$('input[name=bank_card]').val()==""||$('input[name=bank_type]').val()==""||$('input[name=bank]').val()==""||$('input[name=realname]').val()==""||$('input[name=telephone]').val()==""||$('input[name=salary]').val()==""){
+                mui.alert("请填写数值大于零的整数金额，并选择到账账号！谢谢！");
                 return false;
             }else{
-                ok = true;
-            }
-            if(ok == true){
+
+                var sum = $('input[name=salary]').val();
+                if(!(/^[1-9]+?[0-9]*$/).test(sum)){
+                    mui.alert("请填写数值大于零的整数，谢谢！");
+                    return false;
+                }else if(parseFloat(sum)> parseFloat("{$memberInfo['balance']}") ){
+                    mui.alert("您填写的金额不能大于你的个人余额哦！");
+                    return false;
+                }
+
+                var data1 = wooApi.getInputData();
+                var objData = wooApi.arrTOobj(data1);
                 var result = wooApi.asyncF("{:url('api/SalaryOut/applySalaryOut')}",objData);
-                alert(result.msg)
+                mui.alert(result.msg)
                 if(result.code == 200){
                     window.location.href="{:url('member/mywallet')}";
                 }
-            }else{
-                mui.toast('请核对金额和账号是否正确');
+
             }
             
         })
 
 
         // 提现金额
-        $('input[name=salary]').on('keyup',function(){
-            if( parseFloat($(this).val()) <0){
-                mui.toast('提现金额不能小于0');
+        $('input[name=salary]').on('blur',function(){
+            var sum = $(this).val();
+            if(!(/^[1-9]+?[0-9]*$/).test(sum)){
+                mui.toast("请填写数值大于零的整数，谢谢！");
+                ok = false;
                 return false;
-            }else if(parseFloat($(this).val())> parseFloat("{$memberInfo['balance']}") ){
-                ok = true;
-                $(this).val("{$memberInfo['balance']}");
+            }else if(parseFloat(sum)> parseFloat("{$memberInfo['balance']}") ){
+                mui.toast("您填写的金额不能大于你的个人余额哦！");
+                ok = false;
+                return false;
             }
         })
     })
