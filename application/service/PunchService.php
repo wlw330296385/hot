@@ -36,10 +36,15 @@ class PunchService {
         if($stakes < session('memberInfo.hot_coin')){
             return json(['code'=>100,'msg'=>'热币不足']);
         }
-        $res = db('member')->where(['id'=>$data['member_id']])->dec('hot_coin',$stakes)->update();
-        if(!$res){
-            return ['code'=>100,'msg'=>'热币扣除失败,请重试'];
+
+        if($stakes>0){
+            $res = db('member')->where(['id'=>$data['member_id']])->dec('hot_coin',$stakes)->update();
+            if(!$res){
+                return ['code'=>100,'msg'=>'热币扣除失败,请重试'];
+            }
         }
+        
+        
 
         $result = $this->Punch->save($data);
         if($result){
