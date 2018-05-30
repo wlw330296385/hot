@@ -33,7 +33,8 @@ class PunchService {
     // 新增打卡
     public function createPunch($data){
         $stakes = ceil($data['stakes']);
-        if($stakes < session('memberInfo.hot_coin')){
+        $hot_coin = session('memberInfo.hot_coin');
+        if($stakes < $hot_coin){
             return json(['code'=>100,'msg'=>'热币不足']);
         }
 
@@ -42,6 +43,7 @@ class PunchService {
             if(!$res){
                 return ['code'=>100,'msg'=>'热币扣除失败,请重试'];
             }
+            session('memberInfo.hot_coin',($hot_coin-$stakes));
         }
         
         
