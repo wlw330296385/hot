@@ -53,6 +53,8 @@ class Pooltask extends Base{
                 }
                 // 更新奖金池
                 $result = db('pool')->where(['date_str'=>$date_str])->update(['status'=>-1]);
+                // 奖金得主诞生
+                $model = new \app\model\
             }
 	    	$data = ['crontab'=>'每日擂台开奖'];
             $this->record($data);
