@@ -76,21 +76,12 @@ class CampMember extends Base
             $status = 0;
             if ($campMemberInfo) {
                 $campMemberId = $campMemberInfo['id'];
-                if ($type != $campMemberInfo['type']) {
-                    // 改变角色等级
-                    $data = [
-                        'id' => $campMemberId,
-                        'camp_id' => $campInfo['id'],
-                        'camp' => $campInfo['camp'],
-                        'member_id' => $this->memberInfo['id'],
-                        'member' => $this->memberInfo['member'],
-                        'remarks' => $remarks,
-                        'type' => $type,
-                        'status' => $status,
-                        'update_time' => time()
-                    ];
-                    $result = $db->update($data);
-                } else {
+                // 营主不能改变
+                if ($campMemberInfo['type'] == 4) {
+                    return json(['code' => 100, 'msg' => '你是训练营营主，不需申请加入']);
+                }
+                // 若有camp_member数据 status=-1的话更新status=1
+                if ($type == $campMemberInfo['type']) {
                     if ($campMemberInfo['status'] == 1) {
                         return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
                     } elseif ($campMemberInfo['status'] == -1) {
@@ -101,9 +92,28 @@ class CampMember extends Base
                     } else {
                         return json(['code' => 100, 'msg' => '您已提交加入申请，请等待训练营审核']);
                     }
+                } else {
+                    // type改变只能增大
+                    if ($type > $campMemberInfo['type']) {
+                        // 改变角色等级
+                        $data = [
+                            'id' => $campMemberId,
+                            'camp_id' => $campInfo['id'],
+                            'camp' => $campInfo['camp'],
+                            'member_id' => $this->memberInfo['id'],
+                            'member' => $this->memberInfo['member'],
+                            'remarks' => $remarks,
+                            'type' => $type,
+                            'status' => $status,
+                            'update_time' => time()
+                        ];
+                        $result = $db->update($data);
+                    } else {
+                        return json(['code' => 100, 'msg' => '你已经是训练营的一员']);
+                    }
                 }
             } else {
-
+                // 插入新数据
                 $data = [
                     'camp_id' => $campInfo['id'],
                     'camp' => $campInfo['camp'],
