@@ -66,6 +66,9 @@ class GroupApply extends Base{
             if($group_apply_id){
                 $result = $this->GroupApplyService->updateGroupApply($data,$group_apply_id);
             }else{
+                $data['member_id'] = $this->memberInfo['id'];
+                $data['memebr'] = $this->memberInfo['member'];
+                $data['avatar'] = $this->memberInfo['avatar'];
                 $result = $this->GroupApplyService->createGroupApply($data);
             }
             
