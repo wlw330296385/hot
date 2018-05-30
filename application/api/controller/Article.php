@@ -84,7 +84,7 @@ class Article extends Base{
             $data['avatar'] = $this->memberInfo['avatar'];
             $comment_id = input('param.comment_id');
             if($comment_id){
-                $result = $this->ArticleService->updateComment($data,['id'=>$comment_id]);
+                $result = $this->ArticleService->updateComment($data,['id'=>$comment_id,'member_id'=>$this->memberInfo['id']]);
             }else{
                 $result = $this->ArticleService->createComment($data);
             }

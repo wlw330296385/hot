@@ -146,7 +146,7 @@ class Punch extends Base{
             $data['avatar'] = $this->memberInfo['avatar'];
             $comment_id = input('param.comment_id');
             if($comment_id){
-                $result = $this->PunchService->updateComment($data,['id'=>$comment_id]);
+                $result = $this->PunchService->updateComment($data,['id'=>$comment_id,'member_id'=>$this->memberInfo['id']]);
             }else{
                 $result = $this->PunchService->createComment($data);
             }
