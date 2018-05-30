@@ -101,4 +101,19 @@ class Group extends Base{
         return view('Group/poolList');
     }
 
+    // 社群成员申请列表
+    public function groupApplyList() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $this->assign('groupInfo',$groupInfo);
+        return view('Group/groupApplyList');
+    }
+    // 社群成员操作回复列表
+    public function groupApplyInfo() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $this->assign('groupInfo',$groupInfo);
+        return view('Group/groupApplyInfo');
+    }
+
 }
