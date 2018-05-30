@@ -184,7 +184,7 @@ class Group extends Base{
 
             $result = $this->GroupService->createGroup($data);
             if($result['code'] == 200){
-                $res = $this->GroupService->createGroupMember($this->memberInfo['id'],$this->memberInfo['member'],$result['data']);
+                $res = $this->GroupService->createGroupMember($this->memberInfo['id'],$this->memberInfo['member'],$this->memberInfo['avatar'],$result['data']);
             }
             return json($result);   
          }catch (Exception $e){
