@@ -119,7 +119,7 @@
                     </div>
                     <div class="price-frame f12" style="margin-top: 19px;">
                         本月打卡
-                        <text class="colororange f18">0</text>
+                        <text class="colororange f18">{$monthPunch}</text>
                     </div>
                 </li>
             </ul>
@@ -132,7 +132,6 @@
                         <span id="result" class="ui-alert domData punch_time" name="punch_time"></span>
                     </div>
                 </div>
-
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
                         <label class="wd45">
@@ -141,7 +140,6 @@
                         <input type="hidden" name="punch_category" value="" class="data">
                     </a>
                 </div>
-
                 <div class="mui-input-row">
                     <label class="wd45">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
@@ -166,15 +164,6 @@
                     </a>
                     <input type="hidden" name="image_url" value="" class="data">
                 </div>
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>
-                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>上传照片</label>
-                        <img id="preview_1" class="upload-preview" src="" alt="">
-                        <input type="hidden" name="image_url" value="" class="data">
-                    </a>
-                </div> -->
-
                 <div class="operation-box border-b">
                     <div class="mui-input-row">
                         <label class="wd49 lineHeight20">选择社群
@@ -548,6 +537,14 @@
 
         // 获取数据并进行提交
         function submitAction() {
+            //提示框
+            if ("{$memberInfo.id}" == 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            }
 
             if ($(".punch_category").text() == '') {
                 mui.toast("请选择运动类型");
