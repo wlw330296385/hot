@@ -41,11 +41,7 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-text-right">
-            <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}" class="colororange">
-                <button class="groupAdmin hide" style="margin-right: 5px;">管理</button>
-            </a>
-        </h1>
+        <h1 class="mui-title">社群详情</h1>
     </header>
 
     <div class="mui-content">
@@ -62,7 +58,10 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <button class="mui-btn bgred joinGropu" style="margin-top:26px">加入</button>
+                        <button class="mui-btn bgred joinGroup" style="margin-top:26px">加入</button>
+                        <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">
+                            <button class="mui-btn bgred groupAdmin hide" style="margin-top:26px">管理</button>
+                        </a>
                     </div>
                 </li>
             </ul>
@@ -176,17 +175,23 @@
         var member_id = "{$memberInfo.id}";
         var group_id = "{$groupInfo.id}";
         var group_member_id = "{$groupInfo.member_id}";
+        var id = "{$id}"; //是否在社群内，是则id有值，否则为空
+        console.log(id)
         $(function () {
 
             // 判断底部按钮退出与管理 
-            if (group_member != member) {
+            if (id != '' && group_member != member) {
                 $(".outGroup").show();
-            }else{
+            } else if (id != '' && group_member == member) {
+                $(".groupAdmin").show();
+                $(".joinGroup").hide();
+            } else if (id == '' && group_member == member) {
                 $(".groupAdmin").show();
             }
+
             // 判断擂主名称显示
-            var nowPool = "{$nowPool.winer}"
-            var lastPool = "{$lastPool.winer}"
+            var nowPool = "{nowPool.winer}"
+            var lastPool = "{lastPool.winer}"
             if (nowPool != '') {
                 $(".winer").text(nowPool);
             } else {
@@ -194,7 +199,7 @@
             }
 
             // 加入社群
-            $(".joinGropu").on("tap", '', function () {
+            $(".joinGroup").on("tap", '', function () {
                 mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
                     data: {
                         group_id: group_id
@@ -224,7 +229,7 @@
                     if (e.index == 1) {
                         mui.ajax("{:url('api/group/dropGroup')}", {
                             data: {
-                                id:"{$id}",
+                                id: id,
                                 member_id: member_id,
                                 group_id: group_id,
                             },
