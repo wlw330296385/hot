@@ -537,6 +537,14 @@
 
         // 获取数据并进行提交
         function submitAction() {
+            //提示框
+            if ("{$memberInfo.id}" == 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            }
 
             if ($(".punch_category").text() == '') {
                 mui.toast("请选择运动类型");
