@@ -2238,7 +2238,7 @@ class Team extends Base
                 'member' => $teammemberinfo['member'],
                 'avatar' => $teammemberinfo['avatar'],
                 'contact_tel' => $teammemberinfo['telephone'],
-                'student_id' => !empty($teammemberinfo['student_id']) ? teammemberinfo['student_id'] : 0,
+                'student_id' => !empty($teammemberinfo['student_id']) ? $teammemberinfo['student_id'] : 0,
                 'student' => !empty($teammemberinfo['student']) ? $teammemberinfo['student'] : '',
                 'is_pay' => 1,
                 'is_sign' => 1,
