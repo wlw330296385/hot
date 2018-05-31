@@ -81,7 +81,7 @@
 <body>
 
     <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backHref"></a>
     </header>
 
     <div class="mui-content">
@@ -118,7 +118,8 @@
                 <div class="dragClass" id="drag">{$punchInfo.rewords_money}</div>
             </div>
             <div class="page-header border-b">
-                <span class="course wd52">评论（<text class="comment_count">0</text>）</span>
+                <span class="course wd52">评论（
+                    <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
                     <span class="colororange">{$punchInfo.rewords_money}</span> HT
@@ -261,6 +262,18 @@
         // /////////////////////////////////////////////
         var count = 1;
         $(function () {
+
+            // 返回上一层判断
+            var punch = wooApi.GetQueryString('punch');
+            if (punch == "index") {
+                $(".backHref").attr("href", "{:url('punch/index')}");
+            } else if (punch == "list") {
+                $(".backHref").attr("href", "{:url('punch/punchList')}");
+            } else if (punch == "create") {
+                $(".backHref").attr("href", "{:url('punch/index')}");
+            } else if (punch == "info") {
+                $(".backHref").addClass("mui-action-back");
+            }
 
             if ($(".punchImg").html() == '') {
                 $(".punchImg").html("<p style=''min-height:200px;background:#ddd></p>")

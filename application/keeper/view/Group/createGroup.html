@@ -42,13 +42,15 @@
                 <label>社群名称</label>
                 <input type="text" name="group" class="data" value="" placeholder="社群名称">
             </div>
+
             <div class="mui-input-row h-auto">
-                <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <a href="#txpopover" class="mui-navigate-right">
                     <label>社群Logo</label>
-                    <img id="preview_1" class="upload-preview" alt="">
-                    <input type="hidden" name="logo" value="" class="data">
+                    <div id="view" style="width: 51px;"></div>
                 </a>
+                <input type="hidden" name="logo" value="" class="data">
             </div>
+
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>社群类型</label>
@@ -86,7 +88,14 @@
         </ul>
 
     </div>
-
+    <!-- 头像截图弹框 -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div id="clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" id="file">
+        </div>
+        <button id="clipBtn">截取</button>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
@@ -96,10 +105,23 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         // 获取数据并进行提交
         function submitAction() {
-
+            //提示框
+            if ("{$memberInfo.id}" == 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+            }
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -122,6 +144,40 @@
                 }, 'json');
             }
         };
+
+    </script>
+    <script>
+        var imgurl = '';
+        var pc = new PhotoClip('#clipArea', {
+            size: 260,
+            outputSize: 640,
+            //adaptive: ['60%', '80%'],
+            file: '#file',
+            view: '#view',
+            ok: '#clipBtn',
+            //img: 'img/mm.jpg',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    logo = res.path;
+                    $("input[name=logo]").val(logo)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
 
     </script>
 </body>

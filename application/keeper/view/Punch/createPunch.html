@@ -572,12 +572,12 @@
             var url = "{:url('api/punch/createPunchApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '提示', '确定', function () {
-                    var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data;
+                mui.alert("打卡成功", '提示', '确定', function () {
+                    var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败');
+                mui.alert(ajaxResult.msg, '打卡失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                     }

@@ -37,6 +37,7 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+        var group_id = "{$groupInfo.id}"
 
         $(function () {
 
@@ -98,7 +99,6 @@
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/group_apply/getGroupApplyListByPageApi','','',true)}" + '/?page=' + page;
-                var group_id = "{$groupInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
@@ -158,8 +158,8 @@
 
         // 同意
         function agree(group_apply_id) {
-            var elem = this;
-            var li = elem.parentNode.parentNode;
+            // var elem = this;
+            // var li = elem.parentNode.parentNode;
             var btnArray = ['取消', '确认'];
             mui.confirm('确认同意该申请?', '提示', btnArray, function (e) {
                 if (e.index == 1) {
@@ -175,8 +175,7 @@
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
-                                mui.toast("操作成功");
-                                window.setTimeout("window.location.reload()", 2000)
+                                joinGroup();
                             } else {
                                 mui.toast(data.msg);
                             }
@@ -190,6 +189,31 @@
                     setTimeout(function () {
                         // mui.swipeoutClose(li);
                     }, 0);
+                }
+            });
+        }
+
+        function joinGroup() {
+            mui.ajax("{:url('api/group/createGroupMemberApi')}", {
+                data: {
+                    group_id: group_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("操作成功");
+                        window.setTimeout("window.location.reload()", 2000)
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
                 }
             });
         }
