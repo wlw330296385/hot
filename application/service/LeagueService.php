@@ -112,7 +112,7 @@ class LeagueService
     public function saveMatchOrgMember($data, $condition=[]) {
         $model = new MatchOrgMember();
         // 带更新条件更新数据
-        if ( !empty($condition) ) {
+        if ( !empty($condition) && is_array($condition) ) {
             $res = $model->allowField(true)->save($data, $condition);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -156,6 +156,26 @@ class LeagueService
         // 粉丝数
         $result['fans_num'] = getfansnum($result['id'], 5);
         return $result;
+    }
+
+    // 获取联赛组织人员列表
+    public function getMatchOrgMemberList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchOrgMember();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取联赛组织人员列表
+    public function getMatchOrgMemberPaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchOrgMember();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 
     // 获取联赛组织人员列表
@@ -238,7 +258,17 @@ class LeagueService
     // 获取联赛球队详情（关联比赛、球队详细）
     public function getMatchTeamInfo($map) {
         $model = new MatchTeam();
-        $res = $model->with('team')->with('match')->where($map)->find();
+        $res = $model->with('team,match')->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    public function getMatchTeamInfoSimple($map) {
+        $model = new MatchTeam();
+        $res = $model->where($map)->find();
         if (!$res) {
             return $res;
         }

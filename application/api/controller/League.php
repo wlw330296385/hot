@@ -38,7 +38,7 @@ class League extends Base
             // 创建联赛组织成功
             if ($res['code'] == 200) {
                 $matchOrgId = $res['data'];
-                // 保存联赛组织-会员关系数据
+                // 保存联赛组织-会员关系数据 type=10负责人
                 $leagueService->saveMatchOrgMember([
                     'match_org_id' => $matchOrgId,
                     'match_org' => $data['name'],
@@ -46,6 +46,7 @@ class League extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'type' => 10,
                     'status' => 1
                 ]);
             }
@@ -564,14 +565,18 @@ class League extends Base
         if ($matchApply['status'] == 2) {
             return json(['code' => 100, 'msg' => '此申请已同意了，无需再次操作']);
         }
-        // 当前会员有无联赛组织人员关系（操作权限）
         $leagueService = new LeagueService();
-        $matchOrgMember = $leagueService->getMatchOrgMember([
-            'match_org_id' => $matchApply['match']['match_org_id'],
-            'member_id' => $this->memberInfo['id']
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueService->getMatchMemberType([
+            'match_id' => $data['id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
         ]);
-        if (!$matchOrgMember) {
-            return json(['code' => 100, 'msg' => __lang('MSG_403').'您不是联赛组织人员']);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 同意status=2/拒绝status=3：更新申请状态,回复消息推送
         $statusStr = '';
@@ -687,14 +692,18 @@ class League extends Base
         if (!$matchApply) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         }
-        // 当前会员有无联赛组织人员关系（操作权限）
+        // 当前会员有无联赛工作人员数据（操作权限）
         $leagueService = new LeagueService();
-        $matchOrgMember = $leagueService->getMatchOrgMember([
-            'match_org_id' => $matchApply['match']['match_org_id'],
-            'member_id' => $this->memberInfo['id']
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueService->getMatchMemberType([
+            'match_id' => $data['id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
         ]);
-        if (!$matchOrgMember) {
-            return json(['code' => 100, 'msg' => __lang('MSG_403').'您不是联赛组织人员']);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 组合推送消息内容
         $message = [
@@ -1329,5 +1338,59 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($result);
+    }
+
+    // 获取联赛组织-人员列表
+    public function getmatchorgmemberlist() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchOrgMemberList($data, $page);
+
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        }
+        catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 获取联赛组织-人员列表(页码)
+    public function getmatchorgmemberpage() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchOrgMemberPaginator($data);
+
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        }
+        catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 向会员邀请加入联赛组织
+    public function invitematchorgmebmer() {
+
+    }
+
+    // 邀请会员加入联赛组织列表
+    public function getmatchorginvitationlist() {
+
     }
 }
