@@ -36,6 +36,6 @@ class Frontend extends Base{
 
 
     public function checklogin(){
-
+        return json(['code' => 100, 'msg' => '请先登录']);
     }
 }

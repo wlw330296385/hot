@@ -7,7 +7,7 @@ class Group extends Base{
  
     public function _initialize(){
         parent::_initialize();
-       $this->GroupService = new GroupService;
+        $this->GroupService = new GroupService;
     }
  
     // 获取社群列表

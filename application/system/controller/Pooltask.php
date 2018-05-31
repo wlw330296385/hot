@@ -89,5 +89,7 @@ class Pooltask extends Base{
     /**
      * 测试用数据插入
      */
-    
+    public function test(){
+        
+    }
 }
