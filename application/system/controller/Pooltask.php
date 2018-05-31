@@ -90,6 +90,27 @@ class Pooltask extends Base{
      * 测试用数据插入
      */
     public function test(){
+        $Group = new \app\model\Group;
+        $group = db('group')->find();
+        $gourp['group'] = rand(10000,99999);
+        $group['member_id'] = rand(1,99);
+        $Group->isUpdate(false)->save($group); 
+
+
+        $Group = new \app\model\GroupMember;
+        $group_member = db('group_member')->find();
+        $group_member['group_id'] = rand(1,30);
+        $group_member['member_id'] = rand(1,99);
+        $GroupMember->isUpdate(false)->save($group_member);
+
+
+        $Pool = new \app\model\Pool;
+        $pool = db('pool')->find();
+        $pool['group_id'] = rand(1,30);
+        $pool['bonus'] = rand(999,9999);
+        $Pool->isUpdate(false)->save($pool);
+
+                 
         
     }
 }

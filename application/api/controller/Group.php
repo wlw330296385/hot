@@ -187,7 +187,7 @@ class Group extends Base{
                 $res = $this->GroupService->createGroupMember($this->memberInfo['id'],$this->memberInfo['member'],$this->memberInfo['avatar'],$result['data']);
             }
             return json($result);   
-         }catch (Exception $e){
+        }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
