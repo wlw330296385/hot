@@ -34,6 +34,10 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script>
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
         $(function () {
 
             //初始化全局变量
@@ -89,6 +93,7 @@
                     toList(page, gType);//具体取数据的方法
                 }, 100);
             }
+
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
@@ -108,17 +113,16 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                group_apply_id = data.data.data[i].id
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey refuse" onclick="checkRefuse(' + data.data.data[i].id + ')">拒绝</span><span class="mui-btn mui-btn-red agree" onclick="checkAgree(' + data.data.data[i].id + ')">同意</span></div>';
+                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><button class="mui-btn mui-btn-grey refuse" onclick="refuse(' + data.data.data[i].id + ')">拒绝</button><button class="mui-btn mui-btn-red agree" onclick="agree(' + data.data.data[i].id + ')">同意</button></div>';
                                 newli += '<div class="mui-slider-handle"><div class="mui-media-body wd83"><img class="mui-pull-left img45" src="' + data.data.data[i].avatar + '">';
                                 newli += '<p class="lineHeight20">' + data.data.data[i].member + '</p><p>' + data.data.data[i].create_time + '</p></div>';
-                                if (data.data.data[i].status == "申请中") {
-                                    newli += '<div class="fr colororange" style="line-height:40px;">未回复</div>'
-                                } else if (data.data.data[i].status  == "已同意") {
-                                    newli += '<div class="fr colororange" style="line-height:40px;>已同意</div>'
-                                } else if (data.data.data[i].status == "已拒绝") {
-                                    newli += '<div class="fr colororange" style="line-height:40px;>已拒绝</div>'
+                                if (data.data.data[i].status == '申请中') {
+                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">未回复</span>'
+                                } else if (data.data.data[i].status == '已同意') {
+                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">已同意</span>'
+                                } else if (data.data.data[i].status == '已拒绝') {
+                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">已拒绝</span>'
                                 }
                                 newli += '</li>';
                             }
@@ -149,87 +153,84 @@
                 });
             };
 
-            // 同意
-            $(document).on("tap", ".agree", function (group_apply_id) {
-                var elem = this;
-                var li = elem.parentNode.parentNode;
-                var btnArray = ['取消', '确认'];
-                mui.confirm('确认同意该申请?', '提示', btnArray, function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
-                            data: {
-                                group_apply_id: group_apply_id,
-                                status: 2
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data);
-                                if (data.code == 200) {
-                                    mui.toast("操作成功");
-                                    window.setTimeout("window.location.reload()", 1000);
-                                    // window.setTimeout("window.location.href='{:url('group/groupInfo')}/group_id/{$groupInfo.id}'", 2000)
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
-                            }
-                        });
-                    } else {
-                        setTimeout(function () {
-                            mui.swipeoutClose(li);
-                        }, 0);
-                    }
-                });
-            })
-
-            // 拒绝
-            $(document).on("tap", ".refuse", function checkRefuse(group_apply_id) {
-                var elem = this;
-                var li = elem.parentNode.parentNode;
-                var btnArray = ['取消', '确认'];
-                mui.confirm('确认拒绝该申请?', '提示', btnArray, function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
-                            data: {
-                                group_apply_id: group_apply_id,
-                                status: -1
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data);
-                                if (data.code == 200) {
-                                    mui.toast("您已拒绝该成员的申请");
-                                    window.setTimeout("window.location.reload()", 1000);
-                                    // window.setTimeout("window.location.href='{:url('group/groupInfo')}/group_id/{$groupInfo.id}'", 2000)
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
-                            }
-                        });
-                    } else {
-                        setTimeout(function () {
-                            mui.swipeoutClose(li);
-                        }, 0);
-                    }
-                });
-            });
-
-
         });
 
+
+        // 同意
+        function agree(group_apply_id) {
+            var elem = this;
+            var li = elem.parentNode.parentNode;
+            var btnArray = ['取消', '确认'];
+            mui.confirm('确认同意该申请?', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
+                        data: {
+                            group_apply_id: group_apply_id,
+                            status: 2
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("操作成功");
+                                window.setTimeout("window.location.reload()", 2000)
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                } else {
+                    setTimeout(function () {
+                        // mui.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        }
+
+        // 拒绝
+        function refuse(group_apply_id) {
+            // var elem = this;
+            // var li = elem.parentNode.parentNode;
+            var btnArray = ['取消', '确认'];
+            mui.confirm('确认拒绝该申请?', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
+                        data: {
+                            group_apply_id: group_apply_id,
+                            status: -1
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("您已拒绝该成员的申请");
+                                window.setTimeout("window.location.reload()", 2000)
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                } else {
+                    setTimeout(function () {
+                        // mui.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        }
 
     </script>
 </body>
