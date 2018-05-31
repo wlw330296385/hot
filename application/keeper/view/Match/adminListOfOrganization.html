@@ -30,7 +30,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred">
-                <a href="{:url('match/signupleague')}">邀请</a>
+                <a href="{:url('match/addorgmemberoforg', ['org_id' => $org_id])}">邀请</a>
             </li>
         </ul>
 
@@ -97,13 +97,13 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/follow/myfans','','',true)}" + '/?page=' + page;
-            var team_id = 2
+            var url = "{:url('api/league/getmatchorgmemberpage','','',true)}" + '/?page=' + page;
+            var match_org_id = "{$org_id}";
             mui.ajax({
                 url: url,
                 data: {
-                    team_id: team_id,
-                    type: 4
+                    match_org_id: match_org_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -116,9 +116,10 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">同意</span><span class="mui-btn mui-btn-red" data-action="del">拒绝</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data.data[i].member + '';
-                            newli += '<p class="mui-ellipsis"><font class="tipCorner bgred">申请/邀请</font></p></div></a></div>'
+                            //newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">同意</span><span class="mui-btn mui-btn-red" data-action="del">拒绝</span></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data.data[i].member + '';
+                            newli += '<p class="mui-ellipsis"><font class="tipCorner bgred">'+ data.data.data[i].type +'</font></p>'
+                            newli += '</div></a></div>'
                             newli += '</li>';
                         }
                     }

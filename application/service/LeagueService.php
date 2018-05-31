@@ -165,7 +165,11 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_num'] = $res[$k]->getData('type');
+        }
+        return $result;
     }
 
     // 获取联赛组织人员列表
@@ -175,17 +179,22 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['type_num'] = $res[$k]->getData('type');
+        }
+        return $result;
     }
 
     // 获取联赛组织人员列表
     public function getMatchOrgMembers($map) {
         $model = new MatchOrgMember();
         $res = $model->where($map)->select();
-        if (!$res) {
-            return $res;
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_num'] = $res[$k]->getData('type');
         }
-        return $res->toArray();
+        return $result;
     }
 
     // 获取联赛组织人员详情
@@ -195,7 +204,9 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        $result['type_num'] = $res->getData('type');
+        return $result;
     }
 
     // 保存联赛-工作人员关系数据
@@ -211,6 +222,41 @@ class LeagueService
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
+        // 直接更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res ) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // 联赛组织人员邀请记录
+    public function getMatchOrgMemberApply($map) {
+        $model = new \app\model\Apply();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        $result['status_num'] = $res->getData('status');
+        return $result;
+    }
+
+    // 保存联赛组织人员邀请数据
+    public function saveMatchOrgMemberApply($data) {
+        $model = new \app\model\Apply();
         // 直接更新数据
         if ( array_key_exists('id', $data) ) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);

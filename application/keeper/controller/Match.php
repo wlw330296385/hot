@@ -367,20 +367,43 @@ class Match extends Base {
             'league_id' => $league_id
         ]);
     }
+
     // 联赛球队报名回复
     public function teamApplyListOfLeague() {
         return view('Match/teamApplyListOfLeague');
     }
 
-    // 组织管理员
+    // 组织管理员列表
     public function adminListOfOrganization() {
-        return view('Match/adminListOfOrganization');
+        $org_id = input('org_id');
+        // 查询联赛组织
+        $leagueService = new LeagueService();
+        $leagueOrgInfo = $leagueService->getMatchOrg(['id' => $org_id]);
+
+        return view('Match/adminListOfOrganization', [
+            'org_id' => $org_id,
+            'leagueOrgInfo' => $leagueOrgInfo
+        ]);
     }
 
-    // 联赛工作人员
+    //  邀请会员-组织管理员
+    public function addorgmemberoforg() {
+        $org_id = input('org_id');
+        // 查询联赛组织
+        $leagueService = new LeagueService();
+        $leagueOrgInfo = $leagueService->getMatchOrg(['id' => $org_id]);
+
+        return view('Match/addOrgMemberOfOrg', [
+            'org_id' => $org_id,
+            'leagueOrgInfo' => $leagueOrgInfo
+        ]);
+    }
+
+    // 联赛工作人员列表
     public function workListOfLeague() {
         return view('Match/workListOfLeague');
     }
+
 
     // 联赛消息
     public function messageListOfLeague() {
