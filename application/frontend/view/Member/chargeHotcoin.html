@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>充值</title>
+    <title>充币</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -27,7 +27,7 @@
             border-bottom: 1px solid #EEE;
         }
         .charge-form .hot-input { position: relative; }
-        .charge-form .hot-input .money{ position: absolute; font-size: 24px; font-weight: bold; top:30px; }
+        .charge-form .hot-input .money{ position: absolute; font-size: 20px; top:30px; }
         .mui-btn-block{
             padding: 10px 0;
             font-size: 16px;
@@ -37,21 +37,35 @@
             color:#999;
             text-align: center;
         }
+        select.payType {
+            width: 70%;
+            float: right;
+            padding: 0px 5px;
+            margin: 0px;
+            direction: rtl;
+        }
     </style>
 </head>
 
 <body class="whitebg">
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-icon mui-icon-closeempty mui-pull-left"></a>
-    <h1 class="mui-title">钱包充值</h1>
+    <h1 class="mui-title">热币（Hotcoin）充值</h1>
 </header>
 <div class="mui-content whitebg">
 
         <form action="" class="charge-form">
-                <label>充值金额</label>
-                <div class="hot-input"><span class="money">￥</span><input type="number" name="sum" class="input" placeholder=""></div>
+            <div class="hot-input">
+                <label>充币数额</label>
+                <span class="mui-pull-right">⇄</span>
+                <select name="payType" class="payType">
+                    <option value="1">微信支付 </option>
+                    <option value="2">钱包余额（￥{$memberInfo['balance']}）支付</option>
+                </select>
+            </div>
+                <div class="hot-input"><span class="money">ℋ</span><input type="number" name="sum" class="input" placeholder=""></div>
                 <button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="submitCharge">提交充值</button>
-                <div class="tips">暂只支持微信支付</div>
+                <div class="tips">支持微信支付和钱包余额支付</div>
         </form>
 
 </div>
@@ -78,7 +92,18 @@
                 mui.alert("请填写数值大于零的整数，谢谢！");
                 return false;
             }
-            location.href = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=wallet&title=钱包充值';
+            var payType = $("select[name='payType']").val();
+            if(payType==1){
+                //通过微信支付充币
+                location.href = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=hotcoin&title=热币充值';
+            }else{
+                //通过钱包余额充币
+                if(parseFloat(sum)> parseFloat("{$memberInfo['balance']}") ){
+                    mui.alert("操作失败，您要充值的数额大于您的个人余额！")
+                    return false;
+                }
+                //余额充币接口
+            }
         });
 
     })

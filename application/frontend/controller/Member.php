@@ -299,4 +299,53 @@ class Member extends Base{
         return view('Member/registerInfo');
     }
 
+
+
+
+    // 我的热币
+    public function myHotcoin(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        if($member_id){
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+        }else{
+            $memberInfo = $this->memberInfo;
+        }
+
+
+        return view('Member/myHotcoin');
+    }
+
+    // 个人充值热币
+    public function chargeHotcoin(){
+
+        return view('Member/chargeHotcoin');
+    }
+
+    // 热币转余额
+    public function changeHotcoin(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        if($member_id){
+            $memberInfo = db('member')->where(['id'=>$member_id])->find();
+            $this->assign('memberInfo',$memberInfo);
+        }else{
+            $memberInfo = $this->memberInfo;
+        }
+
+        return view('Member/changeHotcoin');
+    }
+
+    // 热币收支明细
+    public function hotCoinDetail(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
+        $SalaryOutService = new \app\service\SalaryOutService($member_id);
+        $salaryoutList = $SalaryOutService->getSalaryOutList(['member_id'=>$this->memberInfo['id']]);
+        // dump($salaryoutList);die;
+        $this->assign('salaryoutList',$salaryoutList);
+        $this->assign('salaryinList',$salaryinList);
+        return view('Member/hotCoinDetail');
+    }
+
 }
