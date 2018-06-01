@@ -370,4 +370,11 @@ class Event extends Base{
     public function eventListOfMember() {
         return view('Event/eventListOfMember');
     }
+
+
+
+    // 活动报名表
+    public function applicationForm() {
+        return view('Event/applicationForm');
+    }
 }

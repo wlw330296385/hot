@@ -63,6 +63,7 @@
 
             <form action="" class="mui-input-group">
 
+
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>活动对象</label>
@@ -135,7 +136,7 @@
                 </div>
 
 
-                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnStart" id="demo1" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
                         <span id="resultStart" class="ui-alert domData" name="starts"></span>
@@ -207,13 +208,31 @@
                     </a>
                 </div>
 
+
                 <!-- 活动简介 -->
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">活动简介</span>
                     <span class="fr more" id="emptyIntro">[ 清空简介 ]</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro"></div>
+                <div id="articleEditor" class="tuwenIntro border-b"></div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>是否填表</label>
+                        <span class="select-row">
+                            <select id="application_form" class="data" name="application_form">
+                                <option value="-1">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row h-auto application_des" style="display: none">
+                    <label>填表说明</label>
+                    <textarea name="application_des" class="data" style="text-align: left"></textarea>
+                </div>
 
             </form>
 
@@ -446,6 +465,17 @@
             var pageLD = 1;
             toStudentList(StudentKeyword, wStudents, 1);
 
+
+            // 选择是否需要填表
+            $("#application_form").change(function () {
+                if ($(this).children('option:selected').val() == '-1') {
+                    $(".application_des").hide();
+                } else {
+                    $(".application_des").show();
+                    var h = $(document).height()-$(window).height();
+                    $(document).scrollTop(h);
+                }
+            });
 
             //清除简介
             $("#emptyIntro").on('click', '', function () {
