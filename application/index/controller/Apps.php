@@ -1,18 +1,18 @@
 <?php 
 namespace app\index\controller;
-use think\Controller;
+use app\frontend\controller\Base;
 /**
 * 
 */
-class Apps extends Controller
+class Apps extends Base
 {
 	
 	public function _initialize(){
-
+        parent::_initialize();
     }
 
     public function appsForm(){
-    	$member_id = input('param.member_id');
+    	$member_id = session('memberInfo.id');
     	$event_id = input('param.event_id');
     	$memberInfo = db('member')->where(['id'=>$member_id])->find();
     	$cert = db('cert')->where(['member_id'=>$member_id,'cert_type'=>1])->find();
