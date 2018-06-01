@@ -221,7 +221,7 @@
                     <span class="fr more" id="emptyIntro">[ 清空简介 ]</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro">{$eventInfo.event_des}</div>
+                <div id="articleEditor" class="tuwenIntro border-b">{$eventInfo.event_des}</div>
 
 
                 <div class="mui-input-row">
@@ -548,6 +548,9 @@
             $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
             // 设置是否填表默认值
             $('#apps_form option[value="{$eventInfo.apps_form}"]').prop("selected", true);
+            if("{$eventInfo.apps_form}"=="1"){
+                $(".apps_des").show();
+            }
             // 是否满额中文转数字
 //            var is_max = "{$eventInfo.is_max}";
 //            if(is_max=="已满人"){
@@ -753,9 +756,9 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var event_des = $('textarea.event_des').val();
             objData.dom = JSON.stringify(eventDomArr);
-            objData.event_des = event_des;
+            objData.event_des = $('textarea.event_des').val();
+            objData.apps_des = $('textarea[name="apps_des"]').val();
             if (eventDomArr.length == 0 || eventDomArr == undefined || eventDomArr == []) {
                 eventDomArr = [{ name: '默认', price: '' }];
             }
