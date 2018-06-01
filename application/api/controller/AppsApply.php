@@ -57,7 +57,7 @@ class AppsApply extends Base{
         }
     }
 
-    // 邀请加入|申请加入,写入一条
+    // 提交报名,写入一条
     public function createAppsApplyApi(){
         try{
             $data = input('post.');
