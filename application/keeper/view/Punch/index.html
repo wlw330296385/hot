@@ -50,7 +50,7 @@
 
         .endDK {
             background: #ff7f00 !important;
-            color: #fff;
+            color: #fff !important;
         }
 
         .mui-grid-view.mui-grid-9 .mui-table-view-cell {
@@ -219,20 +219,14 @@
             success: function (data) {
                 console.log(data)
                 var newli = "";
-                var thisDate = '';
-                var date = ''
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        // thisDate = data.data[i].punch_time;
-                        // console.log(typeof (thisDate))
-                        // console.log(String(data.data[i].punch_time))
-                        // $(".date .dateClass li").each(function () {
-                        //     date = $(this).attr("data-date");
-                        //     if (date == String(thisDate)) {
-                        //         console.log(123)
-                        //         $(this).addClass("endDK");
-                        //     }
-                        // });
+                        $(".dateClass li").each(function () {
+                            var date = $(this).attr("data-date");
+                            if (data.data[i].punch_time == date) {
+                                $(this).addClass("endDK");
+                            }
+                        });
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
