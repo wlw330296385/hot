@@ -261,7 +261,7 @@ class LeagueService
         if ( array_key_exists('id', $data) ) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $data['id']];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -292,6 +292,25 @@ class LeagueService
         $model = new MatchMember();
         $res = $model->where($map)->value('type');
         return ($res) ? $res : 0;
+    }
+
+    //  获取联赛-工作人员列表
+    public function getMatchMemberList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchMember();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    public function getMatchMemberPaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchMember();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 
     // 获取联赛球队数

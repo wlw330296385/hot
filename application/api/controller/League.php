@@ -572,7 +572,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $power = $leagueService->getMatchMemberType([
-            'match_id' => $data['id'],
+            'match_id' => $data['apply_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
@@ -699,7 +699,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $power = $leagueService->getMatchMemberType([
-            'match_id' => $data['id'],
+            'match_id' => $data['apply_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
@@ -1611,5 +1611,56 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($resultUpdateApply);
+    }
+
+    // 联赛工作人员列表
+    public function getmatchmemberlist() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1);
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if ( input('?page') ) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchMemberList($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 联赛工作人员列表(页码)
+    public function getmatchmemberpage() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if ( input('?page') ) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchMemberPaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        }  catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
     }
 }
