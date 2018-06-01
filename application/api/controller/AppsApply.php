@@ -1,19 +1,18 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\ApplyService;
 use think\Db;
-
-class Apply extends Base{
-    protected $ApplyService;
+use app\model\AppsApply as AppsApplyModel;
+class AppsApply extends Base{
+    private $AppsApply;
     public function _initialize(){
         parent::_initialize();
-        $this->ApplyService = new ApplyService;
+        $this->AppsApply = new AppsApplyModel;
     }
 
 
 
-    public function getApplyListByPageApi(){
+    public function getAppsApplyListByPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
@@ -23,7 +22,7 @@ class Apply extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $result = $this->ApplyService->getApplyListByPage($map);    
+            $result = $this->AppsApply->where($map)->paginate(10);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
@@ -36,7 +35,7 @@ class Apply extends Base{
 
    
     // 不带page
-    public function getApplyListNoPageApi(){
+    public function getAppsApplyListNoPageApi(){
         try{
             $map = input('post.');
             $keyword = input('param.keyword');
@@ -46,8 +45,8 @@ class Apply extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $Apply = new \app\model\Apply;
-            $result = $Apply->where($map)->select();
+            
+            $result = $this->AppsApply->where($map)->select();
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result->toArray()]);
             }else{
@@ -59,14 +58,14 @@ class Apply extends Base{
     }
 
     // 邀请加入|申请加入,写入一条
-    public function createApplyApi(){
+    public function createAppsApplyApi(){
         try{
             $data = input('post.');
-            $apply_id = input('param.apply_id');
-            if($apply_id){
-                $result = $this->ApplyService->updateApply($data,$apply_id);
+            $apps_apply_id = input('param.apps_apply_id');
+            if($apps_apply_id){
+                $result = $this->AppsApply->save($data,$apps_apply_id);
             }else{
-                $result = $this->ApplyService->createApply($data);
+                $result = $this->AppsApply->save($data);
             }
             
             return json($result);
@@ -74,5 +73,6 @@ class Apply extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-}
 
+
+}
