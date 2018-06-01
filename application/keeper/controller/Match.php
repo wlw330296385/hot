@@ -8,6 +8,7 @@ use app\service\LeagueService;
 use app\service\MatchService;
 use app\service\TeamService;
 use app\service\RefereeService;
+use think\Exception;
 
 class Match extends Base {
     protected $league_id;
@@ -396,6 +397,43 @@ class Match extends Base {
         return view('Match/addOrgMemberOfOrg', [
             'org_id' => $org_id,
             'leagueOrgInfo' => $leagueOrgInfo
+        ]);
+    }
+
+    // 会员查看联赛组织邀请详情
+    public function orginvitation() {
+        // apply表id
+        $id = input('id', 0, 'intval');
+        // 查询联赛组织邀请信息
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $applyInfo = $leagueS->getMatchOrgMemberApply([
+            'id' => $id,
+            'organization_type' => 5
+        ]);
+        if (!$applyInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 查询联赛组织信息、联赛信息
+        $orgInfo = $leagueS->getMatchOrg(['id' => $applyInfo['organization_id']]);
+        $leagueInfo = $matchS->getMatch(['match_org_id' => $applyInfo['organization_id']]);
+        // 更新apply阅读状态为已读
+        try {
+            if ($this->memberInfo['id'] == $applyInfo['member_id']) {
+                $leagueS->saveMatchOrgMemberApply([
+                    'id' => $applyInfo['id'],
+                    'isread' => 1
+                ]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage());
+            $this->error($e->getMessage());
+        }
+
+        return view('Match/orgInvitation', [
+            'applyInfo' => $applyInfo,
+            'orgInfo' => $orgInfo,
+            'leagueInfo' => $leagueInfo
         ]);
     }
 

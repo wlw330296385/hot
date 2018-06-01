@@ -62,46 +62,57 @@
 
         <form action="" class="mui-input-group registerFrom">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+            <input type="hidden" name="member_id" class="data" value="{$memberInfo['id']}" />
+            <input type="hidden" name="member" class="data" value="{$memberInfo['member']}" />
+            <input type="hidden" name="type" class="data" value="1" />
+            <input type="hidden" name="f_id" class="data" value="{$eventInfo.id}" />
+
             <div class="mui-input-row">
-                <label class="colororange">姓名</label>
-                <input type="text" class="data" name="name" value="{$memberInfo.realname}" placeholder="姓名">
+                <label class="colororange">真实姓名</label>
+                <input type="text" class="data" name="name" value="{$memberInfo.realname}" placeholder="真实姓名">
             </div>
-            <div class="mui-input-row">
+            <div class="mui-input-row mixForm">
+                <a class="mui-navigate-right">
                 <label class="colororange">性别</label>
-                <input type="text" class="data" name="age" value="{:getSex($memberInfo['sex'])}" placeholder="性别">
+                <select name="sexSelect" style="padding-right: 30px;">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+                </a>
+                <input type="hidden" name="sex" value="男">
             </div>
 
-            <div class="mui-input-row">
+            <div class="mui-input-row mixForm">
                 <label class="colororange">所属社区</label>
-                <input type="text" class="data" name="address" value="" placeholder="户口所在街道社区">
+                <input type="text" class="" name="community" value="" placeholder="户口所在街道社区">
             </div>
 
-            <div class="mui-input-row">
+            <div class="mui-input-row mixForm">
                 <label class="colororange">居住地</label>
-                <input type="text" class="data" name="address" value="" placeholder="现居住地址">
+                <input type="text" class="" name="address" value="" placeholder="现居住地址">
             </div>
 
-            <div class="mui-input-row">
+            <div class="mui-input-row mixForm">
                 <label class="colororange">籍贯</label>
-                <input type="text" class="data" name="school" value="" placeholder="籍贯">
+                <input type="text" class="" name="native_place" value="" placeholder="籍贯">
             </div>
 
-            <div class="mui-input-row">
+            <div class="mui-input-row mixForm">
                 <label class="colororange">身份证号码</label>
                 <input type="text" name="idno" value="{$cert.cert_no}" class="input wd54 idno" placeholder="请输入身份证号码">
             </div>
 
-            <div class="mui-input-row h-auto">
+            <div class="mui-input-row mixForm">
                 <a class="mui-navigate-right filePicker" onclick="add_id(1)">
                     <label class="colororange">身份证</label>
                     <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$cert.photo_positive}">
-                    <input type="hidden" name="photo_positive" value="">
+                    <input type="hidden" name="photo_positive" value="{$cert.photo_positive}">
                 </a>
             </div>
 
             <div class="mui-input-row">
                 <label class="colororange">联系电话</label>
-                <input type="text" class="data telephone" name="telephone reg_mobile" value="" placeholder="联系电话">
+                <input type="text" class="data telephone" name="telephone reg_mobile" value="{$memberInfo.telephone}" placeholder="联系电话">
             </div>
 
             <div class="mui-input-row">
@@ -136,11 +147,22 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/smsCode.js"></script>
     <script>
 
+        var flag = false;
+
         $(function () {
+
+            var sexNum="{$memberInfo.sex}";
+            if(sexNum=="2"){
+                $('select[name="sexSelect"] option[value="女"]').prop("selected", true);
+            }
+            // 选择是否需要填表
+            $('select[name="sexSelect"]').change(function () {
+                $('input[name="sex"]').val($(this).val());
+            });
+
             //验证短信验证码
             $('#code').on("blur", function () {
                 var code = document.getElementById('code').value;
@@ -149,12 +171,50 @@
                     mui.toast('请填写正确的验证码');
                     flag = false;
                 } else {
-                    telephone = $(".telephone").val();
+                    var telephone = $(".telephone").val();
                     console.log(telephone)
                     var result = smsCode.validateSmsCodeApi(telephone, code, "{:url('api/sms/validateSmsCodeApi','','',true)}");
-                    if (result == 200) {
+                    console.log(result)
+                    if (result.code == 200) {
                         flag = true;
-                        mui.toast(result.msg);
+//                        mui.toast(result.msg);
+//    alert('sss')
+                        //短信验证通过后
+                        //判断填写的手机是否已经是注册会员
+                        let res = wooApi.asyncF("{:url('api/login/isFieldRegisterApi')}",{
+                            'field': 'telephone',
+                            'value': telephone
+                        })
+
+                        console.log(res)
+
+//                        mui.ajax(, {
+//                            data: {
+//                                'field': 'telephone',
+//                                'value': telephone
+//                            },
+//                            dataType: 'json',//服务器返回json格式数据
+//                            type: 'post',//HTTP请求类型
+//                            async:false,
+//                            timeout: 10000,//超时时间设置为10秒；
+//                            headers: {'Content-Type': 'application/json'},
+//                            success: function (data) {
+//                                alert('6767')
+//                                console.log(data);
+//                                if (data.msg == 1) {
+//                                    //判断是否平台会员，如是将对应的值赋予因此域
+//                                    $('input[name="member"]').val();
+//                                    $('input[name="member_id"]').val();
+//                                }else{
+//                                    //如果不是，则新注册
+//                                    alert('00000')
+//                                }
+//                            },
+//                            error: function (xhr, type, errorThrown) {
+//                                console.log(type);
+//                            }
+//                        });
+//
                     } else {
                         flag = false;
                         mui.toast(result.msg);
@@ -165,7 +225,7 @@
 
         // 发送短信验证码
         function sendCode(obj) {
-            telephone = $(".telephone").val();
+            var telephone = $(".telephone").val();
             var telephoneReg = /^\d{11,11}$/;
             if (!telephoneReg.test(telephone)) {
                 mui.toast('请填写正确的手机号码');
@@ -191,17 +251,28 @@
                 return false;
             };
 
+            if (flag == false) {
+                mui.toast("请填写正确的验证码");
+                return false;
+            };
+
+            //组合自定义表单项
+            var mixFrom = '';
+            $(".mixForm").each(function () {
+                mixFrom += '<li><span class="fTitle">'+$(this).find("label").text()+'</span><span class="fValue">'+$(this).find("input").val()+'</span></li>'
+            });
+            mixFrom = '<ul class="diyList">'+mixFrom+'</ul>'
+
+
             var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
+            var objData = wooApi.arrTOobj(data);
+            objData.content = mixFrom;
             objData.remarks = $(".remarks").val();
-            var url = "{:url('api/member/createstudyinterion')}";
+            var url = "{:url('api/apps_apply/createAppsApplyApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                    window.location.href = "{:url('index/index')}"
+                    window.location.href = "{:url('member/index')}"
                 })
             } else {
                 mui.alert(ajaxResult.msg, '提交失败', function () { });
