@@ -362,12 +362,16 @@ class Event extends Base{
 
     // 已报名人员列表
     public function eventOfSignUpList(){
+
+
         return view('Event/eventOfSignUpList');
     }
 
 
     // 用户的活动
     public function eventListOfMember() {
+
+
         return view('Event/eventListOfMember');
     }
 
@@ -375,6 +379,8 @@ class Event extends Base{
 
     // 活动报名表
     public function applicationForm() {
+
+        
         return view('Event/applicationForm');
     }
 }

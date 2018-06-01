@@ -26,7 +26,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_output')->insert(
                 ['f_id'=>$value['id'],'type'=>3,'output'=>$value['output'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
@@ -36,7 +36,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_output')->insert(
                 ['f_id'=>$value['id'],'type'=>1,'output'=>$value['output'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
@@ -47,7 +47,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_output')->insert(
                 ['f_id'=>$value['id'],'type'=>2,'output'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
@@ -58,7 +58,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_income')->insert(
                 ['f_id'=>$value['id'],'type'=>1,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
@@ -68,7 +68,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_income')->insert(
                 ['f_id'=>$value['id'],'type'=>2,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
@@ -78,7 +78,7 @@ class Woo extends Controller{
         foreach ($list as $key => &$value) {
             db('sys_income')->insert(
                 ['f_id'=>$value['id'],'type'=>2,'income'=>$value['income'],'camp_id'=>$value['camp_id'],'create_time'=>$value['create_time']]
-            )
+            );
         }
     }
 
