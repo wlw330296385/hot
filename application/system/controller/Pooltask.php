@@ -18,6 +18,7 @@ class Pooltask extends Base{
     public function startPool(){
         try{
             $data = ['crontab'=>'每日擂台开启'];
+            db('pool')->where(['status'=>1,'start'=>['elt',time()]])->update(['status'=>2]);
             $this->record($data);
         }catch(Exception $e){
             $data = ['crontab'=>'每日擂台开启','status'=>0,'callback_str'=>$e->getMessage()];
@@ -32,11 +33,15 @@ class Pooltask extends Base{
     public function lottery(){
     	try{
             $date_str = date('Ymd',time());
-            $poolList = db('pool')->where(['status'=>2,'end_str'=>$date_str])->select();
+            $poolList = db('pool')->where(['end_str'=>$date_str,'status'=>2])->select();
             $model = new \app\model\PoolWinner;
+            // dump($poolList);
             foreach ($poolList as $key => $value) {
+          
                 $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
-                if(empty($memberList)) continue();
+                if(empty($memberList)){
+                    continue;
+                }
                 $c_ids = [];
                 //将得分转化为简单的1维数组;
                 foreach ($memberList as $k => $val) {
@@ -54,6 +59,7 @@ class Pooltask extends Base{
                                         'punchs'    =>$max,
                                         'pool'      =>$val['pool'],
                                         'pool_id'   =>$val['pool_id'],
+                                        'bonus'     =>$value['bonus'],
                                      ];
                     }
                 }
@@ -82,7 +88,7 @@ class Pooltask extends Base{
     private function updateMembersHotcoin($memberList,$bonus){
         $ids = [];
         foreach ($memberList as $key => $value) {
-            $ids[] = $value['id'];
+            $ids[] = $value['member_id'];
         }
         db('member')->where(['id'=>['in',$ids]])->inc('hot_coin',$bonus)->update();
     }
@@ -90,27 +96,39 @@ class Pooltask extends Base{
      * 测试用数据插入
      */
     public function test(){
-        $Group = new \app\model\Group;
-        $group = db('group')->find();
-        $gourp['group'] = rand(10000,99999);
-        $group['member_id'] = rand(1,99);
-        $Group->isUpdate(false)->save($group); 
+        // $Group = new \app\model\Group;
+        // $group = db('group')->find();
+        // $gourp['group'] = rand(10000,99999);
+        // $group['member_id'] = rand(1,99);
+        // unset($group['id']);
+        // $Group->isUpdate(false)->save($group);
 
 
-        $Group = new \app\model\GroupMember;
+        $GroupMember = new \app\model\GroupMember;
         $group_member = db('group_member')->find();
         $group_member['group_id'] = rand(1,30);
         $group_member['member_id'] = rand(1,99);
+        unset($group_member['id']);
         $GroupMember->isUpdate(false)->save($group_member);
 
 
-        $Pool = new \app\model\Pool;
-        $pool = db('pool')->find();
-        $pool['group_id'] = rand(1,30);
-        $pool['bonus'] = rand(999,9999);
-        $Pool->isUpdate(false)->save($pool);
+        // $Pool = new \app\model\Pool;
+        // $pool = db('pool')->find();
+        // $pool['group_id'] = rand(1,30);
+        // $pool['bonus'] = rand(999,9999);
+        // $pool['end_str'] = 20180531;
+        // $pool['status'] = 1;
+        // unset($pool['id']);
+        // $Pool->isUpdate(false)->save($pool);
 
-                 
-        
+        $GroupPunch = new \app\model\GroupPunch;         
+        $group_punch = db('group_punch')->find();
+        $group_punch['group_id'] = rand(1,30);
+        $group_punch['pool_id'] = rand(1,30);
+        $group_punch['member_id'] = rand(1,99);
+        unset($group_punch['id']);
+        $GroupPunch->isUpdate(false)->save($group_punch);
+
+
     }
 }
