@@ -572,7 +572,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $power = $leagueService->getMatchMemberType([
-            'match_id' => $data['apply_id'],
+            'match_id' => $matchApply['match_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
@@ -699,7 +699,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $power = $leagueService->getMatchMemberType([
-            'match_id' => $data['apply_id'],
+            'match_id' => $matchApply['match_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
