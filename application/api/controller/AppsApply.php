@@ -67,8 +67,12 @@ class AppsApply extends Base{
             }else{
                 $result = $this->AppsApply->save($data);
             }
+            if($result){
+                return json(['code'=>200,'msg'=>'提交成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'提交失败']);
+            }
             
-            return json($result);
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
