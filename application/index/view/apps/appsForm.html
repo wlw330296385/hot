@@ -66,7 +66,7 @@
             <input type="hidden" name="type" class="data" value="1" />
             <input type="hidden" name="f_id" class="data" value="{$eventInfo.id}" />
 
-            <div class="mui-input-row mName {if $memberInfo.id}hide{else/}show{/if}">
+            <div class="mui-input-row mName {if $memberInfo.id>0}hide{else/}show{/if}">
                 <label class="colororange">会员名</label>
                 <input type="text" class="data" name="member" value="{$memberInfo.member}" placeholder="会员名">
             </div>
@@ -116,7 +116,7 @@
 
             <div class="mui-input-row">
                 <label class="colororange">联系电话</label>
-                <input type="text" class="data telephone mixForm" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话" {if $memberInfo.id}readonly="readonly"{/if}>
+                <input type="text" class="data telephone mixForm" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
             </div>
 
             <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
@@ -216,7 +216,19 @@
             $('.telephone').on("blur", function () {
                 var telephone = $(this).val();
                 if(telephone!=""){
-                    //如果号码不为空，判断是格式是否正确
+                    //已登陆会员并没修改电话（本人报名）
+                    //隐藏会员名和短信验证，跳过验证
+                    if(mTel==telephone) {
+                        $('input[name="member"]').val(mName);
+                        $(".mName").hide();
+                        $(".smsValidate").hide();
+                        flagPhone = true;
+                        flagSMS = true;
+                        flagMember = true;
+                        return false;
+                    }
+                    //非会员或会员但修改了号码（帮别人报名）
+                    //判断手机号码格式是否正确
                     if (!(/^1[34578]\d{9}$/).test(telephone)) {
                         mui.toast("请填写正确的手机格式");
                         flagPhone = false;
@@ -300,8 +312,13 @@
 
             $("#submitAction").on("click","", function () {
 
-                //判断是否非会员
-                if(mID==""){
+                var member = $("input[name='member']").val();
+                var telephone = $("input[name='telephone']").val();
+                var token = $('input[name=__token__]').val();
+
+                //如果是非会员，判断是否通过验证
+                //如果是会员并修改了手机号码（帮报名），判断是否通过验证
+                if(mID==""||mID!=""&&mTel!=telephone){
                     if (flagMember == false) {
                         mui.toast("提交失败，会员名填写有误，请重新填写！");
                         return false;
@@ -314,10 +331,6 @@
                         mui.toast("提交失败，验证码填写有误");
                         return false;
                     };
-
-                    var member = $("input[name='member']").val();
-                    var telephone = $("input[name='telephone']").val();
-                    var token = $('input[name=__token__]').val();
                     //如已经通过以上验证则创建会员账号
                     mui.ajax("{:url('api/login/registerApi')}", {
                         data: {
@@ -361,6 +374,7 @@
                 if(flagCreate == false){
                     return false;
                 }
+
 
                 //组合自定义表单项
                 var mixFrom = '';
