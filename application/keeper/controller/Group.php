@@ -118,4 +118,9 @@ class Group extends Base{
         return view('Group/groupApplyInfo');
     }
 
+     // 社群宗旨
+     public function groupTenet() {
+        return view('Group/groupTenet');
+    }
+
 }
