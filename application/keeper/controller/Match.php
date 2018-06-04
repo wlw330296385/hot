@@ -407,7 +407,7 @@ class Match extends Base {
         // 查询联赛组织邀请信息
         $leagueS = new LeagueService();
         $matchS = new MatchService();
-        $applyInfo = $leagueS->getMatchOrgMemberApply([
+        $applyInfo = $leagueS->getApplyByLeague([
             'id' => $id,
             'organization_type' => 5
         ]);
@@ -420,13 +420,13 @@ class Match extends Base {
         // 更新apply阅读状态为已读
         try {
             if ($this->memberInfo['id'] == $applyInfo['member_id']) {
-                $leagueS->saveMatchOrgMemberApply([
+                $leagueS->saveApplyByLeague([
                     'id' => $applyInfo['id'],
                     'isread' => 1
                 ]);
             }
         } catch (Exception $e) {
-            trace('error:'.$e->getMessage());
+            trace('error:'.$e->getMessage(), 'error');
             $this->error($e->getMessage());
         }
 
@@ -449,6 +449,41 @@ class Match extends Base {
         $types = $leagueS->getMatchMemberTypes();
         return view('Match/addWorkerOfLeague', [
             'types' => $types
+        ]);
+    }
+
+    // 会员查看联赛工作人员邀请详情
+    public function workerinvitation() {
+        // apply表id
+        $id = input('id', 0, 'intval');
+        // 查询联赛组织邀请信息
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $applyInfo = $leagueS->getApplyByLeague([
+            'id' => $id,
+            'organization_type' => 4
+        ]);
+        if (!$applyInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 查询联赛联赛信息
+        $leagueInfo = $leagueS->getMatchWithOrg(['id' => $applyInfo['organization_id']]);
+        // 更新apply阅读状态为已读
+        try {
+            if ($this->memberInfo['id'] == $applyInfo['member_id']) {
+                $leagueS->saveApplyByLeague([
+                    'id' => $applyInfo['id'],
+                    'isread' => 1
+                ]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            $this->error($e->getMessage());
+        }
+
+        return view('Match/workerInvitation', [
+            'applyInfo' => $applyInfo,
+            'leagueInfo' => $leagueInfo
         ]);
     }
 

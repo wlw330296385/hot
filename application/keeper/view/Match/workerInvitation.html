@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>联赛工作人员邀请</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .coloricon {
+            width: 2.3em;
+            height: 2.3em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .operationFrame {
+            padding: 30px !important;
+        }
+
+        .operationFrame button {
+            padding: 8px 14px
+        }
+
+        .mui-popup-button {
+            font-size: 15px !important;
+        }
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav subheader">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+</header>
+<div class="mui-content list ">
+
+    <form action="" class="mui-input-group mb">
+        <input id="applyid" type="hidden" value="{$applyInfo.id}">
+        <div class="mui-input-row h-auto">
+            <label>回复的内容：</label>
+            <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
+        </div>
+        <div class="mui-button-row h-auto operationFrame">
+            <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+            <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+        </div>
+
+        <p class="pline"></p>
+    </form>
+
+    <div class="page-header">
+        <span class="course">联赛</span>
+    </div>
+    <ul class="mui-table-view mb" style="margin-top: -4px">
+        <li class="mui-table-view-cell mui-media listli coach" style="padding:11px 15px;">
+            <img class="mui-media-object mui-pull-left coachicon" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+            <h4>{$leagueInfo.name}</h4>
+            <div class="mui-media-body wd49" style="line-height:20px !important">
+                <p>{$leagueInfo.city} {$leagueInfo.area}</p>
+                <p class="f12">
+                    <a href="">粉丝：
+                        <strong class="colororange">{$leagueInfo.fans_num}</strong>
+                    </a>
+                </p>
+            </div>
+            <div class="price-frame" style="padding:0">
+                <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    $(function() {
+        followStatus();
+
+        // 关注联赛
+        $(".follow").on("tap", '', function () {
+            var league_id = "{$leagueInfo.id}";
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+    });
+
+    // 判断当前的关注状态
+    function followStatus() {
+        var league_id = "{$leagueInfo.id}";
+        mui.ajax("{:url('api/follow/getfollow')}", {
+            data: {
+                type: 5,
+                team_id: league_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    if (data.data === 1) {
+                        $(".follow").text("取消关注");
+                    } else {
+                        $(".follow").text("关注");
+                    }
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    }
+
+    // 审核操作
+    function check_status(value) {
+        var apply_id = document.getElementById('applyid').value;
+        var reply = $(".reply").val();
+        mui.ajax("{:url('api/league/replymatchworkerinvitation')}", {
+            data: {
+                apply_id: apply_id,
+                status: value,
+                reply: reply
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (res) {
+                if (res.code == 200) {
+                    if (value == 2) {
+                        mui.toast("你同意了联赛组织邀请")
+                        window.setTimeout("history.go(-1)", 2000);
+                    } else {
+                        mui.toast("你拒绝了联赛组织邀请")
+                        window.setTimeout("history.go(-1)", 2000);
+                    }
+                } else {
+                    mui.toast(res.msg);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+                mui.toast('网络异常');
+            }
+        });
+    }
+</script>
+</body>
+</html>
