@@ -49,19 +49,22 @@
         <div class="nav-list borderStyle mb12">
             <div class="page-header">
                 <span class="course">
-                    社群成员（<text class="groupMemberNum">0</text>）
+                    社群成员（
+                    <text class="groupMemberNum">0</text>）
                 </span>
             </div>
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
                 <li class="mui-table-view-cell navli memberList">
-                    <p class="memberAdd">
-                        <i class="mui-icon mui-icon-plusempty" style="font-size: 2.7rem;border: 1px solid #ddd;"></i>
-                    </p>
+                    <a href="#groupAddMember">
+                        <p>
+                            <i class="mui-icon mui-icon-plusempty" style="font-size: 3.3rem;border: 1px solid #ddd;"></i>
+                        </p>
+                    </a>
                 </li>
                 <li class="mui-table-view-cell navli">
                     <a href="#groupMember">
                         <p>
-                            <i class="mui-icon mui-icon-minus" style="font-size: 2.7rem;border: 1px solid #ddd;"></i>
+                            <i class="mui-icon mui-icon-minus" style="font-size: 3.3rem;border: 1px solid #ddd;"></i>
                         </p>
                     </a>
                 </li>
@@ -113,16 +116,33 @@
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred deleteOut">
+            <!-- <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred deleteOut">
                 删除并退出
-            </li>
-            <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bggreen" onclick="submitAction()">
+            </li> -->
+            <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
                 保存修改
             </li>
         </ul>
 
     </div>
 
+    <!--添加成员-->
+    <div id="groupAddMember" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>粉丝列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn bgred" id="addMemberDel">邀请加入</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:50px !important;">
+            <div class="mui-scroll">
+                <form class="mui-input-group addMemberList mb44"></form>
+            </div>
+        </div>
+    </div>
 
     <!--删除成员-->
     <div id="groupMember" class="mui-popover" style="margin: 0">
@@ -204,13 +224,13 @@
             // });
 
             // 添加成员
-            $(".memberAdd").on("tap", function () {
-                mui.confirm('请前往社群详情分享链接邀请好友加入', '提示', ['取消', '前往分享'], function (e) {
-                    if (e.index === 1) {
-                        window.location.href = "{:url('group/groupInfo',['group_id'=>$groupInfo.id])}";
-                    }
-                });
-            });
+            // $(".memberAdd").on("tap", function () {
+            //     mui.confirm('请前往社群详情分享链接邀请好友加入', '提示', ['取消', '前往分享'], function (e) {
+            //         if (e.index === 1) {
+            //             window.location.href = "{:url('group/groupInfo',['group_id'=>$groupInfo.id])}";
+            //         }
+            //     });
+            // });
 
             // 删除成员
             $("#memberDel").on('tap', function () {
@@ -251,8 +271,40 @@
             });
 
             groupMember();
-
+            myFansList();
         })
+
+        //我的粉丝列表
+        function myFansList() {
+            var url = "{:url('api/follow/myfans')}" + '/?page=' + 1;
+            mui.ajax({
+                url: url,
+                data: {
+                    type: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            $(".groupMemberNum").text(data.data.data.length)
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label class="lineHeight20" style="width:85%">' + data.data.data[i].member + '</label>';
+                            newli += '<input name="checkbox1" value="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" type="checkbox"></div>';
+                        }
+                        $(".addMemberList").append(newli);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
         //自定义列表
         function groupMember() {

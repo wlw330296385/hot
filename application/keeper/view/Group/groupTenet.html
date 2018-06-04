@@ -64,7 +64,7 @@
             </ul>
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
-                    {poolInfo.rule}
+                    {$poolInfo.rule}
                 </li>
             </ul>
 
@@ -73,36 +73,16 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        var count = 1;
-        var group_member = "{$groupInfo.member}";
-        var member = "{$memberInfo.member}";
-        var member_id = "{$memberInfo.id}";
-        var group_id = "{$groupInfo.id}";
-        var group_member_id = "{$groupInfo.member_id}";
-        var id = "{$id}"; //是否在社群内，是则id有值，否则为空
-        console.log(id)
+
         $(function () {
-
-            // 判断底部按钮退出与管理 
-            if (id != '' && group_member != member) {
-                $(".outGroup").show();
-            } else if (id != '' && group_member == member) {
-                $(".groupAdmin").show();
-                $(".joinGroup").hide();
-            } else if (id == '' && group_member == member) {
-                $(".groupAdmin").show();
-            }
-
-
             // 加入社群
             $(".joinGroup").on("tap", '', function () {
+                var group_id = "{$groupInfo.id}";
                 mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
                     data: {
                         group_id: group_id
@@ -126,102 +106,7 @@
                 });
             });
 
-            //退出社群
-            $(".outGroup").on('tap', function () {
-                mui.confirm("确认退出社群？", "提示", function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/group/dropGroup')}", {
-                            data: {
-                                id: id,
-                                member_id: member_id,
-                                group_id: group_id,
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data);
-                                if (data.code == 200) {
-                                    mui.toast(data.msg);
-                                    window.setTimeout("window.location.href='{:url('group/index')}'", 1500);
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
-                            }
-                        });
-                    }
-                })
-            })
-
-            toPunchList(); //获取我的打卡记录列表
         })
-
-        //下拉刷新具体业务实现
-        function pulldownRefresh() {
-            setTimeout(function () {
-                count = 1;//刷新并显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toPunchList(page, gType);//具体取数据的方法
-            }, 100);
-        }
-        //上拉加载具体业务实现
-        function pullupRefresh() {
-            setTimeout(function () {
-                count++;//翻下一页
-                var page = count;
-                var gType = 2;//代表上拉加载
-                toPunchList(page, gType);//具体取数据的方法
-            }, 100);
-        }
-        //获取我的打卡记录列表
-        function toPunchList(page, gType) {
-            var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}";
-            mui.ajax({
-                url: url,
-                data: {
-                    page: page,
-                    group_id: group_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var newli = "";
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
-                            newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
-                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewords_money + '</text></p>';
-                            newli += '</div></a></li>'
-                        }
-                        if (newli == '') {
-                            $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                        }
-                    }
-
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.punchList").empty().append(newli);
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.punchList").append(newli);
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
-
     </script>
 </body>
 
