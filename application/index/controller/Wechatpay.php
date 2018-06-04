@@ -14,7 +14,7 @@ class Wechatpay extends Base
 
     public function wechatPay(){
         $total = ceil(input('param.total',1)); 
-        $billOrder = '2'.getOrderID(rand(0,9));
+        $billOrder = '3'.getOrderID(rand(0,9));
         $jsonBillInfo = [
             'goods'=>'篮球管家平台充值',
             'goods_id'=>0,
