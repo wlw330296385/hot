@@ -44,7 +44,10 @@ class GroupApplyService{
 
     //更新一条数据
     public function updateGroupApply($data,$apply_id){
-
+        $status = $this->GroupApplyModel->where(['id'=>$apply_id])->value('status');
+        if($status == 2){
+            return ['code'=>100,'msg'=>'该用户已进群,不可操作'];
+        }
         $result = $this->GroupApplyModel->save($data,['id'=>$apply_id]);
         if($result){
             return ['code'=>200,'msg'=>'操作成功'];
