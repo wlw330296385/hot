@@ -1889,8 +1889,8 @@ class League extends Base
             ]);
             // 同意，更新联赛组织人员数据
             if ($status == 2) {
-                $resultUpdateOrgMember = $leagueS->saveMatchOrgMember([
-                    'id' => $orgMember['id'],
+                $resultUpdateMember = $leagueS->saveMatchMember([
+                    'id' => $matchMember['id'],
                     'status' => 1
                 ]);
             }
