@@ -120,6 +120,17 @@ class Group extends Base{
 
      // 社群宗旨
      public function groupTenet() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+
+        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
+        $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
+        // 是否已加入社群
+        $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
+        $this->assign('lastPool',$lastPool);
+        $this->assign('id',$id);
+        $this->assign('nowPool',$nowPool);
+        $this->assign('groupInfo',$groupInfo);
         return view('Group/groupTenet');
     }
 
