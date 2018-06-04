@@ -198,7 +198,7 @@ class Group extends Base{
     public function createGroupMemberApi(){
         try{
             $group_id = input('param.group_id');
-            $member_id = $this->memberInfo['id'];
+            $member_id = input('param.member_id',$this->memberInfo['id']);
             $member = $this->memberInfo['member'];
             $avatar = $this->memberInfo['avatar'];
             $result = $this->GroupService->createGroupMember($member_id,$member,$avatar,$group_id);

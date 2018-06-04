@@ -14,6 +14,7 @@ class Wechatpay extends Base
 
     public function wechatPay(){
         $total = ceil(input('param.total',1)); 
+        $total = 0.01;
         $billOrder = '3'.getOrderID(rand(0,9));
         $jsonBillInfo = [
             'goods'=>'篮球管家平台充值',
@@ -31,9 +32,9 @@ class Wechatpay extends Base
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$total]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
-        $shareurl = request()->url(true);
+        $url = request()->url(true);//支付链接
         $wechatS = new \app\service\WechatService;
-        $jsApi = $wechatS->jsapi($shareurl);
+        $jsApi = $wechatS->jsapi($url);
 
         $this->assign('jsApiParameters',$jsApiParameters);
         $this->assign('jsApi', $jsApi);

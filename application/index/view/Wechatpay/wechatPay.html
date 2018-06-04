@@ -58,6 +58,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script>
 
 
@@ -75,16 +76,82 @@
         });
 
 
-        $("#submit").click(function () {
-            
+        $(document).on('tap','#submit',function () {
+       
+            {if $jsApiParameters === 0}
+            alert('订单已支付,不可再支付'); 
 
+        	{else /}
+	            var strJsApiParameters = '{$jsApiParameters}';
+	            var objJsApiParameters = JSON.parse(strJsApiParameters);
+	            wx.chooseWXPay({
+	                timestamp: {$jsApi['timestamp']},
+	                nonceStr: objJsApiParameters.nonceStr,
+	                package: objJsApiParameters.package,
+	                signType: 'MD5',
+	                paySign: objJsApiParameters.paySign,
+	                success: function (res) {
+	                    // 支付成功后的回调函数
+	                    charge(JSON.stringify(res));
+	                },
+	                cancel: function() {
+	                    //mui.toast('取消了支付付款');
+	                    mui.alert('取消了支付付款');
+	                },
+	                fail: function(res) {
+	                    var errmsg = res.errMsg;
+	                    mui.alert('网络延迟,请刷新页面');
+	                }
+	            });
+	        {/if}
 
-			//支付成功后刷新父窗口页面
-            window.parent.reloadWindow();
 
         });
+        
+
+
+        wx.checkJsApi({
+		    jsApiList: ['chooseWXPay'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+		    success: function(res) {
+			    // 以键值对的形式返回，可用的api值true，不可用为false
+			    // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+			    console.log(res);
+			},
+
+		});
+
 
     })
+
+
+    function charge(remarks){
+    	$.ajax({
+            url: "{:url('api/Charge/ChargeApi',['charge_order'=>$billOrder])}",
+            data: {
+                "charge" : total,
+                "type":type,
+            },
+            async: false,
+            type: 'post',
+            dataType:'json',
+            complete: function(msg) {
+                console.log(msg)
+            },
+            success:function(msg){
+                if(msg.code == 200){
+                    mui.alert('支付成功','提示','确定',function(){
+                        //支付成功后刷新父窗口页面
+            			window.parent.reloadWindow();
+                      });
+                }else{
+                    mui.toast(result.msg);
+                }
+            },
+            error:function(msg){
+                alert(JSON.stringify(msg));
+            }
+        });
+    }
 </script>
 
 <script type="text/javascript">
@@ -92,13 +159,16 @@
             //开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             debug:false,
             appId: "{$jsApi.appId}", // 必填，企业号的唯一标识，此处填写企业号corpid
-            timestamp: "{$jsApi.timestamp}", // 必填，生成签名的时间戳
+            timestamp: {$jsApi.timestamp}, // 必填，生成签名的时间戳
             nonceStr: "{$jsApi.nonceStr}", // 必填，生成签名的随机串
             signature: "{$jsApi.signature}",// 必填，签名，见附录1
             jsApiList:  [
                 // 所有要调用的 API 都要加到这个列表中
                 'checkJsApi',
+                'chooseWXPay',
             ]// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
+
+    
 </script>
 </html>
