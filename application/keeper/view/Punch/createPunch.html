@@ -375,7 +375,7 @@
         }
 
         var totalNum = '';//序号总和的变量
-        groupList = [];
+        var groupList = [];
 
         $(function () {
 
@@ -550,7 +550,7 @@
                 mui.toast("请选择运动类型");
                 return false;
             }
-
+            groupList = [];
             $("#hideStList input[name=group]").each(function (i) {
                 var group = $(this).siblings("font").text();
                 var group_id = $(this).attr("data-group_id");
@@ -568,7 +568,8 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.groupList = JSON.stringify(groupList);
+            let list = JSON.stringify(groupList);
+            objData.groupList = list;
             var url = "{:url('api/punch/createPunchApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

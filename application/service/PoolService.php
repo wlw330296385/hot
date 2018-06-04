@@ -52,6 +52,7 @@ class PoolService {
     public function createPool($data){
         
         $validate = validate('PoolVal');
+
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }

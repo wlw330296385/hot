@@ -109,7 +109,8 @@ class Punch extends Base{
             $data['date_str'] = date('Ym',time());
             $result = $this->PunchService->createPunch($data);
 
-            if(!empty($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
+            if(isset($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
+                
                 $groupList = json_decode($data['groupList'],true);
                 foreach ($groupList as $key => &$value) {
                     $value['punch'] = $data['punch'];

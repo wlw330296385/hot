@@ -35,7 +35,7 @@ class PunchService {
         $stakes = ceil($data['stakes']);
         $hot_coin = session('memberInfo.hot_coin');
         if($stakes < $hot_coin){
-            return json(['code'=>100,'msg'=>'热币不足']);
+            return ['code'=>100,'msg'=>'热币不足'];
         }
 
         if($stakes>0){
