@@ -120,7 +120,7 @@ class GroupService {
         $GroupMemberInfo = $this->GroupMemberModel->where(['group_id'=>$group_id,'member_id'=>$member_id])->find();
         if($GroupMemberInfo){
             if($GroupMemberInfo['status'] == 2)
-            return ['code'=>100,'msg'=>'您已经加入社群'];
+            return ['code'=>100,'msg'=>'你同意了该会员的申请'];
         }
         $result = $this->GroupMemberModel->save($data);
 
