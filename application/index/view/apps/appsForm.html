@@ -410,45 +410,45 @@
         }
 
         // 获取数据并进行提交
-        function submitAction() {
-
-            // if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-            //     mui.toast("请填写正确的手机格式");
-            //     return false;
-            // };
-
-            // if (flag == false) {
-            //     mui.toast("请填写正确的验证码");
-            //     return false;
-            // };
-
-            //组合自定义表单项
-            var mixFrom = '';
-            $(".mixForm").each(function () {
-                mixFrom += '<li><span class="fTitle">'+$(this).find("label").text()+'</span><span class="fValue">'+$(this).find("input").val()+'</span></li>'
-            });
-            mixFrom = '<ul class="diyList">'+mixFrom+'</ul>'
-
-
-            var data = wooApi.getInputData('input', 'data');
-            var objData = wooApi.arrTOobj(data);
-            objData.content = mixFrom;
-            objData.remarks = $(".remarks").val();
-            var url = "{:url('api/apps_apply/createAppsApplyApi')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                    window.location.href = "{:url('frontend/member/index')}"
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '提交失败', function () { });
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
-        };
+//        function submitAction() {
+//
+//             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
+//                 mui.toast("请填写正确的手机格式");
+//                 return false;
+//             };
+//
+//             if (flag == false) {
+//                 mui.toast("请填写正确的验证码");
+//                 return false;
+//             };
+//
+//            //组合自定义表单项
+//            var mixFrom = '';
+//            $(".mixForm").each(function () {
+//                mixFrom += '<li><span class="fTitle">'+$(this).find("label").text()+'</span><span class="fValue">'+$(this).find("input").val()+'</span></li>'
+//            });
+//            mixFrom = '<ul class="diyList">'+mixFrom+'</ul>'
+//
+//
+//            var data = wooApi.getInputData('input', 'data');
+//            var objData = wooApi.arrTOobj(data);
+//            objData.content = mixFrom;
+//            objData.remarks = $(".remarks").val();
+//            var url = "{:url('api/apps_apply/createAppsApplyApi')}";
+//            var ajaxResult = wooApi.asyncF(url, objData);
+//            if (ajaxResult.code == 200) {
+//                mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
+//                    window.location.href = "{:url('frontend/member/index')}"
+//                })
+//            } else {
+//                mui.alert(ajaxResult.msg, '提交失败', function () { });
+//                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+//                    if (data.code === 200) {
+//                        $('input[name=__token__]').val(data.data);
+//                    }
+//                }, 'json');
+//            }
+//        };
 
     </script>
 </body>
