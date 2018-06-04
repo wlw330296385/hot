@@ -442,6 +442,16 @@ class Match extends Base {
         return view('Match/workListOfLeague');
     }
 
+    // 邀请联赛工作人员
+    public function addworkerofleague() {
+        // 工作人员类型
+        $leagueS = new LeagueService();
+        $types = $leagueS->getMatchMemberTypes();
+        return view('Match/addWorkerOfLeague', [
+            'types' => $types
+        ]);
+    }
+
 
     // 联赛消息
     public function messageListOfLeague() {

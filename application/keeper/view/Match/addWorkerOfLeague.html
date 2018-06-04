@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加联赛工作人员</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+</head>
+
+<body class=whitebg>
+
+<header id="header" class="mui-bar mui-bar-nav search2">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">
+        <input type="search" class="mui-input-clear keyword" placeholder="请输入会员名称或手机号">
+    </h1>
+    <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
+</header>
+
+<div class="mui-content coach">
+    <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
+        <div class="mui-scroll">
+            <ul class="mui-table-view detalis-list list border-b memberList">
+                <li class="nodata">
+                    <i class="icon iconfont icon-logo-Big"></i>
+                    <p>请搜索你要邀请的会员名称</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- 工作人员角色popover -->
+<div class="mui-popover" id="typePopover" style="margin: 0;">
+    <div class="mui-popover-arrow"></div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <ul class="mui-table-view list typeList">
+                {volist name="types" id="vo"}
+                <li class="mui-table-view-cell listli detalisli" data-type="{$key}"><font class="type">{$vo}</font></li>
+                {/volist}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<!-- 选择器 -->
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script>
+    mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+        // 关闭弹出菜单
+        $("body").on('tap', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
+    })(mui);
+
+    $(function () {
+
+        //初始化全局变量
+        var count = 1;
+        var keyword = wooApi.GetQueryString('keyword');
+        // var keyword = ''
+        $('.keyword').val(keyword);
+
+        //搜索活动
+        $("#searchBtn").on("tap", function () {
+            keyword = $(".keyword").val();
+            searchToList();
+        })
+
+        //搜索、下拉刷选后触发
+        function searchToList() {
+            count = 1;//显示第一页
+            var page = count;
+            var gType = 1;//代表下拉刷新
+            toList(page, gType);//具体取数据的方法
+        }
+
+        mui.init({
+            swipeBack: true, //启用右滑关闭功能
+            pullRefresh: {
+                //下拉刷新上拉加载教练列表
+                container: "#refreshContainer",
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: false,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefresh
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefresh
+                }
+            }
+        });
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        // 工作人员角色popover点击绑定
+        $('.typeList').on('tap', 'li', function() {
+            var type = $(this).attr('data-type');
+            var match_id = $('#typePopover').attr('data-matchid');
+            var member_id = $('#typePopover').attr('data-memberid');
+            mui.ajax("{:url('api/league/invitematchmebmer')}", {
+                data: {
+                    match_id: match_id,
+                    member_id: member_id,
+                    type: type
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经发送邀请，请耐心等待回复");
+                        //location.reload();
+                    } else {
+                        mui.toast(data.msg);
+                        //location.reload();
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+
+        // 接口获取数据并追加到页面
+        var toList = function (page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/member/getmemberlistpage','','',true)}" + '/?page=' + page;
+            mui.ajax({
+                url: url,
+                data: {
+                    keyword: keyword,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell mui-media listli">';
+                            newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '" style="width: 45px !important;height: 45px !important;margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].member;
+                            newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</p></div><div class="price-frame"><button type="button" class="btn bgred" style="margin-top:5px" onclick="checkMember(' + data.data.data[i].id + ')">邀请</button></div>'
+                            newli += '</li>';
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.memberList").empty().append(newli);
+                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                        mui('#refreshContainer').pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.memberList").append(newli);
+                    }
+                    if (newli != '') {
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+    })
+
+    // 检查队员
+    function checkMember(member_id) {
+        //console.log(member_id)
+        var match_id = "{$leagueInfo.id}";
+        mui.ajax("{:url('api/league/checkmatchmember')}", {
+            data: {
+                match_id: match_id,
+                member_id: member_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    var btnArray = ['取消', '确认'];
+                    mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
+                        if (e.index == 1) {
+                            //addMember(member_id);
+                            mui("#typePopover").popover("toggle");
+                            $('#typePopover').attr('data-memberid', member_id).attr('data-matchid', match_id);
+                        }
+                    });
+                } else {
+                    //addMember(member_id);
+                    // popover选择工作人员角色
+                    mui("#typePopover").popover("toggle");
+                    $('#typePopover').attr('data-memberid', member_id).attr('data-matchid', match_id);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    }
+
+    // 添加队员
+    /*function addMember(member_id) {
+        var match_id = "{$leagueInfo.id}";
+        mui.ajax("{:url('api/league/invitematchmebmer')}", {
+            data: {
+                match_id: match_id,
+                member_id: member_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    mui.toast("已经发送邀请，请耐心等待回复");
+                } else {
+                    mui.toast(data.msg);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log(type);
+            }
+        });
+    }*/
+
+</script>
+</body>
+
+</html>

@@ -35,7 +35,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
-                <a href="{:url('match/addOrgMemberOfOrg',['league_id'=>19])}">
+                <a href="{:url('match/addworkerofleague',['league_id'=> $league_id])}">
                     邀请工作人员
                 </a>
             </li>
@@ -103,13 +103,12 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/follow/myfans','','',true)}" + '/?page=' + page;
-            var team_id = 2
+            var url = "{:url('api/league/getmatchmemberpage','','',true)}" + '/?page=' + page;
+            var match_id = "{$leagueInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    team_id: team_id,
-                    type: 4
+                    match_id: match_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -121,7 +120,7 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '<span>管理员</span></li>'
+                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '<span>'+ data.data.data[i].type_text +'</span></li>'
                         }
                     }
 
