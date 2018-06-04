@@ -111,6 +111,7 @@
             <div class="mui-input-row">
                 <a href="{:url('group/groupApplyList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">
                     <label>入群申请</label>
+                    <span class="colororange">查看申请列表</span>
                 </a>
             </div>
         </form>
@@ -314,7 +315,7 @@
                 url: url,
                 data: {
                     status: 1,
-                    group_id: group_id
+                    group_id: group_id,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -344,6 +345,12 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            if (!(/^[0-9]*$/).test($("input[name=max]").val())) {
+                mui.toast("最大人数请填写数字");
+                return false;
+            }
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

@@ -33,10 +33,6 @@
         <input type="hidden" class="data" name="group" value="{$groupInfo.group}">
         <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
         <form action="" class="mui-input-group">
-            <div class="mui-input-row h-auto">
-                <label>规则</label>
-                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
-            </div>
             <div class="mui-input-row">
                 <label>金额/每卡</label>
                 <input type="text" name="stake" class="data" value="" placeholder="金额/每卡">
@@ -52,6 +48,10 @@
                     <label>结束时间</label>
                     <span id="resultEnd" class="ui-alert domData" name="ends"></span>
                 </div>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>规则</label>
+                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
             </div>
         </form>
 
@@ -115,6 +115,28 @@
 
         // 获取数据并进行提交
         function submitAction() {
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = time.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var day = time.getDate();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            var nowTime = year + "-" + month + "-" + day;
+            var start = $("#resultStart").text();
+            var end = $("#resultEnd").text();
+
+            if (start < nowTime) {
+                mui.toast("开始时间不能小于当前时间");
+                return false;
+            }
+            if (end == '') {
+                mui.toast("请选择结束时间");
+                return false;
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -138,7 +160,6 @@
                 }, 'json');
             }
         };
-
 
     </script>
 </body>
