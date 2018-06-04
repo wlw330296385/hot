@@ -114,7 +114,7 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><button class="mui-btn mui-btn-grey refuse" onclick="refuse(' + data.data.data[i].id + ')">拒绝</button><button class="mui-btn mui-btn-red agree" onclick="agree(' + data.data.data[i].id + ')">同意</button></div>';
+                                newli += `<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><button class="mui-btn mui-btn-grey refuse" onclick="refuse(' + data.data.data[i].id + ')">拒绝</button><button class="mui-btn mui-btn-red agree" onclick="agree(${data.data.data[i].id},'${data.data.data[i].member}',${data.data.data[i].member_id},'${data.data.data[i].avatar}')">同意</button></div>`;
                                 newli += '<div class="mui-slider-handle"><div class="mui-media-body wd83"><img class="mui-pull-left img45" src="' + data.data.data[i].avatar + '">';
                                 newli += '<p class="lineHeight20">' + data.data.data[i].member + '</p><p>' + data.data.data[i].create_time + '</p></div>';
                                 if (data.data.data[i].status == '申请中') {
@@ -157,7 +157,7 @@
 
 
         // 同意
-        function agree(group_apply_id) {
+        function agree(group_apply_id, member, member_id, avatar) {
             // var elem = this;
             // var li = elem.parentNode.parentNode;
             var btnArray = ['取消', '确认'];
@@ -175,7 +175,31 @@
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
-                                joinGroup();
+                                mui.ajax("{:url('api/group/createGroupMemberApi')}", {
+                                    data: {
+                                        group_id: group_id,
+                                        member_id: member_id,
+                                        member: member,
+                                        avatar: avatar
+                                    },
+                                    dataType: 'json',//服务器返回json格式数据
+                                    type: 'post',//HTTP请求类型
+                                    timeout: 10000,//超时时间设置为10秒；
+                                    headers: { 'Content-Type': 'application/json' },
+                                    success: function (data) {
+                                        console.log(data);
+                                        if (data.code == 200) {
+                                            mui.toast("操作成功");
+                                            // window.setTimeout("window.location.reload()", 2000)
+                                        } else {
+                                            mui.toast(data.msg);
+                                        }
+                                    },
+                                    error: function (xhr, type, errorThrown) {
+                                        //异常处理；
+                                        console.log(type);
+                                    }
+                                });
                             } else {
                                 mui.toast(data.msg);
                             }
@@ -189,31 +213,6 @@
                     setTimeout(function () {
                         // mui.swipeoutClose(li);
                     }, 0);
-                }
-            });
-        }
-
-        function joinGroup() {
-            mui.ajax("{:url('api/group/createGroupMemberApi')}", {
-                data: {
-                    group_id: group_id,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast("操作成功");
-                        window.setTimeout("window.location.reload()", 2000)
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
                 }
             });
         }

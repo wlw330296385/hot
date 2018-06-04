@@ -131,11 +131,12 @@
     <div id="groupAddMember" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd45">
+            <span class="course wd60" style="margin-top: 5px">
                 <strong>粉丝列表</strong>
+                <text class="colororange memberAdd" >邀请微信好友</text>
             </span>
             <span class="fr">
-                <button class="mui-btn bgred" id="addMemberDel">邀请加入</button>
+                <button class="mui-btn bgred" id="addMemberDel">邀请</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper" style="top:50px !important;">
@@ -223,16 +224,56 @@
             //         }
             //     });
             // });
+            
+
+            // 分享邀请成员
+            $(".memberAdd").on("tap", function () {
+                mui("#groupAddMember").popover("toggle");
+                mui.confirm('请前往社群详情分享链接邀请好友加入', '提示', ['取消', '前往分享'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{:url('group/groupInfo',['group_id'=>$groupInfo.id])}";
+                    }
+                });
+            });
 
             // 添加成员
-            // $(".memberAdd").on("tap", function () {
-            //     mui.confirm('请前往社群详情分享链接邀请好友加入', '提示', ['取消', '前往分享'], function (e) {
-            //         if (e.index === 1) {
-            //             window.location.href = "{:url('group/groupInfo',['group_id'=>$groupInfo.id])}";
-            //         }
-            //     });
-            // });
-
+            $("#addMemberDel").on('tap', function () {
+                let list = [];
+                let member_id = ''
+                $(".addMemberList input[type=checkbox]:checked").each(function (i) {
+                    member_id = $(this).val();
+                    list.push(member_id);
+                })
+                let addList = JSON.stringify(list);
+                console.log(addList)
+                // mui.confirm("确认删除选中成员吗？", "提示", function (e) {
+                //     if (e.index == 1) {
+                //         mui.ajax("{:url('api/group/dropGroups')}", {
+                //             data: {
+                //                 group_id: group_id,
+                //                 idList: idList
+                //             },
+                //             dataType: 'json',//服务器返回json格式数据
+                //             type: 'post',//HTTP请求类型
+                //             timeout: 10000,//超时时间设置为10秒；
+                //             headers: { 'Content-Type': 'application/json' },
+                //             success: function (data) {
+                //                 console.log(data);
+                //                 if (data.code == 200) {
+                //                     mui.toast(data.msg);
+                //                 } else {
+                //                     mui.toast(data.msg);
+                //                 }
+                //             },
+                //             error: function (xhr, type, errorThrown) {
+                //                 //异常处理；
+                //                 console.log(type);
+                //             }
+                //         });
+                //     }
+                // });
+            });
+            
             // 删除成员
             $("#memberDel").on('tap', function () {
                 let list = [];

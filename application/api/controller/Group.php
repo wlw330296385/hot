@@ -199,8 +199,8 @@ class Group extends Base{
         try{
             $group_id = input('param.group_id');
             $member_id = input('param.member_id',$this->memberInfo['id']);
-            $member = $this->memberInfo['member'];
-            $avatar = $this->memberInfo['avatar'];
+            $avatar = input('param.avatar',$this->memberInfo['avatar']);
+            $member = input('param.member',$this->memberInfo['member']);
             $result = $this->GroupService->createGroupMember($member_id,$member,$avatar,$group_id);
             return json($result);   
         }catch (Exception $e){
