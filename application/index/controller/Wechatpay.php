@@ -33,10 +33,10 @@ class Wechatpay extends Base
         $jsApiParameters = $result['data']['jsApiParameters'];
         $shareurl = request()->url(true);
         $wechatS = new \app\service\WechatService;
-        $jsapi = $wechatS->jsapi($shareurl);
+        $jsApi = $wechatS->jsapi($shareurl);
 
         $this->assign('jsApiParameters',$jsApiParameters);
-        $this->assign('jsapi', $jsapi);
+        $this->assign('jsApi', $jsApi);
         $this->assign('jsonBillInfo',json_encode($jsonBillInfo));
         $this->assign('billOrder',$billOrder);
         return $this->fetch('Wechatpay/wechatPay');
