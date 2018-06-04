@@ -117,9 +117,10 @@ class GroupService {
             'status'            =>1,
         ];
 
-        $GroupMemberInfo = $this->GroupMemberModel->where(['group_id'=>$group_id,'member_id'=>$member_id,'status'=>1])->find();
+        $GroupMemberInfo = $this->GroupMemberModel->where(['group_id'=>$group_id,'member_id'=>$member_id])->find();
         if($GroupMemberInfo){
-            return ['code'=>100,'msg'=>'您加入过该社群'];
+            if($GroupMemberInfo['status'] == 2)
+            return ['code'=>100,'msg'=>'您已经加入社群'];
         }
         $result = $this->GroupMemberModel->save($data);
 
