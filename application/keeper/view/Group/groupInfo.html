@@ -69,9 +69,9 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>上期擂主：
-                        <text class="colororange winer"></text>
+                        <text class="colororange winer">{volist name="winnerList" id="vol"}{$vol.winner},{/volist}</text>
                     </label>
-                    <span class="wd45 pdr15 mui-navigate-right">
+                    <span class="wd25 pdr15 mui-navigate-right">
                         <a href="#">往届</a>
                     </span>
                 </li>
@@ -82,7 +82,7 @@
                     本期打卡
                 </span>
                 <span class="more pdr15">
-                    <a href="" class="mui-navigate-right">社群规则</a>
+                    <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">社群规则</a>
                 </span>
             </div>
             <div class="nav-list mb">
@@ -150,7 +150,6 @@
 
         </div>
     </div>
-
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
         <div class="shareGuideText">1、点击右上角的
@@ -159,7 +158,6 @@
         </div>
         <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
@@ -176,7 +174,6 @@
         var group_id = "{$groupInfo.id}";
         var group_member_id = "{$groupInfo.member_id}";
         var id = "{$id}"; //是否在社群内，是则id有值，否则为空
-        console.log(id)
         $(function () {
 
             // 判断底部按钮退出与管理 
@@ -188,15 +185,6 @@
             } else if (id == '' && group_member == member) {
                 $(".groupAdmin").show();
             }
-
-            // 判断擂主名称显示
-            // var nowPool = "{nowPool.winer}"
-            // var lastPool = "{lastPool.winer}"
-            // if (nowPool != '') {
-            //     $(".winer").text(nowPool);
-            // } else {
-            //     $(".winer").text(lastPool);
-            // }
 
             // 加入社群
             $(".joinGroup").on("tap", '', function () {
@@ -294,7 +282,7 @@
                     var newli = "";
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id +'/?punch=info';
+                            var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
                             newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                             newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
                             newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewords_money + '</text></p>';
