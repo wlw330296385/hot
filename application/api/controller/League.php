@@ -1901,6 +1901,6 @@ class League extends Base
             trace('error'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
-        return json($resultUpdateApply);
+        return json($resultUpdateMember);
     }
 }
