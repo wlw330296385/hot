@@ -23,10 +23,15 @@ class Group extends Base{
 
         $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
         $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
+        $winnerList = [];
+        if($lastPool){
+            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id']])->select();
+        }
         // 是否已加入社群
         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
         $this->assign('lastPool',$lastPool);
         $this->assign('id',$id);
+        $this->assign('winnerList',$winnerList);
         $this->assign('nowPool',$nowPool);
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupInfo');
