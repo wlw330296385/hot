@@ -209,6 +209,42 @@ class LeagueService
         return $result;
     }
 
+    // 联赛使用获取apply数据
+    public function getApplyByLeague($map) {
+        $model = new \app\model\Apply();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        $result['status_num'] = $res->getData('status');
+        return $result;
+    }
+
+    // 联赛使用保存apply数据
+    public function saveApplyByLeague($data) {
+        $model = new \app\model\Apply();
+        // 直接更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $data['id']];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res ) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
+    // ***** 联赛工作人员 *****
     // 保存联赛-工作人员关系数据
     public function saveMatchMember($data, $condition=[]) {
         $model = new MatchMember();
@@ -242,41 +278,6 @@ class LeagueService
         }
     }
 
-    // 联赛组织人员邀请记录
-    public function getMatchOrgMemberApply($map) {
-        $model = new \app\model\Apply();
-        $res = $model->where($map)->find();
-        if (!$res) {
-            return $res;
-        }
-        $result = $res->toArray();
-        $result['status_num'] = $res->getData('status');
-        return $result;
-    }
-
-    // 保存联赛组织人员邀请数据
-    public function saveMatchOrgMemberApply($data) {
-        $model = new \app\model\Apply();
-        // 直接更新数据
-        if ( array_key_exists('id', $data) ) {
-            $res = $model->allowField(true)->isUpdate(true)->save($data);
-            if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $data['id']];
-            } else {
-                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-                return ['code' => 100, 'msg' => __lang('MSG_400')];
-            }
-        }
-        // 插入数据
-        $res = $model->allowField(true)->isUpdate(false)->save($data);
-        if ($res ) {
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
-        } else {
-            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
-        }
-    }
-
     // 获取联赛-工作人员详情
     public function getMatchMember($map) {
         $model = new MatchMember();
@@ -284,7 +285,9 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        $result['type_text'] = $res->type_text;
+        return $result;
     }
 
     // 获取会员的联赛工作人员角色权限
@@ -294,24 +297,40 @@ class LeagueService
         return ($res) ? $res : 0;
     }
 
+    // 获取联赛工作人员类型内容
+    public function getMatchMemberTypes() {
+        $model = new MatchMember();
+        return $model->getTypes();
+    }
+
     //  获取联赛-工作人员列表
     public function getMatchMemberList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
-        if ($res) {
+        if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
     }
 
+    //  获取联赛-工作人员列表（分页）
     public function getMatchMemberPaginator($map, $order='id desc', $limit=10) {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->paginate($limit);
-        if ($res) {
+        if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
     }
+    // ***** 联赛工作人员 end *****
 
     // 获取联赛球队数
     public function getMatchTeamCount($map) {

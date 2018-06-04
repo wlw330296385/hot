@@ -1508,11 +1508,11 @@ class League extends Base
         }
         try {
             // 保存apply数据（status=1）
-            $applyId = $leagueService->saveMatchOrgMemberApply($dataApply);
+            $applyId = $leagueService->saveApplyByLeague($dataApply);
             // 保存联赛组织人员数据
             $orgMemberId = $leagueService->saveMatchOrgMember($dataMatchOrgMember);
         } catch (Exception $e) {
-            trace('error:'.$e->getMessage());
+            trace('error:'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
         if ($orgMemberId['code'] != 200) {
@@ -1551,7 +1551,7 @@ class League extends Base
         }
         // 获取联赛组织邀请数据
         $leagueS = new LeagueService();
-        $apply = $leagueS->getMatchOrgMemberApply([
+        $apply = $leagueS->getApplyByLeague([
             'id' => $data['apply_id'],
             'organization_type' => 5
         ]);
@@ -1590,7 +1590,7 @@ class League extends Base
         ];
         try {
             // 更新apply数据
-            $resultUpdateApply = $leagueS->saveMatchOrgMemberApply([
+            $resultUpdateApply = $leagueS->saveApplyByLeague([
                 'id' => $apply['id'],
                 'status' => $status,
                 'reply' => $reply,
@@ -1607,7 +1607,7 @@ class League extends Base
             $messageS = new MessageService();
             $messageS->sendMessageToMember($apply['member_id'], $message, config('wxTemplateID.applyResult'));
         } catch (Exception $e) {
-            trace($e->getMessage(), 'error');
+            trace('error'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($resultUpdateApply);
@@ -1662,5 +1662,245 @@ class League extends Base
             trace($e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         }
+    }
+
+    // 检查会员有无联赛工作人员数据
+    public function checkmatchmember() {
+        try {
+            $data = input('param.');
+            if ( !array_key_exists('match_id', $data) ) {
+                return json(['code' => 100, 'msg' => '缺少match_id']);
+            }
+            if ( !array_key_exists('member_id', $data) ) {
+                return json(['code' => 100, 'msg' => '缺少member_id']);
+            }
+            // 查询联赛组织人员数据
+            $leagueService = new LeagueService();
+            $matchorgmember = $leagueService->getMatchMember([
+                'match_id' => $data['match_id'],
+                'member_id' => $data['member_id']
+            ]);
+            if ( $matchorgmember ) {
+                if ($matchorgmember['status'] == 1) {
+                    // 会员已是正式联赛工作人员
+                    return json(['code' => 200, 'msg' => '会员已是正式联赛工作人员']);
+                } else if ($matchorgmember['status'] == 0 ) {
+                    // 有数据，不是正式数据
+                    return json(['code' => 200, 'msg' => '已邀请会员']);
+                }
+            } else {
+                // 没有联赛组织人员数据
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 邀请会员 联赛工作人员
+    public function invitematchmebmer() {
+        // 接收请求变量
+        $data = input('post.');
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => '缺少match_id']);
+        }
+        if ( !array_key_exists('member_id', $data) ) {
+            return json(['code' => 100, 'msg' => '缺少member_id']);
+        }
+        $leagueService = new LeagueService();
+        // 查询联赛组织数据
+        $match = $leagueService->getMatchWithOrg(['id' => $data['match_id']]);
+        if (!$match || $match['status_num'] != 1) {
+            return json(['code' => 100, 'msg' => '联赛不存在或未通过审核']);
+        }
+        // 获取受邀请会员的详细信息
+        $memberService = new MemberService();
+        $member = $memberService->getMemberInfo(['id' => $data['member_id']]);
+        if (!$member) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404').'会员']);
+        }
+        // 检查当前会员联赛组织人员身份
+        if ( $this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        $checkMatchOrgMember = $leagueService->getMatchOrgMember([
+            'match_org_id' => $match['match_org_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (!$checkMatchOrgMember || $checkMatchOrgMember['status'] != 1) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 邀请的会员有无联赛工作人员数据
+        $matchMember = $leagueService->getMatchMember([
+            'match_id' => $match['id'],
+            'member_id' => $data['member_id']
+        ]);
+        // 组合联赛工作人员数据 （status=0）
+        $dataMatchMember = [
+            'match_id' => $match['id'],
+            'match' => $match['name'],
+            'match_logo' => $match['logo'],
+            'member_id' => $member['id'],
+            'member' => $member['member'],
+            'member_avatar' => $member['avatar'],
+            'type' => $data['type'],
+            'status' => 0
+        ];
+        if ($matchMember) {
+            if ($matchMember['status'] == 1) {
+                // 会员已是正式联赛工作人员
+                return json(['code' => 200, 'msg' => '会员已是正式联赛工作人员']);
+            } else if ($dataMatchMember['status'] == 0 ) {
+                // 有数据，不是正式数据
+                //return json(['code' => 200, 'msg' => '已邀请会员', 'data' => $matchOrgMember]);
+                $dataMatchMember['id'] = $matchMember['id'];
+            }
+        }
+        // apply表type字段内容
+        $applyType = 0;
+        switch ($data['type']) {
+            case 9: $applyType = 3; break;  // 管理员
+            case 8: $applyType = 8; break;  // 记分员
+            case 7: $applyType = 6; break;  // 裁判员
+            default: $applyType=1;
+        }
+        // 邀请的会员有无(apply)邀请数据记录
+        $matchMemberApply = $leagueService->getApplyByLeague([
+            'organization_type' => 4,
+            'organization_id' => $match['id'],
+            //'type' => $applyType,
+            'member_id' => $data['member_id'],
+            'apply_type' => 2
+        ]);
+        // apply数据
+        $dataApply = [
+            'member' => $member['member'],
+            'member_id' => $member['id'],
+            'member_avatar' => $member['avatar'],
+            'organization_type' => 4,
+            'organization' => $match['name'],
+            'organization_id' => $match['id'],
+            'organization_image' => $match['logo'],
+            'type' => $applyType,
+            'inviter' => $this->memberInfo['member'],
+            'inviter_id' => $this->memberInfo['id'],
+            'inviter_avatar' => $this->memberInfo['avatar'],
+            'apply_type' => 2,
+            'isread' => 0,
+            'status' => 1
+        ];
+        if ($matchMemberApply) {
+            //return json(['code' => 100, 'msg' => '有邀请记录', 'data' => $matchOrgMemberApply]);
+            $dataApply['id'] = $matchMemberApply['id'];
+        }
+        // 工作人员角色文案
+        $typesArr = $leagueService->getMatchMemberTypes();
+        $typeStr = $typesArr[$data['type']];
+        try {
+            // 保存apply数据（status=1）
+            $applyId = $leagueService->saveApplyByLeague($dataApply);
+            // 保存联赛人员数据
+            $matchMemberId = $leagueService->saveMatchMember($dataMatchMember);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if ($matchMemberId['code'] != 200) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            // 发送消息给受邀会员
+            $messageS = new MessageService();
+            $message = [
+                'title' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
+                'content' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
+                'url' => url('keeper/match/workerinvitation', ['id' => $applyId['data']], '' ,true),
+                'keyword1' => '联赛邀请担任'.$typeStr,
+                'keyword2' => $this->memberInfo['member'],
+                'keyword3' => date('Y-m- H:i', time()),
+                'remark' => '点击查看详情',
+                'steward_type' => 2,
+            ];
+            $messageS->sendMessageToMember($member['id'], $message, config('wxTemplateID.checkPend'));
+            return json($matchMemberId);
+        }
+    }
+
+    // 会员回复联赛工作人员邀请
+    public function replymatchworkerinvitation() {
+        $data = input('post.');
+        // 比传参数验证 apply_id status(状态)
+        if ( !array_key_exists('apply_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').',传入apply_id']);
+        }
+        if ( !array_key_exists('status', $data) || !in_array($data['status'], [2, 3]) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').',传入正确status']);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 获取联赛工作人员邀请数据
+        $leagueS = new LeagueService();
+        $apply = $leagueS->getApplyByLeague([
+            'id' => $data['apply_id'],
+            'organization_type' => 4
+        ]);
+        if (!$apply) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        if ($apply['member_id'] != $this->memberInfo['id']) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 获取联赛工作人员数据
+        $matchMember = $leagueS->getMatchMember([
+            'match_id' => $apply['organization_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        // 同意status=2/拒绝status=3：更新申请状态,回复消息推送
+        $status = $data['status'];
+        $statusStr = '';
+        if ($status == 3) {
+            // 拒绝
+            $statusStr = '已拒绝';
+        } else {
+            // 同意
+            $statusStr = '已同意';
+        }
+        // 回复理由
+        $reply = ( !empty($data['reply']) ) ? '回复说明：'.$data['reply'] : '';
+        // 组合推送消息内容
+        $message = [
+            'title' => '联赛工作人员邀请会员回复结果',
+            'content' => '您的联赛' . $apply['organization'] . '邀请会员' . $apply['member'] . '担任'. $matchMember['type_text'] .'回复结果：'.$statusStr,
+            'url' => url('keeper/message/index', '', '', true),
+            'keyword1' => '您的联赛' . $apply['organization'] . '邀请会员' . $apply['member'] . '担任'. $matchMember['type_text'] .'回复结果：'.$statusStr,
+            'keyword2' => $statusStr,
+            'remark' => '点击登录平台查看更多信息',
+            'steward_type' => 2
+        ];
+        try {
+            // 更新apply数据
+            $resultUpdateApply = $leagueS->saveApplyByLeague([
+                'id' => $apply['id'],
+                'status' => $status,
+                'reply' => $reply,
+                'remarks' => $statusStr
+            ]);
+            // 同意，更新联赛组织人员数据
+            if ($status == 2) {
+                $resultUpdateOrgMember = $leagueS->saveMatchOrgMember([
+                    'id' => $orgMember['id'],
+                    'status' => 1
+                ]);
+            }
+            // 发送消息推送
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($apply['member_id'], $message, config('wxTemplateID.applyResult'));
+        } catch (Exception $e) {
+            trace('error'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json($resultUpdateApply);
     }
 }
