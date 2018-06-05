@@ -18,7 +18,7 @@
             margin: 25px 28px 0 28px;
             line-height: 54px;
             vertical-align: middle;
-            display: inline-flex;
+            /* display: inline-flex; */
         }
 
         .tipContent .tipContentText p {
@@ -389,6 +389,27 @@
                 });
                 mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
 
+                var realname = $("input[name=realname]").val();
+                var community = $("input[name=community]").val();
+                var address = $("input[name=address]").val();
+                var native_place = $("input[name=native_place]").val();
+                if (realname == '') {
+                    mui.toast("请填写真实姓名");
+                    return false;
+                }   
+                if (community == '') {
+                    mui.toast("请填写所属社区");
+                    return false;
+                }
+                if (address == '') {
+                    mui.toast("请填写居住地");
+                    return false;
+                }
+                if (native_place == '') {
+                    mui.toast("请填写籍贯");
+                    return false;
+                }
+
                 var data = wooApi.getInputData('input', 'data');
                 var objData = wooApi.arrTOobj(data);
                 objData.content = mixFrom;
@@ -397,7 +418,7 @@
                 var ajaxResult = wooApi.asyncF(url, objData);
                 if (ajaxResult.code == 200) {
                     mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                        window.location.href = "{:url('member/index')}"
+                        window.location.href = "https://mp.weixin.qq.com/s/lBBjAgxkcqMKmk2tDfe6Cg"
                     })
                 } else {
                     mui.alert(ajaxResult.msg, '提交失败', function () { });
