@@ -33,6 +33,7 @@ class Wechatpay extends Base
         
         $jsApiParameters = $result['data']['jsApiParameters'];
         $url = request()->url(true);//支付链接
+        // $url ="https://m.hot-basketball.com/keeper/punch/punchinfo/?punch_id=1&punch=index";
         $wechatS = new \app\service\WechatService;
         $jsApi = $wechatS->jsapi($url);
 

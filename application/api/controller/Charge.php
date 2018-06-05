@@ -13,13 +13,13 @@ class Charge extends Frontend{
 	        $member_id = $this->memberInfo['id'];
 	        $avatar = $this->memberInfo['avatar'];
 	        $charge = input('param.charge');
-	        $charge_order = input('param.billOrder');
+	        $charge_order = input('param.charge_order');
 	        $type = input('param.type',1);
 	        if($charge >1){
 	        	if($member_id<1){
 	        		return json(['code'=>100,'msg'=>'未注册平台会员,充值未到账,请联系平台客服']);
 	        	}
-	        	if(is_numeric($charge_order)){
+	        	if(!$charge_order){
 	        		return json(['code'=>100,'msg'=>'充值单号错误']);
 	        	}
 	        	$Charge = new \app\model\Charge;
@@ -27,20 +27,20 @@ class Charge extends Frontend{
 	        		'member'		=>$member,
 	        		'member_id'		=>$member_id,
 	        		'avatar'		=>$avatar,
-	        		'charge'		=>$charge
+	        		'charge'		=>$charge,
 	        		'charge_order'	=>$charge_order,
 	        		'status'		=>1
 	        	]);
 	        	if($result){
 	        		switch($type){
 	        			case 1:
-	        				db('member')->where(['id'=>$member_id])->setInc('balance',$charge)->update();
+	        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
 	        			break;
 	        			case 2:
-	        				db('member')->where(['id'=>$member_id])->setInc('hot_coin',$charge)->update();
+	        				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
 	        			break;
 	        			case 3:
-	        				db('camp')->where(['id'=>$camp_id])->setInc('balance',$charge)->update();
+	        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
 	        			break;
 	        			default:   
 	        			return json(['code'=>100,'msg'=>'请指定充值的类型']); 

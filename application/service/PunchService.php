@@ -51,18 +51,20 @@ class PunchService {
 
         $result = $this->Punch->save($data);
         if($result){
-            db('hotcoin_finance')->insert(
-                [
-                    'member_id' =>$data['member_id'],
-                    'member'    =>$data['member'],
-                    'member'    =>$data['member'],
-                    'hot_coin'  =>-$stakes,
-                    'type'      =>-1,
-                    'status'    =>1,
-                    'f_id'      =>$this->Punch->id,
-                    'create_time'=>time(),
-                ]
-            );
+            if($stakes>0){
+                db('hotcoin_finance')->insert(
+                    [
+                        'member_id' =>$data['member_id'],
+                        'member'    =>$data['member'],
+                        'avatar'    =>$data['avatar'],
+                        'hot_coin'  =>-$stakes,
+                        'type'      =>-1,
+                        'status'    =>1,
+                        'f_id'      =>$this->Punch->id,
+                        'create_time'=>time(),
+                    ]
+                );
+            }
             return ['code'=>200,'msg'=>'创建成功','data'=>$this->Punch->id];
         }else{
             return ['code'=>100,'msg'=>'创建失败'];
