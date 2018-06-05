@@ -12,6 +12,9 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
@@ -103,6 +106,12 @@
                         <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
+                {eq name="$btnApplyWorkerShow" value="1"}
+                <!-- 申请联赛工作人员 -->
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="#typePopover">申请联赛工作人员</a>
+                </li>
+                {/eq}
             </ul>
 
             <ul class="mui-table-view mb">
@@ -271,9 +280,25 @@
         </div>
     </div>
 
+    <!-- 工作人员角色popover -->
+    <div class="mui-popover" id="typePopover" style="margin: 0;" data-matchid="{$leagueInfo.id}" data-memberid="{$memberInfo.id}">
+        <div class="mui-popover-arrow"></div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list typeList">
+                    {volist name="types" id="vo"}
+                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}"><font class="type">{$vo}</font></li>
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
@@ -283,6 +308,10 @@
             $('.mui-scroll-wrapper').scroll({
                 indicators: true //是否显示滚动条
             });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
         })(mui);
         // a标签跳转
         mui(".mui-content").on("tap", "a", function () {
@@ -405,6 +434,42 @@
             followStatus(); //判断当前的关注状态
             toCommentList(); //获取评论列表
             // toRecordEventList(); //活动纪录
+
+            // 工作人员角色popover点击绑定
+            $('.typeList').on('tap', 'li', function() {
+                var type = $(this).attr('data-type');
+                var match_id = $('#typePopover').attr('data-matchid');
+                var member_id = $('#typePopover').attr('data-memberid');
+                mui.ajax("{:url('api/league/applyleagueworker')}", {
+                    data: {
+                        match_id: match_id,
+                        member_id: member_id,
+                        type: type
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast("已经发送申请，请耐心等待回复");
+                            //location.reload();
+                            mui("#typePopover").popover("toggle");
+                        } else {
+                            mui.toast(data.msg);
+                            mui("#typePopover").popover("toggle");
+                            //location.reload();
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+
         });
 
         // 点赞状态

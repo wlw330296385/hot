@@ -1478,7 +1478,7 @@ class League extends Base
             }
         }
         // 邀请的会员有无(apply)邀请数据记录
-        $matchOrgMemberApply = $leagueService->getMatchOrgMemberApply([
+        $matchOrgMemberApply = $leagueService->getApplyByLeague([
             'organization_type' => 5,
             'organization_id' => $data['match_org_id'],
             'type' => 3,
@@ -1582,7 +1582,7 @@ class League extends Base
         $message = [
             'title' => '联赛组织邀请会员回复',
             'content' => '您的联赛组织' . $apply['organization'] . '邀请会员' . $apply['member'] . '加入回复结果：'.$statusStr,
-            'url' => url('keeper/message/index', '', '', true),
+            'url' => url('keeper/match/adminlistoforganization', ['org_id' => $apply['organization_id']], '', true),
             'keyword1' => '您的联赛组织' . $apply['organization'] . '邀请会员' . $apply['member'] . '加入回复结果：'.$statusStr,
             'keyword2' => $statusStr,
             'remark' => '点击登录平台查看更多信息',
@@ -1605,7 +1605,7 @@ class League extends Base
             }
             // 发送消息推送
             $messageS = new MessageService();
-            $messageS->sendMessageToMember($apply['member_id'], $message, config('wxTemplateID.applyResult'));
+            $messageS->sendMessageToMember($apply['inviter_id'], $message, config('wxTemplateID.applyResult'));
         } catch (Exception $e) {
             trace('error'.$e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
