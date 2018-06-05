@@ -132,18 +132,7 @@ class Punch extends Base{
 
 
  
-    //打卡关联社群
-    public function createPunchMemberApi(){
-         try{
-            $punch_id = input('param.punch_id');
-            $member_id = $this->memberInfo['id'];
-            $member = $this->memberInfo['member'];
-            $result = $this->PunchService->createPunchMember($member_id,$member,$punch_id);
-             return json($result);   
-         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
-        }
-    }
+
 
 
     // 打卡评论
@@ -219,5 +208,15 @@ class Punch extends Base{
         }
     }
 
-    
+    // 打赏
+    public function rewardApi(){
+        try{
+            $member_id = $this->memberInfo['id'];
+            $member = $this->memberInfo['member'];
+            $avatar = $this->memberInfo['avatar'];
+            
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
