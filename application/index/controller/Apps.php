@@ -18,7 +18,12 @@ class Apps extends Base
         if ($member_id > 0) {
             $cert = db('cert')->where(['member_id'=>$member_id,'cert_type'=>1])->find();
         } else {
-            $cert = [];
+            $cert = [
+                'cert_no' => '',
+                'photo_positive' => '',
+                'cert_type' => '',
+                'photo_back' => ''
+            ];
         }
 
         $eventInfo = db('event')->where(['id'=>$event_id])->find();
@@ -37,7 +42,12 @@ class Apps extends Base
         if ($member_id > 0) {
             $cert = db('cert')->where(['member_id'=>$member_id,'cert_type'=>1])->find();
         } else {
-            $cert = [];
+            $cert =  [
+                'cert_no' => '',
+                'photo_positive' => '',
+                'cert_type' => '',
+                'photo_back' => ''
+            ];
         }
 
         $eventInfo = db('event')->where(['id'=>$event_id])->find();
