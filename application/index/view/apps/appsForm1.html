@@ -168,7 +168,7 @@
         var flagPhone = false;
         var flagSMS = false;
         var flagMember = false;
-        var flagCreate = false;
+        var flagCreate = true;
         var mID = "{$memberInfo.id}";
         var mName = "{$memberInfo.member}";
         var mTel = "{$memberInfo.telephone}";
@@ -349,6 +349,7 @@
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
+                        async: false,
                         timeout: 10000,//超时时间设置为10秒；
                         headers: { 'Content-Type': 'application/json' },
                         success: function (data) {
@@ -377,9 +378,9 @@
                     });
                 }
 
-                // if (flagCreate == false) {
-                //     return false;
-                // }
+                if (flagCreate == false) {
+                    return false;
+                }
 
 
                 //组合自定义表单项

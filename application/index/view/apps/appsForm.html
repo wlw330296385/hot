@@ -20,10 +20,12 @@
             vertical-align: middle;
             display: inline-flex;
         }
+
         .tipContent .tipContentText p {
             line-height: 20px;
-            color:#666;
+            color: #666;
         }
+
         .registerFrom {
             margin: 10px 25px 0px;
             background: none;
@@ -42,7 +44,6 @@
             margin-bottom: 0;
             color: #999;
         }
-
     </style>
 </head>
 
@@ -55,7 +56,9 @@
     <div class="mui-content mt55" style="background: none !important">
         <div class="tipContent">
             <div class="tipContentText">
-                <p><strong>活动登记说明：</strong></p>
+                <p>
+                    <strong>活动登记说明：</strong>
+                </p>
                 <p>{$eventInfo.apps_des}</p>
             </div>
         </div>
@@ -77,11 +80,11 @@
             </div>
             <div class="mui-input-row mixForm">
                 <a class="mui-navigate-right">
-                <label class="colororange">性别</label>
-                <select name="sexSelect" style="padding-right: 30px;">
-                    <option value="男">男</option>
-                    <option value="女">女</option>
-                </select>
+                    <label class="colororange">性别</label>
+                    <select name="sexSelect" style="padding-right: 30px;">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
                 </a>
                 <input type="hidden" name="sex" value="男">
             </div>
@@ -160,10 +163,10 @@
         var flagPhone = false;
         var flagSMS = false;
         var flagMember = false;
-        var flagCreate = false;
-        var mID="{$memberInfo.id}";
-        var mName="{$memberInfo.member}";
-        var mTel="{$memberInfo.telephone}";
+        var flagCreate = true;
+        var mID = "{$memberInfo.id}";
+        var mName = "{$memberInfo.member}";
+        var mTel = "{$memberInfo.telephone}";
 
         $(function () {
 
@@ -172,18 +175,18 @@
             var gCity = getLocationTB['city'];
             var gProvince = getLocationTB['province'];
             var gArea = getLocationTB['area'];
-            if(gCity==null||gCity=="undefined"){
-                gCity="";
+            if (gCity == null || gCity == "undefined") {
+                gCity = "";
             }
-            if(gProvince==null||gProvince=="undefined"){
-                gProvince="";
+            if (gProvince == null || gProvince == "undefined") {
+                gProvince = "";
             }
-            if(gArea==null||gArea=="undefined"){
-                gArea="";
+            if (gArea == null || gArea == "undefined") {
+                gArea = "";
             }
 
-            var sexNum="{$memberInfo.sex}";
-            if(sexNum=="2"){
+            var sexNum = "{$memberInfo.sex}";
+            if (sexNum == "2") {
                 $('select[name="sexSelect"] option[value="女"]').prop("selected", true);
             }
             // 选择是否需要填表
@@ -215,10 +218,10 @@
             //验证是否注册的手机号
             $('.telephone').on("blur", function () {
                 var telephone = $(this).val();
-                if(telephone!=""){
+                if (telephone != "") {
                     //已登陆会员并没修改电话（本人报名）
                     //隐藏会员名和短信验证，跳过验证
-                    if(mTel==telephone) {
+                    if (mTel == telephone) {
                         $('input[name="member"]').val(mName);
                         $(".mName").hide();
                         $(".smsValidate").hide();
@@ -233,7 +236,7 @@
                         mui.toast("请填写正确的手机格式");
                         flagPhone = false;
                         return false;
-                    }else{
+                    } else {
                         //判断是否已经注册的会员手机号
                         mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
                             data: {
@@ -242,16 +245,16 @@
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型
-                            async:false,
+                            async: false,
                             timeout: 10000,//超时时间设置为10秒；
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             success: function (data) {
                                 console.log(data);
                                 //判断该手机号码是否已经是注册会员
                                 if (data.msg == 1) {
                                     mui.alert("该手机号码是本平台已注册会员、请让本人自行报名，谢谢！");
                                     flagPhone = false;
-                                }else{
+                                } else {
                                     flagPhone = true;
                                 }
                             },
@@ -271,13 +274,11 @@
                 $(this).val(member);
 
                 //判断会员名格式
-                if(((/\s/).test(member))===true)
-                {
+                if (((/\s/).test(member)) === true) {
                     flagMember = false;
                     mui.alert("会员名不许有空格");
                     return false;
-                }else if((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test(member)===false)
-                {
+                } else if ((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test(member) === false) {
                     flagMember = false;
                     mui.alert("会员名只能包含英文、数字或中文，长度为2-15位");
                     return false;
@@ -292,14 +293,14 @@
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
                         console.log(data);
                         if (data.msg == 1) {
                             flagMember = false;
                             mui.alert("该会员名称已经存在，请使用其他名称！");
                             return false;
-                        }else{
+                        } else {
                             flagMember = true;
                         }
                     },
@@ -310,7 +311,7 @@
             });
 
 
-            $("#submitAction").on("click","", function () {
+            $("#submitAction").on("click", "", function () {
 
                 var member = $("input[name='member']").val();
                 var telephone = $("input[name='telephone']").val();
@@ -318,7 +319,7 @@
 
                 //如果是非会员，判断是否通过验证
                 //如果是会员并修改了手机号码（帮报名），判断是否通过验证
-                if(mID==""||mID!=""&&mTel!=telephone){
+                if (mID == "" || mID != "" && mTel != telephone) {
                     if (flagMember == false) {
                         mui.toast("提交失败，会员名填写有误，请重新填写！");
                         return false;
@@ -339,12 +340,13 @@
                             province: gProvince,
                             city: gCity,
                             area: gArea,
-                            __token__:token
+                            __token__: token
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
+                        async: false,
                         timeout: 10000,//超时时间设置为10秒；
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         success: function (data) {
                             //服务器返回响应，根据响应结果，分析是否登录成功；
                             console.log(data);
@@ -360,9 +362,9 @@
                             } else {
                                 flagCreate = true;
                                 $("input[name='member_id']").val(data.id)
+                                console.log(data.id)
                                 mui.toast("提交中...");
                             }
-
                         },
                         error: function (xhr, type, errorThrown) {
                             //异常处理；
@@ -371,17 +373,37 @@
                     });
                 }
 
-                // if(flagCreate == false){
-                //     return false;
-                // }
-
+                if (flagCreate == false) {
+                    return false;
+                }
 
                 //组合自定义表单项
                 var mixFrom = '';
                 $(".mixForm").each(function () {
-                    mixFrom += '<li><span class="fTitle">'+$(this).find("label").text()+'</span><span class="fValue">'+$(this).find("input").val()+'</span></li>'
+                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
                 });
-                mixFrom = '<ul class="diyList">'+mixFrom+'</ul>'
+                mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
+                
+                var realname = $("input[name=realname]").val();
+                var community = $("input[name=community]").val();
+                var address = $("input[name=address]").val();
+                var native_place = $("input[name=native_place]").val();
+                if (realname == '') {
+                    mui.toast("请填写真实姓名");
+                    return false;
+                }   
+                if (community == '') {
+                    mui.toast("请填写所属社区");
+                    return false;
+                }
+                if (address == '') {
+                    mui.toast("请填写居住地");
+                    return false;
+                }
+                if (native_place == '') {
+                    mui.toast("请填写籍贯");
+                    return false;
+                }
 
                 var data = wooApi.getInputData('input', 'data');
                 var objData = wooApi.arrTOobj(data);
