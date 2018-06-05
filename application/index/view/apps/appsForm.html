@@ -256,6 +256,10 @@
                                     flagPhone = false;
                                 } else {
                                     flagPhone = true;
+                                    $(".mName").show();
+                                    $(".smsValidate").show();
+                                    $('input[name=member]').val('');
+                                    $('input[name=idno]').val('');
                                 }
                             },
                             error: function (xhr, type, errorThrown) {
@@ -340,7 +344,8 @@
                             province: gProvince,
                             city: gCity,
                             area: gArea,
-                            __token__: token
+                            __token__: token,
+                            ismyself: 0
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
@@ -368,6 +373,7 @@
                         },
                         error: function (xhr, type, errorThrown) {
                             //异常处理；
+                            flagCreate = false;
                             console.log(type);
                         }
                     });
