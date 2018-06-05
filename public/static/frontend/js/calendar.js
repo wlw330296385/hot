@@ -8,7 +8,15 @@ $(function () {
   });
   var width = $(".item").width()
   $(".item").css("height", width)
-  $(".item").css("line-height", width +"px")
+  $(".item").css("line-height", width + "px");
+  $(".calendar-date li").each(function () {
+    var time = $(this).attr("data");
+    var year = time.substring(0, 4);
+    var month = time.substring(4, 6);
+    var day = time.substring(6, 8);
+    var dateTime = year + "-" + month + "-" + day
+    $(".hideInput").append('<input type="hidden" name="date" value="' + dateTime + '" >')
+  });
 });
 
 ; (function ($, window, document, undefined) {
@@ -105,7 +113,7 @@ $(function () {
 
 
       var _titleStr = '<span class="icon iconfont icon-logo-Big"></span>' +
-      '<span class="title"></span>' +
+        '<span class="title"></span>' +
         // '<a href="javascript:;" id="backToday">T</a>'+
         '<div class="arrow">' +
         '<span class="arrow-prev"><</span>' +
@@ -154,6 +162,7 @@ $(function () {
       this.$calendarDate_item = this.$calendar_date.find('.item');
       this.$calendarToday_date = this.$calendar_today.find('.date');
       this.$calendarToday_week = this.$calendar_today.find('.week');
+      // console.log(this.$calendarToday_date)
 
       this.showCalendar();
 
