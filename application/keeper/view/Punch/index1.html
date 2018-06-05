@@ -13,8 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
-    <link rel="stylesheet" href="/static/frontend/css/calendar.css">
-
+    <link rel="stylesheet" href="/static/frontend/css/mobile_date.css">
     <style type="text/css">
         .coloricon {
             width: 2.3em;
@@ -34,10 +33,10 @@
             width: 70%;
             text-align: center;
         }
-
         .sportDkText span {
             margin-top: 5px;
         }
+
 
         .mui-grid-view.mui-grid-9 .mui-table-view-cell {
             border: none;
@@ -47,8 +46,43 @@
 
 <body class="whitebg">
 
-    <div id="calendar" class="calendar"></div>
-
+    <div class="box">
+        <section class="date">
+            <div class="head">
+                <div class="hot">
+                    <i class="icon iconfont"></i>
+                    <!-- <span class="icon iconfont icon-logo-Big "></span> -->
+                </div>
+                <div class="tomon">
+                    <span class="year"></span>年
+                    <span class="month"></span>月</div>
+                <div class="prev mui-icon mui-icon-arrowleft"></div>
+                <div class="next mui-icon mui-icon-arrowright"></div>
+            </div>
+            <ol>
+                <li>日</li>
+                <li>一</li>
+                <li>二</li>
+                <li>三</li>
+                <li>四</li>
+                <li>五</li>
+                <li>六</li>
+            </ol>
+            <ul class="dateClass">
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+                <li>日期</li>
+            </ul>
+        </section>
+    </div>
     <p class="pline"></p>
     <div class="mui-content">
         <div class="list" style="margin-bottom: 110px;">
@@ -128,9 +162,7 @@
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/mobile_date.js"></script>
-<script src="/static/frontend/js/calendar.js"></script>
 <script>    
-
     var count = 1
     $(function () {
         $(".goConfirm").click(function () {
@@ -175,13 +207,12 @@
                 var newli = "";
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        // $(".calendar-date li").each(function () {
-                        //     var date = $(this).attr("data");
-                        //     console.log(date)
-                        //     if (data.data[i].punch_time == date) {
-                        //         $(this).addClass("endDK");
-                        //     }
-                        // });
+                        $(".dateClass li").each(function () {
+                            var date = $(this).attr("data-date");
+                            if (data.data[i].punch_time == date) {
+                                $(this).addClass("endDK");
+                            }
+                        });
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
@@ -207,6 +238,5 @@
         });
     };
 </script>
-
 
 </html>
