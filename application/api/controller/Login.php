@@ -29,15 +29,22 @@ class Login extends Base{
 
             $memberInfo = session('memberInfo', '', 'think');
             $memberS = new \app\service\MemberService;
+            // myself: 标识是否本人电话与微信存入同一会员数据
+            $data['ismyself'] = input('ismyself', 1, 'intval');
+            if ($data['ismyself'] == 0) {
+                // openid字段保存空内容
+                $data['openid'] = '';
+                $data['nickname'] = '';
+            }
             // 如果有微信授权信息
-            if (isset($memberInfo['openid'])) {
+            if (isset($memberInfo['openid']) && !empty($memberInfo['openid']) && $data['myself'] == 1) {
                 $isMember = $memberS->getMemberInfo(['openid' => $memberInfo['openid']]);
                 if ($isMember) {
                     return ['code' => 100, 'msg' => '您的微信号已注册成为会员'];
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
-                    //$data['avatar'] = $memberInfo['avatar'];
+                    // 下载微信头像文件到本地
                     $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
                 }
             }
