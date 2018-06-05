@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>社群邀请</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+       <!--自定义多色图标icon.js-->
+       <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .coloricon {
+            width: 2.3em;
+            height: 2.3em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content pt">
+
+        <form action="" class="mui-input-group mb">
+            <input id="apply_id" type="hidden" value="{applyInfo.id}">
+            <div class="mui-input-row h-auto">
+                <label>回复的内容：</label>
+                <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
+            </div>
+
+            <div class="mui-button-row h-auto operationFrame">
+                <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+            </div>
+
+
+        </form>
+        <p class="pline"></p>
+        <div class="list mb44">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli" id="logoframe">
+                    <div class="mui-media-body  wd66">
+                        <strong class="f16 tmName">{$groupInfo.group}</strong>
+                        <img class="mui-media-object mui-pull-left logostyle" src="{$groupInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                        <p class="mui-ellipsis lineHeight20">发起人：{$groupInfo.member}</p>
+                        <p class="mui-ellipsis lineHeight20">成员:
+                            <text class="colororange">{$groupInfo.members}</text>
+                        </p>
+                    </div>
+                    <!-- <div class="price-frame">
+                        <button class="mui-btn bgred joinGroup" style="margin-top:26px">加入</button>
+                        <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">
+                            <button class="mui-btn bgred groupAdmin hide" style="margin-top:26px">管理</button>
+                        </a>
+                    </div> -->
+                </li>
+            </ul>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>上期擂主：
+                        <text class="colororange winer">{volist name="winnerList" id="vol"}{$vol.winner},{/volist}</text>
+                    </label>
+                    <span class="wd25 pdr15 mui-navigate-right">
+                        <a href="#">往届</a>
+                    </span>
+                </li>
+            </ul>
+
+            <div class="page-header whitebg">
+                <span class="course">
+                    本期打卡
+                </span>
+                <span class="more pdr15">
+                    <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">社群规则</a>
+                </span>
+            </div>
+            <div class="nav-list mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-game"></use>
+                            </svg>
+                            <div class="mui-media-body" style="font-size: 14px !important">个人</div>
+                            <h3 class=" colororange">0</h3>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-activity"></use>
+                            </svg>
+                            <div class="mui-media-body" style="font-size: 14px !important">社群</div>
+                            <h3 class=" colororange">0</h3>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                        <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-home-team"></use>
+                            </svg>
+                            <div class="mui-media-body" style="font-size: 14px !important">奖金池</div>
+                            <h3 class=" colororange">{$groupInfo.bonus}</h3>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+<!-- 
+            <div class="page-header">
+                <span class="course">
+                    打卡记录
+                </span>
+                <span class="more pdr15">
+                    <a href="{:url('punch/punchList')}/?group_id={$groupInfo.id}" class="mui-navigate-right">更多</a>
+                </span>
+            </div> -->
+            <!-- <ul class="mui-table-view mb punchList"></ul> -->
+
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // 审核操作
+        function check_status(value) {
+            var apply_id = document.getElementById('apply_id').value;
+            var reply = $(".reply").val();
+            mui.ajax("{:url('api/match/replymatchapply')}", {
+                data: {
+                    apply_id: apply_id,
+                    status: value,
+                    reply: reply
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (res) {
+                    if (res.code == 200) {
+                        mui.alert(res.msg, function () {
+                            setTimeout(window.location.href = "{:url('frontend/team/matchApplyList')}/team_id/{team_id}", 3000);
+                        })
+                    } else {
+                        mui.toast(res.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                    mui.toast('网络异常');
+                }
+            });
+        }
+
+        // var count = 1;
+        // var group_member = "{$groupInfo.member}";
+        // var member = "{$memberInfo.member}";
+        // var member_id = "{$memberInfo.id}";
+        // var group_id = "{$groupInfo.id}";
+        // var group_member_id = "{$groupInfo.member_id}";
+        // var id = "{$id}"; //是否在社群内，是则id有值，否则为空
+        // $(function () {
+        //     toPunchList(); //获取我的打卡记录列表
+        // })
+
+        // //下拉刷新具体业务实现
+        // function pulldownRefresh() {
+        //     setTimeout(function () {
+        //         count = 1;//刷新并显示第一页
+        //         var page = count;
+        //         var gType = 1;//代表下拉刷新
+        //         toPunchList(page, gType);//具体取数据的方法
+        //     }, 100);
+        // }
+        // //上拉加载具体业务实现
+        // function pullupRefresh() {
+        //     setTimeout(function () {
+        //         count++;//翻下一页
+        //         var page = count;
+        //         var gType = 2;//代表上拉加载
+        //         toPunchList(page, gType);//具体取数据的方法
+        //     }, 100);
+        // }
+        // //获取我的打卡记录列表
+        // function toPunchList(page, gType) {
+        //     var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}";
+        //     mui.ajax({
+        //         url: url,
+        //         data: {
+        //             page: page,
+        //             group_id: group_id
+        //         },
+        //         dataType: 'json',//服务器返回json格式数据
+        //         type: 'post',//HTTP请求类型
+        //         timeout: 10000,//超时时间设置为10秒；
+        //         headers: { 'Content-Type': 'application/json' },
+        //         success: function (data) {
+        //             console.log(data)
+        //             var newli = "";
+        //             if (data.code == 200) {
+        //                 for (var i = 0; i <= data.data.data.length - 1; i++) {
+        //                     var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
+        //                     newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+        //                     newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
+        //                     newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewords_money + '</text></p>';
+        //                     newli += '</div></a></li>'
+        //                 }
+        //                 if (newli == '') {
+        //                     $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+        //                 }
+        //             }
+
+        //             if (gType == 1) {
+        //                 //上拉刷新
+        //                 $("ul.punchList").empty().append(newli);
+        //             } else {
+        //                 //下拉加载 gType==2
+        //                 $("ul.punchList").append(newli);
+        //             }
+        //         },
+        //         error: function (xhr, type, errerThrown) {
+        //             mui.toast('网络异常,请稍候再试');
+        //         }
+        //     });
+        // };
+
+    </script>
+</body>
+
+</html>
