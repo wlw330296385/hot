@@ -105,7 +105,7 @@
                             <h3 class=" colororange">0</h3>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 createPool">
                         <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-bonuspool"></use>
@@ -162,6 +162,7 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
@@ -175,6 +176,14 @@
         var group_member_id = "{$groupInfo.member_id}";
         var id = "{$id}"; //是否在社群内，是则id有值，否则为空
         $(function () {
+
+            // 判断是否可以创建奖金池
+            $(".createPool").on("tap", function () {
+                if (group_member != member) {
+                    $(this).children("a").attr("href", "javascript:;");
+                    mui.toast("只有社群群主才能创建奖金池")
+                }
+            })
 
             // 判断底部按钮退出与管理 
             if (id != '' && group_member != member) {
@@ -229,6 +238,7 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
+                                    
                                     window.setTimeout("window.location.href='{:url('group/index')}'", 1500);
                                 } else {
                                     mui.toast(data.msg);
@@ -307,6 +317,44 @@
         };
 
     </script>
+     <script>
+            wx.config({
+                //debug: true,
+                appId: "{$jsapi['appId']}",
+                timestamp: "{$jsapi['timestamp']}",
+                nonceStr: "{$jsapi['nonceStr']}",
+                signature: "{$jsapi['signature']}",
+                jsApiList: [
+                    // 所有要调用的 API 都要加到这个列表中
+                    'checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ'
+                ]
+            });
+            wx.ready(function () {
+                // 分享到朋友圈
+                wx.onMenuShareTimeline({
+                    title: "{$groupInfo.group}",
+                    link: "{$shareurl}/pid/{$mid}",
+                    imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
+                    success: function () { },
+                    cancel: function () { }
+                });
+                // 分享给朋友
+                wx.onMenuShareAppMessage({
+                    title: "{$groupInfo.group}",
+                    desc: "{$groupInfo.tenet}",
+                    link: "{$shareurl}/pid/{$mid}",
+                    imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
+                    type: "",
+                    dataUrl: '',
+                    success: function () { },
+                    cancel: function () { }
+                });
+    
+            });
+        </script>
 </body>
 
 </html>
