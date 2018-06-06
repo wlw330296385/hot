@@ -118,7 +118,8 @@
                 <div class="dragClass" id="drag">{$punchInfo.rewords_money}</div>
             </div>
             <div class="page-header border-b">
-                <span class="course wd52">评论（<text class="comment_count">0</text>）</span>
+                <span class="course wd52">评论（
+                    <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
                     <span class="colororange">{$punchInfo.rewords_money}</span> HT
@@ -172,23 +173,23 @@
             <form action="" class="mui-input-group">
                 <div class="mui-row classHFrame">
                     <div class="mui-col-sm-6 mui-col-xs-6">
-                        <span class="classH classActive">1H币</span>
+                        <span class="classH classActive" data-h="1">1H币</span>
                     </div>
                     <div class="mui-col-sm-6 mui-col-xs-6">
-                        <span class="classH">2H币</span>
+                        <span class="classH" data-h="2">2H币</span>
                     </div>
                 </div>
                 <div class="mui-row classHFrame">
                     <div class="mui-col-sm-6 mui-col-xs-6">
-                        <span class="classH">5H币</span>
+                        <span class="classH" data-h="5">5H币</span>
                     </div>
                     <div class="mui-col-sm-6 mui-col-xs-6">
-                        <span class="classH">10H币</span>
+                        <span class="classH" data-h="10">10H币</span>
                     </div>
                 </div>
                 <div class="success-frame">
                     <div class="choise">
-                        <button type="button" class="mui-btn mui-btn-danger f16 bgblue">确认打赏</button>
+                        <button type="button" class="mui-btn mui-btn-danger f16 bgblue confirmDS">确认打赏</button>
                     </div>
                 </div>
                 <p class="goCharge mui-text-center">充值H币</p>
@@ -253,7 +254,7 @@
         var total = wooApi.GetQueryString('total');
         $(function () {
 
-            if(total!=""&&total!=null){
+            if (total != "" && total != null) {
                 mask.show();
                 $('.mui-iframe-wrapper').show();
                 //看看如何将total值放入webview充值窗口里
@@ -290,6 +291,34 @@
                     $(this).addClass("classActive");
                 }
             })
+
+            //打赏
+            $(".confirmDS").on('tap', function () {
+                var punch_id = "{$punchInfo.id}";
+                var reward = $(".classActive").attr("data-h");
+                mui.ajax("{:url('api/punch/rewardApi')}", {
+                    data: {
+                        punch_id: punch_id,
+                        reward: reward,
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             //评论功能
             $(".commentBtn").on('tap', function () {
@@ -329,6 +358,8 @@
                     }
                 });
             });
+
+
 
             pulldownRefresh(); //页面打开时获取一次最新评论信息
         });

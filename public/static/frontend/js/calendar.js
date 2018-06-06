@@ -9,14 +9,6 @@ $(function () {
   var width = $(".item").width()
   $(".item").css("height", width)
   $(".item").css("line-height", width + "px");
-  $(".calendar-date li").each(function () {
-    var time = $(this).attr("data");
-    var year = time.substring(0, 4);
-    var month = time.substring(4, 6);
-    var day = time.substring(6, 8);
-    var dateTime = year + "-" + month + "-" + day
-    $(".hideInput").append('<input type="hidden" name="date" value="' + dateTime + '" >')
-  });
 });
 
 ; (function ($, window, document, undefined) {
@@ -86,7 +78,7 @@ $(function () {
       var dateStr = returnDateStr(dateObj.getDate());
       var firstDay = new Date(year, month - 1, 1); // 当前月的第一天
 
-      this.$calendarTitle_text.text(year + '/' + dateStr.substr(4, 2));
+      this.$calendarTitle_text.text(year + '-' + dateStr.substr(4, 2));
 
       this.$calendarDate_item.each(function (i) {
         // allDay: 得到当前列表显示的所有天数
