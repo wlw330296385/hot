@@ -218,6 +218,9 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
 
+        var count = 1;
+        var backTotal = wooApi.GetQueryString('backTotal');
+
         //初始化
         mui.init({
             swipeBack: false,
@@ -227,7 +230,7 @@
             },
             subpages: [{
                 id: "charge",
-                url: "{:url('/frontend/member/chargeHotcoin')}",
+                url: "{:url('/frontend/member/chargeHotcoin')}"+"?backTotal="+backTotal,
                 styles: {
                     top: 'auto',
                     bottom: '0',
@@ -250,14 +253,12 @@
         };
 
         // /////////////////////////////////////////////
-        var count = 1;
-        var total = wooApi.GetQueryString('total');
         $(function () {
 
-            if (total != "" && total != null) {
+
+            if(backTotal!=""&&backTotal!=null){
                 mask.show();
                 $('.mui-iframe-wrapper').show();
-                //看看如何将total值放入webview充值窗口里
             }
 
             // 返回上一层判断
