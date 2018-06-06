@@ -64,9 +64,11 @@ class GroupApply extends Base{
             $data = input('post.');
             $group_apply_id = input('param.group_apply_id');
             $member_id = input('param.member_id');
+            $type = input('param.type');
+            //同意操作
             if($group_apply_id){
                 $result = $this->GroupApplyService->updateGroupApply($data,$group_apply_id);
-            }elseif ($member_id<>) {
+            }elseif ($member_id<> $this->memberInfo['id']) {
                 $data['member_id'] = $this->memberInfo['id'];
                 $data['member'] = $this->memberInfo['member'];
                 $data['avatar'] = $this->memberInfo['avatar'];

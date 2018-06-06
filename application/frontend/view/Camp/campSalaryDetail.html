@@ -29,8 +29,8 @@
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/campWallet',['camp_id'=>$campInfo.id])}"></a>
             <a class="mui-control-item mui-active" href="#withdrawList">提现明细</a>
-            <a class="mui-control-item" href="#salaryInList">收入明细</a>
-            <a class="mui-control-item" href="#salaryOutList">支出明细</a>
+            <a class="mui-control-item" href="#incomeList">收入明细</a>
+            <a class="mui-control-item" href="#outputList">支出明细</a>
         </div>
     </div>
 </header>
@@ -43,14 +43,14 @@
                 <ul class="mui-table-view list item-list withdraw border-b"></ul>
             </div>
         </div>
-        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg">
+        <div id="incomeList" class="mui-control-content mui-scroll-wrapper whitebg">
             <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryIn"></ul>
+                <ul class="mui-table-view list item-list incomeList"></ul>
             </div>
         </div>
-        <div id="salaryOutList" class="mui-control-content mui-scroll-wrapper whitebg">
+        <div id="outputList" class="mui-control-content mui-scroll-wrapper whitebg">
             <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryOut"></ul>
+                <ul class="mui-table-view list item-list outputList"></ul>
             </div>
         </div>
     </div>
@@ -80,7 +80,7 @@
         var sOutCount = 1;
         var wCount = 1;
 
-        mui('#salaryInList').pullRefresh({
+        mui('#incomeList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -106,7 +106,7 @@
                 sInCount = 1;//刷新并显示第一页
                 var page = sInCount;
                 var gType = 1;//代表下拉刷新
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toIncomeList('incomeList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
@@ -116,12 +116,12 @@
                 sInCount++;//翻下一页
                 var page = sInCount;
                 var gType = 2;//代表上拉加载
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toIncomeList('incomeList', page, gType, 1);//具体取数据的方法
             }, 100);
         }
 
 
-        mui('#salaryOutList').pullRefresh({
+        mui('#outputList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -147,7 +147,7 @@
                 sOutCount = 1;//刷新并显示第一页
                 var page = sOutCount;
                 var gType = 1;//代表下拉刷新
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
+                toOutputList('outputList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -157,7 +157,7 @@
                 sOutCount++;//翻下一页
                 var page = sOutCount;
                 var gType = 2;//代表上拉加载
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
+                toOutputList('outputList', page, gType, -1);//具体取数据的方法
             }, 100);
         }
 
@@ -303,6 +303,129 @@
             }
         });
     };
+
+
+    //获取提现明细表
+    var toIncomeList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/income/getIncomeListByPageApi')}?page="+page;
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id:{$campInfo.id},
+                rebate_type:{$campInfo.rebate_type}
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var statusCN = '';
+                var btn = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        btn = "";
+                        newli +=`<li class="mui-table-view-cell mui-collapse mui-collapse">
+                                 <a class="mui-navigate-right" href="#"><div class="list-cont"><h4>收入金额：￥${data.data.data[i].income}</h4></a>
+                                 <p>收入类型:${data.data.data[i].type}</p>
+                                 <p>详情:${data.data.data[i].f_id}</p>
+                                 <p>收入前余额:${data.data.data[i].s_balance}</p>
+                                 <p>收入后余额:${data.data.data[i].e_balance}</p>
+                                </li>`;
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.incomeList").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.incomeList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.incomeList").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+
+
+    //获取提现明细表
+    var toOutputList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/output/getOutputListByPageApi')}?page="+page;
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id:{$campInfo.id},
+                rebate_type:{$campInfo.rebate_type}
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var statusCN = '';
+                var btn = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        btn = "";
+                        newli +=`<li class="mui-table-view-cell mui-collapse mui-collapse">
+                                 <a class="mui-navigate-right" href="#"><div class="list-cont"><h4>支出金额：￥${data.data.data[i].output}</h4></a>
+                                 <p>支出类型:${data.data.data[i].type}</p>
+                                 <p>详情:${data.data.data[i].f_id}</p>
+                                 <p>支出前余额:${data.data.data[i].s_balance}</p>
+                                 <p>支出后余额:${data.data.data[i].e_balance}</p>
+                                </li>`;
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.outputList").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.outputList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.outputList").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
 
     //状态数字转换中文
     function numTOcn(n){
