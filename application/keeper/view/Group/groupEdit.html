@@ -70,6 +70,32 @@
                 </li>
             </ul>
         </div>
+        <!-- <div class="mui-row">
+            <div class="mui-col-sm-3 mui-col-xs-3">
+                <img src="/static/frontend/images/1.jpg" style="width: 100%">
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7" style="padding-left: 20px">
+                <h5>标题</h5>
+                <p>型号：Xxx 颜色：xxx 内存：xxx</p>
+            </div>
+            <div class="mui-col-sm-2 mui-col-xs-2 mui-text-right">
+                <p>￥1990</p>
+                <p>￥3000</p>
+                <p>x1</p>
+            </div>
+        </div>
+        <div class="mui-row">
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-left">商品总价</div>
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-right">￥1990</div>
+        </div>
+        <div class="mui-row">
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-left">运费</div>
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-right">￥0</div>
+        </div>
+        <div class="mui-row">
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-left">实付款（含运费）</div>
+            <div class="mui-col-sm-6 mui-col-xs-6 mui-text-right">￥1990</div>
+        </div> -->
 
         <form action="" class="mui-input-group mt55">
             <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
@@ -130,21 +156,20 @@
     <!--添加成员-->
     <div id="groupAddMember" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd60" style="margin-top: 5px">
                 <strong>粉丝列表</strong>
-                <text class="colororange memberAdd" >邀请微信好友</text>
-            </span>
-            <span class="fr">
-                <button class="mui-btn bgred" id="addMemberDel">邀请</button>
+                <text class="colororange memberAdd">邀请微信好友</text>
             </span>
         </div>
         <div class="mui-scroll-wrapper" style="top:50px !important;">
             <div class="mui-scroll">
-                <form class="mui-input-group addMemberList mb44"></form>
+                <ul class="mui-table-view list addMemberList"></ul>
             </div>
         </div>
     </div>
+
+
 
     <!--删除成员-->
     <div id="groupMember" class="mui-popover" style="margin: 0">
@@ -224,7 +249,7 @@
             //         }
             //     });
             // });
-            
+
 
             // 分享邀请成员
             $(".memberAdd").on("tap", function () {
@@ -237,43 +262,40 @@
             });
 
             // 添加成员
-            $("#addMemberDel").on('tap', function () {
-                let list = [];
-                let member_id = ''
-                $(".addMemberList input[type=checkbox]:checked").each(function (i) {
-                    member_id = $(this).val();
-                    list.push(member_id);
+            $(document).on("tap", ".addMemberList li", function () {
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                var member_avatar = $(this).attr("data-member_avatar");
+                mui.confirm("确认发送邀请？", function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
+                            data: {
+                                group_id: group_id,
+                                member: member,
+                                member_id: member_id,
+                                avatar: member_avatar
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    }
                 })
-                let addList = JSON.stringify(list);
-                console.log(addList)
-                // mui.confirm("确认删除选中成员吗？", "提示", function (e) {
-                //     if (e.index == 1) {
-                //         mui.ajax("{:url('api/group/dropGroups')}", {
-                //             data: {
-                //                 group_id: group_id,
-                //                 idList: idList
-                //             },
-                //             dataType: 'json',//服务器返回json格式数据
-                //             type: 'post',//HTTP请求类型
-                //             timeout: 10000,//超时时间设置为10秒；
-                //             headers: { 'Content-Type': 'application/json' },
-                //             success: function (data) {
-                //                 console.log(data);
-                //                 if (data.code == 200) {
-                //                     mui.toast(data.msg);
-                //                 } else {
-                //                     mui.toast(data.msg);
-                //                 }
-                //             },
-                //             error: function (xhr, type, errorThrown) {
-                //                 //异常处理；
-                //                 console.log(type);
-                //             }
-                //         });
-                //     }
-                // });
-            });
-            
+            })
+
             // 删除成员
             $("#memberDel").on('tap', function () {
                 let list = [];
@@ -334,8 +356,8 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             $(".groupMemberNum").text(data.data.data.length)
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label class="lineHeight20" style="width:85%">' + data.data.data[i].member + '</label>';
-                            newli += '<input name="checkbox1" value="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" type="checkbox"></div>';
+                            newli += '<li class="mui-table-view-cell listli" data-member="' + data.data.data[i].member + '" data-member_id="' + data.data.data[i].member_id + '" data-member_avatar="' + data.data.data[i].member_avatar + '">';
+                            newli += '<img class="img24" src="' + data.data.data[i].member_avatar + '">' + data.data.data[i].member + '</li>';
                         }
                         $(".addMemberList").append(newli);
                     } else {

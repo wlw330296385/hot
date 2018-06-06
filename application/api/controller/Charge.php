@@ -35,9 +35,11 @@ class Charge extends Frontend{
 	        		switch($type){
 	        			case 1:
 	        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
+	        				session('memberInfo.balance',($this->memebrInfo['balance']+$charge));
 	        			break;
 	        			case 2:
 	        				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
+	        				session('memberInfo.hot_coin',($this->memebrInfo['hot_coin']+$charge));
 	        			break;
 	        			case 3:
 	        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();

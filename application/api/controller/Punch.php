@@ -216,7 +216,29 @@ class Punch extends Base{
             $avatar = $this->memberInfo['avatar'];
             $reward = input('param.reward');
             $punch_id = input('param.punch_id');
-            
+            if($reward>$this->memberInfo['hot_coin']){
+                return json(['code'=>100,'msg'=>'热币不足']);
+            }
+            $result = db('member')->where(['id'=>$member_id])->dec('hot_coin',$reward)->update();
+            if($result){
+                db('punch')->where(['id'=>$punch_id])->inc('rewards',1)->inc('rewards_money',$reward)->update();
+                db('hotcoin_finance')->insert(
+                    [
+                        'member_id' =>$member_id,
+                        'member'    =>$member,
+                        'avatar'    =>$avatar,
+                        'hot_coin'  =>-$reward,
+                        'type'      =>-3,
+                        'status'    =>1,
+                        'f_id'      =>$punch_id,
+                        'create_time'=>time(),
+                    ]
+                );
+                session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$reward));
+                return json(['code'=>200,'msg'=>'打赏成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'热币扣除失败,请重新登录']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
