@@ -115,14 +115,14 @@
 
             <div class="punchImg" style="position: relative;">
                 <img src="{$punchInfo.image_url}" alt="" style="width: 100%">
-                <div class="dragClass" id="drag">{$punchInfo.rewords_money}</div>
+                <div class="dragClass rewardNum" id="drag">{$punchInfo.rewards_money}</div>
             </div>
             <div class="page-header border-b">
                 <span class="course wd52">评论（
                     <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
-                    <span class="colororange">{$punchInfo.rewords_money}</span> HT
+                    <span class="colororange rewardNum1">{$punchInfo.rewards_money}</span> HT
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
@@ -218,6 +218,9 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
 
+        var count = 1;
+        var backTotal = wooApi.GetQueryString('backTotal');
+
         //初始化
         mui.init({
             swipeBack: false,
@@ -227,7 +230,7 @@
             },
             subpages: [{
                 id: "charge",
-                url: "{:url('/frontend/member/chargeHotcoin')}",
+                url: "{:url('/frontend/member/chargeHotcoin')}" + "?backTotal=" + backTotal,
                 styles: {
                     top: 'auto',
                     bottom: '0',
@@ -250,14 +253,12 @@
         };
 
         // /////////////////////////////////////////////
-        var count = 1;
-        var total = wooApi.GetQueryString('total');
         $(function () {
 
-            if (total != "" && total != null) {
+
+            if (backTotal != "" && backTotal != null) {
                 mask.show();
                 $('.mui-iframe-wrapper').show();
-                //看看如何将total值放入webview充值窗口里
             }
 
             // 返回上一层判断
@@ -308,7 +309,12 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
+                            var realReward = Number($(".rewardNum").text()) + Number(reward)
+                            var realReward1 = Number($(".rewardNum1").text()) + Number(reward)
+                            $(".rewardNum").text(realReward)
+                            $(".rewardNum1").text(realReward1)
                             mui.toast(data.msg);
+                            mui('#reward').popover('toggle');
                         } else {
                             mui.toast(data.msg);
                         }

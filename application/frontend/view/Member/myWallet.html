@@ -46,7 +46,7 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                    <a href="{:url('member/withdraw')}">
+                    <a href="{:url('frontend/member/withdraw')}">
                         <span>提现</span>
                     </a>
                 </li>
@@ -62,7 +62,7 @@
         <p><i class="icon iconfont icon-logo-line" style="font-size: 6em;"></i></p>
 
         <p>我的热币</p>
-        <p class="colororange" style="font-size: 1.8em">888</p>
+        <p class="colororange" style="font-size: 1.8em">{$memberInfo.hot_coin}</p>
         <br /><br />
         <a href="{:url('member/myHotcoin',['member_id'=>$memberInfo['id']])}">
             <button type="button" class="btn">热币详情</button>
@@ -77,6 +77,8 @@
 <script src="/static/frontend/js/wooApi.js"></script>
 <script>
 
+    var chargeType = "";
+    var backTotal = wooApi.GetQueryString('backTotal');
 
     //初始化
     mui.init({
@@ -87,7 +89,7 @@
         },
         subpages: [{
             id: "charge",
-            url: "{:url('member/charge')}",
+            url: "{:url('frontend/member/charge')}"+"?backTotal="+backTotal,
             styles: {
                 top: 'auto',
                 bottom: '0',
@@ -96,15 +98,12 @@
         }]
     });
 
-    var chargeType = "";
-    var total = wooApi.GetQueryString('total');
 
     $(function () {
 
-        if(total!=""&&total!=null){
+        if(backTotal!=""&&backTotal!=null){
             mask.show();
             $('.mui-iframe-wrapper').show();
-            //看看如何将total值放入webview充值窗口里
         }
 
         $(".goCharge").click(function () {

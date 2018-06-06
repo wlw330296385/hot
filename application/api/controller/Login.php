@@ -37,7 +37,7 @@ class Login extends Base{
                 $data['nickname'] = '';
             }
             // 如果有微信授权信息
-            if (isset($memberInfo['openid']) && !empty($memberInfo['openid']) && $data['myself'] == 1) {
+            if (isset($memberInfo['openid']) && !empty($memberInfo['openid']) && $data['ismyself'] == 1) {
                 $isMember = $memberS->getMemberInfo(['openid' => $memberInfo['openid']]);
                 if ($isMember) {
                     return ['code' => 100, 'msg' => '您的微信号已注册成为会员'];

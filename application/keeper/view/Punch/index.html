@@ -67,7 +67,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <div class="goConfirm">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-game"></use>
+                                <use xlink:href="#icon-punch-vs"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">挑战</div>
                         </div>
@@ -75,7 +75,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <div class="goConfirm">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-activity"></use>
+                                <use xlink:href="#icon-punch-plan"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">计划</div>
                         </div>
@@ -83,7 +83,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('Group/index')}">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-campus"></use>
+                                <use xlink:href="#icon-punch-community"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">社群</div>
                         </a>
@@ -91,7 +91,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <div class="goConfirm">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-home-team"></use>
+                                <use xlink:href="#icon-punch-success"></use>
                             </svg>
                             <div class="mui-media-body" style="font-size: 14px !important">成就</div>
                         </div>
@@ -130,6 +130,7 @@
 <script src="/static/frontend/js/mobile_date.js"></script>
 <script src="/static/frontend/js/calendar.js"></script>
 <script>    
+
 
 
     var count = 1
@@ -176,21 +177,34 @@
                 var newli = "";
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
+                        var punch_time = data.data[i].punch_time
                         $(".calendar-date .item").each(function () {
                             var time = $(this).attr("data");
                             var year = time.substring(0, 4);
                             var month = time.substring(4, 6);
                             var day = time.substring(6, 8);
                             var dateTime = year + "-" + month + "-" + day
-                            if (data.data[i].punch_time == dateTime) {
+                            if (punch_time == dateTime) {
                                 $(this).addClass("endDK");
                             }
                         });
-
+                        // $(document).on("tap", ".arrow-next", function () {
+                        //     $(".calendar-date .item").each(function () {
+                        //         var time = $(this).attr("data");
+                        //         console.log(time)
+                        //         var year = time.substring(0, 4);
+                        //         var month = time.substring(4, 6);
+                        //         var day = time.substring(6, 8);
+                        //         var dateTime = year + "-" + month + "-" + day
+                        //         if (punch_time == dateTime) {
+                        //             $(this).addClass("endDK");
+                        //         }
+                        //     });
+                        // })
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewords_money + '</text></p>';
+                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewards_money + '</text></p>';
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {

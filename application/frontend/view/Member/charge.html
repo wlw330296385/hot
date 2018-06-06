@@ -59,13 +59,19 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
+    var backTotal = wooApi.GetQueryString('backTotal');
     //初始化
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
 
     $(function () {
+
+        if(backTotal!=""){
+            $("input[name='sum']").val(backTotal);
+        }
 
         $(".mui-icon-closeempty").click(function () {
             window.parent.closeWindow();
