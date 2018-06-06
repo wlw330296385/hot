@@ -2032,7 +2032,7 @@ class League extends Base
         $message = [
             'title' => '会员'.$this->memberInfo['member'].'申请担任联赛'.$match['name'].$typeStr,
             'content' => '会员'.$this->memberInfo['member'].'申请担任联赛'.$match['name'].$typeStr,
-            'url' => url('keeper/match/workerapply', ['id' => $applyId['data']], '' ,true),
+            'url' => url('keeper/match/workerapplylist', ['id' => $applyId['data']], '' ,true),
             'keyword1' => '会员申请联赛担任'.$typeStr,
             'keyword2' => $this->memberInfo['member'],
             'keyword3' => date('Y-m- H:i', time()),
