@@ -216,7 +216,16 @@ class Punch extends Base{
             $avatar = $this->memberInfo['avatar'];
             $reward = input('param.reward');
             $punch_id = input('param.punch_id');
-            
+            if($reward<$this->memberInfo['hot_coin']){
+                return json(['code'=>100,'msg'=>'热币不足']);
+            }
+            $result = db('member')->where(['id'=>$member_id])->dec('hot_coin',$reward)->update();
+            if($result){
+                session('memberInfo.hot_coin',($this->memebrInfo['hot_coin']+$reward));
+                return json(['code'=>200,'msg'=>'打赏成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'热币扣除失败,请重新登录']);
+            }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
