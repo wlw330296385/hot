@@ -1819,22 +1819,25 @@ class League extends Base
         }
         if ($matchMemberId['code'] != 200) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        } else {
-            // 发送消息给受邀会员
-            $messageS = new MessageService();
-            $message = [
-                'title' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
-                'content' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
-                'url' => url('keeper/match/workerinvitation', ['id' => $applyId['data']], '' ,true),
-                'keyword1' => '联赛邀请担任'.$typeStr,
-                'keyword2' => $this->memberInfo['member'],
-                'keyword3' => date('Y-m- H:i', time()),
-                'remark' => '点击查看详情',
-                'steward_type' => 2,
-            ];
-            $messageS->sendMessageToMember($member['id'], $message, config('wxTemplateID.checkPend'));
-            return json($matchMemberId);
         }
+        // 发送消息给受邀会员
+        $messageS = new MessageService();
+        $message = [
+            'title' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
+            'content' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
+            'url' => url('keeper/match/workerinvitation', ['id' => $applyId['data']], '' ,true),
+            'keyword1' => '联赛邀请担任'.$typeStr,
+            'keyword2' => $this->memberInfo['member'],
+            'keyword3' => date('Y-m- H:i', time()),
+            'remark' => '点击查看详情',
+            'steward_type' => 2,
+        ];
+        try {
+            $messageS->sendMessageToMember($member['id'], $message, config('wxTemplateID.checkPend'));
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage());
+        }
+        return json($matchMemberId);
     }
 
     // 会员回复联赛工作人员邀请
@@ -2014,21 +2017,29 @@ class League extends Base
 
         if ($matchMemberId['code'] != 200) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        } else {
-            // 发送消息给受邀会员
-           /* $messageS = new MessageService();
-            $message = [
-                'title' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
-                'content' => '联赛-' . $match['name'] . '邀请你担任'.$typeStr,
-                'url' => url('keeper/match/workerinvitation', ['id' => $applyId['data']], '' ,true),
-                'keyword1' => '联赛邀请担任'.$typeStr,
-                'keyword2' => $this->memberInfo['member'],
-                'keyword3' => date('Y-m- H:i', time()),
-                'remark' => '点击查看详情',
-                'steward_type' => 2,
-            ];
-            $messageS->sendMessageToMember($member['id'], $message, config('wxTemplateID.checkPend'));*/
-            return json($matchMemberId);
         }
+        // 发送消息给联赛组织人员
+        // 获取联赛组织人员
+        $orgmembers = $leagueService->getMatchOrgMembers([
+            'match_org_id' => $match['match_org_id'],
+            'status' => 1
+        ]);
+        $memberIdsReviceMessage = [];
+        foreach ($orgmembers as $val) {
+            $memberIdsReviceMessage[]['id'] = $val['member_id'];
+        }
+        $messageS = new MessageService();
+        $message = [
+            'title' => '会员'.$this->memberInfo['member'].'申请担任联赛'.$match['name'].$typeStr,
+            'content' => '会员'.$this->memberInfo['member'].'申请担任联赛'.$match['name'].$typeStr,
+            'url' => url('keeper/match/workerapply', ['id' => $applyId['data']], '' ,true),
+            'keyword1' => '会员申请联赛担任'.$typeStr,
+            'keyword2' => $this->memberInfo['member'],
+            'keyword3' => date('Y-m- H:i', time()),
+            'remark' => '点击查看详情',
+            'steward_type' => 2,
+        ];
+        $messageS->sendMessageToMembers($memberIdsReviceMessage, $message, config('wxTemplateID.checkPend'));
+        return json($matchMemberId);
     }
 }
