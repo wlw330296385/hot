@@ -256,6 +256,18 @@ class Match extends Base {
 
     // 联赛主页
     public function leagueInfo() {
+        // 工作人员类型
+        $leagueS = new LeagueService();
+        $types = $leagueS->getMatchMemberTypes();
+        // 申请联赛工作人员按钮显示：查询联赛工作人员无数据就显示
+        $btnApplyWorkerShow = 0;
+        $matchmember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id']]);
+        if (!$matchmember || $matchmember['status'] != 1) {
+            $btnApplyWorkerShow = 1;
+        }
+
+        $this->assign('types', $types);
+        $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
         return view('Match/leagueInfo');
     }
 

@@ -48,7 +48,7 @@
 <body class="whitebg">
 
     <div id="calendar" class="calendar"></div>
-
+    <div class="hide hideInput"></div>
     <p class="pline"></p>
     <div class="mui-content">
         <div class="list" style="margin-bottom: 110px;">
@@ -131,6 +131,7 @@
 <script src="/static/frontend/js/calendar.js"></script>
 <script>    
 
+
     var count = 1
     $(function () {
         $(".goConfirm").click(function () {
@@ -175,13 +176,17 @@
                 var newli = "";
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        // $(".calendar-date li").each(function () {
-                        //     var date = $(this).attr("data");
-                        //     console.log(date)
-                        //     if (data.data[i].punch_time == date) {
-                        //         $(this).addClass("endDK");
-                        //     }
-                        // });
+                        $(".calendar-date .item").each(function () {
+                            var time = $(this).attr("data");
+                            var year = time.substring(0, 4);
+                            var month = time.substring(4, 6);
+                            var day = time.substring(6, 8);
+                            var dateTime = year + "-" + month + "-" + day
+                            if (data.data[i].punch_time == dateTime) {
+                                $(this).addClass("endDK");
+                            }
+                        });
+
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
