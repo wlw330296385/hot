@@ -21,6 +21,7 @@ class Base extends Frontend {
             $this->nologin(); 
         }
         $this->footMenu();
+        $this->assign('module', cookie('module'));
 	}
 
 
