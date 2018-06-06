@@ -39,21 +39,27 @@
         .tipBottom {
             margin: 15px 40px;
         }
-
         .tipBottom p {
             margin-bottom: 0;
             color: #999;
+        }
+        #eventDes {
+            margin-top: 0;
+            display: none;
         }
     </style>
 </head>
 
 <body>
 
-    <header class="mui-bar mui-bar-nav subheader">
-        <h1 class="mui-title">活动登记表</h1>
+    <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-center mui-title">{$eventInfo.event}活动登记表</h1>
     </header>
 
     <div class="mui-content mt55" style="background: none !important">
+        <ul class="mui-table-view list" id="eventDes">
+            <li class="listli desimg">{$eventInfo.event_des}</li>
+        </ul>
         <div class="tipContent">
             <div class="tipContentText">
                 <p>
@@ -134,7 +140,7 @@
         </form>
         <div class="tipBottom">
             <p>本活动最终解释权归</p>
-            <p>巨星培训所有</p>
+            <p>{$eventInfo.organization}所有</p>
         </div>
 
         <ul class="mui-table-view operation">
@@ -168,7 +174,13 @@
         var mName = "{$memberInfo.member}";
         var mTel = "{$memberInfo.telephone}";
 
+        var showDetail = wooApi.GetQueryString('showDetail');
+
         $(function () {
+
+            if(showDetail=="yes"){
+                $("#eventDes").show();
+            }
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
