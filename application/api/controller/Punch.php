@@ -234,7 +234,7 @@ class Punch extends Base{
                         'create_time'=>time(),
                     ]
                 );
-                session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$reward));
+                session('memberInfo.hot_coin',($this->memberInfo['hot_coin']-$reward));
                 return json(['code'=>200,'msg'=>'打赏成功']);
             }else{
                 return json(['code'=>100,'msg'=>'热币扣除失败,请重新登录']);
