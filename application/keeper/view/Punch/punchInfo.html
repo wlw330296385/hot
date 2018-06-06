@@ -166,8 +166,8 @@
     <div id="reward" class="mui-popover mui-popover-action mui-popover-bottom actionsheet whitebg" style="height: 270px;">
         <div class="list">
             <h5 class="mui-text-left">
-                <span class="type">打赏</span>
                 <a href="#reward" class="mui-icon mui-icon-closeempty"></a>
+                <span class="type">打赏</span>
             </h5>
             <form action="" class="mui-input-group">
                 <div class="mui-row classHFrame">
@@ -239,16 +239,6 @@
             $('.mui-iframe-wrapper').hide();
         });
 
-        $(function () {
-
-            $(document).on('tap', ".goCharge", function () {
-                mui('#reward').popover('toggle');
-                mask.show();
-                $('.mui-iframe-wrapper').show();
-            })
-
-        });
-
         var closeWindow = function () {
             mask.close();
             $('.mui-iframe-wrapper').hide();
@@ -260,7 +250,14 @@
 
         // /////////////////////////////////////////////
         var count = 1;
+        var total = wooApi.GetQueryString('total');
         $(function () {
+
+            if(total!=""&&total!=null){
+                mask.show();
+                $('.mui-iframe-wrapper').show();
+                //看看如何将total值放入webview充值窗口里
+            }
 
             // 返回上一层判断
             var punch = wooApi.GetQueryString('punch');
@@ -277,6 +274,13 @@
             if ($(".punchImg").html() == '') {
                 $(".punchImg").html("<p style=''min-height:200px;background:#ddd></p>")
             }
+
+
+            $(document).on('click', ".goCharge", function () {
+                mui('#reward').popover('toggle');
+                mask.show();
+                $('.mui-iframe-wrapper').show();
+            })
 
             // 选择打赏币
             $(document).on("tap", ".classH", function () {

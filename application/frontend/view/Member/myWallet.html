@@ -74,9 +74,9 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
 
-    var chargeType = "";
 
     //初始化
     mui.init({
@@ -96,17 +96,32 @@
         }]
     });
 
-    var mask = mui.createMask(function(){
-        $('.mui-iframe-wrapper').hide();
-    });
+    var chargeType = "";
+    var total = wooApi.GetQueryString('total');
 
     $(function () {
+
+        if(total!=""&&total!=null){
+            mask.show();
+            $('.mui-iframe-wrapper').show();
+            //看看如何将total值放入webview充值窗口里
+        }
 
         $(".goCharge").click(function () {
             mask.show();
             $('.mui-iframe-wrapper').show();
         })
 
+        //未开放提示
+        $(".goConfirm").click(function () {
+            mui.toast('暂未开放，敬请期待');
+        })
+
+    });
+
+
+    var mask = mui.createMask(function(){
+        $('.mui-iframe-wrapper').hide();
     });
 
     var closeWindow = function () {
@@ -119,9 +134,5 @@
     };
 
 
-    //未开放提示
-    $(".goConfirm").click(function () {
-        mui.toast('暂未开放，敬请期待');
-    })
 </script>
 </html>

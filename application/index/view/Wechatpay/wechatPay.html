@@ -40,7 +40,7 @@
 
 <body class="whitebg">
 <header id="header" class="mui-bar mui-bar-nav subheader">
-	<a class="mui-icon mui-icon-closeempty mui-pull-left"></a>
+	<span class="mui-icon mui-icon-closeempty mui-pull-left"></span>
 	<h1 class="mui-title">微信支付</h1>
 </header>
 <div class="mui-content whitebg">
@@ -49,7 +49,7 @@
 		<label></label>
 		<div class="sum colororange">￥<span></span></div>
 		<button type="button" class="mui-btn mui-btn-block bggreen" id="submit">确定支付</button>
-		<a class="mui-action-back tips">返回修改金额</a>
+		<a href="#" class="backUrl tips">返回修改金额</a>
 	</form>
 
 </div>
@@ -65,60 +65,18 @@
     var total = wooApi.GetQueryString('total');
     var title = wooApi.GetQueryString('title');
     var type = wooApi.GetQueryString('type');
+    var backUrl = wooApi.GetQueryString('backUrl');
 
     $(function () {
 
         $(".charge-form label").text(title+'金额');
         $(".sum span").text(total);
 
-        $(".mui-icon-closeempty").click(function () {
-            window.parent.closeWindow();
+        $(".mui-icon-closeempty,.backUrl").click(function () {
+//            window.parent.closeWindow();
+			window.location.href = backUrl+"&total="+total;
         });
 
-        wx.ready(function(){
-	        $(document).on('tap','#submit',function () {
-	       
-	            {if $jsApiParameters === 0}
-	            alert('订单已支付,不可再支付'); 
-
-	        	{else /}
-		            var strJsApiParameters = '{$jsApiParameters}';
-		            var objJsApiParameters = JSON.parse(strJsApiParameters);
-		            wx.chooseWXPay({
-		                timestamp: {$jsApi['timestamp']},
-		                nonceStr: objJsApiParameters.nonceStr,
-		                package: objJsApiParameters.package,
-		                signType: 'MD5',
-		                paySign: objJsApiParameters.paySign,
-		                success: function (res) {
-		                    // 支付成功后的回调函数
-		                    charge(JSON.stringify(res));
-		                },
-		                cancel: function() {
-		                    mui.toast('取消了支付付款');
-		                    // mui.alert('取消了支付付款');
-		                },
-		                fail: function(res) {
-		                    var errmsg = res.errMsg;
-		                    mui.alert(errmsg);
-		                }
-		            });
-		        {/if}
-
-
-	        });
-        })
-
-
-        wx.checkJsApi({
-		    jsApiList: ['chooseWXPay'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-		    success: function(res) {
-			    // 以键值对的形式返回，可用的api值true，不可用为false
-			    // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-			    console.log(res);
-			},
-
-		});
 
 
     })
@@ -142,7 +100,7 @@
                 if(msg.code == 200){
                     mui.alert('支付成功','提示','确定',function(){
                         //支付成功后刷新父窗口页面
-            			window.parent.reloadWindow();
+                        window.location.href = backUrl;
                       });
                 }else{
                     mui.toast(result.msg);
