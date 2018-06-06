@@ -221,7 +221,7 @@ class Punch extends Base{
             }
             $result = db('member')->where(['id'=>$member_id])->dec('hot_coin',$reward)->update();
             if($result){
-                db('punch')->where(['id'=>$punch_id])->inc('rewords',$reward)->update();
+                db('punch')->where(['id'=>$punch_id])->inc('rewards',1)->inc('rewords_money',$reward)->update();
                 db('hotcoin_finance')->insert(
                     [
                         'member_id' =>$member_id,
