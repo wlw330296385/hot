@@ -12,5 +12,8 @@ class Income extends Model {
     //                         'type',
     //                         ];
 
-
+	public function getTypeAttr($value){
+		$list = [1=>'课程订单收入',2=>'活动订单收入',3=>'课时收入',4=>'充值',5=>'退款收入'];
+		return $list[$value];
+	}	
 }

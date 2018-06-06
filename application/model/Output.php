@@ -13,4 +13,9 @@ class Output extends Model {
     //                         ];
 
 
+
+	public function getTypeAttr($value){
+		$list = [1=>'赠课',2=>'课时退费',-1=>'提现',3=>'课时教练支出',4=>'平台分成',-2=>'其他支出'];
+		return $list[$value];
+	}	
 }
