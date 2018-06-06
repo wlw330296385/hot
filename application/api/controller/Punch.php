@@ -221,6 +221,19 @@ class Punch extends Base{
             }
             $result = db('member')->where(['id'=>$member_id])->dec('hot_coin',$reward)->update();
             if($result){
+                db('punch')->where(['id'=>$punch_id])->inc('rewords',$reward)->update();
+                db('hotcoin_finance')->insert(
+                    [
+                        'member_id' =>$member_id,
+                        'member'    =>$member,
+                        'avatar'    =>$avatar,
+                        'hot_coin'  =>-$reward,
+                        'type'      =>-3,
+                        'status'    =>1,
+                        'f_id'      =>$punch_id,
+                        'create_time'=>time(),
+                    ]
+                );
                 session('memberInfo.hot_coin',($this->memebrInfo['hot_coin']+$reward));
                 return json(['code'=>200,'msg'=>'打赏成功']);
             }else{
