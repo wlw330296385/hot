@@ -48,7 +48,9 @@ class Group extends Base{
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
-
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
 
 
         $this->assign('groupInfo',$groupInfo);
@@ -61,7 +63,9 @@ class Group extends Base{
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
-
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
 
 
         $this->assign('groupInfo',$groupInfo);
@@ -112,6 +116,9 @@ class Group extends Base{
     public function groupApplyList() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupApplyList');
     }
@@ -119,6 +126,9 @@ class Group extends Base{
     public function groupApplyInfo() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupApplyInfo');
     }
@@ -137,7 +147,9 @@ class Group extends Base{
     public function myGroupApply() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
-
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
         $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
         $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
         $winnerList = [];

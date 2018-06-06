@@ -37,9 +37,7 @@ class Backend extends Base {
         }
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
-        // dump($sidebar_menu);die;
         $this->assign('_sidebar_menus', $sidebar_menu);
-        // dump($sidebar_menu);die;
         
     }
 

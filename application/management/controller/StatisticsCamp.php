@@ -184,6 +184,7 @@ class StatisticsCamp extends Camp{
         }elseif ($this->campInfo['rebate_type'] == 1 && !$month_end) {
             $this->assign('list4',$list4);//课时收入
             $this->assign('list3',$list3);//课时收入
+            $this->assign('financeList',$financeList);//每日余额
             $this->assign('list2',$list2);//活动收入
             $this->assign('list_1',$list_1);//提现   
             $this->assign('list1',$list1);//赠课
@@ -281,6 +282,7 @@ class StatisticsCamp extends Camp{
 
             $this->assign('list1',$list1);
             $this->assign('list2',$list2);
+            $this->assign('financeList',$financeList);//每日余额
             $this->assign('list3',$list3);
             $this->assign('list4',$list4);
             $this->assign('list_1',$list_1);
