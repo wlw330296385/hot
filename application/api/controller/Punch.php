@@ -214,6 +214,8 @@ class Punch extends Base{
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
             $avatar = $this->memberInfo['avatar'];
+            $reward = input('param.reward');
+            $punch_id = input('param.punch_id');
             
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
