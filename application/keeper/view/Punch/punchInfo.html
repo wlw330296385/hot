@@ -115,14 +115,14 @@
 
             <div class="punchImg" style="position: relative;">
                 <img src="{$punchInfo.image_url}" alt="" style="width: 100%">
-                <div class="dragClass" id="drag">{$punchInfo.rewards_money}</div>
+                <div class="dragClass rewardNum" id="drag">{$punchInfo.rewards_money}</div>
             </div>
             <div class="page-header border-b">
                 <span class="course wd52">评论（
                     <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
-                    <span class="colororange">{$punchInfo.rewards_money}</span> HT
+                    <span class="colororange rewardNum1">{$punchInfo.rewards_money}</span> HT
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
@@ -230,7 +230,7 @@
             },
             subpages: [{
                 id: "charge",
-                url: "{:url('/frontend/member/chargeHotcoin')}"+"?backTotal="+backTotal,
+                url: "{:url('/frontend/member/chargeHotcoin')}" + "?backTotal=" + backTotal,
                 styles: {
                     top: 'auto',
                     bottom: '0',
@@ -256,7 +256,7 @@
         $(function () {
 
 
-            if(backTotal!=""&&backTotal!=null){
+            if (backTotal != "" && backTotal != null) {
                 mask.show();
                 $('.mui-iframe-wrapper').show();
             }
@@ -295,10 +295,6 @@
 
             //打赏
             $(".confirmDS").on('tap', function () {
-                var hot_coin = "{punchInfo.hot_coin}";
-                if (hot_coin <= 0) {
-                    mui.toast("热币不足");
-                }
                 var punch_id = "{$punchInfo.id}";
                 var reward = $(".classActive").attr("data-h");
                 mui.ajax("{:url('api/punch/rewardApi')}", {
@@ -313,6 +309,10 @@
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
+                            var realReward = Number($(".rewardNum").text()) + Number(reward)
+                            var realReward1 = Number($(".rewardNum1").text()) + Number(reward)
+                            $(".rewardNum").text(realReward)
+                            $(".rewardNum1").text(realReward1)
                             mui.toast(data.msg);
                             mui('#reward').popover('toggle');
                         } else {
