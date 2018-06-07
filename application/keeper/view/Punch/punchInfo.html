@@ -119,8 +119,7 @@
                 <div class="dragClass rewardNum" id="drag">{$punchInfo.rewards_money}</div>
             </div>
             <div class="page-header border-b">
-                <span class="course wd52">评论（
-                    <text class="comment_count">0</text>）</span>
+                <span class="course wd52">评论（<text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
                     <span class="colororange rewardNum1">{$punchInfo.rewards_money}</span> HT
@@ -266,7 +265,7 @@
             if (punch == "index") {
                 $(".backHref").attr("href", "{:url('punch/index')}");
             } else if (punch == "list") {
-                $(".backHref").attr("href", "{:url('punch/punchList')}");
+                $(".backHref").addClass("mui-action-back")
             } else if (punch == "create") {
                 $(".backHref").attr("href", "{:url('punch/index')}");
             } else if (punch == "info") {
@@ -300,16 +299,18 @@
 
             //打赏
             $(".confirmDS").on('tap', function () {
-                var hot_coin = "{$memberInfo.hot_coin}"
+                var hot_coin = "{$memberInfo.hot_coin}";
+                var choise_hot_coin = $(".classActive").text();
                 var arrBtn = ["取消", "充值热币"]
-                if (hot_coin <= 0) {
+                if (hot_coin < choise_hot_coin) {
                     mui.confirm("热币不足", "提示", arrBtn, function (e) {
                         if (e.index == 1) {
                             mui('#reward').popover('toggle');
                             mask.show();
                             $('.mui-iframe-wrapper').show();
                         }
-                    })
+                    });
+                    mui('#reward').popover('toggle');
                 }
                 var punch_id = "{$punchInfo.id}";
                 var reward = $(".classActive").attr("data-h");
