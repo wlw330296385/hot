@@ -79,8 +79,25 @@
 
         $(function () {
 
+            var group_member = "{$groupInfo.member}";
+            var member = "{$memberInfo.member}";
+            var member_id = "{$memberInfo.id}";
+            var group_id = "{$groupInfo.id}";
+            var group_member_id = "{$groupInfo.member_id}";
+            var id = "{$id}"; //是否在社群内，是则id有值，否则为空
+
             if ("{$poolInfo.rule}" == '') {
                 $(".poolRule").append("<p>暂无</p>");
+            }
+
+            // 判断底部按钮退出与管理 
+            if (id != '' && group_member != member) {
+                $(".outGroup").show();
+            } else if (id != '' && group_member == member) {
+                $(".groupAdmin").show();
+                $(".joinGroup").hide();
+            } else if (id == '' && group_member == member) {
+                $(".groupAdmin").show();
             }
 
             // 加入社群

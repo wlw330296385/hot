@@ -138,7 +138,10 @@ class Group extends Base{
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
         $poolInfo = db('pool')->where(['group_id'=>$group_id])->find();//本期
+         // 是否已加入社群
+         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
         $this->assign('poolInfo',$poolInfo);
+        $this->assign('id',$id);
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupTenet');
     }

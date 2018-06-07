@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>联赛工作人员</title>
+    <title>联赛工作人员申请列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -17,7 +17,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">联赛工作人员</h1>
+        <h1 class="mui-title">联赛工作人员申请列表</h1>
     </header>
 
     <div class="mui-content">
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <ul class="mui-table-view operation mt">
+        <!--<ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                 <a href="{$homeurl}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
@@ -44,7 +44,7 @@
                     工作人员申请列表
                 </a>
             </li>
-        </ul>
+        </ul>-->
 
     </div>
 
@@ -108,12 +108,13 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchmemberpage','','',true)}" + '/?page=' + page;
-            var match_id = "{$leagueInfo.id}";
+            var url = "{:url('api/apply/getApplyListByPageApi','','',true)}" + '/?page=' + page;
+            var organization_id = "{$leagueInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
-                    match_id: match_id
+                    organization_id: organization_id,
+                    apply_type: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -124,13 +125,14 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
                             var status = data.data.data[i].status;
                             if (status == 1) {
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '<span>'+ data.data.data[i].type_text +'</span></li>'
+                                var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '<span>'+ data.data.data[i].status +'</span></li>'
                             } else {
                                 // 非正式工作人员
-                                newli += '<li class="mui-table-view-cell mui-media listli" style="color:#b1a8a8;"><a href="#">' + data.data.data[i].member + '[未审核]<span>'+ data.data.data[i].type_text +'</span></li>'
+                                var urls = "{:url('match/workerapplyinfo')}" + '/apply_id/' + data.data.data[i].id;
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="'+ urls +'">' + data.data.data[i].member + '<span>'+ data.data.data[i].status +'</span></li>'
                             }
                         }
                     }

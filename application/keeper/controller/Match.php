@@ -6,6 +6,7 @@ use app\model\MatchRefereeApply;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
+use app\service\MemberService;
 use app\service\TeamService;
 use app\service\RefereeService;
 use think\Exception;
@@ -473,7 +474,8 @@ class Match extends Base {
         $matchS = new MatchService();
         $applyInfo = $leagueS->getApplyByLeague([
             'id' => $id,
-            'organization_type' => 4
+            'organization_type' => 4,
+            'apply_type' => 2
         ]);
         if (!$applyInfo) {
             $this->error(__lang('MSG_404'));
@@ -499,6 +501,58 @@ class Match extends Base {
         ]);
     }
 
+    // 联赛工作人员申请列表
+    public function workerapplylist() {
+        return view('Match/workerApplyList');
+    }
+
+    // 查看联赛工作人员申请详情
+    public function workerapplyinfo() {
+        $apply_id = input('apply_id', 0, 'intval');
+        // 获取联赛工作人员申请数据
+        $leagueS = new LeagueService();
+        $applyInfo = $leagueS->getApplyByLeague([
+            'id' => $apply_id,
+            'organization_type' => 4,
+            'apply_type' => 1
+        ]);
+        if (!$applyInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 查询联赛联赛信息
+        $leagueInfo = $leagueS->getMatchWithOrg(['id' => $applyInfo['organization_id']]);
+        // 查询联赛工作人员信息
+        $matchMemberInfo = $leagueS->getMatchMember([
+            'match_id' => $applyInfo['organization_id'],
+            'member_id' => $applyInfo['member_id']
+        ]);
+        $memberS = new MemberService();
+        $matchMemberInfo['member'] = $memberS->getMemberInfo(['id' => $matchMemberInfo['member_id']]);
+
+        // 更新apply阅读状态为已读
+        try {
+            // 联赛工作人员查看更新阅读状态
+            $matchOrgMember = $leagueS->getMatchOrgMember([
+                'match_org_id' => $leagueInfo['match_org_id'],
+                'member_id' => $this->memberInfo['id'],
+                'status' => 1
+            ]);
+            if ($matchOrgMember && $matchOrgMember['status'] == 1) {
+                $leagueS->saveApplyByLeague([
+                    'id' => $applyInfo['id'],
+                    'isread' => 1
+                ]);
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            $this->error($e->getMessage());
+        }
+
+        $this->assign('applyInfo', $applyInfo);
+        $this->assign('leagueInfo', $leagueInfo);
+        $this->assign('matchMemberInfo', $matchMemberInfo);
+        return view('Match/workerApplyInfo');
+    }
 
     // 联赛消息
     public function messageListOfLeague() {

@@ -26,7 +26,7 @@
             line-height: 60px;
             position: absolute;
             background-color: #e21c15;
-            background-image: url(/static/frontend/images/redball.png);
+            background-image: url(/static/frontend/images/hot_coin.png);
             background-repeat: no-repeat;
             border-radius: 50%;
             text-align: center;
@@ -72,7 +72,7 @@
         .mui-iframe-wrapper {
             display: none;
             z-index: 9999;
-            height: 286px !important;
+            height: 320px !important;
             position: fixed;
         }
     </style>
@@ -115,6 +115,7 @@
 
             <div class="punchImg" style="position: relative;">
                 <img src="{$punchInfo.image_url}" alt="" style="width: 100%">
+                <span class="icon iconfont #icon-punch-gold"></span>
                 <div class="dragClass rewardNum" id="drag">{$punchInfo.rewards_money}</div>
             </div>
             <div class="page-header border-b">
@@ -139,7 +140,7 @@
                         分享
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                <li class="mui-table-view-cell mui-col-xs-4 mui-col-sm-4 opli bgorange">
                     <a href="#reward">
                         打赏
                     </a>
@@ -278,7 +279,7 @@
             }
 
 
-            $(document).on('click', ".goCharge", function () {
+            $(document).on('tap', ".goCharge", function () {
                 mui('#reward').popover('toggle');
                 mask.show();
                 $('.mui-iframe-wrapper').show();
@@ -295,6 +296,17 @@
 
             //打赏
             $(".confirmDS").on('tap', function () {
+                var hot_coin = "{$memberInfo.hot_coin}"
+                var arrBtn = ["取消", "充值热币"]
+                if (hot_coin <= 0) {
+                    mui.confirm("热币不足", "提示", arrBtn, function (e) {
+                        if (e.index == 1) {
+                            mui('#reward').popover('toggle');
+                            mask.show();
+                            $('.mui-iframe-wrapper').show();
+                        }
+                    })
+                }
                 var punch_id = "{$punchInfo.id}";
                 var reward = $(".classActive").attr("data-h");
                 mui.ajax("{:url('api/punch/rewardApi')}", {
