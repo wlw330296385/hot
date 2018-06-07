@@ -43,8 +43,11 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred hide createPool">
                 <a href="{:url('group/createPool',['group_id'=>$groupInfo.id])}">创建奖金池</a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray hide nowPool">
+                奖金池进行中
             </li>
         </ul>
 
@@ -125,6 +128,14 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
+                                if (data.data == '') {
+                                    $(".createPool").show();
+                                }
+                                if (data.data[i].status == -1) {
+                                    $(".createPool").show();
+                                } else {
+                                    $(".nowPool").show();
+                                }
                                 var urls = "{:url('group/poolInfo')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><label>' + data.data[i].group + '</label><span class="wd25">' + data.data[i].stake + '</sapn>';
