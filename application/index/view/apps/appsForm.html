@@ -137,12 +137,12 @@
             <div class="mui-input-row isMyself {if $memberInfo.id>0}hide{else/}show{/if}">
                 <label style="width: 10%;"><a href="#isMyselfTips"><i class="mui-icon mui-icon-help colororange"></i></a></label>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                    <label>本人报名</label>
-                    <input name="ismyself" type="radio">
+                    <label>非本人报名</label>
+                    <input name="ismyself" type="radio" value="-1">
                 </div>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                    <label>非本人报名</label>
-                    <input name="ismyself" type="radio">
+                    <label>本人报名</label>
+                    <input name="ismyself" type="radio" value="1">
                 </div>
             </div>
 
@@ -272,6 +272,18 @@
                     if (mTel == telephone) {
                         $('input[name="member"]').val(mName);
                         $(".mName").hide();
+                        $('input[name="ismyself"]').removeAttr("checked");
+                        $(".isMyself").hide();
+                        $(".smsValidate").hide();
+                        flagPhone = true;
+                        flagSMS = true;
+                        flagMember = true;
+                        return false;
+                    }
+                    if (mID != "" && mTel != telephone) {
+                        $('input[name="member"]').val(mName);
+                        $(".mName").hide();
+                        $('input[name="ismyself"]').removeAttr("checked");
                         $(".isMyself").hide();
                         $(".smsValidate").hide();
                         flagPhone = true;
