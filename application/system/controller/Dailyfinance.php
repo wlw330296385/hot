@@ -43,7 +43,6 @@ class Dailyfinance extends Base{
     private function getCampFinanceWee(){
         $list = db('camp')->where(['status'=>1])->where('delete_time',null)->select();
         foreach ($list as $key => $value) {
-            dump($value['rebate_type']);
             $data = [
                 'camp_id'=>$value['id'],
                 'camp'=>$value['camp'],
