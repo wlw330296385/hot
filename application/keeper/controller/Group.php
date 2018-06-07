@@ -91,10 +91,13 @@ class Group extends Base{
     public function poolEdit() {
         $pool_id = input('param.pool_id');
         $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$poolInfo['group_id']]);
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
 
 
-
-
+        
         $this->assign('poolInfo',$poolInfo);
         
         return view('Group/poolEdit');

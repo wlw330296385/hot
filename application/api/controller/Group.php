@@ -151,6 +151,11 @@ class Group extends Base{
             $group_id = input('param.group_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+            if($groupInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+
             $result = $this->GroupService->updateGroup($data,['id'=>$group_id]);
             return json($result);
          }catch (Exception $e){
@@ -163,6 +168,10 @@ class Group extends Base{
         try{
            $data = input('post.');
            $group_id = input('param.group_id');
+           $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+            if($groupInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
            $data['member_id'] = $this->memberInfo['id'];
            $data['member'] = $this->memberInfo['member'];
            $result = db('group')->where(['id'=>$group_id])->update($data);
