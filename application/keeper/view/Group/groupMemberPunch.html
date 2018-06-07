@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>奖金池</title>
+    <title>社群成员</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,60 +11,46 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        @media screen and (min-width: 320px) {
-            .list .listli .mui-media-body {
-                width: 62% !important;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .list .listli .mui-media-body {
-                width: 67% !important;
-            }
-        }
-    </style>
 </head>
 
-
 <body class=whitebg>
-
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">奖金池</h1>
+        <h1 class="mui-title">社群成员</h1>
     </header>
 
     <div class="mui-content">
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b pool"></ul>
+                <ul class="mui-table-view detalis-list list border-b groupMemberList">
+                </ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred hide createPool">
-                <a href="{:url('group/createPool',['group_id'=>$groupInfo.id])}">创建奖金池</a>
-            </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray hide nowPool">
-                奖金池进行中
-            </li>
-        </ul>
 
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-        mui(".mui-content").on("tap", "a", function () {
+         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+        var group_id = "{$groupInfo.id}"
 
         $(function () {
+
             //初始化全局变量
             var count = 1;
-            var teamId = wooApi.GetQueryString('team_id');
+
+            //搜索、下拉刷选后触发
+            function searchToList() {
+                count = 1;//显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toList(page, gType);//具体取数据的方法
+            }
+
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -111,13 +97,13 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/pool/getPoolListApi','','',true)}" + '/?page=' + page;
-                var group_id = "{$groupInfo.id}"
+                var member_id = "{$memberInfo.id}"
+                var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}" + '/?page=' + page;
                 mui.ajax({
                     url: url,
                     data: {
-                        status: 1,
-                        group_id: group_id
+                        group_id: group_id,
+                        member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -127,38 +113,32 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
-                            if (data.data == '') {
-                                $(".createPool").show();
-                            }
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                if (data.data[i].status == -1) {
-                                    $(".createPool").show();
-                                } else {
-                                    $(".nowPool").show();
-                                }
-                                var urls = "{:url('group/poolInfo')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><label>' + data.data[i].group + '</label><span class="wd25">' + data.data[i].stake + '</sapn>';
-                                newli += '</li>';
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
+                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
+                                newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
+                                newli += '</div></a></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.pool").empty().append(newli);
+                            $("ul.groupMemberList").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.pool").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.groupMemberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.pool").append(newli);
+                            $("ul.groupMemberList").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
                         } else {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
+
                     },
                     error: function (xhr, type, errerThrown) {
                         mui.toast('网络异常,请稍候再试');
@@ -166,7 +146,9 @@
                     }
                 });
             };
-        })
+
+        });
+
     </script>
 </body>
 

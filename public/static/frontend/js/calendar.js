@@ -108,8 +108,8 @@ $(function () {
         '<span class="title"></span>' +
         // '<a href="javascript:;" id="backToday">T</a>'+
         '<div class="arrow">' +
-        '<span class="arrow-prev"><</span>' +
-        '<span class="arrow-next">></span>' +
+        '<span class="arrow-prev"><i class="mui-icon mui-icon-back"></i></span>' +
+        '<span class="arrow-next"><i class="mui-icon mui-icon-forward"></i></span>' +
         '</div>';
       var _weekStr = '<li class="item">日</li>' +
         '<li class="item">一</li>' +

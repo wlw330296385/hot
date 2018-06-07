@@ -180,4 +180,20 @@ class Group extends Base{
         return view('Group/myGroupApply');
     }
 
+    // 社群个人打卡列表
+    public function groupMemberPunch() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $this->assign('groupInfo',$groupInfo);
+        return view('Group/groupMemberPunch');
+    }
+
+    // 社群成员列表
+    public function groupMemberList() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $this->assign('groupInfo',$groupInfo);
+        return view('Group/groupMemberList');
+    }
+
 }
