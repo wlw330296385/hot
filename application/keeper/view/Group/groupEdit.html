@@ -74,11 +74,11 @@
         <form action="" class="mui-input-group mt55">
             <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
             <div class="mui-input-row">
-                    <a href="{:url('group/groupApplyList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">
-                        <label>入群申请</label>
-                        <span class="colororange">查看申请列表</span>
-                    </a>
-                </div>
+                <a href="{:url('group/groupApplyList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">
+                    <label>入群申请</label>
+                    <span class="colororange">查看申请列表</span>
+                </a>
+            </div>
             <div class="mui-input-row h-auto">
                 <a href="#txpopover" class="mui-navigate-right">
                     <label>社群Logo</label>
@@ -114,7 +114,7 @@
                 <label>公告</label>
                 <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice" placeholder="请填写内容">{$groupInfo.notice}</textarea>
             </div>
-          
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -186,10 +186,9 @@
     <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
     <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
-
+        var group_id = "{$groupInfo.id}";
+        var member_id = "{$groupInfo.member_id}"
         $(function () {
-            var group_id = "{$groupInfo.id}";
-            var member_id = "{$groupInfo.member_id}"
             // 设置社群类型默认值
             $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
 
@@ -241,34 +240,35 @@
                 var member = $(this).attr("data-member");
                 var member_id = $(this).attr("data-member_id");
                 var member_avatar = $(this).attr("data-member_avatar");
-                mui.confirm("确认发送邀请？", function (e) {
-                    if (e.index == 1) {
-                        mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
-                            data: {
-                                group_id: group_id,
-                                member: member,
-                                member_id: member_id,
-                                avatar: member_avatar
-                            },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
-                            success: function (data) {
-                                console.log(data);
-                                if (data.code == 200) {
-                                    mui.toast(data.msg);
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                            error: function (xhr, type, errorThrown) {
-                                //异常处理；
-                                console.log(type);
-                            }
-                        });
-                    }
-                })
+                mui.toast("暂未开放，敬请期待")
+                // mui.confirm("确认发送邀请？", function (e) {
+                //     if (e.index == 1) {
+                //         mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
+                //             data: {
+                //                 group_id: group_id,
+                //                 member: member,
+                //                 member_id: member_id,
+                //                 avatar: member_avatar
+                //             },
+                //             dataType: 'json',//服务器返回json格式数据
+                //             type: 'post',//HTTP请求类型
+                //             timeout: 10000,//超时时间设置为10秒；
+                //             headers: { 'Content-Type': 'application/json' },
+                //             success: function (data) {
+                //                 console.log(data);
+                //                 if (data.code == 200) {
+                //                     mui.toast(data.msg);
+                //                 } else {
+                //                     mui.toast(data.msg);
+                //                 }
+                //             },
+                //             error: function (xhr, type, errorThrown) {
+                //                 //异常处理；
+                //                 console.log(type);
+                //             }
+                //         });
+                //     }
+                // })
             })
 
             // 删除成员
@@ -365,12 +365,17 @@
                         var newli = '';
                         var div = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell navli"><img src="' + data.data.data[i].avatar + '" alt=""><p class="mui-ellipsis">' + data.data.data[i].member + '</p></li>'
                             $(".groupMemberNum").text(data.data.data.length)
-                            newli += '<li class="mui-table-view-cell navli"><a href=""><img src="' + data.data.data[i].avatar + '" alt=""><p class="mui-ellipsis">' + data.data.data[i].member + '</p></a></li>'
-                            div += '<div class="mui-input-row mui-checkbox mui-left"><label class="lineHeight20" style="width:85%">' + data.data.data[i].member + '</label><input name="checkbox1" value="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" type="checkbox"></div>';
+                            if (data.data.data[i].member_id != member_id) {
+                                div += '<div class="mui-input-row mui-checkbox mui-left"><label class="lineHeight20" style="width:85%">' + data.data.data[i].member + '</label><input name="checkbox1" value="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" type="checkbox"></div>';
+                            }
                         }
                         $(".memberList").before(newli);
                         $(".delMemberList").append(div);
+                        if (div == '') {
+                            $(".delMemberList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有社群成员</p></li>');
+                        }
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }

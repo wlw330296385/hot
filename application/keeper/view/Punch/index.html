@@ -81,7 +81,7 @@
                         </div>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('Group/index')}">
+                        <a class="group" href="{:url('Group/index')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-community"></use>
                             </svg>
@@ -110,13 +110,14 @@
 
             <ul class="mui-table-view mb punchList"></ul>
 
-            <a href="{:url('Punch/createPunch')}">
-                <button class="bgred sportDk">
+            <button class="bgred sportDk">
+                <a class="punch" href="{:url('Punch/createPunch')}">
                     <div class="sportDkText">
-                        <span>运动打卡</span>
+                        <span style="color: #fff">运动打卡</span>
                     </div>
-                </button>
-            </a>
+                </a>
+            </button>
+
 
         </div>
     </div>
@@ -131,15 +132,33 @@
 <script src="/static/frontend/js/calendar.js"></script>
 <script>    
 
-
-
     var count = 1
     $(function () {
+        if ("{$memberInfo.id}" == 0) {
+            $(".group").attr("href", "javascript:;");
+            $(".punch").attr("href", "javascript:;");
+        }
+        $(".punch").on("tap", function () {
+            checkKogin()
+        })
+        $(".group").on("tap", function () {
+            checkKogin()
+        })
         $(".goConfirm").click(function () {
             mui.toast('暂未开放，敬请期待');
         })
         toPunchList(); //获取我的打卡记录列表
     })
+    function checkKogin() {
+        if ("{$memberInfo.id}" == 0) {
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
+                }
+            });
+            return false;
+        }
+    }
     //下拉刷新具体业务实现
     function pulldownRefresh() {
         setTimeout(function () {

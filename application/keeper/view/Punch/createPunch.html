@@ -120,7 +120,7 @@
                     <img class="mui-media-object mui-pull-left img45" src="{$memberInfo.avatar}">
                     <div class="mui-media-body wd45">
                         <strong class="f16">{$memberInfo.member}</strong>
-                        <p class="mui-ellipsis lineHeight20">{$memberInfo.city} {$memberInfo.area}</p>
+                        <p class="mui-ellipsis lineHeight20 address">{$memberInfo.city} {$memberInfo.area}</p>
                     </div>
                     <div class="price-frame f12" style="margin-top: 19px;">
                         本月打卡
@@ -380,6 +380,10 @@
             var time = year + '-' + month + '-' + day
             $(".punch_time").text(time)
 
+            if ("{$memberInfo.city}" == '' && "{$memberInfo.area}" == '') {
+                $(".address").text("暂无地址信息")
+            }
+
             // 是否发布通知
             $(".isAnonymous").on("tap", '', function () {
                 var is_anonymous = $("input[name=is_anonymous]");
@@ -525,6 +529,7 @@
                         window.location.href = "{$fasturl}";
                     }
                 });
+                return false;
             }
 
             if ($(".punch_category").text() == '') {

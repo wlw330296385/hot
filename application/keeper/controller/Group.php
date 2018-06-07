@@ -115,6 +115,14 @@ class Group extends Base{
         return view('Group/poolList');
     }
 
+       // 奖金池擂主列表
+       public function poolWinnerList() {
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $this->assign('groupInfo',$groupInfo);
+        return view('Group/poolWinnerList');
+    }
+
     // 社群成员申请列表
     public function groupApplyList() {
         $group_id = input('param.group_id');

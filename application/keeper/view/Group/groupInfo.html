@@ -72,7 +72,8 @@
                         <text class="colororange winer">{volist name="winnerList" id="vol"}{$vol.winner},{/volist}</text>
                     </label>
                     <span class="wd25 pdr15 mui-navigate-right">
-                        <a href="#">往届</a>
+                            往届
+                        <!-- <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}">往届</a> -->
                     </span>
                 </li>
             </ul>
@@ -188,6 +189,7 @@
             // 判断底部按钮退出与管理 
             if (id != '' && group_member != member) {
                 $(".outGroup").show();
+                $(".joinGroup").hide();
             } else if (id != '' && group_member == member) {
                 $(".groupAdmin").show();
                 $(".joinGroup").hide();
@@ -238,7 +240,7 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
-                                    
+
                                     window.setTimeout("window.location.href='{:url('group/index')}'", 1500);
                                 } else {
                                     mui.toast(data.msg);
@@ -317,44 +319,44 @@
         };
 
     </script>
-     <script>
-            wx.config({
-                //debug: true,
-                appId: "{$jsapi['appId']}",
-                timestamp: "{$jsapi['timestamp']}",
-                nonceStr: "{$jsapi['nonceStr']}",
-                signature: "{$jsapi['signature']}",
-                jsApiList: [
-                    // 所有要调用的 API 都要加到这个列表中
-                    'checkJsApi',
-                    'onMenuShareTimeline',
-                    'onMenuShareAppMessage',
-                    'onMenuShareQQ'
-                ]
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$groupInfo.group}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
+                success: function () { },
+                cancel: function () { }
             });
-            wx.ready(function () {
-                // 分享到朋友圈
-                wx.onMenuShareTimeline({
-                    title: "{$groupInfo.group}",
-                    link: "{$shareurl}/pid/{$mid}",
-                    imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
-                    success: function () { },
-                    cancel: function () { }
-                });
-                // 分享给朋友
-                wx.onMenuShareAppMessage({
-                    title: "{$groupInfo.group}",
-                    desc: "{$groupInfo.tenet}",
-                    link: "{$shareurl}/pid/{$mid}",
-                    imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
-                    type: "",
-                    dataUrl: '',
-                    success: function () { },
-                    cancel: function () { }
-                });
-    
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: "{$groupInfo.group}",
+                desc: "{$groupInfo.tenet}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$groupInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
             });
-        </script>
+
+        });
+    </script>
 </body>
 
 </html>
