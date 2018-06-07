@@ -528,6 +528,12 @@ class Match extends Base {
         ]);
         $memberS = new MemberService();
         $matchMemberInfo['member'] = $memberS->getMemberInfo(['id' => $matchMemberInfo['member_id']]);
+        // 若是裁判员读取裁判员数据
+        $refereeS = new RefereeService();
+        if ($applyInfo['type'] == 6) {
+            $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $applyInfo['member_id']]);
+            $this->assign('refereeInfo', $refereeInfo);
+        }
 
         // 更新apply阅读状态为已读
         try {

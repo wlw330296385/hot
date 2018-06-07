@@ -126,13 +126,20 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var status = data.data.data[i].status;
+                            var typeStr = '';
+                            switch (data.data.data[i].type) {
+                                case 3: typeStr='管理员';break;
+                                case 8: typeStr='记分员';break;
+                                case 6: typeStr='裁判员';break;
+                                default: typeStr='工作人员';break;
+                            }
                             if (status == 1) {
                                 var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '<span>'+ data.data.data[i].status +'</span></li>'
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '['+ typeStr +']<span>'+ data.data.data[i].status +'</span></li>'
                             } else {
                                 // 非正式工作人员
                                 var urls = "{:url('match/workerapplyinfo')}" + '/apply_id/' + data.data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="'+ urls +'">' + data.data.data[i].member + '<span>'+ data.data.data[i].status +'</span></li>'
+                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="'+ urls +'">' + data.data.data[i].member + '['+ typeStr +']<span>'+ data.data.data[i].status +'</span></li>'
                             }
                         }
                     }

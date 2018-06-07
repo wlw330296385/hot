@@ -27,18 +27,28 @@ class Camp extends Base{
         // 最新消息
         $member_id = $this->memberInfo['id'];
         $messageList = db('message')->page(1,10)->select();
-        $CampMember = new \app\model\CampMember; 
+        $CampMember = new \app\model\CampMember;
+        // 会员能否创建训练营（查询会员有无训练营营主数据）
+        $showCreateCampBtn = 0;
         if($this->o_id > 0 && $this->o_type == 1){
             $campList = $CampMember::with('camp')->where(['camp_id'=>$this->o_id,'member_id'=>$member_id,'status'=>1])->select();
         }else{
             $campList = $CampMember::with('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
+            $campowner = $CampMember->where([
+                'member_id' => $member_id,
+                'type' => 4
+            ])->find();
+            // 无营主显示创建训练营按钮
+            $showCreateCampBtn = $campowner ? 0 : 1;
         }
         // $campList = $CampMember::with('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
         if($campList){
             $campList = $campList->toArray();
         }
+
         $this->assign('campList',$campList);
         $this->assign('messageList',$messageList);
+        $this->assign('showCreateCampBtn', $showCreateCampBtn);
         return view('Camp/index');
     }
 

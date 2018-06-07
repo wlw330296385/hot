@@ -77,6 +77,30 @@
         </li>
     </ul>
 
+    {if condition="$refereeInfo"}
+    <!--裁判员数据-->
+    <div class="page-header">
+        <span class="course">裁判员信息</span>
+    </div>
+    <ul class="mui-table-view mb" style="margin-top: -4px">
+        <li class="mui-table-view-cell mui-media listli coach" style="padding:11px 15px;">
+            <img class="mui-media-object mui-pull-left coachicon" src="{$refereeInfo.portraits}" style="width:60px !important;height:60px !important;margin-top:5px">
+            <h4>{$refereeInfo.referee}</h4>
+            <div class="mui-media-body wd49" style="line-height:20px !important">
+                <p>{$refereeInfo.city} {$refereeInfo.area}</p>
+                <p class="f12">
+                   <!-- <a href="">粉丝：
+                        <strong class="colororange"></strong>
+                    </a>-->
+                </p>
+            </div>
+            <div class="price-frame" style="padding:0">
+                <!--<button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>-->
+            </div>
+        </li>
+    </ul>
+    {/if}
+
 </div>
 
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -153,7 +177,7 @@
     function check_status(value) {
         var apply_id = document.getElementById('applyid').value;
         var reply = $(".reply").val();
-        mui.ajax("{:url('api/league/replymatchworkerinvitation')}", {
+        mui.ajax("{:url('api/league/replymatchworkerapply')}", {
             data: {
                 apply_id: apply_id,
                 status: value,
@@ -166,10 +190,10 @@
             success: function (res) {
                 if (res.code == 200) {
                     if (value == 2) {
-                        mui.toast("你同意了联赛工作人员邀请")
+                        mui.toast("你同意了联赛工作人员审请")
                         window.setTimeout("history.go(-1)", 2000);
                     } else {
-                        mui.toast("你拒绝了联赛工作人员邀请")
+                        mui.toast("你拒绝了联赛工作人员审请")
                         window.setTimeout("history.go(-1)", 2000);
                     }
                 } else {
