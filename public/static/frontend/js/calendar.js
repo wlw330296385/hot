@@ -75,11 +75,13 @@ $(function () {
       var self = this;
       var year = dateObj.getDate().getFullYear();
       var month = dateObj.getDate().getMonth() + 1;
+      if (month < 10) {
+        month = "0" + month
+      }
       var dateStr = returnDateStr(dateObj.getDate());
       var firstDay = new Date(year, month - 1, 1); // 当前月的第一天
-
-      this.$calendarTitle_text.text(year + '-' + dateStr.substr(4, 2));
-
+      this.$calendarTitle_text.text(year + '-' + month);
+      // this.$calendarTitle_text.text(year + '-' + dateStr.substr(4, 2));
       this.$calendarDate_item.each(function (i) {
         // allDay: 得到当前列表显示的所有天数
         var allDay = new Date(year, month - 1, i + 1 - firstDay.getDay());
