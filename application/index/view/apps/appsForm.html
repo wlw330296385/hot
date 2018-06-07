@@ -135,9 +135,14 @@
             </div>
 
             <div class="mui-input-row isMyself {if $memberInfo.id>0}hide{else/}show{/if}">
-                <label class="colororange">是否本人报名</label>
-                <div class="mui-switch mui-switch-blue mui-active" data-switch="5">
-                    <div class="mui-switch-handle"></div>
+                <label style="width: 10%;"><a href="#isMyselfTips"><i class="mui-icon mui-icon-help colororange"></i></a></label>
+                <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
+                    <label>本人报名</label>
+                    <input name="ismyself" type="radio">
+                </div>
+                <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
+                    <label>非本人报名</label>
+                    <input name="ismyself" type="radio">
                 </div>
             </div>
 
@@ -158,6 +163,27 @@
 
     </div>
 
+
+    <!--是否本人报名提示-->
+    <div id="isMyselfTips" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title">
+            <span class="course">是否本人报名说明</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="mine">
+                    <div class="explain">
+                        <div class="explain-cont">
+                            <p><strong>本人报名：</strong>代表当前手机号码为您本人使用，并且当前操作的微信和手机号码在本报名系统会进行关联绑定，以后再进行其他活动的报名时，系统将调取你的历史报名数据自动填写到对应项，减少您的操作流程。</p>
+                            <p><strong>非本人报名：</strong>代表当前手机号码<span class="colorred">非您本人使用</span>，系统会默认您<span class="colorred">为他人报名</span>，并且当前操作的微信和手机号码在本报名系统<span class="colorred">不会进行关联绑定</span>，以后再进行其他活动的报名时，需要重新填写所有项目。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/libs/yzvalidate.js"></script>
@@ -171,6 +197,9 @@
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/smsCode.js"></script>
     <script>
+
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
 
         //定义全局变量
         var flagPhone = false;
@@ -243,6 +272,7 @@
                     if (mTel == telephone) {
                         $('input[name="member"]').val(mName);
                         $(".mName").hide();
+                        $(".isMyself").hide();
                         $(".smsValidate").hide();
                         flagPhone = true;
                         flagSMS = true;
@@ -277,6 +307,7 @@
                                     flagPhone = true;
                                     $(".mName").show();
                                     $(".smsValidate").show();
+                                    $(".isMyself").show();
                                     $('input[name=member]').val('');
                                     $('input[name=idno]').val('');
                                 }

@@ -91,7 +91,7 @@
                 <li class="mui-table-view-cell listli">
                     <img class="mui-media-object mui-pull-left img45" src="{$punchInfo.avatar}">
                     <div class="mui-media-body wd45">
-                        <strong class="f16">{$punchInfo.member}</strong>
+                        <strong class="f16 punchMember"></strong>
                         <p class="mui-ellipsis lineHeight20">{$punchInfo.city} {$punchInfo.area}</p>
                     </div>
                     <div class="price-frame mui-text-left" style="padding-top: 5px;">
@@ -256,7 +256,6 @@
         // /////////////////////////////////////////////
         $(function () {
 
-
             if (backTotal != "" && backTotal != null) {
                 mask.show();
                 $('.mui-iframe-wrapper').show();
@@ -278,6 +277,11 @@
                 $(".punchImg").html("<p style=''min-height:200px;background:#ddd></p>")
             }
 
+            if ("{$punchInfo.is_anonymous}" == -1) {
+                $(".punchMember").text("匿名")
+            } else {
+                $(".punchMember").text("{$punchInfo.member}")
+            }
 
             $(document).on('tap', ".goCharge", function () {
                 mui('#reward').popover('toggle');
@@ -377,11 +381,9 @@
                 });
             });
 
-
-
             pulldownRefresh(); //页面打开时获取一次最新评论信息
         });
-
+        var count = 1
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
