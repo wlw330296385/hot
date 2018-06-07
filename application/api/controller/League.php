@@ -2042,4 +2042,11 @@ class League extends Base
         $messageS->sendMessageToMembers($memberIdsReviceMessage, $message, config('wxTemplateID.checkPend'));
         return json($matchMemberId);
     }
+
+    // 回复联赛工作人员申请
+    public function replymatchworkerapply() {
+        $data = input('post.');
+        dump($data);
+
+    }
 }
