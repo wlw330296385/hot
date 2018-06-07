@@ -15,7 +15,7 @@ class Charge extends Frontend{
 	        $charge = input('param.charge');
 	        $charge_order = input('param.charge_order');
 	        $type = input('param.type',1);
-	        if($charge >1){
+	        if($charge >=1){
 	        	if($member_id<1){
 	        		return json(['code'=>100,'msg'=>'未注册平台会员,充值未到账,请联系平台客服']);
 	        	}
@@ -35,11 +35,11 @@ class Charge extends Frontend{
 	        		switch($type){
 	        			case 1:
 	        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
-	        				session('memberInfo.balance',($this->memebrInfo['balance']+$charge));
+	        				session('memberInfo.balance',($this->memberInfo['balance']+$charge));
 	        			break;
 	        			case 2:
 	        				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
-	        				session('memberInfo.hot_coin',($this->memebrInfo['hot_coin']+$charge));
+	        				session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$charge));
 	        			break;
 	        			case 3:
 	        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();

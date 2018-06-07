@@ -50,13 +50,16 @@ class PoolService {
     
     // 生成奖金池\擂台
     public function createPool($data){
-        
+       
         $validate = validate('PoolVal');
 
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-        
+         $is_pool = db('pool')->where(['group_id'=>$data['group_id'],'status'=>1])->whereOr(['group_id'=>$data['group_id'],'status'=>2])->find();
+         if($is_pool){
+             return ['msg'=>'同时期只能创建一个奖金池', 'code' => 100];
+         }
         $result = $this->PoolModel->save($data);
         if($result){
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->PoolModel->id];

@@ -114,9 +114,11 @@ class Punch extends Base{
                 $groupList = json_decode($data['groupList'],true);
                 foreach ($groupList as $key => &$value) {
                     $value['punch'] = $data['punch'];
+                    $value['member'] = $data['member'];
                     $value['punch_id'] = $result['data'];
                     $value['month_str'] = date('Ym',time());
                     $value['date_str'] = date('Ymd',time());
+                    db('pool')->where(['id'=>$value['pool_id']])->inc('members',1)->inc('bonus',$value['stake'])->update();
                 }
                 
                 $GroupPunch = new \app\model\GroupPunch;
