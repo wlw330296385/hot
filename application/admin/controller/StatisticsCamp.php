@@ -114,10 +114,10 @@ class StatisticsCamp extends Backend{
         if($this->campInfo['rebate_type'] == 1 && $camp_id){
     
             //课时收入
-            $income3 = db('income')->field("sum(income) as s_income,from_unixtime(schedule_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $income3 = db('income')->field("sum(income) as s_income,from_unixtime(create_time,'%Y%m%d') as days,sum(schedule_income) as s_schedule_income")->where(['camp_id'=>$camp_id,'type'=>3])->where(['schedule_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
  
             //课时薪资和平台支出
-            $schedule =  db('schedule')->field("sum(s_coach_salary+s_assistant_salary) as s_s_salary,from_unixtime(lesson_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['lesson_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
+            $schedule =  db('schedule')->field("sum(s_coach_salary+s_assistant_salary) as s_s_salary,from_unixtime(finish_settle_time,'%Y%m%d') as days,sum(cost*students*schedule_rebate) as s_s_rebate,is_settle,camp_id")->where(['camp_id'=>$camp_id,'is_settle'=>1])->where(['lesson_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
             
             // 提现支出
@@ -197,7 +197,7 @@ class StatisticsCamp extends Backend{
             // 提现
             $output_1 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>-1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
             // 课时教练支出
-            $output3 = db('output')->field("sum(output.output) as s_output,output.camp_id,from_unixtime(output.schedule_time,'%Y%m%d') as days,sum(schedule.schedule_income) as s_schedule_income")->join('schedule','schedule.id=output.f_id')->where(['output.camp_id'=>$camp_id,'output.type'=>3])->where(['output.create_time'=>['between',[$month_start,$month_end]]])->where('output.delete_time',null)->group('days')->order('output.id desc')->select();
+            $output3 = db('output')->field("sum(output.output) as s_output,output.camp_id,from_unixtime(output.create_time,'%Y%m%d') as days,sum(schedule.schedule_income) as s_schedule_income")->join('schedule','schedule.id=output.f_id')->where(['output.camp_id'=>$camp_id,'output.type'=>3])->where(['output.create_time'=>['between',[$month_start,$month_end]]])->where('output.delete_time',null)->group('days')->order('output.id desc')->select();
 
             //平台分成
             $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
@@ -682,7 +682,7 @@ class StatisticsCamp extends Backend{
         $list = db('salary_in')
             ->field('sum(salary) as s_salary,sum(push_salary) as s_push_salary,count(id) as s_id,member,realname,member_id,camp_id,camp')
             ->where(['camp_id'=>$camp_id,'type'=>1])
-            ->where(['schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where(['create_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
             ->group('member_id')
             ->select();
@@ -700,7 +700,7 @@ class StatisticsCamp extends Backend{
         $list = db('salary_in')
             ->join('schedule','schedule.id=salary_in.schedule_id')
             ->where(['salary_in.camp_id'=>$camp_id,'type'=>1,'member_id'=>$member_id])
-            ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
             ->where('salary_in.delete_time',null)
             ->order('salary_in.id desc')
             ->select();
