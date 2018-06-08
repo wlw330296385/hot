@@ -142,13 +142,20 @@ class Team extends Base
         $refereeS = new RefereeService();
         $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
 
-        // 获取会员所在联赛组织
+        // 获取会员所在联赛组织（联赛组织人员）
         $leagueS = new LeagueService();
         $myMatchOrgs = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
+        // 获取会员所在联赛（联赛工作人员）
+        $myWorkMatchs = $leagueS->getMatchMembers([
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
 
+        //dump($myWorkMatchs);
         $this->assign('myTeamList', $myTeamList);
         $this->assign('refereeInfo', $refereeInfo);
         $this->assign('myMatchOrgList', $myMatchOrgs);
+        $this->assign('myWorkMatchList', $myWorkMatchs);
         return view('Team/myteam');
     }
 
