@@ -44,10 +44,25 @@ class GroupApplyService{
 
     //更新一条数据
     public function updateGroupApply($data,$apply_id){
-        $status = $this->GroupApplyModel->where(['id'=>$apply_id])->value('status');
-        if($status == 2){
+        $info = $this->GroupApplyModel->where(['id'=>$apply_id])->find();
+        // 自己申请(群主操作)
+        if ($info['type'] == 1) {
+            $member_id = db('group')->where(['id'=>$info['group_id']])->value('member_id');
+            if($member_id<>session('memberInfo.id')){
+                return ['code'=>100,'msg'=>'非群主不可操作'];
+            }
+        // 被邀请(用户操作)
+        }elseif ($info['type'] == 2) {
+            if($info['member_id']<>session('memberInfo.id')){
+                return ['code'=>100,'msg'=>'本人不可操作'];
+            }
+        }
+
+        if($info['status'] == 2){
             return ['code'=>100,'msg'=>'该用户已进群,不可操作'];
         }
+
+
         $result = $this->GroupApplyModel->save($data,['id'=>$apply_id]);
         if($result){
             return ['code'=>200,'msg'=>'操作成功'];

@@ -12,12 +12,12 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $list = db('income')->where(['type'=>1])->select();
+        $list = db('output')->where(['type'=>3])->select();
         foreach ($list as $key => $value) {
-            $goods_type = db('bill')->where(['id'=>$value['f_id']])->value('goods_type');
-            if($goods_type == 2){
-                db('income')->where(['id'=>$value['id']])->update(['type'=>2]);
-            }
+            $finish_settle_time = db('schedule')->where(['id'=>$value['f_id']])->value('finish_settle_time');
+
+            db('output')->where(['id'=>$value['id']])->update(['create_time'=>$finish_settle_time]);
+            
         }
     }
 
