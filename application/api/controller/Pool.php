@@ -127,7 +127,7 @@ class Pool extends Base{
 
     //创建擂台
     public function createPoolApi(){
-         try{
+        try{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
@@ -140,15 +140,47 @@ class Pool extends Base{
             }
 
             $result = $this->PoolService->createPool($data);
-             return json($result);   
-         }catch (Exception $e){
+            return json($result);   
+        }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
 
- 
+    // 获取擂台擂主列表
+    public function getPoolWinnerListApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page',1);
+            $PoolWinner = new \app\model\PoolWinner;
+            $result = $PoolWinner->where($map)->page($page)->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败,请检查参数','data'=>$result]);
+            } 
+        }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
    
+
+
+    // 获取擂台擂主列表带page
+    public function getPoolWinnerListByPageApi(){
+        try{
+            $map = input('post.');
+            $PoolWinner = new \app\model\PoolWinner;
+            $result = $PoolWinner->where($map)->paginate(10);
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败,请检查参数','data'=>$result]);
+            } 
+        }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     
 }
