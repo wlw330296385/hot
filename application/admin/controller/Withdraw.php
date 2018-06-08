@@ -105,7 +105,7 @@ class Withdraw extends Backend{
                 $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if($res){
                     db('camp_finance')->insert([
-                        'money'        => -($campWithdrawInfo['buffer']),
+                        'money'        => ($campWithdrawInfo['buffer']),
                         'camp_id'       => $campWithdrawInfo['camp_id'],
                         'camp'          => $campWithdrawInfo['camp'],
                         'type'          => -4,

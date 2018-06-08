@@ -188,6 +188,7 @@ class Crontabwoo extends Base {
                         'e_balance' => $campInfo['balance']+$incomeSchedule,
                         's_balance'=>$campInfo['balance'],
                         'rebate_type' => $campInfo['rebate_type'],
+                        'schedule_rebate' => $campInfo['rebate_type'],
                         'status' => 1,
                         'type' => 3,
                         'schedule_rebate'=>$campScheduleRebate,
@@ -204,13 +205,13 @@ class Crontabwoo extends Base {
                         'member_id' =>0,
                         'type'      =>3,
                         's_balance' =>$campInfo['balance'],
-                        'e_balance' =>$campInfo['balance']-$totalCoachSalary,
+                        'e_balance' =>$campInfo['balance'],
                         'system_remarks'=>'营业额结算',
                         'status'    =>1,
                         'remarks'   =>'课时教练总薪资支出',
                         'schedule_time'=>$schedule['lesson_time'],
                         'rebate_type' => $campInfo['rebate_type'],
-                        'create_time'=>$schedule['create_time'],
+                        'schedule_rebate' => $campInfo['rebate_type'],
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
                     ];
@@ -222,13 +223,13 @@ class Crontabwoo extends Base {
                         'member_id' =>0,
                         'type'      =>4,
                         's_balance' =>$campInfo['balance'],
-                        'e_balance' =>$campInfo['balance']-$totalCoachSalary,
+                        'e_balance' =>$campInfo['balance'],
                         'system_remarks'=>'课时结算',
                         'schedule_time'=>$schedule['lesson_time'],
-                         'rebate_type' => $campInfo['rebate_type'],
+                        'rebate_type' => $campInfo['rebate_type'],
+                        'schedule_rebate' => $campInfo['rebate_type'],
                         'status'    =>1,
                         'remarks'   =>'平台分成',
-                        'create_time'=>$schedule['create_time'],
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
                     ];
@@ -241,6 +242,8 @@ class Crontabwoo extends Base {
                         'type' => 3,
                         'e_balance' => $campInfo['balance']+$incomeSchedule,
                         's_balance'=>$campInfo['balance'],
+                        'rebate_type' => $campInfo['rebate_type'],
+                        'schedule_rebate' => $campInfo['rebate_type'],
                         'f_id' => $schedule['id'],
                         'date' => date('Ymd', $schedule['lesson_time']),
                         'datetime' => $schedule['lesson_time']
@@ -390,13 +393,13 @@ class Crontabwoo extends Base {
                     'member_id' =>0,
                     'type'      =>3,
                     's_balance' =>$campInfo['balance'],
-                    'e_balance' =>$campInfo['balance']-$totalCoachSalary,
+                    'e_balance' =>$campInfo['balance'],
                     'system_remarks'=>'营业额结算',
                     'schedule_time'=>$schedule['lesson_time'],
                     'rebate_type' => $campInfo['rebate_type'],
+                    'schedule_rebate' => $campInfo['rebate_type'],
                     'status'    =>1,
                     'remarks'   =>'课时教练总薪资支出',
-                    'create_time'=>$schedule['create_time'],
                     'f_id'=>$schedule['id'],
                     'system_remarks'=>$schedule['lesson_time'],
                 ];
@@ -407,15 +410,16 @@ class Crontabwoo extends Base {
                     'camp' => $schedule['camp'],
                     'money'=>$totalCoachSalary,
                     'type' => -1,
-                    'e_balance' => $campInfo['balance']-$totalCoachSalary,
+                    'e_balance' => $campInfo['balance'],
                     's_balance'=>$campInfo['balance'],
+                    'rebate_type' => $campInfo['rebate_type'],
+                    'schedule_rebate' => $campInfo['rebate_type'],
                     'f_id' => $schedule['id'],
                     'date' => date('Ymd', $schedule['lesson_time']),
                     'datetime' => $schedule['lesson_time']
                 ];
                 $this->insertcampfinance($dataCampFinance,2);
                 
-                db('camp')->where(['id'=>$schedule['camp_id']])->dec('balance',$totalCoachSalary)->update();
                 // 更新课时数据
                 Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' =>  time(),'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
                 db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);

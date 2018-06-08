@@ -70,7 +70,11 @@ class AppsApply extends Base{
                     switch ($data['type']) {
                         case 1:
                             $EventService = new \app\model\EventService;
-                            $res = $EventService->joinEvent();
+                            $res = $EventService->joinEvent($data['f_id'],$this->memberInfo['id'],$this->memberInfo['member'],1);
+                            if($res['code'] == 100){
+                                $msg = $res['msg'];
+                                $this->AppsApply->save(['system_remarks'=>$msg],$this->AppsApply->id);
+                            }
                             break;
                         default:
                             # code...

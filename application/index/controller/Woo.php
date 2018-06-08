@@ -12,13 +12,12 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $list = db('output')->where(['type'=>3])->select();
+        $list = db('salary_in')->field('salary_in.schedule_id,salary_in.create_time,salary_in.id,schedule.finish_settle_time')->join('schedule','schedule.id = salary_in.schedule_id')->order('salary_in.id desc')->select();
+        dump($list);die;
         foreach ($list as $key => $value) {
-            $finish_settle_time = db('schedule')->where(['id'=>$value['f_id']])->value('finish_settle_time');
-
-            db('output')->where(['id'=>$value['id']])->update(['create_time'=>$finish_settle_time]);
-            
+            db('salary_in')->where(['id'=>$value['id']])->update(['create_time'=>$value['finish_settle_time']]);
         }
+        
     }
 
 
