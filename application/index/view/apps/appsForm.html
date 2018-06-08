@@ -95,6 +95,7 @@
             <input type="hidden" name="member_id" class="data" value="{$memberInfo['id']}" />
             <input type="hidden" name="type" class="data" value="1" />
             <input type="hidden" name="f_id" class="data" value="{$eventInfo.id}" />
+            <input type="hidden" name="event" class="data" value="{$eventInfo.event}" />
 
             <div class="mui-input-row mName {if $memberInfo.id>0}hide{else/}show{/if}">
                 <label class="colororange">会员名</label>
@@ -421,6 +422,7 @@
 
                 var member = $("input[name='member']").val();
                 var telephone = $("input[name='telephone']").val();
+                var ismyself = $("input[name='ismyself']").val();
                 var token = $('input[name=__token__]').val();
 
                 //如果是非会员，判断是否通过验证
@@ -447,7 +449,7 @@
                             city: gCity,
                             area: gArea,
                             __token__: token,
-                            ismyself: 0
+                            ismyself: ismyself
                         },
                         dataType: 'json',//服务器返回json格式数据
                         type: 'post',//HTTP请求类型
