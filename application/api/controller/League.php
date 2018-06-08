@@ -1378,8 +1378,9 @@ class League extends Base
             if (input('?param.page')) {
                 unset($data['page']);
             }
+            $orderby = ['type' => 'desc', 'id' => 'desc'];
             $leagueS = new LeagueService();
-            $result = $leagueS->getMatchOrgMemberList($data, $page);
+            $result = $leagueS->getMatchOrgMemberList($data, $page, $orderby);
 
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1401,7 +1402,8 @@ class League extends Base
                 unset($data['page']);
             }
             $leagueS = new LeagueService();
-            $result = $leagueS->getMatchOrgMemberPaginator($data);
+            $orderby = ['type' => 'desc', 'id' => 'desc'];
+            $result = $leagueS->getMatchOrgMemberPaginator($data, $orderby);
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {

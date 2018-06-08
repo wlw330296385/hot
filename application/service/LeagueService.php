@@ -303,6 +303,20 @@ class LeagueService
         return $model->getTypes();
     }
 
+    // 获取联赛-工作人员列表（无分页）
+    public function getMatchMembers($map,$order='id desc') {
+        $model = new MatchMember();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
+    }
+
     //  获取联赛-工作人员列表
     public function getMatchMemberList($map, $page=1, $order='id desc', $limit=10) {
         $model = new MatchMember();

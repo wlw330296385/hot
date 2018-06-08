@@ -57,12 +57,15 @@
 
 
             <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
+                {eq name="$matchMemberInfo.type" value="10"}
+                <!-- 负责人可见 -->
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/leagueMatchEdit', ['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-training-Order"></span>
                         <div class="mui-media-body">编辑</div>
                     </a>
                 </li>
+                {/eq}
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/leagueInfo',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-team-homepage"></span>
@@ -75,6 +78,8 @@
                         <div class="mui-media-body">球队</div>
                     </a>
                 </li>
+                {gt name="$matchMemberInfo.type" value="9"}
+                <!-- 管理员以上可见 -->
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/workListOfLeague',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-training-game"></span>
@@ -87,6 +92,7 @@
                         <div class="mui-media-body">分组</div>
                     </a>
                 </li>
+                {/gt}
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/matchListOfLeague',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-training-game"></span>

@@ -173,12 +173,12 @@
             </ul>
             {/notempty}
 
+            {notempty name="myMatchOrgList"}
+            <!--联赛组织-->
             <div class="page-header organizationTitle">
                 <span class="course">组织</span>
             </div>
             <div class="myOrganization mb">
-                {notempty name="myMatchOrgList"}
-                <!--组织-->
                 {volist name="myMatchOrgList" id="vo"}
                 <div class="mb">
                     <ul class="mui-table-view list">
@@ -209,8 +209,50 @@
                         </li>
                     </ul>
                 </div>
-                {/volist} {/notempty}
+                {/volist}
             </div>
+            {/notempty}
+
+            {if condition="!($myMatchOrgList) && $myWorkMatchList"}
+            <!-- 联赛工作人员关系 -->
+            <div class="page-header organizationTitle">
+                <span class="course">联赛</span>
+            </div>
+            <div class="myOrganization mb">
+                {volist name="myWorkMatchList" id="vo"}
+                <div class="mb">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli">
+                            <a href="{:url('match/leaguemanage',['league_id'=>$vo.match_id])}">
+                                <img src="{$vo.match_logo}" class="img24">{$vo.match}</a>
+                            <span class="mui-navigate-right wd36"></span>
+                        </li>
+                    </ul>
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module2 mb">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a href="{:url('match/leagueinfo', ['league_id' => $vo.match_id])}">
+                                <span class="icon iconfont icon-training-camp"></span>
+                                <div class="mui-media-body">联赛主页</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a>
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">联赛战绩</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                            <a>
+                                <span class="icon iconfont icon-training-course"></span>
+                                <div class="mui-media-body">联赛数据</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {/volist}
+            </div>
+            {/if}
+
             <!-- <div class="hintsO hintsTip mui-text-center hide whitebg">
                 <p>你还没组织哦</p>
                 <p>赶紧来查找或创建你的组织吧！</p>
