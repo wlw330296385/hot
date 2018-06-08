@@ -76,12 +76,12 @@ class AppsApply extends Base{
                                 $msg = $res['msg'];
                                 $this->AppsApply->save(['system_remarks'=>$msg],$this->AppsApply->id);
                             }else{
-                                $value['contact'] = $data['contact'];
-                                $value['linkman'] = $data['linkman'];
+                                $value['contact'] = input('param.telephone',$this->memberInfo['telephone']);
+                                $value['linkman'] = input('param.realname',$this->memberInfo['member']);
                                 $value['remarks'] = $data['remarks'];
                                 $value['event_id'] = $data['f_id'];
                                 $value['event'] = $data['event'];
-                                $value['combo'] = $data['combo'];
+                                $value['combo'] = '默认套餐';
                                 $value['avatar'] = $this->memberInfo['avatar'];
                                 
                                 $this->EventService->saveAllMmeber([$value]);
