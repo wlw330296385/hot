@@ -78,6 +78,7 @@
             <h4>恭喜您登记成功！</h4>
             <p>请耐心等待工作人员与您联系，谢谢</p>
         </div>
+
         <ul class="mui-table-view list" id="eventDes">
             <li class="listli desimg">{$eventInfo.event_des}</li>
         </ul>
@@ -238,12 +239,15 @@
         var mID = "{$memberInfo.id}";
         var mName = "{$memberInfo.member}";
         var mTel = "{$memberInfo.telephone}";
+        var eMember = "{$event_member.member_id}";
         var getCurrTel = "";
 
         var showDetail = wooApi.GetQueryString('showDetail');
         var showSuccess = wooApi.GetQueryString('showSuccess');
 
         $(function () {
+
+            console.log(eMember)
 
             if(showDetail=="yes"){
                 $("#eventDes").show();
@@ -254,6 +258,7 @@
                 $("#showSuccess").show();
                 $("#eventDes").show();
             }
+
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -481,6 +486,12 @@
                             console.log(type);
                         }
                     });
+                }else{
+                    //如果是会员自己报名,判断是否已经报名过
+                    if(eMember==mID){
+                        mui.alert("您本人已经登记过，请勿重复登记！");
+                        return false;
+                    }
                 }
 
                 if (flagCreate == false) {
