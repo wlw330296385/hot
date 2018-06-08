@@ -24,18 +24,30 @@ class Group extends Base{
         $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
         $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
         $winnerList = [];
+        
         if($lastPool){
             $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id']])->select();
         }
         // 是否已加入社群
         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
-        // 本期个人打卡次数
-        $totalPunch = db('group_punch')->
+        $totalPunch = 0;
+        $membersPunch = 0;
+        $totalBonus = 0;
+        if($nowPool){
+            // 本期个人打卡次数
+            $totalPunch = db('group_punch')->where(['pool_id'=>$nowPool['id'],'member_id'=>$this->memberInfo['id']])->count();
+            $membersPunch = $nowPool['members'];
+            $totalBonus = $nowPool['bonus'];
+        }
+        
         $this->assign('lastPool',$lastPool);
         $this->assign('id',$id);
         $this->assign('winnerList',$winnerList);
         $this->assign('nowPool',$nowPool);
         $this->assign('groupInfo',$groupInfo);
+        $this->assign('totalPunch',$totalPunch);
+        $this->assign('membersPunch',$membersPunch);
+        $this->assign('totalBonus',$totalBonus);
         return view('Group/groupInfo');
     }
 
