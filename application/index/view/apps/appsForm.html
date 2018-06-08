@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>报名表</title>
+    <title>登记表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -37,15 +37,25 @@
         }
 
         .tipBottom {
-            margin: 15px 40px;
+            margin: 30px;
+            text-align: center;
         }
-        .tipBottom p {
-            margin-bottom: 0;
+        .tipBottom p.f12 {
             color: #999;
+            font-size: 12px;
         }
         #eventDes {
             margin-top: 0;
             display: none;
+        }
+        #showSuccess {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            background-color: #FF9900;
+        }
+        #showSuccess h4,#showSuccess p{
+            color:#FFF;
         }
         .nobg {
             background: transparent !important;
@@ -53,23 +63,28 @@
         .nobg::after {
             background: none !important;
         }
+
     </style>
 </head>
 
 <body>
 
     <header class="mui-bar mui-bar-nav">
-        <h1 class="mui-center mui-title">{$eventInfo.event}活动登记表</h1>
+        <h1 class="mui-center mui-title">{$eventInfo.event}</h1>
     </header>
 
     <div class="mui-content mt55" style="background: none !important">
+        <div id="showSuccess">
+            <h4>恭喜您登记成功！</h4>
+            <p>请耐心等待工作人员与您联系，谢谢</p>
+        </div>
         <ul class="mui-table-view list" id="eventDes">
             <li class="listli desimg">{$eventInfo.event_des}</li>
         </ul>
         <div class="tipContent">
             <div class="tipContentText">
                 <p>
-                    <strong>活动登记说明：</strong>
+                    <strong>登记说明：</strong>
                 </p>
                 <p>{$eventInfo.apps_des}</p>
             </div>
@@ -143,11 +158,11 @@
             <div class="mui-input-row nobg isMyself {if $memberInfo.id>0}hide{else/}show{/if}">
                 <label style="width: 10%;"><a href="#isMyselfTips"><i class="mui-icon mui-icon-help colororange"></i></a></label>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                    <label>非本人报名</label>
+                    <label>非本人登记</label>
                     <input name="ismyself" class="ismyself0" type="radio" value="0">
                 </div>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                    <label>本人报名</label>
+                    <label>本人登记</label>
                     <input name="ismyself" class="ismyself1" type="radio" value="1">
                 </div>
             </div>
@@ -156,13 +171,15 @@
                 <textarea name="remarks" class="mui-text-left remarks" rows="4" value="" placeholder="备注:"></textarea>
             </div>
 
-            <div class="mui-input-row nobg">
-                <label>结束日期</label>
-                <span>{$eventInfo.end|date='Y-m-d H:i',###}{if $eventInfo.is_max==-1}（已满人）{/if}</span>
-            </div>
 
         </form>
-        <div class="tipBottom mui-text-center">
+
+            <div class="endDate">
+
+            </div>
+
+        <div class="tipBottom">
+            <p><strong>结束日期：{$eventInfo.end|date='Y-m-d H:i',###} {if $eventInfo.is_max==-1}（已满人）{/if}</strong></p>
             <p class="f12">本活动最终解释权归{$eventInfo.organization}所有</p>
         </div>
 
@@ -179,15 +196,15 @@
     <div id="isMyselfTips" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header explain-title">
-            <span class="course">是否本人报名说明</span>
+            <span class="course">是否本人登记说明</span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <div class="mine">
                     <div class="explain">
                         <div class="explain-cont">
-                            <p><strong>本人报名：</strong>代表当前手机号码为您本人使用，并且当前操作的微信和手机号码在本报名系统会进行关联绑定，以后再进行其他活动的报名时，系统将调取你的历史报名数据自动填写到对应项，减少您的操作流程。</p>
-                            <p><strong>非本人报名：</strong>代表当前手机号码<span class="colorred">非您本人使用</span>，系统会默认您<span class="colorred">为他人报名</span>，并且当前操作的微信和手机号码在本报名系统<span class="colorred">不会进行关联绑定</span>，以后再进行其他活动的报名时，需要重新填写所有项目。</p>
+                            <p><strong>本人登记：</strong>代表当前手机号码为您本人使用，并且当前操作的微信和手机号码在本报名系统会进行关联绑定，以后再进行其他活动的报名时，系统将调取你的历史报名数据自动填写到对应项，减少您的操作流程。</p>
+                            <p><strong>非本人登记：</strong>代表当前手机号码<span class="colorred">非您本人使用</span>，系统会默认您<span class="colorred">为他人报名</span>，并且当前操作的微信和手机号码在本报名系统<span class="colorred">不会进行关联绑定</span>，以后再进行其他活动的报名时，需要重新填写所有项目。</p>
                         </div>
                     </div>
                 </div>
@@ -223,10 +240,17 @@
         var getCurrTel = "";
 
         var showDetail = wooApi.GetQueryString('showDetail');
+        var showSuccess = wooApi.GetQueryString('showSuccess');
 
         $(function () {
 
             if(showDetail=="yes"){
+                $("#eventDes").show();
+            }
+            if(showSuccess=="yes"){
+                $(".registerFrom").hide();
+                $(".operation").hide();
+                $("#showSuccess").show();
                 $("#eventDes").show();
             }
 
@@ -500,8 +524,9 @@
                     //   特别说明：  活动已过期或已满人可进行报名，但不会产生 event_member      //
                     ///////////////////////////////////////////////////////////////////////
 
-                    mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                        window.setTimeout("history.go(-1)",1500);
+                    mui.alert('恭喜您登记成功，请耐心等待工作人员与您联系，谢谢', "", '确定', function () {
+//                        window.setTimeout("history.go(-1)",1500);
+                        location.href = "{:url('/index/apps/appsForm/event_id/')}"+"{$eventInfo.id}"+"?showSuccess=yes"
                     })
                 } else {
                     mui.alert(ajaxResult.msg, '提交失败', function () { });
@@ -533,46 +558,6 @@
             }
         }
 
-        // 获取数据并进行提交
-//        function submitAction() {
-//
-//             if (!(/^1[34578]\d{9}$/).test($("input[name=telephone]").val())) {
-//                 mui.toast("请填写正确的手机格式");
-//                 return false;
-//             };
-//
-//             if (flag == false) {
-//                 mui.toast("请填写正确的验证码");
-//                 return false;
-//             };
-//
-//            //组合自定义表单项
-//            var mixFrom = '';
-//            $(".mixForm").each(function () {
-//                mixFrom += '<li><span class="fTitle">'+$(this).find("label").text()+'</span><span class="fValue">'+$(this).find("input").val()+'</span></li>'
-//            });
-//            mixFrom = '<ul class="diyList">'+mixFrom+'</ul>'
-//
-//
-//            var data = wooApi.getInputData('input', 'data');
-//            var objData = wooApi.arrTOobj(data);
-//            objData.content = mixFrom;
-//            objData.remarks = $(".remarks").val();
-//            var url = "{:url('api/apps_apply/createAppsApplyApi')}";
-//            var ajaxResult = wooApi.asyncF(url, objData);
-//            if (ajaxResult.code == 200) {
-//                mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-//                    window.location.href = "{:url('frontend/member/index')}"
-//                })
-//            } else {
-//                mui.alert(ajaxResult.msg, '提交失败', function () { });
-//                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-//                    if (data.code === 200) {
-//                        $('input[name=__token__]').val(data.data);
-//                    }
-//                }, 'json');
-//            }
-//        };
 
     </script>
 </body>

@@ -69,8 +69,9 @@ class AppsApply extends Base{
                 if($result){
                     switch ($data['type']) {
                         case 1:
-                            $EventService = new \app\model\EventService;
+                            $EventService = new \app\service\EventService;
                             $res = $EventService->joinEvent($data['f_id'],$this->memberInfo['id'],$this->memberInfo['member'],1);
+                            dump($res);
                             if($res['code'] == 100){
                                 $msg = $res['msg'];
                                 $this->AppsApply->save(['system_remarks'=>$msg],$this->AppsApply->id);
