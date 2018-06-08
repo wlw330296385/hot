@@ -71,11 +71,21 @@ class AppsApply extends Base{
                         case 1:
                             $EventService = new \app\service\EventService;
                             $res = $EventService->joinEvent($data['f_id'],$this->memberInfo['id'],$this->memberInfo['member'],1);
-                            dump($res);
+
                             if($res['code'] == 100){
                                 $msg = $res['msg'];
                                 $this->AppsApply->save(['system_remarks'=>$msg],$this->AppsApply->id);
-                            }
+                            }else{
+                                $value['contact'] = $data['contact'];
+                                $value['linkman'] = $data['linkman'];
+                                $value['remarks'] = $data['remarks'];
+                                $value['event_id'] = $data['f_id'];
+                                $value['event'] = $data['event'];
+                                $value['combo'] = $data['combo'];
+                                $value['avatar'] = $this->memberInfo['avatar'];
+                                
+                                $this->EventService->saveAllMmeber([$value]);
+                                
                             break;
                         default:
                             # code...
