@@ -86,9 +86,7 @@ $(function () {
         // allDay: 得到当前列表显示的所有天数
         var allDay = new Date(year, month - 1, i + 1 - firstDay.getDay());
         var allDay_str = returnDateStr(allDay);
-
         $(this).text(allDay.getDate()).attr('data', allDay_str);
-
         if (returnDateStr(new Date()) === allDay_str) {
           $(this).attr('class', 'item item-curDay');
         } else if (returnDateStr(firstDay).substr(0, 6) === allDay_str.substr(0, 6)) {
@@ -97,6 +95,18 @@ $(function () {
           $(this).attr('class', 'item');
         }
       });
+
+      // 修复9月份天数没有添加item-curMonth这个类的问题
+      if (month == "09") {
+        $("#calendar .calendar-date .item").each(function () {
+          var data = $(this).attr("data");
+          var dataMonth = data.substring(4, 5);
+          if (dataMonth == "9") {
+            $(this).addClass("item-curMonth")
+          }
+        })
+      }
+
     },
 
     renderDOM: function () { // 渲染DOM
