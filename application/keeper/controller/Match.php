@@ -519,6 +519,21 @@ class Match extends Base {
         if (!$applyInfo) {
             $this->error(__lang('MSG_404'));
         }
+
+        // 申请职位文案
+        switch ($applyInfo['type']) {
+            case 3:
+                $applyInfo['type_text'] = '管理员';
+                break;  // 管理员
+            case 8:
+                $applyInfo['type_text'] = '记分员';
+                break;  // 记分员
+            case 6:
+                $applyInfo['type_text'] = '裁判员';
+                break;  // 裁判员
+            default:
+                $applyInfo['type_text'] = '工作人员';
+        }
         // 查询联赛联赛信息
         $leagueInfo = $leagueS->getMatchWithOrg(['id' => $applyInfo['organization_id']]);
         // 查询联赛工作人员信息
@@ -527,7 +542,7 @@ class Match extends Base {
             'member_id' => $applyInfo['member_id']
         ]);
         $memberS = new MemberService();
-        $matchMemberInfo['member'] = $memberS->getMemberInfo(['id' => $matchMemberInfo['member_id']]);
+        $applyInfo['member'] = $memberS->getMemberInfo(['id' => $matchMemberInfo['member_id']]);
         // 若是裁判员读取裁判员数据
         $refereeS = new RefereeService();
         if ($applyInfo['type'] == 6) {

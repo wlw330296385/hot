@@ -48,7 +48,8 @@
 <body>
 
     <div id="calendar" class="calendar"></div>
-    <div class="hide hideInput"></div>
+    <div class="hide punchTimeList"></div>
+
     <p class="pline"></p>
     <div class="mui-content">
         <div class="list" style="margin-bottom: 110px;">
@@ -57,7 +58,7 @@
                 <li class="mui-table-view-cell listli">
                     <img src="{$memberInfo.avatar}" class="img40" style="margin-left: 13px">
                     <text style="margin-left: 5px;" class="f16">{$memberInfo.member}</text>
-                    <span class="wd49" style="margin-top: 9px;margin-right:14px">本月打卡
+                    <span class="wd36" style="margin-top: 9px;margin-right:14px">本月打卡
                         <text class="colororange">{$monthPunch}</text>次</span>
                 </li>
             </ul>
@@ -133,6 +134,7 @@
 <script>    
 
     var count = 1
+
     $(function () {
         if ("{$memberInfo.id}" == 0) {
             $(".group").attr("href", "javascript:;");
@@ -148,6 +150,13 @@
             mui.toast('暂未开放，敬请期待');
         })
         toPunchList(); //获取我的打卡记录列表
+
+        $(document).on("tap", ".arrow-prev", function () {
+            toPunchList();
+        })
+        $(document).on("tap", ".arrow-next", function () {
+            toPunchList();
+        })
     })
     function checkKogin() {
         if ("{$memberInfo.id}" == 0) {
@@ -197,29 +206,20 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var punch_time = data.data[i].punch_time
+                        // $(".punchTimeList").append('<input value="' + punch_time + '">')
                         $(".calendar-date .item").each(function () {
                             var time = $(this).attr("data");
                             var year = time.substring(0, 4);
                             var month = time.substring(4, 6);
                             var day = time.substring(6, 8);
+                            if (day < 10 && day.length == 1) {
+                                day = "0" + day
+                            }
                             var dateTime = year + "-" + month + "-" + day
                             if (punch_time == dateTime) {
                                 $(this).addClass("endDK");
                             }
                         });
-                        // $(document).on("tap", ".arrow-next", function () {
-                        //     $(".calendar-date .item").each(function () {
-                        //         var time = $(this).attr("data");
-                        //         console.log(time)
-                        //         var year = time.substring(0, 4);
-                        //         var month = time.substring(4, 6);
-                        //         var day = time.substring(6, 8);
-                        //         var dateTime = year + "-" + month + "-" + day
-                        //         if (punch_time == dateTime) {
-                        //             $(this).addClass("endDK");
-                        //         }
-                        //     });
-                        // })
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';

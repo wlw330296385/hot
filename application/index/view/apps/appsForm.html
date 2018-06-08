@@ -138,11 +138,11 @@
                 <label style="width: 10%;"><a href="#isMyselfTips"><i class="mui-icon mui-icon-help colororange"></i></a></label>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
                     <label>非本人报名</label>
-                    <input name="ismyself" type="radio" value="-1">
+                    <input name="ismyself" class="ismyself0" type="radio" value="0">
                 </div>
                 <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
                     <label>本人报名</label>
-                    <input name="ismyself" type="radio" value="1">
+                    <input name="ismyself" class="ismyself1" type="radio" value="1">
                 </div>
             </div>
 
@@ -262,6 +262,14 @@
                 }
             });
 
+            //获取电话焦点时记录当前手机号
+
+            $('.telephone').on("focus", function () {
+
+                var getCurrTel = $(this).val()
+                console.log(getCurrTel)
+
+            });
 
             //验证是否注册的手机号
             $('.telephone').on("blur", function () {
@@ -280,24 +288,14 @@
                         flagMember = true;
                         return false;
                     }
-                    if (mID != "" && mTel != telephone) {
-                        $('input[name="member"]').val(mName);
-                        $(".mName").hide();
-                        $('input[name="ismyself"]').removeAttr("checked");
-                        $(".isMyself").hide();
-                        $(".smsValidate").hide();
-                        flagPhone = true;
-                        flagSMS = true;
-                        flagMember = true;
-                        return false;
-                    }
                     //非会员或会员但修改了号码（帮别人报名）
-                    //判断手机号码格式是否正确
                     if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                        //判断手机号码格式是否正确
                         mui.toast("请填写正确的手机格式");
                         flagPhone = false;
                         return false;
                     } else {
+
                         //判断是否已经注册的会员手机号
                         mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
                             data: {
@@ -320,8 +318,14 @@
                                     $(".mName").show();
                                     $(".smsValidate").show();
                                     $(".isMyself").show();
-                                    $('input[name=member]').val('');
-                                    $('input[name=idno]').val('');
+                                    $('input[name="ismyself"]').removeAttr("checked");
+                                    //如果是登陆会员帮他人报名，是否本人报名将锁定“非本人报名”
+                                    if (mID != "" && mTel != telephone) {
+                                        $('input[name=member]').val('');
+                                        $('input[name=idno]').val('');
+                                        $('.ismyself1').attr("disabled","disabled");
+                                        $('.ismyself0').attr("checked","checked");
+                                    }
                                 }
                             },
                             error: function (xhr, type, errorThrown) {

@@ -161,6 +161,13 @@
 
         $(function () {
 
+            $('.camp_telephone').on("blur", function () {
+                var camp_telephone = $('.camp_telephone').val();
+                if (!(/(^([0-9]{3,4}-)?[0-9]{7,8}$)|(^((\(\d{3}\))|(\d{3}\-))?(1[34578]\d{9})$)/).test(camp_telephone)) {
+                    mui.toast("请输入正确的手机格式或固话格式");
+                    return false;
+                }
+            })
 
             // 注册 step2
             $('.camp-step2').click(function () {
@@ -185,8 +192,8 @@
                 } else if (locationStr == "") {
                     mui.toast('请选择所属地区');
                     return false;
-                } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
-                    mui.toast("请输入正确的手机格式");
+                } else if (!(/(^([0-9]{3,4}-)?[0-9]{7,8}$)|(^((\(\d{3}\))|(\d{3}\-))?(1[34578]\d{9})$)/).test(camp_telephone)) {
+                    mui.toast("请输入正确的手机格式或固话格式");
                     return false;
                 } else if (introHtml == "" || camp_description == "") {
                     mui.toast("请填写训练营宣言和简介");
