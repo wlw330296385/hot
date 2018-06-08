@@ -51,10 +51,10 @@ class Base extends Frontend {
                 'module' => $module
 			],
 			[
-				'name'=>'消息',
+				'name'=>'打卡',
 				'icon'=>'icon iconfont icon-nav-news',
 				'action'=>'index',
-				'controller'=>'Message',
+				'controller'=>'Punch',
                 'module' => $module
 			],
 			[
