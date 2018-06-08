@@ -66,6 +66,17 @@ class AppsApply extends Base{
                 $result = $this->AppsApply->save($data,$apps_apply_id);
             }else{
                 $result = $this->AppsApply->save($data);
+                if($result){
+                    switch ($data['type']) {
+                        case 1:
+                            $EventService = new \app\model\EventService;
+                            $res = $EventService->joinEvent();
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
             }
             if($result){
                 return json(['code'=>200,'msg'=>'提交成功']);
