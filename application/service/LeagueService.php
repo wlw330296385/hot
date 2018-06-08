@@ -244,6 +244,12 @@ class LeagueService
         }
     }
 
+    // 软删除联赛组织人员
+    public function delMatchOrgMember($id) {
+        $model = new MatchOrgMember();
+        return $model::destroy($id);
+    }
+
     // ***** 联赛工作人员 *****
     // 保存联赛-工作人员关系数据
     public function saveMatchMember($data, $condition=[]) {
@@ -344,6 +350,13 @@ class LeagueService
         }
         return $result;
     }
+
+    // 删除联赛工作人员
+    public function delMatchMember($id) {
+        $model = new MatchMember();
+        return $model::destroy($id);
+    }
+
     // ***** 联赛工作人员 end *****
 
     // 获取联赛球队数

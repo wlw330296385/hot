@@ -24,7 +24,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b fans"></ul>
+                <ul class="mui-table-view detalis-list list border-b fans OA_task"></ul>
             </div>
         </div>
 
@@ -116,7 +116,9 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            //newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">同意</span><span class="mui-btn mui-btn-red" data-action="del">拒绝</span></div>';
+                            if (data.data.data[i].type_num != 10) {
+                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            }
                             newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data.data[i].member + '';
                             newli += '<p class="mui-ellipsis"><font class="tipCorner bgred">'+ data.data.data[i].type +'</font></p>'
                             newli += '</div></a></div>'
@@ -150,6 +152,43 @@
             });
         };
 
+        //拖拽后显示操作图标，点击操作图标删除元素；
+        $('.OA_task').on('tap', '.mui-btn', function () {
+            var elem = this;
+            var li = elem.parentNode.parentNode;
+            var btnArray = ['确认', '取消'];
+            var txt = elem.innerHTML;
+            var id = elem.parentNode.getAttribute('data-id');
+            var action = elem.getAttribute('data-action');
+            mui.confirm('确认删除该管理员吗', '提示', btnArray, function (e) {
+                if (e.index == 0) {
+                    var apiurl = "{:url('api/league/delmatchorgmember')}";
+                    mui.ajax(apiurl, {
+                        data: {
+                            id: id,
+                        },
+                        dataType: 'json',
+                        type: 'post',
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            if (data.code == 200) {
+                                li.parentNode.removeChild(li);
+                                location.reload();
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errotThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+                } else {
+                    setTimeout(function () {
+                        mui.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        });
     </script>
 </body>
 

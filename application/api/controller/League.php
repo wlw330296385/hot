@@ -1642,6 +1642,65 @@ class League extends Base
         return json($resultUpdateApply);
     }
 
+    // 删除联赛组织人员
+    public function delmatchorgmember() {
+        $id = input('id', 0, 'intval');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询联赛组织人员数据
+        $leagueS = new LeagueService();
+        $matchorgmember = $leagueS->getMatchOrgMember(['id' => $id]);
+        if (!$matchorgmember) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查当前会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查当前会员操作权限（联赛组织人员数据）
+        $orgmemberpower = $leagueS->getMatchOrgMember([
+            'match_org_id' => $matchorgmember['match_org_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        // 非负责人不能操作
+        if (!$orgmemberpower || $orgmemberpower['type_num'] != 10) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 不能删除负责人
+        if (!$matchorgmember['type_num'] == 10) {
+            return json(['code' => 100, 'msg' => '不能删除负责人']);
+        }
+
+        try {
+            // 删除联赛组织人员
+            $resultDelete = $leagueS->delMatchOrgMember($matchorgmember['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if (!$resultDelete) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        // 给该会员发送被删除联赛组织消息推送
+        try {
+            $messageContent = [
+                'title' => '联赛组织人员被移出通知',
+                'content' => '您已被移出联赛组织'.$matchorgmember['match_org'],
+                'url' => url('keeper/message/index', '', '', true),
+                'keyword1' => '您已被移出联赛组织'.$matchorgmember['match_org'],
+                'keyword2' => '被移出联赛组织',
+                'remark' => '点击登录平台查看更多信息',
+                'steward_type' => 2
+            ];
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($matchorgmember['member_id'], $messageContent, config('wxTemplateID.informationChange'));
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
     // 联赛工作人员列表
     public function getmatchmemberlist()
     {
@@ -2208,5 +2267,65 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
         return json($resultUpdateApply);
+    }
+
+    // 删除联赛工作人员
+    public function delmatchmember() {
+        $id = input('id', 0, 'intval');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询联赛工作人员数据
+        $leagueS = new LeagueService();
+        $matchMember = $leagueS->getMatchMember(['id' => $id]);
+        if (!$matchMember) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查会员操作权限(联赛工作人员)
+        $matchMemberPower = $leagueS->getMatchMember([
+            'match_id' => $matchMember['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$matchMemberPower || $matchMemberPower['type'] < 10) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 负责人不能删除
+        if ($matchMember['type'] == 10) {
+            return json(['code' => 100, 'msg' => '负责人不能删除']);
+        }
+
+        try {
+            // 删除联赛工作人员数据
+            $resultDelete = $leagueS->delMatchMember($matchMember['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+
+        if (!$resultDelete) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        // 向该会员发送被移出联赛工作人员 消息推送
+        try {
+            $messageContent = [
+                'title' => '联赛工作人员被移出通知',
+                'content' => '您已被移出联赛'.$matchMember['match'],
+                'url' => url('keeper/message/index', '', '', true),
+                'keyword1' => '您已被移出联赛'.$matchMember['match'],
+                'keyword2' => '被移出联赛',
+                'remark' => '点击登录平台查看更多信息',
+                'steward_type' => 2
+            ];
+            $messageS = new MessageService();
+            $messageS->sendMessageToMember($matchMember['member_id'], $messageContent, config('wxTemplateID.informationChange'));
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }
