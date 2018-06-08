@@ -1,14 +1,11 @@
 <?php 
 namespace app\api\controller;
 use app\api\controller\Base;
-use app\service\CampFinanceService;
 use think\Db;
 
 class CampFinance extends Base{
-    protected $CampFinanceService;
 	public function _initialize(){
 		parent::_initialize();
-        $this->CampFinanceService = new CampFinanceService;
 	}
 
 
@@ -23,7 +20,8 @@ class CampFinance extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $result = $this->CampFinanceService->getCampFinanceListByPage($map);    
+            $CampFinance = new \app\model\CampFinance;
+            $result = $CampFinance->where($map)->paginate(10);    
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
