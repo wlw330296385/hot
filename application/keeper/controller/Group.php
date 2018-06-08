@@ -30,7 +30,7 @@ class Group extends Base{
         // 是否已加入社群
         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
         // 本期个人打卡次数
-        
+        $totalPunch = db('group_punch')->
         $this->assign('lastPool',$lastPool);
         $this->assign('id',$id);
         $this->assign('winnerList',$winnerList);
