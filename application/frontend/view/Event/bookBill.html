@@ -185,6 +185,7 @@ mui.init({
 mui('.mui-scroll-wrapper').scroll();
 
 var total=wooApi.GetQueryString('total');
+var domName=wooApi.GetQueryString('domName');
 var total_fee = "{$eventInfo.price}"*total;
 var studentList = [{ student: "{$memberInfo.member}", student_id: "0", member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
 // var studentList = new Array();
@@ -357,6 +358,7 @@ function joinEvent(){
     objData = wooApi.arrTOobj(arrData2);
     objData.memberData = JSON.stringify(studentList);
     objData.event = "{$eventInfo.event}";
+    objData.combo = domName;
     var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
     let result = wooApi.asyncF(url+'/total/'+total,objData);
     if(result.code == 200){

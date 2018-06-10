@@ -148,7 +148,7 @@
 
             <div class="mui-input-row">
                 <label class="colororange">联系电话</label>
-                <input type="text" class="data telephone mixForm" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
+                <input type="text" class="data telephone" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
             </div>
 
             <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
@@ -501,7 +501,11 @@
                 //组合自定义表单项
                 var mixFrom = '';
                 $(".mixForm").each(function () {
-                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
+                    if($(this).find("img").length>0){
+                        mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue"><a href="' + $(this).find("input").val() + '" target="_blank"><img src="' + $(this).find("input").val() + '" /></a></span></li>'
+                    }else{
+                        mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
+                    }
                 });
                 mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
                 

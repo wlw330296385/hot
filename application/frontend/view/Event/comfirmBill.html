@@ -171,6 +171,7 @@
         mui('.mui-scroll-wrapper').scroll();
         var debug = 1;
         var total=wooApi.GetQueryString('total');
+        var domName=wooApi.GetQueryString('domName');
         var total_fee = "{$eventInfo.price}"*total;
         $('.eventTotal').text('￥'+total_fee+'元');
         var studentList = [{ student: "{$memberInfo.member}", student_id: '0', total:total, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
@@ -329,6 +330,7 @@
             objData = wooApi.arrTOobj(arrData2);
             objData.memberData = JSON.stringify(studentList);
             objData.event = "{$eventInfo.event}";
+            objData.combo = domName;
             var url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
             let result = wooApi.asyncF(url+'/total/'+total,objData);
             if(result.code == 200){
