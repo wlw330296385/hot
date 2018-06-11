@@ -80,6 +80,8 @@ class AppsApply extends Base{
                                 $value['linkman'] = input('param.realname',$this->memberInfo['member']);
                                 $value['member'] = input('param.member',$this->memberInfo['member']);
                                 $value['member_id'] = input('param.member_id',$this->memberInfo['id']);
+                                $value['student'] = input('param.member',$this->memberInfo['member']);
+                                $value['student_id'] = '0';
                                 $value['remarks'] = $data['remarks'];
                                 $value['event_id'] = $data['f_id'];
                                 $value['event'] = $data['event'];
