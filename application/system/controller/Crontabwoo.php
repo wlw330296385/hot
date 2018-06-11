@@ -210,7 +210,12 @@ class Crontabwoo extends Base {
                         'remarks'   =>'课时教练总薪资支出',
                         'schedule_time'=>$schedule['lesson_time'],
                         'rebate_type' => $campInfo['rebate_type'],
+<<<<<<< HEAD
                         'create_time'=>$schedule['create_time'],
+=======
+                        
+                        'schedule_rebate' => $campInfo['rebate_type'],
+>>>>>>> 4dadfdc67fcd39fd2f2f1b5e8bcc0b20946091e6
                         'f_id'=>$schedule['id'],
                         'system_remarks'=>$schedule['lesson_time'],
                     ];
