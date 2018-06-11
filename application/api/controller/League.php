@@ -9,6 +9,7 @@ use app\service\MemberService;
 use app\service\MessageService;
 use app\service\RefereeService;
 use app\service\TeamService;
+use think\Db;
 use think\Exception;
 
 class League extends Base
@@ -1087,8 +1088,8 @@ class League extends Base
         }
     }
 
-    // 创建联赛球队分组数据
-    public function createleaguegroup()
+    // 保存联赛球队分组数据
+    public function saveleaguegroup()
     {
         // 接收请求变量
         $data = input('post.');
@@ -1104,7 +1105,6 @@ class League extends Base
         if (!$match) {
             return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他联赛']);
         }
-        // 验证会员有无操作权限
         // 当前会员有无操作权限（查询联赛工作人员）
         if ($this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
@@ -1114,7 +1114,8 @@ class League extends Base
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        if (!$power) {
+        // 需要联赛管理员以上
+        if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 检查分组数据有效性
@@ -1124,13 +1125,28 @@ class League extends Base
         if (empty($data['groupList']) && $data['groupList'] == "[]") {
             return json(['code' => 100, 'msg' => __lang('MSG_402') . 'groupList分组球队名单']);
         }
+        // 事务处理：检查联赛有无球队分组数据 若有数据先物理删除原有数据
+        Db::startTrans();
+        try {
+            $matchGroups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
+            $matchGroupTeams = $leagueS->getMatchGroupTeams(['match_id' => $match['id']]);
+            if ($matchGroups) {
+                $leagueS->deleteMatchGroup(['match_id' => $match['id']], true);
+            }
+            if ($matchGroupTeams) {
+                $leagueS->deleteMatchGroupTeam(['match_id' => $match['id']], true);
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+        }
         // 解析post提交的球队分组数据
-        $groups = json_decode($data['groupList'], true);
-        if (is_null($groups)) {
+        $dataGroups = json_decode($data['groupList'], true);
+        if (is_null($dataGroups)) {
             return json(['code' => 100, 'msg' => '数据不合法']);
         }
         try {
-            foreach ($groups as $k => $group) {
+            foreach ($dataGroups as $k => $group) {
                 //dump($group);
                 // 保存分组数据
                 $groupData = [

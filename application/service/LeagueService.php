@@ -470,6 +470,11 @@ class LeagueService
         return $model->id;
     }
 
+    // 删除联赛分组数据
+    public function deleteMatchGroup($id, $force=false) {
+        return MatchGroup::destroy($id, $force);
+    }
+
     // 获取联赛分组详情
     public function getMatchGroup($map) {
         $model = new MatchGroup();
@@ -544,6 +549,11 @@ class LeagueService
             return $res;
         }
         return $res->toArray();
+    }
+
+    // 删除联赛分组球队数据
+    public function deleteMatchGroupTeam($id, $force=false) {
+        return MatchGroupTeam::destroy($id, $force);
     }
 
     // 获取联赛球队球员列表（无分页）
