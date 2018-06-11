@@ -1163,7 +1163,7 @@ class League extends Base
                         'match' => $match['name'],
                         'match_logo' => $match['logo'],
                         'team_id' => $team['team_id'],
-                        'team' => $team['team']['name'],
+                        'team' => $team['team'],
                         'team_logo' => $team['team_logo'],
                         'group_id' => $groupId,
                         'group_name' => $group['groupName'],
