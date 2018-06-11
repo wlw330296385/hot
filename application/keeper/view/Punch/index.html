@@ -42,6 +42,24 @@
         .mui-grid-view.mui-grid-9 .mui-table-view-cell {
             border: none;
         }
+
+        .dragClass {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            position: fixed;
+            background-color: #e21c15;
+            background-image: url(/static/frontend/images/redball.png);
+            background-repeat: no-repeat;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 14px;
+            bottom:90px;
+            right: 48px;
+            box-shadow: 0 0 10px 0 #000;
+            text-shadow: 1px 1px #000;
+            z-index: 11;
+        }
     </style>
 </head>
 
@@ -111,15 +129,16 @@
 
             <ul class="mui-table-view mb punchList"></ul>
 
-            <button class="bgred sportDk">
+            <!-- <button class="bgred sportDk">
                 <a class="punch" href="{:url('Punch/createPunch')}">
                     <div class="sportDkText">
                         <span style="color: #fff">运动打卡</span>
                     </div>
                 </a>
-            </button>
-
-
+            </button> -->
+            <div class="dragClass" id="drag">
+                <a class="punch" href="{:url('Punch/createPunch')}" style="color: #fff">打卡</a>
+            </div>
         </div>
     </div>
 
@@ -244,6 +263,66 @@
             }
         });
     };
+</script>
+<!-- 悬浮拖动按钮 -->
+<script>
+    window.onload = function () {
+        var flag = 0; //标记是拖曳还是点击
+        var oDiv = document.getElementById('drag');
+        var disX, moveX, L, T, starX, starY, starXEnd, starYEnd;
+        oDiv.addEventListener('touchstart', function (e) {
+            flag = 0;
+            e.preventDefault();//阻止触摸时页面的滚动，缩放
+            disX = e.touches[0].clientX - this.offsetLeft;
+            disY = e.touches[0].clientY - this.offsetTop;
+            //手指按下时的坐标
+            starX = e.touches[0].clientX;
+            starY = e.touches[0].clientY;
+            //console.log(disX);
+        });
+        oDiv.addEventListener('touchmove', function (e) {
+            flag = 1;
+            L = e.touches[0].clientX - disX;
+            T = e.touches[0].clientY - disY;
+            //移动时 当前位置与起始位置之间的差值
+            starXEnd = e.touches[0].clientX - starX;
+            starYEnd = e.touches[0].clientY - starY;
+            //console.log(L);
+            if (L < 0) {
+                //限制拖拽的X范围，不能拖出屏幕
+                L = 0;
+            } else if (L > document.documentElement.clientWidth - this.offsetWidth) {
+                L = document.documentElement.clientWidth - this.offsetWidth;
+            }
+            if (T < 0) {
+                //限制拖拽的Y范围，不能拖出屏幕
+                T = 0;
+            } else if (T > document.documentElement.clientHeight - this.offsetHeight) {
+                T = document.documentElement.clientHeight - this.offsetHeight;
+            }
+            moveX = L + 'px';
+            moveY = T + 'px';
+            //console.log(moveX);
+            this.style.left = moveX;
+            this.style.top = moveY;
+        });
+        // window.addEventListener('touchend', function (e) {
+        //     //alert(parseInt(moveX))
+        //     //判断滑动方向
+        //     if (flag === 0) {
+        //         //点击
+
+        //     }
+        // });
+    }
+
+    $("#drag").on("tap", "", function () {
+        if ($('input[name=mid]').val() == 0) {
+            window.location.href = "{$fasturl}";
+        } else {
+            window.location.href = "{:url('Member/registerInfo')}";
+        }
+    })
 </script>
 
 
