@@ -37,6 +37,7 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title fenpei">
+            <span style="color:#bdbdbd">(可重新分配)</span>
             <button type="button" class="bgred" style="margin-top: 6px;">分配</button>
         </h1>
     </header>
@@ -64,6 +65,21 @@
             </li>
         </ul>
     </div>
+
+    <div id="move" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>请选择移动的组别</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="margin-top: -4px;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list groupNameLi"></ul>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
@@ -72,6 +88,8 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+        var groupList = [];
+        var groupTeam = [];
         var teams = '';
         $(function () {
 
@@ -79,7 +97,7 @@
                 var league_id = "{$leagueInfo.id}";
                 var totalNum = $(".totalNum").text();
                 var groupNum = $("input[name=groupNum]").val()
-                if (totalNum < groupNum) {
+                if (Number(totalNum) < Number(groupNum)) {
                     mui.toast("分组数不能大于球队总数");
                     return false;
                 }
@@ -94,22 +112,26 @@
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
-                        var newli = ''
+                        var newli = '';
+                        var groupNameLi = '';
                         if (data.code == 200) {
                             var fenzuNum = totalNum / groupNum; //取值分组数
                             teams = split_array(data.data, fenzuNum);
                             // console.log(teams)
                             teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
                             for (var i = 0; i < teams.length; i++) {
-                                newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" /></div>';
+                                groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((teams.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
+                                newli += '<ul class="mui-table-view list border-b" id="ulClass"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">' + ((teams.slice(0, i).length + 1)) + '</span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
-                                    newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
+                                    newli += '<li class="mui-table-view-cell mui-media listli coach liClass" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
+                                    newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div></a>';
                                     newli += '</li>';
                                 }
                                 newli += '</ul>'
                             }
                             $(".frame").empty().append(newli)
+                            $(".groupNameLi").empty().append(groupNameLi)
+
                         } else {
                             mui.toast(data.msg);
                         }
@@ -121,6 +143,28 @@
                     }
                 });
             });
+
+            // 移动操作
+            $(document).on("tap", ".frame ul li", function () {
+                $(".checkTeamId").val($(this).attr("data-team_id"));
+            })
+            $(document).on("tap", ".groupNameLi li", function () {
+                var thisTeamId = $(this).children(".checkTeamId").val();
+                var thisName = $(this).children(".thisName").text();
+                var moveli = '';
+                $(".frame ul li").each(function (index) {
+                    if (thisTeamId == $(this).attr("data-team_id")) {
+                        moveli = '<li class="mui-table-view-cell mui-media listli coach" data-team_id="' + $(this).attr("data-team_id") + '">' + $(this).html() + '';
+                        $(this).remove()
+                        $(".frame ul .page-header").each(function () {
+                            if (thisName == $(this).children().val()) {
+                                $(this).parent().append(moveli);
+                                mui('#move').popover('toggle');
+                            }
+                        })
+                    }
+                });
+            })
         })
 
         function split_array(arr, len) {
@@ -134,13 +178,30 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            var groupList = [];
-            $(".frame input[name=groupName]").each(function (i) {
-                var groupTeam = teams[i];
-                var groupName = $(this).val();
+            groupList = []
+            $(".frame ul").each(function () {
+                var groupName = $(this).find("input[name=groupName]").val();
+                groupTeam = [];
+                $(this).find("li").each(function () {
+                    var team = $(this).attr("data-team");
+                    var team_id = $(this).attr("data-team_id");
+                    var team_logo = $(this).attr("data-team_logo");
+                    var match = $(this).attr("data-match");
+                    var match_id = $(this).attr("data-match_id");
+                    var members_num = $(this).attr("data-team_imembers_num");
+                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num })
+                })
                 groupList.push({ groupName, groupTeam })
             })
             console.log(groupList)
+            for (var i = 0; i < groupList.length; i++) {
+                var group = groupList[i].groupTeam.length
+                console.log(group)
+                if (group == "1") {
+                    mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
+                    return false;
+                }
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -148,7 +209,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.groupList = JSON.stringify(groupList);
-            var url = "{:url('api/league/createleaguegroup')}";
+            var url = "{:url('api/league/saveleaguegroup')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             console.log(ajaxResult);
             if (ajaxResult.code == 200) {

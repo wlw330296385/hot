@@ -78,6 +78,7 @@
             <h4>恭喜您登记成功！</h4>
             <p>请耐心等待工作人员与您联系，谢谢</p>
         </div>
+
         <ul class="mui-table-view list" id="eventDes">
             <li class="listli desimg">{$eventInfo.event_des}</li>
         </ul>
@@ -147,7 +148,7 @@
 
             <div class="mui-input-row">
                 <label class="colororange">联系电话</label>
-                <input type="text" class="data telephone mixForm" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
+                <input type="text" class="data telephone" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
             </div>
 
             <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
@@ -185,7 +186,7 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" id="submitAction">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" id="submitAction">
                 提交
             </li>
         </ul>
@@ -219,11 +220,13 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    {if $eventInfo.status==1}
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    {/if}
     <script src="/static/frontend/js/smsCode.js"></script>
     <script>
 
@@ -238,12 +241,20 @@
         var mID = "{$memberInfo.id}";
         var mName = "{$memberInfo.member}";
         var mTel = "{$memberInfo.telephone}";
+        var eMember = "{$event_member.member_id}";
         var getCurrTel = "";
 
         var showDetail = wooApi.GetQueryString('showDetail');
         var showSuccess = wooApi.GetQueryString('showSuccess');
 
         $(function () {
+
+
+            if("{$eventInfo.status}"=="2"){
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动下架</li>');
+            }
+
+            console.log(eMember)
 
             if(showDetail=="yes"){
                 $("#eventDes").show();
@@ -254,6 +265,7 @@
                 $("#showSuccess").show();
                 $("#eventDes").show();
             }
+
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -481,6 +493,12 @@
                             console.log(type);
                         }
                     });
+                }else{
+                    //如果是会员自己报名,判断是否已经报名过
+                    if(eMember==mID){
+                        mui.alert("您本人已经登记过，请勿重复登记！");
+                        return false;
+                    }
                 }
 
                 if (flagCreate == false) {
@@ -490,7 +508,11 @@
                 //组合自定义表单项
                 var mixFrom = '';
                 $(".mixForm").each(function () {
-                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
+                    if($(this).find("img").length>0){
+                        mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue"><a href="' + $(this).find("input").val() + '" target="_blank"><img src="' + $(this).find("input").val() + '" /></a></span></li>'
+                    }else{
+                        mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
+                    }
                 });
                 mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
                 

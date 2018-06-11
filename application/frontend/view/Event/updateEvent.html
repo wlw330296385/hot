@@ -599,13 +599,16 @@
                     if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || eDomPrice == 0 || !(/^[1-9]+?[0-9]*$/).test(eDomPrice))) { //////加上判断是否收费
                         isTrue = false;
                         return false;
+                        console.log("000")
                     } else {
                         if (ePrice == 2) {
                             eDoms += '<button type="button" class="selectDom">' + eDom + '<div>' + eDomPrice + '</div></button>'
                             eventDomArr.push({ name: eDom, price: eDomPrice });
+                            console.log("111")
                         } else {
                             eDoms += '<button type="button" class="selectDom">' + eDom + '</button>'
                             eventDomArr.push({ name: eDom, price: '' });
+                            console.log("222")
                         }
 
                     }
@@ -630,7 +633,11 @@
             })
             // 删除
             $(document).on('tap', ".cancel-dom", function () {
-                $(this).parent().remove();
+                if($(".cancel-dom").length>1){
+                    $(this).parent().remove();
+                }else{
+                    mui.alert("请至少保留一个套餐选项，如只有一个选项，填写‘默认’即可")
+                }
             });
 
             //判断是否免费隐藏价格

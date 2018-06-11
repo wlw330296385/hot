@@ -378,9 +378,9 @@ class Event extends Base{
 
 
     // 活动报名表
-    public function applicationForm() {
+    public function eventOfAppsFormList() {
 
         
-        return view('Event/applicationForm');
+        return view('Event/eventOfAppsFormList');
     }
 }
