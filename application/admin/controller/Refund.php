@@ -62,39 +62,37 @@ class Refund extends Backend{
                 $this->error('传参错误,找不到退款信息');
             }
             $refundamount = $refundInfo['refundamount'];
-            if($refundamount <= $refundInfo['refund']){
-                $this->error('打款金额不可大于退款金额');
-            }
-            
             if($refundInfo['rebate_type'] <> 1){//课时版
                 $this->error('非课时版训练营不允许操作');
             }
             
             
             if($action == 4) {
-                $income  = $refundInfo['refundamount'] - $refundInfo['refund'] - $refundInfo['refund_fee'];
-                $BillService = new \app\service\BillService;
                 //训练营课时版收入
                 $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
-                db('income')->insert([
-                    'income'        => $income,
-                    'camp_id'       => $refundInfo['camp_id'],
-                    'camp'          => $refundInfo['camp'],
-                    'member_id'     => $refundInfo['member_id'],
-                    'member'        => $refundInfo['member'],
-                    'type'          => 5,
-                    'e_balance'     =>($campInfo['balance'] + $income),
-                    's_balance'     =>$campInfo['balance'],
-                    'f_id'          =>$refundInfo['id'],
-                    'student_id'    =>$refundInfo['student_id'],
-                    'student'       =>$refundInfo['student'],
-                    'system_remarks'=>$remarks,
-                    'create_time'   => time(),
-                    'update_time'   => time(),
-                ]);
+                $refund = $refundamount*(1-$campInfo['refund_rebate']);//实际退费
+                $refund_fee = $refundamount*$campInfo['refund_rebate'];//手续费
+            
+                
+                // db('income')->insert([
+                //     'income'        => $income,
+                //     'camp_id'       => $refundInfo['camp_id'],
+                //     'camp'          => $refundInfo['camp'],
+                //     'member_id'     => $refundInfo['member_id'],
+                //     'member'        => $refundInfo['member'],
+                //     'type'          => 5,
+                //     'e_balance'     =>($campInfo['balance'] + $income),
+                //     's_balance'     =>$campInfo['balance'],
+                //     'f_id'          =>$refundInfo['id'],
+                //     'student_id'    =>$refundInfo['student_id'],
+                //     'student'       =>$refundInfo['student'],
+                //     'system_remarks'=>$remarks,
+                //     'create_time'   => time(),
+                //     'update_time'   => time(),
+                // ]);
                 // 增加训练营营业额
-                db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
-                $Refund->save(['status'=>3],['id'=>$refund_id]);
+                // db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
+                $Refund->save(['status'=>3,'rebate_type'=>$campInfo['rebate_type'],'refund_rebate'=>$campInfo['refund_rebate'],'refund'=>$refund,'refund_fee'=>$refund_fee],['id'=>$refund_id]);
             }
             $this->success('操作成功');    
         }else{

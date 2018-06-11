@@ -64,7 +64,7 @@ class Pooltask extends Base{
                     }
                 }
                 // 更新奖金池
-                $result = db('pool')->where(['end_str'=>$date_str])->update(['status'=>-1]);
+                $result = db('pool')->where(['end_str'=>$date_str])->update(['status'=>-1,'winner_list'=>json_encode($winners)]);
                 // 奖金得主诞生
                 $model->saveAll($winners);
                 //奖金打入个人热币?还是自己领取奖品?
