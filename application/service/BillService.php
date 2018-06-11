@@ -578,8 +578,8 @@ class BillService {
                     
                     $updateData = ['status'=>-1,'remarks'=>$data['remarks']];
                     $result = $this->Bill->save($updateData,$map);
-                    $refundamount = $refundTotal*$billInfo['price'];
                     $campInfo = db('camp')->where(['id'=>$billInfo['camp_id']])->find();
+                    $refundamount = $refundTotal*$billInfo['price'];
                     $refundData = [
                         'refundamount'=>$refundamount,
                         'reason'=>$data['remarks'],
@@ -608,7 +608,7 @@ class BillService {
                             "data" => [
                                 'first' => ['value' => '['.$billInfo['goods'].']收到一笔申请退款'],
                                 'keyword1' => ['value' => $billInfo['bill_order']],
-                                'keyword2' => ['value' => $refundTotal.'元'],
+                                'keyword2' => ['value' => $refundamount.'元'],
                                 'keyword3' => ['value' => $billInfo['remarks']],
                                 'remark' => ['value' => '大热篮球']
                             ]
@@ -624,86 +624,85 @@ class BillService {
                 }
                 break;
             // 修改价格和数量
-                case '2':
-                    if($billInfo['status'] != 0){
-                        return ['code'=>100,'msg'=>'只有未付款订单才可以修改价格和数量'];
-                    }else{
-                        $updateData = ['remarks'=>$data['remarks'],'total'=>$data['total'],'price'=>$data['price']];
-                        $result = $this->Bill->save($updateData,$map);
-                        if($result){
-                            // 发送消息给用户
+            case '2':
+                if($billInfo['status'] != 0){
+                    return ['code'=>100,'msg'=>'只有未付款订单才可以修改价格和数量'];
+                }else{
+                    $updateData = ['remarks'=>$data['remarks'],'total'=>$data['total'],'price'=>$data['price']];
+                    $result = $this->Bill->save($updateData,$map);
+                    if($result){
+                        // 发送消息给用户
 
-                        }
                     }
-                    break;
-                //同意退款 
-                case '3':
-                        if($billInfo['status']!= -1){
-                            return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
-                        }   
-                        $isPower = $this->isPower($billInfo['camp_id'],session('memberInfo.id'));
-                        if($isPower<3){
-                            return ['code'=>100,'msg'=>'您没有这个权限'];
+                }
+            break;
+            //同意退款 
+            case '3':
+                    if($billInfo['status']!= -1){
+                        return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
+                    }   
+                    $isPower = $this->isPower($billInfo['camp_id'],session('memberInfo.id'));
+                    if($isPower<3){
+                        return ['code'=>100,'msg'=>'您没有这个权限'];
+                    }
+                    if($billInfo['goods_type'] == '课程'){
+                        // 查询剩余课时
+                        $lesson_member = db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->find();
+                        if(!$lesson_member || $lesson_member['rest_schedule']<1){
+                            return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
                         }
-                        if($billInfo['goods_type'] == '课程'){
-                            // 查询剩余课时
-                            $lesson_member = db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->find();
-                            if(!$lesson_member || $lesson_member['rest_schedule']<1){
-                                return ['code'=>100,'msg'=>'该学生已上完课,不允许退款'];
-                            }
-                            $refundTotal = ($lesson_member['rest_schedule']<$billInfo['total'])?$lesson_member['rest_schedule']:$billInfo['total'];
+                        $refundTotal = ($lesson_member['rest_schedule']<$billInfo['total'])?$lesson_member['rest_schedule']:$billInfo['total'];
 
 
-                            $updateData = [
-                                'refundamount'=>($refundTotal*$billInfo['price']),
-                                'status'=>-2,
-                                'remarks' => "您的剩余课时为{$lesson_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},因此您最多只能申请退{$refundTotal}节课的钱"
-                            ]; 
-                            $result = $this->Bill->save($updateData,$map);
-                            if($result){
-                                // 剩余课时的变化
-                                $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
-                                if($rest_schedule == 0){
-                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
-                                    
-                                }else{
-                                    db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
-                                }
-                            }
-                        }else{
-                            // 其他订单
-                            
-                        }
-                       
-                        $Refund = new \app\model\Refund;
-                        $Refund->save($refundData,['bill_id'=>$billInfo['id']]);
+                        $updateData = [
+                            'refundamount'=>($refundTotal*$billInfo['price']),
+                            'status'=>-2,
+                            'remarks' => "您的剩余课时为{$lesson_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},因此您最多只能申请退{$refundTotal}节课的钱"
+                        ]; 
+                        $result = $this->Bill->save($updateData,['id'=>$billInfo['id']]);
                         if($result){
-                            //发送信息给用户
-                            $MessageData = [
-                                "touser" => session('memberInfo.openid'),
-                                "template_id" => config('wxTemplateID.successCheck'),
-                                "url" => url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
-                                "topcolor"=>"#FF0000",
-                                "data" => [
-                                    'first' => ['value' => "{$billInfo['goods']}退款申请已被同意"],
-                                    'keyword1' => ['value' => '您的退款申请已被同意'],
-                                    'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
-                                    'remark' => ['value' => '退款完成需要2-3个工作日到账,如有疑问,请联系客服']
-                                ]
-                            ];
-                            $saveData = [
-                                            'title'=>"{$billInfo['goods']}退款申请已被同意",
-                                            'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: ({$data['output']})元<br/>支付信息:{$billInfo['student']}",
-                                            'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
-                                            'member_id'=>$billInfo['member_id']
-                                        ];
-
-                            $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
+                            // 剩余课时的变化
+                            $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
+                            if($rest_schedule == 0){
+                                db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
+                            }else{
+                                db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule]);
+                            }
                         }
-                    break;
+                    }else{
+                        // 其他订单
+                        
+                    }
+                   
+                    $Refund = new \app\model\Refund;
+                    $Refund->save(['status'=>2],['bill_id'=>$billInfo['id']]);
+                    if($result){
+                        //发送信息给用户
+                        $MessageData = [
+                            "touser" => session('memberInfo.openid'),
+                            "template_id" => config('wxTemplateID.successCheck'),
+                            "url" => url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                            "topcolor"=>"#FF0000",
+                            "data" => [
+                                'first' => ['value' => "{$billInfo['goods']}退款申请已被同意"],
+                                'keyword1' => ['value' => '您的退款申请已被同意'],
+                                'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
+                                'remark' => ['value' => '退款完成需要2-3个工作日到账,如有疑问,请联系客服']
+                            ]
+                        ];
+                        $saveData = [
+                                        'title'=>"{$billInfo['goods']}退款申请已被同意",
+                                        'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: ({$billInfo['refundamount']})元<br/>支付信息:{$billInfo['student']}",
+                                        'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
+                                        'member_id'=>$billInfo['member_id']
+                                    ];
+
+                        $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
+                    }
+                break;
             //拒绝退款
                 case '4': 
-                    $result = $this->Bill->save(['status'=>1],$map);
+                    $result = $this->Bill->save(['status'=>1],['id'=>$billInfo['id']]);
                     $Refund = new \app\model\Refund;
                     $Refund->save($refundData,['bill_id'=>$billInfo['id']]);
                     if($result){
@@ -732,7 +731,10 @@ class BillService {
                     break;
             //撤销退款
                 case '5': 
-                    $result = $this->Bill->save(['status'=>1],$map);
+                    if($billInfo['status']<>-1){
+                        return ['code'=>100,'msg'=>'订单状态不是退款中不可撤销'];
+                    }
+                    $result = $this->Bill->save(['status'=>1],['id'=>$billInfo['id']]);
                     $Refund = new \app\model\Refund;
                     $Refund->save(['status'=>-2,'cancel_time'=>time()],['bill_id'=>$billInfo['id']]);
                     if($result){

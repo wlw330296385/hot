@@ -138,7 +138,7 @@ class Pool extends Base{
                 $data['end'] = strtotime($data['ends']);
                 $data['end_str'] = date('Ymd',$data['end']);
             }
-
+            $data['winner_list'] = '[]';
             $result = $this->PoolService->createPool($data);
             return json($result);   
         }catch (Exception $e){
