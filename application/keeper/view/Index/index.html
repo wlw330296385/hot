@@ -190,7 +190,7 @@
                             <use xlink:href="#icon-p-constitution"></use>
                         </svg>
                         <span class="f14" style="display: block;">体质</span>
-                        <div class="mui-media-body f18 colororange">0</div>
+                        <div class="mui-media-body f18 colororange bmi">0</div>
                     </li>
                 </ul>
             </div>
@@ -538,6 +538,29 @@
             //         }
             //     });
             // });
+
+            var member_id = "{$memberInfo.id}";
+            mui.ajax("{:url('api/member/getmembersportindex')}", {
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".bmi").text(data.data.bmi);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
 
         })
 
