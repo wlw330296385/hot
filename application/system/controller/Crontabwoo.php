@@ -254,7 +254,7 @@ class Crontabwoo extends Base {
                     db('camp')->where(['id'=>$schedule['camp_id']])->inc('balance',$incomeCampSalary)->update();
                     // 更新课时数据
                     Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $incomeSchedule, 'finish_settle_time' => time(),'s_coach_salary'=>($schedule['coach_salary']+$pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
-                    db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
+                    db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => time()]);
                     // 课时工资收入结算 end
                 }
 
@@ -422,7 +422,7 @@ class Crontabwoo extends Base {
                 
                 // 更新课时数据
                 Db::name('schedule')->where(['id' => $schedule['id']])->update(['is_settle' => 1, 'schedule_income' => $schedule['cost']*$schedule['students']-$totalCoachSalary, 'finish_settle_time' =>  time(),'s_coach_salary'=>($schedule['coach_salary'] + $pushSalary),'s_assistant_salary'=>$totalAssistantSalary]);
-                db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => $schedule['create_time']]);
+                db('schedule_member')->where(['schedule_id' => $schedule['id']])->update(['status' => 1, 'update_time' => time()]);
                 // 课时工资收入结算 end --------------------------------------
             }
         });

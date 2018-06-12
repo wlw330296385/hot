@@ -19,8 +19,8 @@ class GroupVal extends Validate{
     	'member_id'		=>'请先登录',
     	'logo'		=>'logo必须',
     	'group'		=>'群名必须',
-    	'tenet'		=>'宗旨必须',
-    	// 'rule'		=>'规则必须',
+    	// 'tenet'		=>'宗旨必须',
+    	'rule'		=>'规则必须',
 
     ];
     
