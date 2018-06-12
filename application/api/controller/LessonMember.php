@@ -157,7 +157,7 @@ class LessonMember extends Base{
             $rest_schedule = input('param.rest_schedule');
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
             $model = new \app\model\LessonMember();
-            $map = [];
+            $map = ['lesson_member.is_school'=>-1];
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
             } 
