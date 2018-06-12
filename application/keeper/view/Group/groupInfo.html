@@ -85,7 +85,7 @@
                         <span class="icon iconfont icon-activity-opponent colororange"></span>本期打卡
                     </label>
                     <span class="wd25 pdr15 mui-navigate-right">
-                        <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right" style="font-size: 13px;">社群口号</a>
+                        <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right" style="font-size: 13px;">社群规则</a>
                     </span>
                 </li>
             </ul>
@@ -136,7 +136,7 @@
             </p>
 
             <!--底部操作-->
-            <ul class="mui-table-view operation ">
+            <ul class="mui-table-view operation  initialBottom">
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="{$homeurl}">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
@@ -147,6 +147,16 @@
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-8 mui-col-sm-8 opli bgred">
                     <a href="{:url('punch/createPunch')}">打卡</a>
+                </li>
+            </ul>
+            <ul class="mui-table-view operation otherBottom hide">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="{$homeurl}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli ">
+                    <a href="#shareGuide">分享</a>
                 </li>
             </ul>
 
@@ -186,6 +196,12 @@
                     mui.toast("只有社群群主才能创建奖金池")
                 }
             })
+
+            var groupIndex = wooApi.GetQueryString('groupIndex');
+            if (groupIndex == "otherGroup") {
+                $(".initialBottom").hide();
+                $(".otherBottom").show();
+            }
 
             // 判断底部按钮退出与管理 
             if (id != '' && group_member != member) {

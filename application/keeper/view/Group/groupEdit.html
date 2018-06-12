@@ -46,11 +46,11 @@
 
     <div class="mui-content coach">
 
+        <input type="hidden" name="group" class="data" value="{$groupInfo.group}">
         <div class="nav-list borderStyle mb12">
             <div class="page-header">
                 <span class="course">
-                    社群成员（
-                    <text class="groupMemberNum">0</text>）
+                    社群成员（<text class="groupMemberNum">0</text>）
                 </span>
             </div>
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
@@ -114,11 +114,11 @@
                 <input type="text" name="max" class="data" value="{$groupInfo.max}" placeholder="最大人数">
             </div>
             <div class="mui-input-row h-auto">
-                <label>社群口号</label>
-                <textarea name="tenet" rows="3" value="{$groupInfo.tenet}" class="tenet" placeholder="请填写内容">{$groupInfo.tenet}</textarea>
+                <label>社群规则</label>
+                <textarea name="rule" rows="3" value="{$groupInfo.rule}" class="rule" placeholder="请填写内容">{$groupInfo.rule}</textarea>
             </div>
             <div class="mui-input-row h-auto">
-                <label>公告</label>
+                <label>社群公告</label>
                 <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice" placeholder="请填写内容">{$groupInfo.notice}</textarea>
             </div>
 
@@ -139,8 +139,10 @@
     <div id="groupAddMember" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course wd60" style="margin-top: 5px">
+            <span class="course wd36" style="margin-top: 5px">
                 <strong>粉丝列表</strong>
+            </span>
+            <span class="fr f14" style="margin-top: 5px">
                 <text class="colororange memberAdd">邀请微信好友</text>
             </span>
         </div>
@@ -150,8 +152,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!--删除成员-->
     <div id="groupMember" class="mui-popover" style="margin: 0">
@@ -406,7 +406,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.tenet = $(".tenet").val();
+            objData.rule = $(".rule").val();
             objData.notice = $(".notice").val();
             var url = "{:url('api/group/updateGroupApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
