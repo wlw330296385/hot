@@ -53,6 +53,9 @@
         });
 
         $(function () {
+
+
+
             //初始化全局变量
             var count = 1;
             var teamId = wooApi.GetQueryString('team_id');
@@ -102,12 +105,13 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/pool/getPoolWinnerListApi','','',true)}" + '/?page=' + page;
-                var pool_id = "{poolInfo.id}"
+                var url = "{:url('api/pool/getPoolListApi','','',true)}" + '/?page=' + page;
+                var group_id = "{$groupInfo.id}"
                 mui.ajax({
                     url: url,
                     data: {
-                        pool_id: 5
+                        status: -1,
+                        group_id: group_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -118,17 +122,18 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                if (data.data == '') {
-                                    $(".createPool").show();
+                                winner_list = JSON.parse(data.data[i].winner_list);
+                                _winner = '';
+                                if (winner_list != '') {
+                                    for (var j = 0; j <= winner_list.length - 1; j++) {
+                                        _winner += winner_list[j].member + ','
+                                    }
                                 }
-                                if (data.data[i].status == -1) {
-                                    $(".createPool").show();
-                                } else {
-                                    $(".nowPool").show();
-                                }
+                                //去除最后一个逗号
+                                winnerList = _winner.substring(0, _winner.length - 1);
                                 newli += `<li class="mui-table-view-cell mui-collapse listli">
                                             <a class="mui-navigate-right"  href="#">
-                                                <p>${data.data[i].group}</p><p>${data.data[i].start}期</p>
+                                                <p>`+ winnerList + `</p><p>${data.data[i].start}期</p>
                                             </a>
                                             <div class="mui-collapse-content">
                                                 <ul class="mui-table-view mb list" style="margin-top:-8px;margin-left:-40px;">
@@ -136,7 +141,7 @@
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Contact colororange"></span>擂主
                                                         </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">`+ winnerList + `</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
@@ -148,31 +153,31 @@
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Quantity colororange"></span>打卡人数
                                                         </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">${data.data[i].members}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-opponent colororange"></span>奖金池金额
                                                         </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">${data.data[i].bonus}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-opponent colororange"></span>每次下注金额
                                                                 </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">${data.data[i].stake}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Startingtim colororange"></span>开始时间
                                                         </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">${data.data[i].start}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-EndTime colororange"></span>结束时间
                                                         </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
+                                                        <span class="wd60">${data.data[i].end}</span>
                                                     </li>
                                                 </ul>
                                             </div>

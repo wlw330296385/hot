@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>创建奖金池</title>
+    <title>创建打卡规则</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -19,14 +19,43 @@
             display: table;
             width: 100%;
         }
+
+        .publicTip {
+            padding: 15px;
+        }
+
+        .publicTip .publicTitle {
+            vertical-align: middle;
+            display: inline-flex;
+            margin-bottom: 5px;
+        }
+
+        .publicTip .publicTitle strong {
+            line-height: 40px;
+            padding-left: 5px;
+        }
+
+        .publicTip .publicTitle img {
+            width: 15%;
+            height: 15%;
+        }
+
+        .publicTip .publicText {
+            padding-left: 43px;
+        }
+
+        .publicTip .publicText p {
+            margin-bottom: 0;
+            font-size: 12px
+        }
     </style>
 </head>
 
 <body>
 
     <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">创建奖金池</h1>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backHref"></a>
+        <h1 class="mui-title">创建打卡规则</h1>
     </header>
 
     <div class="mui-content">
@@ -52,18 +81,29 @@
                 </div>
             </div>
             <div class="mui-input-row">
-                <label>限定打卡次数</label>
-                <input type="number" name="" class="data" value="" placeholder="请输入限定打卡次数">
+                <label class="wd45">个人每天打卡上限</label>
+                <input type="number" name="" class="data wd52" value="" placeholder="请输入个人每天打卡上限">
             </div>
             <div class="mui-input-row h-auto">
-                <label>规则</label>
+                <label>打卡说明</label>
                 <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
             </div>
         </form>
 
+        <div class="publicTip mb44">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、必须创建打卡规则才能在社群打卡</p>
+                <p>2、为保护打卡会员权益，打卡规则一旦创建，将不可修改</p>
+            </div>
+        </div>
+
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
-                创建奖金池
+                创建打卡规则
             </li>
         </ul>
 
@@ -118,6 +158,15 @@
 
             });
         })(mui, document);
+
+        $(function () {
+            var createGroupId = wooApi.GetQueryString('createGroupId');
+            if (createGroupId != null) {
+                $(".backHref").attr("href", "{:url('group/groupInfo')}/" + createGroupId);
+            } else {
+                $(".backHref").addClass("mui-action-back");
+            }
+        })
 
         // 获取数据并进行提交
         function submitAction() {
