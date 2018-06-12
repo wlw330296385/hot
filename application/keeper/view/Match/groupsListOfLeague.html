@@ -16,7 +16,7 @@
 <body class=whitebg>
 
     <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <a href="{:url('match/leagueManage',['league_id'=>$leagueInfo.id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">分组列表</h1>
     </header>
 
@@ -122,7 +122,19 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="#">' + data.data.data[i].name + '</li>';
+                            newli += `<li class="mui-table-view-cell mui-collapse listli">`;
+                            newli += `<a class="mui-navigate-right"  href="#"><p>${data.data.data[i].name}</p></a>`
+                            newli += `<div class="mui-collapse-content"><ul class="mui-table-view mb list" style="margin-top:-8px;margin-left:-40px;">`;
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell mui-media listli coach" style="padding-left:42px;">
+                                            <img class="mui-media-object mui-pull-left coachicon" src="${data.data.data[i].group_teams[j].team_logo}" style="width: 40px !important;height: 40px !important; float:left !important;">
+                                                <div class="mui-media-body lineHeight20 wd73">
+                                                    <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}</p>
+                                                    <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
+                                                </div>
+                                            <li>`;
+                            }
+                            newli += `</ul></div></li>`
                         }
                     }
                     if (gType == 1) {

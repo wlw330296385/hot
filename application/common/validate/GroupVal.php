@@ -10,8 +10,8 @@ class GroupVal extends Validate{
 		'logo'		=>'require',
 		'max'	=>'require',
 		'group'		=>'require',
-		'tenet'	=>'require',
-		// 'rule'		=>'require',
+		// 'tenet'	=>'require',
+		'rule'		=>'require',
     ];
     
     protected $message = [
