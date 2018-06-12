@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>填表人员列表</title>
+    <title>{$eventInfo.organization}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,32 +11,33 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-<style>
-    ul.event {
-        padding:10px;
-    }
-    .diyList {
-        padding: 0px;
-        font-size: 14px;
-    }
-    .diyList li {
-        border-top:1px solid #EEE;
-        padding:4px;
-        clear:both;
-    }
-    .diyList .fTitle { float: left; width: 100px; }
-    .diyList .fValue { float: left; }
-    .diyList img {
-       width: 56px; height: 42px;
-    }
-</style>
+    <style>
+        .diyList {
+            padding: 0px;
+            font-size: 14px;
+        }
+        .diyList li {
+            border-top:1px solid #EEE;
+            padding:4px;
+            clear:both;
+        }
+        .diyList .fTitle { float: left; width: 100px; }
+        .diyList .fValue { float: left; }
+        .diyList img {
+           width: 56px; height: 42px;
+        }
+        .subheader .mui-title { right: 5px !important; }
+        .mui-table-view-cell { padding:11px 15px 0px }
+        .mui-table-view-cell:after { background: none; }
+        .mui-table-view-cell .rmk { background-color: #F8F8F8;margin: 5px -15px;padding:8px 15px; clear: both; }
+    </style>
 </head>
 
 <body class=whitebg>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
-        <h1 class="mui-title">{$eventInfo.organization}</h1>
+        <h1 class="mui-title">{$eventInfo.event}（ <span class="colororange">0</span> 份报名表）</h1>
     </header>
 
     <div class="mui-content">
@@ -130,8 +131,9 @@
                     var newli = '';
                     console.log(data)
                     if (data.code == 200) {
+                        $(".mui-title span").text(data.data.total);
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell mui-media"><i class="f12 fr colorgray"><span class="colororange">' + data.data.data[i].create_time + '</span></i><p class="pb4"><span class="colororange">' + data.data.data[i].member + '</span>：' + data.data.data[i].remarks + '</p><ul class="diyList"><li><span class="fTitle">姓名</span><span class="fValue">' + data.data.data[i].realname + '</span></li><li><span class="fTitle">联系电话</span><span class="fValue">' + data.data.data[i].telephone + '</span></li></ul>'+data.data.data[i].content+'</li>'
+                            newli = newli + '<li class="mui-table-view-cell"><i class="f12 fr colorgray">' + data.data.data[i].create_time + '</i><p class="pb4"><span class="colororange">' + data.data.data[i].member + '</span></p><ul class="diyList"><li><span class="fTitle">姓名</span><span class="fValue">' + data.data.data[i].realname + '</span></li><li><span class="fTitle">联系电话</span><span class="fValue">' + data.data.data[i].telephone + '</span></li></ul>'+data.data.data[i].content+'<ul class="mui-row table rmk"><li class="mui-col-sm-12"><p>留言：' + data.data.data[i].remarks + '</p></li></ul></li>'
                         }
                     }
                     if (gType == 1) {
