@@ -671,4 +671,19 @@ class Match extends Base {
             'teamInfo' => $teamInfo
         ]);
     }
+
+    // 赛程列表管理
+    public function schedulelistofleague() {
+        return view('Match/scheduleListOfLeague');
+    }
+
+    // 创建赛程
+    public function createscheduleofleague() {
+        return view('Match/createScheduleOfLeague');
+    }
+
+    // 编辑赛程
+    public function editscheduleofleauge() {
+        return view('Match/editScheduleOfLeague');
+    }
 }
