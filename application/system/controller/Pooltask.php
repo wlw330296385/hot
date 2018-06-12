@@ -33,12 +33,16 @@ class Pooltask extends Base{
     public function lottery(){
     	try{
             $date_str = date('Ymd',time());
-            $poolList = db('pool')->where(['end_str'=>$date_str,'status'=>2])->select();
+            // $date_str = 20180611;
+            $poolList = db('pool')->where([
+                    // 'end_str'=>$date_str,
+                    // 'status'=>2
+                ])->select();
             $model = new \app\model\PoolWinner;
             // dump($poolList);
             foreach ($poolList as $key => $value) {
           
-                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
                 }
@@ -51,11 +55,13 @@ class Pooltask extends Base{
                 $max = max($c_ids);
                 //将最高分的值对应的原数组下标key的值存为数组,即获奖者数组
                 $winners = [];
+                // dump($memberList);
                 foreach ($memberList as $k => $val) {
                     if($val['c_id'] == $max){
                         $winners[] = [
                                         'member'    =>$val['member'],
                                         'member_id' =>$val['member_id'],
+                                        'avatar'    =>$val['avatar'],
                                         'punchs'    =>$max,
                                         'pool'      =>$val['pool'],
                                         'pool_id'   =>$val['pool_id'],
@@ -63,13 +69,15 @@ class Pooltask extends Base{
                                      ];
                     }
                 }
+                // dump($winners);
                 // 更新奖金池
-                $result = db('pool')->where(['end_str'=>$date_str])->update(['status'=>-1,'winner_list'=>json_encode($winners)]);
+                $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode($winners)]);
                 // 奖金得主诞生
                 $model->saveAll($winners);
-                //奖金打入个人热币?还是自己领取奖品?
+                // 奖金打入个人热币?还是自己领取奖品?
                 $bonus = ceil(($value['bonus']/count($winners)));
                 $this->updateMembersHotcoin($winners,$bonus);
+                //die;
             }
 	    	$data = ['crontab'=>'每日擂台开奖'];
             $this->record($data);
