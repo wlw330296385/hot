@@ -46,7 +46,7 @@ class Punch extends Base{
     // 打卡
     public function createPunch(){
         $group_id = input('param.group_id');
-        $is_pool = 0;
+        $is_pool = -1;
         if($group_id){
             $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->value('id');
         }
@@ -62,7 +62,7 @@ class Punch extends Base{
             ->order('group_member.id desc')
             ->select();
         
-        $this->assign('is_pool',$is_pool);
+        $this->assign('is_pool',$is_pool?$is_pool:-1);
     	$this->assign('monthPunch',$monthPunch);
         $this->assign('groupList',$groupList);
     	return view('Punch/createPunch');

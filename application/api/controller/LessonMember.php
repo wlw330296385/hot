@@ -158,6 +158,7 @@ class LessonMember extends Base{
             $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
             $model = new \app\model\LessonMember();
             $map = ['lesson_member.is_school'=>-1];
+            $map = ['lesson_member.status'=>1];
             if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
                 $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
             } 
