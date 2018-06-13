@@ -2541,19 +2541,29 @@ class League extends Base
         if (!$groupTeams) {
             return json(['code' => 100, 'msg' => '联赛分组球队'.__lang('MSG_404')]);
         }
-        //dump($groupTeams);
-        // matchGameCount: 预计场次数
-        // teamCount: 分组内球队数量
-        $teatmCount = count($groupTeams);
-        $matchGameNumber = $teatmCount * ($teatmCount - 1) / 2;
-        // 比赛轮数: 球队数为单数时轮数等于球队数,球队数为双数时轮数等于队数减一
-        $matchRoundNumber = ($matchGameNumber%2==0) ? $teatmCount-1 : $teatmCount;
-        //dump($matchGameNumber);
-        //dump($matchRoundNumber);
-        // 计算对阵关系(单循环）
-        $scheduleArrary = [];
-        for ($i = 0; $i<$matchRoundNumber; $i++) {
+        try {
+            // 计算对阵关系(单循环）
+            $berger = new \Berger();
+            $singleCycleBattle = $berger->singleCycle($groupTeams);
+            //dump($singleCycleBattle);
+            $battle = [];
+            foreach ($singleCycleBattle as $loop) {
+                foreach ($loop as $team) {
+                    //  排除球队轮空
+                    if ($team['away_team_id'] && $team['home_team_id']) {
+                        array_push($battle, $team);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage());
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
 
+        if ($battle) {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $battle]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
     }
 }
