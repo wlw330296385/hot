@@ -123,13 +123,14 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 winner_list = JSON.parse(data.data[i].winner_list);
-                                console.log(winner_list)
                                 _winner = '';
                                 _winner_punchs = '';
+                                _winner_bonus = '';
                                 if (winner_list != '') {
                                     for (var j = 0; j <= winner_list.length - 1; j++) {
                                         _winner += winner_list[j].member + ',';
                                         _winner_punchs = winner_list[j].punchs;
+                                        _winner_bonus = parseInt(winner_list[j].bonus / winner_list.length);
                                     }
                                 }
                                 //去除最后一个逗号
@@ -154,9 +155,9 @@
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主
+                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主打卡金额
                                                         </label>
-                                                        <span class="wd60">`+ winnerList + `</span>
+                                                        <span class="wd60">`+ _winner_bonus + `</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
