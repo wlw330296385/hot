@@ -132,7 +132,13 @@ class Pool extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             if(isset($data['starts'])){
-                $data['start'] = strtotime($data['starts'])+86399;
+                $data['start'] = strtotime($data['starts']);
+                $start_str = date('Ymd',$data['start']);
+                if($start_str <= date('Ymd',time())){
+                    $data['status'] = 2;
+                }else{
+                    $data['status'] = 1;
+                };
             }
             if(isset($data['ends'])){
                 $data['end'] = strtotime($data['ends']);
