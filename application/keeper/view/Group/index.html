@@ -114,9 +114,16 @@
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].group.logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
                                 newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group.group + '</h5><p>成员：<text class="colororange">' + data.data.data[i].group.members + '</text>&nbsp;&nbsp;单卡消耗：<text class="colororange">' + data.data.data[i].group.stake + '</text>HT&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].group.bonus + '</text></p></div>'
                                 if (data.data.data[i].group.member == "{$memberInfo.member}" && data.data.data[i].group.id != '') {
-                                    let result = wooApi.asyncT("{:url('api/group_apply/getAppsApplyListByPageApi')}",{group_id:data.data.data[i].group_id});
-                                    
-                                    newli += '<div class="fr"><text class="mui-badge mui-badge-danger" style="margin: 15px 10px 0 0;">0</text></div>';
+                                    let num = 0;
+                                    let result = wooApi.asyncT("{:url('api/group_apply/getGroupApplyListByPageApi')}",{group_id:data.data.data[i].group_id},function(msg){
+                                        if(msg.code == 200){
+                                            console.log(msg.data.total);
+                                            num = msg.data.total;
+                                        }
+                                        
+                                    });
+                                    // console.log(num)
+                                    newli += '<div class="fr"><text class="mui-badge mui-badge-danger" style="margin: 15px 10px 0 0;">'+num+'</text></div>';
                                 }
                                 newli += '</li>'
                             }

@@ -27,7 +27,7 @@ class GroupApply extends Base{
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
-                return json(['code'=>100,'msg'=>'检查你的参数']);
+                return json(['code'=>100,'msg'=>'检查你的参数','data'=>0]);
             }
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
