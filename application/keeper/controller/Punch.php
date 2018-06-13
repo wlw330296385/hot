@@ -45,7 +45,7 @@ class Punch extends Base{
 
     // 打卡
     public function createPunch(){
-        $group_id = intput('param.group_id');
+        $group_id = input('param.group_id');
         if($group_id){
             $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->value('id');
         }
