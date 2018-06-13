@@ -79,16 +79,18 @@ class CampWithdraw extends Base{
             if($campInfo['balance']<$data['withdraw']){
                 return json(['code'=>100,'msg'=>'余额不足']);
             }
-            $data['s_balance'] = $data['e_balance'] = $campInfo['balance'];
+            $data['s_balance'] = $campInfo['balance'];
+            $data['e_balance'] = $campInfo['balance'] - $data['withdraw'];
             $data['camp_type'] = $campInfo['type'];
+            $data['camp'] = $campInfo['camp'];
             $data['rebate_type'] = $campInfo['rebate_type'];
-            $buffer = $data['withdraw'];
+            $data['schedule_rebate'] = $campInfo['schedule_rebate'];
+            $data['buffer'] = $data['withdraw'];
             if($campInfo['rebate_type'] == 2){
-                // 手续费
                 $data['camp_withdraw_fee'] = $buffer*$campInfo['schedule_rebate'];
-                $buffer += $data['camp_withdraw_fee'];
+            }else{
+                $data['camp_withdraw_fee'] = 0;
             }
-            $data['buffer'] = $buffer;
             $result = $this->CampWithdrawService->createCampWithdraw($data);
             if($result['code'] == 200){
                 db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$buffer)->update();

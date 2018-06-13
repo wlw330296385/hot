@@ -65,63 +65,16 @@ class Withdraw extends Backend{
             $campInfo = db('camp')->where(['id'=>$campWithdrawInfo['camp_id']])->find();
 
             if($action == 2){
-                if($campWithdrawInfo['rebate_type'] == 2){
-                    
-                    $res = db('output')->insert([
-                        'output'        => $campWithdrawInfo['camp_withdraw_fee'],
-                        'camp_id'       => $campWithdrawInfo['camp_id'],
-                        'camp'          => $campWithdrawInfo['camp'],
-                        'member_id'     => $campWithdrawInfo['member_id'],
-                        'member'        => $campWithdrawInfo['member'],
-                        'type'          => 4,
-                        'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee']),
-                        's_balance'     =>$campInfo['balance'],
-                        'f_id'          =>$campWithdrawInfo['id'],
-                        'system_remarks'=>$system_remarks,
-                        'create_time'   => time(),
-                        'update_time'   => time(),
-                    ]);
-                    if(!$res){
-                        $this->error('操作失败,请务必截图并联系woo,82行');
-                    }
-                }
-                $res = db('output')->insert([
-                    'output'        => $campWithdrawInfo['withdraw'],
-                    'camp_id'       => $campWithdrawInfo['camp_id'],
-                    'camp'          => $campWithdrawInfo['camp'],
-                    'member_id'     => $campWithdrawInfo['member_id'],
-                    'member'        => $campWithdrawInfo['member'],
-                    'type'          => -1,
-                    'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee'] - $campWithdrawInfo['withdraw']),
-                    's_balance'     =>($campInfo['balance'] - $campWithdrawInfo['camp_withdraw_fee']),
-                    'f_id'          =>$campWithdrawInfo['id'],
-                    'system_remarks'=>$system_remarks,
-                    'create_time'   => time(),
-                    'update_time'   => time(),
-                ]);
-                if(!$res){
-                    $this->error('操作失败,请务必截图并联系woo,100行');
-                }
+                
+                // 同意提现
                 $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
-                if($res){
-                    db('camp_finance')->insert([
-                        'money'        => ($campWithdrawInfo['buffer']),
-                        'camp_id'       => $campWithdrawInfo['camp_id'],
-                        'camp'          => $campWithdrawInfo['camp'],
-                        'type'          => -4,
-                        'e_balance'     =>($campInfo['balance'] - $campWithdrawInfo['buffer']),
-                        's_balance'     =>($campInfo['balance']),
-                        'f_id'          =>$campWithdrawInfo['id'],
-                        'system_remarks'=>$system_remarks,
-                        'create_time'   => time(),
-                        'update_time'   => time(),
-                    ]);
+                
                 }else{
                     $this->error('操作失败,请务必截图并联系woo,117行');
                 }
                 $this->record("{$this->admin['username']}同意了{$campWithdrawInfo['camp']}的提现申请");
             }elseif ($action == -1) {
-                // 解冻资金
+                // 拒绝操作,解冻资金
                 $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'e_balance'=>($campInfo['balance']+$campWithdrawInfo['buffer']),'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,124行');

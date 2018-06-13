@@ -106,7 +106,8 @@ class Punch extends Base{
             $data['area'] = $this->memberInfo['area'];
 
             $data['month_str'] = date('Ym',time());
-            $data['date_str'] = date('Ym',time());
+            $data['date_str'] = date('Ymd',time());
+            $data['status'] = 1;
             $result = $this->PunchService->createPunch($data);
 
             if(isset($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
@@ -220,16 +221,30 @@ class Punch extends Base{
             if($reward>$this->memberInfo['hot_coin']){
                 return json(['code'=>100,'msg'=>'热币不足']);
             }
-            $result = db('member')->where(['id'=>$member_id])->dec('hot_coin',$reward)->update();
+            $result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('hot_coin',$reward)->update();
             if($result){
                 db('punch')->where(['id'=>$punch_id])->inc('rewards',1)->inc('rewards_money',$reward)->update();
                 db('hotcoin_finance')->insert(
                     [
-                        'member_id' =>$member_id,
+                        'member_id' =>$this->memberInfo['id'],
                         'member'    =>$member,
                         'avatar'    =>$avatar,
                         'hot_coin'  =>-$reward,
                         'type'      =>-3,
+                        'status'    =>1,
+                        'f_id'      =>$punch_id,
+                        'create_time'=>time(),
+                    ]
+                );
+                $punchInfo = $this->PunchService->getPunchInfo(['id'=>$punch_id]);
+                db('member')->where(['id'=>$punchInfo['member_id']])->inc('hot_coin',$reward)->update();
+                db('hotcoin_finance')->insert(
+                    [
+                        'member_id' =>$punchInfo['member_id'],
+                        'member'    =>$punchInfo['member'],
+                        'avatar'    =>$punchInfo['avatar'],
+                        'hot_coin'  =>$reward,
+                        'type'      =>3,
                         'status'    =>1,
                         'f_id'      =>$punch_id,
                         'create_time'=>time(),

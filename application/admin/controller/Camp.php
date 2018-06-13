@@ -62,7 +62,7 @@ class Camp extends Backend {
                 unset($request['__token__']);
             }
             // 保存课时收入平台抽取比例空值
-            if (empty($request['schedule_rebate'])) {
+            if (empty($request['schedule_rebate']) || $request['schedule_rebate']<0) {
                 $request['schedule_rebate'] = 0.1;
             }
             // 保存课时收入平台抽取比例空值

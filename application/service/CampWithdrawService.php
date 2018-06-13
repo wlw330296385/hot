@@ -78,6 +78,80 @@ class CampWithdrawService {
         }
         $result = $this->CampWithdrawModel->allowField(true)->save($data);
         if($result){
+            if($data['rebate_type'] == 2){
+                    
+                $res = db('output')->insert([
+                    'output'        => $data['camp_withdraw_fee'],
+                    'camp_id'       => $data['camp_id'],
+                    'camp'          => $data['camp'],
+                    'member_id'     => $data['member_id'],
+                    'member'        => $data['member'],
+                    'type'          => 4,
+                    'e_balance'     =>$data['e_balance'],
+                    's_balance'     =>$data['s_balance'],
+                    'f_id'          =>$this->CampWithdrawModel->id,
+                    'rebate_type'   =>$data['rebate_type'],
+                    'schedule_rebate'   =>$data['schedule_rebate'],
+                    
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+                if(!$res){
+                    $this->error('操作失败,请务必截图并联系woo,87行');
+                }
+                $res = db('output')->insert([
+                    'output'        => $data['withdraw'],
+                    'camp_id'       => $data['camp_id'],
+                    'camp'          => $data['camp'],
+                    'member_id'     => $data['member_id'],
+                    'member'        => $data['member'],
+                    'type'          => -1,
+                    'e_balance'     =>$data['e_balance'],
+                    's_balance'     =>$data['s_balance'],
+                    'f_id'          =>$this->CampWithdrawModel->id,
+                    'rebate_type'   =>$data['rebate_type'],
+                    'schedule_rebate'   =>$data['schedule_rebate'],
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+                if(!$res){
+                    $this->error('操作失败,请务必截图并联系woo,106行');
+                }
+            }else{
+                $res = db('output')->insert([
+                    'output'        => $data['withdraw'],
+                    'camp_id'       => $data['camp_id'],
+                    'camp'          => $data['camp'],
+                    'member_id'     => $data['member_id'],
+                    'member'        => $data['member'],
+                    'type'          => -1,
+                    'e_balance'     =>($data['balance']),
+                    's_balance'     =>($data['balance']),
+                    'f_id'          =>$data['id'],
+                    'rebate_type'   =>$data['rebate_type'],
+                    'schedule_rebate'   =>$data['schedule_rebate'],
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+                if(!$res){
+                    $this->error('操作失败,请务必截图并联系woo,100行');
+                }
+            }
+            if($res){
+                db('camp_finance')->insert([
+                    'money'        => ($data['buffer']),
+                    'camp_id'       => $data['camp_id'],
+                    'camp'          => $data['camp'],
+                    'type'          => -4,
+                    'e_balance'     =>($data['balance'] - $data['buffer']),
+                    's_balance'     =>($data['balance']),
+                    'f_id'          =>$data['id'],
+                    'rebate_type'   =>$data['rebate_type'],
+                    'schedule_rebate'   =>$data['schedule_rebate'],
+                    'create_time'   => time(),
+                    'update_time'   => time(),
+                ]);
+            }
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->CampWithdrawModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];

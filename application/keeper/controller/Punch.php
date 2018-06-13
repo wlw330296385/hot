@@ -30,9 +30,9 @@ class Punch extends Base{
     	$punchInfo = $this->PunchService->getPunchInfo(['id'=>$punch_id]);
     	$month_str = date('Ym',time());
     	// 累计打卡
-    	$totalPunch = db('punch')->where(['member_id'=>$this->memberInfo['id']])->count();
+    	$totalPunch = db('punch')->where(['member_id'=>$punchInfo['member_id']])->count();
     	//本月打卡
-    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
+    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$punchInfo['member_id']])->count();
 
 
     	$this->assign('totalPunch',$totalPunch);
