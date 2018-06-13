@@ -74,7 +74,7 @@ class Punch extends Base{
             $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->whereTime('create_time','today')->group('pool_id')->select();
             foreach ($groupList as $key => $value) {
                 foreach ($punchList as $k => $val) {
-                    if($val['c_id']>=$value['times'] && $val['pool_id'] == $val['p_id']){
+                    if($val['c_id']>=$value['times'] && $val['pool_id'] == $value['p_id']){
                         // unset($groupList[$key]);
                         $groupList[$key]['is_max'] = 1;
                     }
