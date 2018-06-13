@@ -9,6 +9,7 @@ use app\model\MatchGroupTeam;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
+use app\model\MatchSchedule;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 
@@ -633,5 +634,77 @@ class LeagueService
     // 删除联赛参赛球队球员数据 $force 是否强制删除
     public function delMatchTeamMember($data, $force=false) {
         return MatchTeamMember::destroy($data, $force);
+    }
+
+    // 保存联赛赛程
+    public function saveMatchSchedule($data, $condi=[]) {
+        $model = new MatchSchedule();
+        if ( !empty($condi) && is_array($condi) ) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
+    // 获取赛程详情
+    public function getMatchSchedule($map) {
+        $model = new MatchSchedule();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取赛程列表
+    public function getMatchSchedules($map, $order='id desc') {
+        $model = new MatchSchedule();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取赛程列表
+    public function getMatchScheduleList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchSchedule();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取赛程列表（页码）
+    public function getMatchSchedulePaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchSchedule();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 删除赛程
+    public function delMatchSchedule($data, $force=false) {
+        return MatchSchedule::destroy($data, $force);
     }
 }

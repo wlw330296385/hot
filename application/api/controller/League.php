@@ -2344,4 +2344,216 @@ class League extends Base
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
+
+    // 创建赛程
+    public function createschedule() {
+        // 接收请求数据
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['status'] = input('post.status', 1, 'intval');
+        // 数据验证器
+        $validate = validate('MatchScheduleVal');
+        if (!$validate->scene('add')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 检查会员操作权限（联赛工作人员-管理员以上）
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 插入赛程数据
+        try {
+           $result = $leagueS->saveMatchSchedule($data);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $result]);
+    }
+
+    // 编辑赛程
+    public function updateschedule() {
+        // 接收请求数据
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['status'] = input('post.status', 1, 'intval');
+        // 数据验证器
+        $validate = validate('MatchScheduleVal');
+        if (!$validate->scene('edit')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 检查会员操作权限（联赛工作人员-管理员以上）
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 修改赛程数据
+        try {
+            $result = $leagueS->saveMatchSchedule($data);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    // 赛程列表（无分页）
+    public function getmatchschedules() {
+        try {
+            $data = input('param.');
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchSchedules($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 赛程列表
+    public function getmatchschedulelist() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1, 'intval');
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchScheduleList($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 赛程列表（页码）
+    public function getmatchschedulepage() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1, 'intval');
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchSchedulePaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 删除赛程
+    public function delmatchschedule() {
+        $id = input('id', 0, 'intval');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 获取赛程详情
+        $leagueS = new LeagueService();
+        $scheduleInfo  = $leagueS->getMatchSchedule(['id' => $id]);
+        if (!$scheduleInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查会员操作权限
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $scheduleInfo['match_id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
+    // 根据联赛分组生成预览赛程
+    public function buildschedulebygroup() {
+        // 接收请求数据
+        $data = input('post.');
+        // 数据验证
+        if ( !array_key_exists('group_id', $data) ) {
+            return json(['code' =>100, 'msg' => __lang('MSG_402').',请传入group_id']);
+        }
+        $leagueS = new LeagueService();
+        // 查询联赛分组数据
+        $groupInfo = $leagueS->getMatchGroup(['id' => $data['group_id']]);
+        if (!$groupInfo) {
+            return json(['code' => 100, 'msg' => '联赛分组'.__lang('MSG_404')]);
+        }
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查会员有无操作权限（管理员以上）
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $groupInfo['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 获取联赛分组球队数据
+        $orderby = ['group_number' => 'asc'];
+        $groupTeams = $leagueS->getMatchGroupTeams([
+            'match_id' => $groupInfo['match_id'],
+            'group_id' => $groupInfo['id']
+        ], $orderby);
+        if (!$groupTeams) {
+            return json(['code' => 100, 'msg' => '联赛分组球队'.__lang('MSG_404')]);
+        }
+        //dump($groupTeams);
+        // matchGameCount: 预计场次数
+        // teamCount: 分组内球队数量
+        $teatmCount = count($groupTeams);
+        $matchGameNumber = $teatmCount * ($teatmCount - 1) / 2;
+        // 比赛轮数: 球队数为单数时轮数等于球队数,球队数为双数时轮数等于队数减一
+        $matchRoundNumber = ($matchGameNumber%2==0) ? $teatmCount-1 : $teatmCount;
+        //dump($matchGameNumber);
+        //dump($matchRoundNumber);
+        // 计算对阵关系(单循环）
+        $scheduleArrary = [];
+        for ($i = 0; $i<$matchRoundNumber; $i++) {
+
+        }
+    }
 }

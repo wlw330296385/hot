@@ -14,6 +14,8 @@ class Apps extends Base
     public function appsForm(){
         $member_id = session('memberInfo.id');
         $event_id = input('param.event_id');
+        $lesson_id = input('param.lesson_id');
+        $type = input('param.type',2);
         $memberInfo = db('member')->where(['id'=>$member_id])->find();
         $event_member = db('event_member')->where(['event_id'=>$event_id,'member_id'=>$this->memberInfo['id']])->find();
         if ($member_id > 0) {
@@ -28,7 +30,13 @@ class Apps extends Base
             ];
         }
 
-        $eventInfo = db('event')->where(['id'=>$event_id])->find();
+        if($type == 2){
+            $EventService = new \app\service\EventService();
+            $eventInfo = $EventService->getEventInfo(['id'=>$event_id]);
+        }elseif($type == 1){
+             $LessonService = new \app\service\LessonService();
+             $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+        }
 
         $this->assign('memberInfo',$memberInfo);
         $this->assign('cert',$cert);

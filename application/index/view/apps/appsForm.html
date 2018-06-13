@@ -63,6 +63,9 @@
         .nobg::after {
             background: none !important;
         }
+        .selectTotal, .selectDom{
+            padding: 5px 8px !important;
+        }
 
     </style>
 </head>
@@ -82,12 +85,25 @@
         <ul class="mui-table-view list" id="eventDes">
             <li class="listli desimg">{$eventInfo.event_des}</li>
         </ul>
-        <div class="tipContent">
+        <div class="tipContent border-b">
             <div class="tipContentText">
                 <p>
                     <strong>登记说明：</strong>
                 </p>
                 <p>{$eventInfo.apps_des}</p>
+            </div>
+        </div>
+
+        <div class="tipContent">
+            <div class="tipContentText">
+                <p>
+                    <strong>请选择您要报名的种类：</strong>
+                </p>
+                <p class="mui-text-center">
+                    {volist name='$eventInfo.doms' id="vol"}
+                    <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}</button>
+                    {/volist}
+                </p>
             </div>
         </div>
 
@@ -97,6 +113,7 @@
             <input type="hidden" name="type" class="data" value="1" />
             <input type="hidden" name="f_id" class="data" value="{$eventInfo.id}" />
             <input type="hidden" name="event" class="data" value="{$eventInfo.event}" />
+
 
             <div class="mui-input-row mName {if $memberInfo.id>0}hide{else/}show{/if}">
                 <label class="colororange">会员名</label>
@@ -181,7 +198,7 @@
             </div>
 
         <div class="tipBottom">
-            <p><strong>结束日期：{$eventInfo.end|date='Y-m-d H:i',###} {if $eventInfo.is_max==-1}（已满人）{/if}</strong></p>
+            <p><strong>结束日期：{$eventInfo.ends} {if $eventInfo.is_max==-1}（已满人）{/if}</strong></p>
             <p class="f12">本活动最终解释权归{$eventInfo.organization}所有</p>
         </div>
 
@@ -290,6 +307,14 @@
             $('select[name="sexSelect"]').change(function () {
                 $('input[name="sex"]').val($(this).val());
             });
+
+
+            // 选择套餐
+            $('.selectDom').on('click', function () {
+                $('.selectDom').removeClass('bggreen');
+                $(this).addClass('bggreen');
+                $('.price-frame strong').text($(this).val());
+            })
 
             //验证短信验证码
             $('#code').on("blur", function () {
@@ -541,6 +566,7 @@
                 var objData = wooApi.arrTOobj(data);
                 objData.content = mixFrom;
                 objData.remarks = $(".remarks").val();
+                objData.dom = $('.selectDom.bggreen').text();
                 var url = "{:url('api/apps_apply/createAppsApplyApi')}";
                 var ajaxResult = wooApi.asyncF(url, objData);
                 if (ajaxResult.code == 200) {
