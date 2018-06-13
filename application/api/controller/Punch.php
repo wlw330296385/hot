@@ -110,7 +110,6 @@ class Punch extends Base{
             $result = $this->PunchService->createPunch($data);
 
             if(isset($data['groupList']) && $data['groupList'] != '[]' && $result['code']== 200){
-                
                 $groupList = json_decode($data['groupList'],true);
                 foreach ($groupList as $key => &$value) {
                     $value['punch'] = $data['punch'];

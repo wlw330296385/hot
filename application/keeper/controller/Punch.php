@@ -54,14 +54,35 @@ class Punch extends Base{
     	//本月打卡
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
 
+        // 获取开启奖金池规则的社群
+        $groupList = [];
     	$groupList = db('group_member')
-            ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id')
+            ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id,pool.times')
             ->join('pool','pool.group_id = group_member.group_id','left')
             ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
             ->where(['pool.status'=>2])
             ->order('group_member.id desc')
             ->select();
-        
+         
+        //如果某人当天已在奖金池里打卡超过times(不允许打卡)
+        $pool_ids = [];
+        if(!empty($groupList)){
+            foreach ($groupList as $key => $value) {
+                $pool_ids[] = $value['p_id'];
+                $groupList[$key]['is_max'] = 0;
+            }
+            $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->whereTime('create_time','today')->group('pool_id')->select();
+            foreach ($groupList as $key => $value) {
+                foreach ($punchList as $k => $val) {
+                    if($val['c_id']>=$value['times'] && $val['pool_id'] == $val['p_id']){
+                        // unset($groupList[$key]);
+                        $groupList[$key]['is_max'] = 1;
+                    }
+                }
+            }
+        }
+        dump($groupList);
+
         $this->assign('is_pool',$is_pool?$is_pool:-1);
     	$this->assign('monthPunch',$monthPunch);
         $this->assign('groupList',$groupList);
