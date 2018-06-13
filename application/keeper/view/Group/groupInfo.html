@@ -111,7 +111,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}">
+                        <a href="" class="createPool">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-bonuspool"></use>
                             </svg>
@@ -147,7 +147,7 @@
                     <a href="#shareGuide">分享</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-8 mui-col-sm-8 opli bgred">
-                    <a href="{:url('punch/createPunch')}" class="createPunch">打卡</a>
+                    <a href="{:url('punch/createPunch')}/?group_id={$groupInfo.id}" class="createPunch">打卡</a>
                 </li>
             </ul>
             <ul class="mui-table-view operation otherBottom hide">
@@ -187,29 +187,40 @@
         var member_id = "{$memberInfo.id}";
         var group_id = "{$groupInfo.id}";
         var group_member_id = "{$groupInfo.member_id}";
+        var avatar = "{$memberInfo.avatar}";
         var id = "{$id}"; //是否在社群内，是则id有值，否则为空
         $(function () {
 
             // 打卡提示
-            // $(".createPunch").on("tap", function () {
-            //     if (group_member != member) {
-            //         $(this).attr("href", "javascript:;");
-            //         mui.alert("该群还未设置打卡规则");
-            //     } else {
-            //         $(this).attr("href", "javascript:;");
-            //         mui.alert("该群还未设置打卡规则,请前往创建", function () {
-            //             window.location.href = "{:url('group/createPool')}" + '/group_id/' + "{$groupInfo.id}"
-            //         });
-            //     }
-            // });
+            $(".createPunch").on("tap", function () {
+                if (group_member != member && "{$nowPool.status}" != 2) {
+                    $(this).attr("href", "javascript:;");
+                    mui.alert("该群还未设置打卡规则,暂不能在该群打卡");
+                    return false;
+                } else if (group_member == member && "{$nowPool.status}" != 2) {
+                    $(this).attr("href", "javascript:;");
+                    var btnArray = ['取消', '前往'];
+                    mui.confirm('该群还未设置打卡规则,请前往创建', '提示', btnArray, function (e) {
+                        if (e.index == 1) {
+                            window.location.href = "{:url('group/createPool')}" + '/group_id/' + "{$groupInfo.id}";
+                        }
+                    })
+                }
+            });
 
             // 判断是否可以创建奖金池
             $(".createPool").on("tap", function () {
                 if (group_member != member) {
-                    $(this).children("a").attr("href", "javascript:;");
-                    mui.toast("只有社群群主才能创建奖金池")
+                    mui.toast("只有社群群主才能创建奖金池");
+                    return false;
                 }
             });
+            if (group_member != member) {
+                $(".createPool").attr("href", "javascript:;");
+                return false;
+            } else {
+                $(".createPool").attr("href", "{:url('group/poolList',['group_id'=>$groupInfo.id])}");
+            }
 
             var groupIndex = wooApi.GetQueryString('groupIndex');
             if (groupIndex == "otherGroup") {
@@ -232,6 +243,9 @@
             $(".joinGroup").on("tap", '', function () {
                 mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
                     data: {
+                        member: member,
+                        member_id: member_id,
+                        avatar: avatar,
                         group_id: group_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -285,6 +299,9 @@
                     }
                 })
             })
+
+
+
             toPunchList(); //获取我的打卡记录列表
         })
 

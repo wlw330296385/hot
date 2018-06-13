@@ -179,7 +179,6 @@
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="box" id="hideStList" style="display: none"></div>
-                    <div class="box" id="hideStListIni" style="display: none"></div>
                     <div class="operation-btn">
                         <span class="mui-badge">0</span>
                         <a class="all">全选</a>
@@ -200,6 +199,7 @@
                 <div class="publicText">
                     <p>1、开启匿名打卡、本次打卡将隐藏个人信息，但会正常进行统计，仅自己可见。</p>
                     <p>2、每次打卡可选择自己所在社群，打卡信息将发布到社群。</p>
+                    <p>3、选中社群点击删除，可删除已选社群</p>
                 </div>
             </div>
 
@@ -282,7 +282,7 @@
                     {volist name="groupList" id="vol"}
                     <div class="mui-input-row mui-checkbox mui-left">
                         <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
-                        <span style="width:15%"> {$vol.stake}</span>
+                        <span style="width:15%" class="stakeNum"> {$vol.stake}</span>
                         <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
                             data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}">
                     </div>
@@ -373,6 +373,39 @@
 
         $(function () {
 
+            // 默认把社群选上
+            if ("{$is_pool}" > 0) {
+                $("#inactiveList").empty();
+                $("#hideStList").empty();
+                var stake = '';
+                $(".groupslist input[type=checkbox]").each(function () {
+                    var group_id = wooApi.GetQueryString('group_id');
+                    stake = $(this).siblings(".stakeNum").text();
+                    if (group_id == $(this).attr("data-group_id")) {
+                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    }
+                    $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
+                });
+                $(".Hbin").text(stake)
+                changeIndex();//调用-更新序号
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+            }
+
+            //复选框赋值
+            $("#setGroupBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $(".groupslist input[name='checkbox1']").prop("checked", false);
+                //然后遍历出对应所选
+                $("#hideStList input[name=group]").each(function () {
+                    var thisGroupId = $(this).attr("data-group_id");
+                    $("#groups").find("input[name='checkbox1']").filter(function () {
+                        return $(this).attr("data-group_id") == thisGroupId
+                    }).prop("checked", true);
+                });
+            });
+
             // 获取当前时间为打卡时间
             var year = new Date().getFullYear();
             var month = new Date().getMonth() + 1;
@@ -440,12 +473,12 @@
             })
 
             //删除
-            $(".del").click(function () {
+            $(document).on('tap', '.del', function () {
                 $("input[name='group']:checked").parents(".checkboxCont").remove();
-                changeIndex();
                 $("#hideStList").empty();
+                var SumNum = 0
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:19% !important"></label><font class="f14">' + $(this).val() + '</font><input name="group" value="' + $(this).val() + '" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"></div>';
                     var group = $(this).siblings("font").text();
                     var group_id = $(this).attr("data-group_id");
                     var member = $(this).attr("data-member");
@@ -454,13 +487,11 @@
                     var pool_id = $(this).attr("data-pool_id");
                     var stake = $(this).attr("data-stake");
                     groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
+                    SumNum += parseInt(stake)
                     $("#hideStList").append(str);
                 })
-
-            });
-
-            //角标随checkboxCont的数量变化
-            $(document).on('tap', '.del', function () {
+                $(".Hbin").text(SumNum)
+                changeIndex();//调用-更新序号
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
@@ -471,7 +502,7 @@
                 $("#hideStList").empty();
                 var SumNum = 0
                 $(".groupslist input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                     var stake = $(this).attr("data-stake");
