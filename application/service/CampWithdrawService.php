@@ -71,6 +71,7 @@ class CampWithdrawService {
 
     // 新增提现记录
     public function createCampWithdraw($data){
+        Db::rollback();
         $data['status'] = 1;
         $validate = validate('CampWithdrawVal');
         if(!$validate->scene('add')->check($data)){
@@ -78,8 +79,8 @@ class CampWithdrawService {
         }
         $result = $this->CampWithdrawModel->allowField(true)->save($data);
         if($result){
+            $date_str = date('Ymd',time());
             if($data['rebate_type'] == 2){
-                    
                 $res = db('output')->insert([
                     'output'        => $data['camp_withdraw_fee'],
                     'camp_id'       => $data['camp_id'],
@@ -87,36 +88,32 @@ class CampWithdrawService {
                     'member_id'     => $data['member_id'],
                     'member'        => $data['member'],
                     'type'          => 4,
-                    'e_balance'     =>$data['e_balance'],
+                    'e_balance'     =>$data['s_balance'] - $data['camp_withdraw_fee'],
                     's_balance'     =>$data['s_balance'],
                     'f_id'          =>$this->CampWithdrawModel->id,
                     'rebate_type'   =>$data['rebate_type'],
                     'schedule_rebate'   =>$data['schedule_rebate'],
+                    'date_str'      =>$date_str,
                     
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
-                if(!$res){
-                    $this->error('操作失败,请务必截图并联系woo,87行');
-                }
                 $res = db('output')->insert([
-                    'output'        => $data['withdraw'],
+                    'output'        => $data['withdraw'] - $data['camp_withdraw_fee'],
                     'camp_id'       => $data['camp_id'],
                     'camp'          => $data['camp'],
                     'member_id'     => $data['member_id'],
                     'member'        => $data['member'],
                     'type'          => -1,
-                    'e_balance'     =>$data['e_balance'],
+                    'e_balance'     =>$data['s_balance'] - $data['withdraw'] + $data['camp_withdraw_fee'],
                     's_balance'     =>$data['s_balance'],
                     'f_id'          =>$this->CampWithdrawModel->id,
                     'rebate_type'   =>$data['rebate_type'],
                     'schedule_rebate'   =>$data['schedule_rebate'],
+                    'date_str'      =>$date_str,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
-                if(!$res){
-                    $this->error('操作失败,请务必截图并联系woo,106行');
-                }
             }else{
                 $res = db('output')->insert([
                     'output'        => $data['withdraw'],
@@ -125,17 +122,15 @@ class CampWithdrawService {
                     'member_id'     => $data['member_id'],
                     'member'        => $data['member'],
                     'type'          => -1,
-                    'e_balance'     =>($data['balance']),
-                    's_balance'     =>($data['balance']),
-                    'f_id'          =>$data['id'],
+                    'e_balance'     =>($data['e_balance']),
+                    's_balance'     =>($data['s_balance']),
+                    'f_id'          =>$this->CampWithdrawModel->id,
                     'rebate_type'   =>$data['rebate_type'],
                     'schedule_rebate'   =>$data['schedule_rebate'],
+                    'date_str'      =>$date_str,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
-                if(!$res){
-                    $this->error('操作失败,请务必截图并联系woo,100行');
-                }
             }
             if($res){
                 db('camp_finance')->insert([
@@ -143,17 +138,20 @@ class CampWithdrawService {
                     'camp_id'       => $data['camp_id'],
                     'camp'          => $data['camp'],
                     'type'          => -4,
-                    'e_balance'     =>($data['balance'] - $data['buffer']),
-                    's_balance'     =>($data['balance']),
-                    'f_id'          =>$data['id'],
+                    'e_balance'     =>($data['e_balance']),
+                    's_balance'     =>($data['s_balance']),
+                    'f_id'          =>$this->CampWithdrawModel->id,
                     'rebate_type'   =>$data['rebate_type'],
                     'schedule_rebate'   =>$data['schedule_rebate'],
+                    'date_str'      =>$date_str,
                     'create_time'   => time(),
                     'update_time'   => time(),
                 ]);
             }
+            Db::commit();
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->CampWithdrawModel->id];
         }else{
+            Db::rollback();
             return ['msg'=>'操作失败', 'code' => 100];
         }
     }
