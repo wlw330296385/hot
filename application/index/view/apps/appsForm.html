@@ -18,7 +18,6 @@
             margin: 25px 28px 0 28px;
             line-height: 54px;
             vertical-align: middle;
-            display: inline-flex;
         }
 
         .tipContent .tipContentText p {
@@ -94,7 +93,7 @@
             </div>
         </div>
 
-        <div class="tipContent">
+        <div class="tipContent" id="sDom">
             <div class="tipContentText">
                 <p>
                     <strong>请选择您要报名的种类：</strong>
@@ -266,9 +265,25 @@
 
         $(function () {
 
-
+            //活动下架提示，并隐藏表单
             if("{$eventInfo.status}"=="2"){
                 $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动下架</li>');
+                $(".registerFrom").hide();
+                $("#sDom").hide();
+            }
+            //活动已满人提示，并隐藏表单
+            if("{$eventInfo.is_max}"=="-1"){
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">已满人</li>');
+                $(".registerFrom").hide();
+                $("#sDom").hide();
+            }
+            //判断当前时间是否大于活动结束时间
+            var time = Number("{$eventInfo.end}");
+            var timestamp = Date.parse(new Date())/1000;
+            if(timestamp>time){
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动已经结束</li>');
+                $(".registerFrom").hide();
+                $("#sDom").hide();
             }
 
             console.log(eMember)
@@ -279,6 +294,7 @@
             if(showSuccess=="yes"){
                 $(".registerFrom").hide();
                 $(".operation").hide();
+                $("#sDom").hide();
                 $("#showSuccess").show();
                 $("#eventDes").show();
             }
@@ -308,6 +324,10 @@
                 $('input[name="sex"]').val($(this).val());
             });
 
+            //如果套餐选项只有一个就自动选上
+            if($('.selectDom').length==1){
+                $('.selectDom').addClass('bggreen');
+            }
 
             // 选择套餐
             $('.selectDom').on('click', function () {
@@ -457,6 +477,32 @@
 
             $("#submitAction").on("click", "", function () {
 
+                var realname = $("input[name=realname]").val();
+                var community = $("input[name=community]").val();
+                var address = $("input[name=address]").val();
+                var native_place = $("input[name=native_place]").val();
+
+                if($('.selectDom.bggreen').length==0){
+                    mui.toast("请选择您要报名的种类");
+                    return false;
+                }
+                if (realname == '') {
+                    mui.toast("请填写真实姓名");
+                    return false;
+                }
+                if (community == '') {
+                    mui.toast("请填写所属社区");
+                    return false;
+                }
+                if (address == '') {
+                    mui.toast("请填写居住地");
+                    return false;
+                }
+                if (native_place == '') {
+                    mui.toast("请填写籍贯");
+                    return false;
+                }
+
                 var member = $("input[name='member']").val();
                 var telephone = $("input[name='telephone']").val();
                 var ismyself = $("input[name='ismyself']").val();
@@ -540,27 +586,7 @@
                     }
                 });
                 mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
-                
-                var realname = $("input[name=realname]").val();
-                var community = $("input[name=community]").val();
-                var address = $("input[name=address]").val();
-                var native_place = $("input[name=native_place]").val();
-                if (realname == '') {
-                    mui.toast("请填写真实姓名");
-                    return false;
-                }   
-                if (community == '') {
-                    mui.toast("请填写所属社区");
-                    return false;
-                }
-                if (address == '') {
-                    mui.toast("请填写居住地");
-                    return false;
-                }
-                if (native_place == '') {
-                    mui.toast("请填写籍贯");
-                    return false;
-                }
+
 
                 var data = wooApi.getInputData('input', 'data');
                 var objData = wooApi.arrTOobj(data);

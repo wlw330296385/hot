@@ -85,7 +85,7 @@ class AppsApply extends Base{
                                 $value['remarks'] = $data['remarks'];
                                 $value['event_id'] = $data['f_id'];
                                 $value['event'] = $data['event'];
-                                $value['combo'] = '默认套餐';
+                                $value['combo'] = input('param.dom','默认套餐');
                                 $value['avatar'] = $this->memberInfo['avatar'];
                                 $value['total'] = 1;
                                 $EventService->saveAllMmeber([$value]);

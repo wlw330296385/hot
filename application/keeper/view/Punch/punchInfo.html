@@ -217,6 +217,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
 
         var count = 1;
@@ -300,8 +301,8 @@
 
             //打赏
             $(".confirmDS").on('tap', function () {
-                var hot_coin = "{$memberInfo.hot_coin}";
-                var choise_hot_coin = $(".classActive").text();
+                var hot_coin = Number("{$memberInfo.hot_coin}");
+                var choise_hot_coin = Number($(".classActive").attr("data-h"));
                 var arrBtn = ["取消", "充值热币"];
                 var arrBtnConfirm = ["取消", "确认"];
                 if (hot_coin < choise_hot_coin) {
@@ -449,6 +450,44 @@
                 }
             });
         };
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$punchInfo.member} | {$punchInfo.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$punchInfo.image_url}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$punchInfo.member} | {$punchInfo.name}',
+                desc: '本月累计打卡：{$totalPunch}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$punchInfo.image_url}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
     </script>
 </body>
 
