@@ -218,6 +218,11 @@ class Punch extends Base{
             $avatar = $this->memberInfo['avatar'];
             $reward = input('param.reward');
             $punch_id = input('param.punch_id');
+
+            $punchInfo = $this->PunchService->getPunchInfo(['id'=>$punch_id]);
+            if($punchInfo['member_id'] == $member_id){
+                return json(['code'=>100,'msg'=>'不可给自己打赏']);
+            }
             if($reward>$this->memberInfo['hot_coin']){
                 return json(['code'=>100,'msg'=>'热币不足']);
             }
@@ -236,7 +241,6 @@ class Punch extends Base{
                         'create_time'=>time(),
                     ]
                 );
-                $punchInfo = $this->PunchService->getPunchInfo(['id'=>$punch_id]);
                 db('member')->where(['id'=>$punchInfo['member_id']])->inc('hot_coin',$reward)->update();
                 db('hotcoin_finance')->insert(
                     [
