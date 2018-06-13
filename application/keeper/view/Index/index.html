@@ -561,7 +561,6 @@
                     console.log(type);
                 }
             });
-
         })
 
         //拼接搜索地址
@@ -605,6 +604,28 @@
             }, 500);
         }
 
+        function nowTime() {
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month
+            }
+            var day = new Date().getDate();
+            if (day < 10) {
+                day = "0" + day
+            }
+            var mintues = new Date().getMinutes();
+            if (mintues < 10) {
+                mintues = "0" + mintues
+            }
+            var seconds = new Date().getSeconds();
+            if (seconds < 10) {
+                seconds = "0" + seconds
+            }
+            return year + '-' + month + '-' + day + ' ' + mintues + '-' + seconds
+            console.log(time)
+        }
+
         var eventid = ''
         //获取最近一条活动
         function toLastEventList() {
@@ -621,19 +642,28 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
+
                         // 将时间戳转成日期格式
                         var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
                         var Tday = gettimed(data.data[0].start_time_stamp * 1000);
                         var Ttime = gettimeh(data.data[0].start_time_stamp * 1000);
                         eventid = data.data[0].id
                         var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id + '/event_id/' + data.data[0].id;
-                        div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        if (nowTime() > data.data[0].start_time) {
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        } else {
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        }
                         div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].event + '</h5>';
                         div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                         if (data.data[0].is_finished_num == 1) {
                             div += '<button class="mui-btn opbtn bggray">已结束</button>';
                         } else {
-                            div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                            if (nowTime() > data.data[0].start_time) {
+                                div += '<button class="mui-btn opbtn bggray">参加</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                            }
                         }
                         div += ' </div></div></li>';
                         // 人员头像版块
@@ -682,7 +712,11 @@
                         if (data.data[0].match_time == 0) {
                             div += '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
                         } else {
-                            div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            if (nowTime() > data.data[0].match_time) {
+                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            } else {
+                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            }
                         }
                         div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[0].match + '</h5><div class="divFrame">';
                         div += '<p>发起人：' + data.data[0].home_team + '</p>';
@@ -690,7 +724,12 @@
                         if (data.data[0].is_finished_num == 1) {
                             div += '<button class="mui-btn opbtn bggray">已结束</button>';
                         } else {
-                            div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                            if (nowTime() > data.data[0].match_time) {
+                                div += '<button class="mui-btn opbtn bggray">参加</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                            }
+
                         }
                         div += ' </div></div></li>';
                         // 人员头像版块
