@@ -165,12 +165,12 @@ class Camp extends Base{
 
             // 地区input 拆分成省 市 区 3个字段
             $locationStr = input('post.locationStr');
-            if ($locationStr) {
+            /*if ($locationStr) {
                 $locationArr = explode('|', $locationStr);
                 $campData['province'] = $locationArr[0];
                 $campData['city'] = $locationArr[1];
                 $campData['area'] = $locationArr[2];
-            }
+            }*/
 
             //dump($data);
             $campS = new CampService();
@@ -244,6 +244,14 @@ class Camp extends Base{
                 'realname' => input('post.creator'),
                 //'camp_telephone' => $telephone
             ];
+            // 地区input 拆分成省 市 区 3个字段
+            $locationStr = input('post.locationStr');
+            if ($locationStr) {
+                $locationArr = explode('|', $locationStr);
+                $data['province'] = $locationArr[0];
+                $data['city'] = $locationArr[1];
+                $data['area'] = $locationArr[2];
+            }
             $campS = new CampService();
             return $campS->createCamp($data);
         }catch(Exception $e){
