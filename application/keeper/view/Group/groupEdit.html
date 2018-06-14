@@ -50,7 +50,8 @@
         <div class="nav-list borderStyle mb12">
             <div class="page-header">
                 <span class="course">
-                    社群成员（<text class="groupMemberNum">0</text>）
+                    社群成员（
+                    <text class="groupMemberNum">0</text>）
                 </span>
             </div>
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">
@@ -73,7 +74,7 @@
             <li class="mui-table-view-cell listli">
                 <label>奖金池</label>
                 <span class="wd36 pdr15">
-                    <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right colororange">管理奖金池</a>
+                    <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right colororange">管理打卡规则</a>
                 </span>
             </li>
         </ul>
@@ -83,7 +84,9 @@
             <div class="mui-input-row">
                 <a href="{:url('group/groupApplyList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">
                     <label>入群申请</label>
-                    <span class="colororange">查看申请列表</span>
+                    <span class="colororange">待处理
+                        <text class="mui-badge mui-badge-danger fr" style="margin: 12px 0 0 10px;">0</text>
+                    </span>
                 </a>
             </div>
             <div class="mui-input-row h-auto">
@@ -110,16 +113,17 @@
                 </div>
             </div>
             <div class="mui-input-row">
-                <label>最大人数</label>
-                <input type="text" name="max" class="data" value="{$groupInfo.max}" placeholder="最大人数">
+                <label>人数限额</label>
+                <span>人</span>
+                <input type="text" name="max" class="data wd45" value="{$groupInfo.max}" placeholder="请填写人数限额" style="padding-right: 5px">
             </div>
             <div class="mui-input-row h-auto">
                 <label>社群规则</label>
-                <textarea name="rule" rows="3" value="{$groupInfo.rule}" class="rule" placeholder="请填写内容">{$groupInfo.rule}</textarea>
+                <textarea name="rule" rows="3" value="{$groupInfo.rule}" class="rule mui-text-left" placeholder="请填写内容">{$groupInfo.rule}</textarea>
             </div>
             <div class="mui-input-row h-auto">
                 <label>社群公告</label>
-                <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice" placeholder="请填写内容">{$groupInfo.notice}</textarea>
+                <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice mui-text-left" placeholder="请填写内容">{$groupInfo.notice}</textarea>
             </div>
 
         </form>
@@ -316,6 +320,27 @@
                 });
             });
 
+            // 获取申请列表未回复的数量值
+            var url = "{:url('api/group_apply/getGroupApplyListByPageApi','','',true)}";
+            var group_id = "{$groupInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    status: 1,
+                    group_id: group_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        $(".mui-badge").text(data.data.total);
+                    }
+                },
+            });
+
             groupMember();
             myFansList();
         })
@@ -392,6 +417,8 @@
                 }
             });
         };
+
+
 
         // 获取数据并进行提交
         function submitAction() {

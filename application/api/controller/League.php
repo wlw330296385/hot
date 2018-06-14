@@ -2415,6 +2415,11 @@ class League extends Base
     public function getmatchschedules() {
         try {
             $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
             $leagueS = new LeagueService();
             $result = $leagueS->getMatchSchedules($data);
             if (!$result) {
@@ -2432,6 +2437,11 @@ class League extends Base
         try {
             $data = input('param.');
             $page = input('page', 1, 'intval');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
             if (input('?page')) {
                 unset($data['page']);
             }
@@ -2452,6 +2462,11 @@ class League extends Base
         try {
             $data = input('param.');
             $page = input('page', 1, 'intval');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
             if (input('?page')) {
                 unset($data['page']);
             }

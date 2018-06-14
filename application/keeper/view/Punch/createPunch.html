@@ -82,15 +82,31 @@
 
         .secondUl {
             margin: 0 !important;
-            padding: 11px !important;
+            padding: 0 11px 11px 11px !important;
         }
 
         .secondUl li {
             padding-left: 11px !important;
+            padding-right: 0 !important;
+            line-height: 29px;
         }
 
         .secondUl li:after {
             left: 0 !important;
+        }
+
+        .secondUl li .hideDiv {
+            float: right;
+            width: 87%;
+            display: none;
+        }
+
+        .secondUl li .hideDiv input {
+            width: 25%;
+            margin: 0 0 0 10px;
+            padding: 0;
+            height: 28px;
+            text-align: center;
         }
 
         .showHbin {
@@ -145,11 +161,29 @@
                         <input type="hidden" name="punch_category" value="" class="data">
                     </a>
                 </div>
-                <div class="mui-input-row">
+                <div class="mui-input-row sportProject">
                     <label class="wd45">
                         <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
                     </label>
                     <input type="text" class="data wd52" name="name" value="" placeholder="运动项目" />
+                </div>
+
+                <div class="mui-input-row sportProject">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动时长
+                    </label>
+                    <span>minutes</span>
+                    <input type="number" class="data" name="duration" value="" placeholder="运动时长" style="width: 34% !important;height: 42px;padding-right: 5px;"
+                    />
+                </div>
+
+                <div class="mui-input-row sportProject">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动路程
+                    </label>
+                    <span>km</span>
+                    <input type="number" class="data" name="extent" value="" placeholder="运动路程" style="width: 39% !important;height: 42px;padding-right: 5px;"
+                    />
                 </div>
 
                 <div class="mui-input-row">
@@ -233,11 +267,42 @@
                         </a>
                         <div class="mui-collapse-content" style="padding: 0">
                             <ul class="mui-table-view list secondUl">
-                                <li class="mui-table-view-cell listli">跑步</li>
-                                <li class="mui-table-view-cell listli">健身</li>
-                                <li class="mui-table-view-cell listli">游泳</li>
-                                <li class="mui-table-view-cell listli">球类</li>
-                                <li class="mui-table-view-cell listli">综合</li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>跑步</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时间">
+                                        <input type="number" name="extent" value="" placeholder="公里">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>健身</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时间">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>游泳</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时间">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>球类</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时间">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>综合</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时间">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
                                 <li class="mui-table-view-cell otherChoise">自填</li>
                             </ul>
                         </div>
@@ -287,8 +352,7 @@
                         <span style="width:10%" class="stakeNum"> {$vol.stake}</span>
                         <span style="width:50%;color:#ddd">今日已打卡{$vol.times}次</span>
                         <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
-                            data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}" disabled>
-                        {else/}
+                            data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}" disabled> {else/}
                         <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
                         <span style="width:15%" class="stakeNum"> {$vol.stake}</span>
                         <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
@@ -448,26 +512,54 @@
                 $("input[name=punch_category]").val('');
                 mui("#sportType").popover("toggle");
             });
-            // 选择训练
+
             $(".secondUl").on('tap', '.listli', function () {
-                var name = $(this).text();
-                var punch_category = $(this).parent().parent().siblings().children().text();
-                $("input[name=name]").val(name);
+                $(".secondUl .hideDiv").hide();
+                $(this).find(".hideDiv").show();
+            });
+            $(".secondUl").on('tap', '.confirmBtn', function () {
+                var duration = $(this).siblings("input[name=duration]").val();
+                var extent = $(this).siblings("input[name=extent]").val();
+                var punch_category = $(this).parents(".mui-collapse-content").siblings().find("p").text();
+                var name = $(this).parent().siblings("text").text();
                 $(".punch_category").text(punch_category);
+                $(".sportProject input[name=name]").val(name);
+                $(".sportProject input[name=duration]").val(duration);
+                $(".sportProject input[name=extent]").val(extent);
                 if (punch_category == "训练") {
                     $("input[name=punch_category]").val(1);
                 } else {
                     $("input[name=punch_category]").val(2);
                 }
-                mui("#sportType").popover("toggle");
-            });
-            $(".otherChoise").on("tap", "", function () {
-                $("input[name=name]").val('');
-                var punch_category = $(this).parent().parent().siblings().children().text();
-                $(".punch_category").text(punch_category);
-                $("input[name=punch_category]").val(1);
+                if (name != "跑步") {
+                    $(".sportProject input[name=extent]").val('');
+                    $(".sportProject input[name=extent]").parent().hide();
+                } else {
+                    $(".sportProject input[name=extent]").parent().show();
+                }
                 mui("#sportType").popover("toggle");
             })
+
+            // // 选择训练
+            // $(".secondUl").on('tap', '.listli', function () {
+            //     var name = $(this).text();
+            //     var punch_category = $(this).parent().parent().siblings().children().text();
+            //     $("input[name=name]").val(name);
+            //     $(".punch_category").text(punch_category);
+            //     if (punch_category == "训练") {
+            //         $("input[name=punch_category]").val(1);
+            //     } else {
+            //         $("input[name=punch_category]").val(2);
+            //     }
+            //     mui("#sportType").popover("toggle");
+            // });
+            // $(".otherChoise").on("tap", "", function () {
+            //     $("input[name=name]").val('');
+            //     var punch_category = $(this).parent().parent().siblings().children().text();
+            //     $(".punch_category").text(punch_category);
+            //     $("input[name=punch_category]").val(1);
+            //     mui("#sportType").popover("toggle");
+            // })
 
             //全选
             $(".all").click(function () {
@@ -560,6 +652,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
             //提示框
             if ("{$memberInfo.id}" == 0) {
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {

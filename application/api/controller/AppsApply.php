@@ -68,7 +68,7 @@ class AppsApply extends Base{
                 $result = $this->AppsApply->save($data);
                 if($result){
                     switch ($data['type']) {
-                        case 1:
+                        case 2:
                             $EventService = new \app\service\EventService;
                             $res = $EventService->joinEvent($data['f_id'],$this->memberInfo['id'],$this->memberInfo['member'],1);
 

@@ -117,7 +117,8 @@
                                 if (data.data.data[i].group.member == "{$memberInfo.member}" && data.data.data[i].group.id != '') {
                                     mui.ajax("{:url('api/group_apply/getGroupApplyListByPageApi')}", {
                                         data: {
-                                            group_id: data.data.data[i].group_id
+                                            group_id: data.data.data[i].group_id,
+                                            status: 1
                                         },
                                         dataType: 'json',//服务器返回json格式数据
                                         type: 'post',//HTTP请求类型
@@ -128,11 +129,6 @@
                                             console.log(data)
                                             if (data.code == 200) {
                                                 applyNum = data.data.total;
-                                                // for (var j = 0; j <= data.data.data.length - 1; j++) {
-                                                //     if (dagroup_id == data.data.data[j].group_id) {
-                                                //         console.log(data.data.data[j].status + "+" + data.data.data[j].group_id)
-                                                //     }
-                                                // }
                                             }
                                             if (applyNum != 0) {
                                                 newli += '<div class="fr"><text class="mui-badge mui-badge-danger" style="margin: 15px 10px 0 0;">' + applyNum + '</text></div>';

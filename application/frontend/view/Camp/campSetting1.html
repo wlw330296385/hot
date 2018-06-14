@@ -183,10 +183,6 @@
 
         $('#submit-form1').click(function () {
 
-            //去除提示文字的标签 
-            $("#articleEditor").children(".Eleditor-placeholder").remove();
-            //获取最终含简单html标签的图文内容
-            var introHtml = $("#articleEditor").html();
 
             var campid = $('input[name=campid]').val();
             var logo = $('input[name=logo]').val();
@@ -209,8 +205,17 @@
             } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
                 mui.toast("请输入正确的手机格式");
                 return false;
-            } else if (introHtml == "" || camp_description == "") {
-                mui.toast("请填写训练营宣言和简介");
+            } else if (camp_description == "") {
+                mui.toast("请填写训练营宣言");
+                return false;
+            };
+            //去除提示文字的标签
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
+            //获取最终含简单html标签的图文内容
+            var introHtml = $("#articleEditor").html();
+            if (introHtml == "") {
+                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
+                mui.toast("请填写训练营简介");
                 return false;
             };
 

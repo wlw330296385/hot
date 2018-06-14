@@ -13,30 +13,83 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         @media screen and (min-width: 320px) {
-            .list .listli .mui-media-body {
-                width: 62% !important;
+            #refreshContainer {
+                margin-top: 246px !important;
+            }
+        }
+
+        @media screen and (min-width: 360px) {
+            #refreshContainer {
+                margin-top: 260px !important;
             }
         }
 
         @media screen and (min-width: 375px) {
-            .list .listli .mui-media-body {
-                width: 67% !important;
+            #refreshContainer {
+                margin-top: 264px !important;
+            }
+        }
+
+        @media screen and (min-width: 411px) {
+            #refreshContainer {
+                margin-top: 274px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 275px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 386px !important;
             }
         }
     </style>
 </head>
 
 
-<body class=whitebg>
+<body>
 
-    <header class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">擂主列表</h1>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content list">
+        <div class="img4x3" style="background-image:url('/static/frontend/images/sport.jpg');padding-bottom: 31%"></div>
+        <ul class="mui-table-view borderStyle" style="margin-top: 3px;">
+            <li class="mui-table-view-cell listli" id="logoframe">
+                <div class="mui-media-body  wd66">
+                    <strong class="f16 tmName">{$groupInfo.group}</strong>
+                    <img class="mui-media-object mui-pull-left logostyle" src="{$groupInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <p class="mui-ellipsis lineHeight20">发起人：{$groupInfo.member}</p>
+                    <p class="mui-ellipsis lineHeight20">成员:
+                        <text class="colororange">{$groupInfo.members}</text>
+                    </p>
+                </div>
+                <div class="price-frame" style="margin-top: 15px;">
+                    <p class="f12">累计打卡
+                        <text class="colororange f14 members">0</text>
+                    </p>
+                    <p class="f12">累计奖金
+                        <text class="colororange f14  bonus">0</text>
+                    </p>
+                </div>
+            </li>
+        </ul>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli">
+                <label>
+                    <span class="icon iconfont icon-activity-opponent colororange"></span>往届擂主
+                </label>
+                <span class="fr f14 colororange totalData">共0期</span>
+            </li>
+        </ul>
+
+        <div id="refreshContainer" class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b pool"></ul>
             </div>
@@ -120,8 +173,15 @@
                     success: function (data) {
                         console.log(data)
                         var newli = '';
+                        var SumBonus = 0;
+                        var SumMembers = 0;
                         if (data.code == 200) {
+                            $(".totalData").text("共" + data.data.length + "期");
                             for (var i = 0; i <= data.data.length - 1; i++) {
+                                SumBonus += parseInt(data.data[i].bonus)
+                                SumMembers += parseInt(data.data[i].members)
+                                $(".bonus").text(SumBonus);
+                                $(".members").text(SumMembers);
                                 winner_list = JSON.parse(data.data[i].winner_list);
                                 _winner = '';
                                 _winner_punchs = '';
@@ -137,7 +197,7 @@
                                 winnerList = _winner.substring(0, _winner.length - 1);
                                 newli += `<li class="mui-table-view-cell mui-collapse listli">
                                             <a class="mui-navigate-right"  href="#">
-                                                <p>`+ winnerList + `</p><p>${data.data[i].start}期</p>
+                                                <p class="mui-ellipsis">`+ winnerList + `</p><p>${data.data[i].start}期</p>
                                             </a>
                                             <div class="mui-collapse-content">
                                                 <ul class="mui-table-view mb list" style="margin-top:-8px;margin-left:-40px;">
@@ -155,15 +215,9 @@
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主打卡金额
+                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主所得金额
                                                         </label>
                                                         <span class="wd60">`+ _winner_bonus + `</span>
-                                                    </li>
-                                                    <li class="mui-table-view-cell listli">
-                                                        <label>
-                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>奖金池名称
-                                                        </label>
-                                                        <span class="wd60">${data.data[i].group}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
@@ -179,7 +233,7 @@
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>每次下注金额
+                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>每次打卡金额
                                                                 </label>
                                                         <span class="wd60">${data.data[i].stake}</span>
                                                     </li>

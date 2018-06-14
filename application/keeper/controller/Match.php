@@ -679,6 +679,13 @@ class Match extends Base {
 
     // 创建赛程
     public function createscheduleofleague() {
+        // 获取联赛分组列表
+        $leagueS = new LeagueService();
+        $groups = $leagueS->getMatchGroups([
+            'match_id' => $this->league_id
+        ]);
+
+        $this->assign('groups', $groups);
         return view('Match/createScheduleOfLeague');
     }
 

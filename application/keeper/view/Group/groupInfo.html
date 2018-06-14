@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>社群详情</title>
+    <title>{$groupInfo.group}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <link rel="stylesheet" href="/static/frontend/css/liMarquee.css">
     <style>
         .coloricon {
             width: 2.3em;
@@ -35,13 +36,41 @@
         .mui-grid-view.mui-grid-9 .mui-table-view-cell {
             border: none;
         }
+
+        .dowebok {
+            height: 40px;
+            width: 80%;
+            background: #fff;
+            display: inline-block
+        }
+
+        .str_wrap.str_active {
+            background: #fff;
+        }
+
+        .dowebok li {
+            font-size: 14px;
+            line-height: 20px
+        }
+
+        .dowebok .mui-table-view-cell::after {
+            height: 0;
+        }
+
+        .winnerListBtn {
+            float: right;
+            width: 20%;
+            line-height: 40px;
+            font-size: 14px;
+            text-align: right;
+            padding-right: 30px;
+        }
     </style>
 </head>
 
 <body>
     <header class="mui-bar mui-bar-transparent">
         <a href="{:url('group/index')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <!-- <h1 class="mui-title">社群详情</h1> -->
     </header>
 
     <div class="mui-content">
@@ -65,19 +94,25 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mui-table-view mb">
+
+            <ul class="mui-table-view dowebok">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>上期擂主：
+                        <span class="icon iconfont icon-msg-notice-active colororange"></span>公告：
+                    </label>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-p-game colororange"></span>上期擂主：
                         <text class="colororange winer">{volist name="winnerList" id="vol" empty="暂无擂主"}{$vol.winner},{/volist}</text>
                     </label>
-                    <span class="wd25 pdr15 mui-navigate-right">
-                        <!-- 往届 -->
-                        <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}">往届</a>
-                    </span>
                 </li>
             </ul>
-
+            <ul class="mui-table-view winnerListBtn">
+                <li>
+                    <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">往届</a>
+                </li>
+            </ul>
 
             <ul class="mui-table-view whitebg" style="border-bottom: 1px solid #f5f5f5;">
                 <li class="mui-table-view-cell listli">
@@ -90,7 +125,7 @@
                 </li>
             </ul>
 
-            <div class="nav-list borderStyle">
+            <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm4">
                         <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id])}">
@@ -106,7 +141,7 @@
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-masses"></use>
                             </svg>
-                            <span class="f14" style="display: block;">社群</span>
+                            <span class="f14" style="display: block;">群成员</span>
                             <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$membersPunch}</div>
                         </a>
                     </li>
@@ -132,8 +167,8 @@
             </div>
             <ul class="mui-table-view mb punchList"></ul>
 
-            <p class="mui-text-center f12 mt55" style="margin-top: 20px">需要退出社群? 请点击 |
-                <text class="outGroup colororange">退出</text>
+            <p class="mui-text-center f12 mt55" style="margin-top: 20px">退出社群请点击 |
+                <text class="outGroup colororange">退群</text>
             </p>
 
             <!--底部操作-->
@@ -176,6 +211,7 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/jquery.liMarquee.js"></script>
     <script>
         //初始化
         mui.init({
@@ -190,6 +226,11 @@
         var avatar = "{$memberInfo.avatar}";
         var id = "{$id}"; //是否在社群内，是则id有值，否则为空
         $(function () {
+
+            $('.dowebok').liMarquee({
+                direction: 'up',
+                scrollamount: 20
+            });
 
             // 打卡提示
             $(".createPunch").on("tap", function () {
@@ -344,7 +385,7 @@
                             var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].punch_id + '/?punch=info';
                             newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
                             newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
-                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
+                            newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;<i class="icon iconfont icon-activity-Startingtim colororange f14"></i>打卡金&nbsp;<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;<i class="icon iconfont icon-activity-Startingtim colororange f14"></i>打赏&nbsp;<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
                             newli += '</div></a></li>'
                         }
                         if (newli == '') {

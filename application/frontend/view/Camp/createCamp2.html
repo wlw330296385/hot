@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
@@ -63,13 +60,6 @@
                     <label>总部地址</label>
                     <input type="text" class="input" name="location" placeholder="非机构可不填">
                 </div>
-                <div class="mui-input-row" id='showCityPicker3'>
-                    <a href="#" class="mui-navigate-right">
-                        <label>所属地区</label>
-                        <span id="cityResult3" class="ui-alert location" style="color:#737373"></span>
-                    </a>
-                    <input id="location-input" type="hidden" name="locationStr" value="">
-                </div>
                 <div class="mui-input-row">
                     <label>联系电话</label>
                     <input type="tel" class="input camp_telephone" placeholder="请填写你的联系电话">
@@ -101,10 +91,6 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <!--选择器-->
-    <script src="/static/frontend/js/mui.picker.min.js"></script>
-    <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
     </script>
@@ -126,38 +112,6 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        //地区选择器
-        (function ($, doc) {
-            $.init();
-            $.ready(function () {
-                var _getParam = function (obj, param) {
-                    return obj[param] || '';
-                };
-                ///级联示例
-                var cityPicker3 = new $.PopPicker({
-                    layer: 3
-                });
-                cityPicker3.setData(cityData3);
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
-
-                var showCityPickerButton = doc.getElementById('showCityPicker3');
-                var cityResult3 = doc.getElementById('cityResult3');
-                var locationvalue = doc.getElementById('location-input');
-                showCityPickerButton.addEventListener('tap', function (event) {
-                    cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
-                        //返回 false 可以阻止选择框的关闭
-                        //return false;
-                    });
-                }, false);
-            });
-        })(mui, document);
-
 
         $(function () {
 
@@ -182,15 +136,11 @@
                 var banner = $('input[name=banner]').val();
                 var company = $('input[name=company]').val();
                 var location_input = $('input[name=location]').val();
-                var locationStr = $('input[name=locationStr]').val();
                 var camp_telephone = $('.camp_telephone').val();
                 var camp_description = $('.camp_description').val();
 
                 if (logo == "" || banner == "") {
                     mui.toast('请上传图片');
-                    return false;
-                } else if (locationStr == "") {
-                    mui.toast('请选择所属地区');
                     return false;
                 } else if (!(/(^([0-9]{3,4}-)?[0-9]{7,8}$)|(^((\(\d{3}\))|(\d{3}\-))?(1[34578]\d{9})$)/).test(camp_telephone)) {
                     mui.toast("请输入正确的手机格式或固话格式");
@@ -207,7 +157,6 @@
                         banner: banner,
                         company: company,
                         location: location_input,
-                        locationStr: locationStr,
                         intro: introHtml,
                         camp_description: camp_description,
                         camp_telephone: camp_telephone

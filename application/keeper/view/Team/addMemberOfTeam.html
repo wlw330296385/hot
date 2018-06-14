@@ -227,33 +227,33 @@
         function checkMember(member_id) {
             var team_id = "{$team_id}";
             console.log(member_id)
-            // mui.ajax("{:url('api/team/checkteammember')}", {
-            //     data: {
-            //         team_id: team_id,
-            //         member_id: member_id
-            //     },
-            //     dataType: 'json',//服务器返回json格式数据
-            //     type: 'post',//HTTP请求类型
-            //     timeout: 10000,//超时时间设置为10秒；
-            //     headers: { 'Content-Type': 'application/json' },
-            //     success: function (data) {
-            //         console.log(data);
-            //         if (data.code == 200) {
-            //             var btnArray = ['取消', '确认'];
-            //             mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
-            //                 if (e.index == 1) {
-            //                     addMember(member_id);
-            //                 }
-            //             });
-            //         } else {
-            //             addMember(member_id);
-            //         }
-            //     },
-            //     error: function (xhr, type, errorThrown) {
-            //         //异常处理；
-            //         console.log(type);
-            //     }
-            // });
+            mui.ajax("{:url('api/team/checkteammember')}", {
+                data: {
+                    team_id: team_id,
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        var btnArray = ['取消', '确认'];
+                        mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
+                            if (e.index == 1) {
+                                addMember(member_id);
+                            }
+                        });
+                    } else {
+                        addMember(member_id);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
         }
         // 添加队员
         function addMember(member_id) {
