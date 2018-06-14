@@ -206,6 +206,9 @@ class Group extends Base{
     public function groupMemberList() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+
+
+        
         $this->assign('groupInfo',$groupInfo);
         return view('Group/groupMemberList');
     }

@@ -47,20 +47,17 @@ class Login extends Controller{
         $memberS = new MemberService();
         $userinfo = $WechatS->oauthUserinfo();
         if ($userinfo) {
+            $member_id = db('member_openid')->where(['openid'=>$userinfo['openid']])->value('member_id');
             cache('userinfo_'.$userinfo['openid'], $userinfo);
             $avatar = str_replace("http://", "https://", $userinfo['headimgurl']);
-            //$avatar = $memberS->downwxavatar($userinfo);
-            // 查询有无member数据
-            $isMember = $memberS->getMemberInfo(['openid' => $userinfo['openid']]);
-            if ($isMember) {
-
+         
+            if ($member_id) {
+                $isMember = $memberS->getMemberInfo(['id' => $member_id]);
                 unset($isMember['password']);
                 cookie('mid', $isMember['id']);
                 cookie('openid', $isMember['openid']);
                 cookie('member', md5($isMember['id'].$isMember['member'].config('salekey')));
                 session('memberInfo', $isMember, 'think');
-
-                // if (session('memberInfo', '', 'think')) {
                  if( Cookie::has('url') ){
                      $url = cookie('url');
                      cookie('url',null);
@@ -68,12 +65,9 @@ class Login extends Controller{
                  }else{
                      $this->redirect('school/Index/index');
                  }
-                // } else {
-//                    $this->redirect('school/Index/index');
-                // }
             } else {
                 $member = [
-                    'id' => 0,
+                    'id' => -1,
                     'openid' => $userinfo['openid'],
                     'member' => $userinfo['nickname'],
                     'nickname' => $userinfo['nickname'],

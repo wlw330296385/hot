@@ -41,7 +41,7 @@ class Withdraw extends Backend{
 
     // 提现处理
     public function campWithdrawDeal(){
-        Db::startTrans();
+        // Db::startTrans();
         try{
             $campWithdraw_id = input('param.campWithdraw_id');
 
@@ -172,11 +172,11 @@ class Withdraw extends Backend{
                 }
                 $this->record("{$this->admin['username']}打款{$campWithdrawInfo['camp']}的提现申请");
             }
-            Db::commit();
+            // Db::commit();
             $this->success('操作成功');
             
         }catch(Exception $e){
-            Db::rollback();
+            // Db::rollback();
             dump($e->getMessage());
         }
 
