@@ -380,7 +380,7 @@ class CampMember extends Base
             // 请求参数验证
             $id = input('post.campmemberid');
             $action = input('post.action');
-            if (!$id || !$action) {
+            if (!$id) {
                 return json(['code' => 100, 'msg' => __lang('MSG_402')]);
             }
             // 获取camp_member数据
