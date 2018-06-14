@@ -13,14 +13,38 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         @media screen and (min-width: 320px) {
-            .list .listli .mui-media-body {
-                width: 62% !important;
+            #refreshContainer {
+                margin-top: 246px !important;
+            }
+        }
+
+        @media screen and (min-width: 360px) {
+            #refreshContainer {
+                margin-top: 260px !important;
             }
         }
 
         @media screen and (min-width: 375px) {
-            .list .listli .mui-media-body {
-                width: 67% !important;
+            #refreshContainer {
+                margin-top: 264px !important;
+            }
+        }
+
+        @media screen and (min-width: 411px) {
+            #refreshContainer {
+                margin-top: 274px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 275px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 386px !important;
             }
         }
     </style>
@@ -47,10 +71,10 @@
                 </div>
                 <div class="price-frame" style="margin-top: 15px;">
                     <p class="f12">累计打卡
-                        <text class="colororange f14">123</text>
+                        <text class="colororange f14 members">0</text>
                     </p>
                     <p class="f12">累计奖金
-                        <text class="colororange f14">644</text>
+                        <text class="colororange f14  bonus">0</text>
                     </p>
                 </div>
             </li>
@@ -65,7 +89,7 @@
             </li>
         </ul>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 246px;">
+        <div id="refreshContainer" class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b pool"></ul>
             </div>
@@ -149,9 +173,15 @@
                     success: function (data) {
                         console.log(data)
                         var newli = '';
+                        var SumBonus = 0;
+                        var SumMembers = 0;
                         if (data.code == 200) {
-                            $(".totalData").text("共" + data.data.length + "期")
+                            $(".totalData").text("共" + data.data.length + "期");
                             for (var i = 0; i <= data.data.length - 1; i++) {
+                                SumBonus += parseInt(data.data[i].bonus)
+                                SumMembers += parseInt(data.data[i].members)
+                                $(".bonus").text(SumBonus);
+                                $(".members").text(SumMembers);
                                 winner_list = JSON.parse(data.data[i].winner_list);
                                 _winner = '';
                                 _winner_punchs = '';
