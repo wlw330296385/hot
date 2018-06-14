@@ -774,15 +774,16 @@ class CampMember extends Base
             $page = input('param.page', 1);
             $where['camp_member.camp_id'] = $map['camp_id'];
             $where['camp_member.type'] = 3;
-            $where['camp_member.status'] = $map['status'];
+            if ( input('?status') ) {
+                $where['camp_member.status'] = $map['status'];
+            }
             $list = Db::view('camp_member', ['id' => 'campmemberid', 'camp_id', 'member_id', 'status'])
                 ->view('member', ['id', 'member', 'sex', 'avatar', 'province', 'city', 'area'], 'camp_member.member_id=member.id', 'LEFT')
                 ->where($where)
                 ->page($page, 10)
-//                ->fetchSql(true)
+                ->order(['camp_member.update_time' => 'desc', 'camp_member.id' => 'desc'])
                 ->select();
 
-//            dump($list);
             if (empty($list)) {
                 return json(['code' => 200, 'msg' => __lang('MSG_000'), 'data' => []]);
             } else {
