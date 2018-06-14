@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -38,6 +41,13 @@
                             <option value="2">其他</option>
                         </select>
                     </span>
+                </div>
+                <div class="mui-input-row" id='showCityPicker3'>
+                    <a href="#" class="mui-navigate-right">
+                        <label>所属地区</label>
+                        <span id="cityResult3" class="ui-alert location" style="color:#737373"></span>
+                    </a>
+                    <input id="location-input" type="hidden" name="locationStr" value="">
                 </div>
                 <div class="mui-input-row">
                     <label>创建者姓名</label>
@@ -91,11 +101,46 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/smsCode.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        //地区选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+                cityPicker3.setData(cityData3);
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                var locationvalue = doc.getElementById('location-input');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+            });
+        })(mui, document);
 
         (function ($, doc) {
 
@@ -157,12 +202,16 @@
                 var creator = $('.realname').val();
                 var camp_telephone = $('.camp_telephone').val();
                 var smsverify = $('.verifcation').val();
+                var locationStr = $('input[name=locationStr]').val();
 
                 if (campname == "") {
                     mui.toast('请填写训练营名称');
                     return false;
                 } else if (isNaN(camptype) === true) {
                     mui.toast('请选择训练营类型');
+                    return false;
+                } else if (locationStr == "") {
+                    mui.toast('请选择所属地区');
                     return false;
                 } else if (!(/[\u4e00-\u9fa5a-zA-Z]{2,20}/).test(creator)) {
                     mui.toast('请填写创建者姓名');
@@ -185,24 +234,25 @@
                         telephone = document.getElementById('telephone').value;
                         var result = smsCode.validateSmsCodeApi(telephone, smsverify, "{:url('api/sms/validatesmscodeapi')}");
                         if (result.code == 200) {
-                            creatcamp(campname, camptype, creator);
+                            creatcamp(campname, camptype, creator,locationStr);
                         } else {
                             mui.toast(result.msg);
                         }
                     }
                 } else {
-                    creatcamp(campname, camptype, creator);
+                    creatcamp(campname, camptype, creator,locationStr);
                 }
 
             });
         });
 
-        function creatcamp(campname, camptype, creator) {
+        function creatcamp(campname, camptype, creator,locationStr) {
             mui.ajax("{:url('api/camp/createCamp')}", {
                 data: {
                     campname: campname,
                     camptype: camptype,
                     creator: creator,
+                    locationStr: locationStr
                 },
                 dataType: 'json',
                 type: 'post',
