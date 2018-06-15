@@ -23,8 +23,8 @@
     <div class="mui-content">
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b fans"></ul>
+            <div class="mui-scroll ">
+                <div class="groupsList"></div>
             </div>
         </div>
 
@@ -34,13 +34,18 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
-                {eq name="$btnEditAction" value="1"}
-                <a href="{:url('Match/editGroups',['league_id'=>$leagueInfo.id])}">编辑分组</a>
-                {else/}
-                <a href="{:url('Match/createGroups',['league_id'=>$leagueInfo.id])}">创建分组</a>
-                {/eq}
+            {eq name="$btnEditAction" value="1"}
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+                <a href="{:url('Match/createScheduleOfLeague',['league_id'=>$leagueInfo.id])}">创建赛程</a>
             </li>
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
+                <a href="{:url('Match/editGroups',['league_id'=>$leagueInfo.id])}">编辑分组</a>
+            </li>
+            {else/}
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
+                <a href="{:url('Match/createGroups',['league_id'=>$leagueInfo.id])}">创建分组</a>
+            </li>
+            {/eq}
         </ul>
 
     </div>
@@ -49,7 +54,10 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
-
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
@@ -57,7 +65,6 @@
         $(function () {
             //初始化全局变量
             var count = 1;
-            // followStatus();
         })
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -121,7 +128,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `<li class="mui-table-view-cell mui-collapse listli">`;
+                            newli += ` <ul class="mui-table-view detalis-list list border-b "><li class="mui-table-view-cell mui-collapse listli ">`;
                             newli += `<a class="mui-navigate-right"  href="#"><p>${data.data.data[i].name}</p></a>`
                             newli += `<div class="mui-collapse-content" style="padding-bottom:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-40px; margin-bottom:0 !important">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
@@ -133,20 +140,20 @@
                                                 </div>
                                             <li>`;
                             }
-                            newli += `</ul></div></li>`
+                            newli += `</ul></div></li></ul>`
                         }
                     }
                     if (gType == 1) {
                         //上拉刷新
-                        $("ul.fans").empty().append(newli);
+                        $(".groupsList").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.fans").html('<p class="nodata">没有相关数据哦</p>');
+                            $(".groupsList").html('<p class="nodata">没有相关数据哦</p>');
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.fans").append(newli);
+                        $(".groupsList").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);

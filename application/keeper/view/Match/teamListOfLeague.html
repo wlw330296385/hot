@@ -39,6 +39,12 @@
                 </div>
             </div>
         </div>
+
+        <ul class="mui-table-view operation createGroups hide">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bgblue">
+                <a href="{:url('match/groupslistofleague',['league_id'=>$leagueInfo.id])}">前往创建分组</a>
+            </li>
+        </ul>
     </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -159,6 +165,9 @@
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
+                    if (data.data.total >= 2) {
+                        $(".createGroups").show();
+                    }
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('team/teamInfo')}" + '/team_id/' + data.data.data[i].team.id + '/id/' + data.data.data[i].id;
                         newli += '<li class="mui-table-view-cell mui-media listli coach">';
