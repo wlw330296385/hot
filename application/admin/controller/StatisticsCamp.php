@@ -90,12 +90,9 @@ class StatisticsCamp extends Backend{
 
     // 资金账目
     public function campBill(){
-        // $camp_id = $this->campInfo['id'];
         $camp_id = input('param.camp_id',9);
         $monthStart = input('param.monthstart',date('Ym',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ym'));
-        // $monthStart = input('param.monthstart',20171201);
-        // $monthEnd = input('param.monthend',20171231);
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $income = [];
@@ -125,6 +122,7 @@ class StatisticsCamp extends Backend{
             //赠课支出
             $output_gift = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days")->where(['camp_id'=>$camp_id,'type'=>1])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
+            //月份
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
                 $list3[$i]  = ['s_income'=>0,'s_schedule_income'=>0];
                 $list2[$i]  = ['s_income'=>0];
@@ -133,6 +131,8 @@ class StatisticsCamp extends Backend{
                 $list4[$i]  = ['s_s_rebate'=>0,'s_s_salary'=>0];
                 $financeList[$i] = ['e_balance'=>0];
             }
+
+            // 课时收入
             foreach ($list3 as $key => &$value) {
                 foreach ($income3 as $k => $val) {
                     if($key == $val['days']){
@@ -140,6 +140,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             }  
+
+            // 活动收入
             foreach ($list2 as $key => &$value) {
                 foreach ($income2 as $k => $val) {
                     if($key == $val['days']){
@@ -156,6 +158,7 @@ class StatisticsCamp extends Backend{
                 }
             }
 
+            //赠课支出
             foreach ($list1 as $key => &$value) {
                 foreach ($output_gift as $k => $val) {
                     if($key == $val['days']){
@@ -163,6 +166,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             }
+
+             //课时薪资和平台支出
             foreach ($list4 as $key => &$value) {
                 foreach ($schedule as $k => $val) {
                     if($key == $val['days']){
@@ -170,6 +175,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             }
+
+            // 课程订单收入
             foreach ($financeList as $key => $value) {
                 foreach ($finance as $k => $val) {
                     if($key == $val['days']){
@@ -210,12 +217,14 @@ class StatisticsCamp extends Backend{
             //平台分成
             $output4 = db('output')->field("sum(output) as s_output,from_unixtime(create_time,'%Y%m%d') as days,camp_id")->where(['camp_id'=>$camp_id,'type'=>4])->where(['create_time'=>['between',[$month_start,$month_end]]])->where('delete_time',null)->group('days')->select();
 
-            
+            //初始变量
             for ($i=$monthStart; $i <= $monthEnd; $i++) { 
-                $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00,'s_schedule_income'=>0,'camp_id'=>0];
+                $list1[$i]  = $list2[$i] = $list3[$i] = $list4[$i] = $list_1[$i] = ['s_output'=>0.00,'s_schedule_income'=>0,'camp_id'=>0,'s_income'=>0];
                 $list_income1[$i] = $list_income2[$i] = ['s_income'=>0.00];
                 $financeList[$i] = ['e_balance'=>0];
             }
+
+            // 赠课支出
             foreach ($list1 as $key => &$value) {
                 foreach ($output1 as $k => $val) {
                     if($key == $val['days']){
@@ -223,6 +232,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             } 
+
+            // 课时退费
             foreach ($list2 as $key => &$value) {
                 foreach ($output2 as $k => $val) {
                     if($key == $val['days']){
@@ -230,6 +241,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             } 
+
+            // 课时教练支出
             foreach ($list3 as $key => &$value) {
                 foreach ($output3 as $k => $val) {
                     if($key == $val['days']){
@@ -237,6 +250,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             } 
+
+            //平台分成
             foreach ($list4 as $key => &$value) {
                 foreach ($output4 as $k => $val) {
                     if($key == $val['days']){
@@ -244,6 +259,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             }  
+
+            // 提现
             foreach ($list_1 as $key => &$value) {
                 foreach ($output_1 as $k => $val) {
                     if($key == $val['days']){
@@ -251,6 +268,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             } 
+
+            // 课程订单收入
             foreach ($list_income1 as $key => &$value) {
                 foreach ($income1 as $k => $val) {
                     if($key == $val['days']){
@@ -266,6 +285,8 @@ class StatisticsCamp extends Backend{
                     }
                 }
             }
+
+            // 每日余额
             foreach ($financeList as $key => $value) {
                 foreach ($finance as $k => $val) {
                     if($key == $val['days']){
