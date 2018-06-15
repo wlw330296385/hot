@@ -98,7 +98,7 @@
                 <p>
                     <strong>请选择您要报名的种类：</strong>
                 </p>
-                <p class="mui-text-center">
+                <p>
                     {volist name='$eventInfo.doms' id="vol"}
                     <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}</button>
                     {/volist}
@@ -197,7 +197,7 @@
             </div>
 
         <div class="tipBottom">
-            <p><strong>结束日期：{$eventInfo.ends} {if $eventInfo.is_max==-1}（已满人）{/if}</strong></p>
+            <p><strong>结束日期：{$eventInfo.ends} {if $eventInfo.is_max=="已满人"}（已满人）{/if}</strong></p>
             <p class="f12">本活动最终解释权归{$eventInfo.organization}所有</p>
         </div>
 
@@ -236,7 +236,7 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
-    {if $eventInfo.status==1}
+    {if $eventInfo.status=="正常"}
     <script>
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
     </script>
@@ -257,6 +257,7 @@
         var mID = "{$memberInfo.id}";
         var mName = "{$memberInfo.member}";
         var mTel = "{$memberInfo.telephone}";
+        var mIDNO ="{$cert.cert_no}"
         var eMember = "{$event_member.member_id}";
         var getCurrTel = "";
 
@@ -265,28 +266,51 @@
 
         $(function () {
 
-            //活动下架提示，并隐藏表单
-            if("{$eventInfo.status}"=="2"){
-                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动下架</li>');
-                $(".registerFrom").hide();
-                $("#sDom").hide();
-            }
-            //活动已满人提示，并隐藏表单
-            if("{$eventInfo.is_max}"=="-1"){
-                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">已满人</li>');
-                $(".registerFrom").hide();
-                $("#sDom").hide();
-            }
-            //判断当前时间是否大于活动结束时间
+
             var time = Number("{$eventInfo.end}");
             var timestamp = Date.parse(new Date())/1000;
-            if(timestamp>time){
-                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动已经结束</li>');
+
+            if("{$eventInfo.status}"=="下架"){
+                //活动下架提示，并隐藏表单
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动下架</li>');
+                $("#eventDes").show();
                 $(".registerFrom").hide();
                 $("#sDom").hide();
+            }else if(timestamp>time){
+                //判断当前时间是否大于活动结束时间
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动已经结束</li>');
+                $("#eventDes").show();
+                $(".registerFrom").hide();
+                $("#sDom").hide();
+            }else if("{$eventInfo.is_max}"=="已满人"){
+                //活动已满人提示，并隐藏表单
+                $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">活动已满人</li>');
+                $("#eventDes").show();
+                $(".registerFrom").hide();
+                $("#sDom").hide();
+            }else if(mID!="" && eMember==mID){
+                //判断当前会员身份是否有报名过
+                mui.confirm('您已经提交过此报名表，请问需要为别人报名吗？', '提示', ['是', '否'], function (e) {
+                    if (e.index === 0) {
+                        $(".mName").show();
+                        $(".smsValidate").show();
+                        $(".isMyself").show();
+                        $('input[name=member]').val('');
+                        $('input[name=telephone]').val('');
+                        $('input[name=idno]').val('');
+                        $('input[name=photo_positive]').val('');
+                        $(".upload-preview").attr("src","");
+                        $('input[name="ismyself"]').removeAttr("checked");
+                        $('.ismyself1').attr("disabled","disabled");
+                        $('.ismyself0').attr("checked","checked");
+                    }else{
+                        $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">已报名</li>');
+                        $("#eventDes").show();
+                        $(".registerFrom").hide();
+                        $("#sDom").hide();
+                    }
+                });
             }
-
-            console.log(eMember)
 
             if(showDetail=="yes"){
                 $("#eventDes").show();
@@ -414,8 +438,14 @@
                                         $('input[name="ismyself"]').removeAttr("checked");
                                         //如果是登陆会员帮他人报名，是否本人报名将锁定“非本人报名”
                                         if (mID != "" && mTel != telephone) {
-                                            $('input[name=member]').val('');
-                                            $('input[name=idno]').val('');
+                                            var memberName = $('input[name="member"]').val();
+                                            var memberIDNO = $('input[name="idno"]').val();
+                                            if(memberName==mName) {
+                                                $('input[name=member]').val('');
+                                            }
+                                            if(memberIDNO==mIDNO) {
+                                                $('input[name=idno]').val('');
+                                            }
                                             $('.ismyself1').attr("disabled","disabled");
                                             $('.ismyself0').attr("checked","checked");
                                         }
