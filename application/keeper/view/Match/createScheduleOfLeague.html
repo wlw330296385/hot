@@ -49,7 +49,7 @@
                     <span class="select-row">
                         <select id="matchGroup" class="data" name="group_id">
                             <option value="">选择分组</option>
-                            <option value="">全部分组</option>
+                            <option value="0">全部分组</option>
                             {volist name="groups" id="vo"}
                             <option value="{$vo.id}">{$vo.name}</option>
                             {/volist}
@@ -80,47 +80,68 @@
         });
 
         var scheduleList = [];
+        var match_id = "{$league_id}";
+
         $(function () {
+            // 初始化列出全部分组的对阵信息
+            getbattle(0);
             // 联赛分组选择事件
             $('#matchGroup').change(function () {
                 var group_id = $(this).val();
-                var urlBuildBatte = "{:url('api/league/buildschedulebygroup')}";
-                if (group_id) {
-                    // 请求api 获取对阵信息
-                    mui.ajax({
-                        url: urlBuildBatte,
-                        data: {
-                            group_id: group_id
-                        },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            console.log(data);
-                            var newli = '';
-                            scheduleList = data.data
-                            if (data.code == 200) {
-                                for (var i = 0; i <= data.data.length - 1; i++) {
-                                    newli += `<li class="mui-table-view-cell listli">
-                                                <div class="fl"><img class="img45" src="${data.data[i].home_team_logo}" alt="">${data.data[i].home_team}</div>
-                                                <div class="fr">${data.data[i].away_team}<img class="img45" src="${data.data[i].away_team_logo}" alt=""></div>
-                                            </li>`
-                                }
-                                if (newli != '') {
-                                    $("ul.schedule").empty().append(newli);
-                                }
-                            } else {
-                                $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
-                            }
-                        },
-                        error: function (xhr, type, errerThrown) {
-                            mui.toast('网络异常,请稍候再试');
-                        }
-                    });
-                }
+                console.log(group_id);
+                getbattle(group_id);
             });
         });
+
+        function getbattle(group_id) {
+            // 请求api 获取对阵信息
+            var urlBuildBatte = "{:url('api/league/buildschedulebygroup')}";
+            mui.ajax({
+                url: urlBuildBatte,
+                data: {
+                    group_id: group_id,
+                    match_id: match_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    scheduleList = data.data
+                    if (data.code == 200) {
+                        if (group_id) {
+                            battleData = data.data.battles;
+                            for (var i = 0; i <= battleData.length - 1; i++) {
+                                newli += `<li class="mui-table-view-cell listli">
+                                                <div class="fl"><img class="img45" src="${battleData[i].home_team_logo}" alt="">${battleData[i].home_team}</div>
+                                                <div class="fr">${battleData[i].away_team}<img class="img45" src="${battleData[i].away_team_logo}" alt=""></div>
+                                            </li>`;
+                            }
+                        } else {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                battleData = data.data[i].battles;
+                                for ( var j =0; j<=battleData.length-1; j++) {
+                                    newli += `<li class="mui-table-view-cell listli">
+                                                <div class="fl"><img class="img45" src="${battleData[j].home_team_logo}" alt="">${battleData[j].home_team}</div>
+                                                <div class="fr">${battleData[j].away_team}<img class="img45" src="${battleData[j].away_team_logo}" alt=""></div>
+                                            </li>`;
+                                }
+                            }
+                        }
+                        if (newli != '') {
+                            $("ul.schedule").empty().append(newli);
+                        }
+                    } else {
+                        $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
         function submitAction() {
             console.log(scheduleList)
