@@ -248,4 +248,37 @@ class Group extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取带本期打卡总数的社群群员列表
+    public function getGroupMemberWithTotalPunchListApi(){
+        try{
+            $group_id = input('param.group_id');
+            $page = input('param.page',1);
+            $group_member = db('group_member')->where(['group_id'=>$group_id])->page($page)->select();
+            $poolInfo = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();
+            foreach ($group_member as $key => $value) {
+                    $group_member[$key]['c_p'] = 0;
+                }
+            if($poolInfo){
+                $memberIDs = [];
+                foreach ($group_member as $key => $value) {
+                    $memberIDs[] = $value['member_id'];
+                }
+                $punchs = db('group_punch')->field('count(id) as c_id,member_id,member')->where(['member_id'=>['in',$memberIDs],'pool_id'=>$poolInfo['id']])->group('member_id')->select();
+                foreach ($group_member as $key => $value) {
+                    foreach ($punchs as $k => $val) {
+                        if($val['member_id'] == $value['member_id']){
+                            $group_member[$key]['c_p'] = $val['c_id'];
+                        }
+                    }
+                }
+            }
+
+            
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$group_member]);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\ArticleService;
-use app\service\WechatService;
+use app\school\serviceArticleService;
+use app\school\serviceWechatService;
 class Article extends Base{
 	protected $ArticleService;
 	public function _initialize(){

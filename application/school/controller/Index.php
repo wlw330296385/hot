@@ -1,9 +1,9 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\BannerService;
-use app\service\MemberService;
-use app\service\WechatService;
+use app\school\serviceBannerService;
+use app\school\serviceMemberService;
+use app\school\serviceWechatService;
 use think\Cookie;
 
 class Index extends Base{
@@ -48,7 +48,7 @@ class Index extends Base{
         $this->assign('bannerList',$bannerList);
   
     	// 热门文章
-        $ArticleService= new \app\service\ArticleService;
+        $ArticleService= new \app\school\serviceArticleService;
     	$ArticleList = $ArticleService->getArticleList([],1,'hot DESC',4);
     	//红包
         $bonus_type = input('param.bonus_type',1);

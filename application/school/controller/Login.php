@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use think\Controller;
-use app\service\WechatService;
-use app\service\MemberService;
+use app\school\serviceWechatService;
+use app\school\serviceMemberService;
 use think\Cookie;
 
 class Login extends Controller{

@@ -2,10 +2,10 @@
 namespace app\school\controller;
 use app\school\controller\Base;
 use app\model\CampMember;
-use app\service\CampService;
-use app\service\CoachService;
-use app\service\MemberService;
-use app\service\ScheduleService;
+use app\school\serviceCampService;
+use app\school\serviceCoachService;
+use app\school\serviceMemberService;
+use app\school\serviceScheduleService;
 use think\Db;
 class Camp extends Base{
     protected $CampService;
@@ -61,7 +61,7 @@ class Camp extends Base{
 
     public function campInfo(){
         $camp_id = input('param.camp_id');
-        $LessonService = new \app\service\LessonService;
+        $LessonService = new \app\school\serviceLessonService;
         $lessonList = $LessonService->getLessonList(['camp_id'=>$camp_id,'status'=>1]);
         $lessonCount = count($lessonList);
         $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
@@ -415,7 +415,7 @@ class Camp extends Base{
         }
 
         //教练的班级
-        $GradeService = new \app\service\GradeService;
+        $GradeService = new \app\school\serviceGradeService;
         $gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$coachInfo['id'],'camp_id'=>$camp_id]);
         // 教练的证件
         $cert = db('cert')->where(['member_id'=>$coachInfo['member_id']])->select();
@@ -461,7 +461,7 @@ class Camp extends Base{
             ]);
         $yearScheduleOfCoach = count($yearScheduleOfCoachList);
         //教练工资
-        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $SalaryInService = new \app\school\serviceSalaryInService($member_id);
         $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$coachInfo['member_id'],'type'=>1,'camp_id'=>$camp_id]);
 
         // 本月工资
@@ -514,7 +514,7 @@ class Camp extends Base{
     // 训练营的场地列表
     public function courtListOfCamp(){
         $camp_id = input('param.camp_id')?input('param.camp_id'):0;
-        // $CourtService = new \app\service\CourtService;
+        // $CourtService = new \app\school\serviceCourtService;
         // $courtList = $CourtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
 

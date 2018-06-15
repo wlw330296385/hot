@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
-use app\service\CampService;
-use app\service\StudentService;
+use app\school\serviceCampService;
+use app\school\serviceStudentService;
 use app\school\controller\Base;
 use think\Db;
 /**
@@ -99,7 +99,7 @@ class Student extends Base
 								->select();	
 
 		// 学生订单
-		$billService = new \app\service\BillService;
+		$billService = new \app\school\serviceBillService;
 		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
 		$totalBill = count($studentBillList);
 		// 未付款订单

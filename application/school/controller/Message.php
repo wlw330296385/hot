@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\MessageService;
+use app\school\serviceMessageService;
 class Message extends Base{
 	protected $MessageService;
 	public function _initialize(){

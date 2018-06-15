@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\EventService;
+use app\school\serviceEventService;
 class Event extends Base{
 	private $EventService;
 	public function _initialize(){
@@ -95,12 +95,12 @@ class Event extends Base{
         ];
         $amount = $total*$eventInfo['doms'][$domIndex]['price'];
         // $amount = 0.01;
-        $WechatJsPayService = new \app\service\WechatJsPayService;
+        $WechatJsPayService = new \app\school\serviceWechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
         $shareurl = request()->url(true);
-        $wechatS = new \app\service\WechatService;
+        $wechatS = new \app\school\serviceWechatService;
         $jsapi = $wechatS->jsapi($shareurl);
         $eventInfo['price'] = $eventInfo['doms'][$domIndex]['price'];
         // ---------------------------------------------------卡券系统
@@ -167,7 +167,7 @@ class Event extends Base{
     // 创建活动
     public function createEvent() {
         $organization_id = input('param.organization_id');
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $campInfo = $CampService->getCampInfo(['id'=>$organization_id]);
         // 获取会员在训练营角色
         $isPower = $CampService->isPower($organization_id,$this->memberInfo['id']);

@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\ScoreService;
+use app\school\serviceScoreService;
 class Score extends Base{
 	protected $ScoreService;
 	public function _initialize(){

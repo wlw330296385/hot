@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\BillService;
-use app\service\WechatService;
+use app\school\serviceBillService;
+use app\school\serviceWechatService;
 class Bill extends Base{
 	protected $BillService;
 	public function _initialize(){
@@ -33,16 +33,16 @@ class Bill extends Base{
         $eventInfo = [];
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
-            $LessonService = new \app\service\LessonService;
+            $LessonService = new \app\school\serviceLessonService;
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             // 学生信息
-            $StudentService = new \app\service\StudentService;
+            $StudentService = new \app\school\serviceStudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
         }
 
 
         if($billInfo['goods_type'] =='活动'){
-            $EventService = new \app\service\EventService;
+            $EventService = new \app\school\serviceEventService;
             $eventInfo = $EventService->getEventInfo(['id'=>$billInfo['goods_id']]);
             // 学生信息
             $eventInfo['event_member'] = db('event_member')->where(['event_id'=>$eventInfo['id'],'member_id'=>$billInfo['member_id']])->find();
@@ -83,11 +83,11 @@ class Bill extends Base{
         }
         // 课程信息
         if($billInfo['goods_type'] == '课程'){
-            // $LessonService = new \app\service\LessonService;
+            // $LessonService = new \app\school\serviceLessonService;
             // $lessonInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             $lessonInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             // 学生信息
-            $StudentService = new \app\service\StudentService;
+            $StudentService = new \app\school\serviceStudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }        
@@ -111,11 +111,11 @@ class Bill extends Base{
             $billInfo = $this->BillService->getBill(['bill_order'=>$bill_order]);
         }
         if($billInfo['goods_type']=='课程'){
-            // $LessonService = new \app\service\LessonService;
+            // $LessonService = new \app\school\serviceLessonService;
             // $goodsInfo = $LessonService->getLessonInfo(['id'=>$billInfo['goods_id']]);
             $goodsInfo = db('lesson')->where(['id'=>$billInfo['goods_id']])->find();
             // 学生信息
-            $StudentService = new \app\service\StudentService;
+            $StudentService = new \app\school\serviceStudentService;
             $studentInfo = $StudentService->getStudentInfo(['id'=>$billInfo['student_id']]);
             $this->assign('studentInfo',$studentInfo);
         }elseif ($billInfo['goods_type']=='活动') {
@@ -132,7 +132,7 @@ class Bill extends Base{
         if($billInfo['status']==0 && $billInfo['is_pay']=='未付款'){
             $amount = ($billInfo['total']*$billInfo['price'])?($billInfo['total']*$billInfo['price']):1;
             // $amount = 0.01;
-            $WechatJsPayService = new \app\service\WechatJsPayService;
+            $WechatJsPayService = new \app\school\serviceWechatJsPayService;
            
             $result = $WechatJsPayService->pay(['order_no'=>$billInfo['bill_order'],'amount'=>$amount]);
 

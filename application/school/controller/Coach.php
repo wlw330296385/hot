@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\CoachService;
-use app\service\ScheduleService;
+use app\school\serviceCoachService;
+use app\school\serviceScheduleService;
 use think\Db;
 class Coach extends Base{
 	protected $coachService;
@@ -53,7 +53,7 @@ class Coach extends Base{
             $coachInfo = $this->coachService->getCoachInfo(['id'=>$coach_id]);
         }
     	//教练的班级
-        $GradeService = new \app\service\GradeService;
+        $GradeService = new \app\school\serviceGradeService;
     	$gradeOfCoachList = $GradeService->getGradeList(['coach_id'=>$coach_id,'camp_id'=>$camp_id]);
         // 教练的证件
         $cert = db('cert')->where(['member_id'=>$member_id,'status'=>1])->select();
@@ -100,7 +100,7 @@ class Coach extends Base{
                             ]);
         $yearScheduleOfCoach = count($yearScheduleOfCoachList); 
         //教练工资
-        $SalaryInService = new \app\service\SalaryInService($member_id);
+        $SalaryInService = new \app\school\serviceSalaryInService($member_id);
         $salaryList = $SalaryInService->getSalaryInList(['member_id'=>$member_id,'type'=>1,'camp_id'=>$camp_id]);
         // 平均月薪
         $averageSalaryByMonth = $SalaryInService->getAverageSalaryByMonth($member_id,$camp_id);
@@ -339,7 +339,7 @@ class Coach extends Base{
     // 训练营下的人员
     public function coachListOfCamp(){
         $camp_id = input('param.camp_id');
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $campInfo = $CampService->getCampInfo($camp_id);
         $type = input('param.type')?input('param.type'):2;
         $status = input('param.status')?input('param.status'):1;

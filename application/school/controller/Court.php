@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\CourtService;
-use app\service\CourtMediaService;
+use app\school\serviceCourtService;
+use app\school\serviceCourtMediaService;
 class Court extends Base{
 	protected $CourtService;
     protected $CourtMediaService;
@@ -26,7 +26,7 @@ class Court extends Base{
         $button = 0;
         $courtInfo = $this->CourtService->getCourtInfoWithCourtCamp($court_id,$camp_id);
 
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         if($camp_id!=$courtInfo['campid'] && $power>2 && $courtInfo['status'] == 1){
             // 可以将场地添加到自己场地
@@ -61,7 +61,7 @@ class Court extends Base{
     public function updateCourt(){   	
     	$court_id = input('param.court_id');
         $CourtInfo = $this->CourtService->getCourtInfo(['id'=>$court_id]);
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $power = $CampService->isPower($CourtInfo['camp_id'],$this->memberInfo['id']);
         if($power<2){
             $this->error('请先加入一个训练营并成为管理员或者创建训练营');
@@ -73,7 +73,7 @@ class Court extends Base{
 
     public function createCourt(){
         $camp_id = input('param.camp_id');
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
 
         if($power<2){

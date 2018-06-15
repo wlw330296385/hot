@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\service\GradeService;
+use app\school\serviceGradeService;
 use think\Db;
 class Grade extends Base{
 	public function _initialize(){
@@ -40,7 +40,7 @@ class Grade extends Base{
         $lesson_id = input('param.lesson_id');
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         // 获取会员在训练营角色
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
@@ -62,11 +62,11 @@ class Grade extends Base{
         // 教练列表
         $coachlist = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1, 'type' => 2])->select();
         //场地列表
-        $courtService = new \app\service\CourtService;
+        $courtService = new \app\school\serviceCourtService;
         //$courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $courtList = $courtService->getCourtListOfCamp(['camp_id'=>$camp_id]);
         // 教案列表
-        $PlanService = new \app\service\PlanService;
+        $PlanService = new \app\school\servicePlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
         $this->assign('delete_time',time());
         $this->assign('lessonList',$lessonList);
@@ -85,7 +85,7 @@ class Grade extends Base{
     	$grade_id = input('param.grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
         // 判读权限
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $is_power = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
@@ -102,13 +102,13 @@ class Grade extends Base{
         //获取员工列表
         $staffList = db('camp_member')->where(['camp_id'=>$gradeInfo['camp_id'],'status'=>1])->select();
         //场地列表
-        $courtService = new \app\service\CourtService;
+        $courtService = new \app\school\serviceCourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$gradeInfo['camp_id'],'status'=>1]);
     	// 获取班级学生
     	$students = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1])->select();
 
         // 教案列表
-        $PlanService = new \app\service\PlanService;
+        $PlanService = new \app\school\servicePlanService;
         $planList = $PlanService->getPlanList(['camp_id'=>$gradeInfo['camp_id'],'type'=>1]);
         // dump($gradeInfo);die;
         $this->assign('delete_time',time());
@@ -138,7 +138,7 @@ class Grade extends Base{
         $grade_id = input('grade_id');
         $gradeInfo = $this->GradeService->getGradeInfo(['id'=>$grade_id]);
         // 判读权限
-        $CampService = new \app\service\CampService;
+        $CampService = new \app\school\serviceCampService;
         $isPower = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
         // 班级同学
         $studentList = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);

@@ -3,11 +3,11 @@
 namespace app\school\controller;
 
 use think\Controller;
-use app\service\SystemService;
-use app\service\MemberService;
+use app\school\serviceSystemService;
+use app\school\serviceMemberService;
 use think\Cookie;
 use think\Request;
-use app\service\WechatService;
+use app\school\serviceWechatService;
 
 class Frontend extends Controller
 {
