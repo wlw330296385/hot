@@ -101,6 +101,7 @@
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
+                    async: false,
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
@@ -113,10 +114,35 @@
                                 var day = data.data.data[i].create_time.substring(8, 10);
                                 var create_time = year + "-" + month + "-" + day
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                                newli += '<div class="mui-media-body wd"><img class="mui-pull-left img45" src="' + data.data.data[i].avatar + '">';
-                                newli += '<p class="lineHeight20 f16">' + data.data.data[i].member + '</p><p><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + create_time + '&nbsp;&nbsp;打卡:<text class="colororange">0</text></p></div>';
-                                newli += '<div class="price-frame"><button type="button" class="btn bgred follow" onclick="followMember(' + data.data.data[i].member_id + ')">关注</button></div>'
-                                newli += '</li>';
+                                newli += '<div class="mui-media-body wd73"><img class="mui-pull-left img45" src="' + data.data.data[i].avatar + '">';
+                                newli += '<p class="lineHeight20 f16">' + data.data.data[i].member + '</p><p><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + create_time + '&nbsp;&nbsp;打卡&nbsp;<text class="colororange">0</text></p></div>';
+                                if (data.data.data[i].member_id == "{$memberInfo.id}") {
+                                    newli += '<div class="price-frame"></div></li>'
+                                } else {
+                                    newli += '<div class="price-frame"><button type="button" class="btn bgred follow" data-member_id="' + data.data.data[i].member_id + '">'
+                                    mui.ajax("{:url('api/follow/getfollow')}", {
+                                        data: {
+                                            type: 1,
+                                            member_id: data.data.data[i].member_id
+                                        },
+                                        dataType: 'json',//服务器返回json格式数据
+                                        type: 'post',//HTTP请求类型
+                                        async: false,
+                                        timeout: 10000,//超时时间设置为10秒；
+                                        headers: { 'Content-Type': 'application/json' },
+                                        success: function (data) {
+                                            console.log(data)
+                                            if (data.code == 200) {
+                                                if (data.data == 1) {
+                                                    newli += '取消关注'
+                                                } else {
+                                                    newli += '关注'
+                                                }
+                                            }
+                                        }
+                                    })
+                                    newli += '</button></div></li>';
+                                }
                             }
                         }
                         if (gType == 1) {
@@ -145,42 +171,41 @@
                 });
             };
 
-            // followStatus();
+            // 关注会员
+            $(document).on("tap", ".follow", function () {
+                var member_id = $(this).attr("data-member_id");
+                var thisText = $(this).text();
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 1,
+                        member_id: member_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            setTimeout("window.location.reload()", 1000)
+
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
 
         });
 
-        // 关注会员
-        function followMember(member_id) {
-            mui.ajax("{:url('api/follow/focus')}", {
-                data: {
-                    type: 1,
-                    member_id: member_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast(data.msg);
-                        // followStatus();
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
-
-        // 判断当前的关注状态
-        // function followStatus(member_id) {
-        //     var member_id = "{$memberInfo.id}";
-        //     mui.ajax("{:url('api/follow/getfollow')}", {
+        // function followMember(member_id) {
+        //     mui.ajax("{:url('api/follow/focus')}", {
         //         data: {
         //             type: 1,
         //             member_id: member_id
@@ -190,13 +215,13 @@
         //         timeout: 10000,//超时时间设置为10秒；
         //         headers: { 'Content-Type': 'application/json' },
         //         success: function (data) {
+        //             //服务器返回响应，根据响应结果，分析是否登录成功；
         //             console.log(data);
         //             if (data.code == 200) {
-        //                 if (data.data === 1) {
-        //                     $(".follow").text("取消关注");
-        //                 } else {
-        //                     $(".follow").text("关注");
-        //                 }
+        //                 mui.toast(data.msg);
+        //                 $()
+        //             } else {
+        //                 mui.toast(data.msg);
         //             }
         //         },
         //         error: function (xhr, type, errorThrown) {
@@ -205,6 +230,7 @@
         //         }
         //     });
         // }
+
     </script>
 </body>
 
