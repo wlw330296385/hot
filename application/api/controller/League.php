@@ -2524,61 +2524,103 @@ class League extends Base
     public function buildschedulebygroup() {
         // 接收请求数据
         $data = input('post.');
-        // 数据验证
-        if ( !array_key_exists('group_id', $data) ) {
-            return json(['code' =>100, 'msg' => __lang('MSG_402').',请传入group_id']);
-        }
         $leagueS = new LeagueService();
+        // 数据验证
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
         // 查询联赛分组数据
-        $groupInfo = $leagueS->getMatchGroup(['id' => $data['group_id']]);
-        if (!$groupInfo) {
-            return json(['code' => 100, 'msg' => '联赛分组'.__lang('MSG_404')]);
-        }
-        // 检查会员登录信息
-        if ($this->memberInfo['id'] === 0) {
-            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
-        }
-        // 检查会员有无操作权限（管理员以上）
-        $power = $leagueS->getMatchMemberType([
-            'match_id' => $groupInfo['match_id'],
-            'member_id' => $this->memberInfo['id'],
-            'status' => 1
-        ]);
-        if (!$power || $power < 9) {
-            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
-        }
-        // 获取联赛分组球队数据
-        $orderby = ['group_number' => 'asc'];
-        $groupTeams = $leagueS->getMatchGroupTeams([
-            'match_id' => $groupInfo['match_id'],
-            'group_id' => $groupInfo['id']
-        ], $orderby);
-        if (!$groupTeams) {
-            return json(['code' => 100, 'msg' => '联赛分组球队'.__lang('MSG_404')]);
-        }
-        try {
-            // 计算对阵关系(单循环）
-            $berger = new \Berger();
-            $singleCycleBattle = $berger->singleCycle($groupTeams);
-            //dump($singleCycleBattle);
-            $battle = [];
-            foreach ($singleCycleBattle as $loop) {
-                foreach ($loop as $team) {
-                    //  排除球队轮空
-                    if ($team['away_team_id'] && $team['home_team_id']) {
-                        array_push($battle, $team);
+        $orderby = ['group_id' => 'asc', 'group_number' => 'asc'];
+        $battle = []; // 定义对阵关系数组
+        $berger = new \Berger();
+        // 传入分组id 以分组单位生成对阵预览
+        if ( array_key_exists('group_id', $data) && !empty($data['group_id']) && $data['group_id'] ) {
+            // 根据分组查询分组下球队
+            $groupInfo = $leagueS->getMatchGroup(['id' => $data['group_id']]);
+            if (!$groupInfo) {
+                return json(['code' => 100, 'msg' => '联赛分组'.__lang('MSG_404')]);
+            }
+            // 获取联赛分组球队数据
+            $groupTeams = $leagueS->getMatchGroupTeams([
+                'match_id' => $groupInfo['match_id'],
+                'group_id' => $groupInfo['id']
+            ], $orderby);
+            if (!$groupTeams) {
+                return json(['code' => 100, 'msg' => '联赛分组球队'.__lang('MSG_404')]);
+            }
+            try {
+                // 计算对阵关系(单循环）
+                $singleCycleBattle = $berger->singleCycle($groupTeams);
+                //dump($singleCycleBattle);
+                $groupBattle = [];
+                foreach ($singleCycleBattle as $loop) {
+                    foreach ($loop as $team) {
+                        //  排除球队轮空
+                        if ($team['away_team_id'] && $team['home_team_id']) {
+                            array_push($groupBattle, $team);
+                        }
                     }
                 }
+            } catch (Exception $e) {
+                trace('error:'.$e->getMessage());
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
             }
-        } catch (Exception $e) {
-            trace('error:'.$e->getMessage());
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
+            // 组合对阵预览数据
+            $battle['group_id'] = $groupInfo['id'];
+            $battle['group_name'] = $groupInfo['name'];
+            $battle['battles'] = $groupBattle;
+        } else {
+            // 获取整个联赛的所有分组生成对阵预览数据
+            // 获取联赛分组
+            $groups = $leagueS->getMatchGroups([
+                'match_id' => $data['match_id'],
+                'status' => 1
+            ], ['id' => 'asc']);
+            if (!$groups) {
+                return json(['code' => 100, 'msg' =>'分组'. __lang('MSG_000')]);
+            }
+            // 遍历分组获取分组下球队列表
+            foreach ($groups as $k => $group) {
+                $groupTeams = $leagueS->getMatchGroupTeams([
+                    'group_id' => $group['id'],
+                    'status' => 1
+                ], $orderby);
+                if (!$groupTeams) {
+                    return json(['code' => 100, 'msg' => '分组球队'.__lang('MSG_000')]);
+                    break;
+                }
+                try {
+                    // 计算对阵关系(单循环）
+                    $singleCycleBattle = $berger->singleCycle($groupTeams);
+                    $groupBattle = [];
+                    foreach ($singleCycleBattle as $loop) {
+                        foreach ($loop as $team) {
+                            //  排除球队轮空
+                            if ($team['away_team_id'] && $team['home_team_id']) {
+                                array_push($groupBattle, $team);
+                            }
+                        }
+                    }
+                } catch (Exception $e) {
+                    trace('error:'.$e->getMessage());
+                    return json(['code' => 100, 'msg' => $e->getMessage()]);
+                }
+                // 组合对阵预览数据
+                $battle[$k]['group_id'] = $group['id'];
+                $battle[$k]['group_name'] = $group['name'];
+                $battle[$k]['battles'] = $groupBattle;
+            }
         }
-
         if ($battle) {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $battle]);
         } else {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
     }
+
+    // 批量保存比赛赛程数据
+    public function saveallmatchschedule() {
+        $data = input('post.');
+    }
+
 }

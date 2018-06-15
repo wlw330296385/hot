@@ -23,13 +23,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b schedule">
-                    <li class="mui-table-view-cell listli">
-                        <a href="{:url('Match/editScheduleOfLeague',['league_id'=>$leagueInfo.id])}"></a>
-                        <div class="fl"><img class="img45" src="/uploads/images/team/2018/02/thumb_5a7b158462ddf.jpg" alt="">H1篮球队</div>
-                        <div class="fr">北头初中球队<img class="img45" src="/uploads/images/team/2018/02/thumb_5a77fcf8e6b94.png" alt=""></div>
-                    </li>
-                </ul>
+                <ul class="mui-table-view detalis-list list border-b schedule"></ul>
             </div>
         </div>
 
@@ -120,9 +114,9 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('match/editscheduleofleauge')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
+                            var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
                             newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                            newli += '<a class="mui-navigate-right" href="‘+ urls +’">';
+                            newli += '<a class="mui-navigate-right" href="'+ urls +'">';
                             newli += '<label>' + data.data.data[i].home_team + '<img class="img45" src="' + data.data.data[i].home_team_logo + '" alt=""></label>';
                             newli += '<span class="pull-right">' + data.data.data[i].away_team + '<img class="img45" src="' + data.data.data[i].away_team_logo + '" alt=""></span>';
                             newli += '</a></li>';
@@ -130,15 +124,15 @@
                     }
                     if (gType == 1) {
                         //上拉刷新
-                        // $("ul.schedule").empty().append(newli);
+                        $("ul.schedule").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
-                        // if (newli == '') {
-                        //     $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
-                        // }
+                         if (newli == '') {
+                             $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
+                         }
                     } else {
                         //下拉加载 gType==2
-                        // $("ul.schedule").append(newli);
+                        $("ul.schedule").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
