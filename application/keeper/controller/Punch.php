@@ -69,8 +69,9 @@ class Punch extends Base{
         if(!empty($groupList)){
             foreach ($groupList as $key => $value) {
                 $pool_ids[] = $value['p_id'];
-                $groupList[$key]['is_max'] = 0;
+                $groupList[$key]['punchs'] = 0;
                 $groupList[$key]['max'] = 0;
+                $groupList[$key]['is_max'] = 0;
             }
             $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->whereTime('create_time','today')->group('pool_id')->select();
             foreach ($groupList as $key => $value) {
@@ -79,6 +80,7 @@ class Punch extends Base{
                         // unset($groupList[$key]);
                         $groupList[$key]['is_max'] = 1;
                     }
+                    $groupList[$key]['punchs'] = $val['c_id'];
                     $groupList[$key]['max'] = $value['times'];
                 }
             }
