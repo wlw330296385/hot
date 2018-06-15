@@ -1,10 +1,341 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>赛程编辑</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+    </style>
 </head>
+
 <body>
-编辑赛程
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+
+        <form action="" class="mui-input-group mt55">
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>比赛类型</label>
+                    <span class="select-row">
+                        <select id="matchType" class="data" name="type">
+                            <option value="1">小组赛</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row" id='showCityPicker3'>
+                <div class="mui-navigate-right">
+                    <label>比赛地点</label>
+                    <span id="cityResult3" class="ui-alert"></span>
+                    <input type="hidden" name="province" value="" class="data" id="province">
+                    <input type="hidden" name="city" value="" class="data" id="city">
+                    <input type="hidden" name="area" value="" class="data" id="area">
+                </div>
+            </div>
+            <div class="mui-input-row">
+                <label>具体地址</label>
+                <input type="text" name="court" value="" class="data" placeholder="请输入比赛具体地址">
+            </div>
+            <div class="mui-input-row picker btnStart">
+                <div class="mui-navigate-right">
+                    <label>比赛时间</label>
+                    <span id="resultStart" class="ui-alert domData" name="start_time"></span>
+                </div>
+            </div>
+
+            <div class="mui-input-row">
+                <a href="#referee" id="setReferee" class="mui-navigate-right">
+                    <label>裁判名单</label>
+                    <span class="referee" style="width: 60%"></span>
+                    <div class="hideRefereeList"></div>
+                    <input type="hidden" name="referee_id" value="" class="data">
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <a href="#score" id="setReferee" class="mui-navigate-right">
+                    <label>记分员</label>
+                    <span class="score" style="width: 60%"></span>
+                    <div class="hideScoreList"></div>
+                    <input type="hidden" name="score_id" value="" class="data">
+                </a>
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+    </div>
+
+    <!-- 球队A
+    <div id="teamA" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamADel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamAList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+
+    <!--球队B-->
+    <!-- <div id="teamB" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamBDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTB" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTB"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamAList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+
+    <!--裁判列表-->
+    <div id="referee" class="mui-popover tipClass" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>裁判列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="refereeConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="RefereeDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordRE" placeholder="请输入裁判名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchRE"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul id="refereeDiv" class="mui-table-view mui-input-group list refereeList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--记分员-->
+    <div id="score" class="mui-popover tipClass" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>记分员列表</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="refereeConfirm">确认</button>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="RefereeDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordSC" placeholder="请输入记分员名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchSC"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul id="refereeDiv" class="mui-table-view mui-input-group list refereeList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //选择器
+        var getProvince = '';
+        var getCity = '';
+        var getArea = '';
+        (function ($, doc) {
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
+                });
+
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
+
+                cityPicker3.setData(cityData3);
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                        getProvince = _getParam(items[0], 'text');
+                        getCity = _getParam(items[1], 'text');
+                        getArea = _getParam(items[2], 'text');
+                        document.getElementById('province').value = getProvince;
+                        document.getElementById('city').value = getCity;
+                        document.getElementById('area').value = getArea;
+                    });
+                }, false);
+
+                //开始时间
+                var resultStart = $('#resultStart')[0];
+                var btnStart = $('.btnStart');
+                btnStart.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+            });
+        })(mui, document);
+
+        // 获取数据并进行提交
+        // function submitAction() {
+        //     var data = wooApi.getInputData('input', 'data');
+        //     datas = wooApi.getInputData('select', 'data', data);
+        //     // 获取其他标签值
+        //     arrData = wooApi.getDomData('domData', datas);
+        //     var objData = wooApi.arrTOobj(arrData);
+        //     var url = "{:url('api/league/creatematch')}";
+        //     var ajaxResult = wooApi.asyncF(url, objData);
+        //     if (ajaxResult.code == 200) {
+        //         mui.alert('联赛创建成功，请等待审核', '确定', function () {
+        //             var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
+        //             window.top.location.href = goUrl;
+        //         })
+        //     } else {
+        //         mui.alert(ajaxResult.msg, '联赛创建失败');
+        //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+        //             if (data.code === 200) {
+        //                 $('input[name=__token__]').val(data.data);
+        //             }
+        //         }, 'json');
+        //     }
+        // };
+
+    </script>
 </body>
+
 </html>
