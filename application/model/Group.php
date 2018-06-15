@@ -12,4 +12,8 @@ class Group extends Model {
     //                         'type',
     //    
 
+
+	public function pool(){
+		return $this->hasOne('pool');
+	}
 }

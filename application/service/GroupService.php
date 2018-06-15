@@ -30,7 +30,7 @@ class GroupService {
 
     // 分页获取社群
     public function getGroupListByPage($map=[], $order='',$paginate=10){
-        $result = $this->GroupModel->where($map)->order($order)->paginate($paginate);
+        $result = $this->GroupModel->with('pool')->where($map)->order($order)->paginate($paginate);
         return $result;
     }
 
