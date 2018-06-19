@@ -20,6 +20,26 @@
             border-top: 1px solid #ddd;
         }
 
+        .showNumberCont {
+            position: absolute;
+            top: 11px;
+            left: 15px;
+            color: #fff
+        }
+
+        .showNumberCont h2 {
+            margin: 0
+        }
+
+        .showNumberCont div {
+            margin-bottom: 10px;
+        }
+
+        .showNumberCont p {
+            margin-bottom: 0;
+            color: #fff
+        }
+
         .dragClass {
             width: 60px;
             height: 60px;
@@ -40,12 +60,6 @@
         }
 
         .classHFrame {
-            /* position: fixed; */
-            /* background: #fff; */
-            /* height: 55px; */
-            /* overflow: hidden; */
-            /* bottom: 43px; */
-            /* width: 100%; */
             padding: 10px;
             text-align: center;
             line-height: 34px;
@@ -109,10 +123,7 @@
                     <label>
                         <span class="icon iconfont icon-activity-Startingtim colororange"></span>{$punchInfo.punch_time}</label>
                     <span class="wd66" style="font-size: 12px;">
-                        <text class="f14">{$punchInfo.name}</text>&nbsp; 时长
-                        <text class="colororange">{$punchInfo.duration}/mintues</text>
-                       路程
-                        <text class="colororange">{$punchInfo.extent}/km</text>
+                        <text class="f14">{$punchInfo.name}</text>
                     </span>
                 </li>
             </ul>
@@ -121,6 +132,23 @@
             <div class="punchImg" style="position: relative;">
                 <img src="{$punchInfo.image_url}" alt="" style="width: 100%">
                 <span class="icon iconfont #icon-punch-gold"></span>
+                <div class="showNumberCont">
+                    <div class="Workout">
+                        <p>Workout</p>
+                        <h2>{$punchInfo.duration}</h2>
+                        <p>min</p>
+                    </div>
+                    <div class="Distance">
+                        <p>Distance</p>
+                        <h2>{$punchInfo.extent}</h2>
+                        <p>Km</p>
+                    </div>
+                    <div class="Count">
+                        <p>Count</p>
+                        <h2>{$totalPunch}</h2>
+                        <p>times</p>
+                    </div>
+                </div>
                 <div class="dragClass rewardNum" id="drag">{$punchInfo.rewards_money}</div>
             </div>
             <div class="page-header border-b">
@@ -265,6 +293,13 @@
             if (backTotal != "" && backTotal != null) {
                 mask.show();
                 $('.mui-iframe-wrapper').show();
+            }
+
+            if ("{$punchInfo.duration}" == 0) {
+                $(".Workout").hide();
+            }
+            if ("{$punchInfo.extent}" == 0) {
+                $(".Distance").hide();
             }
 
             // 返回上一层判断
