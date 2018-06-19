@@ -663,6 +663,13 @@ class LeagueService
         return $model->id;
     }
 
+    // 批量保存联赛赛程
+    public function saveAllMatchSchedule($data) {
+        $model = new MatchSchedule();
+        $res = $model->saveAll($data);
+        return $res;
+    }
+
     // 获取赛程详情
     public function getMatchSchedule($map) {
         $model = new MatchSchedule();
