@@ -585,14 +585,12 @@ class Schedule extends Base
                     //dump($studentList);
                     $lessonMemberMap = [];
                     $dataSaveScheduleGiftStudent = [];
+                    $lessonMemberMap['camp_id'] = $request['camp_id'];
+                    $studentIDs = [];
+                    $lessonMemberMap['lesson_id'] = $request['lesson_id'];
                     foreach ($studentList as $k => $student) {
-                        $lessonMemberMap['camp_id'] = $request['camp_id'];
-                        $lessonMemberMap['student_id'] = $student['student_id'];
-                        $lessonMemberMap['lesson_id'] = $request['lesson_id'];
-                        $saveStudentRestschedule = $this->ScheduleService->saveStudentRestschedule($lessonMemberMap, $request['gift_schedule']);
-                        if (!$saveStudentRestschedule) {
-                            return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
-                        }
+                        
+                        $studentIDs[] = $student['id'];
                         $dataSaveScheduleGiftStudent[$k] = [
                             'member' => $this->memberInfo['member'],
                             'member_id' => $this->memberInfo['id'],
@@ -608,8 +606,15 @@ class Schedule extends Base
                             'status' => 1
                         ];
                     }
+
+                    $lessonMemberMap['student_id'] = ['in',$studentIDs];
+                    $studentMap = ['id'=>['in',$studentIDs]];
+                    $saveStudentRestschedule = $this->ScheduleService->saveStudentRestschedule($lessonMemberMap, $request['gift_schedule'],$studentMap);
+                    if (!$saveStudentRestschedule) {
+                        return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
+                    }
                     // 保存赠课与学员关系记录
-                    $saveScheduleGiftStudentResult = $this->ScheduleService->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent);
+                    $saveScheduleGiftStudentResult = $this->ScheduleService->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent,$lessonMemberMap);
                 }
                 $res = $this->ScheduleService->recordgift($request);
                 if (!$res) {

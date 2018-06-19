@@ -724,12 +724,11 @@ class ScheduleService
     }
 
     // 批量更新学员剩余课时
-    public function saveStudentRestschedule($map, $gift_schedule)
+    public function saveStudentRestschedule($map, $gift_schedule,$studentMap)
     {
         // 更新lesson_member课时数字段
-        //$lessonMemberRestSchedule = Db::name('lesson_member')->where($map)->whereNull('delete_time')->setInc('rest_schedule', $gift_schedule);
         $lessonMemberRestSchedule = db('lesson_member')->where($map)->whereNull('delete_time')->inc('rest_schedule', $gift_schedule)->inc('total_schedule', $gift_schedule)->update();
-        $studentTotalSchedule = db('student')->where(['id' => $map['student_id']])->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
+        $studentTotalSchedule = db('student')->where($studentMap)->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
         if (!$lessonMemberRestSchedule || !$studentTotalSchedule) {
             return false;
         } else {
@@ -738,8 +737,9 @@ class ScheduleService
     }
 
     // 保存赠课与学员关系
-    public function saveAllScheduleGiftStudent($data)
+    public function saveAllScheduleGiftStudent($data,$lessonMemberMap)
     {
+        
         $model = new ScheduleGiftStudent();
         $res = $model->saveAll($data);
         if ($res) {
