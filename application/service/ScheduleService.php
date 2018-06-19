@@ -743,11 +743,18 @@ class ScheduleService
         $billIDs = [];
         foreach ($billList as $key => $value) {
             $billIDs[] = $value['id'];
+            foreach ($data as $k => &$val) {
+                if($value['student_id'] == $value['student_id']){
+                    $val['bill_id'] = $value['id'];
+                }
+            }
         }
         $result = db('bill')->where(['id'=>['in',$billIDs]])->inc('total_gift',$total)->update();
-        if($result){
-            
+        if(!$result){
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return $result;
         }
+
         $model = new ScheduleGiftStudent();
         $res = $model->saveAll($data);
         if ($res) {
