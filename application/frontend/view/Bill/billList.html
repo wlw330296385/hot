@@ -44,8 +44,7 @@
         <div id="segmentedControl" class="mui-segmented-control">
             <a class="mui-control-item mui-active" href="#bill1">已付款<span id="count-bill1">0</span></a>
             <a class="mui-control-item" href="#bill0">未付款<span id="count-bill0">0</span></a>
-            <a class="mui-control-item" href="#bill-2">已退款<span id="count-bill-2">0</span></a>
-            <a class="mui-control-item" href="#bill-1">未退款<span id="count-bill-1">0</span></a>
+            <a class="mui-control-item" href="#bill-2">退款<span id="count-bill-2">0</span></a>
         </div>
     </div>
     <ul class="mui-table-view camp-lesson-list detalis-list coach">
@@ -81,11 +80,6 @@
                     <ul class="mui-table-view mui-text-center detalis-list bill-2"></ul>
                 </div>
             </div>
-            <div id="bill-1" class="mui-scroll-wrapper mui-control-content" style="top:170px">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view mui-text-center detalis-list bill-1"></ul>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -108,18 +102,21 @@
         window.top.location.href=this.href;
     });
     var postData = {};
+    var postRefundData = {};
     var campID = wooApi.GetQueryString('camp_id');
     var member_id = wooApi.GetQueryString('member_id');
     var toUrl ;
     var backUrl;
     if(campID){
         postData.camp_id = campID;
+        postRefundData.camp_id = campID;
         toUrl = "{:url('bill/billInfoOfCamp')}";
         backUrl = "{:url('camp/powerCamp')}"+"/camp_id/"+campID;
         $(".mui-icon-left-nav").attr("href",backUrl);
     }
     if(member_id){
         postData.member_id = member_id;
+        postRefundData.member_id = member_id;
         toUrl = "{:url('bill/billInfo')}";
         backUrl = "{:url('member/index')}";
         $(".mui-icon-left-nav").attr("href",backUrl);
@@ -218,49 +215,9 @@
         }
 
 
-        //未退款订单
-        mui('#bill-1').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto:true,//可选,默认false.自动下拉刷新一次
-                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefresh01
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefresh01
-            }
-        });
-        //下拉刷新具体业务实现（上架）
-        function pulldownRefresh01() {
-            setTimeout(function() {
-                Count01 = 1;//刷新并显示第一页
-                var page = Count01;
-                var gType = 1;//代表下拉刷新
-                postData.status = -1;
-                toList('bill-1',page,gType,postData,-1);//具体取数据的方法
-            }, 100);
-        }
-        //上拉加载具体业务实现（上架）
-        function pullupRefresh01() {
-            setTimeout(function() {
-                Count01++;//翻下一页
-                var page = Count01;
-                var gType =2;//代表上拉加载
-                postData.status = -1;
-                toList('bill-1',page,gType,postData,-1);//具体取数据的方法
-            }, 100);
-        }
 
 
-        //已退款订单
+        //退款订单
         mui('#bill-2').pullRefresh({
             down: {
                 //下拉刷新
@@ -286,8 +243,7 @@
                 Count02 = 1;//刷新并显示第一页
                 var page = Count02;
                 var gType = 1;//代表下拉刷新
-                postData.status = -2;
-                toList('bill-2',page,gType,postData,-2);//具体取数据的方法
+                toRefundList('bill-2',page,gType,postData,-2);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（上架）
@@ -296,8 +252,7 @@
                 Count02++;//翻下一页
                 var page = Count02;
                 var gType =2;//代表上拉加载
-                postData.status = -2
-                toList('bill-2',page,gType,postData,-2);//具体取数据的方法
+                toRefundList('bill-2',page,gType,postData,-2);//具体取数据的方法
             }, 100);
         }
 
@@ -357,6 +312,83 @@
             }
         });
     };
+
+
+    //接口获取数据并追加到页面
+    var toRefundList = function(wList,page,gType,postData,status) {
+        console.log(postData);  /////// 两处打印的结果不一样，所以必须另外给status值
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/refund/getRefundListByPageApi')}?page="+page;
+        mui.ajax({
+            url:url,
+            data: postRefundData,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                console.log(postData);  /////// 两处打印的结果不一样，所以必须另外给status值
+                var newli='';
+                if (data.code == 200) {
+                    var dealtime = "";
+                    for(var i=0;i<=data.data.data.length-1;i++){
+                        var urls = toUrl+ '/bill_order/' + data.data.data[i].bill_order;
+                        dealtime = "";
+                        if(data.data.data[i].status=="已打款"){
+                            dealtime = '<p>同意退款时间：' + timetrans(data.data.data[i].agree_time) + '</p><p>操作打款时间：' + timetrans(data.data.data[i].finish_time) + '</p>';
+                        }else if(data.data.data[i].status=="已同意"){
+                            dealtime = '<p>同意退款时间：' + data.data.data[i].agree_time + '</p>';
+                        }else if(data.data.data[i].status=="已拒绝"){
+                            dealtime = '<p>拒绝退款时间：' + data.data.data[i].reject_time + '</p>';
+                        }else if(data.data.data[i].status=="已撤销"){
+                            dealtime = '<p>撤销退款时间：' + data.data.data[i].cancel_time + '</p>';
+                        }
+
+
+                        newli +=  '<li class="mui-table-view-cell listli"><a href="'+urls+'"><ul class="mui-row table  item-list"><li class="mui-col-sm-10 mui-col-xs-10"><div class="list-cont1">' + data.data.data[i].bill.goods_des + '<font class="tipCorner bggreen">'+data.data.data[i].bill.goods_type+'</font><p>申请退款时间：' + data.data.data[i].create_time + '</p>'+dealtime+'</div></li><li class="mui-col-sm-2 mui-col-xs-2">' + data.data.data[i].status + '</li></ul><small>订单号：' + data.data.data[i].bill_order + '</small></a></li>';
+                    }
+                    $('#count-'+wList).text(data.data.total);
+                }
+                if(gType==1){
+                    //上拉刷新
+                    $("ul.bill"+status).empty().append(newli);
+                    mui('#'+wList).pullRefresh().endPulldownToRefresh();
+                    mui('#'+wList).pullRefresh().refresh(true);
+                    if(newli=='') {
+                        $("ul.bill"+status).append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                }else{
+                    //下拉加载 gType==2
+                    $("ul.bill"+status).append(newli);
+                }
+
+                if(newli!=''){
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
+                }else{
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //时间戳转换
+    function timetrans(date){
+        var date = new Date(date*1000);//如果date为10位不需要乘1000
+        var Y = date.getFullYear() + '-';
+        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+        var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+        var m = (date.getMinutes() <10 ? '0' + date.getMinutes() : date.getMinutes());
+        var s = (date.getSeconds() <10 ? '0' + date.getSeconds() : date.getSeconds());
+        return Y+M+D+h+m;
+    }
+
 
 </script>
 </html>
