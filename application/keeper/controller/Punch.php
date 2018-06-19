@@ -60,7 +60,7 @@ class Punch extends Base{
             ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id,pool.times')
             ->join('pool','pool.group_id = group_member.group_id','left')
             ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
-            ->where(['pool.status'=>2])
+            // ->where(['pool.status'=>2])
             ->order('group_member.id desc')
             ->select();
          

@@ -614,7 +614,11 @@ class Schedule extends Base
                         return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
                     }
                     // 保存赠课与学员关系记录
-                    $saveScheduleGiftStudentResult = $this->ScheduleService->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent,$lessonMemberMap);
+                    $billMap['student_id'] = ['in',$studentIDs];
+                    $billMap['camp_id'] = $request['camp_id'];
+                    $billMap['goods_id'] = $request['lesson_id'];
+                    $billMap['status'] = 1;
+                    $saveScheduleGiftStudentResult = $this->ScheduleService->saveAllScheduleGiftStudent($dataSaveScheduleGiftStudent,$billMap,$request['gift_schedule']);
                 }
                 $res = $this->ScheduleService->recordgift($request);
                 if (!$res) {

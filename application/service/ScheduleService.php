@@ -737,9 +737,17 @@ class ScheduleService
     }
 
     // 保存赠课与学员关系
-    public function saveAllScheduleGiftStudent($data,$lessonMemberMap)
+    public function saveAllScheduleGiftStudent($data,$billMap,$total)
     {
-        
+        $billList = db('bill')->where($billMap)->group('student_id')->select();
+        $billIDs = [];
+        foreach ($billList as $key => $value) {
+            $billIDs[] = $value['id'];
+        }
+        $result = db('bill')->where(['id'=>['in',$billIDs]])->inc('total_gift',$total)->update();
+        if($result){
+            
+        }
         $model = new ScheduleGiftStudent();
         $res = $model->saveAll($data);
         if ($res) {
