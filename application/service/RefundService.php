@@ -21,7 +21,7 @@ class RefundService {
     }
 
 
-    public function getRefundListByPage($map,$paginate = 1,$p= 10){
+    public function getRefundListByPage($map,$paginate = 10,$p= 10){
         $result = $this->Refund->with('bill')->where($map)->paginate($paginate);
         return $result;
     }
