@@ -28,13 +28,17 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
+
+        .marginRight0 {
+            margin-right: 0 !important
+        }
     </style>
 </head>
 
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">{$leagueInfo.name}</h1>
+        <h1 class="mui-title">{$leagueInfo.name}（赛程预览）</h1>
     </header>
 
     <div class="mui-content mt55">
@@ -45,7 +49,7 @@
         <form action="" class="mui-input-group ">
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label class="wd66">选择分组生成分组对阵信息</label>
+                    <label class="wd66">选择分组查看分组对阵预览</label>
                     <span class="select-row">
                         <select id="matchGroup" name="group_id">
                             <option value="0">全部分组</option>
@@ -115,16 +119,16 @@
                             for (var i = 0; i <= battleData.length - 1; i++) {
                                 newli += `<li class="mui-table-view-cell listli">
                                                 <div class="fl"><img class="img45" src="${battleData[i].home_team_logo}" alt="">${battleData[i].home_team}</div>
-                                                <div class="fr">${battleData[i].away_team}<img class="img45" src="${battleData[i].away_team_logo}" alt=""></div>
+                                                <div class="fr">${battleData[i].away_team}<img class="img45 marginRight0" src="${battleData[i].away_team_logo}" alt=""></div>
                                             </li>`;
                             }
                         } else {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 battleData = data.data[i].battles;
-                                for ( var j =0; j<=battleData.length-1; j++) {
+                                for (var j = 0; j <= battleData.length - 1; j++) {
                                     newli += `<li class="mui-table-view-cell listli">
-                                                <div class="fl"><img class="img45" src="${battleData[j].home_team_logo}" alt="">${battleData[j].home_team}</div>
-                                                <div class="fr">${battleData[j].away_team}<img class="img45" src="${battleData[j].away_team_logo}" alt=""></div>
+                                                <div class="fl"><img class="img45 " src="${battleData[j].home_team_logo}" alt="">${battleData[j].home_team}</div>
+                                                <div class="fr">${battleData[j].away_team}<img class="img45 marginRight0" src="${battleData[j].away_team_logo}" alt=""></div>
                                             </li>`;
                                     var match_group_id = data.data[i].group_id;
                                     var match_group = data.data[i].group_name;
@@ -154,16 +158,33 @@
 
         // 提交
         function submitAction() {
-            // console.log(scheduleList)
+            console.log(scheduleList)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.scheduleList = JSON.stringify(scheduleList);
-            var url = "{:url('api/league/saveallmatchschedule')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            console.log(ajaxResult);
+            mui.confirm('赛程一旦创建，比赛未开始，可修改分组，但赛程将被重置；如比赛已开始，则不能修改分组', '提示', ['取消', '确认'], function (e) {
+                if (e.index === 1) {
+                    var url = "{:url('api/league/saveallmatchschedule')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('赛程创建成功', '确定', function () {
+                            var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + ajaxResult.data;
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '赛程创建失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    }
+                }
+            });
+
         }
     </script>
 </body>
