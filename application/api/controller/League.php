@@ -2621,6 +2621,52 @@ class League extends Base
     // 批量保存比赛赛程数据
     public function saveallmatchschedule() {
         $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        // 数据验证器
+        $validate = validate('MatchScheduleVal');
+        if (!$validate->scene('add')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 检查会员操作权限（联赛工作人员-管理员以上）
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        if ( !array_key_exists('scheduleList', $data) || is_null( json_decode( $data['scheduleList'] ) ) ) {
+            return json(['code' => 100, 'msg' => '请提交预览赛程']);
+        }
+        // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
+        Db::startTrans();
+        try {
+            $matchSchedules = $leagueS->getMatchSchedules(['match_id' => $data['match_id']]);
+            if ($matchSchedules) {
+                $leagueS->delMatchSchedule(['match_id' => $data['match_id']], true);
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+        }
+        // 保存赛程数据
+        $scheduleData = json_decode($data['scheduleList'], true);
+        foreach ($scheduleData as $k => $val) {
+            $scheduleData[$k]['status'] = 1;
+        }
+        try {
+            $result = $leagueS->saveAllMatchSchedule($scheduleData);
+        } catch (Exception $e) {
+            trace('error: '.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
     }
 
 }
