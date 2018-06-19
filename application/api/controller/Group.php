@@ -320,7 +320,7 @@ class Group extends Base{
                     }
                 }
             }
-            return jsoin(['code'=>200,'msg'=>'获取成功','data'=>$groupList]);
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$groupList]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
