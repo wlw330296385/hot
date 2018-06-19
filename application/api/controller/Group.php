@@ -281,4 +281,48 @@ class Group extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取带奖金池的groupList不分页
+    public function getGroupListJoinPoolApi(){
+        try {
+            // 获取开启奖金池规则的社群
+            $groupList = [];
+            $punch_time = input('param.punch_time');
+            if ($punch_time) {
+                $punchTime_start = strtotime($punch_time);
+                $punchTime_end = $punchTime_start+86399;
+            }else{
+                return jsoin(['code'=>100,'msg'=>'请选择时间']);
+            }
+            $groupList = db('group_member')
+                ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id,pool.times')
+                ->join('pool','pool.group_id = group_member.group_id','left')
+                ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
+                // ->where(['pool.status'=>2])
+                ->order('group_member.id desc')
+                ->select();
+             
+            //如果某人当天已在奖金池里打卡超过times(不允许打卡)
+            $pool_ids = [];
+            if(!empty($groupList)){
+                foreach ($groupList as $key => $value) {
+                    $pool_ids[] = $value['p_id'];
+                    $groupList[$key]['punchs'] = 0;
+                }
+                $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->where(['create_time'=>['between',[$punchTime_start,$punchTime_end]]])->group('pool_id')->select();
+                foreach ($groupList as $key => $value) {
+                    foreach ($punchList as $k => $val) {
+                        if($val['pool_id'] == $value['p_id']){
+                            // unset($groupList[$key]);
+                            $groupList[$key]['punchs'] = $val['c_id'];
+                        }
+                    }
+                }
+            }
+            return jsoin(['code'=>200,'msg'=>'获取成功','data'=>$groupList]);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
