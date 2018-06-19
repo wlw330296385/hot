@@ -47,8 +47,7 @@
                 <div class="mui-navigate-right">
                     <label class="wd66">选择分组生成分组对阵信息</label>
                     <span class="select-row">
-                        <select id="matchGroup" class="data" name="group_id">
-                            <option value="">选择分组</option>
+                        <select id="matchGroup" name="group_id">
                             <option value="0">全部分组</option>
                             {volist name="groups" id="vo"}
                             <option value="{$vo.id}">{$vo.name}</option>
@@ -73,6 +72,7 @@
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
@@ -80,7 +80,8 @@
         });
 
         var scheduleList = [];
-        var match_id = "{$league_id}";
+        var match_id = $('input[name=match_id]').val();
+        var match = $('input[name=match]').val();
 
         $(function () {
             // 初始化列出全部分组的对阵信息
@@ -88,7 +89,6 @@
             // 联赛分组选择事件
             $('#matchGroup').change(function () {
                 var group_id = $(this).val();
-                console.log(group_id);
                 getbattle(group_id);
             });
         });
@@ -109,7 +109,6 @@
                 success: function (data) {
                     console.log(data);
                     var newli = '';
-                    scheduleList = data.data
                     if (data.code == 200) {
                         if (group_id) {
                             battleData = data.data.battles;
@@ -127,8 +126,18 @@
                                                 <div class="fl"><img class="img45" src="${battleData[j].home_team_logo}" alt="">${battleData[j].home_team}</div>
                                                 <div class="fr">${battleData[j].away_team}<img class="img45" src="${battleData[j].away_team_logo}" alt=""></div>
                                             </li>`;
+                                    var match_group_id = data.data[i].group_id;
+                                    var match_group = data.data[i].group_name;
+                                    var home_team_id = battleData[j].home_team_id;
+                                    var home_team = battleData[j].home_team;
+                                    var home_team_logo = battleData[j].home_team_logo;
+                                    var away_team_id = battleData[j].away_team_id;
+                                    var away_team = battleData[j].away_team;
+                                    var away_team_logo = battleData[j].away_team_logo;
+                                    scheduleList.push({ match_id, match, match_group_id, match_group, home_team_id, home_team, home_team_logo, away_team_id, away_team, away_team_logo });
                                 }
                             }
+                            //scheduleList = data.data
                         }
                         if (newli != '') {
                             $("ul.schedule").empty().append(newli);
@@ -143,8 +152,18 @@
             });
         }
 
+        // 提交
         function submitAction() {
-            console.log(scheduleList)
+            // console.log(scheduleList)
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.scheduleList = JSON.stringify(scheduleList);
+            var url = "{:url('api/league/saveallmatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
         }
     </script>
 </body>
