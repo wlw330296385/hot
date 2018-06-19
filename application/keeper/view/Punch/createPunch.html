@@ -156,21 +156,21 @@
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
                         <label class="wd45">
-                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>选择运动类型</label>
+                            <i class="icon iconfont icon-th-data colororange"></i>选择运动类型</label>
                         <span class="wd45 punch_category"></span>
                         <input type="hidden" name="punch_category" value="" class="data">
                     </a>
                 </div>
                 <div class="mui-input-row sportProject">
                     <label class="wd45">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动项目
+                        <i class="icon iconfont icon-p-workout colororange"></i>运动项目
                     </label>
                     <input type="text" class="data wd52" name="name" value="" placeholder="运动项目" />
                 </div>
 
                 <div class="mui-input-row sportProject">
                     <label class="wd45">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动时长
+                        <i class="icon iconfont icon-activity-Startingtim  colororange"></i>运动时长
                     </label>
                     <span>minutes</span>
                     <input type="number" class="data" name="duration" value="" placeholder="运动时长" style="width: 34% !important;height: 42px;padding-right: 5px;"
@@ -179,7 +179,7 @@
 
                 <div class="mui-input-row sportProject">
                     <label class="wd45">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动路程
+                        <i class="icon iconfont icon-training-classtime colororange"></i>运动路程
                     </label>
                     <span>km</span>
                     <input type="number" class="data" name="extent" value="" placeholder="运动路程" style="width: 39% !important;height: 42px;padding-right: 5px;"
@@ -188,7 +188,7 @@
 
                 <div class="mui-input-row">
                     <label class="wd45">
-                        <i class="icon iconfont icon-activity-Startingtim colororange"></i>匿名打卡
+                        <i class="icon iconfont icon-training-Experience colororange"></i>匿名打卡
                     </label>
                     <div class="mui-switch mui-switch-mini isAnonymous">
                         <div class="mui-switch-handle"></div>
@@ -198,7 +198,7 @@
                 <div class="mui-input-row h-auto">
                     <a href="#txpopover" class="mui-navigate-right">
                         <label>
-                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>上传运动照</label>
+                            <i class="icon iconfont icon-activity-opponent colororange"></i>上传运动照</label>
                         <div id="view" style="width: 51px;"></div>
                     </a>
                     <input type="hidden" name="image_url" value="" class="data">
@@ -221,10 +221,9 @@
                         <a href="#groups" id="setGroupBox" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </div>
-
+              
 
             </form>
-
             <div class="publicTip mb44">
                 <p class="publicTitle">
                     <img src="/static/frontend/images/hot.png" alt="">
@@ -345,26 +344,12 @@
         <div class="mui-scroll-wrapper" style="top:93px !important;">
             <div class="mui-scroll">
                 <form class="mui-input-group groupslist mb44">
-                    {volist name="groupList" id="vol"}
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        {if $vol.is_max ==1 }
-                        <label class="lineHeight20 groupName" style="width:40%"> {$vol.group} </label>
-                        <span style="width:10%" class="stakeNum"> {$vol.stake}</span>
-                        <span style="width:50%;color:#ddd">今日已打卡{$vol.times}次</span>
-                        <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
-                            data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}" disabled> {else/}
-                        <label class="lineHeight20 groupName" style="width:85%"> {$vol.group} </label>
-                        <span style="width:15%" class="stakeNum"> {$vol.stake}</span>
-                        <input name="checkbox1" value="" type="checkbox" data-group_id="{$vol.group_id}" data-pool="{$vol.pool}" data-pool_id="{$vol.p_id}"
-                            data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-stake="{$vol.stake}"> {/if}
-                    </div>
-                    {/volist}
+
                 </form>
             </div>
         </div>
 
     </div>
-
     <!-- 头像截图弹框 -->
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div id="clipArea"></div>
@@ -442,16 +427,20 @@
         var totalNum = '';//序号总和的变量
         var groupList = [];
 
+        var group_id = wooApi.GetQueryString('group_id');
+        console.log(group_id)
         $(function () {
+            matchList();
+            groupListAboutMember()
 
             // 默认把社群选上 （此处需要加一个条件：个人今日打卡次数未用完）
             if ("{$is_pool}" > 0) {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 var stake = '';
-                $(".groupslist input[type=checkbox]").each(function () {
-                    var group_id = wooApi.GetQueryString('group_id');
+                $(".groupslist input[name='checkbox1']").each(function () {
                     stake = $(this).siblings(".stakeNum").text();
+                    console.log(stake)
                     if (group_id == $(this).attr("data-group_id")) {
                         var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
                     }
@@ -615,18 +604,17 @@
                 $(".mui-badge").text(totalNum);
             });
 
-            matchList();
+
         })
 
         //自定义获取球员列表
         function matchList() {
             var url = "{:url('api/team/lastmatchlist','','',true)}";
-            var member_id = "{$memberInfo.id}";
+            var member_id = "{$memberInfo.id}"
             mui.ajax({
                 url: url,
                 data: {
                     member_id: member_id,
-                    // keyword: keyword
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -642,6 +630,48 @@
                         $(".matchList").empty().append(newli);
                     } else {
                         $(".matchList").append('<p class="mui-text-center">暂无数据</p>')
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        function groupListAboutMember() {
+            var url = "{:url('api/group/getGroupListByPageApi','','',true)}";
+            var member_id = "{$memberInfo.id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var cha = data.data.data[i].max - data.data.data[i].punchs
+                            newli += `
+                            <div class="mui-input-row mui-checkbox mui-left">
+                                <label class="lineHeight20 groupName" style="width:85%">${data.data.data[i].group}</label>
+                                <span style="width:15%" class="stakeNum">${data.data.data[i].stake}</span>`
+                            if (data.data.data[i].pool == null || cha == 0) {
+                                newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data.data[i].id}" data-pool="${data.data.data[i].pool}" data-pool_id="${data.data.data[i].pool + id}"
+                                    data-member="${data.data.data[i].member}" data-member_id="${data.data.data[i].member_id}" data-stake="${data.data.data[i].stake}" disabled> `
+                            } else {
+                                newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data.data[i].id}" data-pool="${data.data.data[i].pool}" data-pool_id="${data.data.data[i].pool + id}"
+                                    data-member="${data.data.data[i].member}" data-member_id="${data.data.data[i].member_id}" data-stake="${data.data.data[i].stake}"> `
+                            }
+                            newli += `</div>`
+                        }
+                        $(".groupslist").empty().append(newli);
+                    } else {
+                        $(".groupslist").append('<p class="mui-text-center">暂无数据</p>')
                     }
                 },
                 error: function (xhr, type, errerThrown) {
