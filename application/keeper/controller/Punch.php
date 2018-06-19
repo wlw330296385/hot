@@ -97,4 +97,19 @@ class Punch extends Base{
         return view('Punch/punchList');
     }
 
+    // 运动计划
+	public function plan() {
+        return view('Punch/plan');
+    }
+
+    // 创建运动计划
+	public function createPlan() {
+        return view('Punch/createPlan');
+    }
+
+    // 运动计划详情
+	public function planInfo() {
+        return view('Punch/planInfo');
+    }
+
 }
