@@ -85,7 +85,7 @@ class Punch extends Base{
             }
         }
    
-
+        dump($groupList);
         $this->assign('is_pool',$is_pool?$is_pool:-1);
     	$this->assign('monthPunch',$monthPunch);
         $this->assign('groupList',$groupList);
