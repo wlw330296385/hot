@@ -51,6 +51,7 @@ class League extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'realname' => $this->memberInfo['realname'],
                     'type' => 10,
                     'status' => 1
                 ]);
@@ -207,6 +208,7 @@ class League extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'realname' => $this->memberInfo['realname'],
                     'type' => 10,
                     'status' => 1
                 ]);
@@ -1640,6 +1642,7 @@ class League extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'realname' => $this->memberInfo['realname'],
                     'type' => 9,
                     'status' => 1
                 ];
@@ -2025,6 +2028,7 @@ class League extends Base
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
+                    'realname' => $this->memberInfo['realname'],
                     'type' => $matchMemberType,
                     'status' => 1
                 ];
@@ -2254,14 +2258,18 @@ class League extends Base
             if ($status == 2) {
                 // 获取联赛信息
                 $match = $leagueS->getMatchWithOrg(['id' => $apply['organization_id']]);
+                // 获取申请工作人员的会员详细数据
+                $memberS = new MemberService();
+                $memberInfo = $memberS->getMemberInfo(['id' => $apply['member_id']]);
                 // 保存联赛工作人员数据
                 $dataMatchMember = [
                     'match_id' => $match['id'],
                     'match' => $match['name'],
                     'match_logo' => $match['logo'],
-                    'member_id' => $apply['member_id'],
-                    'member' => $apply['member'],
-                    'member_avatar' => $apply['member_avatar'],
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'member_avatar' => $memberInfo['avatar'],
+                    'realname' => $memberInfo['realname'],
                     'type' => $matchMemberType,
                     'status' => 1
                 ];
