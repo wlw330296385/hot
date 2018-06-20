@@ -212,8 +212,12 @@
                                 <span>{$memberInfo['hot_id']}</span>
                             </div>
                             <div class="mui-input-row">
-                                <label>姓名</label>
+                                <label>会员名</label>
                                 <span class="name">{$memberInfo['member']}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <label>姓名</label>
+                                <span class="name">{$memberInfo['realname']}</span>
                             </div>
                             <div class="mui-input-row">
                                 <label>性别</label>
@@ -287,8 +291,12 @@
                             <span>{$memberInfo['hot_id']}</span>
                         </div>
                         <div class="mui-input-row">
-                            <label>姓名</label>
+                            <label>会员名</label>
                             <input type="text" name="" class="member" value="{$memberInfo['member']}" style="color: #737373">
+                        </div>
+                        <div class="mui-input-row">
+                            <label>姓名</label>
+                            <input type="text" name="" class="realname" value="{$memberInfo['realname']}" style="color: #737373">
                         </div>
                         <div class="mui-input-row">
                             <label>性别</label>
@@ -530,6 +538,7 @@
                     var area = $("#editor input[name=area]").val();
                     var yearsexp = $("#editor .yearsexp").text();
                     var descri = $("#editor .descri").val();
+                    var realname = $('#editor .realname').val();
                     if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
@@ -542,7 +551,8 @@
                                 city: city,
                                 area: area,
                                 yearsexp: yearsexp,
-                                descri: descri
+                                descri: descri,
+                                realname: realname
                             },
                             dataType: 'json',//服务器返回json格式数据
                             type: 'post',//HTTP请求类型

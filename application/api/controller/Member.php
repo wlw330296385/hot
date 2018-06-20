@@ -20,7 +20,7 @@ class Member extends Base{
     public function _initialize()
     {
         parent::_initialize();
-        $this->MemberService = new MemberService;
+        $this->MemberService = new MemberService();
         $this->SalaryOut = new SalaryOut;
     }
 
@@ -88,7 +88,7 @@ class Member extends Base{
                     }
                 }
                 // 更新member数据成功 同步更新会员所在球队的球员信息
-                $memberS = new MemberService();
+                $memberS = new TeamService();
                 $memberS->saveTeamMember([
                     'age' => $result['data']['age'],
                     'birthday' => $result['data']['birthday'],
