@@ -437,6 +437,17 @@
 
             // 工作人员角色popover点击绑定
             $('.typeList').on('tap', 'li', function() {
+                // 需要会员实名
+                var realname = "{$memberInfo.realname}";
+                if ( realname.length == 0 || realname == "" ) {
+                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function(e) {
+                        if (e.index === 1) {
+                            window.location.href = "{:url('member/memberInfo')}";
+                        }
+                    });
+                    mui("#typePopover").popover("toggle");
+                    return ;
+                }
                 var type = $(this).attr('data-type');
                 var match_id = $('#typePopover').attr('data-matchid');
                 var member_id = $('#typePopover').attr('data-memberid');
