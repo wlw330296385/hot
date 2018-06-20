@@ -2,14 +2,14 @@
 namespace app\management\controller;
 
 use app\management\controller\Backend;
-use app\service\ArticleService;
-class Article extends Backend {
-    private $ArticleListService; 
+use app\service\EventService;
+class Event extends Backend {
+    private $EventListService; 
 	public function _initialize(){
 		parent::_initialize();
-        $this->ArticleService = new ArticleService();
+        $this->EventService = new EventService();
 	}
-    public function articleList() {
+    public function eventList() {
         $field = '请选择搜索关键词';
         $map = [];
 
@@ -28,43 +28,44 @@ class Article extends Backend {
                 };
             }
         }
-        $articleList = $this->ArticleService->getArticleListByPage($map);
+        $eventList = db('event')->where($map)->paginate(10);
+        // dump($eventList);
         $this->assign('field',$field);
-        $this->assign('articleList',$articleList);    
-        return view('Article/articleList');
+        $this->assign('eventList',$eventList);    
+        return view('Event/eventList');
     	
     }
 
-    public function articleInfo(){
-        $article_id = input('param.article_id');
-        $map['id'] = $article_id;
-        $articleInfo = $this->ArticleService->getArticleInfo($map);
+    public function eventInfo(){
+        $event_id = input('param.event_id');
+        $map['id'] = $event_id;
+        $eventInfo = $this->EventService->getEventInfo($map);
 
-        $this->assign('articleInfo',$articleInfo);
-        return  view('Article/articleInfo');
+        $this->assign('eventInfo',$eventInfo);
+        return  view('Event/eventInfo');
     }
 
-    public function createArticle(){
+    public function createEvent(){
         if(request()->isPost()){
             $data = input('post.');
             $data['member_id']=$this->management['id'];
             $data['member'] = $this->management['username'];
-            $result = $this->ArticleService->createArticle($data);
+            $result = $this->EventService->createEvent($data);
             if($result['code'] == 200){
-                $this->success($result['msg'],'/management/Article/articleList');
+                $this->success($result['msg'],'/management/Event/eventList');
             }else{
                 $this->error($result['msg']);
             }
         }
 
-        return view('Article/createArticle');
+        return view('Event/createEvent');
     }
 
 
-    public function updateArticle(){
-        $article_id = input('param.article_id');
-        $map['id'] = $article_id;
-        $articleInfo = $this->ArticleService->getArticleInfo($map);
+    public function updateEvent(){
+        $event_id = input('param.event_id');
+        $map['id'] = $event_id;
+        $eventInfo = $this->EventService->getEventInfo($map);
 
 
         if(request()->isPost()){
@@ -73,18 +74,18 @@ class Article extends Backend {
 
             $data['member_id']=$this->management['id'];
             $data['member'] = $this->management['username'];
-            $result = $this->ArticleService->updateArticle($data,['id'=>$id]);
+            $result = $this->EventService->updateEvent($data,['id'=>$id]);
             if($result['code'] == 200){
-                $this->success($result['msg'],url('management/Article/articleInfo',['article_id'=>$article_id]));
+                $this->success($result['msg'],url('management/Event/eventInfo',['event_id'=>$event_id]));
             }else{
                 $this->error($result['msg']);
             }
         }
 
 
-        $this->assign('articleInfo',$articleInfo);
+        $this->assign('eventInfo',$eventInfo);
 
-        return view('Article/updateArticle');
+        return view('Event/updateEvent');
     }
 
 }
