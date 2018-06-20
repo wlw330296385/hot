@@ -49,6 +49,12 @@
 
         $(function () {
 
+            // mui.confirm('赛程已创建成功，可继续创建下一阶段的赛程', '提示', ['取消', '确认'], function (e) {
+            //     if (e.index === 1) {
+
+            //     }
+            // });
+
             //初始化全局变量
             var onCount = 1;
             var offCount = 1;
@@ -116,7 +122,7 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
                             newli += '<li class="mui-table-view-cell mui-media listli coach">';
-                            newli += '<a class="mui-navigate-right" href="'+ urls +'">';
+                            newli += '<a class="mui-navigate-right" href="' + urls + '">';
                             newli += '<label>' + data.data.data[i].home_team + '<img class="img45" src="' + data.data.data[i].home_team_logo + '" alt=""></label>';
                             newli += '<span class="pull-right">' + data.data.data[i].away_team + '<img class="img45" src="' + data.data.data[i].away_team_logo + '" alt=""></span>';
                             newli += '</a></li>';
@@ -127,9 +133,9 @@
                         $("ul.schedule").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
-                         if (newli == '') {
-                             $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
-                         }
+                        if (newli == '') {
+                            $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
+                        }
                     } else {
                         //下拉加载 gType==2
                         $("ul.schedule").append(newli);

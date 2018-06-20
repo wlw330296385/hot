@@ -689,6 +689,18 @@ class Match extends Base {
         return view('Match/createScheduleOfLeague');
     }
 
+    // 手动创建赛程
+    public function createscheduleofleague1() {
+        // 获取联赛分组列表
+        $leagueS = new LeagueService();
+        $groups = $leagueS->getMatchGroups([
+            'match_id' => $this->league_id
+        ]);
+
+        $this->assign('groups', $groups);
+        return view('Match/createScheduleOfLeague1');
+    }
+
     // 编辑赛程
     public function editScheduleOfLeague() {
         return view('Match/editScheduleOfLeague');
@@ -697,5 +709,10 @@ class Match extends Base {
     // 比赛阶段
     public function createMatchStage() {
         return view('Match/createMatchStage');
+    }
+
+     // 球队积分列表
+     public function integralList() {
+        return view('Match/integralList');
     }
 }
