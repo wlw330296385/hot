@@ -728,7 +728,7 @@ class ScheduleService
     {
         // 更新lesson_member课时数字段
         $lessonMemberRestSchedule = db('lesson_member')->where($map)->whereNull('delete_time')->inc('rest_schedule', $gift_schedule)->inc('total_schedule', $gift_schedule)->update();
-        $studentTotalSchedule = db('student')->where($studentMap)->whereNull('delete_time')->setInc('total_schedule', $gift_schedule);
+        $studentTotalSchedule = db('student')->where($studentMap)->whereNull('delete_time')->inc('total_schedule', $gift_schedule)->update();
         if (!$lessonMemberRestSchedule || !$studentTotalSchedule) {
             return false;
         } else {
