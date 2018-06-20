@@ -693,4 +693,9 @@ class Match extends Base {
     public function editScheduleOfLeague() {
         return view('Match/editScheduleOfLeague');
     }
+
+    // 比赛阶段
+    public function createMatchStage() {
+        return view('Match/createMatchStage');
+    }
 }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加比赛阶段</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"> </a>
+        <h1 class="mui-title">添加比赛阶段</h1>
+    </header>
+
+    <div class="mui-content">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <form action="" class="mui-input-group mb44">
+            <div class="mui-input-row">
+                <label>阶段别名</label>
+                <input type="text" name="byname" value="" class="data" placeholder="请输入比赛阶段别名（如:16强赛）">
+            </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>比赛阶段</label>
+                    <span class="select-row">
+                        <select class="stageSelect">
+                            <option value="1">小组赛</option>
+                            <option value="2">淘汰赛</option>
+                            <option value="3">决赛</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        function submitAction() {
+            var byname = $("input[name=byname]").val();
+            var stage = $('.stageSelect option:selected').val();
+            if (byname == '') {
+                mui.toast("阶段别名不能为空");
+                return false;
+            }
+
+            mui.ajax("{:url('api/match')}", {
+                data: {
+                    byname: byname,
+                    stage: stage,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("添加比赛阶段成功");
+                        setTimeout("history.go(-1)", 1000);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

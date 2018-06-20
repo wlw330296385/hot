@@ -53,19 +53,12 @@
                     </span>
                 </div>
             </div>
-
-            <div class="mui-input-row" id='showCityPicker3'>
-                <div class="mui-navigate-right">
-                    <label>比赛地点</label>
-                    <span id="cityResult3" class="ui-alert"></span>
-                    <input type="hidden" name="province" value="" class="data" id="province">
-                    <input type="hidden" name="city" value="" class="data" id="city">
-                    <input type="hidden" name="area" value="" class="data" id="area">
-                </div>
-            </div>
             <div class="mui-input-row">
-                <label>具体地址</label>
-                <input type="text" name="court" value="" class="data" placeholder="请输入比赛具体地址">
+                <a href="#court" class="mui-navigate-right">
+                    <label>比赛场地</label>
+                    <span class="courtCont domData" name="court"></span>
+                    <input type="hidden" name="court_id" value="" class="court_id data">
+                </a>
             </div>
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
@@ -168,6 +161,40 @@
         </div>
     </div> -->
 
+    <!--常驻场地-->
+    <div id="court" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>常驻球场</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CourtDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordCR" placeholder="请输入场地名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list courtList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!--裁判列表-->
     <div id="referee" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -255,43 +282,25 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
         //选择器
-        var getProvince = '';
-        var getCity = '';
-        var getArea = '';
         (function ($, doc) {
             $.ready(function () {
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
-
-                ///级联示例
-                var cityPicker3 = new $.PopPicker({
-                    layer: 3
-                });
-
-                // 设置默认值
-                cityPicker3.pickers[0].setSelectedIndex(18);
-                cityPicker3.pickers[1].setSelectedIndex(2);
-                cityPicker3.pickers[2].setSelectedIndex(2);
-
-                cityPicker3.setData(cityData3);
-                var showCityPickerButton = doc.getElementById('showCityPicker3');
-                var cityResult3 = doc.getElementById('cityResult3');
-                showCityPickerButton.addEventListener('tap', function (event) {
-                    cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                        //返回 false 可以阻止选择框的关闭
-                        //return false;
-                        getProvince = _getParam(items[0], 'text');
-                        getCity = _getParam(items[1], 'text');
-                        getArea = _getParam(items[2], 'text');
-                        document.getElementById('province').value = getProvince;
-                        document.getElementById('city').value = getCity;
-                        document.getElementById('area').value = getArea;
-                    });
-                }, false);
-
                 //开始时间
                 var resultStart = $('#resultStart')[0];
                 var btnStart = $('.btnStart');
@@ -310,6 +319,100 @@
                 });
             });
         })(mui, document);
+
+        $(function () {
+            var courtKeyword = '';
+            var wCourt = '';
+            var pageCR = 1;
+            toCourtList(wCourt, courtKeyword, 1);
+            // 常驻球场
+            $(".courtList").on('tap', 'li', function () {
+                var court = $(this).find("font").text();
+                $(".courtCont").text(court);
+                var id = $(this).attr('data-id');
+                $(".court_id").val(id);
+                mui("#court").popover("toggle");
+            })
+            //清除常驻球场
+            $("#CourtDel").on('tap', '', function () {
+                $(".courtCont").text('');
+                $(".court_id").val("");
+                mui("#court").popover("toggle");
+            })
+            //搜索常驻球场
+            $("#searchCR").on("tap", function () {
+                var keyword = $(".keywordCR").val();
+                var pageCR = 1;
+                toCourtList(keyword, "court", pageCR);
+            })
+            //常驻球场弹出框页码控制
+            $("#court").on('tap', '.next_page', function () {
+                var getTotalPage = $("#court .totalPage").text();
+                pageCR++;
+                console.log(pageCR)
+                if (pageCR > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            })
+            $("#court").on('tap', '.prev_page', function () {
+                pageCR--;
+                if (pageCR < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            })
+        });
+
+        //场地列表接口获取数据并追加到页面 
+        var toCourtList = function (keyword, wCourt, page) {
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var wCourtList = "ul.courtList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wCourt != '') {
+                wCourtList = "#" + wCourt + " ul.courtList";
+                currPage = "#" + wCourt + " .currPage";
+                totalPage = "#" + wCourt + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                        }
+                        $(wCourtList).empty();
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p></div>'
+                        }
+                        $(wCourtList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
 
         // 获取数据并进行提交
         // function submitAction() {
