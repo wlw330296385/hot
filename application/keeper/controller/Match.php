@@ -703,32 +703,38 @@ class Match extends Base {
 
     // 编辑赛程
     public function editScheduleOfLeague() {
+        $id = input('id', 0, 'intval');
+        // 获取赛程详情
+        $leagueS = new LeagueService();
+        $scheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
+
+        $this->assign('matchScheduleInfo', $scheduleInfo);
         return view('Match/editScheduleOfLeague');
     }
 
-    // 比赛阶段
+    // 比赛阶段创建
     public function createMatchStage() {
         return view('Match/createMatchStage');
     }
 
-    // 比赛阶段列表
-    public function stageListOfLeague() {
-        return view('Match/stageListOfLeague');
+    // 比赛阶段编辑
+    public function editmatchstage() {
+        $id = input('id', 0, 'intval');
+        // 获取比赛阶段详情
+        $leagueS = new LeagueService();
+        $stageInfo = $leagueS->getMatchStage(['id' => $id]);
+
+        $this->assign('matchStageInfo', $stageInfo);
+        return view('Match/editMatchStage');
     }
 
-     // 比赛阶段详情
-     public function stageInfoOfLeague() {
-        return view('Match/stageInfoOfLeague');
+    // 比赛阶段管理
+    public function matchstageofleague() {
+        return view('Match/matchStageOfLeague');
     }
-
-     // 球队积分列表
-     public function integralList() {
-        return view('Match/integralList');
-    }
-    
 
     // 球队积分列表
-    public function testList() {
-        return view('Match/testList');
+    public function integralList() {
+        return view('Match/integralList');
     }
 }
