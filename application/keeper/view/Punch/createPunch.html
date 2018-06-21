@@ -50,6 +50,9 @@
             width: initial !important;
             display: initial !important;
         }
+        .sportProject{
+            display: none;
+        }
 
         .publicTip {
             padding: 15px;
@@ -97,7 +100,7 @@
 
         .secondUl li .hideDiv {
             float: right;
-            width: 85%;
+            width: 80%;
             display: none;
         }
 
@@ -119,6 +122,13 @@
             bottom: 0;
             background: #fff;
             border-top: 1px solid #ddd;
+        }
+        .groupslist .mui-checkbox.mui-left input[type=checkbox]{
+            left:12px;
+            top:6px;
+        }
+        .groupslist .mui-checkbox.mui-left label{
+            padding-left: 48px;
         }
     </style>
 </head>
@@ -176,17 +186,26 @@
                     <label class="wd45">
                         <i class="icon iconfont icon-activity-Startingtim  colororange"></i>运动时长
                     </label>
-                    <span>minutes</span>
-                    <input type="number" class="data" name="duration" value="" placeholder="运动时长" style="width: 34% !important;height: 42px;padding-right: 5px;"
+                    <span class="colororange">分钟</span>
+                    <input type="number" class="data" name="duration" value="" placeholder="选填" style="width: 34% !important;height: 42px;padding-right: 5px;"
                     />
                 </div>
 
                 <div class="mui-input-row sportProject">
                     <label class="wd45">
-                        <i class="icon iconfont icon-training-classtime colororange"></i>运动路程
+                        <i class="icon iconfont icon-training-classtime colororange"></i>运动里程
                     </label>
-                    <span>km</span>
-                    <input type="number" class="data" name="extent" value="" placeholder="运动路程" style="width: 39% !important;height: 42px;padding-right: 5px;"
+                    <span class="colororange">公里</span>
+                    <input type="number" class="data" name="extent" value="" placeholder="选填" style="width: 39% !important;height: 42px;padding-right: 5px;"
+                    />
+                </div>
+
+                <div class="mui-input-row sportProject">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-training-classtime colororange"></i>运动数量
+                    </label>
+                    <span class="colororange">个/次</span>
+                    <input type="number" class="data" name="amount" value="" placeholder="选填" style="width: 39% !important;height: 42px;padding-right: 5px;"
                     />
                 </div>
 
@@ -236,7 +255,7 @@
                 <div class="publicText">
                     <p>1、开启匿名打卡、本次打卡将隐藏个人信息，但会正常进行统计，仅自己可见。</p>
                     <p>2、每次打卡可选择自己所在社群，打卡信息将发布到社群。</p>
-                    <p>3、选中社群点击删除，可删除已选社群</p>
+                    <p>3、选中社群点击删除，可取消已选社群</p>
                 </div>
             </div>
 
@@ -288,7 +307,7 @@
                                     <text>跑步</text>
                                     <div class="hideDiv">
                                         <input type="number" name="duration" value="" placeholder="时长/min">
-                                        <input type="number" name="extent" value="" placeholder="路程/km">
+                                        <input type="number" name="extent" value="" placeholder="里程/km">
                                         <button class="fr bgred confirmBtn">确认</button>
                                     </div>
                                 </li>
@@ -314,6 +333,13 @@
                                     </div>
                                 </li>
                                 <li class="mui-table-view-cell listli">
+                                    <text>足球</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时长/min">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
                                     <text>羽毛球</text>
                                     <div class="hideDiv">
                                         <input type="number" name="duration" value="" placeholder="时长/min">
@@ -331,6 +357,20 @@
                                     <text>骑车</text>
                                     <div class="hideDiv">
                                         <input type="number" name="duration" value="" placeholder="时长/min">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>俯卧撑</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="amount" value="" placeholder="数量/total">
+                                        <button class="fr bgred confirmBtn">确认</button>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell listli">
+                                    <text>仰卧起坐</text>
+                                    <div class="hideDiv">
+                                        <input type="number" name="amount" value="" placeholder="数量/total">
                                         <button class="fr bgred confirmBtn">确认</button>
                                     </div>
                                 </li>
@@ -376,7 +416,6 @@
         <div class="mui-scroll-wrapper" style="top:93px !important;">
             <div class="mui-scroll">
                 <form class="mui-input-group groupslist mb44">
-
                 </form>
             </div>
         </div>
@@ -435,12 +474,23 @@
                 var btn = $('.btn');
                 btn.each(function (i, btn) {
                     btn.addEventListener('tap', function () {
+                        var getPunchDate = document.getElementById("result").innerText;
+                        console.log(getPunchDate)
                         var optionsJson = this.getAttribute('data-options') || '{}';
                         var options = JSON.parse(optionsJson);
                         var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
                         picker.show(function (rs) {
-                            result.innerText = rs.text;
+                            if(getPunchDate!=rs.text){
+                                mui.confirm('您修改了打卡日期，所选社群需要重新选择！', '提示', ['取消', '确定'], function (e) {
+                                    if (e.index === 1) {
+                                        result.innerText = rs.text;
+                                        groupListAboutMember(rs.text);
+                                        document.getElementById("inactiveList").innerHTML="";
+                                        document.getElementById("hideStList").innerHTML="";
+                                    }
+                                });
+                            }
                             picker.dispose();
                         });
                     }, false);
@@ -460,50 +510,35 @@
         var groupList = [];
 
         var group_id = wooApi.GetQueryString('group_id');
-        console.log(group_id)
         $(function () {
             matchList();
-            groupListAboutMember()
-
-            // 默认把社群选上 （此处需要加一个条件：个人今日打卡次数未用完）
-            if ("{$is_pool}" > 0) {
-                $("#inactiveList").empty();
-                $("#hideStList").empty();
-                var stake = '';
-                $(".groupslist input[name='checkbox1']").each(function () {
-                    stake = $(this).siblings(".stakeNum").text();
-                    console.log(stake)
-                    if (group_id == $(this).attr("data-group_id")) {
-                        var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
-                    }
-                    $("#inactiveList").append(str);
-                    $("#hideStList").append(str);
-                });
-                $(".Hbin").text(stake)
-                changeIndex();//调用-更新序号
-                totalNum = $("#inactiveList .checkboxCont").length;
-                $(".mui-badge").text(totalNum);
-            }
-
-            //复选框赋值
-            $("#setGroupBox").on('tap', '', function () {
-                //每次打开先清空所有选择
-                $(".groupslist input[name='checkbox1']").prop("checked", false);
-                //然后遍历出对应所选
-                $("#hideStList input[name=group]").each(function () {
-                    var thisGroupId = $(this).attr("data-group_id");
-                    $("#groups").find("input[name='checkbox1']").filter(function () {
-                        return $(this).attr("data-group_id") == thisGroupId
-                    }).prop("checked", true);
-                });
-            });
 
             // 获取当前时间为打卡时间
             var year = new Date().getFullYear();
             var month = new Date().getMonth() + 1;
             var day = new Date().getDate();
-            var time = year + '-' + month + '-' + day
+            var time = year + '-' + ('0'+month).slice(-2) + '-' + ('0'+day).slice(-2)
             $(".punch_time").text(time)
+            groupListAboutMember(time);
+
+            ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
+            var stake = '';
+            $(".groupslist input[name='checkbox1']").not(":disabled").each(function () {
+                stake = $(this).siblings(".stakeNum").text();
+                console.log(stake)
+                if (group_id == $(this).attr("data-group_id")) {
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
+                    return false;
+                }
+            });
+            $(".Hbin").text(stake)
+            changeIndex();//调用-更新序号
+            totalNum = $("#inactiveList .checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
             if ("{$memberInfo.city}" == '' && "{$memberInfo.area}" == '') {
                 $(".address").text("暂无地址信息")
@@ -519,6 +554,19 @@
                 }
             });
 
+            //复选框赋值
+            $("#setGroupBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $(".groupslist input[name='checkbox1']").prop("checked", false);
+                //然后遍历出对应所选
+                $("#hideStList input[name=group]").each(function () {
+                    var thisGroupId = $(this).attr("data-group_id");
+                    $("#groups").find("input[name='checkbox1']").filter(function () {
+                        return $(this).attr("data-group_id") == thisGroupId
+                    }).prop("checked", true);
+                });
+            });
+
             //清除社群
             $("#groupsDel").on('tap', '', function () {
                 $("#inactiveList").html('');
@@ -529,9 +577,11 @@
             //清除训练
             $("#trainDel").on('tap', '', function () {
                 $(".punch_category").text('');
+                $("input[name=punch_category]").val('');
                 $(".sportProject input[name=name]").val('');
                 $(".sportProject input[name=duration]").val('');
                 $(".sportProject input[name=extent]").val('');
+                $(".sportProject input[name=amount]").val('');
                 mui("#sportType").popover("toggle");
             });
 
@@ -542,32 +592,55 @@
             $(".secondUl").on('tap', '.confirmBtn', function () {
                 var duration = $(this).siblings("input[name=duration]").val();
                 var extent = $(this).siblings("input[name=extent]").val();
+                var amount = $(this).siblings("input[name=amount]").val();
                 var punch_category = $(this).parents(".mui-collapse-content").siblings().find("p").text();
                 var name = $(this).parent().siblings("text").text();
-                $(".punch_category").text(punch_category);
-                $(".sportProject input[name=name]").val(name);
-                $(".sportProject input[name=duration]").val(duration);
-                $(".sportProject input[name=extent]").val(extent);
+                //根据获取值赋值训练类型
                 if (punch_category == "训练") {
                     $("input[name=punch_category]").val(1);
                 } else {
                     $("input[name=punch_category]").val(2);
                 }
-                if (name != "跑步") {
-                    $(".sportProject input[name=extent]").val('');
-                    $(".sportProject input[name=extent]").parent().hide();
-                } else {
+                $(".punch_category").text(punch_category);
+
+                //先隐藏和清空
+                $(".sportProject").hide();
+                $(".sportProject input[name=duration]").val(0);
+                $(".sportProject input[name=extent]").val(0);
+                $(".sportProject input[name=amount]").val(0);
+
+                //后根据是否有值赋值并显示
+                $(".sportProject input[name=name]").val(name);
+                $(".sportProject input[name=name]").parent().show();
+                if(duration!="undefined"&&duration!=null){
+                    $(".sportProject input[name=duration]").val(duration);
+                    $(".sportProject input[name=duration]").parent().show();
+                }
+                if(extent!="undefined"&&extent!=null){
+                    $(".sportProject input[name=extent]").val(extent);
                     $(".sportProject input[name=extent]").parent().show();
                 }
+                if(amount!="undefined"&&amount!=null){
+                    $(".sportProject input[name=amount]").val(amount);
+                    $(".sportProject input[name=amount]").parent().show();
+                }
                 mui("#sportType").popover("toggle");
-            })
+            });
 
             //自填
             $(".otherChoise").on("tap", "", function () {
-                $("input[name=name]").val('');
                 var punch_category = $(this).parent().parent().siblings().children().text();
                 $(".punch_category").text(punch_category);
-                $("input[name=punch_category]").val(1);
+                if (punch_category == "训练") {
+                    $("input[name=punch_category]").val(1);
+                } else {
+                    $("input[name=punch_category]").val(2);
+                }
+                $(".sportProject input[name=name]").val('');
+                $(".sportProject input[name=duration]").val('');
+                $(".sportProject input[name=extent]").val('');
+                $(".sportProject input[name=amount]").val('');
+                $(".sportProject").show();
                 mui("#sportType").popover("toggle");
             })
 
@@ -660,36 +733,48 @@
         };
         
         // 社群列表
-        function groupListAboutMember() {
-            var url = "{:url('api/group/getGroupListByPageApi','','',true)}";
-            var member_id = "{$memberInfo.id}"
+        function groupListAboutMember(pDate) {
+            var url = "{:url('api/group/getGroupListJoinPoolApi','','',true)}";
+
             mui.ajax({
                 url: url,
                 data: {
-                    member_id: member_id
+                    punch_time: pDate
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
+                async:false,
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            // var cha = data.data.data[i].max - data.data.data[i].punchs
+                        var pTips = '';
+                        var cha = 0;
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                             cha = parseInt(data.data[i].times) - parseInt(data.data[i].punchs);
+                             pTips = '';
+                            if(data.data[i].pool == null){
+                                pTips = '未设规则';
+                            }else if(cha <= 0){
+                                pTips = '已打满卡';
+                            }else{
+                                pTips = data.data[i].stake;
+                            }
                             newli += `
                             <div class="mui-input-row mui-checkbox mui-left">
-                                <label class="lineHeight20 groupName" style="width:85%">${data.data.data[i].group}</label>
-                                <span style="width:15%" class="stakeNum">${data.data.data[i].stake}</span>`
+                                <label class="lineHeight20 groupName" style="width:70%">${data.data[i].group}</label>
+                                <span style="width:30%" class="stakeNum">${pTips}</span>`
                             // 此处原本是判断有正在进行的奖金池和会员所剩打卡次数不小于社群所设的打卡次数则显示/否则加disabled
-                            // if (data.data.data[i].pool == null || cha == 0) {
-                            // newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data.data[i].id}" data-pool="${data.data.data[i].pool}" data-pool_id="${data.data.data[i].pool + id}"
-                            //     data-member="${data.data.data[i].member}" data-member_id="${data.data.data[i].member_id}" data-stake="${data.data.data[i].stake}" disabled> `
-                            // } else {
-                            newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data.data[i].id}" data-pool="${data.data.data[i].pool}" data-pool_id="${data.data.data[i].pool + id}"
-                                    data-member="${data.data.data[i].member}" data-member_id="${data.data.data[i].member_id}" data-stake="${data.data.data[i].stake}"> `
-                            // }
+                             if (data.data[i].pool == null || cha <= 0) {
+
+                                 newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data[i].group_id}" data-pool="${data.data[i].pool}" data-pool_id="${data.data[i].p_id}"
+                                     data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-stake="${data.data[i].stake}" disabled="true"> `
+                             } else {
+                                newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data[i].group_id}" data-pool="${data.data[i].pool}" data-pool_id="${data.data[i].p_id}"
+                                        data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-stake="${data.data[i].stake}"> `
+                             }
                             newli += `</div>`
                         }
                         $(".groupslist").empty().append(newli);
@@ -743,27 +828,27 @@
                 console.log(groupList)
             });
 
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // let list = JSON.stringify(groupList);
-            // objData.groupList = list;
-            // var url = "{:url('api/punch/createPunchApi')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert("打卡成功", '提示', '确定', function () {
-            //         var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '打卡失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //         }
-            //     }, 'json');
-            // }
+             var data = wooApi.getInputData('input', 'data');
+             datas = wooApi.getInputData('select', 'data', data);
+             //获取其他标签值
+             arrData = wooApi.getDomData('domData', datas);
+             var objData = wooApi.arrTOobj(arrData);
+             let list = JSON.stringify(groupList);
+             objData.groupList = list;
+             var url = "{:url('api/punch/createPunchApi')}";
+             var ajaxResult = wooApi.asyncF(url, objData);
+             if (ajaxResult.code == 200) {
+                 mui.alert("打卡成功", '提示', '确定', function () {
+                     var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
+                     window.top.location.href = goUrl;
+                 })
+             } else {
+                 mui.alert(ajaxResult.msg, '打卡失败');
+                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                     if (data.code === 200) {
+                     }
+                 }, 'json');
+             }
         };
 
     </script>

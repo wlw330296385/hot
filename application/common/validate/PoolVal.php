@@ -9,7 +9,7 @@ class PoolVal extends Validate{
 		'group_id'		=>'require',
 		'start'		=>'require',
 		'end'		=>'require',
-		'stake'		=>'require|egt:1',
+		'stake'		=>'require|egt:0',
     ];
     
     protected $message = [

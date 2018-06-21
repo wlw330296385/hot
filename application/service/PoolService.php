@@ -58,7 +58,7 @@ class PoolService {
         }
          $is_pool = db('pool')->where(['group_id'=>$data['group_id'],'status'=>1])->whereOr(['group_id'=>$data['group_id'],'status'=>2])->find();
          if($is_pool){
-             return ['msg'=>'同时期只能创建一个奖金池', 'code' => 100];
+             return ['msg'=>'同时期只能创建一个打卡规则', 'code' => 100];
          }
         $result = $this->PoolModel->save($data);
         if($result){

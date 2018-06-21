@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--自定义多色图标icon.js-->
@@ -99,6 +100,11 @@
                 opacity: 0;
             }
         }
+        .punchList .colorgray{
+            color:#CCC !important;
+            margin-left:5px;
+            margin-right:5px;
+        }
         
     </style>
 </head>
@@ -183,6 +189,7 @@
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/mobile_date.js"></script>
 <script src="/static/frontend/js/calendar.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script>    
 
     var count = 1
@@ -274,8 +281,8 @@
                         });
                         var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                        newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data[i].punch_time + ' &nbsp;打卡金<text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data[i].rewards_money + '</text></p>';
+                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16">' + data.data[i].member + ' <i class="colorgray">|</i> <strong>' + data.data[i].name + '</strong>';
+                        newli += '<p class="lineHeight20">' + data.data[i].punch_time + ' &nbsp;<i class="icon iconfont icon-punch-bonuspool colororange f16"></i> 打卡金 <text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏 <text class="colororange">' + data.data[i].rewards_money + '</text> &nbsp; <i class="mui-icon-extra mui-icon-extra-heart f14"></i> <text class="colororange">0</text></p>';
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {
@@ -351,5 +358,44 @@
 
 </script>
 
+<script>
+    wx.config({
+        //debug: true,
+        appId: "{$jsapi['appId']}",
+        timestamp: "{$jsapi['timestamp']}",
+        nonceStr: "{$jsapi['nonceStr']}",
+        signature: "{$jsapi['signature']}",
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ'
+        ]
+    });
+    wx.ready(function () {
+        // 分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: '17运动，一起来运动吧！',
+            desc: '{$memberInfo.member}邀你来PK！',
+            link: "{$shareurl}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            success: function () { },
+            cancel: function () { }
+        });
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '17运动，一起来运动吧！',
+            desc: '{$memberInfo.member}邀你来PK！',
+            link: "{$shareurl}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            type: "",
+            dataUrl: '',
+            success: function () { },
+            cancel: function () { }
+        });
+
+    });
+</script>
 
 </html>

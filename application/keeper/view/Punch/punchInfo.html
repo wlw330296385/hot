@@ -24,7 +24,8 @@
             position: absolute;
             top: 11px;
             left: 15px;
-            color: #fff
+            color: #fff;
+            text-shadow: 2px 1px 1px #333;
         }
 
         .showNumberCont h2 {
@@ -145,7 +146,7 @@
                     </div>
                     <div class="Count">
                         <p>Count</p>
-                        <h2>{$totalPunch}</h2>
+                        <h2>{$punchInfo.amount}</h2>
                         <p>times</p>
                     </div>
                 </div>
@@ -300,6 +301,9 @@
             }
             if ("{$punchInfo.extent}" == 0) {
                 $(".Distance").hide();
+            }
+            if ("{$punchInfo.amount}" == 0) {
+                $(".Count").hide();
             }
 
             // 返回上一层判断
@@ -509,7 +513,8 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: '{$punchInfo.member} | {$punchInfo.name}',
+                title: '17运动，一起来运动吧！',
+                desc: '{$punchInfo.member}打了一卡{$punchInfo.name}，咔咔咔！',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$punchInfo.image_url}",
                 success: function () { },
@@ -517,8 +522,8 @@
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$punchInfo.member} | {$punchInfo.name}',
-                desc: '本月累计打卡：{$totalPunch}',
+                title: '17运动，一起来运动吧！',
+                desc: '{$punchInfo.member}打了一卡{$punchInfo.name}，咔咔咔！',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$punchInfo.image_url}",
                 type: "",

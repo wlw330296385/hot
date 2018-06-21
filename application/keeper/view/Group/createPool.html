@@ -66,7 +66,7 @@
             <div class="mui-input-row">
                 <label>打卡金额</label>
                 <span class="colororange">HT</span>
-                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额请输入O" style="padding-right: 5px;height: 41px;">
+                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额请输入0" style="padding-right: 5px;height: 41px;">
             </div>
             <div class="mui-input-row picker btnStart" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
@@ -81,12 +81,12 @@
                 </div>
             </div>
             <div class="mui-input-row">
-                <label class="wd45">个人每天打卡上限</label>
+                <label class="wd45">个人单日打卡上限</label>
                 <input type="number" name="times" class="data wd52" value="" placeholder="不填默认为1次">
             </div>
             <div class="mui-input-row h-auto">
                 <label>打卡说明</label>
-                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写内容"></textarea>
+                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写说明内容" style="text-align: left;width: 96%;margin: 0 auto;"></textarea>
             </div>
         </form>
         <div class="publicTip mb44">
@@ -102,7 +102,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
-                创建打卡规则
+                提交打卡规则
             </li>
         </ul>
 
@@ -184,8 +184,8 @@
             var start = $("#resultStart").text();
             var end = $("#resultEnd").text();
 
-            if (start < nowTime) {
-                mui.toast("开始时间不能小于当前时间");
+            if (start == '') {
+                mui.toast("请选择开始时间");
                 return false;
             }
             if (end == '') {
