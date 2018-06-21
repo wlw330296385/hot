@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>阶段列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .marginLeft10 {
+            margin-left: 10px !important
+        }
+
+        .marginRight0 {
+            margin-right: 0 !important
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+    <header class="mui-bar mui-bar-nav subheader">
+        <a href="{:url('match/leagueManage',['league_id'=>$leagueInfo.id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title"></h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b schedule"></ul>
+            </div>
+        </div>
+
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{$homeurl}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
+                <a href="{:url('Match/createMatchStage',['league_id'=>$leagueInfo.id])}">新建比赛阶段</a>
+            </li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            //初始化全局变量
+            var onCount = 1;
+            var offCount = 1;
+
+            mui('#refreshContainer').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshOn
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshOn
+                }
+            });
+
+            //下拉刷新具体业务实现
+            function pulldownRefreshOn() {
+                setTimeout(function () {
+                    onCount = 1;//刷新并显示第一页
+                    var page = onCount;
+                    var gType = 1;//代表下拉刷新
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //上拉加载具体业务实现
+            function pullupRefreshOn() {
+                setTimeout(function () {
+                    onCount++;//翻下一页
+                    var page = onCount;
+                    var gType = 2;//代表上拉加载
+                    toList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+        })
+
+        //接口获取数据并追加到页面
+        var toList = function (page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/league/getmatchschedulepage','','',true)}" + '/?page=' + page;
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var urls = "{:url('match/stageInfoofleague')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
+                            newli += `<li class="mui-table-view-cell listli">
+                                        <a href="${urls}">
+                                            <div class="fl">积分赛</div>
+                                            <div class="fr">小组赛</div>
+                                        </a>
+                                      </li>`;
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.schedule").empty().append(newli);
+                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                        mui('#refreshContainer').pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.schedule").append(newli);
+                    }
+                    if (newli != '') {
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>

@@ -711,10 +711,21 @@ class Match extends Base {
         return view('Match/createMatchStage');
     }
 
+    // 比赛阶段列表
+    public function stageListOfLeague() {
+        return view('Match/stageListOfLeague');
+    }
+
+     // 比赛阶段详情
+     public function stageInfoOfLeague() {
+        return view('Match/stageInfoOfLeague');
+    }
+
      // 球队积分列表
      public function integralList() {
         return view('Match/integralList');
     }
+    
 
     // 球队积分列表
     public function testList() {
