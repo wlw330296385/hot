@@ -2353,6 +2353,79 @@ class League extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 
+    // 获取联赛工作人员（裁判）列表
+    public function getleaguerefereelist() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1, 'intval');
+            if ( input('?page') ) {
+                unset($data['page']);
+            }
+            // 查询条件组合
+            if ( input('league_id') ) {
+                $data['match_id'] = input('league_id');
+                unset($data['league_id']);
+            }
+            $data['type'] = 7;
+            $data['status'] = input('param.status', 1, 'intval');
+
+            // 查询联赛工作人员（裁判员角色）列表
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchMemberList($data, $page);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            // 遍历查询裁判员详细信息
+            $refereeS = new RefereeService();
+            foreach ($result as $k => $val) {
+                $refereeInfo = $refereeS->getReferee(['member_id' => $val['member_id']]);
+                if ($refereeInfo) {
+                    $result[$k]['referee'] = $refereeInfo;
+                }
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
+    // 获取联赛工作人员（裁判）列表-分页
+    public function getleaguerefereepage() {
+        try {
+            $data = input('param.');
+            if ( input('?page') ) {
+                unset($data['page']);
+            }
+            // 查询条件组合
+            if ( input('league_id') ) {
+                $data['match_id'] = input('league_id');
+                unset($data['league_id']);
+            }
+            $data['type'] = 7;
+            $data['status'] = input('param.status', 1, 'intval');
+
+            // 查询联赛工作人员（裁判员角色）列表
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchMemberPaginator($data);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            // 遍历查询裁判员详细信息
+            $refereeS = new RefereeService();
+            foreach ($result['data'] as $k => $val) {
+                $refereeInfo = $refereeS->getReferee(['member_id' => $val['member_id']]);
+                if ($refereeInfo) {
+                    $result['data'][$k]['referee'] = $refereeInfo;
+                }
+            }
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+        }
+    }
+
     // 创建赛程
     public function createschedule() {
         // 接收请求数据
