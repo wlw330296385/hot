@@ -715,4 +715,9 @@ class Match extends Base {
      public function integralList() {
         return view('Match/integralList');
     }
+
+    // 球队积分列表
+    public function testList() {
+        return view('Match/testList');
+    }
 }
