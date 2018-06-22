@@ -714,6 +714,10 @@ class Match extends Base {
 
     // 比赛阶段创建
     public function createMatchStage() {
+        $leagueS = new LeagueService();
+        $types = $leagueS->getMatchStageTypes();
+
+        $this->assign('types', $types);
         return view('Match/createMatchStage');
     }
 
@@ -723,8 +727,10 @@ class Match extends Base {
         // 获取比赛阶段详情
         $leagueS = new LeagueService();
         $stageInfo = $leagueS->getMatchStage(['id' => $id]);
+        $types = $leagueS->getMatchStageTypes();
 
         $this->assign('matchStageInfo', $stageInfo);
+        $this->assign('types', $types);
         return view('Match/editMatchStage');
     }
 

@@ -717,7 +717,7 @@ class LeagueService
     }
 
     // 保存比赛阶段数据
-    public function saveMatchStage($data, $condi) {
+    public function saveMatchStage($data, $condi=[]) {
         $model = new MatchStage();
         if ( !empty($condi) && is_array($condi) ) {
             // 带更新条件更新数据
@@ -761,7 +761,11 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
     }
 
     // 获取比赛阶段列表（页码）
@@ -771,7 +775,24 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
+    }
+
+    // 比赛阶段类型文案列表
+    public function getMatchStageTypes() {
+        $type = [
+            '1' => '小组赛',
+            '2' => '热身赛',
+            '3' => '全明星赛',
+            '4' => '淘汰赛',
+            '5' => '决赛',
+            '0' => '其他'
+        ];
+        return $type;
     }
 
     // 删除比赛阶段
