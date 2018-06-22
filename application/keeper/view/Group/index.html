@@ -107,13 +107,18 @@
                     success: function (data) {
                         console.log(data)
                         var newli = '';
+                        var myGroupTips = '';
                         if (data.code == 200) {
                             $(".myGroupNum").text(data.data.data.length)
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data.data[i].group_id;
+                                myGroupTips = '';
+                                if (data.data.data[i].group.member_id == member_id) {
+                                     myGroupTips = '<font class="tipCorner bgred">群主</font>';
+                                }
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].group.logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
-                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group.group + '</h5><p>成员：<text class="colororange">' + data.data.data[i].group.members + '</text>&nbsp;&nbsp;单卡消耗：<text class="colororange">' + data.data.data[i].group.stake + ' HT</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].group.bonus + '</text></p></div>'
+                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group.group + myGroupTips+ '</h5><p>成员：<text class="colororange">' + data.data.data[i].group.members + '</text>&nbsp;&nbsp;单卡消耗：<text class="colororange">' + data.data.data[i].group.stake + ' HT</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].group.bonus + '</text></p></div>'
                                 if (data.data.data[i].group.member == "{$memberInfo.member}" && data.data.data[i].group.id != '') {
                                     mui.ajax("{:url('api/group_apply/getGroupApplyListByPageApi')}", {
                                         data: {

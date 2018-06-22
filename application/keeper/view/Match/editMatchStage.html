@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>赛程列表管理</title>
+    <title>阶段设置</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,41 +11,31 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .marginLeft10 {
-            margin-left: 10px !important
-        }
-
-        .marginRight0 {
-            margin-right: 0 !important
-        }
-    </style>
 </head>
 
-<body class="whitebg">
+<body>
     <header class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('match/leagueManage',['league_id'=>$leagueInfo.id])}" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title"></h1>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">阶段设置</h1>
     </header>
 
     <div class="mui-content">
 
-        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>阶段别名</label>
+                <input type="text" name="byname" value="积分赛" class="data" placeholder="请输入比赛阶段别名（如:16强赛）">
+            </div>
+        </form>
+        <div class="page-header border-b">
+            <span class="course">已有对阵</span>
+        </div>
+
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 130px;">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b schedule"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{$homeurl}">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
-                <a href="{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}">创建赛程</a>
-            </li>
-        </ul>
 
     </div>
 
@@ -57,12 +47,6 @@
         });
 
         $(function () {
-
-            // mui.confirm('赛程已创建成功，可继续创建下一阶段的赛程', '提示', ['取消', '确认'], function (e) {
-            //     if (e.index === 1) {
-
-            //     }
-            // });
 
             //初始化全局变量
             var onCount = 1;
@@ -129,10 +113,9 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
-                            newli += `<li class="mui-table-view-cell listli"><a href="${urls}">
-                                            <div class="fl"><img class="img45" src="${data.data.data[i].home_team_logo}" alt="">${data.data.data[i].home_team}</div>
-                                            <div class="fr">${data.data.data[i].away_team}<img class="img45 marginLeft10 marginRight0" src="${data.data.data[i].away_team_logo}" alt=""></div></a>
+                            newli += `<li class="mui-table-view-cell listli">
+                                            <div class="fl">积分赛</div>
+                                            <div class="fr">小组赛</div>
                                       </li>`;
                         }
                     }

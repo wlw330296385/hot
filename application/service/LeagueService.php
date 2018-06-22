@@ -10,6 +10,7 @@ use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 use app\model\MatchSchedule;
+use app\model\MatchStage;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 
@@ -713,5 +714,68 @@ class LeagueService
     // 删除赛程
     public function delMatchSchedule($data, $force=false) {
         return MatchSchedule::destroy($data, $force);
+    }
+
+    // 保存比赛阶段数据
+    public function saveMatchStage($data, $condi) {
+        $model = new MatchStage();
+        if ( !empty($condi) && is_array($condi) ) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if ( array_key_exists('id', $data) ) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
+    // 获取比赛阶段详情
+    public function getMatchStage($map) {
+        $model = new MatchStage();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+
+    // 获取比赛阶段列表
+    public function getMatchStageList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new MatchStage();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 获取比赛阶段列表（页码）
+    public function getMatchStagePaginator($map, $order='id desc', $limit=10) {
+        $model = new MatchStage();
+        $res = $model->where($map)->order($order)->paginate($limit);
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 删除比赛阶段
+    public function delMatchStage($data, $force=false) {
+        return MatchStage::destroy($data, $force);
     }
 }

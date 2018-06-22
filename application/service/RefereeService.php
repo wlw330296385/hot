@@ -40,6 +40,23 @@ class RefereeService{
         }
 	}
 
+    /**
+     * 查询裁判信息
+     */
+	public function getReferee($map) {
+	    $model = new Referee();
+	    $res = $model->where($map)->find();
+	    if (!$res) {
+	        return $res;
+	    } else {
+            $getData = $res->getData();
+            $result = $res->toArray();
+            $result['level_text'] = $res->level_text;
+            $result['status_num'] = $getData['status'];
+            return $result;
+        }
+    }
+
 	/**
 	 * 申请成为裁判
 	 */
