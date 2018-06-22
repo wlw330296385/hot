@@ -34,7 +34,16 @@ class Punch extends Base{
     	//本月打卡
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$punchInfo['member_id']])->count();
 
+        // 是否已点赞
+        $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$data['punch_id'],'member_id'=>$data['member_id']]);
+        if($likesInfo){
+            $is_like = $likesInfo['status'];
+        }else{
+            $is_like = -1;
+        }
 
+
+        $this->assign('is_like',$is_like);
     	$this->assign('totalPunch',$totalPunch);
     	$this->assign('monthPunch',$monthPunch);
     	$this->assign('punchInfo',$punchInfo);
