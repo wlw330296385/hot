@@ -35,7 +35,7 @@ class Punch extends Base{
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$punchInfo['member_id']])->count();
 
         // 是否已点赞
-        $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$data['punch_id'],'member_id'=>$data['member_id']]);
+        $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$punch_id,'member_id'=>$this->memberInfo['id']]);
         if($likesInfo){
             $is_like = $likesInfo['status'];
         }else{
