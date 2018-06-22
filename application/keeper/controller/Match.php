@@ -628,6 +628,17 @@ class Match extends Base {
         ]);
     }
 
+    // 联赛创建分组
+    public function createCustomGroups() {
+        // 联赛正式球队数
+        $leagueS = new LeagueService();
+        $teamCount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
+
+        return view('Match/createCustomGroups', [
+            'teamCount' => $teamCount
+        ]);
+    }
+
     // 编辑联赛某个分组
     public function editgroups() {
         // 联赛正式球队数
