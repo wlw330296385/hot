@@ -728,9 +728,9 @@ class Match extends Base {
         return view('Match/editMatchStage');
     }
 
-    // 比赛阶段管理
-    public function matchstageofleague() {
-        return view('Match/matchStageOfLeague');
+    // 比赛阶段管理列表
+    public function matchstageListofleague() {
+        return view('Match/matchstageListofleague');
     }
 
     // 球队积分列表
