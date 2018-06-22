@@ -85,6 +85,15 @@ class Base extends Frontend {
 		$this->assign('footMenu',$footMenu);
 	}
 
+
+
+    // 增加会员积分
+    public function addSocre($score){
+        $res = db('member')->where(['id'=>$this->memberInfo['id']])->inc('score',$score)->upadte();
+        return $res;
+    }
+
+
 	protected function nologin(){
 
 		if ($this->is_weixin()) {

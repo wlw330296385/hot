@@ -94,12 +94,13 @@ class MessageService
         // 获取训练营的营主openid
         $memberIDs = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1])->where('type', 'egt', 3)->column('member_id');
         $memberList = db('member')->where('id', 'in', $memberIDs)->select();
+        $WechatService = new \app\service\WechatService();
         // 发送模板消息
         foreach ($memberList as $key => $value) {
             if ($value['openid']) {
                 $messageData['touser'] = $value['openid'];
                 $messageData['url'] = $messageData['url'].'/openid/'.$value['openid'];
-                $WechatService = new \app\service\WechatService();
+                
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
                     $logData = ['wxopenid' => $value['openid'], 'member_id' => $value['id'], 'status' => 1, 'content' => serialize($messageData), 'url' => $messageData['url'],'system_remarks'=>'给训练营营主和管理员的通知'];

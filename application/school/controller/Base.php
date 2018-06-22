@@ -1,12 +1,12 @@
 <?php 
 namespace app\school\controller;
-use app\school\serviceCampService;
+use app\service\CampService;
 use think\Controller;
-use app\school\serviceSystemService;
-use app\school\serviceMemberService;
+use app\service\SystemService;
+use app\service\MemberService;
 use think\Cookie;
 use think\Request;
-use app\school\serviceWechatService;
+use app\service\WechatService;
 use app\common\controller\Frontend;
 
 class Base extends Frontend {

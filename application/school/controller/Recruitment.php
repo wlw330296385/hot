@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceRecruitmentService;
+use app\service\RecruitmentService;
 use think\Db;
 class Recruitment extends Base{
 	public function _initialize(){

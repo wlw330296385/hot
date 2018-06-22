@@ -122,7 +122,7 @@ class PunchService {
 
     public function getCommentList($map,$page= 1,$order = 'id desc'){
         $result = $this->PunchCommentModel->where($map)->order($order)->page($page)->select();
-
+  
         return $result;
         
     }
@@ -135,7 +135,15 @@ class PunchService {
         
     }
 
-
+// 获取点赞
+    public function getLikesInfo($map){
+        $result = $this->PunchLikesModel->where($map)->find();
+        if($result){ 
+            return $result->toArray();
+        }else{
+            return $result;
+        }
+    }
 
     // 新建点赞
     public function createLikes($data){

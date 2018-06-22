@@ -1,13 +1,15 @@
 <?php 
 namespace app\service;
 class TestService{
-	
+	private $option;
+ 	public function __construct($option){
+ 		$this->option = $option;
 
-	public function insertMessage($data){
-		$result = testSerivce($data);
-		return $result;
-	}
+ 	}
 
-
+ 	public function test(){
+ 		echo 222;
+ 		dump($this->option);
+ 	}
 
 }

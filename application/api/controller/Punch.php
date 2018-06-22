@@ -193,7 +193,7 @@ class Punch extends Base{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            
+            $data['avatar'] = $this->memberInfo['avatar'];
             $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$data['punch_id'],'member_id'=>$data['member_id']]);
             if($likesInfo){
                 if($likesInfo['status'] == 1){

@@ -1,6 +1,6 @@
 <?php 
 namespace app\school\controller;
-use app\school\serviceTestService;
+use app\service\TestService;
 class Test {
 
     public function index(){
@@ -173,7 +173,7 @@ class Test {
                 'remark' => ['value' => '大热篮球']
             ]
         ];
-        $w = new \app\school\serviceWechatService();
+        $w = new \app\service\WechatService();
         $res = $w->sendTemplate($data);
         dump($res);           
     }

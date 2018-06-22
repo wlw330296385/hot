@@ -56,7 +56,8 @@ class PoolService {
         if(!$validate->check($data)){
             return ['msg' => $validate->getError(), 'code' => 100];
         }
-         $is_pool = db('pool')->where(['group_id'=>$data['group_id'],'status'=>1])->whereOr(['group_id'=>$data['group_id'],'status'=>2])->find();
+         $is_pool = db('pool')->where(['group_id'=>$data['group_id']])->where('status',['=',1],['=',2],'or')->find();
+
          if($is_pool){
              return ['msg'=>'同时期只能创建一个奖金池', 'code' => 100];
          }

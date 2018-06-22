@@ -1,8 +1,8 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceExerciseService;
-use app\school\serviceCampService;
+use app\service\ExerciseService;
+use app\service\CampService;
 class Exercise extends Base{
 	protected $ExerciseService;
     

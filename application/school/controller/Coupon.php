@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceItemCouponService;
+use app\service\ItemCouponService;
 class Coupon extends Base{
 	protected $ItemCouponService;
 	public function _initialize(){
@@ -55,7 +55,7 @@ class Coupon extends Base{
         $eventList = [];
         $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
         if($itemCouponInfo['organization_type'] == 2){
-            $CampService = new \app\school\serviceCampService;
+            $CampService = new \app\service\CampService;
             $power = $CampService->isPower($itemCouponInfo['organization_id'],$this->memberInfo['id']);
             if($power<2){
                 $this->error('请先加入一个训练营并成为管理员或者创建训练营');
@@ -76,7 +76,7 @@ class Coupon extends Base{
         $eventList = [];
         $lessontList = [];
         if($organization_type == 1){
-            $CampService = new \app\school\serviceCampService;
+            $CampService = new \app\service\CampService;
             $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
 
             if($power<2){

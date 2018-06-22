@@ -1,9 +1,9 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceCampService;
-use app\school\serviceCoachService;
-use app\school\serviceSalaryInService;
+use app\service\CampService;
+use app\service\CoachService;
+use app\service\SalaryInService;
 use think\helper\Time;
 
 class Salaryin extends Base{

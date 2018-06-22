@@ -1,9 +1,9 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceMemberService;
-use app\school\serviceStudentService;
-use app\school\serviceWechatService;
+use app\service\MemberService;
+use app\service\StudentService;
+use app\service\WechatService;
 use think\Db;
 class Member extends Base{
     private $MemberService;
@@ -185,9 +185,9 @@ class Member extends Base{
     // 收支明细
     public function salaryDetail(){
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
-        $SalaryInService = new \app\school\serviceSalaryInService($member_id);
+        $SalaryInService = new \app\service\SalaryInService($member_id);
         $salaryinList = $SalaryInService->getSalaryInList(['member_id'=>$member_id]);
-        $SalaryOutService = new \app\school\serviceSalaryOutService($member_id);
+        $SalaryOutService = new \app\service\SalaryOutService($member_id);
         $salaryoutList = $SalaryOutService->getSalaryOutList(['member_id'=>$this->memberInfo['id']]);
         // dump($salaryoutList);die;
         $this->assign('salaryoutList',$salaryoutList);
@@ -202,7 +202,7 @@ class Member extends Base{
 
     //     }
     //     // 积分明细
-    //     $ScoreService = new \app\school\serviceScoreService;
+    //     $ScoreService = new \app\service\ScoreService;
     //     $scoreList = $ScoreService->getScoreList(['member_id'=>$member_id]);
     //     $this->assign('rebateList',$rebateList);
     //     return view();

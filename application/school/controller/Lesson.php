@@ -1,9 +1,9 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceLessonService;
-use app\school\serviceGradeService;
-use app\school\serviceWechatService;
+use app\service\LessonService;
+use app\service\GradeService;
+use app\service\WechatService;
 
 class Lesson extends Base{
 	protected $LessonService;
@@ -80,7 +80,7 @@ class Lesson extends Base{
         }
         $lessonList = $this->LessonService->getLessonList($map);
         // // 课程类型
-        $GradeService = new \app\school\serviceGradeService;
+        $GradeService = new \app\service\GradeService;
         $gradecateList = $GradeService->getGradeCategory();
 
         $this->assign('gradecateList',$gradecateList);  
@@ -97,7 +97,7 @@ class Lesson extends Base{
         }
         $lessonList = $this->LessonService->getLessonList($map);
         // // 课程类型
-        $GradeService = new \app\school\serviceGradeService;
+        $GradeService = new \app\service\GradeService;
         $gradecateList = $GradeService->getGradeCategory();
 
         $this->assign('gradecateList',$gradecateList);  
@@ -132,7 +132,7 @@ class Lesson extends Base{
         ];
         $amount = $total*$lessonInfo['cost'];
         // $amount = 0.01;
-        $WechatJsPayService = new \app\school\serviceWechatJsPayService;
+        $WechatJsPayService = new \app\service\WechatJsPayService;
         $result = $WechatJsPayService->pay(['order_no'=>$billOrder,'amount'=>$amount]);
         
         $jsApiParameters = $result['data']['jsApiParameters'];
@@ -271,10 +271,10 @@ class Lesson extends Base{
         // 教练列表
     	$staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
-        $GradeCategoryService = new \app\school\serviceGradeCategoryService;
+        $GradeCategoryService = new \app\service\GradeCategoryService;
         $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
         
-        $courtService = new \app\school\serviceCourtService;
+        $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // 私密课程 获取指定会员列表
         $assignMemberList = [];
@@ -315,9 +315,9 @@ class Lesson extends Base{
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
-        $GradeCategoryService = new \app\school\serviceGradeCategoryService;
+        $GradeCategoryService = new \app\service\GradeCategoryService;
         $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
-        $courtService = new \app\school\serviceCourtService;
+        $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
@@ -412,9 +412,9 @@ class Lesson extends Base{
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
-        $GradeCategoryService = new \app\school\serviceGradeCategoryService;
+        $GradeCategoryService = new \app\service\GradeCategoryService;
         $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
-        $courtService = new \app\school\serviceCourtService;
+        $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         $this->assign('campInfo',$campInfo);
         $this->assign('gradeCategoryList',$gradeCategoryList);
@@ -444,10 +444,10 @@ class Lesson extends Base{
         // 教练列表
         $staffList = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1])->select();
         // 课程分类
-        $GradeCategoryService = new \app\school\serviceGradeCategoryService;
+        $GradeCategoryService = new \app\service\GradeCategoryService;
         $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
         
-        $courtService = new \app\school\serviceCourtService;
+        $courtService = new \app\service\CourtService;
         $courtList = $courtService->getCourtList(['camp_id'=>$camp_id,'status'=>1]);
         // 私密课程 获取指定会员列表
         $assignMemberList = [];

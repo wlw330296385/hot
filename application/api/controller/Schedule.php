@@ -590,7 +590,7 @@ class Schedule extends Base
                     $lessonMemberMap['lesson_id'] = $request['lesson_id'];
                     foreach ($studentList as $k => $student) {
                         
-                        $studentIDs[] = $student['id'];
+                        $studentIDs[] = $student['student_id'];
                         $dataSaveScheduleGiftStudent[$k] = [
                             'member' => $this->memberInfo['member'],
                             'member_id' => $this->memberInfo['id'],

@@ -1,7 +1,7 @@
 <?php
 namespace app\school\controller;
-use app\school\serviceBillService;
-use app\school\serviceCampService;
+use app\service\BillService;
+use app\service\CampService;
 
 class Financial extends Base {
     public function _initialize()

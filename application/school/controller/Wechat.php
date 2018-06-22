@@ -2,8 +2,8 @@
 namespace app\school\controller;
 
 // 微信端一些不用检测会员登录的操作
-use app\school\serviceMemberService;
-use app\school\serviceWechatService;
+use app\service\MemberService;
+use app\service\WechatService;
 use think\Cache;
 use think\Controller;
 

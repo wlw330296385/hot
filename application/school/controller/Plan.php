@@ -1,7 +1,7 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\servicePlanService;
+use app\service\PlanService;
 class Plan extends Base{
 	protected $planService;
 
@@ -22,7 +22,7 @@ class Plan extends Base{
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         $planInfo['exercise_strarr'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
-        $CampService = new \app\school\serviceCampService;
+        $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('power',$is_power);
@@ -39,7 +39,7 @@ class Plan extends Base{
         $camp_id = $planInfo['camp_id'];
         $planInfo['exercise_strarr'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
-        $CampService = new \app\school\serviceCampService;
+        $CampService = new \app\service\CampService;
 
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         if($is_power < 2){
@@ -47,11 +47,11 @@ class Plan extends Base{
         }   
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);    
         // 获取适合阶段
-        $gradecateService = new \app\school\serviceGradeService;
+        $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
 
         // 获取训练项目列表
-        $ExerciseService = new \app\school\serviceExerciseService;
+        $ExerciseService = new \app\service\ExerciseService;
         $exerciseList = $ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
 
 //    dump($exerciseList);die;
@@ -66,19 +66,19 @@ class Plan extends Base{
     public function createPlan(){
         $camp_id = input('param.camp_id');
         // 判读权限
-        $CampService = new \app\school\serviceCampService;
+        $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         // dump($is_power);die;
         if($is_power < 2){
             $this->error('您没有权限');
         }       
         // 获取适合阶段
-        $gradecateService = new \app\school\serviceGradeService;
+        $gradecateService = new \app\service\GradeService;
         $gradecateList = $gradecateService->getGradeCategory();
         // 训练营信息
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         // 获取训练项目列表
-        $ExerciseService = new \app\school\serviceExerciseService;
+        $ExerciseService = new \app\service\ExerciseService;
         $exerciseList = $ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
 
 
@@ -98,7 +98,7 @@ class Plan extends Base{
 
         // $this->assign('planListOfCamp',$planListOfCamp);
         // $this->assign('planListOfSys',$planListOfSys);
-        $CampService = new \app\school\serviceCampService;
+        $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
         $this->assign('campInfo',$campInfo);

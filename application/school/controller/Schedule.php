@@ -1,10 +1,10 @@
 <?php 
 namespace app\school\controller;
 use app\school\controller\Base;
-use app\school\serviceCampService;
-use app\school\serviceLessonService;
-use app\school\serviceScheduleService;
-use app\school\serviceGradeService;
+use app\service\CampService;
+use app\service\LessonService;
+use app\service\ScheduleService;
+use app\service\GradeService;
 use think\Db;
 /**
 * 课时表类
@@ -167,7 +167,7 @@ class Schedule extends Base
         $fanListOfCamp = db('camp_member')->where(['camp_id'=>$camp_id,'status'=>1,'type'=>-1])->select();
 
 		// 班级信息
-		$GradeService = new \app\school\serviceGradeService;		
+		$GradeService = new \app\service\GradeService;		
 		$gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
 
 		// 班级课程信息
@@ -175,7 +175,7 @@ class Schedule extends Base
         $lessonInfo = $lessonService->getLessonInfo(['id' => $gradeInfo['lesson_id']]);
 
 		// 教案
-		$PlanService = new \app\school\servicePlanService;
+		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$gradeInfo['plan_id']]);
 		if($planInfo['exercise_str']){
 		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);
@@ -254,7 +254,7 @@ class Schedule extends Base
 		    $scheduleInfo['exerciseList'] = [];
 		}
 		// 教案
-		$PlanService = new \app\school\servicePlanService;
+		$PlanService = new \app\service\PlanService;
 		$planInfo = $PlanService->getPlanInfo(['id'=>$scheduleInfo['plan_id']]);
 		if($planInfo['exercise_str']){
 		    $planInfo['exerciseList'] = json_decode($planInfo['exercise_str'],true);

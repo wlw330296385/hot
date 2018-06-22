@@ -4,7 +4,7 @@ use think\Controller;
 /**
 * 
 */
-class Crontab extends Controller
+class Index extends Controller
 {
 	
 	function __construct()
@@ -13,8 +13,8 @@ class Crontab extends Controller
 	}
 
     public function index1(){
-
-
+    	$testService = new \app\service\TestService(['otion'=>'a']);
+    	$testService->test();
     }
 
     public function index2(){
