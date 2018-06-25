@@ -864,7 +864,9 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        $result['type_text'] = $res->type_text;
+        return $result;
     }
 
 
