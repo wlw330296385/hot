@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>登记表</title>
+    <title>动漫节 - 投篮卡</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -87,7 +87,7 @@
     <div class="tipContent border-b">
         <div class="tipContentText">
             <p>
-                <strong>购买和使用说明：</strong>
+                <strong>登记说明：</strong>
             </p>
             <p>{$eventInfo.apps_des}</p>
         </div>
@@ -100,7 +100,7 @@
             </p>
             <p>
                 {volist name='$eventInfo.doms' id="vol"}
-                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}</button>
+                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
                 {/volist}
             </p>
         </div>
@@ -117,49 +117,7 @@
         <div class="mui-input-row mName {if $memberInfo.id>0}hide{else/}show{/if}">
             <label class="colororange">会员名</label>
             <input type="text" class="data" name="member" value="{$memberInfo.member}" placeholder="会员名">
-        </div>
-
-        <div class="mui-input-row">
-            <label class="colororange">真实姓名</label>
-            <input type="text" class="data" name="realname" value="{$memberInfo.realname}" placeholder="真实姓名">
-        </div>
-        <div class="mui-input-row mixForm">
-            <a class="mui-navigate-right">
-                <label class="colororange">性别</label>
-                <select name="sexSelect" style="padding-right: 30px;">
-                    <option value="男">男</option>
-                    <option value="女">女</option>
-                </select>
-            </a>
-            <input type="hidden" name="sex" value="男">
-        </div>
-
-        <div class="mui-input-row mixForm">
-            <label class="colororange">所属社区</label>
-            <input type="text" class="" name="community" value="" placeholder="户口所在街道社区">
-        </div>
-
-        <div class="mui-input-row mixForm">
-            <label class="colororange">居住地</label>
-            <input type="text" class="" name="address" value="" placeholder="现居住地址">
-        </div>
-
-        <div class="mui-input-row mixForm">
-            <label class="colororange">籍贯</label>
-            <input type="text" class="" name="native_place" value="" placeholder="籍贯">
-        </div>
-
-        <div class="mui-input-row mixForm">
-            <label class="colororange">身份证号码</label>
-            <input type="text" name="idno" value="{$cert.cert_no}" class="input wd54 idno" placeholder="请输入身份证号码">
-        </div>
-
-        <div class="mui-input-row mixForm">
-            <a class="mui-navigate-right filePicker" onclick="add_id(1)">
-                <label class="colororange">身份证</label>
-                <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$cert.photo_positive}">
-                <input type="hidden" name="photo_positive" value="{$cert.photo_positive}">
-            </a>
+            <input type="hidden" class="data" name="realname" value="{$memberInfo.realname}" placeholder="姓名">
         </div>
 
         <div class="mui-input-row">
@@ -171,22 +129,6 @@
             <label class="colororange">短信验证码</label>
             <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
             <input id="code" type="text" class="input reg_code reg_validate" placeholder="输入验证码" style="width: 30%;">
-        </div>
-
-        <div class="mui-input-row nobg isMyself {if $memberInfo.id>0}hide{else/}show{/if}">
-            <label style="width: 10%;"><a href="#isMyselfTips" class="f12"><i class="mui-icon mui-icon-info"></i></a></label>
-            <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                <label>非本人登记</label>
-                <input name="ismyself" class="ismyself0" type="radio" value="0">
-            </div>
-            <div class="mui-radio mui-left mui-pull-right" style="margin-top: 2px;">
-                <label>本人登记</label>
-                <input name="ismyself" class="ismyself1" type="radio" value="1">
-            </div>
-        </div>
-
-        <div class="mui-input-row" style="height: auto !important;">
-            <textarea name="remarks" class="mui-text-left remarks" rows="4" value="" placeholder="备注:"></textarea>
         </div>
 
 
@@ -213,39 +155,12 @@
 </div>
 
 
-<!--是否本人报名提示-->
-<div id="isMyselfTips" class="mui-popover">
-    <div class="mui-popover-arrow"></div>
-    <div class="page-header explain-title">
-        <span class="course">是否本人登记说明</span>
-    </div>
-    <div class="mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <div class="mine">
-                <div class="explain">
-                    <div class="explain-cont">
-                        <p><strong>本人登记：</strong>代表当前手机号码为您本人使用，并且当前操作的微信和手机号码在本报名系统会进行关联绑定，以后再进行其他活动的报名时，系统将调取你的历史报名数据自动填写到对应项，减少您的操作流程。</p>
-                        <p><strong>非本人登记：</strong>代表当前手机号码<span class="colorred">非您本人使用</span>，系统会默认您<span class="colorred">为他人报名</span>，并且当前操作的微信和手机号码在本报名系统<span class="colorred">不会进行关联绑定</span>，以后再进行其他活动的报名时，需要重新填写所有项目。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/libs/yzvalidate.js"></script>
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
-{if $eventInfo.status=="正常"}
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'cert'])}";
-</script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-{/if}
 <script src="/static/frontend/js/smsCode.js"></script>
 <script>
 
@@ -262,7 +177,6 @@
     var mID = "{$memberInfo.id}";
     var mName = "{$memberInfo.member}";
     var mTel = "{$memberInfo.telephone}";
-    var mIDNO ="{$cert.cert_no}"
     var eMember = "{$event_member.member_id}";
     var getCurrTel = "";
 
@@ -299,15 +213,8 @@
                 if (e.index === 0) {
                     $(".mName").show();
                     $(".smsValidate").show();
-                    $(".isMyself").show();
                     $('input[name=member]').val('');
                     $('input[name=telephone]').val('');
-                    $('input[name=idno]').val('');
-                    $('input[name=photo_positive]').val('');
-                    $(".upload-preview").attr("src","");
-                    $('input[name="ismyself"]').removeAttr("checked");
-                    $('.ismyself1').attr("disabled","disabled");
-                    $('.ismyself0').attr("checked","checked");
                 }else{
                     $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">已报名</li>');
                     $("#eventDes").show();
@@ -351,14 +258,6 @@
             gArea = "";
         }
 
-        var sexNum = "{$memberInfo.sex}";
-        if (sexNum == "2") {
-            $('select[name="sexSelect"] option[value="女"]').prop("selected", true);
-        }
-        // 选择是否需要填表
-        $('select[name="sexSelect"]').change(function () {
-            $('input[name="sex"]').val($(this).val());
-        });
 
         //如果套餐选项只有一个就自动选上
         if($('.selectDom').length==1){
@@ -408,8 +307,6 @@
                 if (mTel == telephone) {
                     $('input[name="member"]').val(mName);
                     $(".mName").hide();
-                    $('input[name="ismyself"]').removeAttr("checked");
-                    $(".isMyself").hide();
                     $(".smsValidate").hide();
                     flagPhone = true;
                     flagSMS = true;
@@ -446,20 +343,12 @@
                                     flagPhone = true;
                                     $(".mName").show();
                                     $(".smsValidate").show();
-                                    $(".isMyself").show();
-                                    $('input[name="ismyself"]').removeAttr("checked");
                                     //如果是登陆会员帮他人报名，是否本人报名将锁定“非本人报名”
                                     if (mID != "" && mTel != telephone) {
                                         var memberName = $('input[name="member"]').val();
-                                        var memberIDNO = $('input[name="idno"]').val();
                                         if(memberName==mName) {
                                             $('input[name=member]').val('');
                                         }
-                                        if(memberIDNO==mIDNO) {
-                                            $('input[name=idno]').val('');
-                                        }
-                                        $('.ismyself1').attr("disabled","disabled");
-                                        $('.ismyself0').attr("checked","checked");
                                     }
                                 }
                             }
@@ -519,18 +408,6 @@
 
         $("#submitAction").on("click", "", function () {
 
-            var realname = $("input[name=realname]").val();
-            var community = $("input[name=community]").val();
-            var address = $("input[name=address]").val();
-            var native_place = $("input[name=native_place]").val();
-            var idno = $("input[name=idno]").val();
-            var photo_positive = $("input[name=photo_positive]").val();
-            var ismyself = $("input[name='ismyself']:checked").val();
-
-            if (ismyself == 'undefined'||ismyself == null||ismyself == '') {
-                mui.toast("请选择您是本人登记，还是非本人登记？");
-                return false;
-            }
 
             if($('.selectDom.bggreen').length==0){
                 mui.toast("请选择您要报名的种类");
@@ -540,27 +417,6 @@
                 mui.toast("请填写真实姓名");
                 return false;
             }
-            if (community == '') {
-                mui.toast("请填写所属社区");
-                return false;
-            }
-            if (address == '') {
-                mui.toast("请填写居住地");
-                return false;
-            }
-            if (native_place == '') {
-                mui.toast("请填写籍贯");
-                return false;
-            }
-            if (idno == '') {
-                mui.toast("请填写身份证号");
-                return false;
-            }
-            if (photo_positive == '') {
-                mui.toast("请上传身份证照片");
-                return false;
-            }
-
 
             var member = $("input[name='member']").val();
             var telephone = $("input[name='telephone']").val();
@@ -591,7 +447,7 @@
                         city: gCity,
                         area: gArea,
                         __token__: token,
-                        ismyself: ismyself
+                        ismyself: 1
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -625,10 +481,10 @@
                 });
             }else{
                 //如果是会员自己报名,判断是否已经报名过
-                if(eMember==mID){
-                    mui.alert("您本人已经登记过，请勿重复登记！");
-                    return false;
-                }
+//                if(eMember==mID){
+//                    mui.alert("您本人已经登记过，请勿重复登记！");
+//                    return false;
+//                }
             }
 
             if (flagCreate == false) {
@@ -650,7 +506,7 @@
             var data = wooApi.getInputData('input', 'data');
             var objData = wooApi.arrTOobj(data);
             objData.content = mixFrom;
-            objData.remarks = $(".remarks").val();
+            objData.remarks = member+"购买深圳2018动漫展大热篮球投篮卡券";
             objData.dom = $('.selectDom.bggreen').text();
             var url = "{:url('api/apps_apply/createAppsApplyApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
