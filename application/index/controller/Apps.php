@@ -47,7 +47,7 @@ class Apps extends Base
 
 
     // 购买篮球卡券
-    public function appsForm1(){
+    public function buyCouponForm(){
         $member_id = session('memberInfo.id');
         $event_id = input('param.event_id');
         $lesson_id = input('param.lesson_id');
@@ -61,7 +61,7 @@ class Apps extends Base
         $this->assign('memberInfo',$memberInfo);
         $this->assign('event_member',$event_member);
         $this->assign('eventInfo',$eventInfo);
-        return view('apps/appsForm1');
+        return view('apps/buyCouponForm');
     }
 
 
