@@ -99,6 +99,7 @@ class PunchService {
                             'content'=>"{$data['comment']}",
                             'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
                             'member_id'=>$data['to_member_id'],
+                             'steward_type' =>2,
                             // 'member'    =>$data['to_member'],
                             // 'avatar'    =>$data['to_avatar'],
                         ];
@@ -107,8 +108,8 @@ class PunchService {
                             'title'=>"您的打卡有新的评论",
                             'content'=>"{$data['comment']}",
                             'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
-                            'member_id'=>$data['member_id'],
-                            // 'member'    =>$data['member'],
+                            'member_id'=>$data['punch_member_id'],
+                             'steward_type'=>2,
                             // 'avatar'    =>$data['avatar'],
                         ];
             }
