@@ -2448,6 +2448,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 插入赛程数据
+        $data['match_time'] = strtotime($data['match_time']);
         try {
            $result = $leagueS->saveMatchSchedule($data);
         } catch (Exception $e) {
@@ -2481,6 +2482,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 修改赛程数据
+        $data['match_time'] = strtotime($data['match_time']);
         try {
             $result = $leagueS->saveMatchSchedule($data);
         } catch (Exception $e) {

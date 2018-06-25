@@ -731,7 +731,9 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        $result['match_timestamp'] = $res->getData('match_time');
+        return $result;
     }
 
     // 获取赛程列表
@@ -742,7 +744,11 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['match_timestamp'] = $res[$k]->getData('match_time');
+        }
+        return $result;
     }
 
     // 获取赛程列表
@@ -753,7 +759,11 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['match_timestamp'] = $res[$k]->getData('match_time');
+        }
+        return $result;
     }
 
     // 获取赛程列表（页码）
@@ -764,7 +774,11 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        foreach ($result['data'] as $k => $val) {
+            $result['data'][$k]['match_timestamp'] = $res[$k]->getData('match_time');
+        }
+        return $result;
     }
 
     // 删除赛程
