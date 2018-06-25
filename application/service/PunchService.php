@@ -108,7 +108,7 @@ class PunchService {
                             'member_id'=>$data['member_id']
                         ];
             }
-            $MessageService->saveMessageInfo($messageData,[]);
+            $MessageService->saveMessageMemberInfo($messageData);
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->PunchCommentModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];

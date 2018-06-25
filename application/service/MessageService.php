@@ -62,8 +62,25 @@ class MessageService
         }
     }
 
+    // 只发送个人消息
+    public function saveMessageMemberInfo($data)
+    {
+        $validate = validate('MessageVal');
+        if (!$validate->check($data)) {
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        $result = $this->MessageMemberModel->save($data);
+        // 循环发送模板消息
 
-    // 发送个人消息
+        if ($result === false) {
+            return ['msg' => $this->MessageModel->getError(), 'code' => 100];
+        } else {
+            return ['msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+        }
+    }
+
+
+    // 发送个人消息和模板消息
     public function sendMessageMember($member_id, $messageData, $saveData)
     {   
         $res = $this->MessageMemberModel->save($saveData);
@@ -114,11 +131,6 @@ class MessageService
             $saveallData[$key]['member_id'] = $value['id'];
         }
         $res = $this->MessageMemberModel->saveAll($saveallData);
-        // if ($res) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
     }
 
     // 获取系统消息列表
