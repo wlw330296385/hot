@@ -43,6 +43,7 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="match" value="{$matchScheduleInfo.match}" class="data">
         <input type="hidden" name="match_id" value="{$matchScheduleInfo.match_id}" class="data">
+        <input type="hidden" name="id" value="{$matchScheduleInfo.id}" class="data">
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
@@ -68,14 +69,14 @@
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛场地</label>
-                    <span class="courtCont domData wd60" name="court"></span>
-                    <input type="hidden" name="court_id" value="" class="court_id data">
+                    <span class="courtCont domData wd60" name="court">{$matchScheduleInfo.court}</span>
+                    <input type="hidden" name="court_id" value="{$matchScheduleInfo.court_id}" class="court_id data">
                 </a>
             </div>
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData" name="start_time"></span>
+                    <span id="resultStart" class="ui-alert domData" name="match_time">{$matchScheduleInfo.match_time}</span>
                 </div>
             </div>
 
@@ -87,22 +88,22 @@
             <div class="mui-input-row">
                 <a href="#referee1" class="mui-navigate-right">
                     <label>主裁判</label>
-                    <span class="referee1 data" name="referee1_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee1_id" value="" class="data">
+                    <span class="referee1 domData" name="referee1_name" style="width: 60%">{$matchScheduleInfo.referee1_name}</span>
+                    <input type="hidden" name="referee1_id" value="{$matchScheduleInfo.referee1_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee2" class="mui-navigate-right">
                     <label>副裁判</label>
-                    <span class="referee2 data" name="referee2_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee2_id" value="" class="data">
+                    <span class="referee2 domData" name="referee2_name" style="width: 60%">{$matchScheduleInfo.referee2_name}</span>
+                    <input type="hidden" name="referee2_id" value="{$matchScheduleInfo.referee2_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee3" class="mui-navigate-right">
                     <label>副裁判</label>
-                    <span class="referee3  data" name="referee3_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee3_id" value="" class="data">
+                    <span class="referee3  domData" name="referee3_name" style="width: 60%">{$matchScheduleInfo.referee3_name}</span>
+                    <input type="hidden" name="referee3_id" value="{$matchScheduleInfo.referee3_id}" class="data">
                 </a>
             </div>
 
@@ -126,11 +127,12 @@
             <p class="pline"></p>
             <div class="mui-input-row">
                 <label class="wd45">
-                    <input type="text" name="custom_role" value="" placeholder="请填写自定义角色" class="data mui-text-left" style="padding:0;height: initial;">
+                    <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色" class="data mui-text-left"
+                        style="padding:0;height: initial;">
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;">
                     <span>
-                        <input type="text" name="custom_member" value="" placeholder="请选择角色" class="data">
+                        <input type="text" name="custom_member" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data">
                     </span>
                 </a>
             </div>
@@ -687,7 +689,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert('编辑成功', '确定', function () {
-                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + ajaxResult.data;
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
