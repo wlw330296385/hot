@@ -132,9 +132,16 @@
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;">
                     <span>
-                        <input type="text" name="custom_member" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data">
+                        <input type="text" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data custom_member">
+                        <input type="hidden" name="custom_member" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data">
                     </span>
                 </a>
+            </div>
+            <div class="mui-input-row">
+                <label>联系方式</label>
+                <span>
+                    <input type="text" value="" placeholder="联系方式（选填）" class="data">
+                </span>
             </div>
 
         </form>
@@ -322,6 +329,7 @@
 
         let league_id = "{$league_id}"
         $(function () {
+
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
@@ -460,7 +468,7 @@
                     var str = `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
-                                    <input name="member" class="stdList" value="${$(this).attr("data-id")}" type="checkbox">
+                                    <input name="member" class="stdList" value="${$(this).attr("data-member_id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
                                 </div>`;
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
@@ -475,7 +483,14 @@
             // 选择工作人员
             $(".workList").on('tap', 'li', function () {
                 var workMember = $(this).text();
-                $("input[name=custom_member]").val(workMember);
+                var member_id = $(this).attr("data-member_id");
+                var custom = []
+                custom.push({ workMember, member_id })
+                let custom_member = JSON.stringify(custom);
+                console.log(custom_member)
+
+                $(".custom_member").val(workMember);
+                $("input[name=custom_member]").val(custom_member);
                 mui("#work").popover("toggle");
             });
             //清除
@@ -621,7 +636,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].realname + '</label>';
-                            newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-id=' + data.data[i].id + '>'
+                            newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
                         }
                         if (newli == '') {
@@ -651,7 +666,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli">' + data.data[i].realname + '</li>'
+                            newli += '<li class="mui-table-view-cell listli" data-member_id="' + data.data[i].member_id + '">' + data.data[i].realname + '</li>'
                         }
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
@@ -671,13 +686,15 @@
         function submitAction() {
 
             // 记分员
-            var scorers = ''
-            var scorersList = ''
-            $("#inactiveList font").each(function () {
-                var realname = $(this).text();
-                scorersList += realname + ","
+            let scorersList = []
+            let realname = ''
+            $("#inactiveList .stdList").each(function () {
+                realname = $(this).attr("data-realname");
+                member_id = $(this).val();
+                scorersList.push({ realname, member_id })
             })
-            scorers = scorersList.substring(0, scorersList.length - 1);
+            let scorers = JSON.stringify(scorersList);
+            console.log(scorers)
             $("input[name=scorers]").val(scorers)
 
             var data = wooApi.getInputData('input', 'data');
