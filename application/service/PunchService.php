@@ -91,6 +91,24 @@ class PunchService {
         $result = $this->PunchCommentModel->save($data);
         if($result){
             $this->incPunch(['id'=>$data['punch_id']],'comments');    
+            // 发送站内消息
+            $MessageService = new \app\service\MessageService;
+            if($data['to_member_id'] >= 1){
+                $messageData = [
+                            'title'=>"您的评论有新的回复",
+                            'content'=>"{$data['comment']}",
+                            'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
+                            'member_id'=>$data['to_member_id']
+                        ];
+            }else{
+                $messageData = [
+                            'title'=>"您的打卡有新的评论",
+                            'content'=>"{$data['comment']}",
+                            'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
+                            'member_id'=>$data['member_id']
+                        ];
+            }
+            $MessageService->saveMessageInfo($messageData,[]);
             return ['msg' => '操作成功', 'code' => 200, 'data' => $this->PunchCommentModel->id];
         }else{
             return ['msg'=>'操作失败', 'code' => 100];
