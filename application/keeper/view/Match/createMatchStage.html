@@ -32,23 +32,36 @@
 
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="match" class="data" value="{$leagueInfo.name}">
+        <input type="hidden" name="match_id" class="data" value="{$league_id}">
         <form action="" class="mui-input-group mb44">
             <div class="mui-input-row">
                 <label>阶段别名</label>
-                <input type="text" name="byname" value="" class="data" placeholder="请输入比赛阶段别名（如:16强赛）">
+                <input type="text" name="name" class="data" value="" placeholder="请输入比赛阶段别名（如:16强赛）">
             </div>
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
                     <span class="select-row">
-                        <select class="stageSelect">
+                        <select name="type" class="stageSelect data">
                             <option value="1">小组赛</option>
-                            <option value="2">淘汰赛</option>
-                            <option value="3">决赛</option>
-                            <option value="4">其他</option>
+                            <option value="2">热身赛</option>
+                            <option value="3">全明星</option>
+                            <option value="4">淘汰赛</option>
+                            <option value="5">决赛</option>
+                            <option value="0">其他</option>
                         </select>
                     </span>
                 </div>
+            </div>
+            <div class="mui-input-row advance_div">
+                <label class="wd45">每组出线球队数量</label>
+                <input type="text" name="advance_number" class="data wd52" value="" placeholder="请填写出线球队数量">
+            </div>
+
+            <div class="mui-input-row advance_div h-auto">
+                <label>出线规则</label>
+                <textarea name="advance_setting" rows="2" value="" class="advance_setting" placeholder="请填写出线规则"></textarea>
             </div>
         </form>
 
@@ -61,40 +74,68 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        $(function () {
+            // 
+            $(".stageSelect").on("change", '', function () {
+                let selection = $(this).find("option:selected").val();
+                if (selection == 1) {
+                    $(".advance_div").show();
+                } else {
+                    $(".advance_div").hide();
+                };
+            });
+
+            
+        });
+
+        // 提交
         function submitAction() {
-            var byname = $("input[name=byname]").val();
-            var stage = $('.stageSelect option:selected').val();
-            if (byname == '') {
+
+            let name = $("input[name=name]").val();
+            let advance_number = $("input[name=advance_number]").val();
+            if (name == '') {
                 mui.toast("阶段别名不能为空");
                 return false;
             }
+            if (advance_number == '') {
+                mui.toast("请填写出线球队数量");
+                return false;
+            }
+            let selection = $(".stageSelect").find("option:selected").val();
+            if (selection != 1) {
+                $("input[name=advance_number]").val('');
+                $("input[name=advance_setting]").val('');
+            }
 
-            mui.ajax("{:url('api/match')}", {
-                data: {
-                    byname: byname,
-                    stage: stage,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast("添加比赛阶段成功");
-                        setTimeout("history.go(-1)", 1000);
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var advance_setting = $('textarea.advance_setting').val();
+            objData.advance_setting = advance_setting;
+            var url = "{:url('api/league/addmatchstage')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
+                    var goUrl = "{:url('match/matchStageListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
+                }, 'json');
+            }
         }
     </script>
 </body>

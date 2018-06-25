@@ -20,27 +20,49 @@
     </header>
 
     <div class="mui-content">
-
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="match" class="data" value="{$leagueInfo.name}">
+        <input type="hidden" name="match_id" class="data" value="{$league_id}">
+        <input type="hidden" name="id" class="data" value="{$matchStageInfo.id}">
         <form action="" class="mui-input-group">
-            <div class="mui-input-row">
-                <label>阶段别名</label>
-                <input type="text" name="byname" value="积分赛" class="data" placeholder="请输入比赛阶段别名（如:16强赛）">
-            </div>
-        </form>
-        <div class="page-header border-b">
+            <form action="" class="mui-input-group">
+                <div class="mui-input-row">
+                    <label>阶段别名</label>
+                    <input type="text" name="name" value="{$matchStageInfo.name}" class="data" placeholder="请输入比赛阶段别名（如:16强赛）">
+                </div>
+                <div class="mui-input-row">
+                    <label>比赛阶段</label>
+                    <span class="type">{$matchStageInfo.type_text}</span>
+                    <input type="hidden" value="{$matchStageInfo.type}" name="type" class="data">
+                </div>
+                <div class="mui-input-row advance_div hide">
+                    <label>出线球队数量</label>
+                    <input type="text" name="advance_number" class="data" value="{$matchStageInfo.advance_number}" placeholder="请填写出线球队数量">
+                </div>
+                <div class="mui-input-row advance_div h-auto hide">
+                    <label>出线规则</label>
+                    <textarea name="advance_setting" rows="2" value="{$matchStageInfo.advance_setting}" class="advance_setting" placeholder="请填写出线规则">{$matchStageInfo.advance_setting}</textarea>
+                </div>
+            </form>
+            <!-- <div class="page-header border-b">
             <span class="course">已有对阵</span>
-        </div>
+        </div> -->
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 130px;">
+            <!-- <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 297px;">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b schedule"></ul>
             </div>
-        </div>
-
+        </div> -->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                    提交
+                </li>
+            </ul>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
@@ -48,102 +70,140 @@
 
         $(function () {
 
+            let type = "{$matchStageInfo.type}";
+            if (type == 1) {
+                $(".advance_div").show();
+            }
+
             //初始化全局变量
-            var onCount = 1;
-            var offCount = 1;
+            // var onCount = 1;
+            // var offCount = 1;
 
-            mui('#refreshContainer').pullRefresh({
-                down: {
-                    //下拉刷新
-                    height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto: true,//可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                    callback: pulldownRefreshOn
-                },
-                up: {
-                    //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefreshOn
-                }
-            });
+            // mui('#refreshContainer').pullRefresh({
+            //     down: {
+            //         //下拉刷新
+            //         height: 50,//可选.默认50.触发下拉刷新拖动距离
+            //         auto: true,//可选,默认false.自动下拉刷新一次
+            //         contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+            //         contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+            //         contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+            //         callback: pulldownRefreshOn
+            //     },
+            //     up: {
+            //         //上拉加载
+            //         height: 150,//可选.默认50.触发上拉加载拖动距离
+            //         //auto:true,//可选,默认false.自动上拉加载一次
+            //         contentrefresh: '正在加载...',
+            //         contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+            //         callback: pullupRefreshOn
+            //     }
+            // });
 
-            //下拉刷新具体业务实现
-            function pulldownRefreshOn() {
-                setTimeout(function () {
-                    onCount = 1;//刷新并显示第一页
-                    var page = onCount;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
+            // //下拉刷新具体业务实现
+            // function pulldownRefreshOn() {
+            //     setTimeout(function () {
+            //         onCount = 1;//刷新并显示第一页
+            //         var page = onCount;
+            //         var gType = 1;//代表下拉刷新
+            //         toList(page, gType);//具体取数据的方法
+            //     }, 100);
+            // }
 
-            //上拉加载具体业务实现
-            function pullupRefreshOn() {
-                setTimeout(function () {
-                    onCount++;//翻下一页
-                    var page = onCount;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
-                }, 100);
-            }
+            // //上拉加载具体业务实现
+            // function pullupRefreshOn() {
+            //     setTimeout(function () {
+            //         onCount++;//翻下一页
+            //         var page = onCount;
+            //         var gType = 2;//代表上拉加载
+            //         toList(page, gType);//具体取数据的方法
+            //     }, 100);
+            // }
 
         })
 
         //接口获取数据并追加到页面
-        var toList = function (page, gType) {
-            //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchschedulepage','','',true)}" + '/?page=' + page;
-            var league_id = "{$league_id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    league_id: league_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var newli = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `<li class="mui-table-view-cell listli">
-                                            <div class="fl">积分赛</div>
-                                            <div class="fr">小组赛</div>
-                                      </li>`;
-                        }
-                    }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.schedule").empty().append(newli);
-                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                        mui('#refreshContainer').pullRefresh().refresh(true);
-                        if (newli == '') {
-                            $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
-                        }
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.schedule").append(newli);
-                    }
-                    if (newli != '') {
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                    } else {
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    }
+        // var toList = function (page, gType) {
+        //     //搜索关键字不能完全为空，否则查询为空
+        //     var url = "{:url('api/league/getmatchschedulepage','','',true)}" + '/?page=' + page;
+        //     var league_id = "{$league_id}";
+        //     mui.ajax({
+        //         url: url,
+        //         data: {
+        //             league_id: league_id
+        //         },
+        //         dataType: 'json',//服务器返回json格式数据
+        //         type: 'post',//HTTP请求类型
+        //         timeout: 10000,//超时时间设置为10秒；
+        //         headers: { 'Content-Type': 'application/json' },
+        //         success: function (data) {
+        //             console.log(data)
+        //             var newli = '';
+        //             if (data.code == 200) {
+        //                 for (var i = 0; i <= data.data.data.length - 1; i++) {
+        //                     newli += `<li class="mui-table-view-cell listli">
+        //                                     <div class="fl">积分赛</div>
+        //                                     <div class="fr">小组赛</div>
+        //                               </li>`;
+        //                 }
+        //             }
+        //             if (gType == 1) {
+        //                 //上拉刷新
+        //                 $("ul.schedule").empty().append(newli);
+        //                 mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+        //                 mui('#refreshContainer').pullRefresh().refresh(true);
+        //                 if (newli == '') {
+        //                     $("ul.schedule").html('<p class="nodata">没有相关数据哦</p>');
+        //                 }
+        //             } else {
+        //                 //下拉加载 gType==2
+        //                 $("ul.schedule").append(newli);
+        //             }
+        //             if (newli != '') {
+        //                 mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+        //             } else {
+        //                 mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+        //             }
 
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                }
-            });
-        };
+        //         },
+        //         error: function (xhr, type, errerThrown) {
+        //             mui.toast('网络异常,请稍候再试');
+        //             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+        //         }
+        //     });
+        // };
+
+        // 提交
+        function submitAction() {
+
+            var name = $("input[name=name]").val();
+            if (name == '') {
+                mui.toast("阶段别名不能为空");
+                return false;
+            }
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var advance_setting = $('textarea.advance_setting').val();
+            objData.advance_setting = advance_setting;
+            var url = "{:url('api/league/updatematchstage')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
+                    var goUrl = "{:url('match/matchStageListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        }
     </script>
 </body>
 

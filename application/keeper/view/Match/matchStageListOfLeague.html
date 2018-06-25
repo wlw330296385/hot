@@ -107,7 +107,7 @@
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchschedulepage','','',true)}" + '/?page=' + page;
+            var url = "{:url('api/league/getmatchstagepage','','',true)}" + '/?page=' + page;
             var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
@@ -126,8 +126,8 @@
                             var urls = "{:url('match/editmatchstage')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
                             newli += `<li class="mui-table-view-cell listli">
                                         <a href="${urls}">
-                                            <div class="fl">积分赛</div>
-                                            <div class="fr">小组赛</div>
+                                            <div class="fl">${data.data.data[i].name}</div>
+                                            <div class="fr">${data.data.data[i].type_text}</div>
                                         </a>
                                       </li>`;
                         }
