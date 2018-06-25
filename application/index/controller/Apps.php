@@ -45,4 +45,24 @@ class Apps extends Base
         return view('apps/appsForm');
     }
 
+
+    // 购买篮球卡券
+    public function appsForm1(){
+        $member_id = session('memberInfo.id');
+        $event_id = input('param.event_id');
+        $lesson_id = input('param.lesson_id');
+        $memberInfo = db('member')->where(['id'=>$member_id])->find();
+        $event_member = db('event_member')->where(['event_id'=>$event_id,'member_id'=>$this->memberInfo['id']])->find();
+        
+        $EventService = new \app\service\EventService();
+        $eventInfo = $EventService->getEventInfo(['id'=>$event_id]);
+        
+
+        $this->assign('memberInfo',$memberInfo);
+        $this->assign('event_member',$event_member);
+        $this->assign('eventInfo',$eventInfo);
+        return view('apps/appsForm1');
+    }
+
+
 }
