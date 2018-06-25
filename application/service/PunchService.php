@@ -98,14 +98,18 @@ class PunchService {
                             'title'=>"您的评论有新的回复",
                             'content'=>"{$data['comment']}",
                             'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
-                            'member_id'=>$data['to_member_id']
+                            'member_id'=>$data['to_member_id'],
+                            // 'member'    =>$data['to_member'],
+                            // 'avatar'    =>$data['to_avatar'],
                         ];
             }else{
                 $messageData = [
                             'title'=>"您的打卡有新的评论",
                             'content'=>"{$data['comment']}",
                             'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
-                            'member_id'=>$data['member_id']
+                            'member_id'=>$data['member_id'],
+                            // 'member'    =>$data['member'],
+                            // 'avatar'    =>$data['avatar'],
                         ];
             }
             $MessageService->saveMessageMemberInfo($messageData);
