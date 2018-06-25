@@ -141,6 +141,10 @@ class ItemCouponService {
     }
 
 
+
+
+
+
     /**
     * 发放一张卡券
     * @param $member_id $member
@@ -160,10 +164,10 @@ class ItemCouponService {
             'coupon_number'     =>getTID($member_id),
         ];
 
-        $itemCouponMemberInfo = $this->ItemCouponMemberModel->where(['item_coupon_id'=>$item_coupon_id,'member_id'=>$member_id,'status'=>1])->find();
-        if($itemCouponMemberInfo){
-            return ['code'=>100,'msg'=>'您已经领过该卡'];
-        }
+        // $itemCouponMemberInfo = $this->ItemCouponMemberModel->where(['item_coupon_id'=>$item_coupon_id,'member_id'=>$member_id,'status'=>1])->find();
+        // if($itemCouponMemberInfo){
+        //     return ['code'=>100,'msg'=>'您已经领过该卡'];
+        // }
         $result = $this->ItemCouponMemberModel->save($data);
 
         if($result){

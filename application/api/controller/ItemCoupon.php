@@ -186,4 +186,38 @@ class ItemCoupon extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    //通过输入编码使用卡券
+    public function useItemCouponWithCodeApi(){
+        try{
+            $item_coupon_id = input('param.item_coupon_id');
+            $ic_code = input('param.ic_code');
+            if (!$ic_code) {
+                return json(['code'=>100,'msg'=>'请输入卡券码']);
+            }
+            $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
+            if(!$itemCouponInfo){
+                return json(['code'=>100,'msg'=>'查找不到该卡券']);
+            }
+            if($itemCouponInfo['organization_type'] == 2){
+                $is_power = db('camp_member')->where(['camp_id'=>$itemCouponInfo['organization_id'],'status'=>1,'member_id'=>$this->memberInfo['id']])->find();
+                if(!$is_power){
+                    return json(['code'=>100,'msg'=>'权限不足']);
+                }
+                $result = db('item_coupon_member')->where(['coupon_number'=>$ic_code,'status'=>1])->update(['status'=>2,'update_time'=>time()]);
+                if(!$result){
+                    return json(['code'=>100,'msg'=>'卡券码不正确或者卡券已被使用']);
+                }
+            }else{
+                return json(['code'=>100,'msg'=>'非训练营平台卡券不允许输入卡券码使用']);
+            }
+            return json(['code'=>200,'msg'=>'使用成功']);
+         }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
 }

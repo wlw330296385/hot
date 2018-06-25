@@ -63,10 +63,9 @@ class CampMember extends Base
 
             // 申请加入教练必须有已审核的教练员资格
             if ($type == 2) {
-                $coachS = new CoachService();
-                $coachInfo = $coachS->coachInfo(['member_id' => $this->memberInfo['id']]);
-                if (!$coachInfo && $coachInfo['status_num'] != 1) {
-                    return json(['code' => 101, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
+                $coachInfo = db('coach')->where(['member_id' => $this->memberInfo['id']])->find();
+                if (!$coachInfo && $coachInfo['status'] != 1) {
+                    return json(['code' => 100, 'msg' => '请先注册教练资格', 'goto' => url('frontend/coach/createcoach')]);
                 }
             }
 
