@@ -74,6 +74,8 @@ class ItemCoupon extends Base{
         }
     }
 
+
+
     public function updateItemCouponApi(){
          try{
             $data = input('post.');
@@ -99,6 +101,8 @@ class ItemCoupon extends Base{
          }
      }
 
+
+
     public function editItemCouponApi(){
         try{
            $data = input('post.');
@@ -114,6 +118,9 @@ class ItemCoupon extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+
 
     //生成一张卡券
     public function createItemCouponApi(){

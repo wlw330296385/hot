@@ -101,6 +101,23 @@ class Dailytask extends Base{
     }
 
 
+    // 把过期时间的学生status设置为3,并且吞掉钱财,运行时间:每日05:05
+    public function dropStudent(){
+        try{
+            $list = db('lesson_member')->where(['expire'=>['lt',time()]])->select();
+            if($list){
+                db('lesson_member')->where(['expire'=>['lt',time()]])->update(['status'=>3,'system_remarks'=>"过期清除"]);
+            }
+            $data = ['crontab'=>'清除过期学生'];
+            $this->record($data);
+        }catch(Exception $e){
+            $data = ['crontab'=>'清除过期学生','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+    }
+
+
 
 
     
