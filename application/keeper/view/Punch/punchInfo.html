@@ -90,6 +90,9 @@
             height: 320px !important;
             position: fixed;
         }
+        .highlight {
+            color:#dd524d !important;
+        }
     </style>
 </head>
 
@@ -157,7 +160,9 @@
                     <text class="comment_count">0</text>）</span>
                 <span class="more" style="padding-right: 0">打卡
                     <span class="colororange">{$punchInfo.stakes}</span> HT&nbsp;&nbsp; 打赏
-                    <span class="colororange rewardNum1">{$punchInfo.rewards_money}</span> HT
+                    <span class="colororange rewardNum1">{$punchInfo.rewards_money}</span> HT &nbsp;&nbsp;
+                    <i class="mui-icon-extra mui-icon-extra-like f14 thumbsup"></i>&nbsp;
+                    <span class="colororange thumbup_count">{$punchInfo.likes}</span>
                 </span>
             </div>
             <ul class="mui-table-view comment-list"></ul>
@@ -249,6 +254,26 @@
         </div>
     </div>
 
+    <!-- 回复评论 -->
+    <div id="hfcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                    <i class="mui-icon mui-icon-compose"></i>
+                    <span class="type">回复<text class="colororange"></text>评论</span>
+                    <a href="#hfcomment" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="listli">
+                    <input type="hidden" name="to_member" />
+                    <input type="hidden" name="to_member_id" />
+                    <input type="hidden" name="to_member_avatar" />
+                    <textarea rows="4" class="replyComment" placeholder="请输入回复内容"></textarea>
+                </li>
+                <li class="mui-col-xs-12 opli replyCommentBtn">提交回复</li>
+            </ul>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -332,7 +357,7 @@
                 mui('#reward').popover('toggle');
                 mask.show();
                 $('.mui-iframe-wrapper').show();
-            })
+            });
 
             // 选择打赏币
             $(document).on("tap", ".classH", function () {
@@ -341,7 +366,7 @@
                     $(".classH").removeClass("classActive");
                     $(this).addClass("classActive");
                 }
-            })
+            });
 
             //打赏
             $(".confirmDS").on('tap', function () {
@@ -409,6 +434,7 @@
                     data: {
                         punch: punch,
                         punch_id: punch_id,
+                        to_member_id: "-1",
                         comment: comment,
                         status: 1
                     },
@@ -435,8 +461,113 @@
                 });
             });
 
+            $(".comment-list").on('tap', "a", function () {
+                var to_member = $(this).attr("data-member");
+                var to_member_id = $(this).attr("data-member_id");
+                var to_avatar = $(this).attr("data-avatar")
+                $("#hfcomment .colororange").text(to_member);
+                $("#hfcomment input[name=to_member]").val(to_member);
+                $("#hfcomment input[name=to_member_id]").val(to_member_id);
+                $("#hfcomment input[name=to_member_avatar]").val(to_avatar);
+            });
+
+
+            //回复评论功能
+            $(".replyCommentBtn").on('tap', function () {
+                var punch = "{$punchInfo.punch}"
+                var punch_id = "{$punchInfo.id}";
+                var comment = $(".replyComment").val();
+                var to_member = $("#hfcomment input[name=to_member]").val();
+                var to_member_id = $("#hfcomment input[name=to_member_id]").val();
+                var to_avatar = $("#hfcomment input[name=to_member_avatar]").val();
+                if (comment == '') {
+                    mui.toast("回复内容不能为空");
+                    return false;
+                }
+                mui.ajax("{:url('api/punch/commentApi')}", {
+                    data: {
+                        punch: punch,
+                        punch_id: punch_id,
+                        comment: comment,
+                        to_member: to_member,
+                        to_member_id: to_member_id,
+                        to_member_avatar: to_avatar,
+                        status: 1
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('回复成功，感谢你的回复！');
+                            $(".comment-list").empty();
+                            toCommentList();
+                            mui('#hfcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
             pulldownRefresh(); //页面打开时获取一次最新评论信息
+
+
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var currLikes = parseInt($(".thumbup_count").text());
+                var punch = "{$punchInfo.punch}";
+                var punch_id = "{$punchInfo.id}";
+                mui.ajax("{:url('api/punch/likesApi')}", {
+                    data: {
+                        punch: punch,
+                        punch_id: punch_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            if($(".thumbsup").hasClass("highlight")){
+                                $(".thumbsup").removeClass("highlight");
+                                $(".thumbup_count").text(currLikes-1);
+                            }else{
+                                $(".thumbsup").addClass("highlight");
+                                $(".thumbup_count").text(currLikes+1);
+                            }
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            isthumbsup("{$is_like}") //点赞状态
+
         });
+
+        // 点赞状态
+        function isthumbsup(islikes) {
+            if (islikes == "1") {
+                $(".thumbsup").addClass("highlight");
+            } else {
+                $(".thumbsup").removeClass("highlight");
+            }
+        }
+
+
         var count = 1
         //下拉刷新具体业务实现
         function pulldownRefresh() {
@@ -474,8 +605,13 @@
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
+                        var replyMember = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            replyMember = '';
+                            if(data.data[i].to_member!=""){
+                                replyMember = " 回复 " + data.data[i].to_member;
+                            }
+                            newli = newli + '<li class="mui-table-view-cell listli"><a href="#hfcomment" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-avatar="' + data.data[i].avatar + '"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].avatar + '">' + data.data[i].member + replyMember +'<p>' + data.data[i].comment + '</p></a></li>'
                         }
                     }
                     if (gType == 1) {

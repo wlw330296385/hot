@@ -23,6 +23,10 @@
                 width: 67% !important;
             }
         }
+        .createGroupBtn{
+            float: right;
+            font-size:14px;
+        }
     </style>
 </head>
 
@@ -44,6 +48,7 @@
                 <div class="page-header bggray2">
                     <span class="course">我的社群（
                         <text class="colororange myGroupNum">0</text>）</span>
+                    <span class="createGroupBtn"><a href="{:url('group/createGroup')}">+ 创建新社群</a></span>
                 </div>
                 <ul class="mui-table-view detalis-list list border-b myGroup"></ul>
                 <div class="page-header bggray2">
@@ -53,14 +58,6 @@
                 <ul class="mui-table-view detalis-list list border-b otherGroup"></ul>
             </div>
         </div>
-
-        <ul class="mui-table-view operation">
-            <a href="{:url('group/createGroup')}">
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
-                    创建社群
-                </li>
-            </a>
-        </ul>
 
     </div>
 
@@ -146,7 +143,8 @@
                         }
                         $("ul.myGroup").empty().append(newli);
                         if (newli == '') {
-                            $("ul.myGroup").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $(".createGroupBtn").hide();
+                            $("ul.myGroup").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>你还没有创建或加入任何社群哦</p><p><a href="{:url('group/createGroup')}"><button type="button" class="mui-btn mui-btn-primary" style="margin-top:10px;padding:10px 20px;">立即创建我的社群</button></a></p></li>');
                         }
                     },
                     error: function (xhr, type, errerThrown) {
