@@ -17,7 +17,8 @@ use app\model\MatchTeamMember;
 class LeagueService
 {
     // 创建联赛组织
-    public function createMatchOrg($data) {
+    public function createMatchOrg($data)
+    {
         $model = new MatchOrg();
         // 保存数据，成功返回自增id，失败记录错误信息
         $res = $model->data($data)->allowField(true)->save();
@@ -30,7 +31,8 @@ class LeagueService
     }
 
     // 编辑联赛组织
-    public function updateMatchOrg($data, $condition=[]) {
+    public function updateMatchOrg($data, $condition = [])
+    {
         $model = new MatchOrg();
         // 带更新条件更新数据
         if (!empty($condition) && is_array($condition)) {
@@ -55,7 +57,8 @@ class LeagueService
     }
 
     // 获取联赛组织信息
-    public function getMatchOrg($map) {
+    public function getMatchOrg($map)
+    {
         $model = new MatchOrg();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -65,7 +68,8 @@ class LeagueService
     }
 
     // 获取联赛组织证件图
-    public function getOrgCert($org_id) {
+    public function getOrgCert($org_id)
+    {
         $certlist = db('cert')->where(['match_org_id' => $org_id])->select();
         $certArr = [
             'cert' => '',
@@ -74,22 +78,25 @@ class LeagueService
         ];
         if ($certlist) {
             foreach ($certlist as $val) {
-                switch ( $val['cert_type'] ) {
+                switch ($val['cert_type']) {
                     // 法人
-                    case 1: {
-                        $certArr['fr']['cert_no'] = $val['cert_no'];
-                        $certArr['fr']['photo_positive'] = $val['photo_positive'];
-                        break;
-                    }
+                    case 1:
+                        {
+                            $certArr['fr']['cert_no'] = $val['cert_no'];
+                            $certArr['fr']['photo_positive'] = $val['photo_positive'];
+                            break;
+                        }
                     // 营业执照
-                    case 4: {
-                        $certArr['cert'] = $val['photo_positive'];
-                        break;
-                    }
+                    case 4:
+                        {
+                            $certArr['cert'] = $val['photo_positive'];
+                            break;
+                        }
                     // 其他证明
-                    default: {
-                        $certArr['other'] = $val['photo_positive'];
-                    }
+                    default:
+                        {
+                            $certArr['other'] = $val['photo_positive'];
+                        }
                 }
             }
         }
@@ -97,7 +104,8 @@ class LeagueService
     }
 
     // 获取会员所在联赛组织列表
-    public function getMemberInMatchOrgs($memberId) {
+    public function getMemberInMatchOrgs($memberId)
+    {
         $model = new MatchOrgMember();
         $res = $model->where([
             'member_id' => $memberId,
@@ -111,10 +119,11 @@ class LeagueService
     }
 
     // 保存联赛组织-会员关系数据
-    public function saveMatchOrgMember($data, $condition=[]) {
+    public function saveMatchOrgMember($data, $condition = [])
+    {
         $model = new MatchOrgMember();
         // 带更新条件更新数据
-        if ( !empty($condition) && is_array($condition) ) {
+        if (!empty($condition) && is_array($condition)) {
             $res = $model->allowField(true)->save($data, $condition);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -124,7 +133,7 @@ class LeagueService
             }
         }
         // 直接更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -135,7 +144,7 @@ class LeagueService
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
-        if ($res ) {
+        if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
@@ -144,7 +153,8 @@ class LeagueService
     }
 
     // 获取联赛信息带有联赛组织
-    public function getMatchWithOrg($map) {
+    public function getMatchWithOrg($map)
+    {
         $model = new Match();
         $res = $model->with('matchOrg')->where($map)->find();
         if (!$res) {
@@ -161,7 +171,8 @@ class LeagueService
     }
 
     // 获取联赛组织人员列表
-    public function getMatchOrgMemberList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchOrgMemberList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchOrgMember();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -175,7 +186,8 @@ class LeagueService
     }
 
     // 获取联赛组织人员列表
-    public function getMatchOrgMemberPaginator($map, $order='id desc', $limit=10) {
+    public function getMatchOrgMemberPaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchOrgMember();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -189,7 +201,8 @@ class LeagueService
     }
 
     // 获取联赛组织人员列表
-    public function getMatchOrgMembers($map) {
+    public function getMatchOrgMembers($map)
+    {
         $model = new MatchOrgMember();
         $res = $model->where($map)->select();
         $result = $res->toArray();
@@ -200,7 +213,8 @@ class LeagueService
     }
 
     // 获取联赛组织人员详情
-    public function getMatchOrgMember($map) {
+    public function getMatchOrgMember($map)
+    {
         $model = new MatchOrgMember();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -212,7 +226,8 @@ class LeagueService
     }
 
     // 联赛使用获取apply数据
-    public function getApplyByLeague($map) {
+    public function getApplyByLeague($map)
+    {
         $model = new \app\model\Apply();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -224,10 +239,11 @@ class LeagueService
     }
 
     // 联赛使用保存apply数据
-    public function saveApplyByLeague($data) {
+    public function saveApplyByLeague($data)
+    {
         $model = new \app\model\Apply();
         // 直接更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $data['id']];
@@ -238,7 +254,7 @@ class LeagueService
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
-        if ($res ) {
+        if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
@@ -247,17 +263,19 @@ class LeagueService
     }
 
     // 软删除联赛组织人员
-    public function delMatchOrgMember($id) {
+    public function delMatchOrgMember($id)
+    {
         $model = new MatchOrgMember();
         return $model::destroy($id);
     }
 
     // ***** 联赛工作人员 *****
     // 保存联赛-工作人员关系数据
-    public function saveMatchMember($data, $condition=[]) {
+    public function saveMatchMember($data, $condition = [])
+    {
         $model = new MatchMember();
         // 带更新条件更新数据
-        if ( !empty($condition) ) {
+        if (!empty($condition)) {
             $res = $model->allowField(true)->save($data, $condition);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -267,7 +285,7 @@ class LeagueService
             }
         }
         // 直接更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
@@ -278,7 +296,7 @@ class LeagueService
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
-        if ($res ) {
+        if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
@@ -287,7 +305,8 @@ class LeagueService
     }
 
     // 获取联赛-工作人员详情
-    public function getMatchMember($map) {
+    public function getMatchMember($map)
+    {
         $model = new MatchMember();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -299,20 +318,23 @@ class LeagueService
     }
 
     // 获取会员的联赛工作人员角色权限
-    public function getMatchMemberType($map) {
+    public function getMatchMemberType($map)
+    {
         $model = new MatchMember();
         $res = $model->where($map)->value('type');
         return ($res) ? $res : 0;
     }
 
     // 获取联赛工作人员类型内容
-    public function getMatchMemberTypes() {
+    public function getMatchMemberTypes()
+    {
         $model = new MatchMember();
         return $model->getTypes();
     }
 
     // 获取联赛-工作人员列表（无分页）
-    public function getMatchMembers($map,$order='id desc') {
+    public function getMatchMembers($map, $order = 'id desc')
+    {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->select();
         if (!$res) {
@@ -326,7 +348,8 @@ class LeagueService
     }
 
     //  获取联赛-工作人员列表
-    public function getMatchMemberList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchMemberList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -340,7 +363,8 @@ class LeagueService
     }
 
     //  获取联赛-工作人员列表（分页）
-    public function getMatchMemberPaginator($map, $order='id desc', $limit=10) {
+    public function getMatchMemberPaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -354,7 +378,8 @@ class LeagueService
     }
 
     // 删除联赛工作人员
-    public function delMatchMember($id) {
+    public function delMatchMember($id)
+    {
         $model = new MatchMember();
         return $model::destroy($id);
     }
@@ -362,14 +387,16 @@ class LeagueService
     // ***** 联赛工作人员 end *****
 
     // 获取联赛球队数
-    public function getMatchTeamCount($map) {
+    public function getMatchTeamCount($map)
+    {
         $model = new MatchTeam();
         $res = $model->where($map)->count();
         return ($res) ? $res : 0;
     }
 
     // 获取联赛球队详情（关联比赛、球队详细）
-    public function getMatchTeamInfo($map) {
+    public function getMatchTeamInfo($map)
+    {
         $model = new MatchTeam();
         $res = $model->with('team,match')->where($map)->find();
         if (!$res) {
@@ -379,7 +406,8 @@ class LeagueService
         return $result;
     }
 
-    public function getMatchTeamInfoSimple($map) {
+    public function getMatchTeamInfoSimple($map)
+    {
         $model = new MatchTeam();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -390,7 +418,8 @@ class LeagueService
     }
 
     // 获取联赛球队列表
-    public function getMatchTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
+    public function getMatchTeamList($map, $page = 1, $order = ['id' => 'desc'], $limit = 10)
+    {
         $model = new MatchTeam();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
@@ -400,7 +429,8 @@ class LeagueService
     }
 
     // 获取联赛球队列表（页码）
-    public function getMatchTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
+    public function getMatchTeamPaginator($map, $order = ['id' => 'desc'], $limit = 10)
+    {
         $model = new MatchTeam();
         $res = $model->where($map)->order($order)->paginate($limit);
         if ($res) {
@@ -410,7 +440,8 @@ class LeagueService
     }
 
     // 获取联赛球队列表
-    public function getMatchTeamWithTeamList($map, $page=1, $order=['id' => 'desc'], $limit = 10) {
+    public function getMatchTeamWithTeamList($map, $page = 1, $order = ['id' => 'desc'], $limit = 10)
+    {
         $model = new MatchTeam();
         $res = $model->with('team,match')->where($map)->order($order)->page($page)->limit($limit)->select();
         if ($res) {
@@ -420,7 +451,8 @@ class LeagueService
     }
 
     // 获取联赛球队列表（页码）
-    public function getMatchTeamWithTeamPaginator($map,  $order=['id' => 'desc'], $limit = 10) {
+    public function getMatchTeamWithTeamPaginator($map, $order = ['id' => 'desc'], $limit = 10)
+    {
         $model = new MatchTeam();
         $res = $model->with('team,match')->where($map)->order($order)->paginate($limit);
         if ($res) {
@@ -430,16 +462,17 @@ class LeagueService
     }
 
     // 保存比赛球队数据
-    public function saveMatchTeam($data) {
+    public function saveMatchTeam($data)
+    {
         $model = new MatchTeam();
         // 根据提交的参数有无id 识别执行更新/插入数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
                 return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
             }
         }
@@ -448,37 +481,40 @@ class LeagueService
         if ($res) {
             return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
         } else {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
     }
 
     // 保存联赛分组球队数据
-    public function saveMatchGroup($data) {
+    public function saveMatchGroup($data)
+    {
         $model = new MatchGroup();
         // 更新数据
         if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res == false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res == false) {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
     }
 
     // 删除联赛分组数据
-    public function deleteMatchGroup($id, $force=false) {
+    public function deleteMatchGroup($id, $force = false)
+    {
         return MatchGroup::destroy($id, $force);
     }
 
     // 获取联赛分组详情
-    public function getMatchGroup($map) {
+    public function getMatchGroup($map)
+    {
         $model = new MatchGroup();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -488,14 +524,16 @@ class LeagueService
     }
 
     // 获取联赛分组数
-    public function getMatchGroupCount($map) {
+    public function getMatchGroupCount($map)
+    {
         $model = new MatchGroup();
         $res = $model->where($map)->count();
         return ($res) ? $res : 0;
     }
 
     // 获取联赛分组列表（无分页）
-    public function getMatchGroups($map, $order='id desc') {
+    public function getMatchGroups($map, $order = 'id desc')
+    {
         $model = new MatchGroup();
         $res = $model->where($map)->order($order)->select();
         if (!$res) {
@@ -505,7 +543,8 @@ class LeagueService
     }
 
     // 获取联赛分组列表
-    public function getMatchGroupList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchGroupList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchGroup();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -515,7 +554,8 @@ class LeagueService
     }
 
     // 获取联赛分组列表（页码）
-    public function getMatchGroupPaginator($map, $order='id desc', $limit=10) {
+    public function getMatchGroupPaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchGroup();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -525,26 +565,28 @@ class LeagueService
     }
 
     // 保存联赛-分组-球队数据
-    public function saveMatchGroupTeam($data) {
+    public function saveMatchGroupTeam($data)
+    {
         $model = new MatchGroupTeam();
         // 更新数据
         if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res == false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res == false) {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
     }
 
     // 获取联赛分组球队列表（无分页）
-    public function getMatchGroupTeams($map, $order='id desc') {
+    public function getMatchGroupTeams($map, $order = 'id desc')
+    {
         $model = new MatchGroupTeam();
         $res = $model->where($map)->order($order)->select();
         if (!$res) {
@@ -554,12 +596,14 @@ class LeagueService
     }
 
     // 删除联赛分组球队数据
-    public function deleteMatchGroupTeam($id, $force=false) {
+    public function deleteMatchGroupTeam($id, $force = false)
+    {
         return MatchGroupTeam::destroy($id, $force);
     }
 
     // 获取联赛球队球员列表（无分页）
-    public function getMatchTeamMembers($map, $order='id desc') {
+    public function getMatchTeamMembers($map, $order = 'id desc')
+    {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->select();
         if (!$res) {
@@ -569,7 +613,8 @@ class LeagueService
     }
 
     // 获取联赛球队球员列表
-    public function getMatchTeamMemberList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchTeamMemberList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -579,7 +624,8 @@ class LeagueService
     }
 
     // 获取联赛球队球员列表（页码）
-    public function getMatchTeamMemberPaginator($map, $order='id desc', $limit=10) {
+    public function getMatchTeamMemberPaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -589,7 +635,8 @@ class LeagueService
     }
 
     // 获取联赛球队球员详情
-    public function getMatchTeamMember($map) {
+    public function getMatchTeamMember($map)
+    {
         $model = new MatchTeamMember();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -599,80 +646,86 @@ class LeagueService
     }
 
     // 批量保存联赛参赛球队球员数据
-    public function saveAllMatchTeamMember($data) {
+    public function saveAllMatchTeamMember($data)
+    {
         $model = new MatchTeamMember();
         $res = $model->allowField(true)->saveAll($data);
         return $res;
     }
 
     // 保存联赛参赛球队球员数据
-    public function saveMatchTeamMember($data, $condi=[]) {
+    public function saveMatchTeamMember($data, $condi = [])
+    {
         $model = new MatchTeamMember();
-        if ( !empty($condi) && is_array($condi) ) {
+        if (!empty($condi) && is_array($condi)) {
             // 带更新条件更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res === false) {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
     }
 
     // 删除联赛参赛球队球员数据 $force 是否强制删除
-    public function delMatchTeamMember($data, $force=false) {
+    public function delMatchTeamMember($data, $force = false)
+    {
         return MatchTeamMember::destroy($data, $force);
     }
 
     // 保存联赛赛程
-    public function saveMatchSchedule($data, $condi=[]) {
+    public function saveMatchSchedule($data, $condi = [])
+    {
         $model = new MatchSchedule();
-        if ( !empty($condi) && is_array($condi) ) {
+        if (!empty($condi) && is_array($condi)) {
             // 带更新条件更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res === false) {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
     }
 
     // 批量保存联赛赛程
-    public function saveAllMatchSchedule($data) {
+    public function saveAllMatchSchedule($data)
+    {
         $model = new MatchSchedule();
         $res = $model->saveAll($data);
         return $res;
     }
 
     // 获取赛程详情
-    public function getMatchSchedule($map) {
+    public function getMatchSchedule($map)
+    {
         $model = new MatchSchedule();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -682,7 +735,8 @@ class LeagueService
     }
 
     // 获取赛程列表
-    public function getMatchSchedules($map, $order='id desc') {
+    public function getMatchSchedules($map, $order = 'id desc')
+    {
         $model = new MatchSchedule();
         $res = $model->where($map)->order($order)->select();
         if (!$res) {
@@ -692,7 +746,8 @@ class LeagueService
     }
 
     // 获取赛程列表
-    public function getMatchScheduleList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchScheduleList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchSchedule();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -702,7 +757,8 @@ class LeagueService
     }
 
     // 获取赛程列表（页码）
-    public function getMatchSchedulePaginator($map, $order='id desc', $limit=10) {
+    public function getMatchSchedulePaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchSchedule();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -712,39 +768,97 @@ class LeagueService
     }
 
     // 删除赛程
-    public function delMatchSchedule($data, $force=false) {
+    public function delMatchSchedule($data, $force = false)
+    {
         return MatchSchedule::destroy($data, $force);
     }
 
+    // 获取根据阶段分组的赛程列表
+    public function getMatchScheduleListByStageAndGroup($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
+        $stageModel = new MatchStage();
+        $groupModel = new MatchGroup();
+        $scheduleModel = new MatchSchedule();
+        $data = [];
+        $stages = $stageModel->where($map)->field(['create_time', 'update_time', 'delete_time'], true)->select();
+        if (!$stages) {
+            return $stages;
+        }
+        $stages = $stages->toArray();
+        foreach ($stages as $key => $value) {
+            $data[] = $value;
+            // 小组赛先查询分组数据
+            if ($value['type'] == 1) {
+                $groups = $groupModel->where([
+                    'match_id' => $value['match_id'],
+                    'status' => 1
+                ])
+                    ->field(['create_time', 'update_time', 'delete_time'], true)
+                    ->select();
+                if ($groups) {
+                    $groups = $groups->toArray();
+                    $data[$key]['groups'] = $groups;
+                    foreach ($groups as $key2 => $group) {
+                        $schedules = $scheduleModel->where([
+                            'match_id' => $value['match_id'],
+                            'match_group_id' => $group['id'],
+                            'match_stage_id' => $value['id'],
+                            'status' => 1
+                        ])
+                            ->field(['create_time', 'update_time', 'delete_time'], true)
+                            ->select();
+                        if ($schedules) {
+                            $data[$key]['groups'][$key2]['schedules'] = $schedules->toArray();
+                        }
+                    }
+                }
+            } else {
+                $schedules = $scheduleModel->where([
+                    'match_id' => $value['match_id'],
+                    'match_stage_id' => $value['id'],
+                    'status' => 1
+                ])
+                    ->field(['create_time', 'update_time', 'delete_time'], true)
+                    ->select();
+                if ($schedules) {
+                    $data[$key]['schedules'] = $schedules->toArray();
+                }
+            }
+        }
+        return $data;
+    }
+
     // 保存比赛阶段数据
-    public function saveMatchStage($data, $condi=[]) {
+    public function saveMatchStage($data, $condi = [])
+    {
         $model = new MatchStage();
-        if ( !empty($condi) && is_array($condi) ) {
+        if (!empty($condi) && is_array($condi)) {
             // 带更新条件更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 更新数据
-        if ( array_key_exists('id', $data) ) {
+        if (array_key_exists('id', $data)) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res === false) {
-                trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             }
             return $res;
         }
         // 插入数据
         $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res === false) {
-            trace('error:'.$model->getError().', \n sql:'.$model->getLastSql(), 'error');
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
     }
 
     // 获取比赛阶段详情
-    public function getMatchStage($map) {
+    public function getMatchStage($map)
+    {
         $model = new MatchStage();
         $res = $model->where($map)->find();
         if (!$res) {
@@ -755,7 +869,8 @@ class LeagueService
 
 
     // 获取比赛阶段列表
-    public function getMatchStageList($map, $page=1, $order='id desc', $limit=10) {
+    public function getMatchStageList($map, $page = 1, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchStage();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         if (!$res) {
@@ -769,7 +884,8 @@ class LeagueService
     }
 
     // 获取比赛阶段列表（页码）
-    public function getMatchStagePaginator($map, $order='id desc', $limit=10) {
+    public function getMatchStagePaginator($map, $order = 'id desc', $limit = 10)
+    {
         $model = new MatchStage();
         $res = $model->where($map)->order($order)->paginate($limit);
         if (!$res) {
@@ -783,7 +899,8 @@ class LeagueService
     }
 
     // 比赛阶段类型文案列表
-    public function getMatchStageTypes() {
+    public function getMatchStageTypes()
+    {
         $type = [
             '1' => '小组赛',
             '2' => '热身赛',
@@ -796,7 +913,8 @@ class LeagueService
     }
 
     // 删除比赛阶段
-    public function delMatchStage($data, $force=false) {
+    public function delMatchStage($data, $force = false)
+    {
         return MatchStage::destroy($data, $force);
     }
 }
