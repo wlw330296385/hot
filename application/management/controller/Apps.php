@@ -11,12 +11,13 @@ class Apps extends Backend {
 	}
     public function appsApplyList() {
         $field = '请选择搜索关键词';
-        $map = [];
 
+        $type = input('param.type',2);
+        $f_id = input('param.f_id');
+        $map = ['type'=>$type,'f_id'=>$f_id];
         $field = input('param.field');
         $keyword = input('param.keyword');
         if($keyword==''){
-            $map = [];
             $field = '请选择搜索关键词';
         }else{
             if($field){
@@ -28,8 +29,22 @@ class Apps extends Backend {
                 };
             }
         }
-        $appsApplyList = $this->AppsApply->paginate(10);
+// dump($type);die;
+        if($type == 2){
+            $info = db('event')->where(['id'=>$f_id])->find();
+            if($info['dom']){
+                $info['doms'] = json_decode($info['dom'],true);
+            }else{
+                $info['doms'] = [];
+            }
+            
+        }elseif($type == 1){
+
+        }   
+        
+        $appsApplyList = $this->AppsApply->where($map)->select();
         $this->assign('field',$field);
+        $this->assign('info',$info);
         $this->assign('appsApplyList',$appsApplyList);    
         return view('Apps/appsApplyList');
     	

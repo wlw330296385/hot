@@ -28,7 +28,6 @@ class Backend extends Base
 		// 获取面包屑
 		$_location = $this->getLocation();
 		$menuList = cache("menuList_{$this->memberInfo['id']}");
-		// dump($menuList);die;
 		$this->assign('camp_member',$this->camp_member);
 		$this->assign('_sidebar_menus',$menuList);
 		$this->assign('_location',$_location);

@@ -47,7 +47,7 @@
                             </div>
                         	</div>
 	                        <!-- 添加会员 -->
-	                        <a class="btn btn-warning  btn-flat btn-sub pull-right pop-iframe" data-href="{:url('event/createEvent')}" href="{:url('event/createEvent')}">发布文章&nbsp;<i class="fa fa-user-plus"></i></a>
+	                        <a class="btn btn-warning  btn-flat btn-sub pull-right pop-iframe" data-href="{:url('event/createEvent')}" href="{:url('event/createEvent')}">发布活动&nbsp;<i class="fa fa-user-plus"></i></a>
 	                    </fieldset>
 	                </form>
 
@@ -60,6 +60,9 @@
                     <thead>
                     <tr>
                         <th class="text-center order_by" data-order = 'id'>id</th>
+                        <th class="text-center " data-order = 'create_time'>活动名称</th>
+                        <th class="text-center " data-order = 'create_time'>训练营</th>
+                        <th class="text-center " data-order = 'create_time'>套餐</th>
                         <th class="text-center " data-order = 'create_time'>发布时间</th>
                         <th class="text-center " data-order = 'id'>发布人</th>
                         <th class="text-center " data-order = ''>状态</th>
@@ -72,6 +75,16 @@
                         <td class="text-center">{$vo.id}</td>
                         
                         <td class="text-center">
+                            {$vo.event}
+                        </td>
+                        <td class="text-center">
+                        	{$vo.organization}
+                        </td>
+                        <td class="text-center">
+                        	{$vo.dom}
+                        </td>
+                        
+                        <td class="text-center">
                             {$vo.create_time}
                         </td>
                         <td class="text-center">
@@ -82,19 +95,22 @@
                         </td>
                         <td class="text-center">
                         	<a href="{:url('event/eventInfo',['event_id'=>$vo['id']])}" class="btn btn-info" >详细</a>
+                        	<a href="{:url('event/eventInfo',['event_id'=>$vo['id']])}" class="btn btn-info" >活动报名表</a>
                             <div class="btn-group">
-			                  <button type="button" class="btn btn-success">文章操作</button>
+			                  <button type="button" class="btn btn-success">活动操作</button>
 			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
 			                    <span class="caret"></span>
 			                    <span class="sr-only">Toggle Dropdown</span>
 			                  </button>
 			                  <ul class="dropdown-menu" role="menu">
-			                    <li><a class="pop-iframe" data-href="">不要点</a></li>
 			                    <li><a class="pop-iframe" data-href="{:url('event/updateEvent',['event_id'=>$vo.id])}" href="{:url('event/updateEvent',['event_id'=>$vo.id])}">编辑</a></li>
 			                    <li class="divider"></li>
 			                    <li><a href="#">预留功能</a></li>
 			                  </ul>
 			                </div>
+			                {if $vo.apps_form == 1}
+                        	<a href="{:url('apps/appsApplyList',['f_id'=>$vo['id'],'type'=>2])}" class="btn btn-info" >活动特殊报名表</a>
+                        	{/if}
                         </td>
                         
                     </tr>

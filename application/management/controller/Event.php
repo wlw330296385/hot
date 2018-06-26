@@ -28,6 +28,7 @@ class Event extends Camp {
                 };
             }
         }
+       
         $eventList = db('event')->where($map)->paginate(10);
         // dump($eventList);
         $this->assign('field',$field);
