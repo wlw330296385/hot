@@ -7,12 +7,13 @@ use think\Validate;
 class MatchScheduleVal extends Validate
 {
     protected $rule = [
-        'id' => 'number',
+        'id' => 'require|number',
         'match_id' => 'require|number',
         'member_id' => 'gt:0',
     ];
 
     protected $message = [
+        'id.require' => '请输入赛程id',
         'id.number' => '赛程id不合法',
         'match_id.require' => '传入比赛id',
         'match_id.number' => '比赛id不合法',

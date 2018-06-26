@@ -733,6 +733,17 @@ class LeagueService
         }
         $result = $res->toArray();
         $result['match_timestamp'] = $res->getData('match_time');
+        // 字段json格式转换
+        if ( !empty($result['scorers']) && is_null( json_decode( $result['scorers'] ) ) ) {
+            $result['scorers_list'] = json_decode($result['scorers'], true);
+        } else {
+            $result['scorers_list'] = [];
+        }
+        if ( !empty($result['custom_member']) && is_null( json_decode( $result['custom_member'] ) ) ) {
+            $result['custom_member_list'] = json_decode($result['custom_member'], true);
+        } else {
+            $result['custom_member_list'] = [];
+        }
         return $result;
     }
 
