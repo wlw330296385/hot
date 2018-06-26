@@ -2471,8 +2471,16 @@ class League extends Base
         if (!$validate->scene('edit')->check($data)) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
-        // 检查会员操作权限（联赛工作人员-管理员以上）
         $leagueS = new LeagueService();
+        // 获取赛程数据
+        $scheduleInfo = $leagueS->getMatchSchedule([
+            'id' => $data['id'],
+            'match_id' => $data['match_id']
+        ]);
+        if ( !$scheduleInfo ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查会员操作权限（联赛工作人员-管理员以上）
         $power = $leagueS->getMatchMemberType([
             'match_id' => $data['match_id'],
             'member_id' => $this->memberInfo['id'],
@@ -2490,6 +2498,97 @@ class League extends Base
         }
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        // 发送比赛消息
+        $messageS = new MessageService();
+        /**
+         * 根据标识 对指定人群发送比赛信息更新消息
+         * 1 check_court_time：改变比赛时间、场地 出赛2支球队领队与队长、裁判员、记分员、自定义人物
+         * 2 check_referee: 改变裁判员名单 发送给相应裁判员
+         * 3 check_scorers: 改变记分员名单 发送给相应记分员
+         */
+        $sendMessageMembers = [];
+        $teamS = new TeamService();
+        $refereeS = new RefereeService();
+        $refereeMemberIds = [];
+        $scorerIds = [];
+        $customId = [];
+        $changeStr = '';
+        if ( !empty($data['scorers']) && !is_null( json_decode($data['scorers']) ) ) {
+            $scorers = json_decode($data['scorers'], true);
+            foreach ($scorers as $k =>$val) {
+                $scorerIds[]['id'] = $val['member_id'];
+            }
+        }
+        if ( !empty($data['custom_member']) && !is_null( json_decode($data['custom_member']) ) ) {
+            $scorers = json_decode($data['custom_member'], true);
+            foreach ($scorers as $k =>$val) {
+                $customId[]['id'] = $val['member_id'];
+            }
+        }
+        // 获取提交的裁判名单数据
+        if ( array_key_exists('referee1_id', $data) && $data['referee1_id'] ) {
+            $referee1Info = $refereeS->getRefereeInfo(['id' => $data['referee1_id']]);
+            $refereeMemberIds[]['id'] = $referee1Info['member_id'];
+        }
+        if ( array_key_exists('referee2_id', $data) && $data['referee2_id'] ) {
+            $referee1Info = $refereeS->getRefereeInfo(['id' => $data['referee2_id']]);
+            $refereeMemberIds[]['id'] = $referee1Info['member_id'];
+        }
+        if ( array_key_exists('referee3_id', $data) && $data['referee3_id'] ) {
+            $referee1Info = $refereeS->getRefereeInfo(['id' => $data['referee3_id']]);
+            $refereeMemberIds[]['id'] = $referee1Info['member_id'];
+        }
+        // check_scorers
+        if ( array_key_exists('check_scorers', $data) && $data['check_scorers'] ) {
+            $sendMessageMembers = array_merge($sendMessageMembers, $scorerIds);
+            $changeStr = '记分员修改';
+        }
+        // check_referee
+        if ( array_key_exists('check_referee', $data) && $data['check_referee'] ) {
+            $sendMessageMembers = array_merge($sendMessageMembers, $refereeMemberIds);
+            $changeStr = '裁判员修改';
+        }
+        // check_court_time
+        if ( array_key_exists('check_court_time', $data) && $data['check_court_time'] ) {
+            // 获取2支球队的领队队长
+            $homeTeamInfo = $teamS->getTeam(['id' => $scheduleInfo['home_team_id']]);
+            $awayTeamInfo = $teamS->getTeam(['id' => $scheduleInfo['away_team_id']]);
+            if ( $homeTeamInfo['leader_id'] > 0 ) {
+                array_push($sendMessageMembers, ['id' => $homeTeamInfo['leader_id'] ]);
+            }
+            if ( $homeTeamInfo['captain_id'] > 0  ) {
+                array_push($sendMessageMembers, ['id' => $homeTeamInfo['captain_id'] ]);
+            }
+            if ( $awayTeamInfo['leader_id'] > 0 ) {
+                array_push($sendMessageMembers, ['id' =>$awayTeamInfo['leader_id'] ]);
+            }
+            if ( $awayTeamInfo['captain_id'] > 0  ) {
+                array_push($sendMessageMembers, ['id' =>$awayTeamInfo['captain_id'] ]);
+            }
+            $sendMessageMembers = array_merge($sendMessageMembers, $refereeMemberIds);
+            $sendMessageMembers = array_merge($sendMessageMembers, $scorerIds);
+            $sendMessageMembers = array_merge($sendMessageMembers, $customId);
+            $changeStr = '赛程时间或地点修改';
+        }
+        try {
+            if ( !empty($sendMessageMembers) ) {
+                // 过滤接收消息的会员id重复值，每个会员只收一条消息
+                // 发送消息
+                $message = [
+                    'title' => $scheduleInfo['match'].'赛程安排最新动态通知',
+                    'content' => '联赛'.$scheduleInfo['match']. $scheduleInfo['home_team'].'VS'.$scheduleInfo['away_team']. '赛程安排最新动态通知',
+                    'url' => url('keeper/match/leaguescheduleinfo', ['id' => $scheduleInfo['id']], '', true),
+                    'keyword1' => '联赛赛程安排改动',
+                    'keyword2' => $changeStr,
+                    'keyword3' => date('Y-m-d H:i', time()),
+                    'remark' => '更多详情点击进入查看',
+                    'steward_type' => 2
+                ];
+                $messageS->sendMessageToMembers($sendMessageMembers, $message, config('wxTemplateID.informationChange'));
+            }
+        } catch (Exception $e) {
+            trace('error:'.$e->getMessage(), 'error');
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
