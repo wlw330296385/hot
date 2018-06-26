@@ -67,20 +67,15 @@
             </div>
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label class="wd66">比赛阶段</label>
+                    <label>比赛阶段</label>
                     <span class="select-row">
-                        <select>
-                            <option value="1">小组赛</option>
-                            <option value="2">积分赛</option>
-                            <option value="3">16强赛</option>
-                            <option value="4">8强赛</option>
-                        </select>
+                        <select class="data matchStageType" name="type"></select>
                     </span>
                 </div>
             </div>
             <div class="mui-input-row">
                 <label>每组出线球队</label>
-                <span class="">2</span>
+                <span></span>
             </div>
         </form>
 
@@ -110,7 +105,7 @@
         var scheduleList = [];
         var match_id = $('input[name=match_id]').val();
         var match = $('input[name=match]').val();
-
+        var league_id ="{$league_id}";
         $(function () {
             // 初始化列出全部分组的对阵信息
             getbattle(0);
@@ -119,6 +114,36 @@
                 var group_id = $(this).val();
                 getbattle(group_id);
             });
+            
+            // 比赛阶段
+            mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
+                data: {
+                    league_id: league_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<option value="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                        }
+                        if (newli == '') {
+                            newli = '<option>请先创建比赛阶段</option>'
+                        }
+                        $(".matchStageType").empty().append(newli);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+
         });
 
         function getbattle(group_id) {
