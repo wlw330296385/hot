@@ -56,8 +56,10 @@ class Apps extends Base
         
         $EventService = new \app\service\EventService();
         $eventInfo = $EventService->getEventInfo(['id'=>$event_id]);
+        $billOrder = '2'.getOrderID(rand(0,9));
         
 
+        $this->assign('billOrder',$billOrder);
         $this->assign('memberInfo',$memberInfo);
         $this->assign('event_member',$event_member);
         $this->assign('eventInfo',$eventInfo);

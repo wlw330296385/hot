@@ -482,11 +482,7 @@
                     }
                 });
             }else{
-                //如果是会员自己报名,判断是否已经报名过
-//                if(eMember==mID){
-//                    mui.alert("您本人已经购买过，请勿重复购买！");
-//                    return false;
-//                }
+
             }
 
             if (flagCreate == false) {
@@ -495,20 +491,44 @@
 
             //组合自定义表单项
             var mixFrom = '';
-//            $(".mixForm").each(function () {
-//                if($(this).find("img").length>0){
-//                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue"><a href="' + $(this).find("input").val() + '" target="_blank"><img src="' + $(this).find("input").val() + '" /></a></span></li>'
-//                }else{
-//                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
-//                }
-//            });
-//            mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
+
+
+            
+            ///////////////////////////////////////////////////////////////////////
+            //   流程开始：  活动已过期或已满人可进行报名，但不会产生 event_member      //
+            ///////////////////////////////////////////////////////////////////////
+            //1.提交未付款
+            var remarks = member+"购买深圳2018动漫展大热篮球投篮卡券";
+            createBill();
+
+            //2.去支付页面
+            // 这里是跳转并且支付后返回
+
+
+            //3.订单变成已支付
+            // 跳转支付后判断,如果已支付,返回传参,,默认为 {"err_msg":"get_brand_wcpay_request:ok"}
+            pay('{"err_msg":"get_brand_wcpay_request:ok"}');
+            // 如果未支付
+            // return false;
+
+            //4.joinEvent
+            joinEvent();
+
+
+            //5.赠送卡券.根据支付哪个套餐送哪张卡券
+            presentItemCoupon(presentItemCoupon);
+
+
+            ///////////////////////////////////////////////////////////////////////
+            //   流程开始结束：  活动已过期或已满人可进行报名，但不会产生 event_member      //
+            ///////////////////////////////////////////////////////////////////////
+
 
 
             var data = wooApi.getInputData('input', 'data');
             var objData = wooApi.arrTOobj(data);
             objData.content = mixFrom;
-            objData.remarks = member+"购买深圳2018动漫展大热篮球投篮卡券";
+            objData.remarks = remarks;
             objData.dom = $('.selectDom.bggreen').text();
             var url = "{:url('api/apps_apply/createAppsApplyApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -518,7 +538,6 @@
                 ///////////////////////////////////////////////////////////////////////
 
                 mui.alert('恭喜您购买成功，谢谢参与', "", '确定', function () {
-//                        window.setTimeout("history.go(-1)",1500);
                     location.href = "{:url('/index/apps/appsForm/event_id/')}"+"{$eventInfo.id}"+"?showSuccess=yes"
                 })
             } else {
@@ -552,6 +571,74 @@
     }
 
 
+
+    // 提交参加活动
+    function joinEvent(){
+            let arrData1 = wooApi.getInputData();
+            let arrData2 = wooApi.getInputData('textarea','data',arrData1);
+            objData = wooApi.arrTOobj(arrData2);
+            objData.memberData = JSON.stringify(studentList);
+            objData.event = "{$eventInfo.event}";
+            let url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+            let result = wooApi.asyncF(url+'/total/'+1,objData);
+            if(result.code == 200){
+                presentItemCoupon();
+                mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+                    window.location.href="{:url('frontend/event/eventList')}";
+                });
+            }else{
+                mui.alert(result.msg);
+            }
+            
+        }
+
+
+
+    //创建订单
+    function createBill(){
+        var objBillInfo = {};//订单参数
+        objBillInfo.bill_order = "{$billOrder}";
+        objBillInfo.goods_des = "{$memberInfo.member}"+'购买深圳2018动漫展大热篮球投篮卡券';
+        objBillInfo.total = 1;
+        objBillInfo.student_id = "{$memberInfo.id}";
+        objBillInfo.student = "{$memberInfo.member}";
+        objBillInfo.remarks = remarks;
+        objBillInfo.balance_pay = 0;
+        objBillInfo.goods = "深圳2018动漫展大热篮球投篮卡券";
+        objBillInfo.price = price;
+        objBillInfo.score_pay = 0;
+        objBillInfo.organization_type = 1;
+        objBillInfo.goods_type = 2;
+        objBillInfo.pay_type = 2;
+        objBillInfo.camp = '大热篮球';
+        objBillInfo.camp_id = 9;
+
+        objBillInfo.__token__ = "{$Request.token}";
+        var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+        return result;
+    }
+
+    //支付订单
+    function pay(callback_str){
+            var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
+                'balance_pay' : price,
+                'callback_str':callback_str
+            });
+
+            if(result.code == 200){
+                joinEvent();
+            }else{
+                mui.toast(result.msg);
+            }
+        }
+
+
+    // 赠送卡券操作
+    function presentItemCoupon(item_coupon_ids){
+        var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+            'item_coupon_ids': "[".+item_coupon_ids+."]",
+        },function(){});
+    }
 </script>
 </body>
 
