@@ -33,7 +33,8 @@
 
         /* 裁剪图片样式 */
 
-        #clipArea {
+        .clipArea,
+        .clipArea1 {
             height: 300px;
         }
 
@@ -51,7 +52,8 @@
             font-size: 14px;
         }
 
-        #file {
+        .file,
+        .file1 {
             height: 25px;
             top: 310px;
             left: 30px;
@@ -64,16 +66,25 @@
             margin: 10px;
         }
 
-        #clipBtn {
+        .clipBtn,
+        .clipBtn1 {
             float: right;
             padding: 12px 20px;
             margin: 15px 30px 0 0;
             border-radius: 0;
         }
 
-        #view {
+        .view {
             width: 56px;
             height: 56px;
+            border: 1px solid #CCC;
+            float: right;
+            margin-right: 35px;
+        }
+
+        .view1 {
+            width: 56px;
+            height: 42px;
             border: 1px solid #CCC;
             float: right;
             margin-right: 35px;
@@ -120,6 +131,7 @@
                         <input type="hidden" name="photo_positive" value="">
                     </a>
                 </div>
+
                 <div class="mui-input-row h-auto">
                     <a class="mui-navigate-right filePicker" onclick="add_id(2)">
                         <label>身份证反面</label>
@@ -127,30 +139,26 @@
                         <input type="hidden" name="photo_back" value="">
                     </a>
                 </div>
-                {/else}
-                <?php dump($identCert);?>
-                
                 {/if}
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right portraits filePicker" onclick="add_id(3)">
-                        <label>个人形象照</label>
-                        <img id="preview_3" class="coachicon icon01 upload-preview">
-                        <input type="hidden" name="portraits" value=''>
-                    </a>
-                </div> -->
+
                 <div class="mui-input-row h-auto">
+                    <a href="#txpopover1" class="mui-navigate-right rectangular" data-num="4">
+                        <label>资质证明11111</label>
+                        <div class="viewShow view"></div>
+                    </a>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover1" class="mui-navigate-right rectangular" data-num="5">
+                        <label>身份证反面111111</label>
+                        <div class="viewShow view"></div>
+                    </a>
+                </div>
+                <!-- <div class="mui-input-row h-auto">
                     <a href="#txpopover" class="mui-navigate-right">
                         <label>个人头像</label>
-                        <div id="view"></div>
+                        <div class="view"></div>
                     </a>
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right filePicker" onclick="add_id(4)">
-                        <label>资质证明</label>
-                        <img id="preview_4" class="coachicon icon01 upload-preview" alt="">
-                        <input type="hidden" name="cert" value="">
-                    </a>
-                </div>
+                </div> -->
                 <div class="mui-input-row" id='showCityPicker3'>
                     <a href="#" class="mui-navigate-right">
                         <label>所属地区</label>
@@ -239,11 +247,18 @@
 
     <!-- 头像截图弹框 -->
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div id="clipArea"></div>
+        <div class="clipArea"></div>
         <div class="fileFrame">选择图片
-            <input type="file" id="file">
+            <input type="file" class="file">
         </div>
-        <button id="clipBtn">截取</button>
+        <button class="clipBtn">截取</button>
+    </div>
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaShow clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="file">
+        </div>
+        <button class="">截取</button>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -421,43 +436,52 @@
 
             })
 
+
+
+
         })
     </script>
 
     <script>
         var imgurl = '';
-        var pc = new PhotoClip('#clipArea', {
-            size: 260,
-            outputSize: 640,
-            //adaptive: ['60%', '80%'],
-            file: '#file',
-            view: '#view',
-            ok: '#clipBtn',
-            //img: 'img/mm.jpg',
-            loadStart: function () {
-                console.log('开始读取照片');
-            },
-            loadComplete: function () {
-                console.log('照片读取完成');
-            },
-            done: function (dataURL) {
-                console.log(dataURL);
-                mui.post("{:url('api/upload/imgcropupload')}", {
-                    dataurl: dataURL,
-                    path: 'cert'
-                }, function (res) {
-                    console.log(res);
-                    imgurl = res.path;
-                    mui("#txpopover").popover("toggle");
-                }, 'json');
-            },
-            fail: function (msg) {
-                alert(msg);
-            }
-        });
+        var classNum = '';
+        $(document).on("tap", ".rectangular", function () {
+            classNum = $(this).attr("data-num");
+            $("#txpopover1").attr("data-num", classNum)
+            $("#txpopover1").find("button").addClass("clipBtn" + classNum)
+            $("#txpopover1").find("input[type=file]").addClass("file" + classNum)
+            $(this).find(".viewShow").addClass("view" + classNum)
+            // 图片上传
+            var pc = new PhotoClip('.clipArea1', {
+                size: 260,
+                outputSize: 640,
+                adaptive: ['80%', '60%'],
+                file: '.file' + classNum,
+                view: '.view' + classNum,
+                ok: '.clipBtn' + classNum,
+                loadStart: function () {
+                    console.log('开始读取照片');
+                },
+                loadComplete: function () {
+                    console.log('照片读取完成');
+                },
+                done: function (dataURL) {
+                    console.log(dataURL);
+                    mui.post("{:url('api/upload/imgcropupload')}", {
+                        dataurl: dataURL,
+                        path: 'cert'
+                    }, function (res) {
+                        console.log(res);
+                        imgurl = res.path;
+                        mui("#txpopover1").popover("toggle");
+                    }, 'json');
+                },
+                fail: function (msg) {
+                    alert(msg);
+                }
+            });
+        })
 
-    // 加载的图片必须要与本程序同源，否则无法截图
-    //        pc.load('img/mm.jpg');
 
     </script>
 </body>
