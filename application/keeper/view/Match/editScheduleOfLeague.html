@@ -44,6 +44,12 @@
         <input type="hidden" name="match" value="{$matchScheduleInfo.match}" class="data">
         <input type="hidden" name="match_id" value="{$matchScheduleInfo.match_id}" class="data">
         <input type="hidden" name="id" value="{$matchScheduleInfo.id}" class="data">
+
+        <!-- 检测 -->
+        <input type="hidden" name="check_court_time" value="0" class="data">
+        <input type="hidden" name="check_referee" value="0" class="data">
+        <input type="hidden" name="check_scorers" value="0" class="data">
+
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
@@ -76,7 +82,7 @@
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData" name="match_time">{$matchScheduleInfo.match_time}</span>
+                    <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchScheduleInfo.match_time}</span>
                 </div>
             </div>
 
@@ -120,7 +126,7 @@
                     <a class="all">全选</a>
                     <a class="cancel">取消</a>
                     <a class="del">[删除]</a>
-                    <a href="#score" id="setleagueWorkBox" class="mui-icon mui-icon-personadd add"></a>
+                    <a href="#score" id="setleagueScoreBox" class="mui-icon mui-icon-personadd add"></a>
                 </div>
                 <input type="hidden" class="data" name="scorers" value="">
             </div>
@@ -132,15 +138,15 @@
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;">
                     <span>
-                        <input type="text" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data custom_member">
-                        <input type="hidden" name="custom_member" value="{$matchScheduleInfo.custom_member}" placeholder="请选择角色" class="data">
+                        <input type="text" value="" placeholder="请选择角色" class="custom_member">
+                        <input type="hidden" name="custom_member" value='{$matchScheduleInfo.custom_member}' placeholder="请选择角色" class="data">
                     </span>
                 </a>
             </div>
             <div class="mui-input-row">
                 <label>联系方式</label>
                 <span>
-                    <input type="text" value="" placeholder="联系方式（选填）" class="data">
+                    <input type="text" value="" name="telephone" placeholder="联系方式（选填）" class="data">
                 </span>
             </div>
 
@@ -326,16 +332,25 @@
             });
         })(mui, document);
 
-
-        let league_id = "{$league_id}"
+        let league_id = "{$league_id}";
+        let court_id = "{$matchScheduleInfo.court_id}";
+        let page_court_id = $("input[name=court_id]").val();
+        let match_time = "{$matchScheduleInfo.match_time}";
+        let page_match_time = $("input[name=match_time]").val();
+        let referee1_id = "{$matchScheduleInfo.referee1_id}";
+        let page_referee1_id = $("input[name=referee1_id]").val();
+        let referee2_id = "{$matchScheduleInfo.referee2_id}";
+        let page_referee2_id = $("input[name=referee2_id]").val();
+        let referee3_id = "{$matchScheduleInfo.referee3_id}";
+        let page_referee3_id = $("input[name=referee3_id]").val();
         $(function () {
-
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
             toCourtList(wCourt, courtKeyword, 1);
-            toRefereelist();
-            toScorelist()
+            toRefereelist(); //裁判列表
+            toScorelist();  //记分员列表
+            toScorersInital(); // 记分员赋值
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
@@ -381,8 +396,12 @@
             // 选择裁判
             $(".refereeList1").on('tap', 'li', function () {
                 var referee = $(this).text();
-                $(".referee1").text(referee);
                 var referee1_id = $(this).attr("data-referee_id");
+                if (referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
+                    mui.toast("裁判已选择,请选择其他裁判");
+                    return false;
+                }
+                $(".referee1").text(referee);
                 $("input[name=referee1_id]").val(referee1_id);
                 mui("#referee1").popover("toggle");
             });
@@ -395,9 +414,14 @@
             // 选择裁判
             $(".refereeList2").on('tap', 'li', function () {
                 var referee = $(this).text();
-                $(".referee2").text(referee);
                 var referee2_id = $(this).attr("data-referee_id");
+                if (referee2_id == page_referee1_id || referee2_id == page_referee3_id) {
+                    mui.toast("裁判已选择,请选择其他裁判");
+                    return false;
+                }
+                $(".referee2").text(referee);
                 $("input[name=referee2_id]").val(referee2_id);
+
                 mui("#referee2").popover("toggle");
             });
             //清除
@@ -409,8 +433,12 @@
             // 选择裁判
             $(".refereeList3").on('tap', 'li', function () {
                 var referee = $(this).text();
-                $(".referee3").text(referee);
                 var referee3_id = $(this).attr("data-referee_id");
+                if (referee3_id == page_referee1_id || referee3_id == page_referee2_id) {
+                    mui.toast("裁判已选择,请选择其他裁判");
+                    return false;
+                }
+                $(".referee3").text(referee);
                 $("input[name=referee3_id]").val(referee3_id);
                 mui("#referee3").popover("toggle");
             });
@@ -420,7 +448,6 @@
                 $("input[name=referee3_id]").val("");
                 mui("#referee3").popover("toggle");
             });
-
 
             //全选
             $(".all").on('tap', function () {
@@ -439,7 +466,7 @@
                     var str = `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
-                                    <input name="member" class="stdList" value="${$(this).attr("data-id")}" type="checkbox">
+                                    <input name="member" class="stdList" value="${$(this).attr("data-id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
                                 </div>`;
                     $("#hideStList").append(str);
                 })
@@ -447,15 +474,15 @@
                 $(".mui-badge").text(totalNum);
             });
 
-            //复选框赋值
-            $("#setleagueWorkBox").on('tap', '', function () {
+            //记分员复选框赋值
+            $("#setleagueScoreBox").on('tap', '', function () {
                 //每次打开先清空所有选择
                 $("input[name='checkbox-score']").prop("checked", false);
                 //然后遍历出对应所选
                 $(".stdList").each(function (i) {
-                    var id = $(this).val();
+                    var member_id = $(this).val();
                     $(".scoreList").find("input[name='checkbox-score']").filter(function (index) {
-                        return $(this).attr("data-id") == id
+                        return $(this).attr("data-member_id") == member_id
                     }).prop("checked", true);
                 });
             });
@@ -499,6 +526,10 @@
                 mui("#work").popover("toggle");
             });
 
+            // 自定义角色赋值
+            let custom = JSON.parse('{$matchScheduleInfo.custom_member}')
+            $(".custom_member").val(custom[0].workMember);
+            $(".custom_member").attr("data-member_id", custom[0].member_id);
 
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
@@ -538,6 +569,27 @@
                 $(this).find("label").text(i++);//更新序号
             });
         }
+
+        // 记分员赋值
+        function toScorersInital() {
+            let score = JSON.parse('{$matchScheduleInfo.scorers}')
+            let scorersList = ''
+            for (let i = 0; i <= score.length - 1; i++) {
+                scorersList += `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label style="width:20%;">${score[i].realname}</label>
+                                    <font class="f14">${score[i].realname}</font>
+                                    <input name="member" class="stdList" value="${score[i].member_id}" data-realname="${score[i].realname}" type="checkbox">
+                                </div>`;
+            }
+            $("#inactiveList").append(scorersList);
+            $("#hideStList").append(scorersList);
+            $("#hideStListIni").append(scorersList);
+            totalNum = $("#inactiveList .checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+            changeIndex();
+        }
+
+
         //场地列表接口获取数据并追加到页面 
         var toCourtList = function (keyword, wCourt, page) {
             var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
@@ -695,7 +747,43 @@
             })
             let scorers = JSON.stringify(scorersList);
             console.log(scorers)
-            $("input[name=scorers]").val(scorers)
+            $("input[name=scorers]").val(scorers);
+
+
+            // 根据页面内容变化传对应变量区分（用于是否发通知）
+            // 裁判改变（通知所有裁判）
+            if (referee1_id != page_referee1_id || referee2_id != page_referee2_id || referee3_id != page_referee3_id) {
+                console.log("裁判发生了改变");
+                $("input[name=check_referee]").val("1"); //1为改变 0为未改变
+            }
+            // 记分员改变（通知所有记分员）
+            var idDelID = ""
+            $("#hideStListIni input[name=member]").each(function () {
+                var dsid = $(this).val();
+                //默认为要去除的人员
+                idDelID = "Yes";
+                //该人员遍历新编辑的人员表判断是否存在
+                $("#hideStList input[name=member]").each(function () {
+                    if (dsid == $(this).val()) {
+                        idDelID = "No";
+                        console.log("记分员没有改变")
+                        return false;
+                    }
+                });
+                //上面遍历过不存在就添加到最终变动人员列表中
+                if (idDelID == "Yes") {
+                    console.log("记分员发生了改变")
+                    $("input[name=check_scorers]").val("1"); //1为改变 0为未改变
+                }
+            });
+            // 场地，时间改变（通知所有人）
+            if (court_id != page_court_id || match_time != page_match_time) {
+                console.log("场地或者时间发生了改变");
+                $("input[name=check_court_time]").val("1"); //1为改变 0为未改变
+                $("input[name=check_referee]").val("0");
+                $("input[name=check_scorers]").val("0");
+            }
+
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
