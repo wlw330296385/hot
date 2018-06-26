@@ -1,7 +1,18 @@
 {extend name="layout/common"/}
 {block name="css"}
 <style>
-	.img-md {float:none;}
+	.diyList{
+		display: block;
+		overflow: hidden;
+		white-space:nowrap;
+	}
+	.table img { width: 32px;}
+	.mixContent, .mixContentTitle {
+		display: none;
+	}
+	.eventDoms button{
+		padding: 5px 8px;
+	}
 </style>
 {/block}
 {block name="page-content"}
@@ -9,14 +20,13 @@
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
         <div class="panel-lead">
-            <em>会员管理</em>
+            <em></em>
         </div>
     </div>
     <div class="panel-body">
-        <div class="box no-border">
-        	<div class="row">
+        	<div class="row" style="padding:10px 15px;">
 	        	<!-- 搜索框 -->
-	        	<div class="search-form col-md-10 col-md-offset-1">
+	        	<div class="search-form col-md-12">
 	                <form class="form-inline schedule-list" method="get">
 	                    <fieldset>
 	                         <div class="btn-group">
@@ -41,22 +51,14 @@
 	                                <input type="reset" class="btn btn-default btn-flat" value="重置">
 	                            </div>
 	                        </div>
-	                        <div class="form-group">
-	                        <div class="col-sm-12 text-center col-md-12">
-	                            <p>Tips:点击时间可以排序</p>
-                            </div>
-                        	</div>
 
                         	<div class="form-group">
-	                        <div class="col-sm-12 text-center col-md-12">
-	                        	<p>{volist name="$info.doms" id="vol"}
-	                            <button>{$vol.name}</button>
-	                            {/volist}</p>
-                            </div>
+								<div class="col-sm-12 col-md-12">
+									<p class="eventDoms">分类统计：{volist name="$info.doms" id="vol"}
+									<button>{$vol.name}</button>
+									{/volist}</p>
+								</div>
                         	</div>
-
-	                        <!-- 添加会员 -->
-	                        <a class="btn btn-warning  btn-flat btn-sub pull-right pop-iframe" data-href="{:url('article/createArticle')}" href="{:url('article/createArticle')}">发布文章&nbsp;<i class="fa fa-user-plus"></i></a>
 	                    </fieldset>
 	                </form>
 
@@ -68,34 +70,29 @@
                 <table class="table table-striped table-bordered table-hover">
                     <thead>
                     <tr>
-                        <th class="text-center order_by" data-order = 'id'>id</th>
-                        <th class="text-center " data-order = 'member'>会员名</th>
-                        <th class="text-center " data-order = 'realname'>真实姓名</th>
-                        <th class="text-center " data-order = ''>详情</th>
-                        <th class="text-center">操作</th>
+                        <th class="order_by" data-order = 'id'>id</th>
+						<th data-order = 'dom'>分类</th>
+                        <th data-order = 'member'>会员名</th>
+                        <th data-order = 'realname'>真实姓名</th>
+                        <th class="mixContentTitle">详情</th>
                     </tr>
                     </thead>
                     <tbody>
                     {volist name="appsApplyList" id="vo"}
                     <tr>
-                        <td class="text-center">{$vo.id}</td>
-                        <td class="text-center">{$vo.member}</td>
-                        <td class="text-center">{$vo.realname}</td>
-                        <td class="col-sm-4 col-sm-4" >
+                        <td>{$vo.id}</td>
+						<td class="dom">{$vo.dom}</td>
+                        <td>{$vo.member}</td>
+                        <td>{$vo.realname}</td>
+                        <td class="mixContent">
                             {$vo.content}
                         </td>
-                        
-                        <td class="text-center">
-			                  <button type="button" class="btn btn-success">操作</button>
-                        </td>
-                        
                     </tr>
                     {/volist}
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+	</div>
 </div>
 	
 {/block}
@@ -106,25 +103,35 @@
 {block name='js'}
 <script type="text/javascript">
 	$(function(){
-		// $('.pop-iframe').click(function() {
-	 //        var iframeurl = $(this).attr('data-href');
-	 //        // alert(iframeurl);return;
-	 //        var title = $(this).text();
-	 //        layui.use('layer', function() {
-	 //            var layer = layui.layer;
-	            	
-	 //                layer.open({
-	 //                skin:'layui-layer-lan',
-	 //                type: 2,
-	 //                title: title,
-	 //                shadeClose: true,
-	 //                shade: false,
-	 //                maxmin: true, //开启最大化最小化按钮
-	 //                area: ['900px', '650px'],
-	 //                content: iframeurl
-	 //            });
-	 //        });
-	 //    });
+
+
+        var newTH = 0;
+        //遍历自定义项目重新排版输出
+        $(".eventDoms").find("button").each(function () {
+            newTH = newTH + "<th>"+$(this).find(".fTitle").html()+"</th>";
+            console.log(newTH)
+        });
+
+
+	    var newTH = "";
+        //遍历自定义项目名称输出
+        $("tbody tr:first-child .mixContent").find("li").each(function () {
+            newTH = newTH + "<th>"+$(this).find(".fTitle").html()+"</th>";
+            console.log(newTH)
+        });
+        $(".mixContentTitle").after(newTH);
+
+
+        var newTD = "";
+        //遍历自定义项目重新排版输出
+        $(".mixContent").each(function () {
+            newTD = "";
+            $(this).find("li").each(function () {
+                newTD = newTD + "<td>"+$(this).find(".fValue").html()+"</td>";
+            });
+            $(this).after(newTD)
+        });
+
 
 	})
 	

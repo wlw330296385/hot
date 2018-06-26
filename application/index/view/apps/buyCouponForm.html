@@ -15,9 +15,13 @@
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
     <style>
         .tipContent {
-            margin: 25px 28px 0 28px;
+            margin: 0px 28px;
             line-height: 54px;
             vertical-align: middle;
+        }
+
+        .tipContent .tipContentText{
+            padding: 15px 0 5px;
         }
 
         .tipContent .tipContentText p {
@@ -26,8 +30,14 @@
         }
 
         .registerFrom {
-            margin: 10px 25px 0px;
+            margin: 0px 25px;
             background: none;
+            padding-bottom:20px;
+            border-bottom: 1px solid #DDD;
+        }
+        .registerFrom p{
+            color:#666;
+            padding: 20px 0 0;
         }
 
         .registerFrom .mui-input-row {
@@ -51,7 +61,6 @@
             display: none;
             padding: 20px;
             text-align: center;
-            background-color: #FF9900;
         }
         #showSuccess h4,#showSuccess p{
             color:#FFF;
@@ -65,6 +74,15 @@
         .selectTotal, .selectDom{
             padding: 5px 8px !important;
         }
+        .mui-input-group:before{
+            background: none;
+        }
+        .mui-input-row .mui-numbox {
+            float: none;
+        }
+        #myCoupon{
+            display: none;
+        }
 
     </style>
 </head>
@@ -76,9 +94,9 @@
 </header>
 
 <div class="mui-content mt55" style="background: none !important">
-    <div id="showSuccess">
-        <h4>恭喜您登记成功！</h4>
-        <p>请耐心等待工作人员与您联系，谢谢</p>
+    <div id="showSuccess" class="bggreen">
+        <h4>恭喜您购买成功！</h4>
+        <p>祝您好运，赢取游戏大奖！</p>
     </div>
 
     <ul class="mui-table-view list" id="eventDes">
@@ -87,36 +105,24 @@
     <div class="tipContent border-b">
         <div class="tipContentText">
             <p>
-                <strong>登记说明：</strong>
+                <strong>购买说明：</strong>
             </p>
             <p>{$eventInfo.apps_des}</p>
         </div>
     </div>
 
-    <div class="tipContent" id="sDom">
-        <div class="tipContentText">
-            <p>
-                <strong>请选择您要报名的种类：</strong>
-            </p>
-            <p>
-                {volist name='$eventInfo.doms' id="vol"}
-                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
-                {/volist}
-            </p>
-        </div>
-    </div>
-
-    <form action="" class="mui-input-group registerFrom">
+    <form action="" class="mui-input-group registerFrom {if $memberInfo.id>0}hide{else/}show{/if}">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="member_id" class="data" value="{$memberInfo['id']}" />
         <input type="hidden" name="type" class="data" value="2" />
         <input type="hidden" name="f_id" class="data" value="{$eventInfo.id}" />
         <input type="hidden" name="event" class="data" value="{$eventInfo.event}" />
-
-
-        <div class="mui-input-row mName {if $memberInfo.id>0}hide{else/}show{/if}">
+        <p>
+            <strong>首次购买需登记以下信息，以便联系领奖！</strong>
+        </p>
+        <div class="mui-input-row mName">
             <label class="colororange">会员名</label>
-            <input type="text" class="data" name="member" value="{$memberInfo.member}" placeholder="会员名">
+            <input type="text" class="data" name="member" value="{$memberInfo.member}" placeholder="会员名（没填默认为电话号码）">
             <input type="hidden" class="data" name="realname" value="{$memberInfo.realname}" placeholder="姓名">
         </div>
 
@@ -130,13 +136,38 @@
             <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
             <input id="code" type="text" class="input reg_code reg_validate" placeholder="输入验证码" style="width: 30%;">
         </div>
-
-
     </form>
 
-    <div class="endDate">
 
+    <div class="tipContent" id="sDom">
+        <div class="tipContentText border-b">
+            <p>
+                <strong>请选择您要购买的种类：</strong>
+            </p>
+            <p>
+                {volist name='$eventInfo.doms' id="vol"}
+                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
+                {/volist}
+            </p>
+        </div>
+        <div class="tipContentText border-b">
+            <p>
+                <strong>请选择你要购买几张票：</strong>
+            </p>
+            <div class="mui-input-row h-auto">
+                <div class="mui-numbox">
+                    <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                    <input class="mui-input-numbox data" type="number" name="min" value="1">
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
+
+    <div class="endDate"></div>
 
     <div class="tipBottom">
         <p><strong>结束日期：{$eventInfo.ends} {if $eventInfo.is_max=="已满人"}（已满人）{/if}</strong></p>
@@ -152,6 +183,11 @@
         </li>
     </ul>
 
+    <ul class="mui-table-view operation" id="myCoupon">
+        <li class="mui-table-view-cell mui-col-xs-12 opli bgorange">
+            查看我的卡券
+        </li>
+    </ul>
 </div>
 
 
@@ -167,7 +203,7 @@
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
 
-    var wxOpenID = "{$memberInfo.openid}";
+//    var wxOpenID = "{$memberInfo.openid}";
 
     //定义全局变量
     var flagPhone = false;
@@ -175,9 +211,6 @@
     var flagMember = false;
     var flagCreate = true;
     var mID = "{$memberInfo.id}";
-    var mName = "{$memberInfo.member}";
-    var mTel = "{$memberInfo.telephone}";
-    var eMember = "{$event_member.member_id}";
     var getCurrTel = "";
 
     var showDetail = wooApi.GetQueryString('showDetail');
@@ -207,21 +240,6 @@
             $("#eventDes").show();
             $(".registerFrom").hide();
             $("#sDom").hide();
-        }else if(mID!="" && eMember==mID){
-            //判断当前会员身份是否有报名过
-            mui.confirm('您已经提交过此报名表，请问需要为别人报名吗？', '提示', ['是', '否'], function (e) {
-                if (e.index === 0) {
-                    $(".mName").show();
-                    $(".smsValidate").show();
-                    $('input[name=member]').val('');
-                    $('input[name=telephone]').val('');
-                }else{
-                    $(".operation").empty().append('<li class="mui-table-view-cell mui-col-xs-12 opli bggray">已报名</li>');
-                    $("#eventDes").show();
-                    $(".registerFrom").hide();
-                    $("#sDom").hide();
-                }
-            });
         }
 
         if(showDetail=="yes"){
@@ -233,6 +251,7 @@
             $("#sDom").hide();
             $("#showSuccess").show();
             $("#eventDes").show();
+            $("#myCoupon").show();
         }
 
 
@@ -302,63 +321,45 @@
         $('.telephone').on("blur", function () {
             var telephone = $(this).val();
             if (telephone != "") {
-                //已登陆会员并没修改电话（本人报名）
-                //隐藏会员名和短信验证，跳过验证
-                if (mTel == telephone) {
-                    $('input[name="member"]').val(mName);
-                    $(".mName").hide();
-                    $(".smsValidate").hide();
-                    flagPhone = true;
-                    flagSMS = true;
-                    flagMember = true;
-                    return false;
-                }
-                //非会员或会员但修改了号码（帮别人报名）
-                if (!(/^1[34578]\d{9}$/).test(telephone)) {
-                    //判断手机号码格式是否正确
-                    mui.toast("请填写正确的手机格式");
-                    flagPhone = false;
-                    return false;
-                } else {
+                if(getCurrTel!=telephone) {
+                    //非会员或会员但修改了号码（帮别人报名）
+                    if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                        //判断手机号码格式是否正确
+                        mui.toast("请填写正确的手机格式");
+                        flagPhone = false;
+                        return false;
+                    } else {
 
-                    //判断是否已经注册的会员手机号
-                    mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
-                        data: {
-                            'field': 'telephone',
-                            'value': telephone
-                        },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        async: false,
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
-                        success: function (data) {
-                            console.log(data);
-                            //判断该手机号码是否已经是注册会员
-                            if (data.msg == 1) {
-                                mui.alert("该手机号码是本平台已注册会员、请让本人自行报名，谢谢！");
-                                flagPhone = false;
-                            } else {
-                                if(getCurrTel!=telephone){
+                        //判断是否已经注册的会员手机号
+                        mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
+                            data: {
+                                'field': 'telephone',
+                                'value': telephone
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            async: false,
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: {'Content-Type': 'application/json'},
+                            success: function (data) {
+                                console.log(data);
+                                //判断该手机号码是否已经是注册会员
+                                if (data.msg == 1) {
+                                    mui.alert("该手机号码是本平台已注册会员、请让本人自行报名，谢谢！");
+                                    flagPhone = false;
+                                } else {
                                     flagPhone = true;
-                                    $(".mName").show();
-                                    $(".smsValidate").show();
-                                    //如果是登陆会员帮他人报名，是否本人报名将锁定“非本人报名”
-                                    if (mID != "" && mTel != telephone) {
-                                        var memberName = $('input[name="member"]').val();
-                                        if(memberName==mName) {
-                                            $('input[name=member]').val('');
-                                        }
-                                    }
                                 }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                console.log(type);
                             }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            console.log(type);
-                        }
-                    });
+                        });
 
+                    }
                 }
+            }else{
+                flagPhone = false;
             }
 
         });
@@ -397,6 +398,7 @@
                         return false;
                     } else {
                         flagMember = true;
+                        $("input[name='realname']").val(member);
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -410,11 +412,7 @@
 
 
             if($('.selectDom.bggreen').length==0){
-                mui.toast("请选择您要报名的种类");
-                return false;
-            }
-            if (realname == '') {
-                mui.toast("请填写真实姓名");
+                mui.toast("请选择您要购买的种类");
                 return false;
             }
 
@@ -422,10 +420,14 @@
             var telephone = $("input[name='telephone']").val();
             var token = $('input[name=__token__]').val();
 
-
+            //如果没填会员名称，会员名和真实姓名都默认为电话号码
+            if(member==""){
+                $("input[name='member']").val(telephone);
+                $("input[name='realname']").val(telephone);
+                flagMember = true;
+            }
             //如果是非会员，判断是否通过验证
-            //如果是会员并修改了手机号码（帮报名），判断是否通过验证
-            if (mID == "" || mID != "" && mTel != telephone) {
+            if (mID == "") {
                 if (flagMember == false) {
                     mui.toast("提交失败，会员名填写有误，请重新填写！");
                     return false;
@@ -482,7 +484,7 @@
             }else{
                 //如果是会员自己报名,判断是否已经报名过
 //                if(eMember==mID){
-//                    mui.alert("您本人已经登记过，请勿重复登记！");
+//                    mui.alert("您本人已经购买过，请勿重复购买！");
 //                    return false;
 //                }
             }
@@ -493,14 +495,14 @@
 
             //组合自定义表单项
             var mixFrom = '';
-            $(".mixForm").each(function () {
-                if($(this).find("img").length>0){
-                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue"><a href="' + $(this).find("input").val() + '" target="_blank"><img src="' + $(this).find("input").val() + '" /></a></span></li>'
-                }else{
-                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
-                }
-            });
-            mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
+//            $(".mixForm").each(function () {
+//                if($(this).find("img").length>0){
+//                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue"><a href="' + $(this).find("input").val() + '" target="_blank"><img src="' + $(this).find("input").val() + '" /></a></span></li>'
+//                }else{
+//                    mixFrom += '<li><span class="fTitle">' + $(this).find("label").text() + '</span><span class="fValue">' + $(this).find("input").val() + '</span></li>'
+//                }
+//            });
+//            mixFrom = '<ul class="diyList">' + mixFrom + '</ul>'
 
 
             var data = wooApi.getInputData('input', 'data');
@@ -515,7 +517,7 @@
                 //   特别说明：  活动已过期或已满人可进行报名，但不会产生 event_member      //
                 ///////////////////////////////////////////////////////////////////////
 
-                mui.alert('恭喜您登记成功，请耐心等待工作人员与您联系，谢谢', "", '确定', function () {
+                mui.alert('恭喜您购买成功，谢谢参与', "", '确定', function () {
 //                        window.setTimeout("history.go(-1)",1500);
                     location.href = "{:url('/index/apps/appsForm/event_id/')}"+"{$eventInfo.id}"+"?showSuccess=yes"
                 })
