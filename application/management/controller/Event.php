@@ -1,17 +1,17 @@
 <?php
 namespace app\management\controller;
 
-use app\management\controller\Backend;
+use app\management\controller\Camp;
 use app\service\EventService;
-class Event extends Backend {
-    private $EventListService; 
+class Event extends Camp {
+    private $EventService; 
 	public function _initialize(){
 		parent::_initialize();
         $this->EventService = new EventService();
 	}
     public function eventList() {
         $field = '请选择搜索关键词';
-        $map = [];
+        $map = ['organization_id'=>$this->campInfo['id'],'organization_type'=>1];
 
         $field = input('param.field');
         $keyword = input('param.keyword');
