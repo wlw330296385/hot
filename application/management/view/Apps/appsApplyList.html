@@ -10,8 +10,18 @@
 	.mixContent, .mixContentTitle {
 		display: none;
 	}
-	.eventDoms button{
+	.eventDoms button {
 		padding: 5px 8px;
+		margin-left: 8px;
+	}
+	.eventDoms button.active {
+		background-color: #FFF;
+		border: none;
+	}
+
+	.eventDoms button strong{
+		color:#da7908;
+		margin-left: 8px;
 	}
 </style>
 {/block}
@@ -36,9 +46,10 @@
 			                    <span class="sr-only">Toggle Dropdown</span>
 			                  </button>
 			                  <ul class="dropdown-menu search_opt" role="menu">
-			                    <li data = 'title'><a href="#">标题</a></li>
-			                    <li class="divider" ></li>
-			                    <li data = 'organization'><a href="#" >所属组织</a></li>
+			                    <li data='member'><a href="#">会员名</a></li>
+								<li data='realname'><a href="#">真实姓名</a></li>
+							  	<li data='telephone'><a href="#">电话号码</a></li>
+			                    <li data='dom'><a href="#" >报名种类</a></li>
 			                  </ul>
 			                </div>
 	                        <div class="form-group">
@@ -47,23 +58,20 @@
 	                        </div>
 	                        <div class="form-group">
 	                            <div class="col-sm-12 text-center">
-	                                <input type="submit" class="btn btn-success btn-flat btn-sub search" value="搜索">
-	                                <input type="reset" class="btn btn-default btn-flat" value="重置">
+	                                <input type="submit" class="btn btn-block btn-success search" value="搜索">
 	                            </div>
 	                        </div>
 
-                        	<div class="form-group">
+                        	<div class="form-group" style="float:right">
 								<div class="col-sm-12 col-md-12">
-									<p class="eventDoms">分类统计：{volist name="$info.doms" id="vol"}
-									<button>{$vol.name}</button>
-									{/volist}</p>
+									<p class="eventDoms">分类统计：{volist name="$info.doms" id="vol"}<button type="button"><span>{$vol.name}</span></button>{/volist}</p>
 								</div>
                         	</div>
 	                    </fieldset>
 	                </form>
 
 	            </div>
-	            
+
             </div>	
             <!-- 主体 -->
             <div class="box-body">
@@ -91,6 +99,7 @@
                     {/volist}
                     </tbody>
                 </table>
+				<br />
             </div>
 	</div>
 </div>
@@ -105,11 +114,39 @@
 	$(function(){
 
 
-        var newTH = 0;
+        var domName = "";
         //遍历自定义项目重新排版输出
         $(".eventDoms").find("button").each(function () {
-            newTH = newTH + "<th>"+$(this).find(".fTitle").html()+"</th>";
-            console.log(newTH)
+            domName = $(this).find("span").text();
+            var $option =$("td.dom:contains('"+domName+"')").map(function(){
+                if ($(this).text() == domName) {
+                    return this;
+                }
+            });
+            $(this).append("<strong>"+$option.length+"</strong>");
+        });
+        $(".eventDoms").find("button:first-child").before('<button type="button" class="showAll active"><span>全部</span><strong>'+$("table tbody tr").length+'</strong></button>')
+
+		//检索指定种类
+        $(".eventDoms").find("button").not(".showAll").on('click',function(){
+			$("table tbody tr").hide();
+            $(".eventDoms").find("button").removeClass("active");
+            $(this).addClass("active");
+            domName = $(this).find("span").text();
+            var $option =$("td.dom:contains('"+domName+"')").map(function(){
+                if ($(this).text() == domName) {
+                    return this;
+                }
+            });
+            console.log($option);
+            $option.parent().show();
+        });
+
+        //查看全部
+        $(".showAll").on('click',function(){
+            $("table tbody tr").show();
+            $(".eventDoms").find("button").removeClass("active");
+            $(this).addClass("active");
         });
 
 
@@ -139,14 +176,10 @@
 	$('.search_opt li').on('click',function(){
 		field = $(this).attr('data');
 		console.log(field);
-		$('#field').text(field);
+		//$('#field').text(field);
 		$('input[type=hidden]').val(field)
 	})
 
-	$('input[type=reset]').on('click',function(){
-		$('input[type=hidden]').val('woo');
-		window.location.href="{:url('admin/article/articlelist')}";
-	})
 
 </script>
 {/block}
