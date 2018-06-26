@@ -117,9 +117,29 @@
                 <div class="mui-input-row">
                     <label>记分员</label>
                 </div>
-                <div class="box" id="inactiveList"></div>
-                <div class="box" id="hideStList" style="display: none"></div>
-                <div class="box" id="hideStListIni" style="display: none"></div>
+                <div class="box" id="inactiveList">
+                    {volist name="matchScheduleInfo.scorers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;">{$vol.realname}</label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                    </div>
+                    {/volist}
+                </div>
+                <div class="box" id="hideStList" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;">{$vol.realname}</label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                    </div>
+                    {/volist}</div>
+                <div class="box" id="hideStListIni" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;">{$vol.realname}</label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                    </div>
+                    {/volist}</div>
 
                 <div class="operation-btn">
                     <span class="mui-badge">0</span>
@@ -138,7 +158,8 @@
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;">
                     <span>
-                        <input type="text" value="" placeholder="请选择角色" class="custom_member">
+                        {volist name="matchScheduleInfo.custom_member_list" id="vol"}
+                        <input type="text" value="{$vol.workMember}" data-member_id="{$vol.member_id}" placeholder="请选择角色" class="custom_member"> {/volist}
                         <input type="hidden" name="custom_member" value='{$matchScheduleInfo.custom_member}' placeholder="请选择角色" class="data">
                     </span>
                 </a>
@@ -192,7 +213,6 @@
             </div>
         </div>
     </div>
-
     <!--裁判列表-->
     <div id="referee1" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -334,15 +354,10 @@
 
         let league_id = "{$league_id}";
         let court_id = "{$matchScheduleInfo.court_id}";
-        let page_court_id = $("input[name=court_id]").val();
         let match_time = "{$matchScheduleInfo.match_time}";
-        let page_match_time = $("input[name=match_time]").val();
         let referee1_id = "{$matchScheduleInfo.referee1_id}";
-        let page_referee1_id = $("input[name=referee1_id]").val();
         let referee2_id = "{$matchScheduleInfo.referee2_id}";
-        let page_referee2_id = $("input[name=referee2_id]").val();
         let referee3_id = "{$matchScheduleInfo.referee3_id}";
-        let page_referee3_id = $("input[name=referee3_id]").val();
         $(function () {
             var courtKeyword = '';
             var wCourt = '';
@@ -466,7 +481,7 @@
                     var str = `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
-                                    <input name="member" class="stdList" value="${$(this).attr("data-id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
+                                    <input name="member" class="stdList" value="${$(this).val()}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
                                 </div>`;
                     $("#hideStList").append(str);
                 })
@@ -479,7 +494,7 @@
                 //每次打开先清空所有选择
                 $("input[name='checkbox-score']").prop("checked", false);
                 //然后遍历出对应所选
-                $(".stdList").each(function (i) {
+                $("#hideStList .stdList").each(function (i) {
                     var member_id = $(this).val();
                     $(".scoreList").find("input[name='checkbox-score']").filter(function (index) {
                         return $(this).attr("data-member_id") == member_id
@@ -526,11 +541,6 @@
                 mui("#work").popover("toggle");
             });
 
-            // 自定义角色赋值
-            let custom = JSON.parse('{$matchScheduleInfo.custom_member}')
-            $(".custom_member").val(custom[0].workMember);
-            $(".custom_member").attr("data-member_id", custom[0].member_id);
-
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -572,18 +582,6 @@
 
         // 记分员赋值
         function toScorersInital() {
-            let score = JSON.parse('{$matchScheduleInfo.scorers}')
-            let scorersList = ''
-            for (let i = 0; i <= score.length - 1; i++) {
-                scorersList += `<div class="mui-input-row mui-checkbox checkboxCont">
-                                    <label style="width:20%;">${score[i].realname}</label>
-                                    <font class="f14">${score[i].realname}</font>
-                                    <input name="member" class="stdList" value="${score[i].member_id}" data-realname="${score[i].realname}" type="checkbox">
-                                </div>`;
-            }
-            $("#inactiveList").append(scorersList);
-            $("#hideStList").append(scorersList);
-            $("#hideStListIni").append(scorersList);
             totalNum = $("#inactiveList .checkboxCont").length;
             $(".mui-badge").text(totalNum);
             changeIndex();
@@ -734,6 +732,9 @@
             });
         };
 
+        let page_referee1_id = $("input[name=referee1_id]").val();
+        let page_referee2_id = $("input[name=referee2_id]").val();
+        let page_referee3_id = $("input[name=referee3_id]").val();
         // 获取数据并进行提交
         function submitAction() {
 
@@ -751,6 +752,8 @@
 
 
             // 根据页面内容变化传对应变量区分（用于是否发通知）
+            let page_court_id = $("input[name=court_id]").val();
+            let page_match_time = $(".match_time").text();
             // 裁判改变（通知所有裁判）
             if (referee1_id != page_referee1_id || referee2_id != page_referee2_id || referee3_id != page_referee3_id) {
                 console.log("裁判发生了改变");
@@ -783,7 +786,6 @@
                 $("input[name=check_referee]").val("0");
                 $("input[name=check_scorers]").val("0");
             }
-
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
