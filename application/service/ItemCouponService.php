@@ -229,5 +229,20 @@ class ItemCouponService {
     }
 
 
+    //重复发放多张卡券
+    public function createItemCouponMemberAll($item_coupon_id,$total){
+        $data = [];
+        foreach ($arr as $key => $value) {
+            $data[] = [
+                'member_id'         =>$member_id,
+                'member'            =>$member,
+                'item_coupon_id'    =>$value['id'],
+                'item_coupon'       =>$value['coupon'],
+                'status'            =>1,
+                'coupon_number'     =>getTID($member_id),
+            ];
+        }
+    }
+
 }
 

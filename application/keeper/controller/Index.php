@@ -53,6 +53,12 @@ class Index extends Base{
             // return $this->fetch('Widget/Bonus');
         }
         //平台礼包结束
+
+        // 打卡总数
+        $totalPunch = db('punch')->where(['member_id'=>$this->memberInfo['id']])->count();
+
+
+        $this->assign('totalPunch',$totalPunch);
     	$this->assign('bannerList',$bannerList);
         $this->assign('ArticleList',$ArticleList);
         $this->assign('bonusInfo',$bonusInfo);

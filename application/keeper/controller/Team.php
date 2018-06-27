@@ -1449,6 +1449,10 @@ class Team extends Base
         $beginYear = current($seasonList);
         $endYear = end($seasonList);
 
+
+
+        $totalPunch = db('punch')->where(['member_id'=>$this->memberInfo['id']])->count();
+        $this->assign('totalPunch',$totalPunch);
         return view('Team/memberPersonInfo', [
             'memberInfo' => $memberInfo,
             'memberTeamList' => $memberTeamList,
