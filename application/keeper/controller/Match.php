@@ -289,6 +289,16 @@ class Match extends Base {
         return view('Match/leagueRegulation');
     }
 
+    // 联赛赛程详情页
+    public function leaguescheduleinfo() {
+        $id = input('param.id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchScheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
+
+        $this->assign('matchScheduleInfo', $matchScheduleInfo);
+        return view('Match/leagueScheduleInfo');
+    }
+
     // 联赛赛程
     public function leagueSchedule() {
         return view('Match/leagueSchedule');

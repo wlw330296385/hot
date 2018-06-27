@@ -146,7 +146,7 @@
             </p>
             <p>
                 {volist name='$eventInfo.doms' id="vol"}
-                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}">{$vol.name}<div>{$vol.price}</div></button>
+                <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}"><span>{$vol.name}</span><div>¥{$vol.price}</div></button>
                 {/volist}
             </p>
         </div>
@@ -155,9 +155,9 @@
                 <strong>请选择你要购买几张票：</strong>
             </p>
             <div class="mui-input-row h-auto">
-                <div class="mui-numbox">
+                <div class="mui-numbox" data-numbox-min='1'>
                     <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                    <input class="mui-input-numbox data" type="number" name="min" value="1">
+                    <input class="mui-input-numbox data" type="number" name="total" value="1">
                     <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                 </div>
             </div>
@@ -381,30 +381,7 @@
             }
 
             //判断用户名是否存在
-            mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
-                data: {
-                    'field': 'member',
-                    'value': member
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.msg == 1) {
-                        flagMember = false;
-                        mui.alert("该会员名称已经存在，请使用其他名称！");
-                        return false;
-                    } else {
-                        flagMember = true;
-                        $("input[name='realname']").val(member);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
+            hasMemberName(member)
         });
 
 
@@ -415,16 +392,24 @@
                 mui.toast("请选择您要购买的种类");
                 return false;
             }
+            var total = $("input[name='total']").val();
+            var domName = $('.selectDom.bggreen').find("span").text();
+            var domPrice = $('.selectDom.bggreen').attr("value");
 
             var member = $("input[name='member']").val();
             var telephone = $("input[name='telephone']").val();
             var token = $('input[name=__token__]').val();
 
+            //如果是否没填手机号码
+            if(telephone==""||telephone==null||telephone==undefined){
+                mui.toast("提交失败，手机号填写有误，请重新填写");
+                return false;
+            }
             //如果没填会员名称，会员名和真实姓名都默认为电话号码
             if(member==""){
                 $("input[name='member']").val(telephone);
                 $("input[name='realname']").val(telephone);
-                flagMember = true;
+                hasMemberName(telephone)
             }
             //如果是非会员，判断是否通过验证
             if (mID == "") {
@@ -481,29 +466,30 @@
                         console.log(type);
                     }
                 });
-            }else{
-
             }
-
+            //如果是非会员，检查是否成功注册会员，没成功就中断流程
             if (flagCreate == false) {
+                mui.alert('登记信息失败，请重新提交或稍后再试！', '提交失败', '确定', function () {
+                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                        if (data.code === 200) {
+                            $('input[name=__token__]').val(data.data);
+                        }
+                    }, 'json');
+                })
                 return false;
             }
 
-            //组合自定义表单项
-            var mixFrom = '';
 
-
-            
             ///////////////////////////////////////////////////////////////////////
             //   流程开始：  活动已过期或已满人可进行报名，但不会产生 event_member      //
             ///////////////////////////////////////////////////////////////////////
             //1.提交未付款
-            var remarks = member+"购买深圳2018动漫展大热篮球投篮卡券";
+
             createBill();
 
             //2.去支付页面
             // 这里是跳转并且支付后返回
-
+            top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+total+'&type=2&title='+total+'张'+domName+'&backUrl={:request()->server("http_referer")}';
 
             //3.订单变成已支付
             // 跳转支付后判断,如果已支付,返回传参,,默认为 {"err_msg":"get_brand_wcpay_request:ok"}
@@ -516,38 +502,13 @@
 
 
             //5.赠送卡券.根据支付哪个套餐送哪张卡券
-            presentItemCoupon(presentItemCoupon);
+            presentItemCoupon(item_coupon_ids);
 
 
             ///////////////////////////////////////////////////////////////////////
             //   流程开始结束：  活动已过期或已满人可进行报名，但不会产生 event_member      //
             ///////////////////////////////////////////////////////////////////////
 
-
-
-            var data = wooApi.getInputData('input', 'data');
-            var objData = wooApi.arrTOobj(data);
-            objData.content = mixFrom;
-            objData.remarks = remarks;
-            objData.dom = $('.selectDom.bggreen').text();
-            var url = "{:url('api/apps_apply/createAppsApplyApi')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                ///////////////////////////////////////////////////////////////////////
-                //   特别说明：  活动已过期或已满人可进行报名，但不会产生 event_member      //
-                ///////////////////////////////////////////////////////////////////////
-
-                mui.alert('恭喜您购买成功，谢谢参与', "", '确定', function () {
-                    location.href = "{:url('/index/apps/appsForm/event_id/')}"+"{$eventInfo.id}"+"?showSuccess=yes"
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '提交失败', function () { });
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
 
         });
 
@@ -571,6 +532,34 @@
     }
 
 
+    //判断用户名是否存在
+    function hasMemberName(memberName) {
+        mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
+            data: {
+                'field': 'member',
+                'value': memberName
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            async: false,
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            success: function (data) {
+                console.log(data);
+                if (data.msg == 1) {
+                    flagMember = false;
+                    mui.alert("该会员名称已经存在，请使用其他名称！");
+                    return false;
+                } else {
+                    flagMember = true;
+                    $("input[name='realname']").val(memberName);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                console.log(type);
+            }
+        });
+    }
 
     // 提交参加活动
     function joinEvent(){
@@ -589,23 +578,30 @@
             }else{
                 mui.alert(result.msg);
             }
-            
+
         }
 
 
 
     //创建订单
     function createBill(){
+
+        var member = $("input[name='member']").val();
+        var member_id = $("input[name='member_id']").val();
+        var total = $("input[name='total']").val();
+        var domName = $('.selectDom.bggreen').find("span").text();
+        var domPrice = $('.selectDom.bggreen').attr("value");
+
         var objBillInfo = {};//订单参数
         objBillInfo.bill_order = "{$billOrder}";
         objBillInfo.goods_des = member+'购买深圳2018动漫展大热篮球投篮卡券';
-        objBillInfo.total = 1;
+        objBillInfo.total = total;
         objBillInfo.student_id = member_id;
         objBillInfo.student = member;
-        objBillInfo.remarks = remarks;
+        objBillInfo.remarks = member+'购买'+total+'张深圳2018动漫展大热篮球投篮卡券'+domName;
         objBillInfo.balance_pay = 0;
         objBillInfo.goods = "深圳2018动漫展大热篮球投篮卡券";
-        objBillInfo.price = price;
+        objBillInfo.price = domPrice;
         objBillInfo.score_pay = 0;
         objBillInfo.organization_type = 1;
         objBillInfo.goods_type = 2;
