@@ -2987,6 +2987,47 @@ class League extends Base
         }
     }
 
+    // 根据赛程时间排序，层级（时间-阶段-赛程）的赛程列表
+    public function getmatchschedulelistbytime() {
+        try {
+            $data = input('param.');
+            $page = input('page', 1, 'intval');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+            $_result = $leagueS->getMatchSchedules($data,$orderby);
+            if (!$_result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            $_result1 = $result = [];
+            // 根据比赛时间（年月日）对数据分片
+            foreach ( $_result as $key => $value ) {
+                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+                $_result1[$date][] = $value;
+            }
+            foreach ($_result1 as $k =>$val) {
+                foreach ($val as $k2 => $v) {
+                    $result[$k][$v['match_stage']][] = $v;
+                }
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 比赛阶段列表
     public function getmatchstagelist()
     {
