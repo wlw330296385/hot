@@ -2837,6 +2837,8 @@ class League extends Base
         $scheduleData = json_decode($data['scheduleList'], true);
         foreach ($scheduleData as $k => $val) {
             $scheduleData[$k]['status'] = 1;
+            $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
+            $scheduleData[$k]['match_stage'] = $data['match_stage'];
         }
         try {
             $result = $leagueS->saveAllMatchSchedule($scheduleData);
