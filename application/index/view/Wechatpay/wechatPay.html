@@ -64,7 +64,6 @@
 
     var total = wooApi.GetQueryString('total');
     var title = wooApi.GetQueryString('title');
-    var title = wooApi.GetQueryString('title');
     var type = wooApi.GetQueryString('type');
     var backUrl = wooApi.GetQueryString('backUrl');
 
@@ -146,6 +145,10 @@
             success:function(msg){
                 if(msg.code == 200){
                     mui.alert(msg.msg,'提示','确定',function(){
+                        //判断是否需要带回参数
+						if(type=="-1"){
+                            backUrl = backUrl+"&paySuccess=yes&callbackStr="+remarks
+						}
                         //支付成功后刷新父窗口页面
                         window.location.href = backUrl;
                       });
