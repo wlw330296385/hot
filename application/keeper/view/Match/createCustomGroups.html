@@ -36,8 +36,8 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title fenpei">
-            <button type="button" class="bgred" style="margin-top: 6px;">分组</button>
+        <h1 class="mui-title ">
+            <button type="button" class="bgred fenpei" style="margin-top: 6px;">分组</button>
         </h1>
     </header>
 
@@ -65,6 +65,20 @@
         </ul>
     </div>
 
+    <div id="team" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>选择球队</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="margin-top: -4px;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamList"></ul>
+            </div>
+        </div>
+    </div>
+
     <div id="move" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
@@ -87,66 +101,64 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        var groupList = [];
-        var groupTeam = [];
-        var teams = '';
+
+        (function ($, doc) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui, document);
+
+        let groupList = [];
+        let groupTeam = [];
+        let teams = '';
         $(function () {
+            teamList()
 
-            
+            $(document).on("tap", ".fenpei", function () {
+                let league_id = "{$leagueInfo.id}";
+                let totalNum = $(".totalNum").text();
+                let groupNum = $("input[name=groupNum]").val()
+                console.log(groupNum)
+                if (Number(totalNum) < Number(groupNum)) {
+                    mui.toast("分组数不能大于球队总数");
+                    return false;
+                }
+                let str = '';
+                for (let i = 0; i <= groupNum - 1; i++) {
+                    console.log(i)
+                    str += `<ul class="mui-table-view list border-b">
+                                <div class="page-header border-b bggray2 groupsTip">
+                                    <input type="text" class="course" name="groupName" value="" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
+                                    <span class="f14 fr" style="color:#bfbfbfdd">序号：${i + 1}<a href="#team">添加</a></span>
+                                </div>
+                            </ul>`
+
+                }
+                $(".frame").append(str);
+            });
 
 
-            // $(".fenpei").on("tap", '', function () {
-            //     var league_id = "{$leagueInfo.id}";
-            //     var totalNum = $(".totalNum").text();
-            //     var groupNum = $("input[name=groupNum]").val()
-            //     if (Number(totalNum) < Number(groupNum)) {
-            //         mui.toast("分组数不能大于球队总数");
-            //         return false;
-            //     }
-            //     mui.ajax("{:url('api/league/leagueteamlist')}", {
-            //         data: {
-            //             league_id: league_id
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             //服务器返回响应，根据响应结果，分析是否登录成功；
-            //             console.log(data);
-            //             var newli = '';
-            //             var groupNameLi = '';
-            //             if (data.code == 200) {
-            //                 var fenzuNum = totalNum / groupNum; //取值分组数
-            //                 teams = split_array(data.data, fenzuNum);
-            //                 // console.log(teams)
-            //                 teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
-            //                 for (var i = 0; i < teams.length; i++) {
-            //                     groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((teams.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
-            //                     newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" focus value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">分组序号：' + ((teams.slice(0, i).length + 1)) + '</span></div>';
-            //                     for (var j = 0; j < teams[i].length; j++) {
-            //                         newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
-            //                         newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div></a>';
-            //                         newli += '</li>';
-            //                     }
-            //                     newli += '</ul>'
-            //                 }
-            //                 $(".frame").empty().append(newli)
-            //                 $(".groupNameLi").empty().append(groupNameLi)
+            $(document).on("tap", ".teamList li", function () {
+                let teamName = $(this).find("label").text();
+                let teamLogo = $(this).attr("data-team_logo");
+                let str = '';
+                str += `<li class="mui-table-view-cell mui-media listli coach" data-team_logo="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" data-team="F-18" data-team_id="11" data-match="大热联赛" data-match_id="17" data-members_num="0">
+                            <img class="mui-media-object mui-pull-left coachicon" src="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" style="width: 40px !important;height: 40px !important; float:left !important;">
+                            <div class="mui-media-body lineHeight20 wd73">
+                                <p class="f14" style="font-weight:bold">F-18</p>
+                                <p>参赛0人</p></div><div class="fr" style="line-height:40px;color: #a9a9a9;">
+                                <img src="/static/frontend/images/switch.png" class="iconClass">换组
+                            </div>
+                        </li>`
+                $(".frame").append(str);
+            });
 
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
-
-            // // 移动操作
+            // 移动操作
             // $(document).on("tap", ".frame ul li", function () {
             //     $(".checkTeamId").val($(this).attr("data-team_id"));
             // })
@@ -187,14 +199,40 @@
             // })
         })
 
-        // function split_array(arr, len) {
-        //     var a_len = arr.length;
-        //     var return1 = [];
-        //     for (var i = 0; i < a_len; i += len) {
-        //         return1.push(arr.slice(i, i + len));
-        //     }
-        //     return return1;
-        // }
+        function teamList() {
+            let league_id = "{$league_id}"
+            mui.ajax("{:url('api/league/leagueteamlist')}", {
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i < data.data.length; i++) {
+                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}">
+                                            <label>${data.data[i].team.name}</label>
+                                            <span>球员数：${data.data[i].members_num}</span>
+                                        </li>`
+                        }
+                        $(".teamList").empty().append(newli)
+
+                    } else {
+                        mui.toast(data.msg);
+                    }
+
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         // 获取数据并进行提交
         function submitAction() {
