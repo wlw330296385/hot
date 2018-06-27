@@ -166,7 +166,7 @@ class ItemCoupon extends Base{
         }
     }
 
-    //发放一堆卡券
+    //不同卡券每种发放一张
     public function createItemCouponMemberListApi(){
          try{
             $item_coupon_id = input('param.item_coupon_ids');
@@ -226,5 +226,17 @@ class ItemCoupon extends Base{
     }
 
 
+
+    //同一种卡券发放多张
+    public function createItemCouponMemberAllApi(){
+        try{
+            $item_coupon_id = input('param.item_coupon_id');
+            $total = input('param.total');
+            $result = $this->ItemCouponService->createItemCouponMemberAll($item_coupon_id,$total);
+            return json($result);   
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 }

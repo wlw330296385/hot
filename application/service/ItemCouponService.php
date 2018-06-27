@@ -232,15 +232,30 @@ class ItemCouponService {
     //重复发放多张卡券
     public function createItemCouponMemberAll($item_coupon_id,$total){
         $data = [];
-        foreach ($arr as $key => $value) {
+        $couponInfo = $this->ItemCouponModel->where(['id'=>$item_coupon_id])->find();
+        dump($couponInfo['publish']);
+        dump(($couponInfo['max'] - $couponInfo['publish']));
+        if(($couponInfo['max'] - $couponInfo['publish']) <$total){
+            return ['msg'=>'购买总数超过库存,不可购买', 'code' => 100];
+        }
+        $member_id = session('memberInfo.id');
+        $member = session('memberInfo.member');
+        for ($i=0; $i <= $total ; $i++) { 
             $data[] = [
                 'member_id'         =>$member_id,
                 'member'            =>$member,
-                'item_coupon_id'    =>$value['id'],
-                'item_coupon'       =>$value['coupon'],
+                'item_coupon_id'    =>$item_coupon_id,
+                'item_coupon'       =>$couponInfo['coupon'],
                 'status'            =>1,
-                'coupon_number'     =>getTID($member_id),
+                'coupon_number'     =>getTID($i),
             ];
+        }
+        $result = $this->ItemCouponMemberModel->isUpdate(false)->saveAll($data);
+        if($result){
+            $this->ItemCouponModel->where(['id'=>$item_coupon_id])->setInc('publish',$total);
+            return ['msg' => '领取成功', 'code' => 200];
+        }else{
+            return ['msg'=>'领取失败', 'code' => 100];
         }
     }
 
