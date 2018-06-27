@@ -233,8 +233,6 @@ class ItemCouponService {
     public function createItemCouponMemberAll($item_coupon_id,$total){
         $data = [];
         $couponInfo = $this->ItemCouponModel->where(['id'=>$item_coupon_id])->find();
-        dump($couponInfo['publish']);
-        dump(($couponInfo['max'] - $couponInfo['publish']));
         if(($couponInfo['max'] - $couponInfo['publish']) <$total){
             return ['msg'=>'购买总数超过库存,不可购买', 'code' => 100];
         }
