@@ -92,7 +92,7 @@
                 };
             });
 
-            
+
         });
 
         // 提交
@@ -100,18 +100,18 @@
 
             let name = $("input[name=name]").val();
             let advance_number = $("input[name=advance_number]").val();
+            let type = $(".stageSelect").children("option:selected").val();
             if (name == '') {
                 mui.toast("阶段别名不能为空");
                 return false;
             }
-            if (advance_number == '') {
+            if (type == 1 && advance_number == '') {
                 mui.toast("请填写出线球队数量");
                 return false;
             }
             let selection = $(".stageSelect").find("option:selected").val();
             if (selection != 1) {
                 $("input[name=advance_number]").val('');
-                $("input[name=advance_setting]").val('');
             }
 
             var data = wooApi.getInputData('input', 'data');
@@ -120,7 +120,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             // var advance_setting = $('textarea.advance_setting').val();
-            objData.advance_setting = advance_setting;
+            // objData.advance_setting = advance_setting;
             var url = "{:url('api/league/addmatchstage')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
