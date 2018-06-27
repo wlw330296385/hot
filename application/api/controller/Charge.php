@@ -24,6 +24,7 @@ class Charge extends Frontend{
 	        	}
 	        	if($result){
 	        		switch($type){
+	        			//个人余额充值
 	        			case 1:
 		        			$Charge = new \app\model\Charge;
 				        	$result = $Charge->save([
@@ -37,6 +38,7 @@ class Charge extends Frontend{
 	        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
 	        				session('memberInfo.balance',($this->memberInfo['balance']+$charge));
 	        			break;
+	        			// 个人热币充值
 	        			case 2:
 		        			$Charge = new \app\model\Charge;
 				        	$result = $Charge->save([
@@ -60,6 +62,7 @@ class Charge extends Frontend{
 				        	]);
 	        				session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$charge));
 	        			break;
+	        			// 训练营充值
 	        			case 3:
 		        			$Charge = new \app\model\Charge;
 				        	$result = $Charge->save([
@@ -72,6 +75,7 @@ class Charge extends Frontend{
 				        	]);
 	        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
 	        			break;
+	        			//其他支付
 	        			case -1:
 	        				return json(['code'=>200,'msg'=>'操作成功']);
 	        			break;
