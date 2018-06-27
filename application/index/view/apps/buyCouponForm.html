@@ -485,11 +485,20 @@
             ///////////////////////////////////////////////////////////////////////
             //1.提交未付款
 
-            createBill();
+            var res =  createBill();
+            if(res.code == 200){
 
-            //2.去支付页面
-            // 这里是跳转并且支付后返回
-            top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+total+'&type=2&title='+total+'张'+domName+'&backUrl={:request()->server("http_referer")}';
+                //2.去支付页面
+                // 这里是跳转并且支付后返回
+                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+total+'&backOpt='+domName+'&type=-1&title='+total+'张'+domName+'&backUrl={:request()->server("http_referer")}';
+
+            }else{
+                mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                    location.reload();
+                })
+            }
+
+
 
             //3.订单变成已支付
             // 跳转支付后判断,如果已支付,返回传参,,默认为 {"err_msg":"get_brand_wcpay_request:ok"}
@@ -563,23 +572,28 @@
 
     // 提交参加活动
     function joinEvent(){
-            let arrData1 = wooApi.getInputData();
-            let arrData2 = wooApi.getInputData('textarea','data',arrData1);
-            objData = wooApi.arrTOobj(arrData2);
-            objData.memberData = JSON.stringify(studentList);
-            objData.event = "{$eventInfo.event}";
-            let url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-            let result = wooApi.asyncF(url+'/total/'+1,objData);
-            if(result.code == 200){
-                presentItemCoupon();
-                mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
-                    window.location.href="{:url('frontend/event/eventList')}";
-                });
-            }else{
-                mui.alert(result.msg);
-            }
 
+        var member = $("input[name='member']").val();
+        var total = $("input[name='total']").val();
+        var domName = $('.selectDom.bggreen').find("span").text();
+        var studentList = [{ student: "{$memberInfo.member}", student_id: '0', total:total, combo:domName, member:"{$memberInfo.member}", member_id:"{$memberInfo.id}",event:"{$eventInfo.event}",event_id:"{$eventInfo.id}"}];
+        let arrData = wooApi.getInputData();
+        objData = wooApi.arrTOobj(arrData);
+        objData.remarks = member+'购买'+total+'张深圳2018动漫展大热篮球投篮卡券'+domName;
+        objData.memberData = JSON.stringify(studentList);
+        objData.event = "{$eventInfo.event}";
+        let url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+        let result = wooApi.asyncF(url+'/total/'+1,objData);
+        if(result.code == 200){
+            presentItemCoupon();
+            mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+                window.location.href="{:url('frontend/event/eventList')}";
+            });
+        }else{
+            mui.alert(result.msg);
         }
+
+    }
 
 
 
@@ -616,8 +630,13 @@
 
     //支付订单
     function pay(callback_str){
+
+            var total = $("input[name='total']").val();
+            var domPrice = $('.selectDom.bggreen').attr("value");
+            var total_fee = parseInt(domPrice)*parseInt(total);
+
             var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
-                'balance_pay' : price,
+                'balance_pay' : total_fee,
                 'callback_str':callback_str
             });
 

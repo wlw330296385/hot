@@ -507,6 +507,7 @@
                 }
             });
 
+
             //报名种类确认
             $("#domConfirm").on('tap', this, function () {
                 var isTrue = true;
@@ -523,6 +524,18 @@
                         isTrue = false;
                         return false;
                     } else {
+
+                        //判断是否有同名种类
+                        var $option = $("input[name='event-dom']").map(function(){
+                            if ($(this).val() == eDom) {
+                                return this;
+                            }
+                        });
+                        if($option.length>1){
+                            isTrue = false;
+                            return false;
+                        }
+
                         if (ePrice == 2) {
                             eDoms += '<button type="button" class="selectDom">' + eDom + '<div>' + eDomPrice + '</div></button>'
                             eventDomArr.push({ name: eDom, price: eDomPrice });
@@ -537,7 +550,7 @@
                     $(".eventDom").html(eDoms);
                     mui('#eventDom').popover('toggle');
                 } else {
-                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
+                    mui.alert('请填写完整，保证没有同名套餐，并且名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
                         eDoms = '';
                     })
                 }
