@@ -289,6 +289,11 @@ class Match extends Base {
         return view('Match/leagueRegulation');
     }
 
+    // 联赛赛程详情页
+    public function leaguescheduleinfo() {
+        return view('Match/leagueScheduleInfo');
+    }
+
     // 联赛赛程
     public function leagueSchedule() {
         return view('Match/leagueSchedule');
