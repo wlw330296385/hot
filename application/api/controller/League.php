@@ -2825,7 +2825,10 @@ class League extends Base
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
         Db::startTrans();
         try {
-            $matchSchedules = $leagueS->getMatchSchedules(['match_id' => $data['match_id']]);
+            $matchSchedules = $leagueS->getMatchSchedules([
+                'match_id' => $data['match_id'],
+                'match_stage_id' => $data['match_stage_id']
+            ]);
             if ($matchSchedules) {
                 $leagueS->delMatchSchedule(['match_id' => $data['match_id']], true);
             }

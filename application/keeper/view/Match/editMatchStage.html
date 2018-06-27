@@ -44,7 +44,7 @@
                     <textarea name="" rows="2" value="{$matchStageInfo.advance_setting}" class="advance_setting" placeholder="请填写出线规则">{$matchStageInfo.advance_setting}</textarea>
                 </div> -->
             </form>
-      
+
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交
@@ -59,22 +59,23 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-
+        let type = "{$matchStageInfo.type}";
         $(function () {
-
-            let type = "{$matchStageInfo.type}";
             if (type == 1) {
                 $(".advance_div").show();
             }
-
         })
 
         // 提交
         function submitAction() {
-
-            var name = $("input[name=name]").val();
+            let advance_number = $("input[name=advance_number]").val();
+            let name = $("input[name=name]").val();
             if (name == '') {
                 mui.toast("阶段别名不能为空");
+                return false;
+            }
+            if (type == 1 && advance_number == '') {
+                mui.toast("请填写出线球队数量");
                 return false;
             }
 
@@ -84,7 +85,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             // var advance_setting = $('textarea.advance_setting').val();
-            objData.advance_setting = advance_setting;
+            // objData.advance_setting = advance_setting;
             var url = "{:url('api/league/updatematchstage')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
