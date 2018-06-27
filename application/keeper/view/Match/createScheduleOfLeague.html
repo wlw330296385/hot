@@ -69,8 +69,11 @@
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
                     <span class="select-row">
-                        <select class="data matchStageType" name="type"></select>
+                        <select class="data matchStageType" name="match_stage_id">
+                            <option value="" class="selectAfter">请选择比赛阶段</option>
+                        </select>
                     </span>
+                    <input type="hidden" class="data" name="match_stage" value="">
                 </div>
             </div>
             <div class="mui-input-row">
@@ -105,7 +108,7 @@
         var scheduleList = [];
         var match_id = $('input[name=match_id]').val();
         var match = $('input[name=match]').val();
-        var league_id ="{$league_id}";
+        var league_id = "{$league_id}";
         $(function () {
             // 初始化列出全部分组的对阵信息
             getbattle(0);
@@ -114,7 +117,7 @@
                 var group_id = $(this).val();
                 getbattle(group_id);
             });
-            
+
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -129,12 +132,12 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<option value="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
                         }
                         if (newli == '') {
                             newli = '<option>请先创建比赛阶段</option>'
                         }
-                        $(".matchStageType").empty().append(newli);
+                        $(".selectAfter").after(newli);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -142,6 +145,11 @@
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                 }
+            });
+
+            $('.matchStageType').change(function () {
+                var match_stage = $(this).children("option:selected").text();
+                $("input[name=match_stage]").val(match_stage);
             });
 
         });
