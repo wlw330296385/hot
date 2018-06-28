@@ -173,7 +173,7 @@
         <p><strong>结束日期：{$eventInfo.ends} {if $eventInfo.is_max=="已满人"}（已满人）{/if}</strong></p>
         <br />
         <p>本活动最终解释权归{$eventInfo.organization}所有<br />
-            <span class="f12">Power by HotTech | 技术支持（篮球管家）</span>
+        <span class="f12">Power by HotTech | 技术支持（篮球管家）</span>
         </p>
     </div>
 
@@ -203,7 +203,7 @@
     //弹出菜单
     mui('.mui-scroll-wrapper').scroll();
 
-    //    var wxOpenID = "{$memberInfo.openid}";
+//    var wxOpenID = "{$memberInfo.openid}";
 
     //定义全局变量
     var flagPhone = false;
@@ -212,32 +212,15 @@
     var flagCreate = true;
     var mID = "{$memberInfo.id}";
     var getCurrTel = "";
-
+    var buyCouponForm = {};//需要存储的东西
+    let c = wooApi.getCookie('buyCouponForm');
+    if(c!=null && c!=""){
+        buyCouponForm = c;
+    }
     var showDetail = wooApi.GetQueryString('showDetail');
     var showSuccess = wooApi.GetQueryString('showSuccess');
 
-    var paySuccess = wooApi.GetQueryString('paySuccess');
-    var callbackStr = wooApi.GetQueryString('callbackStr');
-    var backTotal = wooApi.GetQueryString('backTotal');
-    var backDomName = wooApi.GetQueryString('backDomName');
-    var billOrder = wooApi.GetQueryString('billOrder');
-
     $(function () {
-
-        //支付成功后返回创建活动会员记录以及卡券记录
-        if(paySuccess=="yes"&&callbackStr!=""&&backTotal!=""&&backDomName!=""&&billOrder!=""){
-            $("input[name='total']").val(backTotal);
-            var $option =$(".selectDom span").map(function(){
-                if ($(this).text() == backDomName) {
-                    return this;
-                }
-            });
-            $option.addClass('bggreen');
-            //支付成功执行更新订单状态
-            pay();
-        }
-
-        /////////////////////////////////////
 
 
         var time = Number("{$eventInfo.end}");
@@ -506,40 +489,25 @@
             ///////////////////////////////////////////////////////////////////////
             //1.提交未付款
 
-            var res =  createBill();
-            if(res.code == 200){
+            createBill();
 
-                //合计支付金额////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
-                var sum = parseInt(total)*parseInt(domPrice)/100
-
-                //2.去支付页面
-                //处理url参数
-                var backUrl = '{:request()->url(true)}';
-                if(backUrl.indexOf("?")!=-1){
-                    backUrl = backUrl + '&backTotal='+total+'&backDomName='+domName+'&billOrder={$billOrder}';
-                }else{
-                    backUrl = backUrl + '?backTotal='+total+'&backDomName='+domName+'&billOrder={$billOrder}';
-                }
-                //去重
-                backUrl = changeURLArg(backUrl,"backTotal",total);
-                backUrl = changeURLArg(backUrl,"backDomName",domName);
-                backUrl = changeURLArg(backUrl,"billOrder",billOrder);
-                // 这里是跳转并且支付后返回
-                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl='+backUrl;
-
-            }else{
-                mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
-                    location.reload();
-                })
-            }
+            //2.去支付页面
+            // 这里是跳转并且支付后返回
+            top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+total+'&type=2&title='+total+'张'+domName+'&backUrl={:request()->server("http_referer")}';
 
             //3.订单变成已支付
             // 跳转支付后判断,如果已支付,返回传参,,默认为 {"err_msg":"get_brand_wcpay_request:ok"}
-            //pay('{"err_msg":"get_brand_wcpay_request:ok"}');
+            pay('{"err_msg":"get_brand_wcpay_request:ok"}');
+            // 如果未支付
+            // return false;
+
             //4.joinEvent
-            //joinEvent();
+            joinEvent();
+
+
             //5.赠送卡券.根据支付哪个套餐送哪张卡券
-            //presentItemCoupon(item_coupon_ids);
+            presentItemCoupon(item_coupon_ids);
+
 
             ///////////////////////////////////////////////////////////////////////
             //   流程开始结束：  活动已过期或已满人可进行报名，但不会产生 event_member      //
@@ -596,6 +564,31 @@
             }
         });
     }
+</script>
+
+
+<!-- 引入的函数 -->
+<script type="text/javascript">
+
+    // 提交参加活动
+    function joinEvent(){
+        let arrData1 = wooApi.getInputData();
+        let arrData2 = wooApi.getInputData('textarea','data',arrData1);
+        objData = wooApi.arrTOobj(arrData2);
+        objData.memberData = JSON.stringify(studentList);
+        objData.event = "{$eventInfo.event}";
+        let url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
+        let result = wooApi.asyncF(url+'/total/'+1,objData);
+        if(result.code == 200){
+            presentItemCoupon();
+            mui.alert("您已报名成功，请留意活动消息及公告。",result.msg,function(){
+                window.location.href="{:url('frontend/event/eventList')}";
+            });
+        }else{
+            mui.alert(result.msg);
+        }
+
+    }
 
 
 
@@ -617,7 +610,6 @@
         objBillInfo.remarks = member+'购买'+total+'张深圳2018动漫展大热篮球投篮卡券'+domName;
         objBillInfo.balance_pay = 0;
         objBillInfo.goods = "深圳2018动漫展大热篮球投篮卡券";
-        objBillInfo.goods_id = "{$eventInfo.id}"
         objBillInfo.price = domPrice;
         objBillInfo.score_pay = 0;
         objBillInfo.organization_type = 1;
@@ -631,17 +623,11 @@
         return result;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
     //支付订单
-    function pay(){
-
-        var total = $("input[name='total']").val();
-        var domPrice = $('.selectDom.bggreen').attr("value");
-        var total_fee = parseInt(domPrice)*parseInt(total)/100;
-
-        var url = "{:url('api/Bill/payApi')}/bill_order/"+billOrder;
-        var result = wooApi.asyncF(url,{
-            'balance_pay' : total_fee,
+    function pay(callback_str){
+        let billOrder = buyCouponForm.billOrder;
+        let result = wooApi.asyncF("{:url('api/Bill/payApi')}"+"/billOrder/"+billOrder,{
+            'balance_pay' : balance_pay,
             'callback_str':callback_str
         });
 
@@ -653,98 +639,13 @@
     }
 
 
-    // 提交参加活动
-    function joinEvent() {
-
-        var member = $("input[name='member']").val();
-        var total = $("input[name='total']").val();
-        var domName = $('.selectDom.bggreen').find("span").text();
-        var studentList = [{
-            student: "{$memberInfo.member}",
-            student_id: '0',
-            total: total,
-            combo: domName,
-            member: "{$memberInfo.member}",
-            member_id: "{$memberInfo.id}",
-            event: "{$eventInfo.event}",
-            event_id: "{$eventInfo.id}"
-        }];
-        let arrData = wooApi.getInputData();
-        objData = wooApi.arrTOobj(arrData);
-        objData.remarks = member + '购买' + total + '张深圳2018动漫展大热篮球投篮卡券' + domName;
-        objData.memberData = JSON.stringify(studentList);
-        objData.event = "{$eventInfo.event}";
-        let url = "{:url('api/event/joinEventApi',['event_id'=>$eventInfo['id']])}";
-        let result = wooApi.asyncF(url + '/total/' + 1, objData);
-        if (result.code == 200) {
-            presentItemCoupon();
-        } else {
-            mui.alert(result.msg);
-        }
-    }
-
-    
-
     // 赠送卡券操作
-    function presentItemCoupon(){
-
-        var total = $("input[name='total']").val();
-        var item_coupon_id = "";
-        var domName = $('.selectDom.bggreen').find("span").text();
-        //后期考虑套餐对应指定卡券
-        if(domName=="单项卡"){
-            item_coupon_id = "21";
-        }else if(domName=="三项卡"){
-            item_coupon_id = "22";
-        }
-        var result =  wooApi.asyncF("{:url('api/Item_coupon/createItemCouponMemberAllApi')}", {
-            'item_coupon_id' : item_coupon_id,
-            'total':total
-        });
-
-        if(result.code == 200){
-            mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
-                window.location.href="{:url('index/apps/buycouponForm/event_id')}{$eventInfo.id}?showSuccess=yes";
-            });
-        }else{
-            mui.toast(result.msg);
-        }
-
-
+    function presentItemCoupon(item_coupon_ids){
+        var res = wooApi.asyncT("{:url('api/Item_coupon/createItemCouponMemberListApi')}", {
+            'item_coupon_ids': "["+item_coupon_ids+"]",
+        },function(){});
     }
 
-
-    //url 目标url
-    //arg 需要替换的参数名称
-    //arg_val 替换后的参数的值
-    //return url 参数替换后的url
-    function changeURLArg(url,arg,arg_val){
-        var pattern=arg+'=([^&]*)';
-        var replaceText=arg+'='+arg_val;
-        if(url.match(pattern)){
-            var tmp='/('+ arg+'=)([^&]*)/gi';
-            tmp=url.replace(eval(tmp),replaceText);
-            return tmp;
-        }else{
-            if(url.match('[\?]')){
-                return url+'&'+replaceText;
-            }else{
-                return url+'?'+replaceText;
-            }
-        }
-        return url+'\n'+arg+'\n'+arg_val;
-    }
-
-</script>
-
-
-
-<script type="text/javascript">
-    
-        console.log(wooApi.getCookie('url'));
-
-        // 要存入cookie的值
-        
 </script>
 </body>
 
