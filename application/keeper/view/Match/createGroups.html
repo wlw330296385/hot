@@ -29,44 +29,6 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
-
-        .publicTip {
-            padding: 15px;
-        }
-
-        .publicTip .publicTitle {
-            vertical-align: middle;
-            display: inline-flex;
-            margin-bottom: 5px;
-        }
-
-        .publicTip .publicTitle strong {
-            line-height: 40px;
-            padding-left: 5px;
-        }
-
-        .publicTip .publicTitle img {
-            width: 15%;
-            height: 15%;
-        }
-
-        .publicTip .publicText {
-            padding-left: 43px;
-        }
-
-        .publicTip .publicText p {
-            margin-bottom: 0;
-            font-size: 12px
-        }
-
-        .iconClass {
-            width: 12px !important;
-            height: 12px !important;
-            margin-right: 5px !important;
-            float: initial !important;
-            vertical-align: middle;
-            margin-top: -3px;
-        }
     </style>
 </head>
 
@@ -74,10 +36,12 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title fenpei">
+        <h1 class="mui-title">
             <span style="color:#bdbdbd">(可重新分配)</span>
-            <button type="button" class="bgred" style="margin-top: 6px;">随机分配</button>
-            <a href="{:url('match/createCustomGroups',['league_id'=>$league_id])}"><button type="button" class="bgred" style="margin-top: 6px;">手动分配</button></a>
+            <button type="button" class="bgred fenpei" style="margin-top: 6px;">随机分配</button>
+            <a href="{:url('match/createCustomGroups',['league_id'=>$league_id])}">
+                <button type="button" class="bgred" style="margin-top: 6px;">手动分配</button>
+            </a>
         </h1>
     </header>
 
@@ -176,7 +140,7 @@
                                 newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" focus value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：' + ((teams.slice(0, i).length + 1)) + '</span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
                                     newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
-                                    newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
+                                    newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
                                     newli += '<div class="fr" style="line-height:40px;color: #a9a9a9;"><img src="/static/frontend/images/switch.png" class="iconClass">换组</div>';
                                     newli += '</a></li>';
                                 }
@@ -202,25 +166,25 @@
                 $(".checkTeamId").val($(this).attr("data-team_id"));
             })
             $(document).on("tap", ".groupNameLi li", function () {
-                groupList = []
-                $(".frame ul").each(function () {
-                    console.log($(this).children("li"))
-                    groupTeam = [];
-                    $(this).find("li").each(function () {
-                        var team = $(this).attr("data-team");
-                        var team_id = $(this).attr("data-team_id");
-                        groupTeam.push({ team, team_id })
-                    })
-                    groupList.push({ groupTeam })
-                })
-                for (var i = 0; i < groupList.length; i++) {
-                    var group = groupList[i].groupTeam.length
-                    if (group == "1") {
-                        mui('#move').popover('toggle');
-                        mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
-                        return false;
-                    }
-                }
+                // groupList = []
+                // $(".frame ul").each(function () {
+                //     console.log($(this).children("li"))
+                //     groupTeam = [];
+                //     $(this).find("li").each(function () {
+                //         var team = $(this).attr("data-team");
+                //         var team_id = $(this).attr("data-team_id");
+                //         groupTeam.push({ team, team_id })
+                //     })
+                //     groupList.push({ groupTeam })
+                // })
+                // for (var i = 0; i < groupList.length; i++) {
+                //     var group = groupList[i].groupTeam.length
+                //     if (group == "1") {
+                //         mui('#move').popover('toggle');
+                //         mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
+                //         return false;
+                //     }
+                // }
                 var thisTeamId = $(this).children(".checkTeamId").val();
                 var thisName = $(this).children(".thisName").text();
                 var moveli = '';
@@ -269,7 +233,7 @@
             for (var i = 0; i < groupList.length; i++) {
                 var group = groupList[i].groupTeam.length
                 console.log(group)
-                if (group == "0") {
+                if (group == 0) {
                     mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;
                 }
