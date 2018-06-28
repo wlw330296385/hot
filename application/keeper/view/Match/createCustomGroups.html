@@ -44,7 +44,7 @@
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="league_id" class="data" value="{$leagueInfo.id}">
-        <form action="" class="mui-input-group mt55">
+        <form action="" class="mui-input-group">
 
             <div class="mui-input-row">
                 <label>球队数</label>
@@ -57,6 +57,18 @@
             <div class="frame"></div>
 
         </form>
+
+        <div class="publicTip mb44">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、组名可自定义设置</p>
+                <p>2、点击添加可把球队排进对应组别</p>
+                <p>3、每组都可高亮设置种子球队</p>
+            </div>
+        </div>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -131,7 +143,6 @@
                 }
                 let str = '';
                 for (let i = 0; i <= groupNum - 1; i++) {
-                    console.log(i)
                     str += `<ul class="mui-table-view list border-b">
                                 <div class="page-header border-b bggray2 groupsTip">
                                     <input type="text" class="course" name="groupName" value="" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
@@ -165,16 +176,12 @@
                                 <p>参赛${$(this).attr("data-members_num")}人</p></div>
                             </div>
                             <div class="fr f12">
-                                <input type="button" class="seedTeam bggray" value="种子球队" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-right:5px;">
+                                <input type="button" class="seedTeam bggray" value="种子球队" data-is_seedTeam="0" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-right:5px;">
                                 <input type="button" class="deleteTeam bgred" value="删除" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;">
                             </div>
                         </li>`;
-                // $(".frame ul li").each(function () {
-                //     if (team_id == $(this).attr("data-team_id")) {
-                //         mui.toast("该球队已在列表中000");
-                //         return false;
-                //     }
-                // });
+
+
                 $(".frame .groupsTip").each(function () {
                     // 把选中的球队插入到对应的组别中
                     if (dataNum == $(this).find(".groupNum").text()) {
@@ -182,9 +189,8 @@
                             $(this).after(str);
                             mui("#team").popover("toggle");
                         } else {
-                            // 判断选中的球队是否在组别中存在
                             check = "Yes";
-                            $(this).siblings("li").each(function () {
+                            $(".frame ul li").each(function () {
                                 if (team_id == $(this).attr("data-team_id")) {
                                     check == "No"
                                     mui.toast("该球队已在列表中");
@@ -205,9 +211,11 @@
                 if ($(this).hasClass("bggreen") == false) {
                     $(this).removeClass("bggray");
                     $(this).addClass("bggreen");
+                    $(this).attr("data-is_seedTeam", 1);
                 } else {
                     $(this).removeClass("bggreen");
                     $(this).addClass("bggray");
+                    $(this).attr("data-is_seedTeam", 0);
                 }
             });
             // 删除球队
@@ -264,15 +272,16 @@
                     var match = $(this).attr("data-match");
                     var match_id = $(this).attr("data-match_id");
                     var members_num = $(this).attr("data-members_num");
-                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num })
+                    var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
+                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num, is_seedTeam })
                 })
                 groupList.push({ groupName, groupTeam })
             })
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
                 var group = groupList[i].groupTeam.length
-                if (group == "1") {
-                    mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
+                if (group == 0) {
+                    mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;
                 }
             }

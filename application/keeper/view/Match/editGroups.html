@@ -29,44 +29,6 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
-
-        .publicTip {
-            padding: 15px;
-        }
-
-        .publicTip .publicTitle {
-            vertical-align: middle;
-            display: inline-flex;
-            margin-bottom: 5px;
-        }
-
-        .publicTip .publicTitle strong {
-            line-height: 40px;
-            padding-left: 5px;
-        }
-
-        .publicTip .publicTitle img {
-            width: 15%;
-            height: 15%;
-        }
-
-        .publicTip .publicText {
-            padding-left: 43px;
-        }
-
-        .publicTip .publicText p {
-            margin-bottom: 0;
-            font-size: 12px
-        }
-
-        .iconClass {
-            width: 12px !important;
-            height: 12px !important;
-            margin-right: 5px !important;
-            float: initial !important;
-            vertical-align: middle;
-            margin-top: -3px;
-        }
     </style>
 </head>
 
@@ -171,10 +133,10 @@
                             teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
                             for (var i = 0; i < teams.length; i++) {
                                 groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((teams.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
-                                newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：' + ((teams.slice(0, i).length + 1)) + '</span></div>';
+                                newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((teams.slice(0, i).length + 1)) + '</text></span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
                                     newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
-                                    newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team.cover + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
+                                    newli += '<a href="#move" class="teamsTip"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
                                     newli += '<div class="fr" style="line-height:40px;color: #a9a9a9;"><img src="/static/frontend/images/switch.png" class="iconClass">换组</div>';
                                     newli += '</a></li>';
                                 }
@@ -195,6 +157,7 @@
                 });
             });
 
+
             // 赋值显示
             var getMatchGroupTeamsApi = "{:url('api/league/leaguegroupwithteams')}";
             var league_id = "{$league_id}";
@@ -213,11 +176,11 @@
                         var newli = '';
                         for (var i = 0; i < data.data.length; i++) {
                             groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((data.data.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
-                            newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="' + data.data[i].name + '" /><span class="f14 fr" style="color:#bfbfbfdd">序号：' + ((data.data.slice(0, i).length + 1)) + '</span></div>';
+                            newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2"><input type="text" class="course" name="groupName" value="' + data.data[i].name + '" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
                             var teams = data.data[i].group_teams;
                             for (var j = 0; j < teams.length; j++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[j].team_logo + '" data-team="' + teams[j].team.team + '" data-team_id="' + teams[j].team.team_id + '" data-match="' + teams[j].team.match + '" data-match_id="' + teams[j].team.match_id + '" data-members_num="' + teams[j].team.members_num + '">';
-                                newli += '<a href="#move"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[j].team.team + '</p><p>参赛' + teams[j].team.members_num + '人</p></div>';
+                                newli += '<a href="#move" class="teamsTip"><img class="mui-media-object mui-pull-left coachicon" src="' + teams[j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd73"><p class="f14" style="font-weight:bold">' + teams[j].team.team + '</p><p>参赛' + teams[j].team.members_num + '人</p></div>';
                                 newli += '<div class="fr" style="line-height:40px;color: #a9a9a9;"><img src="/static/frontend/images/switch.png" class="iconClass">换组</div>';
                                 newli += '</a></li>';
                             }
@@ -234,30 +197,23 @@
                 }
             });
 
-
             // 移动操作
             $(document).on("tap", ".frame ul li", function () {
                 $(".checkTeamId").val($(this).attr("data-team_id"));
+                // $(".groupNameLi li").attr("data-num", $(this).siblings(".page-header").find(".groupNum").text());
             })
             $(document).on("tap", ".groupNameLi li", function () {
-                groupList = []
-                $(".frame ul").each(function () {
-                    groupTeam = [];
-                    $(this).find("li").each(function () {
-                        var team = $(this).attr("data-team");
-                        var team_id = $(this).attr("data-team_id");
-                        groupTeam.push({ team, team_id })
-                    })
-                    groupList.push({ groupTeam })
-                })
-                for (var i = 0; i < groupList.length; i++) {
-                    var group = groupList[i].groupTeam.length
-                    if (group == "1") {
-                        mui('#move').popover('toggle');
-                        mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
-                        return false;
-                    }
-                }
+                // let dataNum = $(this).attr("data-num");
+                // $(".frame ul").each(function () {
+                //     if (dataNum == $(this).find(".groupNum").text()) {
+                //         console.log($(this).children("li").length)
+                //         if ($(this).children("li").length == 1) {
+                //             mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
+                //             return false;
+                //         }
+                //     }
+                // });
+
                 var thisTeamId = $(this).children(".checkTeamId").val();
                 var thisName = $(this).children(".thisName").text();
                 var moveli = '';
@@ -300,14 +256,13 @@
                     var members_num = $(this).attr("data-members_num");
                     groupTeam.push({ team, team_id, team_logo, match, match_id, members_num })
                 })
-                console.log(groupTeam)
                 groupList.push({ groupName, groupTeam })
             })
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
                 var group = groupList[i].groupTeam.length
                 console.log(group)
-                if (group == "1") {
+                if (group == 0) {
                     mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;
                 }
