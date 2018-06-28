@@ -220,19 +220,21 @@
     var callbackStr = wooApi.GetQueryString('callbackStr');
     var backTotal = wooApi.GetQueryString('backTotal');
     var backDomName = wooApi.GetQueryString('backDomName');
+    var billOrder = wooApi.GetQueryString('billOrder');
 
     $(function () {
 
         //支付成功后返回创建活动会员记录以及卡券记录
-        if(paySuccess=="yes"&&callbackStr!=""&&backTotal!=""&&backDomName!=""){
+        if(paySuccess=="yes"&&callbackStr!=""&&backTotal!=""&&backDomName!=""&&billOrder!=""){
             $("input[name='total']").val(backTotal);
             var $option =$(".selectDom span").map(function(){
                 if ($(this).text() == backDomName) {
                     return this;
                 }
             });
-            $option.addClass('bggreen');;
-            pay(callbackStr);
+            $option.addClass('bggreen');
+            //支付成功执行更新订单状态
+            pay();
         }
 
         /////////////////////////////////////
@@ -507,9 +509,23 @@
             var res =  createBill();
             if(res.code == 200){
 
+                //合计支付金额////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
+                var sum = parseInt(total)*parseInt(domPrice)/100
+
                 //2.去支付页面
+                //处理url参数
+                var backUrl = '{:request()->server("http_referer")}';
+                if(backUrl.indexOf("?")!=-1){
+                    backUrl = backUrl + '&backTotal='+total+'&backDomName='+domName+'&billOrder='+billOrder;
+                }else{
+                    backUrl = backUrl + '?backTotal='+total+'&backDomName='+domName+'&billOrder='+billOrder;
+                }
+                //去重
+                backUrl = changeURLArg(backUrl,"backTotal",total);
+                backUrl = changeURLArg(backUrl,"backDomName",domName);
+                backUrl = changeURLArg(backUrl,"billOrder",billOrder);
                 // 这里是跳转并且支付后返回
-                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+total+'&type=-1&title='+total+'张'+domName+'&backUrl={:request()->server("http_referer")}?total='+backTotal+'&backDomName='+domName;
+                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl='+backUrl;
 
             }else{
                 mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
@@ -517,21 +533,13 @@
                 })
             }
 
-
-
             //3.订单变成已支付
             // 跳转支付后判断,如果已支付,返回传参,,默认为 {"err_msg":"get_brand_wcpay_request:ok"}
             //pay('{"err_msg":"get_brand_wcpay_request:ok"}');
-            // 如果未支付
-            // return false;
-
             //4.joinEvent
             //joinEvent();
-
-
             //5.赠送卡券.根据支付哪个套餐送哪张卡券
             //presentItemCoupon(item_coupon_ids);
-
 
             ///////////////////////////////////////////////////////////////////////
             //   流程开始结束：  活动已过期或已满人可进行报名，但不会产生 event_member      //
@@ -609,6 +617,7 @@
         objBillInfo.remarks = member+'购买'+total+'张深圳2018动漫展大热篮球投篮卡券'+domName;
         objBillInfo.balance_pay = 0;
         objBillInfo.goods = "深圳2018动漫展大热篮球投篮卡券";
+        objBillInfo.goods_id = "{$eventInfo.id}"
         objBillInfo.price = domPrice;
         objBillInfo.score_pay = 0;
         objBillInfo.organization_type = 1;
@@ -622,14 +631,16 @@
         return result;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
     //支付订单
-    function pay(callback_str){
+    function pay(){
 
             var total = $("input[name='total']").val();
             var domPrice = $('.selectDom.bggreen').attr("value");
-            var total_fee = parseInt(domPrice)*parseInt(total);
+            var total_fee = parseInt(domPrice)*parseInt(total)/100;
 
-            var result = wooApi.asyncF("{:url('api/Bill/payApi',['bill_order'=>$billOrder])}",{
+            var url = "{:url('api/Bill/payApi')}/bill_order/"+billOrder;
+            var result = wooApi.asyncF(url,{
                 'balance_pay' : total_fee,
                 'callback_str':callback_str
             });
@@ -682,9 +693,9 @@
         var domName = $('.selectDom.bggreen').find("span").text();
         //后期考虑套餐对应指定卡券
         if(domName=="单项卡"){
-            item_coupon_id = "1";
+            item_coupon_id = "21";
         }else if(domName=="三项卡"){
-            item_coupon_id = "2";
+            item_coupon_id = "22";
         }
         var result =  wooApi.asyncF("{:url('api/Item_coupon/createItemCouponMemberAllApi')}", {
             'item_coupon_id' : item_coupon_id,
@@ -703,6 +714,26 @@
     }
 
 
+    //url 目标url
+    //arg 需要替换的参数名称
+    //arg_val 替换后的参数的值
+    //return url 参数替换后的url
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
 
 </script>
 </body>

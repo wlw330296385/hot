@@ -70,9 +70,12 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
 
     var chargeType = "";
+    var backTotal = wooApi.GetQueryString('backTotal');
+    var paySuccess = wooApi.GetQueryString('paySuccess');
 
     //初始化
     mui.init({
@@ -83,7 +86,7 @@
         },
         subpages: [{
             id: "charge",
-            url: "{:url('member/chargeHotcoin')}",
+            url: "{:url('member/chargeHotcoin')}?backTotal="+backTotal,
             styles: {
                 top: 'auto',
                 bottom: '0',
@@ -91,19 +94,30 @@
             }
         }]
     });
+    $(function () {
+
+        //如果支付成功返回yes，清空充值数量
+        if(paySuccess=="yes"){
+            backTotal = "";
+        }
+        //判断是否有返回充值数量，有则打开充值小窗口
+        if(backTotal!=""&&backTotal!=null){
+            mask.show();
+            $('.mui-iframe-wrapper').show();
+        }
+
+        $(".goCharge").click(function () {
+            mask.show();
+            backTotal = "";
+            $('.mui-iframe-wrapper').show();
+        })
+
+    });
 
     var mask = mui.createMask(function(){
         $('.mui-iframe-wrapper').hide();
     });
 
-    $(function () {
-
-        $(".goCharge").click(function () {
-            mask.show();
-            $('.mui-iframe-wrapper').show();
-        })
-
-    });
 
     var closeWindow = function () {
         mask.close();

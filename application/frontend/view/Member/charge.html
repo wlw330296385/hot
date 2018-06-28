@@ -84,9 +84,41 @@
                 mui.alert("请填写数值大于零的整数，谢谢！");
                 return false;
             }
-            top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=1&title=钱包充值&backUrl={:request()->server("http_referer")}';
+            //处理url参数
+            var backUrl = '{:request()->server("http_referer")}';
+            if(backUrl.indexOf("?")!=-1){
+                backUrl = backUrl + '&backTotal='+sum;
+            }else{
+                backUrl = backUrl + '?backTotal='+sum;
+            }
+            backUrl = changeURLArg(backUrl,"backTotal",sum);
+            //跳转到支付页面
+            top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=1&title=钱包充值&backUrl='+backUrl;
         });
 
     })
+
+
+    //url 目标url
+    //arg 需要替换的参数名称
+    //arg_val 替换后的参数的值
+    //return url 参数替换后的url
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
+
 </script>
 </html>
