@@ -232,7 +232,7 @@
                     return this;
                 }
             });
-            $option.addClass('bggreen');
+            $option.parent().addClass('bggreen');
             //支付成功执行更新订单状态
             pay();
         }
@@ -520,10 +520,16 @@
                 }else{
                     backUrl = backUrl + '?backTotal='+total+'&backDomName='+domName+'&billOrder={$billOrder}';
                 }
+                var bOrder=""
+                if(billOrder==null||billOrder==""||billOrder=="undefined"){
+                    bOrder="{$billOrder}"
+                }else{
+                    bOrder=billOrder
+                }
                 //去重
                 backUrl = changeURLArg(backUrl,"backTotal",total);
                 backUrl = changeURLArg(backUrl,"backDomName",domName);
-                backUrl = changeURLArg(backUrl,"billOrder",billOrder);
+                backUrl = changeURLArg(backUrl,"billOrder",bOrder);
                 // 这里是跳转并且支付后返回
                 top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl='+backUrl;
 
@@ -642,7 +648,7 @@
         var url = "{:url('api/Bill/payApi')}/bill_order/"+billOrder;
         var result = wooApi.asyncF(url,{
             'balance_pay' : total_fee,
-            'callback_str':callback_str
+            'callback_str':callbackStr
         });
 
         if(result.code == 200){
