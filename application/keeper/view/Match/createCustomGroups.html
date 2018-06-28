@@ -115,15 +115,16 @@
 
         let groupList = [];
         let groupTeam = [];
-        let teams = '';
         $(function () {
-            teamList()
-
+            teamList(); //获取球队列表
             $(document).on("tap", ".fenpei", function () {
                 let league_id = "{$leagueInfo.id}";
                 let totalNum = $(".totalNum").text();
-                let groupNum = $("input[name=groupNum]").val()
-                console.log(groupNum)
+                let groupNum = $("input[name=groupNum]").val();
+                if (groupNum == '') {
+                    mui.toast("请输入分组数");
+                    return false;
+                }
                 if (Number(totalNum) < Number(groupNum)) {
                     mui.toast("分组数不能大于球队总数");
                     return false;
@@ -134,71 +135,89 @@
                     str += `<ul class="mui-table-view list border-b">
                                 <div class="page-header border-b bggray2 groupsTip">
                                     <input type="text" class="course" name="groupName" value="" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
-                                    <span class="f14 fr" style="color:#bfbfbfdd">序号：${i + 1}<a href="#team">添加</a></span>
+                                    <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
+                                        <a href="#team" class="addTeam" style="color:#007aff">添加</a>
+                                    </span>
                                 </div>
                             </ul>`
-
                 }
                 $(".frame").append(str);
             });
 
-
+            //获取分组序号并且赋值到球队列表
+            $(document).on("tap", ".addTeam", function () {
+                $(".teamList li").attr("data-num", $(this).siblings().text());
+            })
+            // 选中球队入组别
             $(document).on("tap", ".teamList li", function () {
                 let teamName = $(this).find("label").text();
                 let teamLogo = $(this).attr("data-team_logo");
+                let team_id = $(this).attr("data-team_id");
+                let dataNum = $(this).attr("data-num");
                 let str = '';
-                str += `<li class="mui-table-view-cell mui-media listli coach" data-team_logo="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" data-team="F-18" data-team_id="11" data-match="大热联赛" data-match_id="17" data-members_num="0">
-                            <img class="mui-media-object mui-pull-left coachicon" src="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" style="width: 40px !important;height: 40px !important; float:left !important;">
-                            <div class="mui-media-body lineHeight20 wd73">
-                                <p class="f14" style="font-weight:bold">F-18</p>
-                                <p>参赛0人</p></div><div class="fr" style="line-height:40px;color: #a9a9a9;">
-                                <img src="/static/frontend/images/switch.png" class="iconClass">换组
+                let check = "";
+                str += `<li class="mui-table-view-cell mui-media listli coach" 
+                            data-team_logo="${$(this).attr("data-team_logo")}" data-team="${$(this).attr("data-team")}" 
+                            data-team_id="${$(this).attr("data-team_id")}" data-match="${$(this).attr("data-match")}" data-match_id="${$(this).attr("data-match_id")}" data-members_num="${$(this).attr("data-members_num")}">
+                            <img class="mui-media-object mui-pull-left coachicon" src="${$(this).attr("data-team_logo")}" style="width: 40px !important;height: 40px !important; float:left !important;">
+                            <div class="mui-media-body lineHeight20 wd52">
+                                <p class="f14" style="font-weight:bold">${$(this).attr("data-team")}</p>
+                                <p>参赛${$(this).attr("data-members_num")}人</p></div>
                             </div>
-                        </li>`
-                $(".frame").append(str);
+                            <div class="fr f12">
+                                <input type="button" class="seedTeam bggray" value="种子球队" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-right:5px;">
+                                <input type="button" class="deleteTeam bgred" value="删除" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;">
+                            </div>
+                        </li>`;
+                // $(".frame ul li").each(function () {
+                //     if (team_id == $(this).attr("data-team_id")) {
+                //         mui.toast("该球队已在列表中000");
+                //         return false;
+                //     }
+                // });
+                $(".frame .groupsTip").each(function () {
+                    // 把选中的球队插入到对应的组别中
+                    if (dataNum == $(this).find(".groupNum").text()) {
+                        if ($(".frame ul li").length == 0) {
+                            $(this).after(str);
+                            mui("#team").popover("toggle");
+                        } else {
+                            // 判断选中的球队是否在组别中存在
+                            check = "Yes";
+                            $(this).siblings("li").each(function () {
+                                if (team_id == $(this).attr("data-team_id")) {
+                                    check == "No"
+                                    mui.toast("该球队已在列表中");
+                                    return check = "No";
+                                }
+                            });
+                            if (check == "Yes") {
+                                $(this).after(str);
+                                mui("#team").popover("toggle");
+                            }
+                        }
+                    }
+                });
             });
 
-            // 移动操作
-            // $(document).on("tap", ".frame ul li", function () {
-            //     $(".checkTeamId").val($(this).attr("data-team_id"));
-            // })
-            // $(document).on("tap", ".groupNameLi li", function () {
-            //     groupList = []
-            //     $(".frame ul").each(function () {
-            //         groupTeam = [];
-            //         $(this).find("li").each(function () {
-            //             var team = $(this).attr("data-team");
-            //             var team_id = $(this).attr("data-team_id");
-            //             groupTeam.push({ team, team_id })
-            //         })
-            //         groupList.push({ groupTeam })
-            //     })
-            //     for (var i = 0; i < groupList.length; i++) {
-            //         var group = groupList[i].groupTeam.length
-            //         if (group == "1") {
-            //             mui('#move').popover('toggle');
-            //             mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
-            //             return false;
-            //         }
-            //     }
-            //     var thisTeamId = $(this).children(".checkTeamId").val();
-            //     var thisName = $(this).children(".thisName").text();
-            //     var moveli = '';
-            //     $(".frame ul li").each(function (index) {
-            //         if (thisTeamId == $(this).attr("data-team_id")) {
-            //             moveli = '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + $(this).attr("data-team_logo") + '" data-team="' + $(this).attr("data-team") + '" data-team_id="' + $(this).attr("data-team_id") + '" data-match="' + $(this).attr("data-match") + '" data-match_id="' + $(this).attr("data-match_id") + '" data-members_num="' + $(this).attr("data-members_num") + '">' + $(this).html() + '';
-            //             $(this).remove()
-            //             $(".frame ul .page-header").each(function () {
-            //                 if (thisName == $(this).children().val()) {
-            //                     $(this).parent().append(moveli);
-            //                     mui('#move').popover('toggle');
-            //                 }
-            //             })
-            //         }
-            //     });
-            // })
-        })
+            // 设置种子球队
+            $(document).on("tap", ".seedTeam", function () {
+                if ($(this).hasClass("bggreen") == false) {
+                    $(this).removeClass("bggray");
+                    $(this).addClass("bggreen");
+                } else {
+                    $(this).removeClass("bggreen");
+                    $(this).addClass("bggray");
+                }
+            });
+            // 删除球队
+            $(document).on("tap", ".deleteTeam", function () {
+                $(this).parents("li").remove();
+            });
 
+        });
+
+        // 获取球队列表
         function teamList() {
             let league_id = "{$league_id}"
             mui.ajax("{:url('api/league/leagueteamlist')}", {
@@ -215,17 +234,15 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i < data.data.length; i++) {
-                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}">
-                                            <label>${data.data[i].team.name}</label>
-                                            <span>球员数：${data.data[i].members_num}</span>
+                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" data-team_id="${data.data[i].team_id}" data-match="${data.data[i].match.name}" data-match_id="${data.data[i].match_id}" data-members_num="${data.data[i].members_num}">
+                                            <label class="wd66">${data.data[i].team.name}</label>
+                                            <span class="wd27">参赛：${data.data[i].members_num}人</span>
                                         </li>`
                         }
                         $(".teamList").empty().append(newli)
-
                     } else {
                         mui.toast(data.msg);
                     }
-
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
@@ -236,30 +253,29 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            // groupList = []
-            // $(".frame ul").each(function () {
-            //     var groupName = $(this).find("input[name=groupName]").val();
-            //     groupTeam = [];
-            //     $(this).find("li").each(function () {
-            //         var team = $(this).attr("data-team");
-            //         var team_id = $(this).attr("data-team_id");
-            //         var team_logo = $(this).attr("data-team_logo");
-            //         var match = $(this).attr("data-match");
-            //         var match_id = $(this).attr("data-match_id");
-            //         var members_num = $(this).attr("data-members_num");
-            //         groupTeam.push({ team, team_id, team_logo, match, match_id, members_num })
-            //     })
-            //     groupList.push({ groupName, groupTeam })
-            // })
-            // console.log(groupList)
-            // for (var i = 0; i < groupList.length; i++) {
-            //     var group = groupList[i].groupTeam.length
-            //     console.log(group)
-            //     if (group == "1") {
-            //         mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
-            //         return false;
-            //     }
-            // }
+            groupList = []
+            $(".frame ul").each(function () {
+                var groupName = $(this).find("input[name=groupName]").val();
+                groupTeam = [];
+                $(this).find("li").each(function () {
+                    var team = $(this).attr("data-team");
+                    var team_id = $(this).attr("data-team_id");
+                    var team_logo = $(this).attr("data-team_logo");
+                    var match = $(this).attr("data-match");
+                    var match_id = $(this).attr("data-match_id");
+                    var members_num = $(this).attr("data-members_num");
+                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num })
+                })
+                groupList.push({ groupName, groupTeam })
+            })
+            console.log(groupList)
+            for (var i = 0; i < groupList.length; i++) {
+                var group = groupList[i].groupTeam.length
+                if (group == "1") {
+                    mui.alert("每个组别不能少于两支球队，请重新分配或者移动操作");
+                    return false;
+                }
+            }
 
             // var data = wooApi.getInputData('input', 'data');
             // datas = wooApi.getInputData('select', 'data', data);

@@ -599,16 +599,25 @@
                     if (eDom == "" || eDom.length > 10 || ePrice == 2 && (eDomPrice == "" || eDomPrice == 0 || !(/^[1-9]+?[0-9]*$/).test(eDomPrice))) { //////加上判断是否收费
                         isTrue = false;
                         return false;
-                        console.log("000")
                     } else {
+
+                        //判断是否有同名种类
+                        var $option = $("input[name='event-dom']").map(function(){
+                            if ($(this).val() == eDom) {
+                                return this;
+                            }
+                        });
+                        if($option.length>1){
+                            isTrue = false;
+                            return false;
+                        }
+
                         if (ePrice == 2) {
                             eDoms += '<button type="button" class="selectDom">' + eDom + '<div>' + eDomPrice + '</div></button>'
                             eventDomArr.push({ name: eDom, price: eDomPrice });
-                            console.log("111")
                         } else {
                             eDoms += '<button type="button" class="selectDom">' + eDom + '</button>'
                             eventDomArr.push({ name: eDom, price: '' });
-                            console.log("222")
                         }
 
                     }
@@ -618,7 +627,7 @@
                     console.log(eventDomArr)
                     mui('#eventDom').popover('toggle');
                 } else {
-                    mui.alert('请填写完整，并保证名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
+                    mui.alert('请填写完整，保证没有同名套餐，并且名称长度不超过10个字，价格首位不为0的纯数字，谢谢！', '温馨提示', '确定', function () {
                         eDoms = '';
                     })
                 }

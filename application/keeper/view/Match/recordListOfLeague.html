@@ -51,7 +51,101 @@
                             </ul>
                         </li>
                     </ul>
-                    <ul class="mui-table-view detalis-list list border-b team1 OA_task_team"></ul>
+                    <div class="team1">
+                        <div class="page-header border-b bggray2">
+                            <span class="course">小组赛（第一组）</span>
+                        </div>
+                        <ul class="mui-table-view mui-text-center match">
+                            <li class="mui-table-view-cell border-b">
+                                <a href="">
+                                    <ul class="mui-row" style="padding:0">
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>1</strong>
+                                            </p>
+                                        </li>
+                                        <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
+                                            <p>荣光球队</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>1</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>2</p>
+                                        </li>
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>5</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="page-header border-b bggray2">
+                            <span class="course">小组赛（第二组）</span>
+                        </div>
+                        <ul class="mui-table-view mui-text-center match">
+                            <li class="mui-table-view-cell border-b">
+                                <a href="">
+                                    <ul class="mui-row" style="padding:0">
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>1</strong>
+                                            </p>
+                                        </li>
+                                        <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
+                                            <p>荣光球队</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>1</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>2</p>
+                                        </li>
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>5</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="page-header border-b bggray2">
+                            <span class="course">淘汰赛</span>
+                        </div>
+                        <ul class="mui-table-view mui-text-center match">
+                            <li class="mui-table-view-cell border-b">
+                                <a href="">
+                                    <ul class="mui-row" style="padding:0">
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>1</strong>
+                                            </p>
+                                        </li>
+                                        <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
+                                            <p>荣光球队</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>1</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>2</p>
+                                        </li>
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>5</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
                 </div>
             </div>
 
@@ -230,46 +324,6 @@
             }
         });
     };
-
-
-    //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_team').on('tap', '.mui-btn', function (team) {
-        var elem = this;
-        var li = elem.parentNode.parentNode;
-        var btnArray = ['确认', '取消'];
-        var txt = elem.innerHTML;
-        var eventid = elem.parentNode.getAttribute('data-id');
-        var action = elem.getAttribute('data-action');
-        mui.confirm('确认该活动' + txt + '?', '提示', btnArray, function (e) {
-            if (e.index == 0) {
-                var apiurl = "{:url('api/team/removeevent')}";
-                mui.ajax(apiurl, {
-                    data: {
-                        eventid: eventid,
-                        action: action
-                    },
-                    dataType: 'json',
-                    type: 'post',
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            li.parentNode.removeChild(li);
-                            location.reload();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errotThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    mui.swipeoutClose(li);
-                }, 0);
-            }
-        });
-    });
 
 </script>
 
