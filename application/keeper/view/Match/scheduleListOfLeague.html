@@ -130,27 +130,38 @@
                 success: function (data) {
                     console.log(data)
                     var newli = '';
-                  
+
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + data.data[i].match_id + '/id/' + data.data[i].id;
-                            newli += `<div class="page-header border-b bggray2">
-                                            <span class="course">${data.data}</span>
-                                          </div>
-                                        <ul class="mui-table-view detalis-list list border-b">
-                                            <p>小组赛</p>
-                                            <li class="mui-table-view-cell listli">
-                                                <a href="">
-                                                    <div class="fl">
-                                                        <img class="img45" src="" alt="">是是是
-                                                    </div>
-                                                    <div class="fr">
-                                                        <img class="img45 marginLeft10 marginRight0" src=""alt="">啥发撒飞洒发
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        </ul>`;
+                            for (var j = 0; j <= data.data[i].length - 1; j++) {
+                                console.log(data.data[i][j])
+                            }
+                            for (var date in data.data[i]) {
+                                newli += `<div class="page-header border-b bggray2">
+                                            <span class="course">${date} </span>
+                                        </div>`;
+
+                                newli += `<ul class="mui-table-view detalis-list list border-b">
+                                                        <p></p>
+                                                        <li class="mui-table-view-cell listli">
+                                                            <div class="mui-media-body wd83">
+                                                                <p class="f14" style="margin-bottom: 8px;">
+                                                                    <img class="img24" src="${data.data[i].home_team_logo}" alt="">${data.data[i][date].home_team}</p>
+                                                                <p class="f14">
+                                                                    <img class="img24" src="${data.data[i][date].away_team_logo}" alt="">${data.data[i][date]._team_logo}</p>
+                                                            </div>
+                                                            <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
+                                                                <p style="margin-bottom:8px;"><a href="/keeper/match/editscheduleofleague/league_id/16/id/55"><button class="opclick bgred">编辑</button></a></p>
+                                                                <p><a href="/keeper/match/matchinfoofleague/league_id/55/match_id/16"><button class="opclick bggreen">录入</button></a></p>
+                                                            </div>
+                                                        </li>
+                                                    </ul>`;
+                            }
+
                         }
+
+
                     }
                     if (gType == 1) {
                         //上拉刷新

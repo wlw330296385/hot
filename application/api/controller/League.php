@@ -3010,13 +3010,14 @@ class League extends Base
             // 根据比赛时间（年月日）对数据分片
             foreach ( $_result as $key => $value ) {
                 $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
-                $_result1[$date][] = $value;
+                $_result1[$value['match_stage'].'|'.$date][] = $value;
             }
-            foreach ($_result1 as $k =>$val) {
+            foreach ($_result1 as $key => $value) {
                 $_array = [];
-                foreach ($val as $k2 => $v) {
-                    $_array[$k][$v['match_stage']][] = $v;
-                }
+                $keyExplode = explode('|', $key);
+                $_array['date'] = $keyExplode[1];
+                $_array['stage']['name'] = $keyExplode[0];
+                $_array['stage']['schedules'] = $value;
                 array_push($result, $_array);
             }
             if (!$result) {
