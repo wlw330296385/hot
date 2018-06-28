@@ -93,16 +93,16 @@
                     </a>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a href="#txpopover0" class="mui-navigate-right">
+                    <div class="txpopover mui-navigate-right" onclick="upload(0)">
                         <label>资质证明</label>
                         <div class="viewStyle view0"></div>
-                    </a>
+                    </div>
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a href="#txpopover1" class="mui-navigate-right">
+                    <div class="txpopover mui-navigate-right" onclick="upload(0)">
                         <label>身份证反面</label>
                         <div class="viewStyle view1"></div>
-                    </a>
+                    </div>
                 </div>
 
             </form>
@@ -136,26 +136,13 @@
     <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
     <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
-        var imgurl = '';
-        // 正方形
-        var pc = new PhotoClip('.clipArea', {
-            size: 260,
-            file: '.file',
-            view: '.view',
-            ok: '.clipBtn',
-            done: function (dataURL) {
-                mui.post("{:url('api/upload/imgcropupload')}", {
-                    dataurl: dataURL,
-                    path: 'cert'
-                }, function (res) {
-                    imgurl = res.path;
-                    mui("#txpopover").popover("toggle");
-                }, 'json');
-            },
 
-        });
-        // 长方形
-        for (var i = 0; i <= 1; i++) {
+        function upload(i) {
+            $(".txpopover").on("tap", "", function () {
+                mui("#txpopover" + i).popover("toggle");
+            })
+
+            $(this).attr("href", "#txpopover" + i)
             str = `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                     <div class="clipAreaStyle clipArea${i}"></div>
                     <div class="fileFrame">选择图片
@@ -163,7 +150,8 @@
                     </div>
                     <button class="clipBtnStyle clipBtn${i}">截取</button>
                 </div>`
-            $(".mui-content").append(str)
+            $(".mui-content").append(str);
+            var imgurl = '';
             var pc = new PhotoClip('.clipArea' + i, {
                 size: 260,
                 outputSize: 640,
@@ -171,31 +159,27 @@
                 file: '.file' + i,
                 view: '.view' + i,
                 ok: '.clipBtn' + i,
-                // loadStart: function () {
-                //     console.log('开始读取照片');
-                // },
-                // loadComplete: function () {
-                //     console.log('照片读取完成');
-                // },
-                done: function (dataURL, i) {
-                    // console.log(dataURL);
-                    console.log(i)
+                loadStart: function () {
+                    console.log('开始读取照片');
+                },
+                loadComplete: function () {
+                    console.log('照片读取完成');
+                },
+                done: function (dataURL) {
+                    console.log(dataURL);
                     mui.post("{:url('api/upload/imgcropupload')}", {
                         dataurl: dataURL,
                         path: 'cert'
                     }, function (res) {
-                        // console.log(res);
                         imgurl = res.path;
-                        console.log('#txpopover' + i)
                         mui("#txpopover" + i).popover("toggle");
                     }, 'json');
                 },
-                // fail: function (msg) {
-                //     alert(msg);
-                // }
+                fail: function (msg) {
+                    alert(msg);
+                }
             });
         }
-
     </script>
 </body>
 
