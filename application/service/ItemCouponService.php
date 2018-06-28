@@ -238,7 +238,7 @@ class ItemCouponService {
         }
         $member_id = session('memberInfo.id');
         $member = session('memberInfo.member');
-        for ($i=0; $i <= $total ; $i++) { 
+        for ($i=0; $i <= ($total-1) ; $i++) { 
             $data[] = [
                 'member_id'         =>$member_id,
                 'member'            =>$member,
