@@ -32,7 +32,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b schedule"></ul>
+                <ul class="mui-table-view list border-b schedule OA_task_stage"></ul>
             </div>
         </div>
 
@@ -125,10 +125,15 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('match/editmatchstage')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
                             newli += `<li class="mui-table-view-cell listli">
-                                        <a href="${urls}">
-                                            <div class="fl">${data.data.data[i].name}</div>
-                                            <div class="fr">${data.data.data[i].type_text}</div>
-                                        </a>
+                                        <div class="mui-slider-right mui-disabled">
+                                            <span class="mui-btn mui-btn-red" data-action="del" data-id="${data.data.data[i].id}">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle">
+                                            <a href="${urls}">
+                                                <div class="fl">${data.data.data[i].name}</div>
+                                                <div class="fr">${data.data.data[i].type_text}</div>
+                                            </a>
+                                        </div>
                                       </li>`;
                         }
                     }
@@ -157,6 +162,44 @@
                 }
             });
         };
+
+
+        //拖拽后显示操作图标，点击操作图标删除元素；
+        $('.OA_task_stage').on('tap', '.mui-btn', function () {
+            var elem = this;
+            var li = elem.parentNode.parentNode;
+            var btnArray = ['确认', '取消'];
+            var txt = elem.innerHTML;
+            var id = elem.getAttribute('data-id');
+            mui.confirm('确认该比赛阶段?', '提示', btnArray, function (e) {
+                if (e.index == 0) {
+                    var apiurl = "{:url('api/league/delmatchstage')}";
+                    mui.ajax(apiurl, {
+                        data: {
+                            id: id,
+                        },
+                        dataType: 'json',
+                        type: 'post',
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            if (data.code == 200) {
+                                li.parentNode.removeChild(li);
+                                setTimeout("location.reload()", 1000);
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errotThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+                } else {
+                    setTimeout(function () {
+                        mui.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        });
     </script>
 </body>
 
