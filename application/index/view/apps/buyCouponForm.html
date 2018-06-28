@@ -196,7 +196,7 @@
 <script src="/static/frontend/libs/yzvalidate.js"></script>
 <script src="/static/frontend/js/common.js"></script>
 <script src="/static/frontend/js/city.data-3.js"></script>
-<script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
 <script src="/static/frontend/js/smsCode.js"></script>
 <script>
 
@@ -218,23 +218,36 @@
 
     var paySuccess = wooApi.GetQueryString('paySuccess');
     var callbackStr = wooApi.GetQueryString('callbackStr');
-    var backTotal = wooApi.GetQueryString('backTotal');
-    var backDomName = wooApi.GetQueryString('backDomName');
-    var billOrder = wooApi.GetQueryString('billOrder');
+
+    //获取cookie参数值
+    let getBCF = wooApi.getCookie('buyCouponForm');
+    if(getBCF!=null&&getBCF!=''){
+        var buyCouponForm = JSON.parse(getBCF);
+    }else{
+        var buyCouponForm = {};
+    }
+
 
     $(function () {
 
-        //支付成功后返回创建活动会员记录以及卡券记录
-        if(paySuccess=="yes"&&callbackStr!=""&&backTotal!=""&&backDomName!=""&&billOrder!=""){
-            $("input[name='total']").val(backTotal);
+        //判断是否保存有cookie参数值
+        if(buyCouponForm!=null&&buyCouponForm!=''&&!$.isEmptyObject(buyCouponForm)){
+            console.log(buyCouponForm);
+            //根据获取套餐选上对应项
             var $option =$(".selectDom span").map(function(){
-                if ($(this).text() == backDomName) {
+                if ($(this).text() == buyCouponForm.domName) {
                     return this;
                 }
             });
             $option.parent().addClass('bggreen');
-            //支付成功执行更新订单状态
-            pay();
+            //根据获取数量填上对应项
+            $("input[name='total']").val(buyCouponForm.total);
+        }
+
+        //判断支付成功后返回创建活动会员记录以及卡券记录
+        if(paySuccess=="yes"&&callbackStr!=""&&buyCouponForm!=null&&buyCouponForm!=''&&buyCouponForm!={}){
+            $("#submitAction").hide();
+            pay(buyCouponForm.billOrder);
         }
 
         /////////////////////////////////////
@@ -508,31 +521,17 @@
 
             var res =  createBill();
             if(res.code == 200){
-
                 //合计支付金额////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
                 var sum = parseInt(total)*parseInt(domPrice)/100
 
                 //2.去支付页面
-                //处理url参数
-                var backUrl = '{:request()->url(true)}';
-                if(backUrl.indexOf("?")!=-1){
-                    backUrl = backUrl + '&backTotal='+total+'&backDomName='+domName+'&billOrder={$billOrder}';
-                }else{
-                    backUrl = backUrl + '?backTotal='+total+'&backDomName='+domName+'&billOrder={$billOrder}';
-                }
-
-                var bOrder=""
-                if(billOrder==null&&billOrder==""&&billOrder=="undefined"){
-                    bOrder="{$billOrder}"
-                }else{
-                    bOrder=billOrder
-                }
-                //去重
-                backUrl = changeURLArg(backUrl,"backTotal",total);
-                backUrl = changeURLArg(backUrl,"backDomName",domName);
-                backUrl = changeURLArg(backUrl,"billOrder",bOrder);
+                //设定cookie参数值
+                buyCouponForm.total = total;
+                buyCouponForm.domName = domName;
+                buyCouponForm.billOrder = "{$billOrder}";
+                wooApi.setCookie('buyCouponForm',JSON.stringify(buyCouponForm),18000);
                 // 这里是跳转并且支付后返回
-                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl='+backUrl;
+                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl={:request()->url(true)}';
 
             }else{
                 mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
@@ -640,7 +639,7 @@
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
     //支付订单
-    function pay(){
+    function pay(billOrder){
 
         var total = $("input[name='total']").val();
         var domPrice = $('.selectDom.bggreen').attr("value");
@@ -656,6 +655,7 @@
             joinEvent();
         }else{
             mui.toast(result.msg);
+            $("#submitAction").show();
         }
     }
 
