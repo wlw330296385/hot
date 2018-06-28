@@ -157,7 +157,7 @@
             <div class="mui-input-row h-auto">
                 <div class="mui-numbox" data-numbox-min='1'>
                     <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-                    <input class="mui-input-numbox data" type="number" name="total" value="1">
+                    <input class="mui-input-numbox data" type="number" name="total" value="">
                     <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                 </div>
             </div>
@@ -241,11 +241,12 @@
             });
             $option.parent().addClass('bggreen');
             //根据获取数量填上对应项
-            $("input[name='total']").val(buyCouponForm.total);
+            //$("input[name='total']").val(buyCouponForm.total);
+            mui(".mui-numbox").numbox().setValue(buyCouponForm.total)
         }
 
         //判断支付成功后返回创建活动会员记录以及卡券记录
-        if(paySuccess=="yes"&&callbackStr!=""&&buyCouponForm!=null&&buyCouponForm!=''&&buyCouponForm!={}){
+        if(paySuccess=="yes"&&callbackStr!=""&&buyCouponForm!=null&&buyCouponForm!=''&&!$.isEmptyObject(buyCouponForm)){
             $("#submitAction").hide();
             pay(buyCouponForm.billOrder);
         }
@@ -522,9 +523,10 @@
             var res =  createBill();
             if(res.code == 200){
                 //合计支付金额////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
-                var sum = parseInt(total)*parseInt(domPrice)/100
+//                var sum = parseInt(total)*parseInt(domPrice)
+                var sum = 0.01
 
-                //2.去支付页面
+                    //2.去支付页面
                 //设定cookie参数值
                 buyCouponForm.total = total;
                 buyCouponForm.domName = domName;
@@ -628,7 +630,7 @@
         objBillInfo.score_pay = 0;
         objBillInfo.organization_type = 1;
         objBillInfo.goods_type = 2;
-        objBillInfo.pay_type = 2;
+        objBillInfo.pay_type = "wxpay";
         objBillInfo.camp = '大热篮球';
         objBillInfo.camp_id = 9;
 
@@ -637,13 +639,12 @@
         return result;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
     //支付订单
     function pay(billOrder){
 
         var total = $("input[name='total']").val();
         var domPrice = $('.selectDom.bggreen').attr("value");
-        var total_fee = parseInt(domPrice)*parseInt(total)/100;
+        var total_fee = parseInt(domPrice)*parseInt(total);
 
         var url = "{:url('api/Bill/payApi')}/bill_order/"+billOrder;
         var result = wooApi.asyncF(url,{
