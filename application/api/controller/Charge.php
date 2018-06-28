@@ -15,74 +15,74 @@ class Charge extends Frontend{
 	        $charge = input('param.charge');
 	        $charge_order = input('param.charge_order');
 	        $type = input('param.type',1);
-	        if($charge >=1){
+	        if($charge >=0){//测试的时候改为0,平时是1;
 	        	if($member_id<1){
 	        		return json(['code'=>100,'msg'=>'未注册平台会员,购买未到账,请联系平台客服']);
 	        	}
 	        	if(!$charge_order){
 	        		return json(['code'=>100,'msg'=>'购买单号错误']);
 	        	}
-	        	if($result){
-	        		switch($type){
-	        			//个人余额充值
-	        			case 1:
-		        			$Charge = new \app\model\Charge;
-				        	$result = $Charge->save([
-				        		'member'		=>$member,
-				        		'member_id'		=>$member_id,
-				        		'avatar'		=>$avatar,
-				        		'charge'		=>$charge,
-				        		'charge_order'	=>$charge_order,
-				        		'status'		=>1
-				        	]);
-	        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
-	        				session('memberInfo.balance',($this->memberInfo['balance']+$charge));
-	        			break;
-	        			// 个人热币充值
-	        			case 2:
-		        			$Charge = new \app\model\Charge;
-				        	$result = $Charge->save([
-				        		'member'		=>$member,
-				        		'member_id'		=>$member_id,
-				        		'avatar'		=>$avatar,
-				        		'charge'		=>$charge,
-				        		'charge_order'	=>$charge_order,
-				        		'status'		=>1
-				        	]);
-	        				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
-	        				$Hotcoin = new \app\model\Hotcoin;
-	        				$Hotcoin->save([
-				        		'member'		=>$member,
-				        		'member_id'		=>$member_id,
-				        		'avatar'		=>$avatar,
-				        		'f_id'			=>$Charge->id,
-				        		'hot_coin'		=>$charge,
-				        		'type'			=>1,
-				        		'status'		=>1
-				        	]);
-	        				session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$charge));
-	        			break;
-	        			// 训练营充值
-	        			case 3:
-		        			$Charge = new \app\model\Charge;
-				        	$result = $Charge->save([
-				        		'member'		=>$member,
-				        		'member_id'		=>$member_id,
-				        		'avatar'		=>$avatar,
-				        		'charge'		=>$charge,
-				        		'charge_order'	=>$charge_order,
-				        		'status'		=>1
-				        	]);
-	        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
-	        			break;
-	        			//其他支付
-	        			case -1:
-	        				return json(['code'=>200,'msg'=>'操作成功']);
-	        			break;
-	        			default:   
-	        			return json(['code'=>100,'msg'=>'请指定购买的类型']); 
-	        		}
-	        		
+
+        		switch($type){
+        			//个人余额充值
+        			case 1:
+	        			$Charge = new \app\model\Charge;
+			        	$result = $Charge->save([
+			        		'member'		=>$member,
+			        		'member_id'		=>$member_id,
+			        		'avatar'		=>$avatar,
+			        		'charge'		=>$charge,
+			        		'charge_order'	=>$charge_order,
+			        		'status'		=>1
+			        	]);
+        				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
+        				session('memberInfo.balance',($this->memberInfo['balance']+$charge));
+        			break;
+        			// 个人热币充值
+        			case 2:
+	        			$Charge = new \app\model\Charge;
+			        	$result = $Charge->save([
+			        		'member'		=>$member,
+			        		'member_id'		=>$member_id,
+			        		'avatar'		=>$avatar,
+			        		'charge'		=>$charge,
+			        		'charge_order'	=>$charge_order,
+			        		'status'		=>1
+			        	]);
+        				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
+        				$Hotcoin = new \app\model\Hotcoin;
+        				$Hotcoin->save([
+			        		'member'		=>$member,
+			        		'member_id'		=>$member_id,
+			        		'avatar'		=>$avatar,
+			        		'f_id'			=>$Charge->id,
+			        		'hot_coin'		=>$charge,
+			        		'type'			=>1,
+			        		'status'		=>1
+			        	]);
+        				session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$charge));
+        			break;
+        			// 训练营充值
+        			case 3:
+	        			$Charge = new \app\model\Charge;
+			        	$result = $Charge->save([
+			        		'member'		=>$member,
+			        		'member_id'		=>$member_id,
+			        		'avatar'		=>$avatar,
+			        		'charge'		=>$charge,
+			        		'charge_order'	=>$charge_order,
+			        		'status'		=>1
+			        	]);
+        				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
+        			break;
+        			//其他支付
+        			case -1:
+        				return json(['code'=>200,'msg'=>'操作成功']);
+        			break;
+        			default:   
+        			return json(['code'=>100,'msg'=>'请指定购买的类型']); 
+        		}
+        		if($result){	
 	        		return json(['code'=>200,'msg'=>'购买成功']);
 	        	}else{
 	        		return json(['code'=>100,'msg'=>'购买失败,请联系平台客服通过充值记录保证您自身的权益']);
