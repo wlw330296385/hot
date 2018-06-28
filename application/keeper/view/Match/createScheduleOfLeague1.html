@@ -52,15 +52,19 @@
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
-                <label>主队</label>
-                <span class="HomeTeam" style="width: 60%"></span>
-                <input type="hidden" name="home_team_id" value="" class="data">
+                <a href="#HomeTeam" class="mui-navigate-right">
+                    <label>主队</label>
+                    <span class="HomeTeam" style="width: 60%"></span>
+                    <input type="hidden" name="home_team_id" value="" class="data">
+                </a>
             </div>
 
             <div class="mui-input-row">
-                <label>客队</label>
-                <span class="AwayTeam" style="width: 60%"></span>
-                <input type="hidden" name="away_team_id" value="" class="data">
+                <a href="#AwayTeam" class="mui-navigate-right">
+                    <label>客队</label>
+                    <span class="AwayTeam" style="width: 60%"></span>
+                    <input type="hidden" name="away_team_id" value="" class="data">
+                </a>
             </div>
 
             <div class="mui-input-row">
@@ -155,6 +159,74 @@
                 提交
             </li>
         </ul>
+    </div>
+
+    <!-- 球队A-->
+    <div id="HomeTeam" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamADel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamAList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--球队B-->
+    <div id="AwayTeam" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamBDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTB" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTB"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamAList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!--常驻场地-->
@@ -331,12 +403,9 @@
         let league_id = "{$league_id}";
         let court_id = "{matchScheduleInfo.court_id}";
         let match_time = "{matchScheduleInfo.match_time}";
-        let referee1_id = "{matchScheduleInfo.referee1_id}";
-        let referee2_id = "{matchScheduleInfo.referee2_id}";
-        let referee3_id = "{matchScheduleInfo.referee3_id}";
-        let page_referee1_id = $("input[name=referee1_id]").val();
-        let page_referee2_id = $("input[name=referee2_id]").val();
-        let page_referee3_id = $("input[name=referee3_id]").val();
+
+
+
         $(function () {
             var courtKeyword = '';
             var wCourt = '';
@@ -391,7 +460,12 @@
             $(".refereeList1").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee1_id = $(this).attr("data-referee_id");
-                if (page_referee1_id == page_referee2_id || page_referee1_id == page_referee3_id) {
+
+                let page_referee2_id = $("input[name=referee2_id]").val();
+                let page_referee3_id = $("input[name=referee3_id]").val();
+                console.log(referee1_id)
+                console.log(page_referee3_id)
+                if (referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
                 }
@@ -409,7 +483,10 @@
             $(".refereeList2").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee2_id = $(this).attr("data-referee_id");
-                if (page_referee2_id == page_referee1_id || page_referee2_id == page_referee3_id) {
+                let page_referee1_id = $("input[name=referee1_id]").val();
+
+                let page_referee3_id = $("input[name=referee3_id]").val();
+                if (referee2_id == page_referee1_id || referee2_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
                 }
@@ -428,7 +505,9 @@
             $(".refereeList3").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee3_id = $(this).attr("data-referee_id");
-                if (page_referee3_id == page_referee1_id || page_referee3_id == page_referee2_id) {
+                let page_referee1_id = $("input[name=referee1_id]").val();
+                let page_referee2_id = $("input[name=referee2_id]").val();
+                if (referee3_id == page_referee1_id || referee3_id == page_referee2_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
                 }
@@ -729,40 +808,40 @@
 
 
             // 根据页面内容变化传对应变量区分（用于是否发通知）
-            let page_court_id = $("input[name=court_id]").val();
-            let page_match_time = $(".match_time").text();
-            // 裁判改变（通知所有裁判）
-            if (referee1_id != page_referee1_id || referee2_id != page_referee2_id || referee3_id != page_referee3_id) {
-                console.log("裁判发生了改变");
-                $("input[name=check_referee]").val("1"); //1为改变 0为未改变
-            }
-            // 记分员改变（通知所有记分员）
-            var idDelID = ""
-            $("#hideStListIni input[name=member]").each(function () {
-                var dsid = $(this).val();
-                //默认为要去除的人员
-                idDelID = "Yes";
-                //该人员遍历新编辑的人员表判断是否存在
-                $("#hideStList input[name=member]").each(function () {
-                    if (dsid == $(this).val()) {
-                        idDelID = "No";
-                        console.log("记分员没有改变")
-                        return false;
-                    }
-                });
-                //上面遍历过不存在就添加到最终变动人员列表中
-                if (idDelID == "Yes") {
-                    console.log("记分员发生了改变")
-                    $("input[name=check_scorers]").val("1"); //1为改变 0为未改变
-                }
-            });
-            // 场地，时间改变（通知所有人）
-            if (court_id != page_court_id || match_time != page_match_time) {
-                console.log("场地或者时间发生了改变");
-                $("input[name=check_court_time]").val("1"); //1为改变 0为未改变
-                $("input[name=check_referee]").val("0");
-                $("input[name=check_scorers]").val("0");
-            }
+            // let page_court_id = $("input[name=court_id]").val();
+            // let page_match_time = $(".match_time").text();
+            // // 裁判改变（通知所有裁判）
+            // if (referee1_id != page_referee1_id || referee2_id != page_referee2_id || referee3_id != page_referee3_id) {
+            //     console.log("裁判发生了改变");
+            //     $("input[name=check_referee]").val("1"); //1为改变 0为未改变
+            // }
+            // // 记分员改变（通知所有记分员）
+            // var idDelID = ""
+            // $("#hideStListIni input[name=member]").each(function () {
+            //     var dsid = $(this).val();
+            //     //默认为要去除的人员
+            //     idDelID = "Yes";
+            //     //该人员遍历新编辑的人员表判断是否存在
+            //     $("#hideStList input[name=member]").each(function () {
+            //         if (dsid == $(this).val()) {
+            //             idDelID = "No";
+            //             console.log("记分员没有改变")
+            //             return false;
+            //         }
+            //     });
+            //     //上面遍历过不存在就添加到最终变动人员列表中
+            //     if (idDelID == "Yes") {
+            //         console.log("记分员发生了改变")
+            //         $("input[name=check_scorers]").val("1"); //1为改变 0为未改变
+            //     }
+            // });
+            // // 场地，时间改变（通知所有人）
+            // if (court_id != page_court_id || match_time != page_match_time) {
+            //     console.log("场地或者时间发生了改变");
+            //     $("input[name=check_court_time]").val("1"); //1为改变 0为未改变
+            //     $("input[name=check_referee]").val("0");
+            //     $("input[name=check_scorers]").val("0");
+            // }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
