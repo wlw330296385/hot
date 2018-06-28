@@ -3013,9 +3013,11 @@ class League extends Base
                 $_result1[$date][] = $value;
             }
             foreach ($_result1 as $k =>$val) {
+                $_array = [];
                 foreach ($val as $k2 => $v) {
-                    $result[$k][$v['match_stage']][] = $v;
+                    $_array[$k][$v['match_stage']][] = $v;
                 }
+                array_push($result, $_array);
             }
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
