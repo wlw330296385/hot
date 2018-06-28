@@ -281,9 +281,10 @@ class BillService {
                     'date_str' => date('Ymd', $daytime),
                     'datetime' => $daytime
                 ];
+                CampFinance::create($dataCampFinance);
             }
             
-            CampFinance::create($dataCampFinance);
+            
         }  
                 
         return 1;

@@ -35,8 +35,24 @@ class Charge extends Frontend{
 			        		'charge_order'	=>$charge_order,
 			        		'status'		=>1
 			        	]);
+
         				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
         				session('memberInfo.balance',($this->memberInfo['balance']+$charge));
+        				$MemberFinance = new \app\model\MemberFinance;
+        				$MemberFinance->save([
+			        		'member'		=>$member,
+			        		'member_id'		=>$member_id,
+			        		// 'avatar'		=>$avatar,
+			        		'f_id'			=>$Charge->id,
+			        		'money'			=>$charge,
+			        		'type'			=>2,
+			        		's_balance'		=>$this->memberInfo['balance'],
+			        		'e_balance'		=>($this->memberInfo['balance']+$charge),
+			        		'date_str'		=>date('Ymd',time()),
+			        		'datetime'		=>date('Ymd',time()),
+			        		'system_remarks'		=>'余额充值',
+
+			        	]);
         			break;
         			// 个人热币充值
         			case 2:
@@ -61,6 +77,7 @@ class Charge extends Frontend{
 			        		'status'		=>1
 			        	]);
         				session('memberInfo.hot_coin',($this->memberInfo['hot_coin']+$charge));
+        				
         			break;
         			// 训练营充值
         			case 3:
@@ -74,6 +91,7 @@ class Charge extends Frontend{
 			        		'status'		=>1
 			        	]);
         				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
+        				
         			break;
         			//其他支付
         			case -1:
