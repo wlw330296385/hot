@@ -147,9 +147,19 @@
                         //判断是否需要带回参数
 						// -1是订单需要回传callbackStr
 						if(type=="-1"){
-                            backUrl = backUrl+"&paySuccess=yes&callbackStr="+remarks;
+
+                            if(backUrl.indexOf("?")!=-1){
+                                backUrl = backUrl + "&paySuccess=yes&callbackStr="+remarks;
+                            }else{
+                                backUrl = backUrl + "?paySuccess=yes&callbackStr="+remarks;
+                            }
+
 						}else{
-                            backUrl = backUrl+"&paySuccess=yes"
+                            if(backUrl.indexOf("?")!=-1){
+                                backUrl = backUrl + "&paySuccess=yes";
+                            }else{
+                                backUrl = backUrl + "?paySuccess=yes";
+                            }
 						}
                         //支付成功后刷新父窗口页面
                         window.location.href = backUrl;
