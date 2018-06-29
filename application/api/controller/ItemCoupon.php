@@ -266,7 +266,7 @@ class ItemCoupon extends Base{
             if($itemCouponInfo['member_id']<>$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许赠送他人卡券']);
             }
-            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>input('param.member_id'),'member'=>input('param.member'),'avatar'=>input('param.avatar'),'telephone'=>input('param.avatar')],['id'=>$item_coupon_id]);
+            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>input('param.member_id'),'member'=>input('param.member'),'avatar'=>input('param.avatar'),'telephone'=>input('param.telephone')],['id'=>$item_coupon_id]);
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功']);
             }else{
