@@ -261,53 +261,63 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            $(".groupsTip").each(function () {
+                let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
+                console.log(checkSeed)
+                if (checkSeed > 1) {
+                    mui.toast("每个小组只能有一支种子球队！")
+                    return false;
+                }
+            });
+
             groupList = []
             $(".frame ul").each(function () {
-                var groupName = $(this).find("input[name=groupName]").val();
+                let groupName = $(this).find("input[name=groupName]").val();
                 groupTeam = [];
                 $(this).find("li").each(function () {
-                    var team = $(this).attr("data-team");
-                    var team_id = $(this).attr("data-team_id");
-                    var team_logo = $(this).attr("data-team_logo");
-                    var match = $(this).attr("data-match");
-                    var match_id = $(this).attr("data-match_id");
-                    var members_num = $(this).attr("data-members_num");
-                    var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
+                    let team = $(this).attr("data-team");
+                    let team_id = $(this).attr("data-team_id");
+                    let team_logo = $(this).attr("data-team_logo");
+                    let match = $(this).attr("data-match");
+                    let match_id = $(this).attr("data-match_id");
+                    let members_num = $(this).attr("data-members_num");
+                    let is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
                     groupTeam.push({ team, team_id, team_logo, match, match_id, members_num, is_seedTeam })
                 })
                 groupList.push({ groupName, groupTeam })
             })
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
-                var group = groupList[i].groupTeam.length
+                let group = groupList[i].groupTeam.length
                 if (group == 0) {
                     mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;
                 }
             }
 
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.groupList = JSON.stringify(groupList);
-            // var url = "{:url('api/league/saveleaguegroup')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // console.log(ajaxResult);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
-            //         var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.groupList = JSON.stringify(groupList);
+            var url = "{:url('api/league/saveleaguegroup')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
 
         };
 
