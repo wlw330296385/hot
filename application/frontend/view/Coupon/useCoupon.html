@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$organizationInfo.camp}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .inputForm {
+            text-align: center;
+            padding: 50px 50px 30px;
+        }
+        .inputForm input {
+            font-size: 20px !important;
+            height: 50px;
+        }
+        .inputForm .mui-btn {
+            padding: 12px 0px !important;
+        }
+        #couponPreview{
+            padding-top:30px;
+            border-top:1px solid #DDD;
+        }
+        #couponList{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">凭卡号使用卡券</h1>
+</header>
+<div class="mui-content">
+
+    <div class="inputForm">
+        <p><input type="text" class="coupon_member" name="coupon_member" value="" placeholder="请输入会员名"></p>
+        <p><input type="text" class="coupon_number" name="coupon_number" value="" placeholder="请输入卡券编号后六位"></p>
+    </div>
+
+    <div id="couponPreview">
+
+    </div>
+
+    <div id="couponList">
+
+    </div>
+</div>
+</body>
+</html>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+
+<script type="text/javascript">
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    $(function(){
+
+        //通过会员名获取卡券列表
+        $('.coupon_member').on("blur", function () {
+            var couponMember = $(this).val();
+            if(couponMember!==""&&couponMember!=null){
+                toItemCouponList(couponMember);
+            }
+        });
+
+
+        //通过卡号后六位获取卡券
+        $('.coupon_number').on("blur", function () {
+            var couponNumber = $(this).val();
+            if(couponNumber!=""&&couponNumber!=null){
+
+                var couponMember = $('.coupon_member').val();
+                if(couponMember==""||couponMember==null){
+                    mui.toast("请先输入会员名");
+                    return false;
+                }
+                $("#couponPreview").empty();
+                if(couponNumber.length==6){
+                    var getCID="";
+                    var getCID_last6="";
+                    var matchData = false;
+                    $(".cID").each(function () {
+                        getCID = $(this).text();
+                        getCID_last6 = getCID.substring(getCID.length-6, getCID.length)
+                        if(getCID_last6==couponNumber){
+                            $("#couponPreview").empty().append('<div class="coupon">'+$(this).parentsUntil(".coupon").parent().html()+'</div>');
+                            matchData = true;
+                            return false;
+                        }
+                    });
+                    if(matchData == false){
+                        $("#couponPreview").empty().append('<p class="mui-text-center">该会员没有此卡券哦</p>');
+                    }
+                }else{
+                    $("#couponPreview").empty().append('<p class="mui-text-center">您输入的六位数字长度不对哦</p>');
+                }
+
+            }
+        });
+
+
+        $(document).on('tap','.useCard',function(){
+            var itemCouponID = $(this).attr("data-itemCouponID");
+            var itemCouponNumber = $(this).attr("data-itemCouponNumber");
+            var $thisBtn = $(this);
+            mui.confirm('使用后不可在使用,确定使用吗?', '提示', ['取消', '确定'], function (e) {
+                if (e.index === 1) {
+                    var objData = {
+                        item_coupon_id:itemCouponID,
+                        ic_code : itemCouponNumber
+                    }
+                    var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCouponWithCodeApi')}", objData);
+                    if(ajaxResult.code == 200){
+                        $thisBtn.attr("disabled", true);
+                        $thisBtn.text('已使用');
+                        $thisBtn.removeClass("bggreen");
+                        $thisBtn.removeClass("useCard");
+                    }
+                    mui.toast(ajaxResult.msg);
+                }
+            });
+
+        });
+
+
+    })
+
+
+
+    //接口获取数据并追加到页面
+    var toItemCouponList = function (member) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/item_coupon/getItemCouponMemberListNoPageApi','','',true)}" + '/?page=1';
+        var memberID = "{$memberInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                member: member,
+                status: 1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var btn = '';
+                var currTimestamp = Date.parse(new Date());
+                var startDate = '';
+                var endDate = '';
+                var couponCount = 0;
+                if (data.code == 200) {
+                    couponCount = data.data.length;
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+
+                        startDate = data.data[i].item_coupon.start+' 00:00:00';
+                        endDate = data.data[i].item_coupon.end+' 23:59:59';
+                        startDate = new Date(Date.parse(startDate.replace(/-/g, "/")));
+                        endDate = new Date(Date.parse(endDate.replace(/-/g, "/")));
+                        startDate = startDate.getTime();
+                        endDate = endDate.getTime();
+
+                        if(data.data[i].status == '未使用'){
+                            btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data[i].item_coupon.id+'"  data-itemCouponNumber="'+data.data[i].coupon_number+'" data-itemCouponMemberID = "'+data.data[i].id+'"   >立即使用  </button>';
+
+                        } else if(startDate>currTimestamp||endDate<currTimestamp) {
+                            btn = '<button type="button" class="mui-btn"  disabled="true"  >无效期 </button>';
+                        } else {
+                            btn = '<button type="button" class="mui-btn" disabled="true"  >已使用 </button>';
+                        }
+                        newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data[i].coupon_number + '</div><div class="cName">' + data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data[i].item_coupon.start +'至'+ data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="#">'+ data.data[i].item_coupon.target + '</a>'+btn+'</div></div>'
+
+                    }
+                }
+                $("#couponList").empty().append(newli);
+                if (newli == '') {
+                    $("#couponPreview").empty().append('<p class="mui-text-center">该会员没有未使用的卡券哦</p>');
+                }else{
+                    $("#couponPreview").empty().append('<p class="mui-text-center">该会员有'+couponCount+'张未使用的卡券，<br />请输入卡券编号后六位数获取卡券。</p>');
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+</script>

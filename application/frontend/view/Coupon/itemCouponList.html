@@ -17,7 +17,7 @@
 	<header id="header" class="mui-bar mui-bar-nav for-tab">
 		<div class="camp-lesson-list">
 			<div class="mui-segmented-control mb">
-				<a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('member/index')}"></a>
+				<a class="mui-control-item mui-icon mui-icon-left-nav mui-action-back"></a>
 				<a class="mui-control-item mui-active" href="#itemCouponList">礼品券</a>
 			</div>
 		</div>
@@ -45,7 +45,7 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    mui("body").on("tap", "a", function () {
+    mui(".mui-content").on("tap", "a", function () {
         window.top.location.href = this.href;
     });
 
@@ -64,6 +64,8 @@
 	    		var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCoupon')}", objData);
 	    		if(ajaxResult.code == 200){
 	    			$(this).attr("disabled", true);
+	    			$(this).removeClass("bggreen");
+                    $(this).removeClass("useCard");
 	    			$(this).text('已使用');
 	    			
 	    		}
@@ -169,7 +171,7 @@
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("#itemCouponList .mui-scroll").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("#itemCouponList .mui-scroll").append('<ul><li class="nodata"><p>没有相关数据哦!</p></li></ul>');
                     }
                 } else {
                     //下拉加载 gType==2
