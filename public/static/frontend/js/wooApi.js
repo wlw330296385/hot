@@ -165,7 +165,7 @@ var wooApi = {
     'setCookie':function(c_name,value,seconds)
     {
         if(!seconds){
-            seconds = 360;//默认1个小时
+            seconds = 3600;//默认1个小时
         }
         var exdate = new Date();
         exdate.setSeconds(exdate.getSeconds()+seconds);
