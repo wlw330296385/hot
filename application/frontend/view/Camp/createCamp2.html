@@ -18,48 +18,56 @@
             display: table;
             width: 100%;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
 <body>
-    <div class="mui-content" style="padding-top: 18px">
+    <header class="mui-bar mui-bar-nav subheader header2">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">完善训练营信息</h1>
+    </header>
 
+    <div class="mui-content">
         <div class="register">
-
-            <header class="mui-bar mui-bar-nav subheader header2">
-                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-                <h1 class="mui-title">完善训练营信息</h1>
-            </header>
-
-            <form id="form2" action="" class="mui-input-group mt25">
+            <form id="form2" action="" class="mui-input-group">
 
                 <div class="mui-input-row">
                     <label>训练营名称</label>
                     <span>{if condition="$camp"}{$camp.camp}{/if}</span>
                     <input type="hidden" name="campid" value="{$camp.id}">
                 </div>
+
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>训练营LOGO</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview">
+                        <div class="viewStyleSquare view"></div>
                         <input type="hidden" name="logo" value="">
                     </a>
                 </div>
+
                 <div class="mui-input-row h-auto">
-                    <a class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
+                    <a href="#txpopover1" class="mui-navigate-right">
                         <label>训练营封面</label>
-                        <img id="preview_2" class="coachicon icon01 banner upload-preview">
+                        <div class="viewStyle view1"></div>
                         <input type="hidden" name="banner" value="">
                     </a>
                 </div>
+
                 <div class="mui-input-row">
                     <label>所属公司</label>
                     <input type="text" name="company" class="input company" placeholder="非机构可不填">
                 </div>
+
                 <div class="mui-input-row">
                     <label>总部地址</label>
                     <input type="text" class="input" name="location" placeholder="非机构可不填">
                 </div>
+
                 <div class="mui-input-row">
                     <label>联系电话</label>
                     <input type="tel" class="input camp_telephone" placeholder="请填写你的联系电话">
@@ -73,10 +81,12 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">训练营图文介绍</span>
                 </div>
+
                 <textarea name="introduction" class="data introduction" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro">{$campInfo.camp_introduction}</div>
 
             </form>
+
             <span class="tip-box tip"></span>
             <div class="tjbtn">
                 <button type="button" class="mui-btn btn camp-step2">完善训练营信息</button>
@@ -85,8 +95,24 @@
                 <a href="{:url('index/index')}">[ 跳过，稍后完善 ]</a>
             </p>
         </div>
-        <!-- #form2 end -->
+    </div>
 
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -97,6 +123,11 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         var Edr = new Eleditor({
             el: '#articleEditor', //容器
@@ -126,11 +157,6 @@
             // 注册 step2
             $('.camp-step2').click(function () {
 
-                //去除提示文字的标签 
-                $("#articleEditor").children(".Eleditor-placeholder").remove();
-                //获取最终含简单html标签的图文内容
-                var introHtml = $("#articleEditor").html();
-
                 var campid = $('input[name=campid]').val();
                 var logo = $('input[name=logo]').val();
                 var banner = $('input[name=banner]').val();
@@ -149,14 +175,17 @@
                     mui.toast("请填写训练营宣言和简介");
                     return false;
                 };
-
+                //去除提示文字的标签 
+                $("#articleEditor").children(".Eleditor-placeholder").remove();
+                //获取最终含简单html标签的图文内容
+                var introHtml = $("#articleEditor").html();
                 mui.ajax("{:url('api/camp/updatecamp')}", {
                     data: {
                         camp_id: campid,
                         logo: logo,
                         banner: banner,
                         company: company,
-                        location: location_input,
+                        // location: location_input,
                         intro: introHtml,
                         camp_description: camp_description,
                         camp_telephone: camp_telephone
@@ -168,7 +197,7 @@
                     success: function (res) {
                         if (res.code == 200) {
                             mui.toast(res.msg + ',请完善训练营资质证明');
-                            setTimeout(window.location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
+                            setTimeout(window.location.href ="{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
                         } else {
                             mui.alert(res.msg, function () {
                                 $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
@@ -182,6 +211,73 @@
             });
 
         });
+    </script>
+
+    <script>
+        var imgurl = '';
+        var imgurls = '';
+        // 正方形
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurl = res.path;
+                    console.log(imgurl)
+                    $("input[name=logo]").val(imgurl)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        // 长方形
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    imgurls = res.path;
+                    console.log(imgurls)
+                    $("input[name=banner]").val(imgurls)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
     </script>
 </body>
 
