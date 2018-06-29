@@ -190,10 +190,8 @@ class ItemCoupon extends Base{
             $item_coupon_id = input('param.item_coupon_ids');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
-            // dump($item_coupon_id);
             $item_coupon_ids = json_decode($item_coupon_id,'true');
-            // dump($item_coupon_ids);
-            $result = $this->ItemCouponService->createItemCouponMemberList($member_id,$member,$item_coupon_ids);
+            $result = $this->ItemCouponService->createItemCouponMemberList($member_id,$member,$this->memberInfo['telephone'],$this->memberInfo['avatar'],$item_coupon_ids);
              return json($result);   
          }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
@@ -230,7 +228,7 @@ class ItemCoupon extends Base{
                 if(!$is_power){
                     return json(['code'=>100,'msg'=>'权限不足']);
                 }
-                $result = db('item_coupon_member')->where(['coupon_number'=>$ic_code,'status'=>1])->update(['status'=>2,'update_time'=>time()]);
+                $result = db('item_coupon_member')->where(['coupon_number'=>$ic_code,'status'=>1])->update(['status'=>2,'update_time'=>time(),'use_member'=>$this->memberInfo['member'],'use_member_id'=>$this->memberInfo['id']]);
                 if(!$result){
                     return json(['code'=>100,'msg'=>'卡券码不正确或者卡券已被使用']);
                 }
@@ -256,5 +254,29 @@ class ItemCoupon extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+    //赠送卡券
+    public function presentItemCouponApi(){
+        try{
+            $item_coupon_id = input('param.item_coupon_id');
+            $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
+            if(!$itemCouponInfo){
+                return json(['code'=>100,'msg'=>'查找不到该卡券']);
+            }
+            if($itemCouponInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'不允许赠送他人卡券']);
+            }
+            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>input('param.member_id'),'member'=>input('param.member'),'avatar'=>input('param.avatar'),'telephone'=>input('param.avatar')],['id'=>$item_coupon_id]);
+            if($result){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
+            } 
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }  
+    }
+
+
 
 }

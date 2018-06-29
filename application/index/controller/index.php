@@ -22,7 +22,8 @@ class Index extends Controller
     }
 
     public function index2(){
-        
+        $list = db('item_coupon_member')->field('item_coupon_member.id,member.telephone,member.avatar')->join('member','member.id=item_coupon_member.member_id')->select();
+        dump($list);
         return view();
         
     }

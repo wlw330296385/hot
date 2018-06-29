@@ -131,7 +131,7 @@ class ItemCouponService {
 
         
 
-        $result = $this->ItemCouponMemberModel->save(['status'=>2],['id'=>$item_coupon_member_id]);
+        $result = $this->ItemCouponMemberModel->save(['status'=>2,'use_member'=>session('memberInfo.member'),'use_member_id'=>session('memberInfo.id')],['id'=>$item_coupon_member_id]);
         if($result){
             $this->ItemCouponModel->where(['id'=>$item_coupon_id])->setInc('used',1);
 
@@ -188,7 +188,7 @@ class ItemCouponService {
     * @param $member_id $member
     * @param $item_coupon_id 主表id
     **/ 
-    public function createItemCouponMemberList($member_id,$member,$item_coupon_ids){
+    public function createItemCouponMemberList($member_id,$member,$telephone,$avatar,$item_coupon_ids){
 
         $itemCouponList = $this->ItemCouponModel->where(['id'=>['in',$item_coupon_ids]])->select();
         // echo $this->ItemCouponModel->getlastsql();
@@ -201,6 +201,8 @@ class ItemCouponService {
             $data[] = [
                 'member_id'         =>$member_id,
                 'member'            =>$member,
+                'telephone'         =>$telephone,
+                'avatar'            =>$avatar,
                 'item_coupon_id'    =>$value['id'],
                 'item_coupon'       =>$value['coupon'],
                 'status'            =>1,
@@ -257,6 +259,8 @@ class ItemCouponService {
             $data[] = [
                 'member_id'         =>$member_id,
                 'member'            =>$member,
+                'telephone'         =>session('memberInfo.telephone'),
+                'avatar'            =>session('memberInfo.avatar'),
                 'item_coupon_id'    =>$item_coupon_id,
                 'item_coupon'       =>$couponInfo['coupon'],
                 'status'            =>1,
