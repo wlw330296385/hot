@@ -76,6 +76,24 @@ class ItemCoupon extends Base{
 
 
 
+    // 获取用户卡券带page
+    public function getItemCouponMemberListNoPageApi(){
+        try{
+            $map = input('post.');
+            $result = $this->ItemCouponService->getItemCouponMemberLisNoPage($map);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'查询有误']);
+            }  
+
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
     public function updateItemCouponApi(){
          try{
             $data = input('post.');

@@ -231,6 +231,19 @@ class ItemCouponService {
     }
 
 
+
+    /**
+    * 获取我的卡券列表不分页
+    * @param $member_id $member
+    * @param $item_coupon_id 主表id
+    **/ 
+    public function getItemCouponMemberLisNoPage($map = []){
+        $result = $this->ItemCouponMemberModel->with('itemCoupon')->where($map)->select();
+
+        return $result;
+    }
+
+
     //重复发放多张卡券
     public function createItemCouponMemberAll($item_coupon_id,$total){
         $data = [];
