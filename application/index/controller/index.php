@@ -22,7 +22,8 @@ class Index extends Controller
     }
 
     public function index2(){
-
+        
+        return view();
         
     }
 

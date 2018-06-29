@@ -162,12 +162,14 @@ var wooApi = {
         return ""
     },
     //设置cookie
-    'setCookie':function(c_name,value,expiredays)
+    'setCookie':function(c_name,value,seconds)
     {
+        if(!seconds){
+            seconds = 360;//默认1个小时
+        }
         var exdate = new Date();
-        exdate.setDate(exdate.getDate()+expiredays)
-        document.cookie=c_name+ "=" +escape(value)+
-        ((expiredays==null) ? "" : ";expires="+exdate.toGMTString())
+        exdate.setSeconds(exdate.getSeconds()+seconds);
+        document.cookie=c_name+ "=" +escape(value)+";expires="+exdate.toUTCString()
     },
 
 

@@ -113,8 +113,12 @@ class ItemCouponService {
         $itemCouponInfo = $this->ItemCouponModel->where(['id'=>$item_coupon_id])->find();
         $itemCoupnMemberInfo = $this->ItemCouponMemberModel->where(['id'=>$item_coupon_member_id])->find();
 
+        if(session('memberInfo.id','','think')<>$itemCoupnMemberInfo['member_id']){
+            return ['code'=>100,'msg'=>'卡券不属于你,无法使用'];
+        }
+        
         if($itemCoupnMemberInfo){
-            if($itemCoupnMemberInfo['status']<>1){
+            if($itemCoupnMemberInfo['status'] != '未使用'){
                 return ['code'=>100,'msg'=>'卡券已被使用'];
             }
         }else{
@@ -125,9 +129,7 @@ class ItemCouponService {
             return ['code'=>100,'msg'=>'卡券不在有效期内,无法使用'];
         }
 
-        if(session('memberInfo.id','','think')<>$itemCoupnMemberInfo['member_id']){
-            return ['code'=>100,'msg'=>'卡券不属于你,无法使用'];
-        }
+        
 
         $result = $this->ItemCouponMemberModel->save(['status'=>2],['id'=>$item_coupon_member_id]);
         if($result){
