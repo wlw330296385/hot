@@ -25,7 +25,7 @@ class CampVal extends Validate{
     
     protected $scene = [
         'add'   =>  ['realname','member_id','camp','province','city','area'],
-        'edit' => ['id','province','city','area']
+        'edit' => ['id']
     ];    
 
 }
