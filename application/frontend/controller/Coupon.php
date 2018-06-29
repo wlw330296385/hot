@@ -124,4 +124,34 @@ class Coupon extends Base{
         
         return view('Coupon/couponOfSignUpList');
     }
+
+
+    public function useCoupon(){
+
+        $organization_id = input('param.organization_id');
+        $organization_type = input('param.organization_type',1);
+
+        if($organization_type == 1){
+            $CampService = new \app\service\CampService;
+            $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
+
+            if($power<1){
+                $this->error('请先加入一个训练营并成为兼职、教练、管理员或者创建训练营');
+            }
+
+            $eventList = db('event')->where(['organization_id'=>$organization_id,'organization_type'=>$organization_type])->where('delete_time',null)->select();
+            $lessontList = db('lesson')->where(['camp_id'=>$organization_id,'is_school'=>-1])->where('delete_time',null)->select();
+
+
+
+            $organizationInfo = $CampService->getCampInfo(['id'=>$organization_id]);
+
+        }
+
+        $this->assign('organization_id',$organization_id);
+        $this->assign('organizationInfo',$organizationInfo);
+
+        $this->assign('organization_id',$organization_id);
+        return view('Coupon/useCoupon');
+    }
 }

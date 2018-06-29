@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>动漫节 - 投篮卡</title>
+    <title>{$eventInfo.event}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -65,14 +65,44 @@
         #showSuccess h4,#showSuccess p{
             color:#FFF;
         }
+        #showSuccess button {
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 1px solid #A2D470;
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
         .nobg {
             background: transparent !important;
         }
         .nobg::after {
             background: none !important;
         }
-        .selectTotal, .selectDom{
-            padding: 5px 8px !important;
+        .mui-numbox{
+            width: 200px;
+            height: 55px;
+            padding: 0 50px;
+            margin: 10px auto 20px !important;
+        }
+        .mui-numbox button {
+            font-size: 24px !important;
+            padding: 8px 20px !important;
+        }
+        .mui-numbox [class*=btn-numbox], .mui-numbox [class*=numbox-btn]{
+            width: 50px !important;
+            font-size: 24px !important;
+        }
+        .mui-numbox input{
+            font-size: 24px;
+        }
+        .selectDom {
+            font-size: 20px !important;
+            padding: 8px 20px !important;
+            margin: 10px !important;
+        }
+        .selectDom div {
+            font-size: 22px !important;
         }
         .mui-input-group:before{
             background: none;
@@ -83,26 +113,35 @@
         #myCoupon{
             display: none;
         }
+        .operation .opli{
+            height: 48px;
+            font-size: 16px;
+            padding: 12px 5px;
+        }
 
     </style>
 </head>
 
 <body>
 
-<header class="mui-bar mui-bar-nav">
-    <h1 class="mui-center mui-title">{$eventInfo.event}</h1>
+<header class="mui-bar mui-bar-nav subheader">
+    <a href="/frontend/index/index">
+        <span class="mui-icon icon iconfont icon-nav-Home"></span> <span style="font-size: 14px; line-height: 24px;">篮球管家</span>
+    </a>
+    <h1 class="mui-title"><a href="{:url('frontend/Coupon/itemCouponList')}">查看我的卡券</a></h1>
 </header>
 
 <div class="mui-content mt55" style="background: none !important">
     <div id="showSuccess" class="bggreen">
         <h4>恭喜您购买成功！</h4>
         <p>祝您好运，赢取游戏大奖！</p>
+        <a href="{:url('frontend/Coupon/itemCouponList')}"><button type="button">立即使用卡券</button></a>
     </div>
 
     <ul class="mui-table-view list" id="eventDes">
         <li class="listli desimg">{$eventInfo.event_des}</li>
     </ul>
-    <div class="tipContent border-b">
+    <div class="tipContent border-b" id="apps_des">
         <div class="tipContentText">
             <p>
                 <strong>购买说明：</strong>
@@ -141,20 +180,20 @@
 
     <div class="tipContent" id="sDom">
         <div class="tipContentText border-b">
-            <p>
-                <strong>请选择您要购买的种类：</strong>
+            <p class="mui-text-center">
+                <strong>请选择您要购买的种类</strong>
             </p>
-            <p>
+            <p class="mui-text-center">
                 {volist name='$eventInfo.doms' id="vol"}
                 <button type="button" class="mui-btn selectTotal selectDom" value="{$vol.price}" data="{$key}"><span>{$vol.name}</span><div>¥{$vol.price}</div></button>
                 {/volist}
             </p>
         </div>
         <div class="tipContentText border-b">
-            <p>
-                <strong>请选择你要购买几张票：</strong>
+            <p class="mui-text-center">
+                <strong>请选择你要购买几张票</strong>
             </p>
-            <div class="mui-input-row h-auto">
+            <div class="mui-input-row h-auto mui-text-center">
                 <div class="mui-numbox" data-numbox-min='1'>
                     <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
                     <input class="mui-input-numbox data" type="number" name="total" value="">
@@ -179,13 +218,13 @@
 
     <ul class="mui-table-view operation">
         <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" id="submitAction">
-            提交
+            确定购买
         </li>
     </ul>
 
     <ul class="mui-table-view operation" id="myCoupon">
         <li class="mui-table-view-cell mui-col-xs-12 opli bgorange">
-            查看我的卡券
+            <a href="{:url('index/apps/buycouponForm',['event_id'=>$eventInfo.id])}">继续购买</a>
         </li>
     </ul>
 </div>
@@ -284,6 +323,7 @@
             $(".registerFrom").hide();
             $(".operation").hide();
             $("#sDom").hide();
+            $("#apps_des").hide();
             $("#showSuccess").show();
             $("#eventDes").show();
             $("#myCoupon").show();
