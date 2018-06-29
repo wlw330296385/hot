@@ -157,20 +157,20 @@ class Camp extends Base{
                 'camp_telephone' => input('post.camp_telephone'),
                 'banner' => input('post.banner'),
                 'company' => input('post.company'),
-                'location' => input('post.location'),
+                //'location' => input('post.location'),
                 'camp_introduction' => input('post.intro'),
                 'camp_description' => input('post.camp_description')
 
             ];
 
             // 地区input 拆分成省 市 区 3个字段
-            $locationStr = input('post.locationStr');
-            if (isset($locationStr)) {
-                $locationArr = explode('|', $locationStr);
-                $campData['province'] = $locationArr[0];
-                $campData['city'] = $locationArr[1];
-                $campData['area'] = $locationArr[2];
-            }
+            // $locationStr = input('post.locationStr');
+            // if (isset($locationStr)) {
+            //     $locationArr = explode('|', $locationStr);
+            //     $campData['province'] = $locationArr[0];
+            //     $campData['city'] = $locationArr[1];
+            //     $campData['area'] = $locationArr[2];
+            // }
 
             //dump($data);
             $campS = new CampService();
