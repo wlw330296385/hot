@@ -255,7 +255,7 @@ class ItemCoupon extends Base{
         }
     }
 
-    //赠送卡券
+    //赠送卡券API
     public function presentItemCouponApi(){
         try{
             $item_coupon_id = input('param.item_coupon_id');
@@ -277,6 +277,26 @@ class ItemCoupon extends Base{
         }  
     }
 
-
+    // 领取他人卡券API
+    public function receiveItemCouponApi(){
+        try{
+            $item_coupon_id = input('param.item_coupon_id');
+            $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
+            if(!$itemCouponInfo){
+                return json(['code'=>100,'msg'=>'查找不到该卡券']);
+            }
+            if($itemCouponInfo['member_id']==$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'不允许领取自己的卡券']);
+            }
+            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'avatar'=>$this->memberInfo['avatar'],'telephone'=>$this->memberInfo['telephone']],['id'=>$item_coupon_id]);
+            if($result){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }  
+    }
 
 }

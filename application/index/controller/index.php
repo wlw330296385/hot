@@ -23,8 +23,10 @@ class Index extends Controller
 
     public function index2(){
         $list = db('item_coupon_member')->field('item_coupon_member.id,member.telephone,member.avatar')->join('member','member.id=item_coupon_member.member_id')->select();
-        dump($list);
-        return view();
+        foreach ($list as $key => $value) {
+            db('item_coupon_member')->where(['id'=>$value['id']])->update(['telephone'=>$value['telephone'],'avatar'=>$value['avatar']]);
+        }
+        // return view();
         
     }
 
