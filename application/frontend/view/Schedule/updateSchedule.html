@@ -142,13 +142,20 @@
             <div class="image-items">
 
                 <form class="mui-input-group" style="margin-top:0px">
-                    <div class="mui-input-row h-auto">
+                    <!-- <div class="mui-input-row h-auto">
                         <a class="portraits filePicker" onclick="add_id(3)">
                             <label>上传合照</label>
                             <img id="preview_3" {notempty name="scheduleInfo.cover" }src="{$scheduleInfo.cover}" {/notempty}>
                             <input type="hidden" class="cover" name="portraits" value="">
                         </a>
-                    </div>
+                    </div> -->
+                    <div class="mui-input-row h-auto">
+                            <a href="#txpopover" class="mui-navigate-right">
+                                <label>上传合照</label>
+                                <div class="viewStyle view" {notempty name="scheduleInfo.cover" } style="background-image: url('{$scheduleInfo.cover}')" {/notempty}></div>
+                                <input type="hidden" name="cover" value="{$scheduleInfo.cover}" class="cover">
+                            </a>
+                        </div>
                 </form>
 
                 <form class="mui-input-group">
@@ -546,7 +553,13 @@
         </div>
 
     </div>
-
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            <div class="clipAreaStyle clipArea"></div>
+            <div class="fileFrame">选择图片
+                <input type="file" class="fileStyle file">
+            </div>
+            <button class="clipBtnStyle clipBtn">截取</button>
+        </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -558,6 +571,11 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+          <!--上传截图头像-->
+          <script src="/static/plugins/cropper/hammer.min.js"></script>
+          <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+          <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+          <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -1395,7 +1413,37 @@
         };
 
     </script>
+   <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
 
+    </script>
 </body>
 
 </html>

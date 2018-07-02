@@ -51,7 +51,7 @@
             <div class="mui-input-row h-auto">
                 <a href="#txpopover" class="mui-navigate-right">
                     <label>文章封面</label>
-                    <div id="view" style="background-image: url('{$articleInfo.covers}')"></div>
+                    <div class="viewStyle view" style="background-image: url('{$articleInfo.covers}')"></div>
                     <input type="hidden" name="covers" value="{$articleInfo.covers}" class="data">
                 </a>
             </div>
@@ -85,11 +85,11 @@
     </div>
 
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div id="clipArea"></div>
+        <div class="clipAreaStyle clipArea"></div>
         <div class="fileFrame">选择图片
-            <input type="file" id="file">
+            <input type="file" class="fileStyle file">
         </div>
-        <button id="clipBtn">截取</button>
+        <button class="clipBtnStyle clipBtn">截取</button>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -169,15 +169,13 @@
 
     </script>
     <script>
-        var imgurl = '';
-        var pc = new PhotoClip('#clipArea', {
+        var pc = new PhotoClip('.clipArea', {
             size: 260,
             outputSize: 640,
             adaptive: ['80%', '60%'],
-            file: '#file',
-            view: '#view',
-            ok: '#clipBtn',
-            //img: 'img/mm.jpg',
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
             loadStart: function () {
                 console.log('开始读取照片');
             },
@@ -191,8 +189,7 @@
                     path: 'cert'
                 }, function (res) {
                     console.log(res);
-                    imgurl = res.path;
-                    $("input[name=covers]").val(imgurl)
+                    $("input[name=covers]").val(res.path)
                     mui("#txpopover").popover("toggle");
                 }, 'json');
             },
@@ -200,9 +197,6 @@
                 alert(msg);
             }
         });
-
-        // 加载的图片必须要与本程序同源，否则无法截图
-        //        pc.load('img/mm.jpg');
 
     </script>
 </body>

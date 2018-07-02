@@ -20,19 +20,20 @@
             left: auto;
             right: 6px;
         }
-        
+
         .mui-input-row a {
             display: table;
             width: 100%;
         }
-        
+
         #eventDom .fl {
             text-align: left;
         }
-        .cancel-dom{
+
+        .cancel-dom {
             font-size: 16px;
             float: right;
-            margin:13px 10px;
+            margin: 13px 10px;
         }
 
         .target-input-row span {
@@ -47,7 +48,9 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
         <h1 class="mui-title">{$itemCouponInfo.organization}</h1>
         <input type="hidden" name="organization" value="{$itemCouponInfo.organization}" class="data">
         <input type="hidden" name="organization_id" value="{$itemCouponInfo.organization_id}" class="data">
@@ -123,12 +126,12 @@
                 </div>
                 {else /}
                 <div class="mui-input-row">
-                        <label>有效期开始时间</label>
-                        <span class="domData" name="starts">{$itemCouponInfo.start}</span>
+                    <label>有效期开始时间</label>
+                    <span class="domData" name="starts">{$itemCouponInfo.start}</span>
                 </div>
                 <div class="mui-input-row">
-                        <label>有效期结束时间</label>
-                        <span class="domData" name="ends">{$itemCouponInfo.end}</span>
+                    <label>有效期结束时间</label>
+                    <span class="domData" name="ends">{$itemCouponInfo.end}</span>
                 </div>
                 {/if}
                 <div class="mui-input-row">
@@ -152,7 +155,7 @@
                     <div class="mui-navigate-right">
                         <label>发布状态</label>
                         <span class="select-row freeStatus">
-                            <select  class="data" name="status">
+                            <select class="data" name="status">
                                 <option value="-1">暂不发布</option>
                                 <option value="1">立即发布</option>
                             </select>
@@ -161,13 +164,12 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>卡券封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$itemCouponInfo.image_url}" >
-                        <input type="hidden" name="image_url" value='' class="data">
+                        <div class="viewStyle view" style="background-image: url('{$itemCouponInfo.image_url}')"></div>
+                        <input type="hidden" name="image_url" value="{$itemCouponInfo.image_url}" class="data">
                     </a>
                 </div>
-
                 <div class="mui-input-row">
                     <a href="{:url('coupon/couponOfSignUpList',['item_coupon_id'=>$itemCouponInfo['id']])}" class="mui-navigate-right">
                         <label>领取名单</label>
@@ -180,7 +182,7 @@
                 </div>
 
                 {if $itemCouponInfo.status == 1}
-                    <p class="mui-text-center f12 colororange pt4">温馨提示：已发布卡券的有效期、价值及详情不允许修改。</p>
+                <p class="mui-text-center f12 colororange pt4">温馨提示：已发布卡券的有效期、价值及详情不允许修改。</p>
                 {/if}
                 <textarea name="coupon_des" class="data coupon_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro">{$itemCouponInfo.coupon_des}</div>
@@ -201,7 +203,9 @@
     <div id="target1" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>具体课程</strong></span>
+            <span class="course">
+                <strong>具体课程</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -217,7 +221,9 @@
     <div id="target2" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course"><strong>具体活动</strong></span>
+            <span class="course">
+                <strong>具体活动</strong>
+            </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -230,7 +236,14 @@
         </div>
     </div>
 
-   
+
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -244,20 +257,25 @@
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'coupon'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    {if $itemCouponInfo.status == -1}
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script> {if $itemCouponInfo.status == -1}
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
             el: '#articleEditor', //容器
-            upload:{
+            upload: {
                 server: uploadApiUrl, //填写你的后端上传路径
                 fileSizeLimit: 2 //限制图片上传大小，单位M
             },
             placeHolder: '点击编辑卡券图文介绍',
         });
-    </script>
-    {/if}
+    </script> {/if}
     <script>
         //初始化
         mui.init({
@@ -296,7 +314,7 @@
                         var optionsJson = this.getAttribute('data-options') || '{}';
                         var options = JSON.parse(optionsJson);
                         var wTime = this.getElementsByTagName("span")[0];
-//                        var id = this.getAttribute('id');
+                        //                        var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
 
                         picker.show(function (rs) {
@@ -319,7 +337,7 @@
             //页面打开时执行一次下拉选项
             changeType("{$itemCouponInfo.target_type}");
             var cStatus = "{$itemCouponInfo.status}";
-            if(cStatus=="1"){
+            if (cStatus == "1") {
                 $('select[name="status"]').find('option[value="1"]').parent().prop("disabled", true);
                 $('select[name="status"]').parent().parent().removeClass("mui-navigate-right");
                 $('input[name="coupon"]').prop("readonly", true);
@@ -346,7 +364,7 @@
             });
             // 选择活动对象显示隐藏具体对象
             $("#eventObject").change(function () {
-                $(".targetCont").text('全部'+$(this).find('option:selected').text());
+                $(".targetCont").text('全部' + $(this).find('option:selected').text());
                 $(".target_id").val('0');
                 changeType($(this).val());
             });
@@ -381,14 +399,14 @@
 
         //发行对象下拉操作
         function changeType(tID) {
-            if (tID == '1'||tID == '2') {
-                $(".target-input-row a").attr("href","#target"+tID);
+            if (tID == '1' || tID == '2') {
+                $(".target-input-row a").attr("href", "#target" + tID);
                 $(".target-input-row").show();
                 $(".targetCont").addClass("domData");
                 $(".target_id").addClass("data");
-            }else{
+            } else {
                 $(".target-input-row").hide();
-                $(".target-input-row a").attr("href","#");
+                $(".target-input-row a").attr("href", "#");
                 $(".targetCont").removeClass("domData").text('');
                 $(".target_id").removeClass("data").text('');
             }
@@ -429,7 +447,7 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败',function(){
+                mui.alert(ajaxResult.msg, '创建失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑卡券图文介绍</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -438,7 +456,38 @@
                 }, 'json');
             }
         };
-      
+
+    </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=image_url]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
     </script>
 </body>
 

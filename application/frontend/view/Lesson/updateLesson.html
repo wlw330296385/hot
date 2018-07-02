@@ -47,24 +47,9 @@
         .select-row {
             padding-right: 30px !important;
         }
-        .show {
-            display: block;
-        }
-
-        .hide {
-            display: none;
-        }
 
         .number {
             width: 20% !important;
-        }
-
-        .nohave {
-            margin: 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-top: none;
-            text-align: center;
         }
 
     </style>
@@ -200,20 +185,11 @@
                     </a>
                 </div>
 
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>课程封面</label>
-                        <img id="preview_1" class="coachicon icon01 upload-preview" alt="" {notempty name="$lessonInfo.cover" }src="{$lessonInfo.cover}"
-                            {/notempty}>
-                        <input type="hidden" name="cover" value='{$lessonInfo.cover}' class="data">
-                    </a>
-                </div> -->
-
                 <div class="mui-input-row h-auto">
                     <a href="#txpopover" class="mui-navigate-right">
                         <label>课程封面</label>
-                        <div id="view" style="background-image: url('{$lessonInfo.cover}')"></div>
-                        <input type="hidden" name="cover" value='{$lessonInfo.cover}' class="data">
+                        <div class="viewStyle view" style="background-image: url('{$lessonInfo.cover}')"></div>
+                        <input type="hidden" name="cover" value="{$lessonInfo.cover}" class="data">
                     </a>
                 </div>
 
@@ -573,13 +549,13 @@
         </div>
     </div>
 
-    <!-- 头像截图弹框 -->
+    
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div id="clipArea"></div>
+        <div class="clipAreaStyle clipArea"></div>
         <div class="fileFrame">选择图片
-            <input type="file" id="file">
+            <input type="file" class="fileStyle file">
         </div>
-        <button id="clipBtn">截取</button>
+        <button class="clipBtnStyle clipBtn">截取</button>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -1266,13 +1242,13 @@
     </script>
      <script>
             var imgurl = '';
-            var pc = new PhotoClip('#clipArea', {
+            var pc = new PhotoClip('.clipArea', {
                 size: 260,
                 outputSize: 640,
                 adaptive: ['80%', '60%'],
-                file: '#file',
-                view: '#view',
-                ok: '#clipBtn',
+                file: '.file',
+                view: '.view',
+                ok: '.clipBtn',
                 //img: 'img/mm.jpg',
                 loadStart: function () {
                     console.log('开始读取照片');

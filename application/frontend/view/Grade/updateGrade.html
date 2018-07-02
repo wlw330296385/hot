@@ -71,6 +71,11 @@
         .pdr {
             padding-right: 30px !important;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -129,10 +134,10 @@
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
                         <!--考虑去除-->
                         <!--<div id="hideStListIni">-->
-                            <!--{volist name="students" id="vol"}-->
-                            <!--<input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"-->
-                                <!--data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"-->
-                                <!--data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}-->
+                        <!--{volist name="students" id="vol"}-->
+                        <!--<input type="hidden" class="stdListIni" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"-->
+                        <!--data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"-->
+                        <!--data-member_id="{$vol.member_id}" data-member="{$vol.member}"> {/volist}-->
                         <!--</div>-->
                     </a>
                 </div>
@@ -251,11 +256,19 @@
                     <input type="text" name="reamarks" class="remarks checkChinese data pdr" value="{$gradeInfo.remarks}">
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>合照封面</label>
                         <img id="preview_1" class="coachicon icon01 upload-preview" alt="" src="{$gradeInfo.logo}">
                         <input type="hidden" name="logo" value='{$gradeInfo.logo}' class="data">
+                    </a>
+                </div> -->
+
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label>合照封面</label>
+                        <div class="viewStyle view" style="background-image: url('{$gradeInfo.logo}')"></div>
+                        <input type="hidden" name="logo" value="{$gradeInfo.logo}" class="data">
                     </a>
                 </div>
                 <div class="page-header" style="background: #efeff4;">
@@ -580,6 +593,14 @@
         </div>
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -594,6 +615,11 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -777,7 +803,7 @@
                     var grade = "{$gradeInfo.grade}";
                     var grade_id = "{$gradeInfo.id}";
 
-                    studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id,camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
+                    studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
                     inputList += '<input type="hidden" class="stdList"  data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-student_typenum="' + student_typenum + '" >';
                     studentNames += student + ','
                 });
@@ -1033,7 +1059,7 @@
                                 finalSubmit()
                             }
                         });
-                    }else{
+                    } else {
                         finalSubmit()
                     }
                 }
@@ -1289,7 +1315,37 @@
         };
 
     </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
 
+    </script>
 </body>
 
 </html>
