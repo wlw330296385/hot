@@ -197,7 +197,7 @@
                     success: function (res) {
                         if (res.code == 200) {
                             mui.toast(res.msg + ',请完善训练营资质证明');
-                            setTimeout(window.location.href ="{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
+                            setTimeout(window.location.href = "{:url('camp/createcamp', '', '', true)}/step/3/camp_id/" + res.data, 3000);
                         } else {
                             mui.alert(res.msg, function () {
                                 $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
@@ -214,8 +214,6 @@
     </script>
 
     <script>
-        var imgurl = '';
-        var imgurls = '';
         // 正方形
         var pc = new PhotoClip('.clipArea', {
             size: 260,
@@ -236,9 +234,7 @@
                     path: 'cert'
                 }, function (res) {
                     console.log(res);
-                    imgurl = res.path;
-                    console.log(imgurl)
-                    $("input[name=logo]").val(imgurl)
+                    $("input[name=logo]").val(res.path)
                     mui("#txpopover").popover("toggle");
                 }, 'json');
             },
@@ -267,9 +263,7 @@
                     path: 'cert'
                 }, function (res) {
                     console.log(res);
-                    imgurls = res.path;
-                    console.log(imgurls)
-                    $("input[name=banner]").val(imgurls)
+                    $("input[name=banner]").val(res.path)
                     mui("#txpopover1").popover("toggle");
                 }, 'json');
             },

@@ -21,6 +21,11 @@
             display: table;
             width: 100%;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -47,17 +52,16 @@
                     <input type="hidden" name="campid" value="{$campInfo.id}">
                 </div>
                 <div class="mui-input-row h-auto">
-                    <a href="javascript:void(0)" class="mui-navigate-right camplogo filePicker" onclick="add_id(1)">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>训练营LOGO</label>
-                        <img id="preview_1" class="icon01 logo upload-preview" {notempty name="campInfo.logo" }src="{$campInfo.logo}" {/notempty}>
+                        <div class="viewStyleSquare view" {notempty name="campInfo.logo" }style="background-image: url('{$campInfo.logo}')" {/notempty}></div>
                         <input type="hidden" name="logo" value="{$campInfo.logo}">
                     </a>
                 </div>
-
                 <div class="mui-input-row h-auto">
-                    <a href="javascript:void(0)" class="mui-navigate-right campbanner filePicker" onclick="add_id(2)">
+                    <a href="#txpopover1" class="mui-navigate-right">
                         <label>训练营封面</label>
-                        <img id="preview_2" class="icon01 banner upload-preview" {notempty name="campInfo.banner" }src="{$campInfo.banner}" {/notempty}>
+                        <div class="viewStyle view1" {notempty name="campInfo.banner" }style="background-image: url('{$campInfo.banner}')" {/notempty}></div>
                         <input type="hidden" name="banner" value="{$campInfo.banner}">
                     </a>
                 </div>
@@ -103,156 +107,237 @@
 
         </div>
     </div>
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
-<!--选择器-->
-<script src="/static/frontend/js/mui.picker.min.js"></script>
-<script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/city.data-3.js"></script>
-<script>
-    var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
 
-</script>
-<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-<script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
-<script>
-    var Edr = new Eleditor({
-        el: '#articleEditor', //容器
-        upload: {
-            server: uploadApiUrl, //填写你的后端上传路径
-            fileSizeLimit: 2 //限制图片上传大小，单位M
-        },
-        placeHolder: '点击编辑训练营图文介绍',
-    });
-</script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
 
-    mui("body").on("tap", "a.mui-control-item", function () {
-        window.top.location.href = this.href;
-    });
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'banner'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script>
+        var Edr = new Eleditor({
+            el: '#articleEditor', //容器
+            upload: {
+                server: uploadApiUrl, //填写你的后端上传路径
+                fileSizeLimit: 2 //限制图片上传大小，单位M
+            },
+            placeHolder: '点击编辑训练营图文介绍',
+        });
+    </script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
 
-    //选择器
-    (function ($, doc) {
-        $.init();
-        $.ready(function () {
-            var _getParam = function (obj, param) {
-                return obj[param] || '';
-            };
-            ///级联示例
-            var cityPicker3 = new $.PopPicker({
-                layer: 3
-            });
-            cityPicker3.setData(cityData3);
-            // 设置默认值
-            cityPicker3.pickers[0].setSelectedIndex(18);
-            cityPicker3.pickers[1].setSelectedIndex(2);
-            cityPicker3.pickers[2].setSelectedIndex(2);
+        mui("body").on("tap", "a.mui-control-item", function () {
+            window.top.location.href = this.href;
+        });
 
-            var showCityPickerButton = doc.getElementById('showCityPicker3');
-            var cityResult3 = doc.getElementById('cityResult3');
-            var locationvalue = doc.getElementById('location-input');
-            showCityPickerButton.addEventListener('tap', function (event) {
-                cityPicker3.show(function (items) {
-                    cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
-                    locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
-                    //返回 false 可以阻止选择框的关闭
-                    //return false;
+        //选择器
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+                ///级联示例
+                var cityPicker3 = new $.PopPicker({
+                    layer: 3
                 });
-            }, false);
-        });
-    })(mui, document);
+                cityPicker3.setData(cityData3);
+                // 设置默认值
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
+                cityPicker3.pickers[2].setSelectedIndex(2);
 
-    $(function () {
+                var showCityPickerButton = doc.getElementById('showCityPicker3');
+                var cityResult3 = doc.getElementById('cityResult3');
+                var locationvalue = doc.getElementById('location-input');
+                showCityPickerButton.addEventListener('tap', function (event) {
+                    cityPicker3.show(function (items) {
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        locationvalue.value = _getParam(items[0], 'text') + "|" + _getParam(items[1], 'text') + "|" + _getParam(items[2], 'text')
+                        //返回 false 可以阻止选择框的关闭
+                        //return false;
+                    });
+                }, false);
+            });
+        })(mui, document);
 
-        //判断从哪里进入设置页面
-        var getBackLink = wooApi.GetQueryString('from');
-        if (getBackLink != "" && getBackLink != null) {
-            localStorage.campSettingBackTo = getBackLink;
-        }
-        if (localStorage.campSettingBackTo != "" && localStorage.campSettingBackTo != null) {
-            $(".backToPage").attr("href", localStorage.campSettingBackTo)
-        }
+        $(function () {
 
+            //判断从哪里进入设置页面
+            var getBackLink = wooApi.GetQueryString('from');
+            if (getBackLink != "" && getBackLink != null) {
+                localStorage.campSettingBackTo = getBackLink;
+            }
+            if (localStorage.campSettingBackTo != "" && localStorage.campSettingBackTo != null) {
+                $(".backToPage").attr("href", localStorage.campSettingBackTo)
+            }
 
-        $('#submit-form1').click(function () {
+            $('#submit-form1').click(function () {
 
+                var campid = $('input[name=campid]').val();
+                var logo = $('input[name=logo]').val();
+                var banner = $('input[name=banner]').val();
+                var company = $('input[name=company]').val();
+                var location_input = $('input[name=location]').val();
+                var locationStr = $('input[name=locationStr]').val();
+                var camp_telephone = $('.camp_telephone').val();
+                var camp_description = $('.camp_description').val();
 
-            var campid = $('input[name=campid]').val();
-            var logo = $('input[name=logo]').val();
-            var banner = $('input[name=banner]').val();
-            var company = $('input[name=company]').val();
-            var location_input = $('input[name=location]').val();
-            var locationStr = $('input[name=locationStr]').val();
-            var camp_telephone = $('.camp_telephone').val();
-            var camp_description = $('.camp_description').val();
+                if (logo == "") {
+                    mui.toast('请上传训练营Logo');
+                    return false;
+                } else if (banner == "") {
+                    mui.toast('请上传训练营封面');
+                    return false;
+                } else if (locationStr == "") {
+                    mui.toast('请选择所属地区');
+                    return false;
+                } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
+                    mui.toast("请输入正确的手机格式");
+                    return false;
+                } else if (camp_description == "") {
+                    mui.toast("请填写训练营宣言");
+                    return false;
+                };
+                //去除提示文字的标签
+                $("#articleEditor").children(".Eleditor-placeholder").remove();
+                //获取最终含简单html标签的图文内容
+                var introHtml = $("#articleEditor").html();
+                if (introHtml == "") {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
+                    mui.toast("请填写训练营简介");
+                    return false;
+                };
 
-            if (logo == "") {
-                mui.toast('请上传训练营Logo');
-                return false;
-            } else if (banner == "") {
-                mui.toast('请上传训练营封面');
-                return false;
-            } else if (locationStr == "") {
-                mui.toast('请选择所属地区');
-                return false;
-            } else if (!(/^1[34578]\d{9}$/).test(camp_telephone)) {
-                mui.toast("请输入正确的手机格式");
-                return false;
-            } else if (camp_description == "") {
-                mui.toast("请填写训练营宣言");
-                return false;
-            };
-            //去除提示文字的标签
-            $("#articleEditor").children(".Eleditor-placeholder").remove();
-            //获取最终含简单html标签的图文内容
-            var introHtml = $("#articleEditor").html();
-            if (introHtml == "") {
-                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
-                mui.toast("请填写训练营简介");
-                return false;
-            };
-
-            mui.ajax("{:url('api/camp/updatecamp')}", {
-                data: {
-                    camp_id: campid,
-                    logo: logo,
-                    banner: banner,
-                    company: company,
-                    location: location_input,
-                    locationStr: locationStr,
-                    intro: introHtml,
-                    camp_description: camp_description,
-                    camp_telephone: camp_telephone
-                },
-                dataType: 'json',
-                type: 'post',
-                timeout: 10000,
-                headers: { 'Content-Type': 'application/json' },
-                success: function (res) {
-                    if (res.code == 200) {
-                        mui.alert("修改成功", function () {
-                            window.location.href = "{:url('camp/campsetting', ['camp_id' => $campInfo['id']])}";
-                        });
-                    } else {
-                        mui.alert(res.msg, function () {
-                            $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
-                        });
+                mui.ajax("{:url('api/camp/updatecamp')}", {
+                    data: {
+                        camp_id: campid,
+                        logo: logo,
+                        banner: banner,
+                        company: company,
+                        location: location_input,
+                        locationStr: locationStr,
+                        intro: introHtml,
+                        camp_description: camp_description,
+                        camp_telephone: camp_telephone
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (res) {
+                        if (res.code == 200) {
+                            mui.alert("修改成功", function () {
+                                window.location.href = "{:url('camp/campsetting', ['camp_id' => $campInfo['id']])}";
+                            });
+                        } else {
+                            mui.alert(res.msg, function () {
+                                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑训练营图文介绍</p>");
+                            });
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
+                });
             });
         });
-    });
 
-</script>
+    </script>
+
+    <script>
+        // 正方形
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        // 长方形
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=banner]").val(res.path)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
+    </script>
+</body>
 
 </html>
