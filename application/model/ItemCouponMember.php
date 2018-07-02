@@ -15,7 +15,7 @@ class ItemCouponMember extends Model {
 
 
     public function getStatusAttr($value){
-        $list = [1=>'未使用',2=>'已使用'];
+        $list = [1=>'未使用',2=>'已使用',3=>'已赠送'];
         return $list[$value];           
     }
 
