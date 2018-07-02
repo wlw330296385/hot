@@ -283,14 +283,14 @@ class ItemCoupon extends Base{
     public function receiveItemCouponApi(){
         try{
             $item_coupon_id = input('param.item_coupon_id');
-            $ItemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['id'=>$item_coupon_id]);
+            $ItemCouponMemberInfo = db('item_coupon_member')->where(['id'=>$item_coupon_id])->find();
             if(!$ItemCouponMemberInfo){
                 return json(['code'=>100,'msg'=>'查找不到该卡券']);
             }
             if($ItemCouponMemberInfo['member_id']==$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许领取自己的卡券']);
             }
-            if($ItemCouponMemberInfo['status'] != "未使用"){
+            if($ItemCouponMemberInfo['status'] <> 1){
                 return json(['code'=>100,'msg'=>'该卡券已被使用']);
             }
             // 新的卡券数据
