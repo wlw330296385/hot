@@ -290,7 +290,7 @@ class ItemCoupon extends Base{
             if($ItemCouponMemberInfo['member_id']==$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许领取自己的卡券']);
             }
-            if($ItemCouponMemberInfo['satus']<>1){
+            if($ItemCouponMemberInfo['status']<>1){
                 return json(['code'=>100,'msg'=>'该卡券已被使用']);
             }
             // 新的卡券数据

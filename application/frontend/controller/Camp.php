@@ -613,35 +613,32 @@ class Camp extends Base{
 
         if($campInfo['rebate_type'] == 2){//营业额版
             // 一个月的收益
-            $monthIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
+            $monthIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('type','not in',[3,4])->whereTime('create_time','m')->where('delete_time',null)->sum('income');
             $monthOutput1 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-                'not in',[-1,-2])->whereTime('create_time','m')->where('delete_time',null)->sum('output');
-            $monthOutput2 = 0;
-            // $monthOutput2 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-            //  3)->whereTime('schedule_time','m')->where('delete_time',null)->sum('output');
+                'not in',[1,3,-1,4])->whereTime('create_time','m')->where('delete_time',null)->sum('output');
             $monthOutput1 = $monthOutput1?$monthOutput1:0;
-            // $monthOutput2 = $monthOutput2?$monthOutput2:0;
-            $monthIncome = $monthIncome - $monthOutput1-$monthOutput2;
+            $monthIncome = $monthIncome?$monthIncome:0;
+            $monthIncome = $monthIncome - $monthOutput1;
 
             // 年收益
-            $yearIncome = db('income')->where(['camp_id'=>$campInfo['id']])->whereTime('create_time','y')->where('delete_time',null)->sum('income');
+            $yearIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('type','not in',[3,4])->whereTime('create_time','y')->where('delete_time',null)->sum('income');
             $yearOutput1 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-                'not in',[-1,-2])->whereTime('create_time','y')->where('delete_time',null)->sum('output');
-            $yearOutput2 = 0;
-            // $monthOutput2 = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-            //  3)->whereTime('schedule_time','m')->where('delete_time',null)->sum('output');
+                'not in',[1,3,-1,4])->whereTime('create_time','y')->where('delete_time',null)->sum('output');
+
             $yearOutput1 = $yearOutput1?$yearOutput1:0;
-            // $monthOutput2 = $monthOutput2?$monthOutput2:0;
-            $yearIncome = $yearIncome - $yearOutput1-$yearOutput2;
-
-
+            $yearIncome = $yearIncome?$yearIncome:0;
+            $yearIncome = $yearIncome - $yearOutput1;
             // 总收益
-            $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('income');
+            $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('type','not in',[3,4])->where('delete_time',null)->sum('income');
+            
             // 总支出
             $totalOuput = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-                'not in',[-1,-2,-3])->where('delete_time',null)->sum('output');
+                'not in',[1,3,-1,4])->where('delete_time',null)->sum('output');
+       
             $totalOuput = $totalOuput?$totalOuput:0;
+            $totalIncome = $totalIncome?$totalIncome:0;
             $totalIncome = $totalIncome - $totalOuput;
+
         }else{//课时版
             // 一个月的收益
             $monthIncome = db('income')->where(['camp_id'=>$campInfo['id'],'type'=>3])->whereTime('schedule_time','m')->where('delete_time',null)->sum('income');
@@ -695,6 +692,7 @@ class Camp extends Base{
         $monthBill = db('bill')->where(['camp_id'=>$campInfo['id'],'is_pay'=>1])->whereTime('pay_time','m')->sum('balance_pay');
         //本年营业额
         $yearBill = db('bill')->where(['camp_id'=>$campInfo['id'],'is_pay'=>1])->whereTime('pay_time','y')->sum('balance_pay');
+
         // 月在学会员
         $monthCampStudents = db('monthly_students')->where(['camp_id'=>$campInfo['id']])->limit(2)->select();
         //年教学会员
