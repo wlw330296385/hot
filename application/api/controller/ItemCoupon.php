@@ -282,8 +282,8 @@ class ItemCoupon extends Base{
     // 领取他人卡券API
     public function receiveItemCouponApi(){
         try{
-            $item_coupon_id = input('param.item_coupon_id');
-            $ItemCouponMemberInfo = db('item_coupon_member')->where(['id'=>$item_coupon_id])->find();
+            $item_coupon_member_id = input('param.item_coupon_member_id');
+            $ItemCouponMemberInfo = db('item_coupon_member')->where(['id'=>$item_coupon_member_id])->find();
             if(!$ItemCouponMemberInfo){
                 return json(['code'=>100,'msg'=>'查找不到该卡券']);
             }
@@ -304,7 +304,7 @@ class ItemCoupon extends Base{
             $data['create_time'] = $data['update_time'] = time();
             $res = db('item_coupon_member')->insert($data);
             if($res){
-                $result = db('item_coupon_member')->where(['id'=>$item_coupon_id])->update(['status'=>3,'to_member'=>$this->memberInfo['member'],'to_member_id'=>$this->memberInfo['id']]);
+                $result = db('item_coupon_member')->where(['id'=>$item_coupon_member_id])->update(['status'=>3,'to_member'=>$this->memberInfo['member'],'to_member_id'=>$this->memberInfo['id']]);
             }
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功']);
