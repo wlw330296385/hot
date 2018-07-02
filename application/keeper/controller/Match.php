@@ -764,4 +764,9 @@ class Match extends Base {
     public function integralList() {
         return view('Match/integralList');
     }
+
+    // 球队比分录入
+    public function recordScoreOfLeague() {
+        return view('Match/recordScoreOfLeague');
+    }
 }
