@@ -259,14 +259,16 @@ class ItemCoupon extends Base{
     public function presentItemCouponApi(){
         try{
             $item_coupon_id = input('param.item_coupon_id');
-            $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
-            if(!$itemCouponInfo){
+            $ItemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['id'=>$item_coupon_id]);
+            if(!$ItemCouponMemberInfo){
                 return json(['code'=>100,'msg'=>'查找不到该卡券']);
             }
             if($itemCouponInfo['member_id']<>$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许赠送他人卡券']);
             }
-            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>input('param.member_id'),'member'=>input('param.member'),'avatar'=>input('param.avatar'),'telephone'=>input('param.telephone')],['id'=>$item_coupon_id]);
+
+
+
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功']);
             }else{

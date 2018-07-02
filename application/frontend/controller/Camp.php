@@ -639,7 +639,7 @@ class Camp extends Base{
             $totalIncome = db('income')->where(['camp_id'=>$campInfo['id']])->where('delete_time',null)->sum('income');
             // 总支出
             $totalOuput = db('output')->where(['camp_id'=>$campInfo['id']])->where('type',
-                'not in',[-1,-2])->where('delete_time',null)->sum('output');
+                'not in',[-1,-2,-3])->where('delete_time',null)->sum('output');
             $totalOuput = $totalOuput?$totalOuput:0;
             $totalIncome = $totalIncome - $totalOuput;
         }else{//课时版
