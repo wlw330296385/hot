@@ -66,6 +66,11 @@
             font-size: 16px;
             margin: 13px 10px;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -85,13 +90,13 @@
 
             <form action="" class="mui-input-group mt55">
 
-                <div class="mui-input-row h-auto" id="logoframe">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>
                             <b>球队徽标</b>
                         </label>
-                        <img id="preview_1" class="logostyle mtnone bggray upload-preview" alt="">
-                        <input type="hidden" name="logo" value='' class="data">
+                        <div class="viewStyleSquare view "></div>
+                        <input type="hidden" name="logo" value="" class="data">
                     </a>
                 </div>
 
@@ -108,9 +113,8 @@
                             <i class="tip">*</i>
                         </label>
                         <span class="location-choise max">
-                            {eq name="onlycamptype" value="1"}
-                            训练营<input type="hidden" class="data" name="type" value="1">
-                            {else/}
+                            {eq name="onlycamptype" value="1"} 训练营
+                            <input type="hidden" class="data" name="type" value="1"> {else/}
                             <select id="teamType" class="data" name="type">
                                 <option value="">--请选择--</option>
                                 <option value="2">企事业单位</option>
@@ -215,10 +219,10 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                    <a href="#txpopover1" class="mui-navigate-right">
                         <label>球队封面</label>
-                        <img id="preview_2" class="upload-preview" alt="">
-                        <input type="hidden" name="cover" value='' class="data">
+                        <div class="viewStyle view1"></div>
+                        <input type="hidden" name="cover" value="" class="data">
                     </a>
                 </div>
 
@@ -485,6 +489,23 @@
         </div>
     </div>
 
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -499,6 +520,12 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -961,6 +988,63 @@
                 }
             });
         };
+    </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
     </script>
 </body>
 

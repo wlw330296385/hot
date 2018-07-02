@@ -68,11 +68,12 @@
             <input type="hidden" name="directentry" value="{$directentry}">
 
             <form action="" class="mui-input-group  mt55">
+
                 <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>活动封面</label>
-                        <img id="preview_1" class=" icon01 upload-preview" {eq name="directentry" value="1" } {else/} src="{$eventInfo.cover}" {/eq}
-                            alt="">
+                        <div class="viewStyle view" {eq name="directentry" value="1" } {else/} style="background-image: url('{$eventInfo.cover}')"
+                            {/eq}></div>
                         <input type="hidden" name="cover" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.cover}" {/eq} class="data">
                     </a>
                 </div>
@@ -215,7 +216,7 @@
                     <span class="course">活动详情</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro">{$eventInfo.event_des}</div>
+                <div id="articleEditor" class="tuwenIntro">{eq name="directentry" value="1" }{else/}{$eventInfo.event_des}{/eq}</div>
 
             </form>
 
@@ -243,6 +244,14 @@
         </div>
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -258,6 +267,13 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -304,38 +320,37 @@
 
                 // 获取省市区默认值
                 // 获取省索引值
-                function searchProvince(province) {
-                    for (var i = 0; i <= cityData3.length; i++) {
-                        if (cityData3[i].text == province) {
-                            return i;
-                        }
-                    }
-                }
-                //  获取市索引值
-                function searchCity(city) {
-                    for (var i = 0; i < cityData3.length; i++) {
-                        for (var j = 0; j < cityData3[i].children.length; j++) {
-                            if (cityData3[i].children[j].text == city) {
-                                return j;
-                            }
-                        }
-                    }
-                }
-                //  获取区索引值
-                function searchArea(area) {
-                    for (var i = 0; i < cityData3.length; i++) {
-                        for (var j = 0; j < cityData3[i].children.length; j++) {
-                            for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
-                                if (cityData3[i].children[j].children[k].text == area) {
-                                    return k;
-                                }
-                            }
-                        }
-                    }
-                }
-                cityPicker3.pickers[0].setSelectedIndex({ eq name = "directentry" value="1" }18{ else/}searchProvince("{$eventInfo.province}"){/eq });
-                cityPicker3.pickers[1].setSelectedIndex({ eq name = "directentry" value="1" }2{ else/}searchCity("{$eventInfo.city}"){/eq });
-                cityPicker3.pickers[2].setSelectedIndex({ eq name = "directentry" value="1" }0{ else/}searchArea("{$eventInfo.area}"){/eq });
+                // function searchProvince(province) {
+                //     for (var i = 0; i <= cityData3.length; i++) {
+                //         if (cityData3[i].text == province) {
+                //             return i;
+                //         }
+                //     }
+                // }
+                // //  获取市索引值
+                // function searchCity(city) {
+                //     for (var i = 0; i < cityData3.length; i++) {
+                //         for (var j = 0; j < cityData3[i].children.length; j++) {
+                //             if (cityData3[i].children[j].text == city) {
+                //                 return j;
+                //             }
+                //         }
+                //     }
+                // }
+                // //  获取区索引值
+                // function searchArea(area) {
+                //     for (var i = 0; i < cityData3.length; i++) {
+                //         for (var j = 0; j < cityData3[i].children.length; j++) {
+                //             for (var k = 0; k < cityData3[i].children[j].children.length; k++) {
+                //                 if (cityData3[i].children[j].children[k].text == area) {
+                //                     return k;
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
+                cityPicker3.pickers[0].setSelectedIndex(18);
+                cityPicker3.pickers[1].setSelectedIndex(2);
 
                 cityPicker3.setData(cityData3);
                 var showCityPickerButton = doc.getElementById('showCityPicker3');
@@ -687,6 +702,38 @@
             }
         };
 
+
+    </script>
+
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
 
     </script>
 </body>
