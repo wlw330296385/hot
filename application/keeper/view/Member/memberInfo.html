@@ -188,7 +188,6 @@
             <h1 class="mui-center mui-title">个人资料</h1>
         </div>
         <!--页面标题栏结束-->
-
         <!--页面主内容区开始-->
         <div class="mui-page-content">
             <div class="mui-scroll-wrapper">
@@ -205,7 +204,7 @@
                         <form action="" class="mui-input-group archives1 mb">
                             <div class="mui-input-row h-auto">
                                 <label>头像</label>
-                                <img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
+                                <div class="viewStyleSquare view" style="background-image: url('{$memberInfo.avatar}');margin-right:15px"></div>
                             </div>
                             <div class="mui-input-row">
                                 <label>会员ID</label>
@@ -283,8 +282,11 @@
                     <form action="" class="mui-input-group archives2 mb">
 
                         <div class="mui-input-row h-auto">
-                            <label>头像</label>
-                            <img src="{$memberInfo['avatar']}" alt="头像" style="margin-right: 18px">
+                            <a href="#txpopover">
+                                <label>头像</label>
+                                <div class="viewStyleSquare view" style="background-image: url('{$memberInfo.avatar}');margin-right:15px;"></div>
+                                <input type="hidden" name="avatar" value="{$memberInfo.avatar}" class="avatar">
+                            </a>
                         </div>
                         <div class="mui-input-row">
                             <label>会员ID</label>
@@ -349,6 +351,13 @@
         </div>
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js "></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -366,6 +375,13 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         mui.init();
         //初始化单页view
@@ -528,7 +544,9 @@
             var btnArray = ['取消', '确认'];
             mui.confirm('修改个人信息将会更新个人数据，是否确认修改？', '', btnArray, function (e) {
                 if (e.index == 1) {
+                    var avatar = $("#editor .avatar").val();
                     var member = $("#editor .member").val();
+                    console.log(member)
                     var sex = $("#editor .sex option:selected").val();
                     var height = $("#editor .height").text();
                     var weight = $("#editor .weight").text();
@@ -542,6 +560,7 @@
                     if (member != '' && sex != '' && height != '' && weight != '' && birthday != '') {
                         mui.ajax("{:url('api/member/updateMemberApi')}", {
                             data: {
+                                avatar: avatar,
                                 member: member,
                                 sex: sex,
                                 height: height,
@@ -561,7 +580,7 @@
                             success: function (data) {
                                 console.log(data)
                                 mui.toast(data.msg)
-                                window.setTimeout("location.reload(viewApi.back())", 2500);
+                                // window.setTimeout("location.reload(viewApi.back())", 2500);
                             },
                             error: function (xhr, type, errorThrown) {
                                 console.log(data);
@@ -576,6 +595,36 @@
                 }
             })
         })
+    </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=avatar]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
     </script>
 
 </body>

@@ -44,11 +44,19 @@
                     <a href="" class="mui-text-center f14 colorgreen direct">[直接录入活动]</a>
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
                         <label>活动封面</label>
                         <img id="preview_1" class="upload-preview" alt="">
                         <input type="hidden" name="cover" value='' class="data">
+                    </a>
+                </div> -->
+
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label>活动封面</label>
+                        <div class="viewStyle view"></div>
+                        <input type="hidden" name="cover" value="" class="data">
                     </a>
                 </div>
 
@@ -142,6 +150,14 @@
         </div>
     </div>
 
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -156,6 +172,12 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -291,8 +313,8 @@
                 return false;
             }
 
-             //去除提示文字的标签 
-             $("#articleEditor").children(".Eleditor-placeholder").remove();
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
             var introHtml = $("#articleEditor").html();
             $(".event_des").val(introHtml);
@@ -312,7 +334,7 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '创建失败',function(){
+                mui.alert(ajaxResult.msg, '创建失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -322,7 +344,37 @@
                 }, 'json');
             }
         };
+    </script>
 
+<script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
     </script>
 </body>
 

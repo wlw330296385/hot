@@ -71,6 +71,11 @@
             font-size: 16px;
             margin: 13px 10px;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
@@ -91,12 +96,12 @@
 
             <form action="" class="mui-input-group mt55">
 
-                <div class="mui-input-row h-auto" id="logoframe">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
                         <label>
                             <b>球队徽标</b>
                         </label>
-                        <img id="preview_1" class="logostyle mtnone upload-preview" src="{$teamInfo.logo}" alt="">
+                        <div class="viewStyleSquare view" style="background-image: url('{$teamInfo.logo}')"></div>
                         <input type="hidden" name="logo" value="{$teamInfo.logo}" class="data">
                     </a>
                 </div>
@@ -114,9 +119,8 @@
                             <i class="tip">*</i>
                         </label>
                         <span class="location-choise max">
-                            {eq name="onlycamptype" value="1"}
-                            训练营<input type="hidden" class="data" name="type" value="1">
-                            {else/}
+                            {eq name="onlycamptype" value="1"} 训练营
+                            <input type="hidden" class="data" name="type" value="1"> {else/}
                             <select id="teamType" class="data" name="type">
                                 <option value="">--请选择--</option>
                                 <option value="2">企事业单位</option>
@@ -204,7 +208,8 @@
                         <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names" id="vol"}{$vol.name},{/volist}</span>
                         <div id="hideCoList">
                             {volist name="roleslist.coach_names" id="vol"}
-                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
+                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}"
+                                data-id="{$vol.id}"> {/volist}
                         </div>
                         <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
                     </a>
@@ -233,7 +238,8 @@
                         <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.name},{/volist}</span>
                         <div id="hideCtList">
                             {volist name="roleslist.committee_names" id="vol"}
-                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
+                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}"
+                                data-id="{$vol.id}"> {/volist}
                         </div>
                         <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
                     </a>
@@ -279,10 +285,10 @@
                 </div>
 
                 <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
+                    <a href="#txpopover1" class="mui-navigate-right">
                         <label>球队封面</label>
-                        <img id="preview_2" class="upload-preview" src="{$teamInfo.cover}" alt="">
-                        <input type="hidden" name="cover" value="{$teamInfo.cover}" class="cover data">
+                        <div class="viewStyle view1" style="background-image: url('{$teamInfo.cover}')"></div>
+                        <input type="hidden" name="cover" value="{$teamInfo.cover}" class="data">
                     </a>
                 </div>
 
@@ -642,6 +648,22 @@
         </div>
     </div>
 
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -657,6 +679,12 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -914,7 +942,7 @@
                 $("input[name=manager_id]").val("");
                 mui("#manager").popover("toggle");
             });
-            
+
             // 选择队长
             $(".captainList").on('tap', 'li', function () {
                 var captain = $(this).text();
@@ -1209,7 +1237,7 @@
                 var member_id = $(this).attr("data-member_id");
                 var name = $(this).attr("data-name");
                 var id = $(this).attr("data-id");
-                coachMemberList.push({ member: member, member_id: member_id,name: name, id: id });
+                coachMemberList.push({ member: member, member_id: member_id, name: name, id: id });
             });
             console.log(coachMemberList)
 
@@ -1220,12 +1248,12 @@
                 var member_id = $(this).attr("data-member_id");
                 var name = $(this).attr("data-name");
                 var id = $(this).attr("data-id");
-                committeeMemberList.push({ member: member, member_id: member_id,name: name, id: id });
+                committeeMemberList.push({ member: member, member_id: member_id, name: name, id: id });
             });
             console.log(committeeMemberList)
-            
-             //去除提示文字的标签 
-             $("#articleEditor").children(".Eleditor-placeholder").remove();
+
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
             var introHtml = $("#articleEditor").html();
             $(".introduce").val(introHtml);
@@ -1251,7 +1279,7 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '修改失败',function(){
+                mui.alert(ajaxResult.msg, '修改失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑球队介绍</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -1363,7 +1391,7 @@
                 url: url,
                 data: {
                     team_id: team_id,
-                    status:1
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1400,7 +1428,7 @@
                 url: url,
                 data: {
                     team_id: team_id,
-                    status:1
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1437,7 +1465,7 @@
                 url: url,
                 data: {
                     team_id: team_id,
-                    status:1
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1465,6 +1493,64 @@
                 }
             });
         };
+    </script>
+    
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
     </script>
 </body>
 
