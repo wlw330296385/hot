@@ -288,7 +288,19 @@ class ItemCoupon extends Base{
             if($itemCouponInfo['member_id']==$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许领取自己的卡券']);
             }
-            $result = $this->ItemCouponService->updateItemCoupon(['member_id'=>$this->memberInfo['id'],'member'=>$this->memberInfo['member'],'avatar'=>$this->memberInfo['avatar'],'telephone'=>$this->memberInfo['telephone']],['id'=>$item_coupon_id]);
+
+            // 新的卡券数据
+            $data['item_coupon_id'] = $itemCouponInfo['id'];
+            $data['item_coupon'] = $itemCouponInfo['item_coupon'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['avatar'] = $this->memberInfo['avatar'];
+            $data['telephone'] = $this->memberInfo['telephone'];
+            $data['coupon_number'] = getTID($this->memberInfo['id']);
+            $res = $this->ItemCouponService->createItemCoupon($data);
+            if($res){
+                $result = $this->ItemCouponService->updateItemCoupon(['status'=>3,'to_member'=>$this->memberInfo['member'],'to_member_id'=>$this->memberInfo['id']],['id'=>$item_coupon_id]);
+            }
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功']);
             }else{
