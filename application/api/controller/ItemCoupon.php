@@ -281,25 +281,26 @@ class ItemCoupon extends Base{
     public function receiveItemCouponApi(){
         try{
             $item_coupon_id = input('param.item_coupon_id');
-            $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$item_coupon_id]);
-            if(!$itemCouponInfo){
+            $ItemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['id'=>$item_coupon_id]);
+            if(!$ItemCouponMemberInfo){
                 return json(['code'=>100,'msg'=>'查找不到该卡券']);
             }
-            if($itemCouponInfo['member_id']==$this->memberInfo['id']){
+            if($ItemCouponMemberInfo['member_id']==$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'不允许领取自己的卡券']);
             }
-
+            
             // 新的卡券数据
-            $data['item_coupon_id'] = $itemCouponInfo['id'];
-            $data['item_coupon'] = $itemCouponInfo['item_coupon'];
+            $data['item_coupon_id'] = $ItemCouponMemberInfo['item_coupon_id'];
+            $data['item_coupon'] = $ItemCouponMemberInfo['item_coupon'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['avatar'] = $this->memberInfo['avatar'];
             $data['telephone'] = $this->memberInfo['telephone'];
             $data['coupon_number'] = getTID($this->memberInfo['id']);
-            $res = $this->ItemCouponService->createItemCoupon($data);
+            $data['create_time'] = $data['update_time'] = time();
+            $res = db('item_coupon_member')->insert($data);
             if($res){
-                $result = $this->ItemCouponService->updateItemCoupon(['status'=>3,'to_member'=>$this->memberInfo['member'],'to_member_id'=>$this->memberInfo['id']],['id'=>$item_coupon_id]);
+                $result = db('item_coupon_member')->where(['id'=>$item_coupon_id])->update(['status'=>3,'to_member'=>$this->memberInfo['member'],'to_member_id'=>$this->memberInfo['id']]);
             }
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功']);
