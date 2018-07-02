@@ -17,8 +17,9 @@ class Coupon extends Base{
 
     public function itemCouponInfo(){
     	$itemCoupon_id = input('param.item_coupon_id');
+    	$itemCouponMember_id = input('param.itemCouponMember_id');
         $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
-        $itemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['item_coupon_id'=>$itemCoupon_id,'member_id'=>$this->memberInfo['id']]);
+        $itemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['id'=>$itemCouponMember_id]);
 
         $this->assign('itemCouponMemberInfo',$itemCouponMemberInfo);
         $this->assign('itemCouponInfo',$itemCouponInfo);
@@ -136,7 +137,7 @@ class Coupon extends Base{
             $power = $CampService->isPower($organization_id,$this->memberInfo['id']);
 
             if($power<1){
-                $this->error('请先加入一个训练营并成为兼职、教练、管理员或者创建训练营');
+                $this->error('请先加入一个训练营并成为兼职、管理员或者创建训练营');
             }
 
             $eventList = db('event')->where(['organization_id'=>$organization_id,'organization_type'=>$organization_type])->where('delete_time',null)->select();
@@ -153,5 +154,17 @@ class Coupon extends Base{
 
         $this->assign('organization_id',$organization_id);
         return view('Coupon/useCoupon');
+    }
+
+
+    public function itemCouponGift(){
+    	$itemCoupon_id = input('param.item_coupon_id');
+    	$itemCouponMember_id = input('param.itemCouponMember_id');
+        $itemCouponInfo = $this->ItemCouponService->getItemCouponInfo(['id'=>$itemCoupon_id]);
+        $itemCouponMemberInfo = $this->ItemCouponService->getItemCouponMemberInfo(['id'=>$itemCouponMember_id]);
+
+        $this->assign('itemCouponMemberInfo',$itemCouponMemberInfo);
+        $this->assign('itemCouponInfo',$itemCouponInfo);
+    	return view('Coupon/itemCouponGift');
     }
 }

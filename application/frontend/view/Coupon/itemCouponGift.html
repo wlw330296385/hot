@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>转赠礼品券</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .mui-backdrop{background-color:rgba(0,0,0,.5)}
+
+        #showSuccess {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+        #showSuccess h4,#showSuccess p{
+            color:#FFF;
+        }
+        #showSuccess button {
+            background-color: transparent;
+            color: #FFFFFF;
+            border: 1px solid #A2D470;
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">{$itemCouponInfo.member}赠送礼品券给您：</h1>
+	</header>
+    <div class="mui-content mt55">
+        <div id="showSuccess" class="bggreen">
+            <h4>恭喜您领取成功！</h4>
+            <p>请关注微信公众号【篮球管家】，<br />以便随时查看并使用您的卡券！</p>
+            <a href="{:url('frontend/Coupon/itemCouponList')}"><button type="button">查看卡券</button></a>
+        </div>
+        <div class="mui-card">
+                <div class="mui-card-header mui-card-media" style="height:40vw;background-image:url({$itemCouponInfo.image_url});background-repeat: no-repeat;background-position:center center;  
+                    background-size: cover;">
+                </div>
+                <div class="mui-card-content">
+                    <div class="mui-card-content-inner">
+                        
+                        <p style="color: black;font-weight: bold">{$itemCouponInfo.coupon}</p>
+                        <p style="color: black;font-weight: bolder;">{$itemCouponMemberInfo.coupon_number}</p>
+                        <p style="color: red;font-weight: bold">价值:  ￥{$itemCouponInfo.price}</p>
+                        <p style="color: #333;">{$itemCouponInfo.coupon_des}</p>
+
+                        <p style="color: red;" >{$itemCouponInfo.start} 至 {$itemCouponInfo.end}</p>
+                    </div>
+                </div>
+                <div class="mui-card-footer">
+                    <a class="mui-card-link" href="tel:{$itemCouponInfo.telephone}">联系电话:{$itemCouponInfo.telephone}</a>
+                </div>
+            </div>
+    </div>
+
+    <ul class="mui-table-view operation">
+        {if strtotime($itemCouponInfo.start) > time() || strtotime($itemCouponInfo.end) < time()}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true"  >已失效  </li>
+        {elseif $itemCouponMemberInfo.status == '未使用'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bgred useCard" data-itemCouponID="{$itemCouponInfo.id}"   data-itemCouponMemberID = "{$itemCouponMemberInfo.id}">领取礼券</li>
+        {elseif $itemCouponMemberInfo.status == '已使用'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true"  >已使用  </li>
+        {elseif $itemCouponMemberInfo.status == '已赠送'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true"  >已赠送</li>
+        {else /}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray" >已领取  </li>
+        {/if}
+    </ul>
+
+
+
+    <!--发送-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+</body>
+</html>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+
+<script type="text/javascript">
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+    $(function(){
+
+        //如果是赠送礼券显示显示引导页
+        var gift = wooApi.GetQueryString('gift');
+        if (gift == 1) {
+            mui('#shareGuide').popover('toggle')
+        }
+
+
+        $(document).on('tap','.useCard',function(){
+            var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
+            var r = confirm('确定领取该礼券吗?')
+            if(r===true){
+                var objData = {
+                    item_coupon_member_id:itemCouponMemberID
+                }
+                var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/receiveItemCouponApi')}", objData);
+                if(ajaxResult.code == 200){
+                    $(this).attr("disabled", true);
+                    $(this).removeClass("bgred");
+                    $(this).removeClass("useCard");
+                    $(this).text('已领取');
+                    $("#showSuccess").show();
+                    scrollTo(0,0);
+                }else{
+                    mui.alert(ajaxResult.msg);
+                }
+            }   
+
+            
+        });
+    })
+</script>
