@@ -383,6 +383,11 @@ class Match extends Base {
 
     // 联赛比赛详情
     public function matchInfoOfLeague() {
+        $id = input('match_id', 0, 'intval');
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $id]);
+
+        $this->assign('matchRecordInfo',$matchRecordInfo);
         return view('Match/matchInfoOfLeague');
     }
 
@@ -767,6 +772,16 @@ class Match extends Base {
 
     // 球队比分录入
     public function recordScoreOfLeague() {
+        // 获取比赛比分数据，没有则获取赛程数据
+        $id = input('match_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $id]);
+        if (!$recordInfo) {
+            $recordInfo = $leagueS->getMatchSchedule(['id' => $id]);
+        }
+
+        $this->assign('recordInfo', $recordInfo);
         return view('Match/recordScoreOfLeague');
     }
 }

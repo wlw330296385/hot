@@ -3244,16 +3244,12 @@ class League extends Base
                                 $score += 1;
                             }
                         }
-//                        if ($val['score'] > 0) {
-//                            $score += 1;
-//                        }
                         $_arr['score'] = $score;
                         $_arr['win_count'] = 0;
                         $_arr['lose_count'] = 0;
                         array_push( $_array['teams'], $_arr );
                     }
                 }
-                //$_array[ $value['team'] ][] = $value;
                 array_push($result, $_array);
             }
             if (!$result) {
@@ -3262,9 +3258,8 @@ class League extends Base
                 return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
             }
         } catch (Exception $e) {
-            //trace('error: ' . $e->getMessage(), 'error');
-            //return json(['code' => 100, 'msg' => $e->getMessage()]);
-            dump($e->getMessage());
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 }
