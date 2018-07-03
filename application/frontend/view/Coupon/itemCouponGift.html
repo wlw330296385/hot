@@ -117,26 +117,39 @@
 
 
         $(document).on('tap','.useCard',function(){
-            var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
-            var r = confirm('确定领取该礼券吗?')
-            if(r===true){
-                var objData = {
-                    item_coupon_member_id:itemCouponMemberID
-                }
-                var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/receiveItemCouponApi')}", objData);
-                if(ajaxResult.code == 200){
-                    $(this).attr("disabled", true);
-                    $(this).removeClass("bgred");
-                    $(this).removeClass("useCard");
-                    $(this).text('已领取');
-                    $("#showSuccess").show();
-                    scrollTo(0,0);
-                }else{
-                    mui.alert(ajaxResult.msg);
-                }
-            }   
+            var member_id = "{$memberInfo.id}";
 
-            
+            //判断是否会员
+            if (member_id == "0") {
+                mui.confirm('请先注册篮球管家会员再领取卡券，谢谢！', '提示', ['取消', '快速注册'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+
+            }else{
+
+                var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
+                var r = confirm('确定领取该礼券吗?')
+                if(r===true){
+                    var objData = {
+                        item_coupon_member_id:itemCouponMemberID
+                    }
+                    var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/receiveItemCouponApi')}", objData);
+                    if(ajaxResult.code == 200){
+                        $(this).attr("disabled", true);
+                        $(this).removeClass("bgred");
+                        $(this).removeClass("useCard");
+                        $(this).text('已领取');
+                        $("#showSuccess").show();
+                        scrollTo(0,0);
+                    }else{
+                        mui.alert(ajaxResult.msg);
+                    }
+                }
+
+            }
+
         });
     })
 </script>
