@@ -66,22 +66,28 @@
 
     		var itemCouponID = $(this).attr("data-itemCouponID");
     		var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
-    		var r = confirm('使用后不可在使用,确定使用吗?')
-    		if(r===true){
-	    		var objData = {
-	    			item_coupon_id:itemCouponID,
-	    			item_coupon_member_id : itemCouponMemberID
-	    		}
-	    		var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCoupon')}", objData);
-	    		if(ajaxResult.code == 200){
-	    			$(this).attr("disabled", true);
-	    			$(this).removeClass("bggreen");
-                    $(this).removeClass("useCard");
-	    			$(this).text('已使用');
-	    			
-	    		}
-	    		mui.toast(ajaxResult.msg);    			
-    		}
+
+
+            var currBtn = $(this);
+            mui.confirm('确定使用该卡券吗?', '提示', ['取消', '确定'], function (e) {
+                if (e.index === 1) {
+                    var objData = {
+                        item_coupon_id:itemCouponID,
+                        item_coupon_member_id : itemCouponMemberID
+                    }
+                    var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCoupon')}", objData);
+                    if(ajaxResult.code == 200){
+                        currBtn.attr("disabled", true);
+                        currBtn.removeClass("bggreen");
+                        currBtn.removeClass("useCard");
+                        currBtn.text('已使用');
+                        currBtn.parent().find(".giftCoupon").hide();
+                    }else{
+                        mui.toast(ajaxResult.msg);
+                    }
+                }
+            });
+
     	})
 
         //初始化全局变量
