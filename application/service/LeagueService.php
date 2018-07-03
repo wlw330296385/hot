@@ -9,6 +9,7 @@ use app\model\MatchGroupTeam;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
+use app\model\MatchRank;
 use app\model\MatchSchedule;
 use app\model\MatchStage;
 use app\model\MatchTeam;
@@ -910,6 +911,19 @@ class LeagueService
         return $result;
     }
 
+    public function getMatchStages($map) {
+        $model = new MatchStage();
+        $res = $model->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
+    }
+
     // 获取比赛阶段列表（页码）
     public function getMatchStagePaginator($map, $order = 'id desc', $limit = 10)
     {
@@ -943,5 +957,16 @@ class LeagueService
     public function delMatchStage($data, $force = false)
     {
         return MatchStage::destroy($data, $force);
+    }
+
+    // 获取联赛积分数据
+    public function getMatchRanks($data) {
+        $model = new MatchRank();
+        $res = $model->where($data)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
     }
 }
