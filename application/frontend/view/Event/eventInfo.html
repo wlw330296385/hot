@@ -157,7 +157,8 @@
             <li class="mui-table-view-cell mui-col-xs-2 opli">
                 <a href="#shareGuide">分享</a>
             </li>
-            {switch name="variable"} {case value='1'}
+            {switch name="variable"}
+            {case value='1'}
             <!--报名状态-->
             <li class="mui-table-view-cell mui-col-xs-2 opli">
                 <a href="tel:{$eventInfo.telephone}">
@@ -166,20 +167,29 @@
             </li>
             <li class="mui-table-view-cell mui-col-xs-4 opli ">剩余
                 <font class="surplus colororange"></font>名额</li>
-            {if empty($EventMemberList)}
-            <li class="mui-table-view-cell mui-col-xs-2 opli bggreen signupbtn">报名</li>
+            {if empty($EventMemberList)||$eventInfo.is_repeat==1}
+                {if $eventInfo.apps_form==1}
+            <li class="mui-table-view-cell mui-col-xs-2 opli bggreen"><a href="{$eventInfo.apps_form_url}">报名</a></li>
+                {else /}
+                    <li class="mui-table-view-cell mui-col-xs-2 opli bggreen signupbtn">报名</li>
+                {/if}
             {else /}
             <li class="mui-table-view-cell mui-col-xs-2 opli ">已报名</li>
-            {/if} {/case} {case value='3'}
+            {/if}
+            {/case}
+            {case value='3'}
             <!--报名人数已满-->
             <li class="mui-table-view-cell mui-col-xs-8 opli bggray">报名人数已满</li>
-            {/case} {case value='2'}
+            {/case}
+            {case value='2'}
             <!--已下架-->
             <li class="mui-table-view-cell mui-col-xs-8 opli bggray">已下架</li>
-            {/case} {case value='4'}
+            {/case}
+            {case value='4'}
             <!--已过期-->
             <li class="mui-table-view-cell mui-col-xs-8 opli bggray">已过期</li>
-            {/case} {/switch}
+            {/case}
+            {/switch}
         </ul>
     </div>
 
@@ -308,7 +318,7 @@
 
                 var mID = "{$memberInfo.id}";
                 if (mID <= 0) {
-                    var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
+                    //var btnArray = ['取消', "<a href='{$fasturl}' style='color:#007aff'>前往完善</a>"];
                     mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                         if (e.index === 1) {
                             window.location.href = "{$fasturl}";

@@ -193,18 +193,6 @@
                     <input type="text" name="telephone" class="data telephoneBlur" value="" placeholder="请输入联系电话">
                 </div>
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>生效状态</label>
-                        <span class="select-row freeStatus">
-                            <select class="data" name="status">
-                                <option value="2">默认下架</option>
-                                <option value="1">上架</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
                 <div class="mui-input-row h-auto">
                     <a href="#txpopover" class="mui-navigate-right">
                         <label>活动封面</label>
@@ -222,6 +210,31 @@
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro border-b"></div>
 
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select class="data" name="status">
+                                <option value="2">默认下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>可重复报名</label>
+                        <span class="select-row">
+                            <select class="data" name="is_repeat">
+                                <option value="-1">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>填表（定制项）</label>
@@ -237,6 +250,11 @@
                 <div class="mui-input-row h-auto apps_des" style="display: none">
                     <label>填表说明</label>
                     <textarea name="apps_des" class="data" style="text-align: left"></textarea>
+                </div>
+
+                <div class="mui-input-row apps_form_url" style="display: none">
+                    <label>填表网址</label>
+                    <input type="text" name="apps_form_url" class="data" value="" placeholder="请输入填表网址">
                 </div>
 
             </form>
@@ -483,13 +501,14 @@
             var pageLD = 1;
             toStudentList(StudentKeyword, wStudents, 1);
 
-
             // 选择是否需要填表
             $("#apps_form").change(function () {
                 if ($(this).children('option:selected').val() == '-1') {
                     $(".apps_des").hide();
+                    $(".apps_form_url").hide();
                 } else {
                     $(".apps_des").show();
+                    $(".apps_form_url").show();
                     var h = $(document).height() - $(window).height();
                     $(document).scrollTop(h);
                 }
@@ -675,6 +694,16 @@
                 return false;
             };
 
+
+            // 判断是否需要填表
+            if ($("#apps_form").children('option:selected').val() == '1') {
+                var appsFormUrl = $(".apps_form_url").val();
+                if(IsURL(appsFormUrl)==false){
+                    mui.alert("请输入合法填表网址");
+                    return false;
+                }
+            }
+
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
@@ -839,6 +868,18 @@
                 }
             });
         };
+
+        //判断网址是否合法
+        function IsURL (urlString) {
+            if(urlString!=""){
+                var reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+                if(!reg.test(urlString)){
+                    return false
+                }
+            }else{
+                return false
+            }
+        }
     </script>
     <script>
         var pc = new PhotoClip('.clipArea', {

@@ -222,6 +222,29 @@
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro border-b">{$eventInfo.event_des}</div>
 
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>生效状态</label>
+                        <span class="select-row freeStatus">
+                            <select class="data" name="status">
+                                <option value="2">下架</option>
+                                <option value="1">上架</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>可重复报名</label>
+                        <span class="select-row">
+                            <select id="is_repeat" class="data" name="is_repeat">
+                                <option value="-1">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
 
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -238,6 +261,11 @@
                 <div class="mui-input-row h-auto apps_des" style="display: none">
                     <label>填表说明</label>
                     <textarea name="apps_des" class="data" style="text-align: left">{$eventInfo.apps_des}</textarea>
+                </div>
+
+                <div class="mui-input-row apps_form_url" style="display: none">
+                    <label>填表网址</label>
+                    <input type="text" name="apps_form_url" class="data" value="{$eventInfo.apps_form_url}" placeholder="请输入填表网址">
                 </div>
 
             </form>
@@ -515,13 +543,14 @@
             toCampGradeList(); //调用训练营班级列表
             isFree();  //判断是否收费显示data
 
-
             // 选择是否需要填表
             $("#apps_form").change(function () {
                 if ($(this).children('option:selected').val() == '-1') {
                     $(".apps_des").hide();
+                    $(".apps_form_url").hide();
                 } else {
                     $(".apps_des").show();
+                    $(".apps_form_url").show();
                     var h = $(document).height() - $(window).height();
                     $(document).scrollTop(h);
                 }
@@ -558,11 +587,25 @@
             $('#eventType option[value="{$eventInfo.event_type}"]').prop("selected", true);
             // 设置收费默认值
             $('#eventPrice option[value="{$eventInfo.is_free}"]').prop("selected", true);
+            // 设置是否重复报名
+            $('#is_repeat option[value="{$eventInfo.is_repeat}"]').prop("selected", true);
             // 设置是否填表默认值
             $('#apps_form option[value="{$eventInfo.apps_form}"]').prop("selected", true);
             if ("{$eventInfo.apps_form}" == "1") {
                 $(".apps_des").show();
+                $(".apps_form_url").show();
             }
+            //设置默认生效状态
+            var eStatus = "{$eventInfo.status}";
+            if(eStatus=="正常"){
+                $('select[name="status"] option[value="1"]').prop("selected", true);
+            }else{
+                $('select[name="status"] option[value="2"]').prop("selected", true);
+            }
+
+
+
+
             // 是否满额中文转数字
             //            var is_max = "{$eventInfo.is_max}";
             //            if(is_max=="已满人"){
@@ -759,6 +802,15 @@
                 return false;
             };
 
+            // 判断是否需要填表
+            if ($("#apps_form").children('option:selected').val() == '1') {
+                var appsFormUrl = $("input[name=apps_form_url]").val();
+                if(IsURL(appsFormUrl)==false){
+                    mui.alert("请输入合法填表网址");
+                    return false;
+                }
+            }
+
             //判断是否修改最大人数，如加大了需要改变is_max为1，如改小了需要判断不能小于已报人人数
             var currMax = parseInt($("input[name='max']").val());
             var orgParticipator = parseInt($("input[name='org_participator']").val());
@@ -941,6 +993,18 @@
                 }
             });
         };
+
+        //判断网址是否合法
+        function IsURL (urlString) {
+            if(urlString!=""){
+                var reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+                if(!reg.test(urlString)){
+                    return false
+                }
+            }else{
+                return false
+            }
+        }
     </script>
 
     <script>
