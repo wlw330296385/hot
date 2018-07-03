@@ -42,23 +42,22 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="match" value="{matchScheduleInfo.match}" class="data">
         <input type="hidden" name="match_id" value="{matchScheduleInfo.match_id}" class="data">
-        <input type="hidden" name="id" value="{matchScheduleInfo.id}" class="data">
-
-        <!-- 检测 -->
-        <input type="hidden" name="check_court_time" value="0" class="data">
-        <input type="hidden" name="check_referee" value="0" class="data">
-        <input type="hidden" name="check_scorers" value="0" class="data">
+        <input type="hidden" name="league_id" value="{$league_id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
                 <label>主队</label>
-                <input type="text" name="home_team_id" value="" class="data" placeholder="请填写比分">
+                <input type="text" name="home_score" value="" class="data" placeholder="请填写主队比分">
+                <input type="hidden" name="home_team" value="" class="data">
+                <input type="hidden" name="home_team_id" value="" class="data">
             </div>
 
             <div class="mui-input-row">
                 <label>客队</label>
-                <input type="text" name="away_team_id" value="" class="data" placeholder="请填写比分">
+                <input type="text" name="away_score" value="" class="data" placeholder="请填写客队比分">
+                <input type="hidden" name="away_team" value="" class="data">
+                <input type="hidden" name="away_team_id" value="" class="data">
             </div>
 
             <div class="mui-input-row">
@@ -89,23 +88,23 @@
                 </span>
             </div>
             <div class="mui-input-row">
-                <a href="#referee1" class="mui-navigate-right">
-                    <label>主裁判</label>
-                    <span class="referee1 domData" name="referee1_name" style="width: 60%"></span>
+                <a href="#referee" class="mui-navigate-right refereeTap">
+                    <label data-num="1">主裁判</label>
+                    <span class="domData" name="referee1_name" style="width: 60%"></span>
                     <input type="hidden" name="referee1_id" value="" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
-                <a href="#referee2" class="mui-navigate-right">
-                    <label>副裁判</label>
-                    <span class="referee2 domData" name="referee2_name" style="width: 60%"></span>
+                <a href="#referee" class="mui-navigate-right refereeTap">
+                    <label data-num="2">副裁判</label>
+                    <span class="domData" name="referee2_name" style="width: 60%"></span>
                     <input type="hidden" name="referee2_id" value="" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
-                <a href="#referee3" class="mui-navigate-right">
-                    <label>副裁判</label>
-                    <span class="referee3  domData" name="referee3_name" style="width: 60%"></span>
+                <a href="#referee" class="mui-navigate-right refereeTap">
+                    <label data-num="3">副裁判</label>
+                    <span class="domData" name="referee3_name" style="width: 60%"></span>
                     <input type="hidden" name="referee3_id" value="" class="data">
                 </a>
             </div>
@@ -116,7 +115,7 @@
                 </div>
                 <div class="box" id="inactiveList"> </div>
                 <div class="box" id="hideStList" style="display: none"></div>
-            
+
 
                 <div class="operation-btn">
                     <span class="mui-badge">0</span>
@@ -127,7 +126,7 @@
                 </div>
                 <input type="hidden" class="data" name="scorers" value="">
             </div>
-           
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -170,54 +169,21 @@
             </div>
         </div>
     </div>
+
     <!--裁判列表-->
-    <div id="referee1" class="mui-popover" style="margin: 0">
+    <div id="referee" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd45">
                 <strong>裁判列表</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn" id="RefereeDel1">清除</button>
+                <button class="mui-btn" id="RefereeDel">清除</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list refereeList refereeList1"></ul>
-            </div>
-        </div>
-    </div>
-    <!--裁判列表-->
-    <div id="referee2" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd45">
-                <strong>裁判列表</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="RefereeDel2">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list refereeList refereeList2"></ul>
-            </div>
-        </div>
-    </div>
-    <!--裁判列表-->
-    <div id="referee3" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd45">
-                <strong>裁判列表</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="RefereeDel3">清除</button>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list refereeList refereeList3"></ul>
+                <ul class="mui-table-view list refereeList"></ul>
             </div>
         </div>
     </div>
@@ -292,11 +258,6 @@
         })(mui, document);
 
         let league_id = "{$league_id}";
-        let court_id = "{matchScheduleInfo.court_id}";
-        let match_time = "{matchScheduleInfo.match_time}";
-        let referee1_id = "{matchScheduleInfo.referee1_id}";
-        let referee2_id = "{matchScheduleInfo.referee2_id}";
-        let referee3_id = "{matchScheduleInfo.referee3_id}";
         $(function () {
             var courtKeyword = '';
             var wCourt = '';
@@ -347,61 +308,46 @@
                 }
             });
 
+            //////////////////////////////////////////////////////////////////////
             // 选择裁判
-            $(".refereeList1").on('tap', 'li', function () {
-                var referee = $(this).text();
+            $(".refereeTap").on("tap", "", function () {
+                let dataNum = $(this).find("label").attr("data-num");
+                $(".refereeList li").attr("data-num", dataNum);
+            })
+            $(".refereeList").on('tap', 'li', function () {
+                let page_referee1_id = $("input[name=referee1_id]").val();
+                let page_referee2_id = $("input[name=referee2_id]").val();
+                let page_referee3_id = $("input[name=referee3_id]").val();
+                let referee = $(this).text();
+                let referee_id = $(this).attr("data-referee_id");
+                let liNum = $(this).attr("data-num");
                 var referee1_id = $(this).attr("data-referee_id");
-                if (referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
+                if (referee1_id == page_referee1_id || referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
                 }
-                $(".referee1").text(referee);
-                $("input[name=referee1_id]").val(referee1_id);
-                mui("#referee1").popover("toggle");
+                $(".refereeTap").each(function () {
+                    let datanum = $(this).find("label").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text(referee);
+                        $(this).find("input").val(referee_id);
+                        mui("#referee").popover("toggle");
+                    }
+                })
             });
             //清除
-            $("#RefereeDel1").on('tap', '', function () {
-                $(".referee1").text('');
-                $("input[name=referee1_id]").val("");
-                mui("#referee1").popover("toggle");
+            $("#RefereeDel").on('tap', '', function () {
+                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
+                $(".refereeTap").each(function () {
+                    let datanum = $(this).find("label").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text('');
+                        $(this).find("input").val('');
+                        mui("#referee").popover("toggle");
+                    }
+                })
             });
-            // 选择裁判
-            $(".refereeList2").on('tap', 'li', function () {
-                var referee = $(this).text();
-                var referee2_id = $(this).attr("data-referee_id");
-                if (referee2_id == page_referee1_id || referee2_id == page_referee3_id) {
-                    mui.toast("裁判已选择,请选择其他裁判");
-                    return false;
-                }
-                $(".referee2").text(referee);
-                $("input[name=referee2_id]").val(referee2_id);
-
-                mui("#referee2").popover("toggle");
-            });
-            //清除
-            $("#RefereeDel2").on('tap', '', function () {
-                $(".referee2").text('');
-                $("input[name=referee2_id]").val("");
-                mui("#referee2").popover("toggle");
-            });
-            // 选择裁判
-            $(".refereeList3").on('tap', 'li', function () {
-                var referee = $(this).text();
-                var referee3_id = $(this).attr("data-referee_id");
-                if (referee3_id == page_referee1_id || referee3_id == page_referee2_id) {
-                    mui.toast("裁判已选择,请选择其他裁判");
-                    return false;
-                }
-                $(".referee3").text(referee);
-                $("input[name=referee3_id]").val(referee3_id);
-                mui("#referee3").popover("toggle");
-            });
-            //清除
-            $("#RefereeDel3").on('tap', '', function () {
-                $(".referee3").text('');
-                $("input[name=referee3_id]").val("");
-                mui("#referee3").popover("toggle");
-            });
+            //////////////////////////////////////////////////////////////////////
 
             //全选
             $(".all").on('tap', function () {
@@ -461,7 +407,7 @@
                 $(".mui-badge").text(totalNum);
             });
 
-         
+
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -510,7 +456,7 @@
 
 
         //场地列表接口获取数据并追加到页面 
-        var toCourtList = function (keyword, wCourt, page) {
+        function toCourtList(keyword, wCourt, page) {
             var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
             var wCourtList = "ul.courtList";
             var currPage = ".currPage";
@@ -622,12 +568,9 @@
                     mui.toast('网络异常,请稍候再试');
                 }
             });
-           
+
         };
 
-        let page_referee1_id = $("input[name=referee1_id]").val();
-        let page_referee2_id = $("input[name=referee2_id]").val();
-        let page_referee3_id = $("input[name=referee3_id]").val();
         // 获取数据并进行提交
         function submitAction() {
 
