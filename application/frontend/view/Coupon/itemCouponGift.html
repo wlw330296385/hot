@@ -19,6 +19,10 @@
             padding: 20px;
             text-align: center;
         }
+        #showSuccess img{
+            margin-top: 10px;
+            width: 50%;
+        }
         #showSuccess h4,#showSuccess p{
             color:#FFF;
         }
@@ -39,7 +43,8 @@
     <div class="mui-content mt55">
         <div id="showSuccess" class="bggreen">
             <h4>恭喜您领取成功！</h4>
-            <p>请关注微信公众号【篮球管家】，<br />以便随时查看并使用您的卡券！</p>
+            <p>请关注微信公众号【篮球管家】<br />以便随时查看并使用您的卡券！</p>
+            <p><img src="/static/frontend/images/qrcode_hot.jpg" /> </p>
             <a href="{:url('frontend/Coupon/itemCouponList')}"><button type="button">查看卡券</button></a>
         </div>
         <div class="mui-card">
@@ -93,6 +98,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 
 <script type="text/javascript">
     //初始化
@@ -133,4 +139,43 @@
             
         });
     })
+</script>
+<script>
+    wx.config({
+        //debug: true,
+        appId: "{$jsapi['appId']}",
+        timestamp: "{$jsapi['timestamp']}",
+        nonceStr: "{$jsapi['nonceStr']}",
+        signature: "{$jsapi['signature']}",
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ'
+        ]
+    });
+    wx.ready(function () {
+        // 分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: '{$itemCouponInfo.member}给您赠送礼品券',
+            desc: '{$itemCouponInfo.coupon}',
+            link: "{:request()->root(true)}{:request()->baseUrl()}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}{$itemCouponInfo.image_url}",
+            success: function () { },
+            cancel: function () { }
+        });
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '{$itemCouponInfo.member}给您赠送礼品券',
+            desc: '{$itemCouponInfo.coupon}',
+            link: "{:request()->root(true)}{:request()->baseUrl()}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}{$itemCouponInfo.image_url}",
+            type: "",
+            dataUrl: '',
+            success: function () { },
+            cancel: function () { }
+        });
+
+    });
 </script>
