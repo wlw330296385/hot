@@ -54,46 +54,52 @@ class Refund extends Backend{
         if(request()->isPost()){
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $action = input('param.action');//2=同意,3=同意并打款,4=已打款;
-            
+            $action = input('param.action',4);//2=同意,3=同意并打款,4=已打款;
+            $refund = input('param.refund');//实际退费
             $Refund = new \app\model\Refund;
             $refundInfo = $Refund->where(['id'=>$refund_id])->find();
             if(!$refundInfo){
                 $this->error('传参错误,找不到退款信息');
             }
             $refundamount = $refundInfo['refundamount'];
-            if($refundInfo['rebate_type'] <> 1){//课时版
-                $this->error('非课时版训练营不允许操作');
+            if($refund>$refundamount){
+                $this->error('实际退款不允许大于可退款');
+            }
+            if($refundInfo['status'] <> 2){//课时版
+                $this->error('训练营未同意退款,不允许操作');
             }
             
-            
-            if($action == 4) {
-                //训练营课时版收入
-                $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
-                $refund = $refundamount*(1-$campInfo['refund_rebate']);//实际退费
-                $refund_fee = $refundamount*$campInfo['refund_rebate'];//手续费
-            
-                
-                // db('income')->insert([
-                //     'income'        => $income,
-                //     'camp_id'       => $refundInfo['camp_id'],
-                //     'camp'          => $refundInfo['camp'],
-                //     'member_id'     => $refundInfo['member_id'],
-                //     'member'        => $refundInfo['member'],
-                //     'type'          => 5,
-                //     'e_balance'     =>($campInfo['balance'] + $income),
-                //     's_balance'     =>$campInfo['balance'],
-                //     'f_id'          =>$refundInfo['id'],
-                //     'student_id'    =>$refundInfo['student_id'],
-                //     'student'       =>$refundInfo['student'],
-                //     'system_remarks'=>$remarks,
-                //     'create_time'   => time(),
-                //     'update_time'   => time(),
-                // ]);
-                // 增加训练营营业额
-                // db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
-                $Refund->save(['status'=>3,'rebate_type'=>$campInfo['rebate_type'],'refund_rebate'=>$campInfo['refund_rebate'],'refund'=>$refund,'refund_fee'=>$refund_fee],['id'=>$refund_id]);
+            if($refundInfo['rebate_type']<>1){
+                $this->error('非课时版训练营,不允许操作');
             }
+            $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
+            // if($action == 4) {
+            // 训练营课时版收入
+            $income = ($refundamount-$refund)*(1-$refundInfo['refund_rebate']);//实际退费
+            $refund_fee = $refund*$refundInfo['refund_rebate'];//手续费
+        
+            
+            db('income')->insert([
+                'income'        => $income,
+                'camp_id'       => $refundInfo['camp_id'],
+                'camp'          => $refundInfo['camp'],
+                'member_id'     => $refundInfo['member_id'],
+                'member'        => $refundInfo['member'],
+                'type'          => 5,
+                'e_balance'     =>($campInfo['balance'] + $income),
+                's_balance'     =>$campInfo['balance'],
+                'f_id'          =>$refundInfo['id'],
+                'student_id'    =>$refundInfo['student_id'],
+                'student'       =>$refundInfo['student'],
+                'system_remarks'=>$remarks,
+                'create_time'   => time(),
+                'update_time'   => time(),
+            ]);
+            // 增加训练营营业额
+            db('camp')->where(['id'=>$refundInfo['camp_id']])->inc('balance',$income)->update();
+            $result = $Refund->save(['status'=>3,'rebate_type'=>$campInfo['rebate_type'],'refund_rebate'=>$campInfo['refund_rebate'],'refund'=>$refund,'refund_fee'=>$refund_fee],['id'=>$refund_id]);
+            // }
+            
             $this->success('操作成功');    
         }else{
             $Refund = new \app\model\Refund;

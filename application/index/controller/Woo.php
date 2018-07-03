@@ -12,12 +12,13 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $list = db('salary_in')->field('salary_in.schedule_id,salary_in.create_time,salary_in.id,schedule.finish_settle_time')->join('schedule','schedule.id = salary_in.schedule_id')->order('salary_in.id desc')->select();
-        dump($list);die;
-        foreach ($list as $key => $value) {
-            db('salary_in')->where(['id'=>$value['id']])->update(['create_time'=>$value['finish_settle_time']]);
-        }
-        
+        $a = db('income')->where(['camp_id'=>9])->where('type',1)->where('create_time','between time',['2018-1-1','2018-1-31'])->where('delete_time',null)->sum('balance_pay');
+        $b = db('bill')->where(['camp_id'=>9])->where('goods_type',1)->where('create_time','between time',['2018-1-1','2018-1-31'])->where('delete_time',null)->sum('balance_pay');
+        // dump(db('bill')->getlastsql());
+        echo '收入流水2017-12月';   
+        dump($a);
+        echo '订单收入2017-12月'; 
+        dump($b);
     }
 
 

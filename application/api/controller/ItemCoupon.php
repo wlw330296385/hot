@@ -296,6 +296,8 @@ class ItemCoupon extends Base{
             // 新的卡券数据
             $data['item_coupon_id'] = $ItemCouponMemberInfo['item_coupon_id'];
             $data['item_coupon'] = $ItemCouponMemberInfo['item_coupon'];
+            $data['from_member'] = $ItemCouponMemberInfo['member'];
+            $data['from_member_id'] = $ItemCouponMemberInfo['member_id'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['avatar'] = $this->memberInfo['avatar'];
