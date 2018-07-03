@@ -115,7 +115,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    page:page,
+                    page: page,
                     league_id: league_id
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -138,7 +138,11 @@
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var dataSchedule = data.data[i].stage.schedules[j]
-                                var Ttime = gettimeh(dataSchedule.match_timestamp * 1000);
+                                if (dataSchedule.match_timestamp == '') {
+                                    var Ttime = "待定"
+                                } else {
+                                    var Ttime = gettimeh(dataSchedule.match_timestamp * 1000);
+                                }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id;
                                 newli += `<li class="mui-table-view-cell listli">
                                                 <a href="${urls}"><div class="mui-media-body wd">
@@ -147,10 +151,13 @@
                                                     <p class="f14">
                                                         <img class="img24" src="${dataSchedule.away_team_logo}" alt="">${dataSchedule.away_team}</p>
                                                 </div>
-                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
-                                                    <p style="line-height:62px;">${Ttime}</p>
-                                                </div>
-                                            </a></li>`;
+                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
+                                if (dataSchedule.match_group_id == '') {
+                                    newli += `<p style="line-height:62px;">${Ttime}</p>`
+                                } else {
+                                    newli += `<p style="line-height:32px;">${dataSchedule.match_group}</p><p style="line-height:32px;">${Ttime}</p>`
+                                }
+                                newli += `</div></a></li>`
                             }
                             newli += `</ul>`
                         }

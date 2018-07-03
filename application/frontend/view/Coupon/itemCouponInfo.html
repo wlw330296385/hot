@@ -40,21 +40,27 @@
                 </div>
                 <div class="mui-card-footer">
                     <a class="mui-card-link" href="tel:{$itemCouponInfo.telephone}">联系电话:{$itemCouponInfo.telephone}</a>
-                    <a class="mui-card-link">
 
-                        {if strtotime($itemCouponInfo.start) > time() || strtotime($itemCouponInfo.end) < time()}
-                            <button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已失效  </button>
-                        {elseif $itemCouponMemberInfo.status == '未使用'}
-                        <button type="button" class="mui-btn mui-btn-danger useCard" data-itemCouponID="{$itemCouponInfo.id}"   data-itemCouponMemberID = "{$itemCouponMemberInfo.id}"   >立即使用  </button>
-                        {elseif $itemCouponMemberInfo.status == '已使用'}
-                        <button type="button" class="mui-btn mui-btn-danger"  disabled="true"  >已使用  </button>
-                        {else /}
-                        <button type="button" class="mui-btn tipsbuy" >未领取  </button>
-                        {/if} 
-                    </a>
+                    {if $itemCouponMemberInfo.status == '未使用'&&(strtotime($itemCouponInfo.start) < time()&&strtotime($itemCouponInfo.end) > time())}
+                    <a href="{:url('/frontend/Coupon/itemCouponGift',['item_coupon_id'=>$itemCouponInfo.id,'itemCouponMember_id'=>$itemCouponMemberInfo.id])}?gift=1">赠送好友</a>
+                    {/if}
                 </div>
             </div>
     </div>
+
+    <ul class="mui-table-view operation">
+        {if strtotime($itemCouponInfo.start) > time() || strtotime($itemCouponInfo.end) < time()}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true">已失效</li>
+        {elseif $itemCouponMemberInfo.status == '未使用'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggreen useCard" data-itemCouponID="{$itemCouponInfo.id}" data-itemCouponMemberID="{$itemCouponMemberInfo.id}">立即使用</li>
+        {elseif $itemCouponMemberInfo.status == '已使用'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray" disabled="true">已使用</li>
+        {elseif $itemCouponMemberInfo.status == '已赠送'}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray" disabled="true">已赠送 {$itemCouponMemberInfo.to_member}</li>
+        {else /}
+        <li class="mui-table-view-cell mui-col-xs-12 opli bgred tipsbuy" >未领取  </li>
+        {/if}
+    </ul>
 </body>
 </html>
 

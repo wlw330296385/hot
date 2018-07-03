@@ -28,6 +28,19 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
+
+        .mui-popover {
+            left: 0;
+            right: 0;
+            top: 130px;
+            width: 80%;
+            margin: 0 auto;
+            position: absolute;
+        }
+
+        .mui-popover .mui-popover-arrow {
+            display: none;
+        }
     </style>
 </head>
 
@@ -50,7 +63,7 @@
                     <span class="course">赛程1</span>
                 </div>
                 <div class="mui-input-row">
-                    <a href="#HomeTeam" class="mui-navigate-right">
+                    <a class="mui-navigate-right" onclick="HomeTeam(this)">
                         <label>主队</label>
                         <span class="HomeTeam" style="width: 60%"></span>
                         <input type="hidden" name="home_team_id" value="" class="data">
@@ -85,47 +98,7 @@
                     </div>
                 </div>
             </div>
-            <!-- 赛程二 -->
-            <div class="">
-                <div class="page-header bggray2 border-b">
-                    <span class="course">赛程2</span>
-                </div>
-                <div class="mui-input-row">
-                    <a href="#HomeTeam" class="mui-navigate-right">
-                        <label>主队</label>
-                        <span class="HomeTeam" style="width: 60%"></span>
-                        <input type="hidden" name="home_team_id" value="" class="data">
-                    </a>
-                </div>
-                <div class="mui-input-row">
-                    <a href="#AwayTeam" class="mui-navigate-right">
-                        <label>客队</label>
-                        <span class="AwayTeam" style="width: 60%"></span>
-                        <input type="hidden" name="away_team_id" value="" class="data">
-                    </a>
-                </div>
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>比赛类型</label>
-                        <span class="select-row">
-                            <select class="data matchStageType" name="type"></select>
-                        </span>
-                    </div>
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a href="#court" class="mui-navigate-right">
-                        <label>比赛场地</label>
-                        <span class="courtCont domData wd60" name="court"></span>
-                        <input type="hidden" name="court_id" value="" class="court_id data">
-                    </a>
-                </div>
-                <div class="mui-input-row picker btnStart">
-                    <div class="mui-navigate-right">
-                        <label>比赛时间</label>
-                        <span id="resultStart" class="ui-alert domData match_time" name="match_time"></span>
-                    </div>
-                </div>
-            </div>
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -135,39 +108,7 @@
         </ul>
     </div>
 
-    <!-- 球队A-->
-    <div id="HomeTeam" class="mui-popover" style="margin: 0">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course wd45">
-                <strong>选择球队</strong>
-            </span>
-            <span class="fr">
-                <button class="mui-btn" id="teamADel">清除</button>
-            </span>
-        </div>
-        <div class="pop-search">
-            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
-            <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
-        </div>
-        <div class="mui-scroll-wrapper" style="top:88px !important;">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list teamAList"></ul>
-                <ul class="mui-pager">
-                    <li>
-                        <a href="#" class="prev_page">上一页</a>
-                    </li>
-                    <li>
-                        <span class="currPage">0</span>/
-                        <span class="totalPage">0</span>
-                    </li>
-                    <li>
-                        <a href="#" class="next_page">下一页</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+
 
     <!--球队B-->
     <div id="AwayTeam" class="mui-popover" style="margin: 0">
@@ -288,52 +229,51 @@
         let league_id = "{$league_id}";
 
         $(function () {
-            var courtKeyword = '';
-            var wCourt = '';
-            var pageCR = 1;
-            toCourtList(wCourt, courtKeyword, 1);
+            // var courtKeyword = '';
+            // var wCourt = '';
+            // var pageCR = 1;
+            // toCourtList(wCourt, courtKeyword, 1);
             // 常驻球场
-            $(".courtList").on('tap', 'li', function () {
-                var court = $(this).find("font").text();
-                $(".courtCont").text(court);
-                var id = $(this).attr('data-id');
-                $(".court_id").val(id);
-                mui("#court").popover("toggle");
-            })
-            //清除常驻球场
-            $("#CourtDel").on('tap', '', function () {
-                $(".courtCont").text('');
-                $(".court_id").val("");
-                mui("#court").popover("toggle");
-            })
-            //搜索常驻球场
-            $("#searchCR").on("tap", function () {
-                var keyword = $(".keywordCR").val();
-                var pageCR = 1;
-                toCourtList(keyword, "court", pageCR);
-            })
-            //常驻球场弹出框页码控制
-            $("#court").on('tap', '.next_page', function () {
-                var getTotalPage = $("#court .totalPage").text();
-                pageCR++;
-                console.log(pageCR)
-                if (pageCR > getTotalPage) {
-                    mui.toast("已经最后一页了");
-                } else {
-                    var keyword = $(".keywordCR").val();
-                    toCourtList(keyword, "court", pageCR);
-                }
-            })
-            $("#court").on('tap', '.prev_page', function () {
-                pageCR--;
-                if (pageCR < 1) {
-                    mui.toast("已经是第一页了");
-                } else {
-                    var keyword = $(".keywordCR").val();
-                    toCourtList(keyword, "court", pageCR);
-                }
-            });
-
+            // $(".courtList").on('tap', 'li', function () {
+            //     var court = $(this).find("font").text();
+            //     $(".courtCont").text(court);
+            //     var id = $(this).attr('data-id');
+            //     $(".court_id").val(id);
+            //     mui("#court").popover("toggle");
+            // })
+            // //清除常驻球场
+            // $("#CourtDel").on('tap', '', function () {
+            //     $(".courtCont").text('');
+            //     $(".court_id").val("");
+            //     mui("#court").popover("toggle");
+            // })
+            // //搜索常驻球场
+            // $("#searchCR").on("tap", function () {
+            //     var keyword = $(".keywordCR").val();
+            //     var pageCR = 1;
+            //     toCourtList(keyword, "court", pageCR);
+            // })
+            // //常驻球场弹出框页码控制
+            // $("#court").on('tap', '.next_page', function () {
+            //     var getTotalPage = $("#court .totalPage").text();
+            //     pageCR++;
+            //     console.log(pageCR)
+            //     if (pageCR > getTotalPage) {
+            //         mui.toast("已经最后一页了");
+            //     } else {
+            //         var keyword = $(".keywordCR").val();
+            //         toCourtList(keyword, "court", pageCR);
+            //     }
+            // })
+            // $("#court").on('tap', '.prev_page', function () {
+            //     pageCR--;
+            //     if (pageCR < 1) {
+            //         mui.toast("已经是第一页了");
+            //     } else {
+            //         var keyword = $(".keywordCR").val();
+            //         toCourtList(keyword, "court", pageCR);
+            //     }
+            // });
 
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
@@ -366,9 +306,37 @@
 
         });
 
-        //场地列表接口获取数据并追加到页面 
+        function HomeTeam(HomeTeam) {
+            console.log($(HomeTeam))
+            let str = `<div id="HomeTeam" class="mui-popover">
+                        <div class="mui-popover-arrow"></div>
+                        <div class="page-header">
+                            <span class="course wd45"><strong>选择球队</strong></span>
+                            <span class="fr"><button class="mui-btn" id="teamADel">清除</button></span>
+                        </div>
+                        <div class="pop-search">
+                            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
+                                <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
+                            </div>
+                            <div class="mui-scroll-wrapper" style="top:88px !important;">
+                                <div class="mui-scroll">
+                                    <ul class="mui-table-view list teamAList">
+                                        <li class="mui-table-view-cell listli">中国队</li>
+                                        <li class="mui-table-view-cell listli">荣光队</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
+            $(".mui-content").append(str);
+            mui("#HomeTeam").popover("toggle");
+            $(document).on("tap","",function(){
+                
+            })
+        }
+
+        //场地列表接口获取数据并追加到页面
         var toCourtList = function (keyword, wCourt, page) {
-            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var url = "{: url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
             var wCourtList = "ul.courtList";
             var currPage = ".currPage";
             var totalPage = ".totalPage";

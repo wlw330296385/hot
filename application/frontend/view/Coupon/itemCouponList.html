@@ -10,6 +10,13 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+	<style>
+		.giftCoupon{
+			float: left !important;
+			font-size: 14px !important;
+			margin-left: 20px;
+		}
+	</style>
 </head>
 <body>
 
@@ -19,6 +26,7 @@
 			<div class="mui-segmented-control mb">
 				<a class="mui-control-item mui-icon mui-icon-left-nav mui-action-back"></a>
 				<a class="mui-control-item mui-active" href="#itemCouponList">礼品券</a>
+				<a class="mui-control-item link" href="{:url('frontend/member/index')}">个人中心</a>
 			</div>
 		</div>
 	</header>
@@ -46,6 +54,9 @@
     });
 
     mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+    mui(".mui-segmented-control").on("tap", ".link", function () {
         window.top.location.href = this.href;
     });
 
@@ -144,7 +155,7 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
-                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id;
+                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id+'/itemCouponMember_id/'+data.data.data[i].id;
 
                         startDate = data.data.data[i].item_coupon.start+' 00:00:00';
                         endDate = data.data.data[i].item_coupon.end+' 23:59:59';
@@ -153,13 +164,13 @@
                         startDate = startDate.getTime();
                         endDate = endDate.getTime();
 
-                        if(data.data.data[i].status == '未使用'){
-                            btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data.data[i].item_coupon.id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'"   >立即使用  </button>';
-                            
-                        } else if(startDate>currTimestamp||endDate<currTimestamp) {
-                            btn = '<button type="button" class="mui-btn"  disabled="true"  >无效期 </button>';
+                        if(startDate>currTimestamp||endDate<currTimestamp) {
+                            btn = '<button type="button" class="mui-btn bggray"  disabled="true">已失效</button>';
+                        } else if(data.data.data[i].status == '未使用'){
+                            var giftUrl = "{:url('frontend/Coupon/itemCouponGift')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id+'/itemCouponMember_id/'+data.data.data[i].id+'?gift=1';
+                            btn = '<button type="button" class="mui-btn bggreen useCard mui-pull-left" data-itemCouponID="'+data.data.data[i].item_coupon.id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'">立即使用</button> &nbsp; <a href='+giftUrl+' class="giftCoupon">转赠</a>';
                         } else {
-                            btn = '<button type="button" class="mui-btn" disabled="true"  >已使用 </button>';
+                            btn = '<button type="button" class="mui-btn" disabled="true">'+data.data.data[i].status+'</button>';
                         }
                         newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>'+btn+'</div></div>'
 
