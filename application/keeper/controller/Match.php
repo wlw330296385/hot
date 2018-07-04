@@ -132,7 +132,7 @@ class Match extends Base {
     public function createorganization() {
         // 视图页
         $step = input('step', 1, 'intval');
-        $view = 'Match/createOrganization'.$step;
+        $view = 'Match/organization/createOrganization'.$step;
 
         // 有联赛组织
         $id = input('org_id', 0, 'intval');
@@ -159,7 +159,7 @@ class Match extends Base {
     // 注册联赛组织成功页
     public function createorgsuccess() {
         $orgId = input('org_id', 0, 'intval');
-        return view('Match/createOrgSuccess', [
+        return view('Match/organization/createOrgSuccess', [
             'org_id' => $orgId
         ]);
     }
@@ -168,7 +168,7 @@ class Match extends Base {
     public function organizationSetting() {
         // 视图页
         $step = input('step', 1, 'intval');
-        $view = 'Match/organizationSetting'.$step;
+        $view = 'Match/organization/organizationSetting'.$step;
 
         // 有联赛组织
         $orgId = input('org_id', 0, 'intval');
@@ -377,11 +377,6 @@ class Match extends Base {
         return view('Match/match/matchListOfLeague');
     }
 
-    // 联赛创建比赛
-    public function createMatchOfLeague() {
-        return view('Match/match/createMatchOfLeague');
-    }
-
     // 联赛比赛详情
     public function matchInfoOfLeague() {
         $id = input('match_id', 0, 'intval');
@@ -432,7 +427,7 @@ class Match extends Base {
         $leagueService = new LeagueService();
         $leagueOrgInfo = $leagueService->getMatchOrg(['id' => $org_id]);
 
-        return view('Match/addOrgMemberOfOrg', [
+        return view('Match/organization/addOrgMemberOfOrg', [
             'org_id' => $org_id,
             'leagueOrgInfo' => $leagueOrgInfo
         ]);
@@ -612,7 +607,7 @@ class Match extends Base {
 
     // 联赛数据管理
     public function dataListOfLeague() {
-        return view('Match/dataListOfLeague');
+        return view('Match/data/dataListOfLeague');
     }
 
     // 联赛分组列表
@@ -765,7 +760,7 @@ class Match extends Base {
 
     // 球队积分列表
     public function integralList() {
-        return view('Match/integralList');
+        return view('Match/record/integralList');
     }
 
     // 球队赛果录入
