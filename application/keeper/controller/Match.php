@@ -286,7 +286,11 @@ class Match extends Base {
 
     // 联赛章程
     public function leagueregulation() {
-        return view('Match/leagueRegulation');
+        return view('Match/regulation/leagueRegulation');
+    }
+     // 联赛章程编辑
+     public function regulationofleague() {
+        return view('Match/regulation/regulationOfLeague');
     }
 
     // 联赛赛程详情页
@@ -301,29 +305,26 @@ class Match extends Base {
 
     // 联赛赛程
     public function leagueSchedule() {
-        return view('Match/leagueSchedule');
+        return view('Match/schedule/leagueSchedule');
     }
 
     // 联赛战绩
     public function leagueRecord() {
-        return view('Match/leagueRecord');
+        return view('Match/record/leagueRecord');
     }
 
     // 联赛数据
     public function leagueData() {
-        return view('Match/leagueData');
+        return view('Match/data/leagueData');
     }
 
-    // 联赛比赛动态列表
-    public function leagueDynamicList() {
-        return view('Match/leagueDynamicList');
-    }
+ 
 
     /*=======以上是外部展示页，以下是管理操作页=======*/
 
     // 联赛球队
     public function teamListOfLeague() {
-        return view('Match/teamListOfLeague');
+        return view('Match/team/teamListOfLeague');
     }
 
     // 联赛球队详情
@@ -341,7 +342,7 @@ class Match extends Base {
             $this->error(__lang('MSG_404'));
         }
 
-        return view('Match/teamInfoOfLeague', [
+        return view('Match/team/teamInfoOfLeague', [
             'matchTeamInfo' => $matchTeam
         ]);
     }
@@ -365,7 +366,7 @@ class Match extends Base {
         $teamS = new TeamService();
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
 
-        return view('Match/teamInfoSignupLeague', [
+        return view('Match/team/teamInfoSignupLeague', [
             'matchApplyInfo' => $matchApply,
             'teamInfo' => $teamInfo
         ]);
@@ -373,12 +374,12 @@ class Match extends Base {
 
     // 联赛比赛
     public function matchListOfLeague() {
-        return view('Match/matchListOfLeague');
+        return view('Match/match/matchListOfLeague');
     }
 
     // 联赛创建比赛
     public function createMatchOfLeague() {
-        return view('Match/createMatchOfLeague');
+        return view('Match/match/createMatchOfLeague');
     }
 
     // 联赛比赛详情
@@ -388,18 +389,15 @@ class Match extends Base {
         $matchRecordInfo = $matchS->getMatchRecord(['id' => $id]);
 
         $this->assign('matchRecordInfo',$matchRecordInfo);
-        return view('Match/matchInfoOfLeague');
+        return view('Match/match/matchInfoOfLeague');
     }
 
     // 联赛编辑比赛
     public function matchEditOfLeague() {
-        return view('Match/matchEditOfLeague');
+        return view('Match/match/matchEditOfLeague');
     }
 
-    // 联赛章程编辑
-    public function regulationofleague() {
-        return view('Match/regulationOfLeague');
-    }
+   
 
     // 报名联赛
     public function signUpLeague() {
@@ -479,7 +477,7 @@ class Match extends Base {
 
     // 联赛工作人员列表
     public function workListOfLeague() {
-        return view('Match/workListOfLeague');
+        return view('Match/work/workListOfLeague');
     }
 
     // 邀请联赛工作人员
@@ -487,7 +485,7 @@ class Match extends Base {
         // 工作人员类型
         $leagueS = new LeagueService();
         $types = $leagueS->getMatchMemberTypes();
-        return view('Match/addWorkerOfLeague', [
+        return view('Match/work/addWorkerOfLeague', [
             'types' => $types
         ]);
     }
@@ -522,7 +520,7 @@ class Match extends Base {
             $this->error($e->getMessage());
         }
 
-        return view('Match/workerInvitation', [
+        return view('Match/work/workerInvitation', [
             'applyInfo' => $applyInfo,
             'leagueInfo' => $leagueInfo
         ]);
@@ -530,7 +528,7 @@ class Match extends Base {
 
     // 联赛工作人员申请列表
     public function workerapplylist() {
-        return view('Match/workerApplyList');
+        return view('Match/work/workerApplyList');
     }
 
     // 查看联赛工作人员申请详情
@@ -599,17 +597,17 @@ class Match extends Base {
         $this->assign('applyInfo', $applyInfo);
         $this->assign('leagueInfo', $leagueInfo);
         $this->assign('matchMemberInfo', $matchMemberInfo);
-        return view('Match/workerApplyInfo');
+        return view('Match/work/workerApplyInfo');
     }
 
     // 联赛消息
     public function messageListOfLeague() {
-        return view('Match/messageListOfLeague');
+        return view('Match/message/messageListOfLeague');
     }
     
     // 联赛战绩管理
     public function recordListOfLeague() {
-        return view('Match/recordListOfLeague');
+        return view('Match/record/recordListOfLeague');
     }
 
     // 联赛数据管理
@@ -627,7 +625,7 @@ class Match extends Base {
         if ($matchGroups) {
             $btnEditAction = 1;
         }
-        return view('Match/groupsListOfLeague', [
+        return view('Match/group/groupsListOfLeague', [
             'btnEditAction' => $btnEditAction
         ]);
     }
@@ -638,7 +636,7 @@ class Match extends Base {
         $leagueS = new LeagueService();
         $teamCount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
 
-        return view('Match/createGroups', [
+        return view('Match/group/createGroups', [
             'teamCount' => $teamCount
         ]);
     }
@@ -649,7 +647,7 @@ class Match extends Base {
         $leagueS = new LeagueService();
         $teamCount = $leagueS->getMatchTeamCount(['match_id' => $this->league_id]);
 
-        return view('Match/createCustomGroups', [
+        return view('Match/group/createCustomGroups', [
             'teamCount' => $teamCount
         ]);
     }
@@ -663,7 +661,7 @@ class Match extends Base {
         // 联赛分组数
         $groupCount = $leagueS->getMatchGroupCount(['match_id' => $this->league_id]);
 
-        return view('Match/editGroups', [
+        return view('Match/group/editGroups', [
             'teamCount' => $teamCount,
             'groupCount' => $groupCount
         ]);
@@ -700,7 +698,7 @@ class Match extends Base {
 
     // 赛程列表管理
     public function schedulelistofleague() {
-        return view('Match/scheduleListOfLeague');
+        return view('Match/schedule/scheduleListOfLeague');
     }
 
     // 创建赛程
@@ -712,7 +710,7 @@ class Match extends Base {
         ]);
 
         $this->assign('groups', $groups);
-        return view('Match/createScheduleOfLeague');
+        return view('Match/schedule/createScheduleOfLeague');
     }
 
     // 手动创建赛程
@@ -724,7 +722,7 @@ class Match extends Base {
         ]);
 
         $this->assign('groups', $groups);
-        return view('Match/createScheduleOfLeague1');
+        return view('Match/schedule/createScheduleOfLeague1');
     }
 
     // 编辑赛程
@@ -735,7 +733,7 @@ class Match extends Base {
         $scheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
 
         $this->assign('matchScheduleInfo', $scheduleInfo);
-        return view('Match/editScheduleOfLeague');
+        return view('Match/schedule/editScheduleOfLeague');
     }
 
     // 比赛阶段创建
@@ -744,7 +742,7 @@ class Match extends Base {
         $types = $leagueS->getMatchStageTypes();
 
         $this->assign('types', $types);
-        return view('Match/createMatchStage');
+        return view('Match/stage/createMatchStage');
     }
 
     // 比赛阶段编辑
@@ -757,12 +755,12 @@ class Match extends Base {
 
         $this->assign('matchStageInfo', $stageInfo);
         $this->assign('types', $types);
-        return view('Match/editMatchStage');
+        return view('Match/stage/editMatchStage');
     }
 
     // 比赛阶段管理列表
     public function matchstageListofleague() {
-        return view('Match/matchstageListofleague');
+        return view('Match/stage/matchstageListofleague');
     }
 
     // 球队积分列表
@@ -770,7 +768,7 @@ class Match extends Base {
         return view('Match/integralList');
     }
 
-    // 球队比分录入
+    // 球队赛果录入
     public function recordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('match_id', 0, 'intval');
@@ -782,6 +780,47 @@ class Match extends Base {
         }
 
         $this->assign('recordInfo', $recordInfo);
-        return view('Match/recordScoreOfLeague');
+        return view('Match/record/recordScoreOfLeague');
     }
+
+    // 球队赛果编辑
+    public function editRecordScoreOfLeague() {
+        // 获取比赛比分数据，没有则获取赛程数据
+        $id = input('match_id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $id]);
+        if (!$recordInfo) {
+            $recordInfo = $leagueS->getMatchSchedule(['id' => $id]);
+        }
+
+        $this->assign('recordInfo', $recordInfo);
+        return view('Match/record/editRecordScoreOfLeague');
+    }
+  
+    // 联赛动态列表
+    public function dynamicListOfLeague() {
+        return view('Match/dynamic/listOfLeague');
+    }
+    // 联赛创建动态
+    public function dynamicCreateOfLeague() {
+        return view('Match/dynamic/createOfLeague');
+    }
+    // 联赛动态详情
+    public function dynamicinfoOfLeague() {
+        return view('Match/dynamic/infoOfLeague');
+    }
+    // 联赛编辑动态
+    public function dynamicEditOfLeague() {
+        return view('Match/dynamic/editOfLeague');
+    }
+    // 联赛展示列表
+    public function dynamicList() {
+        return view('Match/dynamic/list');
+    }
+    // 联赛比赛动态列表
+    public function leagueDynamicList() {
+        return view('Match/dynamic/leagueDynamicList');
+    }
+   
 }

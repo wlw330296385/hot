@@ -277,10 +277,11 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('match/matchinfoofleague')}" + '/league_id/' + data.data.data[i].id + '/match_id/' + data.data.data[i].match_id;
+                            var urls = "{:url('match/matchinfoofleague')}" + '/league_id/' + data.data.data[i].match_id + '/match_id/' + data.data.data[i].id;
+                            var urlsEdit = "{:url('match/editRecordScoreOfLeague')}"+ '/league_id/' + data.data.data[i].match_id + '/match_id/' + data.data.data[i].id;
                             newli += `<li class="mui-table-view-cell listli">
-                                        <a href="${urls}">
                                             <div class="mui-media-body wd83">
+                                                <a href="${urls}">
                                                 <p class="f14" style="margin-bottom: 8px;">
                                                     <img class="img24" src="${data.data.data[i].home_team_logo}" alt="">${data.data.data[i].home_team}
                                                     <text class="fr colorgray" style="padding-right: 5px;">99</text>
@@ -290,17 +291,18 @@
                                                     <font class="tipCorner bgred">胜</font>
                                                     <text class="fr colorred" style="padding-right: 5px;">106</text>
                                                 </p>
+                                            </a>
                                             </div>
                                             <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
-                                                <p style="line-height:62px;">16:45</p>
+                                                <p class="lineHeight32">16:45</p>
+                                                <p><a href="${urlsEdit}"><button class="opclick bgred">编辑</button></a></p>
                                             </div>
-                                        </a>
                                     </li>`;
                         }
                         if (gType == 1) {
                             //上拉刷新
                             $("ul.finishedMatchList").empty().append(newli);
-                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                            mui('#' + wList).pullRefresh(). endPulldownToRefresh();
                             mui('#' + wList).pullRefresh().refresh(true);
                             if (newli == '') {
                                 $("ul.finishedMatchList").append('<li class="nodata"><p>没有相关数据哦</p></li>');

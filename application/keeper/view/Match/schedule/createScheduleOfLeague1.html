@@ -87,10 +87,10 @@
                         <input type="hidden" name="court_id" value="">
                     </a>
                 </div>
-                <div class="mui-input-row picker btnTime">
+                <div class="mui-input-row timeTap" data-tnum="1">
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
-                        <span id="resultTime" class="ui-alert domData match_time" name="match_time"></span>
+                        <span class="ui-alert" name="match_time"></span>
                     </div>
                 </div>
             </div>
@@ -215,27 +215,24 @@
 
         //选择器
         (function ($, doc) {
-            $.ready(function () {
-                var _getParam = function (obj, param) {
-                    return obj[param] || '';
-                };
-                var resultTime = $('#resultTime')[0];
-                var btnTime = $('.btnTime');
+            $(document).on("tap", ".timeTap", function () {
+                var tnum = this.getAttribute('data-tnum');
+                this.classList.add("btnTime" + tnum);
+                this.children[0].children[1].classList.add("match_time" + tnum);
+                var resultTime = $('.match_time' + tnum)[0];
+                var btnTime = $('.btnTime' + tnum);
                 btnTime.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-                        picker.show(function (rs) {
-                            resultTime.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        resultTime.innerText = rs.text;
+                        picker.dispose();
+                    });
                 });
-            });
+            })
         })(mui, document);
-
 
         $(function () {
             matchStage(); //比赛阶段
@@ -276,16 +273,16 @@
                                     <input type="hidden" name="court_id" value="">
                                 </a>
                             </div>
-                            <div class="mui-input-row picker btnTime">
+                            <div class="mui-input-row timeTap" data-tnum="${listLength}">
                                 <div class="mui-navigate-right">
                                     <label>比赛时间</label>
-                                    <span id="resultTime" class="ui-alert domData match_time" name="match_time"></span>
+                                    <span class="ui-alert" name="match_time"></span>
                                 </div>
                             </div>
                         </div>`;
                 $("form").append(str);
                 matchStage(); //比赛阶段
-            })
+            });
 
             // 给每个模块传标记值
             $(document).on("tap", ".clickTap", function () {
@@ -293,7 +290,7 @@
                 $(".teamAList li").attr("data-num", dataNum);
                 $(".teamBList li").attr("data-num", dataNum);
                 $(".courtList li").attr("data-num", dataNum);
-            })
+            });
 
 
             // 选择主队
@@ -399,38 +396,6 @@
                     }
                 })
             });
-
-
-            // 选择比赛时间
-            // $(document).on("tap", ".awayTeamTap", function () {
-            //     let dataNum = $(this).parents(".scheduleList").attr("data-num");
-            //     $(".teamBList li").attr("data-num", dataNum);
-            // })
-            // $(".teamBList").on('tap', 'li', function () {
-            //     let team = $(this).text();
-            //     let team_id = $(this).attr("data-team_id");
-            //     let liNum = $(this).attr("data-num");
-            //     $(".awayTeamTap").each(function () {
-            //         let datanum = $(this).parents(".scheduleList").attr("data-num");
-            //         if (liNum == datanum) {
-            //             $(this).find("span").text(team);
-            //             $(this).find("input").val(team_id);
-            //             mui("#AwayTeam").popover("toggle");
-            //         }
-            //     })
-            // });
-            // $("#teamBDel").on('tap', '', function () {
-            //     let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
-            //     $(".awayTeamTap").each(function () {
-            //         let datanum = $(this).parents(".scheduleList").attr("data-num");
-            //         if (liNum == datanum) {
-            //             $(this).find("span").text('');
-            //             $(this).find("input").val('');
-            //             mui("#AwayTeam").popover("toggle");
-            //         }
-            //     })
-            // });
-
         });
 
         // 比赛阶段
