@@ -164,6 +164,14 @@ class ItemCouponService {
             'item_coupon'       =>$itemCouponInfo['coupon'],
             'status'            =>1,
             'coupon_number'     =>getTID($member_id),
+
+            'organization_type'      =>$itemCouponInfo['organization_type'],
+            'organization_id'      =>$itemCouponInfo['organization_id'],
+            'organization'      =>$itemCouponInfo['organization'],
+
+             'telephone'         =>session('memberInfo.telephone'),
+             'avatar'            =>session('memberInfo.avatar'),
+
         ];
 
         // $itemCouponMemberInfo = $this->ItemCouponMemberModel->where(['item_coupon_id'=>$item_coupon_id,'member_id'=>$member_id,'status'=>1])->find();
@@ -207,6 +215,9 @@ class ItemCouponService {
                 'item_coupon'       =>$value['coupon'],
                 'status'            =>1,
                 'coupon_number'     =>getTID($member_id),
+                'organization_type'      =>$value['organization_type'],
+                'organization_id'      =>$value['organization_id'],
+                'organization'      =>$value['organization'],
             ];
             $ids[] = $value['id'];      
         }
@@ -265,6 +276,10 @@ class ItemCouponService {
                 'item_coupon'       =>$couponInfo['coupon'],
                 'status'            =>1,
                 'coupon_number'     =>getTID($i),
+
+                'organization_type'      =>$couponInfo['organization_type'],
+                'organization_id'      =>$couponInfo['organization_id'],
+                'organization'      =>$couponInfo['organization'],
             ];
         }
         $result = $this->ItemCouponMemberModel->isUpdate(false)->saveAll($data);
