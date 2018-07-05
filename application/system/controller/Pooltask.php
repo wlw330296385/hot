@@ -33,10 +33,10 @@ class Pooltask extends Base{
     public function lottery(){
     	try{
             $date_str = date('Ymd',time());
-            // $date_str = 20180611;
+            $date_str = 20180611;
             $poolList = db('pool')->where([
-                    // 'end_str'=>$date_str,
-                    // 'status'=>2
+                    'end_str'=>$date_str,
+                    'status'=>2
                 ])->select();
             $model = new \app\model\PoolWinner;
             // dump($poolList);
@@ -88,6 +88,76 @@ class Pooltask extends Base{
     	}
     	
     }
+
+
+
+    /**
+    * find winner每日晚上22点;
+    * @param 作者:woo
+    */
+    public function lottery2(){
+        try{
+            $date_str = date('Ymd',time());
+            // $date_str = 20180611;
+            $poolList = db('pool')->where([
+                    // 'end_str'=>$date_str,
+                    // 'status'=>2
+                ])->select();
+            $model = new \app\model\PoolWinner;
+            // dump($poolList);
+            foreach ($poolList as $key => $value) {
+          
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
+                if(empty($memberList)){
+                    continue;
+                }
+                
+
+                //奖金池总奖金
+                $P;$P = $value['bonus'];
+                //第一名总数
+                $theFirst;
+                //第二名总数
+                $theSecond;
+                //第三名总数
+                $theThird;
+                // 比例
+                $F;$S;$T;
+
+                // 这里是获得以上三个变量的算法
+                
+
+                // 余数
+                $L = $P%(($theFirst*$F)+($theSecond*$S)+($theThird*$T));
+                //基数
+                $V = ($P-$L)/(($theFirst*$F)+($theSecond*$S)+($theThird*$T));
+                // 第一名奖金;第二名奖金;第三名奖金
+                $theFirstReward = $V*$F;$theSecondReward = $V*$S;$theThirdReward = $V*$T;
+
+
+                // 余数存入奖金池
+
+                // 更新奖金池
+                $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode($winners),'l'=>$L]);
+                // 奖金得主诞生
+                $model->saveAll($winners);
+                $this->updateMembersHotcoin($winners,$bonus);
+                //die;
+            }
+            $data = ['crontab'=>'每日擂台开奖'];
+            $this->record($data);
+        }catch(Exception $e){
+            $data = ['crontab'=>'每日擂台开奖','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+        
+    }
+
+
+
+
+
 
     /**
      * 热币更新

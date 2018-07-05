@@ -42,6 +42,14 @@ class ApplyService{
         }
         $result = $this->ApplyModel->save($data);
         if($result){
+            if ($data['type'] == 1 && $data['organization_type'] == 1) {
+                $MessageService = new \app\service\MessageService;
+                $MessageService->saveMessageMemberInfo(['tital'=>'申请加入成功','content'=>"您申请加入{$data['organization']}成功",'member_id'=>$data['member_id'],'member'=>$data['member'],'url'=>url('frontend/camp/campInfo',['camp_id'=>$data['organization_id']])]);
+            }elseif($data['type'] == 2 && $data['organization_type'] == 1){
+                $MessageService = new \app\service\MessageService;
+                $MessageService->saveMessageMemberInfo(['tital'=>'邀请加入成功','content'=>"您邀请{$data['member']}加入{$data['organization']}成功",'member_id'=>$data['invater_id'],'member'=>$data['invater'],'url'=>url('frontend/camp/campInfo',['camp_id'=>$data['organization_id']])]);
+            }
+           
             return ['code'=>200,'msg'=>'操作成功','data'=>$this->ApplyModel->id];
         }else{
             return ['code'=>100,'msg'=>'操作失败'];
