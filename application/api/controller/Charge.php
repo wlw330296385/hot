@@ -115,5 +115,40 @@ class Charge extends Frontend{
     }
     
     
-    
+    // 热币转余额
+    public function hotcoinToBalance(){
+    	try {
+    		
+    	} catch (Exception $e) {
+    		
+    	}
+    }
+
+
+
+
+    // 余额转热币
+    public function balanceToHotcoin(){
+    	try {
+    		$total = input('param.total');
+    		$l = 1;
+    		$balance = $l *$total;
+    		if ($this->memberInfo['id']<1) {
+    			return json(['code'=>100,'msg'=>'请先登录']);
+    		}
+    		if($this->memberInfo['balance'] < $balance){
+    			return json(['code'=>100,'msg'=>'余额不足']);
+    		}
+    		$result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('balance',$balance)->inc('hot_coin',$total)->update();
+    		if($result){
+    			session('memberInfo.balance',($this->memberInfo['balance'] - $balance));
+    			session('memberInfo.hot_coin',($this->memberInfo['balance'] + $total));
+    			return json(['code'=>200,'msg'=>'操作成功']);
+    		}else{
+    			return json(['code'=>100,'msg'=>'操作失败']);
+    		}
+    	} catch (Exception $e) {
+    		return json(['code'=>100,'msg'=>$e->getMessage()]);
+    	}
+    }
 }

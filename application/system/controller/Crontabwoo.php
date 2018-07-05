@@ -195,8 +195,9 @@ class Crontabwoo extends Base {
                         'system_remarks' => '',
                     ];
                     $this->insertIncome($incomeCamp,0,1);
-                    // 保存训练营财务支出信息
 
+
+                    // 保存训练营财务支出信息
                     $dataOutput[0] = [
                         'output'    => $totalCoachSalary,
                         'camp_id'   => $schedule['camp_id'],
