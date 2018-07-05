@@ -284,7 +284,7 @@ class Event extends Base{
             $data = input('post.');
             $res = $this->EventService->joinEvent($event_id,$member_id,$member,$total);
             if($res['code'] == 200){
-            $itemCouponInfo = $this->EventService->getEventinfo(['id'=>$event_id);
+            $itemCouponInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
                 if( !empty($data['memberData']) && $data['memberData'] != '[]' ){
                     $memberData = json_decode($data['memberData'],true);
                     foreach ($memberData as $key => &$value) {
