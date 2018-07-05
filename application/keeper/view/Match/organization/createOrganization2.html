@@ -16,6 +16,12 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,19 +40,19 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                <div class="mui-navigate-right" onclick="upload(1,this)">
                     <label>营业执照</label>
-                    <img src="" id="preview_1" class="upload-preview">
+                    <div class="viewStyle"></div>
                     <input type="hidden" name="cert" value="" class="data">
-                </a>
+                </div>
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                <div class="mui-navigate-right" onclick="upload(2,this)">
                     <label>法人身份证</label>
-                    <img src="" id="preview_2" class="upload-preview">
-                    <input type="hidden" class="data" name="fr_idcard">
-                </a>
+                    <div class="viewStyle"></div>
+                    <input type="hidden" name="fr_idcard" value="" class="data">
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -55,11 +61,11 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                <div class="mui-navigate-right" onclick="upload(3,this)">
                     <label>创建者身份证</label>
-                    <img src="" id="preview_3" class="upload-preview">
-                    <input type="hidden" class="data" name="cjz_idcard" value="">
-                </a>
+                    <div class="viewStyle"></div>
+                    <input type="hidden" name="cjz_idcard" value="" class="data">
+                </div>
             </div>
             <div class="mui-input-row">
                 <label class="wd45">创建者身份证号</label>
@@ -67,11 +73,11 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                <div class="mui-navigate-right" onclick="upload(4,this)">
                     <label>其他证明</label>
-                    <img src="" id="preview_4" class="upload-preview">
-                    <input type="hidden" class="data" name="other_cert" value="">
-                </a>
+                    <div class="viewStyle"></div>
+                    <input type="hidden" name="other_cert" value="" class="data">
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -114,6 +120,11 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -122,7 +133,7 @@
         var org_id = "{$matchOrgInfo.id}";
         $(".pass").on("tap", function () {
             var btnArray = ['跳过', '继续完善'];
-            mui.confirm("只有组织审核通过，创建的联赛才可以被公开哦！","", btnArray, function (e) {
+            mui.confirm("只有组织审核通过，创建的联赛才可以被公开哦！", "", btnArray, function (e) {
                 if (e.index == 0) {
                     window.location.href = "{:url('match/createorgsuccess')}/org_id/" + org_id;
                 }
@@ -190,6 +201,49 @@
                     }
                 }, 'json');
             }
+        }
+    </script>
+    <script>
+        // 长方形图片
+        function upload(i, thisDiv) {
+            str = `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+                    <div class="clipAreaStyle clipArea${i}"></div>
+                    <div class="fileFrame">选择图片
+                        <input type="file" class="fileStyle file${i}">
+                    </div>
+                    <button class="clipBtnStyle clipBtn${i}">截取</button>
+                </div>`
+            $(".mui-content").find("#txpopover" + i).remove();
+            $(".mui-content").append(str);
+            mui("#txpopover" + i).popover("toggle");
+            $(thisDiv).find(".viewStyle").addClass("view" + i)
+            var pc = new PhotoClip('.clipArea' + i, {
+                size: 260,
+                outputSize: 640,
+                adaptive: ['80%', '60%'],
+                file: '.file' + i,
+                view: '.view' + i,
+                ok: '.clipBtn' + i,
+                loadStart: function () {
+                    console.log('开始读取照片');
+                },
+                loadComplete: function () {
+                    console.log('照片读取完成');
+                },
+                done: function (dataURL) {
+                    console.log(dataURL);
+                    mui.post("{:url('api/upload/imgcropupload')}", {
+                        dataurl: dataURL,
+                        path: 'cert'
+                    }, function (res) {
+                        $(thisDiv).find("input").val(res.path)
+                        mui("#txpopover" + i).popover("toggle");
+                    }, 'json');
+                },
+                fail: function (msg) {
+                    alert(msg);
+                }
+            });
         }
     </script>
 </body>
