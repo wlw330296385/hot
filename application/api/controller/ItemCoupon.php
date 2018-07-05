@@ -319,7 +319,7 @@ class ItemCoupon extends Base{
     }
 
 
-    // 检测卡券有bill的 是否成功发放
+    // 通过bill检测卡券是否成功发放
     public function checkPublishByBill(){
         try {
             $bill_id = input('param.bill_id');
