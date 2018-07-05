@@ -138,7 +138,16 @@
         swipeBack: true //启用右滑关闭功能
     });
 
+    var backUrl = wooApi.GetQueryString('backUrl');
+
     $(function(){
+
+        if(backUrl!=""&&backUrl!=null){
+            console.log(backUrl)
+            $("#header .mui-icon-left-nav").attr("href",backUrl);
+            $("#header .mui-icon-left-nav span").text("收支明细");
+        }
+
         $('#agreeRefund').on('click',function(){
             var re = confirm('是否确认同意退款?');
             if(re===true){
