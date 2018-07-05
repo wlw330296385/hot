@@ -10,7 +10,7 @@ class Hotcoin extends Base{
         $this->HotcoinModel = new HotcoinModel;
     }
  
-    // 获取礼包列表带分页
+    // 获取热币流水列表带分页
     public function getHotcoinFinanceListApi(){
         try{
             $map = input('post.');
@@ -28,7 +28,8 @@ class Hotcoin extends Base{
         }
     }
  
-    // 获取礼包无分页page
+ 
+    // 获取热币流水无分页page
     public function getHotcoinFinanceListNoPageApi(){
         try{
             $map = input('post.');

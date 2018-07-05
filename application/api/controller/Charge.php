@@ -63,7 +63,8 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
-			        		'status'		=>1
+			        		'status'		=>1,
+			        		'type'			=>2
 			        	]);
         				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
         				$Hotcoin = new \app\model\Hotcoin;
@@ -88,7 +89,8 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
-			        		'status'		=>1
+			        		'status'		=>1,
+			        		'type'			=>3
 			        	]);
         				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
         				
@@ -143,6 +145,40 @@ class Charge extends Frontend{
     		if($result){
     			session('memberInfo.balance',($this->memberInfo['balance'] - $balance));
     			session('memberInfo.hot_coin',($this->memberInfo['balance'] + $total));
+    			$Charge = new \app\model\Charge;
+	        	$result = $Charge->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'charge'		=>$total,
+	        		'charge_order'	=>getTID($this->memberInfo['balance']),
+	        		'status'		=>1,
+	        		'type'			=>2
+	        	]);
+	        	$Hotcoin = new \app\model\Hotcoin;
+				$Hotcoin->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'f_id'			=>$Charge->id,
+	        		'hot_coin'		=>$total,
+	        		'type'			=>2,
+	        		'status'		=>1
+	        	]);
+	        	$MemberFinance = new \app\model\MemberFinance;
+	        	$MemberFinance->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'f_id'			=>$Charge->id,
+	        		'money'			=>$total,
+	        		'type'			=>-2,
+	        		'status'		=>1,
+	        		's_balance'		=>$this->memberInfo['balance'],
+	        		'e_balance'		=>$this->memberInfo['balance']-$total,
+	        		'date_str'		=>date('Ymd',time()),
+	        		'system_remarks'=>'余额转热币'
+	        	]);
     			return json(['code'=>200,'msg'=>'操作成功']);
     		}else{
     			return json(['code'=>100,'msg'=>'操作失败']);
