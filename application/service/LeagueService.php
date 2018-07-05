@@ -10,6 +10,7 @@ use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 use app\model\MatchRank;
+use app\model\MatchRecord;
 use app\model\MatchSchedule;
 use app\model\MatchStage;
 use app\model\MatchTeam;
@@ -960,13 +961,28 @@ class LeagueService
     }
 
     // 获取联赛积分数据
-    public function getMatchRanks($data) {
+    public function getMatchRanks($map) {
         $model = new MatchRank();
-        $res = $model->where($data)->select();
+        $res = $model->where($map)->select();
         if (!$res) {
             return $res;
         }
         $result = $res->toArray();
+        return $result;
+    }
+
+    // 比赛结果列表
+    public function getMatchRecords($map, $order='id desc') {
+        $model = new MatchRecord();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $key => $value) {
+            $result[$key]['match_timestamp'] = $value['match_time'];
+            $result[$key]['match_time'] = date('Y-m-d H:i', $value['match_time']);
+        }
         return $result;
     }
 }
