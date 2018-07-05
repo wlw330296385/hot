@@ -40,7 +40,7 @@
 
 <body class="whitebg">
 <header id="header" class="mui-bar mui-bar-nav subheader">
-	<span class="mui-icon mui-icon-closeempty mui-pull-left"></span>
+	<span class="mui-icon mui-icon-closeempty mui-pull-left"><text class="f14">返回</text></span>
 	<h1 class="mui-title">微信支付</h1>
 </header>
 <div class="mui-content whitebg">
@@ -49,7 +49,7 @@
 		<label></label>
 		<div class="sum colororange">￥<span></span></div>
 		<button type="button" class="mui-btn mui-btn-block bggreen" id="submit">确定支付</button>
-		<a href="#" class="backUrl tips">返回修改金额</a>
+		<a href="#" class="backUrl tips">返回修改</a>
 	</form>
 
 </div>
@@ -143,7 +143,7 @@
             },
             success:function(msg){
                 if(msg.code == 200){
-                    mui.alert(msg.msg,'提示','确定',function(){
+                    //mui.alert(msg.msg,'提示','确定',function(){
                         //判断是否需要带回参数
 						// -1是订单需要回传callbackStr
 						if(type=="-1"){
@@ -161,9 +161,10 @@
                                 backUrl = backUrl + "?paySuccess=yes";
                             }
 						}
+                    	mui.toast('支付成功，请稍等...');
                         //支付成功后刷新父窗口页面
                         window.location.href = backUrl;
-                      });
+                      //});
                 }else{
                     mui.alert(msg.msg,'提示','确定',function(){
                     //支付失败后刷新父窗口页面

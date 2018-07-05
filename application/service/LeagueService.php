@@ -9,6 +9,8 @@ use app\model\MatchGroupTeam;
 use app\model\MatchMember;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
+use app\model\MatchRank;
+use app\model\MatchRecord;
 use app\model\MatchSchedule;
 use app\model\MatchStage;
 use app\model\MatchTeam;
@@ -910,6 +912,19 @@ class LeagueService
         return $result;
     }
 
+    public function getMatchStages($map) {
+        $model = new MatchStage();
+        $res = $model->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $k => $val) {
+            $result[$k]['type_text'] = $res[$k]->type_text;
+        }
+        return $result;
+    }
+
     // 获取比赛阶段列表（页码）
     public function getMatchStagePaginator($map, $order = 'id desc', $limit = 10)
     {
@@ -943,5 +958,31 @@ class LeagueService
     public function delMatchStage($data, $force = false)
     {
         return MatchStage::destroy($data, $force);
+    }
+
+    // 获取联赛积分数据
+    public function getMatchRanks($map) {
+        $model = new MatchRank();
+        $res = $model->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 比赛结果列表
+    public function getMatchRecords($map, $order='id desc') {
+        $model = new MatchRecord();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        foreach ($result as $key => $value) {
+            $result[$key]['match_timestamp'] = $value['match_time'];
+            $result[$key]['match_time'] = date('Y-m-d H:i', $value['match_time']);
+        }
+        return $result;
     }
 }

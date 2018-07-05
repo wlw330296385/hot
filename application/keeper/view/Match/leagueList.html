@@ -12,6 +12,30 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
+        @media screen and (min-width: 320px) {
+            #refreshContainer {
+                margin-top: 257px !important;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            #refreshContainer {
+                margin-top: 294px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 320px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 556px !important;
+            }
+        }
+
         .textOverFlow {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -81,7 +105,7 @@
         </div>
 
         <!-- 列表信息 -->
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top:257px !important">
+        <div id="refreshContainer" class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b league"></ul>
             </div>
@@ -123,7 +147,7 @@
             var sProvince = getLocationTB['province'];
             var allArea = getLocationTB['areas'];
             $('.location').text(sCity);
-      
+
             //生成区域选择下拉菜单
             var arrArea = allArea.split(',');
             var selectArea = '';
@@ -161,13 +185,13 @@
             $('.create-league').on('tap', function () {
                 // 会员真实姓名为空需要完善信息
                 var realname = "{$memberInfo.realname}";
-                if ( realname.length == 0 || realname == "" ) {
-                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function(e) {
+                if (realname.length == 0 || realname == "") {
+                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function (e) {
                         if (e.index === 1) {
                             window.location.href = "{:url('member/memberInfo')}";
                         }
                     });
-                    return ;
+                    return;
                 }
                 var hasOrg = $(this).attr('data-hasorg');
                 if (hasOrg == 0) {
@@ -251,7 +275,7 @@
                                 var urls = "{:url('match/leagueInfo')}" + '/league_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><h4 class="textOverFlow">' + data.data[i].name + '</h4><img class="proportion4x3 mui-pull-left" src="' + data.data[i].cover + '">';
-                                newli += ' <div class="mui-media-body wd66"><p class="mui-ellipsis lineHeight20">' + data.data[i].start_time + '-' + data.data[i].end_time + '</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;球队：<font class="colororange">'+ data.data[i].teams_count +'</font></p>';
+                                newli += ' <div class="mui-media-body wd66"><p class="mui-ellipsis lineHeight20">' + data.data[i].start_time + '-' + data.data[i].end_time + '</p><p class="mui-ellipsis lineHeight20">' + data.data[i].city + '&nbsp;' + data.data[i].area + '  &nbsp;球队：<font class="colororange">' + data.data[i].teams_count + '</font></p>';
                                 if (data.data[i].is_finished_num == -1) {
                                     newli += '<p class="mui-ellipsis lineHeight20">' + data.data[i].type + '<font class="tipCorner bggreen" style="margin-left: 10px !important;">报名</font>';
                                 } else if (data.data[i].is_finished_num == 2) {

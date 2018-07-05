@@ -280,16 +280,21 @@ class Event extends Base{
             $event_id = input('param.event_id');
             $member_id = $this->memberInfo['id'];
             $member = $this->memberInfo['member'];
-            $total = input('param.total');
+            $total = input('param.total',1);
             $data = input('post.');
             $res = $this->EventService->joinEvent($event_id,$member_id,$member,$total);
             if($res['code'] == 200){
+            $itemCouponInfo = $this->EventService->getEventInfo(['id'=>$event_id]);
                 if( !empty($data['memberData']) && $data['memberData'] != '[]' ){
                     $memberData = json_decode($data['memberData'],true);
                     foreach ($memberData as $key => &$value) {
                         $value['contact'] = $data['contact'];
                         $value['linkman'] = $data['linkman'];
                         $value['remarks'] = $data['remarks'];
+
+                        $value['organization'] = $itemCouponInfo['organization'];
+                        $value['organization_id'] = $itemCouponInfo['organization_id'];
+                        $value['organization_type'] = $itemCouponInfo['organization_type'];
                         $value['avatar'] = $this->memberInfo['avatar'];
                     }
                     $result = $this->EventService->saveAllMmeber($memberData);

@@ -3196,4 +3196,187 @@ class League extends Base
         }
     }
 
+    // 联赛积分排名
+    public function getmatchranklist() {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            // 获取联赛球队积分数据
+            $_result = $leagueS->getMatchRanks($data);
+            if (!$_result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            $_result1 = $result = [];
+            // 根据联赛阶段、分组将数据分片
+            foreach ($_result as $key => $value) {
+                $_result1[ $value['match_stage'] . '|' . $value['match_group'] ][] = $value;
+            }
+            foreach ($_result1 as $key => $value) {
+                $_array = $_array1 = [];
+                $keyExplode = explode('|', $key);
+                $_array['stage_name'] = $keyExplode[0];
+                $_array['group_name'] = $keyExplode[1];
+                $_array['teams'] = [];
+                $ranks = $value;
+                foreach ($ranks as $k => $rank) {
+                    $_array1[ $rank['team'] . '|' . $rank['team_id'] . '|' . $rank['team_logo'] ][] = $rank;
+                }
+                if ( !empty($_array1) ) {
+                    foreach ($_array1 as $k => $val) {
+                        $kExplode = explode('|', $k);
+                        $_arr = [];
+                        $_arr['team_id'] = $kExplode[1];
+                        $_arr['team'] = $kExplode[0];
+                        $_arr['team_logo'] = $kExplode[2];
+                        // 球队在比赛阶段的积分累加
+                        $score = 0;
+                        for ( $i = 0; $i < count($val); $i++ ) {
+                            if ( $val[$i]['score'] > 0 ) {
+                                $score += 1;
+                            }
+                        }
+                        $_arr['score'] = $score;
+                        $_arr['win_count'] = 0;
+                        $_arr['lose_count'] = 0;
+                        array_push( $_array['teams'], $_arr );
+                    }
+                }
+                array_push($result, $_array);
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 创建比赛结果数据
+    public function creatematchrecord() {
+        $data = input('post.');
+        // 验证器
+        $validate = validate('MatchRecordVal');
+        if ( !$validate->scene('league_add')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 验证会员操作权限 记分员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if ( $power < 8 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        $data['match_time'] = strtotime($data['match_time']);
+        $data['status'] = 1;
+        // 确认填写比赛结果时间（当前时间）24小时内允许修改
+        if ( input('?post.is_record') && input('post.is_record') == 1 ) {
+            $data['record_time'] = time();
+        }
+        try {
+            // 保存比赛结果数据
+            $matchS = new MatchService();
+            $result = $matchS->saveMatchRecord($data);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        // 返回结果
+        return json($result);
+    }
+
+    // 更新比赛结果数据
+    public function updatematchrecord() {
+        $data = input('post.');
+        $data = input('post.');
+        // 验证器
+        $validate = validate('MatchRecordVal');
+        if ( !$validate->scene('league_edit')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 验证会员操作权限 记分员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if ( $power < 8 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        $data['match_time'] = strtotime($data['match_time']);
+        $data['status'] = 1;
+        // 确认填写比赛结果时间（当前时间）24小时内允许修改
+        if ( input('?post.is_record') && input('post.is_record') == 1 ) {
+            $data['record_time'] = time();
+        }
+        try {
+            // 保存比赛结果数据
+            $matchS = new MatchService();
+            $result = $matchS->saveMatchRecord($data);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        // 返回结果
+        return json($result);
+    }
+
+    // 比赛战绩列表（根据时间、阶段、分组）
+    public function matchrecordlistbystage() {
+        $data = input('param.');
+        // 参数league_id -> match_id
+        if (input('?param.league_id')) {
+            unset($data['league_id']);
+            $data['match_id'] = input('param.league_id');
+        }
+        if (input('?page')) {
+            unset($data['page']);
+        }
+        $leagueS = new LeagueService();
+        $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+        $list = $leagueS->getMatchRecords($data, $orderby);
+        if (!$list) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        $_result = $result = [];
+        // 根据比赛时间（年月日）对数据分片
+        foreach ( $list as $key => $value ) {
+            $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+            $_result[$value['match_stage'].'|'.$date][] = $value;
+        }
+        foreach ($_result as $key => $value) {
+            $_array = [];
+            $keyExplode = explode('|', $key);
+            $_array['date'] = $keyExplode[1];
+            $_array['stage']['name'] = $keyExplode[0];
+            $_array['stage']['records'] = $value;
+            array_push($result, $_array);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
+    }
+
 }

@@ -41,8 +41,9 @@
 <div class="mui-content">
 
     <div class="inputForm">
-        <p><input type="text" class="coupon_member" name="coupon_member" value="" placeholder="请输入会员名"></p>
+        <p><input type="text" class="coupon_member_tel" name="coupon_member_tel" value="" placeholder="请输入卡券所属人手机号"></p>
         <p><input type="text" class="coupon_number" name="coupon_number" value="" placeholder="请输入卡券编号后六位"></p>
+        <p><button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="search">查找</button></p>
     </div>
 
     <div id="couponPreview">
@@ -68,48 +69,29 @@
 
     $(function(){
 
-        //通过会员名获取卡券列表
-        $('.coupon_member').on("blur", function () {
-            var couponMember = $(this).val();
-            if(couponMember!==""&&couponMember!=null){
-                toItemCouponList(couponMember);
-            }
+
+        $(document).on('click','#search',function(){
+            searchCoupon();
         });
 
 
-        //通过卡号后六位获取卡券
-        $('.coupon_number').on("blur", function () {
-            var couponNumber = $(this).val();
-            if(couponNumber!=""&&couponNumber!=null){
-
-                var couponMember = $('.coupon_member').val();
-                if(couponMember==""||couponMember==null){
-                    mui.toast("请先输入会员名");
-                    return false;
-                }
-                $("#couponPreview").empty();
-                if(couponNumber.length==6){
-                    var getCID="";
-                    var getCID_last6="";
-                    var matchData = false;
-                    $(".cID").each(function () {
-                        getCID = $(this).text();
-                        getCID_last6 = getCID.substring(getCID.length-6, getCID.length)
-                        if(getCID_last6==couponNumber){
-                            $("#couponPreview").empty().append('<div class="coupon">'+$(this).parentsUntil(".coupon").parent().html()+'</div>');
-                            matchData = true;
-                            return false;
-                        }
-                    });
-                    if(matchData == false){
-                        $("#couponPreview").empty().append('<p class="mui-text-center">该会员没有此卡券哦</p>');
-                    }
-                }else{
-                    $("#couponPreview").empty().append('<p class="mui-text-center">您输入的六位数字长度不对哦</p>');
-                }
-
-            }
-        });
+//        //通过会员名获取卡券列表
+//        $('.coupon_member_tel').on("blur", function () {
+//            var couponMemberTel = $('.coupon_member_tel').val();
+//            if(couponMemberTel!==""&&couponMemberTel!=null){
+//                //根据手机号获取卡券列表
+//                toItemCouponList(couponMemberTel);
+//            }
+//        });
+//
+//        //通过卡号后六位获取卡券
+//        $('.coupon_number').on("blur", function () {
+//            var couponNumber = $('.coupon_number').val();
+//            var couponMemberTel = $('.coupon_member_tel').val();
+//            if(couponNumber!=""&&couponNumber!=null&&couponMemberTel!==""&&couponMemberTel!=null){
+//                searchCoupon();
+//            }
+//        });
 
 
         $(document).on('tap','.useCard',function(){
@@ -136,23 +118,58 @@
         });
 
 
-    })
+    });
 
+    var searchCoupon = function () {
+
+            var couponNumber = $('.coupon_number').val();
+            var couponMemberTel = $('.coupon_member_tel').val();
+            if(couponMemberTel==""||couponMemberTel==null||couponNumber==""||couponNumber==null){
+                mui.toast("卡券编号后六位和卡券所属人手机号码不能为空");
+                return false;
+            }
+            //根据手机号获取卡券列表
+            toItemCouponList(couponMemberTel);
+            //根据卡券后六位获取对应卡券
+            $("#couponPreview").empty();
+            if(couponNumber.length==6){
+                var getCID="";
+                var getCID_last6="";
+                var matchData = false;
+                $(".cID").each(function () {
+                    getCID = $(this).text();
+                    getCID_last6 = getCID.substring(getCID.length-6, getCID.length)
+                    if(getCID_last6==couponNumber){
+                        $("#couponPreview").empty().append('<div class="coupon">'+$(this).parentsUntil(".coupon").parent().html()+'</div>');
+                        matchData = true;
+                        return false;
+                    }
+                });
+                if(matchData == false){
+                    $("#couponPreview").empty().append('<p class="mui-text-center">该会员没有此卡券哦</p>');
+                }
+            }else{
+                $("#couponPreview").empty().append('<p class="mui-text-center">您输入的六位数字长度不对哦</p>');
+            }
+
+    };
 
 
     //接口获取数据并追加到页面
-    var toItemCouponList = function (member) {
+    var toItemCouponList = function (couponMemberTel) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/item_coupon/getItemCouponMemberListNoPageApi','','',true)}" + '/?page=1';
         var memberID = "{$memberInfo.id}";
+        var organization_id = "{$organizationInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                member: member,
-                status: 1
+                organization_id: organization_id,
+                telephone: couponMemberTel
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
+            async: false,
             timeout: 10000,//超时时间设置为10秒；
             headers: {'Content-Type': 'application/json'},
             //processData:false,
@@ -179,9 +196,9 @@
                             btn = '<button type="button" class="mui-btn bggreen useCard" data-itemCouponID="'+data.data[i].item_coupon.id+'"  data-itemCouponNumber="'+data.data[i].coupon_number+'" data-itemCouponMemberID = "'+data.data[i].id+'"   >立即使用  </button>';
 
                         } else if(startDate>currTimestamp||endDate<currTimestamp) {
-                            btn = '<button type="button" class="mui-btn"  disabled="true"  >无效期 </button>';
+                            btn = '<button type="button" class="mui-btn"  disabled="true"  >已失效</button>';
                         } else {
-                            btn = '<button type="button" class="mui-btn" disabled="true"  >已使用 </button>';
+                            btn = '<button type="button" class="mui-btn" disabled="true"  >已使用</button>';
                         }
                         newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data[i].coupon_number + '</div><div class="cName">' + data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data[i].item_coupon.start +'至'+ data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="#">'+ data.data[i].item_coupon.target + '</a>'+btn+'</div></div>'
 

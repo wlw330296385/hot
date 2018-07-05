@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>动态编辑</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">动态编辑</h1>
+    </header>
+
+    <div class="mui-content pt">
+
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="organization_id" value="{campInfo.id}" class="data">
+        <input type="hidden" name="organization" value="{campInfo.camp}" class="data">
+        <input type="hidden" name="organization_type" value="2" class="data">
+        <input type="hidden" name="category" value="3" class="data">
+
+        <form action="" class="mui-input-group mt55">
+
+            <div class="mui-input-row">
+                <label>标题</label>
+                <input type="text" name="title" class="data" value="" placeholder="请输入动态标题">
+            </div>
+
+            <div class="mui-input-row">
+                <label>作者</label>
+                <input type="text" name="author" class="data" value="" placeholder="请填写作者">
+            </div>
+
+            <div class="mui-input-row">
+                <label>摘要</label>
+                <input type="text" name="abstract" class="data" value="" placeholder="请输入动态摘要">
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover" class="mui-navigate-right">
+                    <label>动态封面</label>
+                    <div class="viewStyle view"></div>
+                    <input type="hidden" name="covers" value="" class="data">
+                </a>
+            </div>
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>是否公开</label>
+                    <span class="select-row">
+                        <select id="isStatus" class="data" name="status">
+                            <option value="-1">默认不公开</option>
+                            <option value="1">公开</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">动态内容</span>
+            </div>
+            <textarea name="content" class="data content" style="display: none"></textarea>
+            <div id="articleEditor" class="tuwenIntro"></div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+
+    </div>
+
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'article'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script>
+        var Edr = new Eleditor({
+            el: '#articleEditor', //容器
+            upload: {
+                server: uploadApiUrl, //填写你的后端上传路径
+                fileSizeLimit: 2 //限制图片上传大小，单位M
+            },
+            placeHolder: '点击编辑动态图文',
+        });
+    </script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            //去除提示文字的标签 
+            $("#articleEditor").children(".Eleditor-placeholder").remove();
+            //获取最终含简单html标签的图文内容
+            var introHtml = $("#articleEditor").html();
+            $(".content").val(introHtml);
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var content = $('textarea.content').val();
+            objData.content = content;
+            var url = "{:url('api/article/createArticleApi')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '动态发布成功', '确定', function () {
+                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "{campInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '发布失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑动态图文</p>");
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+
+    </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=covers]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+    </script>
+</body>
+
+</html>

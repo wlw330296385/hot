@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>新建赛程</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+
+        .mui-popover {
+            left: 0;
+            right: 0;
+            top: 130px;
+            width: 80%;
+            margin: 0 auto;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">
+            <a class="addSchedule">添加</a>
+        </h1>
+    </header>
+
+    <div class="mui-content">
+        <input type="hidden" name="__token__" class="data" value="{Request.token}" />
+        <input type="hidden" name="match" value="{matchScheduleInfo.match}" class="data">
+        <input type="hidden" name="match_id" value="{matchScheduleInfo.match_id}" class="data">
+        <input type="hidden" name="id" value="{matchScheduleInfo.id}" class="data">
+
+        <form action="" class="mui-input-group mt55">
+            <!-- 初始赛程-->
+            <div class="scheduleList" data-num="1">
+                <div class="page-header bggray2 border-b">
+                    <span class="course">赛程1</span>
+                </div>
+                <div class="mui-input-row">
+                    <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
+                        <label>主队</label>
+                        <span class="HomeTeam" style="width: 60%"></span>
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
+                        <label>客队</label>
+                        <span class="AwayTeam" style="width: 60%"></span>
+                    </a>
+                </div>
+                <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>比赛类型</label>
+                        <span class="select-row">
+                            <select class="data matchStageType" name="type"></select>
+                        </span>
+                    </div>
+                </div>
+                <div class="mui-input-row h-auto">
+                    <a href="#court" class="mui-navigate-right clickTap courtTap">
+                        <label>比赛场地</label>
+                        <span class="wd60 court"></span>
+                        <input type="hidden" name="court_id" value="">
+                    </a>
+                </div>
+                <div class="mui-input-row timeTap" data-tnum="1">
+                    <div class="mui-navigate-right">
+                        <label>比赛时间</label>
+                        <span class="ui-alert" name="match_time"></span>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+    </div>
+
+
+    <!--球队A-->
+    <div id="HomeTeam" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamADel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamAList">
+                    <li class="mui-table-view-cell listli" data-team_id="1">中国队</li>
+                    <li class="mui-table-view-cell listli" data-team_id="2">荣光队</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--球队B-->
+    <div id="AwayTeam" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择球队</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamBDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordTB" placeholder="请输入球队名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchTB"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamBList">
+                    <li class="mui-table-view-cell listli" data-team_id="1">测试1队</li>
+                    <li class="mui-table-view-cell listli" data-team_id="2">大热队</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--常驻场地-->
+    <div id="court" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>常驻球场</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="CourtDel">清除</button>
+            </span>
+        </div>
+        <div class="pop-search">
+            <input type="search" class="keywordCR" placeholder="请输入场地名称搜索">
+            <span class="mui-icon mui-icon-search searchicon" id="searchCR"></span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:88px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list courtList"></ul>
+                <ul class="mui-pager">
+                    <li>
+                        <a href="#" class="prev_page">上一页</a>
+                    </li>
+                    <li>
+                        <span class="currPage">0</span>/
+                        <span class="totalPage">0</span>
+                    </li>
+                    <li>
+                        <a href="#" class="next_page">下一页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        //选择器
+        (function ($, doc) {
+            $(document).on("tap", ".timeTap", function () {
+                var tnum = this.getAttribute('data-tnum');
+                this.classList.add("btnTime" + tnum);
+                this.children[0].children[1].classList.add("match_time" + tnum);
+                var resultTime = $('.match_time' + tnum)[0];
+                var btnTime = $('.btnTime' + tnum);
+                btnTime.each(function (i, btn) {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        resultTime.innerText = rs.text;
+                        picker.dispose();
+                    });
+                });
+            })
+        })(mui, document);
+
+        $(function () {
+            matchStage(); //比赛阶段
+
+            // 添加赛程
+            $(".addSchedule").on("tap", "", function () {
+                let listLength = $(".scheduleList").length + 1;
+                let str = `<div class="scheduleList" data-num="${listLength}">
+                            <div class="page-header bggray2 border-b">
+                                <span class="course">赛程${listLength}</span>
+                            </div>
+                            <div class="mui-input-row">
+                                <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
+                                    <label>主队</label>
+                                    <span class="HomeTeam" style="width: 60%"></span>
+                                    <input type="hidden" name="home_team_id" value="" class="data">
+                                </a>
+                            </div>
+                            <div class="mui-input-row">
+                                <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
+                                    <label>客队</label>
+                                    <span class="AwayTeam" style="width: 60%"></span>
+                                    <input type="hidden" name="away_team_id" value="" class="data">
+                                </a>
+                            </div>
+                            <div class="mui-input-row">
+                                <div class="mui-navigate-right">
+                                    <label>比赛类型</label>
+                                    <span class="select-row">
+                                        <select class="data matchStageType" name="type"></select>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mui-input-row h-auto">
+                                <a href="#court" class="mui-navigate-right clickTap courtTap">
+                                    <label>比赛场地</label>
+                                    <span class="wd60 court"></span>
+                                    <input type="hidden" name="court_id" value="">
+                                </a>
+                            </div>
+                            <div class="mui-input-row timeTap" data-tnum="${listLength}">
+                                <div class="mui-navigate-right">
+                                    <label>比赛时间</label>
+                                    <span class="ui-alert" name="match_time"></span>
+                                </div>
+                            </div>
+                        </div>`;
+                $("form").append(str);
+                matchStage(); //比赛阶段
+            });
+
+            // 给每个模块传标记值
+            $(document).on("tap", ".clickTap", function () {
+                let dataNum = $(this).parents(".scheduleList").attr("data-num");
+                $(".teamAList li").attr("data-num", dataNum);
+                $(".teamBList li").attr("data-num", dataNum);
+                $(".courtList li").attr("data-num", dataNum);
+            });
+
+
+            // 选择主队
+            $(document).on('tap', '.teamAList li', function () {
+                let team = $(this).text();
+                let liNum = $(this).attr("data-num");
+                $(".homeTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        mui("#HomeTeam").popover("toggle");
+                    }
+                })
+            });
+            $(document).on('tap', '#teamADel', function () {
+                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
+                $(".homeTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text('');
+                        mui("#HomeTeam").popover("toggle");
+                    }
+                })
+            });
+
+            // 选择客队
+            $(document).on('tap', '.teamBList li', function () {
+                let team = $(this).text();
+                let liNum = $(this).attr("data-num");
+                $(".awayTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        mui("#AwayTeam").popover("toggle");
+                    }
+                })
+            });
+            $(document).on('tap', '#teamBDel', function () {
+                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
+                $(".awayTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text('');
+                        mui("#AwayTeam").popover("toggle");
+                    }
+                })
+            });
+
+            // 选择场地
+            var courtKeyword = '';
+            var wCourt = '';
+            var pageCR = 1;
+            toCourtList(wCourt, courtKeyword, 1);
+            //搜索常驻球场
+            $("#searchCR").on("tap", function () {
+                var keyword = $(".keywordCR").val();
+                var pageCR = 1;
+                toCourtList(keyword, "court", pageCR);
+            })
+            //常驻球场弹出框页码控制
+            $("#court").on('tap', '.next_page', function () {
+                var getTotalPage = $("#court .totalPage").text();
+                pageCR++;
+                console.log(pageCR)
+                if (pageCR > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            })
+            $("#court").on('tap', '.prev_page', function () {
+                pageCR--;
+                if (pageCR < 1) {
+                    mui.toast("已经是第一页了");
+                } else {
+                    var keyword = $(".keywordCR").val();
+                    toCourtList(keyword, "court", pageCR);
+                }
+            });
+            // 选择场地
+            $(document).on('tap', '.courtList li', function () {
+                let court = $(this).text();
+                let court_id = $(this).attr("data-id");
+                let liNum = $(this).attr("data-num");
+                $(".courtTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text(court);
+                        $(this).find("input").val(court_id);
+                        mui("#court").popover("toggle");
+                    }
+                })
+            });
+            $(document).on('tap', '#CourtDel', function () {
+                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
+                $(".courtTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    if (liNum == datanum) {
+                        $(this).find("span").text('');
+                        $(this).find("input").val('');
+                        mui("#court").popover("toggle");
+                    }
+                })
+            });
+        });
+
+        // 比赛阶段
+        function matchStage() {
+            let league_id = "{$league_id}";
+            mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
+                data: {
+                    league_id: league_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<option value="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                        }
+                        if (newli == '') {
+                            newli = '<option>请先创建比赛阶段</option>'
+                        }
+                        $(".matchStageType").empty().append(newli);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+        //场地列表接口获取数据并追加到页面 
+        function toCourtList(keyword, wCourt, page) {
+            var url = "{:url('api/court/getCourtListByPageApi','','',true)}/?page=" + page;
+            var wCourtList = "ul.courtList";
+            var currPage = ".currPage";
+            var totalPage = ".totalPage";
+            if (keyword != '' && wCourt != '') {
+                wCourtList = "#" + wCourt + " ul.courtList";
+                currPage = "#" + wCourt + " .currPage";
+                totalPage = "#" + wCourt + " .totalPage";
+            }
+            mui.ajax({
+                url: url,
+                data: {
+                    page: page,
+                    keyword: keyword
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                        }
+                        $(wCourtList).empty();
+                        if (newli == '') {
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p></div>'
+                        }
+                        $(wCourtList).append(newli);
+                        $(currPage).text(data.data.current_page);
+                        $(totalPage).text(data.data.last_page);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+        // 获取数据并进行提交
+        function submitAction() {
+            scheduleList = []
+            $(".scheduleList").each(function () {
+                var home_team = $(this).find(".HomeTeam").text();
+                var home_team_id = $(this).find("input[name=home_team_id]").val();
+                var type = $(this).find(".matchStageType option:checked").val();
+                var court = $(this).find(".court").text();
+                var court_id = $(this).find("input[name=court_id]").val();
+                var match_time = $(this).find(".match_time").text();
+                scheduleList.push({ home_team, home_team_id, type, court, court_id, match_time })
+            })
+            console.log(scheduleList)
+            //     var data = wooApi.getInputData('input', 'data');
+            //     datas = wooApi.getInputData('select', 'data', data);
+            //     // 获取其他标签值
+            //     arrData = wooApi.getDomData('domData', datas);
+            //     var objData = wooApi.arrTOobj(arrData);
+            //     var url = "{:url('api/league/updateschedule')}";
+            //     var ajaxResult = wooApi.asyncF(url, objData);
+            //     if (ajaxResult.code == 200) {
+            //         mui.alert('编辑成功', '确定', function () {
+            //             var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+            //             window.top.location.href = goUrl;
+            //         })
+            //     } else {
+            //         mui.alert(ajaxResult.msg, '编辑失败');
+            //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //             if (data.code === 200) {
+            //                 $('input[name=__token__]').val(data.data);
+            //             }
+            //         }, 'json');
+            //     }
+        };
+
+    </script>
+</body>
+
+</html>

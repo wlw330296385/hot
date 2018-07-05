@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>比赛列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+
+        .bottomButton {
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: 100%;
+            bottom: 50px;
+        }
+
+        .addOperation {
+            float: right;
+            font-size: 14px;
+            display: flex;
+            color: #ff7f00;
+        }
+
+        .addInput {
+            padding: 0 !important;
+            height: 21px !important;
+        }
+
+        .addOperation text {
+            padding-top: 2px;
+        }
+
+        .dataIcon text {
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            text-align: center;
+            background-color: #ddd;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            background-clip: padding-box;
+        }
+
+        .dataIcon i {
+            color: #fff;
+            font-size: 22px;
+        }
+
+        .dataCollapse .dataTitle {
+            border: 1px solid #ddd;
+            padding: 9px;
+        }
+
+        .dataCollapse,
+        .dataCollapse input {
+            text-align: center;
+        }
+
+        .dataCollapse input::-webkit-input-placeholder {
+            color: #ff7f00;
+        }
+
+        .dataCollapse input {
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            color: #ff7f00;
+        }
+
+        .dataCollapse .dataText {
+            padding: 9px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dataCollapse .dataTextLeft {
+            border-left: 1px solid #ddd;
+        }
+
+        .dataCollapse .sfText {
+            padding: 9px;
+        }
+
+        .dataCollapse .sfButton,
+        .dataCollapse .confirmBtn,
+        .dataCollapse .delBtn {
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
+                <a class="mui-control-item mui-active" href="#onMatchSetting">比赛信息</a>
+                <a class="mui-control-item" href="#onHomeTeam">A队</a>
+                <a class="mui-control-item" href="#onAwayTeam">B队</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <!-- 比赛设置信息 -->
+            <div id="onMatchSetting" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <form action="" class="mui-input-group">
+                        <div class="page-header bggray2">
+                            <span class="course wd45">
+                                <strong>基本信息</strong>
+                            </span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>比赛类型</label>
+                            <span>小组赛</span>
+                        </div>
+                        <div class="mui-input-row h-auto">
+                            <label>比赛场地</label>
+                            <span></span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>比赛时间</label>
+                            <span></span>
+                        </div>
+
+                        <div class="page-header bggray2">
+                            <span class="course wd45">
+                                <strong>裁判名单</strong>
+                            </span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>主裁判</label>
+                            <span style="width: 60%"></span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>副裁判</label>
+                            <span style="width: 60%"></span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>副裁判</label>
+                            <span style="width: 60%"></span>
+                        </div>
+
+                        <div class="page-header bggray2">
+                            <span class="course wd45">
+                                <strong>记分员</strong>
+                            </span>
+                        </div>
+                        <input type="hidden" class="data" name="scorers" value="">
+                    </form>
+                </div>
+            </div>
+
+            <!-- 主队信息 -->
+            <div id="onHomeTeam" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <form action="" class="mui-input-group mt55">
+                        <div class="mui-input-row">
+                            <label>得分</label>
+                            <span>100</span>
+                        </div>
+                        <div class="page-header bggray2">
+                            <span class="course">球员数据</span>
+                        </div>
+                        <ul class="mui-table-view list border-b dataList">
+                            <li class="mui-table-view-cell mui-collapse listli">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-4 member">wayen</div>
+                                        <input type="hidden" class="data member_id" value="">
+                                        <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput checkNum" value="16" placeholder="球员号码">
+                                        </div>
+                                        <div class="mui-col-xs-4 colororange isLineup"></div>
+                                    </div>
+                                </a>
+                                <div class="mui-collapse-content dataCollapse">
+                                    <div class="mui-row dataTitle">
+                                        <div class="mui-col-xs-6">出手次数</div>
+                                        <div class="mui-col-xs-6">命中次数</div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fga" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">二分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fg" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="threepfga" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">三分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="threepfg" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fta" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">罚中</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="ft" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <p class="pline"></p>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="reb" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">助攻</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="ast" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="stl" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">封盖</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="blk" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="turnover" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">犯规</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="foul" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 sfText">首发</div>
+                                        <div class="mui-col-xs-4 sfButton">
+                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
+                                                <div class="mui-switch-handle"></div>
+                                            </div>
+                                            <input type="hidden" name="lineup" value="0">
+                                        </div>
+                                        <div class="mui-col-xs-3 mui-text-right delBtn">
+                                            <button type="button" class="mui-btn">删除</button>
+                                        </div>
+                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
+                                            <button type="button" class="mui-btn bggreen">确认</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+                <div class="bottomButton  mui-text-center">
+                    <p>
+                        <a href="">主队弃权</a> 注：弃权比分默认20:0，弃权积0分</p>
+                </div>
+            </div>
+
+            <!-- 客队信息 -->
+            <div id="onAwayTeam" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <form action="" class="mui-input-group mt55">
+                        <div class="mui-input-row">
+                            <label>得分</label>
+                            <span>120</span>
+                        </div>
+                        <div class="page-header bggray2">
+                            <span class="course">球员数据</span>
+                        </div>
+                        <ul class="mui-table-view list border-b dataList">
+                            <li class="mui-table-view-cell mui-collapse listli">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-4 member">wayen</div>
+                                        <input type="hidden" class="data member_id" value="">
+                                        <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput checkNum" value="16" placeholder="球员号码">
+                                        </div>
+                                        <div class="mui-col-xs-4 colororange isLineup"></div>
+                                    </div>
+                                </a>
+                                <div class="mui-collapse-content dataCollapse">
+                                    <div class="mui-row dataTitle">
+                                        <div class="mui-col-xs-6">出手次数</div>
+                                        <div class="mui-col-xs-6">命中次数</div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fga" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">二分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fg" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="threepfga" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">三分</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="threepfg" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="fta" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">罚中</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="ft" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <p class="pline"></p>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="reb" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">助攻</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="ast" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="stl" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">封盖</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="blk" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="turnover" value="" placeholder="0">
+                                        </div>
+                                        <div class="mui-col-xs-2 dataText">犯规</div>
+                                        <div class="mui-col-xs-4">
+                                            <input type="text" name="foul" value="" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="mui-row">
+                                        <div class="mui-col-xs-2 sfText">首发</div>
+                                        <div class="mui-col-xs-4 sfButton">
+                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
+                                                <div class="mui-switch-handle"></div>
+                                            </div>
+                                            <input type="hidden" name="lineup" value="0">
+                                        </div>
+                                        <div class="mui-col-xs-3 mui-text-right delBtn">
+                                            <button type="button" class="mui-btn">删除</button>
+                                        </div>
+                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
+                                            <button type="button" class="mui-btn bggreen">确认</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+                <div class="bottomButton  mui-text-center">
+                    <p>
+                        <a href="">客队弃权</a> 注：弃权比分默认20:0，弃权积0分</p>
+                </div>
+            </div>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
+            </ul>
+
+        </div>
+    </div>
+
+</body>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    $(function () {
+
+        // 确认标志完成
+        $(document).on("tap", ".confirmBtn button", function () {
+            var confirmText = $(this).text();
+            if (confirmText == "确认") {
+                $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#59b200");
+                $(this).text("取消");
+            } else {
+                $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#ddd");
+                $(this).text("确认");
+            }
+        });
+
+        // 删除球员
+        $(document).on("tap", ".delBtn button", function () {
+            $(this).parents(".mui-collapse").remove();
+        });
+
+        // 输入数字判断
+        $(document).on("blur", ".checkNum", function () {
+            if (!(/^[0-9]*$/).test($(this).val())) {
+                $(this).val('').focus();
+                mui.toast("请输入数字");
+                return false;
+            };
+        });
+
+        // 判断球衣号码不能重复
+        $(document).on("blur", "input[name=number]", function () {
+            var numberCount = 0;
+            var thisNumber = $(this).val();
+            $(".dataList input[name=number]").each(function () {
+                if (thisNumber === $(this).val() && thisNumber !== '') {
+                    numberCount++;
+                }
+            });
+            if (numberCount > 1) {
+                mui.toast("球衣号码不能重复");
+                $(this).val('').focus();
+                return false;
+            }
+        });
+
+        $(document).on("blur", "input[name=fg]", function () {
+            var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
+            if (parseInt($(this).val()) > parseInt(fga)) {
+                mui.toast("二分命中次数不能大于出手次数");
+                $(this).val('').focus();
+                return false;
+            }
+        });
+        $(document).on("blur", "input[name=threepfg]", function () {
+            var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val();//三分出手数
+            if (parseInt($(this).val()) > parseInt(threepfga)) {
+                mui.toast("三分命中次数不能大于出手次数");
+                $(this).val('').focus();
+                return false;
+            }
+        });
+        $(document).on("blur", "input[name=ft]", function () {
+            var fta = $(this).parents().siblings().children("input[name=fta]").val(); //罚球出手数
+            if (parseInt($(this).val()) > parseInt(fta)) {
+                mui.toast("罚球命中次数不能大于罚球数");
+                $(this).val('').focus();
+                return false;
+            }
+        });
+
+    });
+
+    // 提交
+    function submitAction() {
+        var members = [];
+        var personalScoreAll = 0;
+        $(".dataCollapse").each(function () {
+            var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+            if (match_record_member_id == undefined) {
+                match_record_member_id = 0;
+            }
+            var team_member_id = $(this).parents(".mui-collapse").attr("data-team_member_id");
+            if (team_member_id == undefined) {
+                team_member_id = 0;
+            }
+            var member = $(this).siblings().find(".member").text();
+            var member_id = $(this).siblings().find(".member_id").val();
+            var name = $(this).siblings().find(".member").text();
+            var number = $(this).siblings().find("input[name=number]").val();
+            var lineup = $(this).find("input[name=lineup]").val(); //首发
+            var fga = $(this).find("input[name=fga]").val(); //二分出手次数
+            var fg = $(this).find("input[name=fg]").val(); //二分命中数
+            var threepfga = $(this).find("input[name=threepfga]").val(); //三分出手次数
+            var threepfg = $(this).find("input[name=threepfg]").val(); //三分命中数
+            var fta = $(this).find("input[name=fta]").val(); //罚球次数
+            var ft = $(this).find("input[name=ft]").val(); //罚球命中数
+            var reb = $(this).find("input[name=reb]").val(); //篮板
+            var ast = $(this).find("input[name=ast]").val(); //助攻
+            var stl = $(this).find("input[name=stl]").val(); //抢断
+            var blk = $(this).find("input[name=blk]").val(); //封盖
+            var turnover = $(this).find("input[name=turnover]").val(); //失误
+            var foul = $(this).find("input[name=foul]").val(); //犯规
+
+            personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
+            $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+            personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
+            members.push({ match_record_member_id, member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+        });
+        var teamScore = $(".home_score").text(); // 球队总得分
+        // 遍历求和球员总得分
+        $("input[name=personalScoreCont]").each(function () {
+            personalScoreAll += parseInt($(this).val());
+        })
+        console.log(personalScoreAll)
+        if (personalScoreAll > teamScore) {
+            mui.toast("球员总得分不能大于球队总得分");
+            return false;
+        }
+        console.log(members)
+
+        // 提交api
+        var data = wooApi.getInputData('input', 'data');
+        datas = wooApi.getInputData('select', 'data', data);
+        // 获取其他标签值
+        arrData = wooApi.getDomData('domData', datas);
+        var objData = wooApi.arrTOobj(arrData);
+        objData.members = JSON.stringify(members);
+        var url = "{:url('api/matchdata/savematchstatisticsbyteam')}";
+        var ajaxResult = wooApi.asyncF(url, objData);
+        if (ajaxResult.code == 200) {
+            mui.alert(ajaxResult.msg, '创建数据成功', '确定', function () {
+                var goUrl = "{:url('team/dataOfTeam')}" + '/team_id/' + "{team_id}";
+                window.top.location.href = goUrl;
+            })
+        } else {
+            mui.alert(ajaxResult.msg, '创建失败');
+            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                if (data.code === 200) {
+                    $('input[name=__token__]').val(data.data);
+                }
+            }, 'json');
+        }
+
+    }
+
+
+</script>
+
+</html>
