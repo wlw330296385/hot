@@ -28,6 +28,7 @@ class Hotcoin extends Base{
         }
     }
  
+ 
     // 获取热币流水无分页page
     public function getHotcoinFinanceListNoPageApi(){
         try{
