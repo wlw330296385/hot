@@ -767,14 +767,15 @@ class Match extends Base {
     public function recordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('match_id', 0, 'intval');
+        $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
-        $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $id]);
-        if (!$recordInfo) {
-            $recordInfo = $leagueS->getMatchSchedule(['id' => $id]);
-        }
+        $scheduleInfo = $leagueS->getMatchSchedule([
+            'id' => $id,
+            'match_id' => $leagueId
+        ]);
 
-        $this->assign('recordInfo', $recordInfo);
+        $this->assign('matchScheduleInfo', $scheduleInfo);
         return view('Match/record/recordScoreOfLeague');
     }
 
@@ -782,14 +783,15 @@ class Match extends Base {
     public function editRecordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('match_id', 0, 'intval');
+        $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
-        $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $id]);
-        if (!$recordInfo) {
-            $recordInfo = $leagueS->getMatchSchedule(['id' => $id]);
-        }
+        $recordInfo = $matchS->getMatchRecord([
+            'id' => $id,
+            'match_id' => $leagueId
+        ]);
 
-        $this->assign('recordInfo', $recordInfo);
+        $this->assign('matchRecordInfo', $recordInfo);
         return view('Match/record/editRecordScoreOfLeague');
     }
   
