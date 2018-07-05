@@ -3293,6 +3293,11 @@ class League extends Base
             // 保存比赛结果数据
             $matchS = new MatchService();
             $result = $matchS->saveMatchRecord($data);
+            // 对应赛程更新完成状态 status=2
+            $leagueS->saveMatchSchedule([
+                'id' => $data['match_schedule_id'],
+                'status' => 2
+            ]);
         } catch (Exception $e) {
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -3304,7 +3309,6 @@ class League extends Base
     // 更新比赛结果数据
     public function updatematchrecord() {
         $data = input('post.');
-        $data = input('post.');
         // 验证器
         $validate = validate('MatchRecordVal');
         if ( !$validate->scene('league_edit')->check($data) ) {
@@ -3315,6 +3319,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $leagueS = new LeagueService();
+        $matchS = new MatchService();
         $power = $leagueS->getMatchMemberType([
             'member_id' => $this->memberInfo['id'],
             'match_id' => $data['match_id'],
@@ -3323,6 +3328,14 @@ class League extends Base
         if ( $power < 8 ) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+        // 获取比赛成绩数据
+        $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
+        // 当前时间超过数据允许修改时间（1天） 不能修改
+        $nowtime = time();
+        if ( $nowtime > $matchRecord['record_time'] + 3600*24 ) {
+            return json(['code' => 100, 'msg' => '超过允许修改时间']);
+        }
+
         $data['match_time'] = strtotime($data['match_time']);
         $data['status'] = 1;
         // 确认填写比赛结果时间（当前时间）24小时内允许修改

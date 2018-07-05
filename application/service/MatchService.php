@@ -217,11 +217,10 @@ class MatchService {
     public function getMatchRecord($map) {
         $model = new MatchRecord();
         $res = $model->where($map)->find();
-        if ($res) {
-            return $res->toArray();
-        } else {
+        if (!$res) {
             return $res;
         }
+        return $res->toArray();
     }
 
     // 视图查询比赛球队战绩列表（关联比赛信息）Pagigator
