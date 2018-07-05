@@ -29,12 +29,17 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
     </style>
 </head>
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
@@ -42,160 +47,175 @@
 
     <div class="mui-content">
 
-        <div class="camp-list camp-lesson-list">
-            <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <form action="" class="mui-input-group mt55">
-                <div class="mui-input-row">
-                    <label>联赛组织</label>
-                    {if condition="$orgId"}
-                    <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
-                    <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data"> {else/}
-                    <div class="mui-navigate-right">
-                        <span class="select-row">
-                            <select class="data select-matchOrg">
-                                <option value="0">请选择</option>
-                                {volist name="matchOrgList" id="vo"}
-                                <option value="{$vo.match_org_id}">{$vo.match_org}</option>
-                                {/volist}
-                            </select>
-                        </span>
-                    </div>
-                    <input type="hidden" name="match_org" value="" class="data">
-                    <input type="hidden" name="match_org_id" value="" class="data"> {/if}
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <form action="" class="mui-input-group mt55">
+            <div class="mui-input-row">
+                <label>联赛组织</label>
+                {if condition="$orgId"}
+                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
+                <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data"> {else/}
+                <div class="mui-navigate-right">
+                    <span class="select-row">
+                        <select class="data select-matchOrg">
+                            <option value="0">请选择</option>
+                            {volist name="matchOrgList" id="vo"}
+                            <option value="{$vo.match_org_id}">{$vo.match_org}</option>
+                            {/volist}
+                        </select>
+                    </span>
                 </div>
+                <input type="hidden" name="match_org" value="" class="data">
+                <input type="hidden" name="match_org_id" value="" class="data"> {/if}
+            </div>
 
-                <div class="mui-input-row">
-                    <label>联赛名称</label>
-                    <input type="text" name="name" value="" class="data" placeholder="请输入联赛名称">
-                </div>
-                <div class="mui-input-row">
-                    <label>负责人姓名</label>
-                    <input type="text" name="charge_name" value="" class="data" placeholder="输入负责人真实姓名">
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(2)">
-                        <label>联赛Logo</label>
-                        <img id="preview_2" class="upload-preview" alt="">
-                        <input type="hidden" name="logo" value='' class="data">
-                    </a>
-                </div>
-                <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>联赛封面</label>
-                        <img id="preview_1" class="upload-preview" alt="">
-                        <input type="hidden" name="cover" value='' class="data">
-                    </a>
-                </div>
+            <div class="mui-input-row">
+                <label>联赛名称</label>
+                <input type="text" name="name" value="" class="data" placeholder="请输入联赛名称">
+            </div>
+            <div class="mui-input-row">
+                <label>负责人姓名</label>
+                <input type="text" name="charge_name" value="" class="data" placeholder="输入负责人真实姓名">
+            </div>
 
-                <div class="mui-input-row" id='showCityPicker3'>
-                    <div class="mui-navigate-right">
-                        <label>联赛地区</label>
-                        <span id="cityResult3" class="ui-alert"></span>
-                        <input type="hidden" name="province" value="" class="data" id="province">
-                        <input type="hidden" name="city" value="" class="data" id="city">
-                        <input type="hidden" name="area" value="" class="data" id="area">
-                    </div>
-                </div>
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover" class="mui-navigate-right">
+                    <label>联赛Logo</label>
+                    <div class="viewStyleSquare view"></div>
+                    <input type="hidden" name="logo" value="" class="data">
+                </a>
+            </div>
 
-                <div class="mui-input-row">
-                    <label>联赛地点</label>
-                    <input type="text" name="court" value="" class="data" placeholder="请输入联赛地点">
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover1" class="mui-navigate-right">
+                    <label>联赛封面</label>
+                    <div class="viewStyle view1"></div>
+                    <input type="hidden" name="cover" value="" class="data">
+                </a>
+            </div>
+            <div class="mui-input-row" id='showCityPicker3'>
+                <div class="mui-navigate-right">
+                    <label>联赛地区</label>
+                    <span id="cityResult3" class="ui-alert"></span>
+                    <input type="hidden" name="province" value="" class="data" id="province">
+                    <input type="hidden" name="city" value="" class="data" id="city">
+                    <input type="hidden" name="area" value="" class="data" id="area">
                 </div>
+            </div>
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>联赛类型</label>
-                        <span class="select-row">
-                            <select id="matchType" class="data" name="type">
-                                <option value="">请选择</option>
-                                <option value="5">邀请赛</option>
-                                <option value="6">公开赛</option>
-                                <option value="7">企业赛</option>
-                                <option value="8">机关赛</option>
-                                <option value="9">校园赛</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
+            <div class="mui-input-row">
+                <label>联赛地点</label>
+                <input type="text" name="court" value="" class="data" placeholder="请输入联赛地点">
+            </div>
 
-                <div class="mui-input-row picker btnStartls" data-options='{"type":"date"}'>
-                    <div class="mui-navigate-right">
-                        <label class="wd36">联赛开始时间</label>
-                        <span id="resultStartls" class="ui-alert domData" name="start_time"></span>
-                    </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>联赛类型</label>
+                    <span class="select-row">
+                        <select id="matchType" class="data" name="type">
+                            <option value="">请选择</option>
+                            <option value="5">邀请赛</option>
+                            <option value="6">公开赛</option>
+                            <option value="7">企业赛</option>
+                            <option value="8">机关赛</option>
+                            <option value="9">校园赛</option>
+                        </select>
+                    </span>
                 </div>
+            </div>
 
-                <div class="mui-input-row picker btnEndls"  data-options='{"type":"date"}'>
-                    <div class="mui-navigate-right">
-                        <label class="wd36">联赛结束时间</label>
-                        <span id="resultEndls" class="ui-alert domData" name="end_time"></span>
-                    </div>
+            <div class="mui-input-row picker btnStartls" data-options='{"type":"date"}'>
+                <div class="mui-navigate-right">
+                    <label class="wd36">联赛开始时间</label>
+                    <span id="resultStartls" class="ui-alert domData" name="start_time"></span>
                 </div>
+            </div>
 
-                <div class="mui-input-row picker btnStartbm">
-                    <div class="mui-navigate-right">
-                        <label class="wd36">报名开始时间</label>
-                        <span id="resultStartbm" class="ui-alert domData" name="reg_start_time"></span>
-                    </div>
+            <div class="mui-input-row picker btnEndls" data-options='{"type":"date"}'>
+                <div class="mui-navigate-right">
+                    <label class="wd36">联赛结束时间</label>
+                    <span id="resultEndls" class="ui-alert domData" name="end_time"></span>
                 </div>
+            </div>
 
-                <div class="mui-input-row picker btnEndbm">
-                    <div class="mui-navigate-right">
-                        <label class="wd36">报名结束时间</label>
-                        <span id="resultEndbm" class="ui-alert domData" name="reg_end_time"></span>
-                    </div>
+            <div class="mui-input-row picker btnStartbm">
+                <div class="mui-navigate-right">
+                    <label class="wd36">报名开始时间</label>
+                    <span id="resultStartbm" class="ui-alert domData" name="reg_start_time"></span>
                 </div>
+            </div>
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label class="wd60">赛制（选择后不可修改）</label>
-                        <span class="select-row">
-                            <select id="" class="data" name="format">
-                                <option value="5v5">5v5</option>
-                                <option value="3v3">3v3</option>
-                            </select>
-                        </span>
-                    </div>
+            <div class="mui-input-row picker btnEndbm">
+                <div class="mui-navigate-right">
+                    <label class="wd36">报名结束时间</label>
+                    <span id="resultEndbm" class="ui-alert domData" name="reg_end_time"></span>
                 </div>
-                <div class="mui-input-row">
-                    <label class="wd45">球队成员下限数</label>
-                    <input type="text" name="min_teammembers" value="" class="data wd52" placeholder="请输入球队成员下限数(0为不限)">
-                </div>
-                <div class="mui-input-row">
-                    <label class="wd45">球队成员上限数</label>
-                    <input type="text" name="max_teammembers" value="" class="data wd52" placeholder="请输入球队成员上限数(0为不限)">
-                </div>
+            </div>
 
-                <div class="mui-input-row">
-                    <label class="wd45">最多参赛队伍数</label>
-                    <input type="text" name="teams_max" value="" class="data wd52" placeholder="请输入最多参赛队伍数">
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label class="wd60">赛制（选择后不可修改）</label>
+                    <span class="select-row">
+                        <select id="" class="data" name="format">
+                            <option value="5v5">5v5</option>
+                            <option value="3v3">3v3</option>
+                        </select>
+                    </span>
                 </div>
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">球队成员下限数</label>
+                <input type="text" name="min_teammembers" value="" class="data wd52" placeholder="请输入球队成员下限数(0为不限)">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">球队成员上限数</label>
+                <input type="text" name="max_teammembers" value="" class="data wd52" placeholder="请输入球队成员上限数(0为不限)">
+            </div>
 
-                <div class="mui-input-row">
-                    <label class="wd45">球队参赛费用</label>
-                    <input type="text" name="entry_fees" value="" class="data wd52" placeholder="输入参赛费用">
-                </div>
-                <div class="mui-input-row">
-                    <label class="wd45">球队参赛保证金</label>
-                    <input type="text" name="deposit" value="" class="data wd52" placeholder="输入球队参赛保证金">
-                </div>
+            <div class="mui-input-row">
+                <label class="wd45">最多参赛队伍数</label>
+                <input type="text" name="teams_max" value="" class="data wd52" placeholder="请输入最多参赛队伍数">
+            </div>
 
-                <div class="page-header" style="background: #efeff4;">
-                    <span class="course">联赛简介</span>
-                </div>
-                <textarea name="introduce" class="data introduce" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro"></div>
+            <div class="mui-input-row">
+                <label class="wd45">球队参赛费用</label>
+                <input type="text" name="entry_fees" value="" class="data wd52" placeholder="输入参赛费用">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd45">球队参赛保证金</label>
+                <input type="text" name="deposit" value="" class="data wd52" placeholder="输入球队参赛保证金">
+            </div>
 
-            </form>
+            <div class="page-header" style="background: #efeff4;">
+                <span class="course">联赛简介</span>
+            </div>
+            <textarea name="introduce" class="data introduce" style="display: none"></textarea>
+            <div id="articleEditor" class="tuwenIntro"></div>
 
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
-                    创建联赛
-                </li>
-            </ul>
-        </div>
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
+                创建联赛
+            </li>
+        </ul>
     </div>
 
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -212,6 +232,11 @@
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         var Edr = new Eleditor({
             el: '#articleEditor', //容器
@@ -383,6 +408,62 @@
         };
 
     </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+    </script>
+    
 </body>
 
 </html>

@@ -13,6 +13,12 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!-- webuploader -->
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -38,20 +44,20 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(1)">
+                <div class="mui-navigate-right" onclick="upload(1,this)">
                     <label>营业执照</label>
-                    <img id="preview_1" class="coachicon icon01 upload-preview" {notempty name='$orgCert.cert' }src="{$orgCert.cert}" {/notempty}>
+                    <div class="viewStyle" {notempty name='$orgCert.cert' }style="background-image:url('{$orgCert.cert}')" {/notempty}></div>
                     <input type="hidden" name="cert" value="{$orgCert.cert}" class="data">
-                </a>
+                </div>
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(2)">
+                <div class="mui-navigate-right" onclick="upload(2,this)">
                     <label>法人身份证</label>
-                    <img id="preview_2" class="coachicon icon01 upload-preview" {notempty name='$orgCert.fr.photo_positive' }src="{$orgCert.fr.photo_positive}"
-                        {/notempty}>
-                    <input type="hidden" name="fr_idcard" class="data" value="{$orgCert.fr.photo_positive}">
-                </a>
+                    <div class="viewStyle" {notempty name='$orgCert.fr.photo_positive' }style="background-image:url('{$orgCert.fr.photo_positive}')"
+                        {/notempty}></div>
+                    <input type="hidden" name="fr_idcard" value="$orgCert.fr.photo_positive" class="data">
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -60,25 +66,25 @@
             </div>
 
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(3)">
+                <div class="mui-navigate-right" onclick="upload(3,this)">
                     <label>创建者身份证</label>
-                    <img id="preview_3" class="coachicon icon01 upload-preview" {notempty name='$idCard.photo_positive' }src="{$idCard.photo_positive}"
-                        {/notempty}>
-                    <input type="hidden" name="cjz_idcard" class="data" value="{$idCard.photo_positive}">
-                </a>
+                    <div class="viewStyle" {notempty name='$idCard.photo_positive' } style="background-image:url('{$idCard.photo_positive}')"
+                        {/notempty}></div>
+                    <input type="hidden" name="cjz_idcard" value="$idCard.photo_positive" class="data">
+                </div>
             </div>
+
             <div class="mui-input-row">
                 <label class="wd45">创建者身份证号</label>
                 <input type="text" class="input data cjzidno" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%" value="{$idCard.cert_no}">
             </div>
 
-
             <div class="mui-input-row h-auto">
-                <a class="mui-navigate-right filePicker" onclick="add_id(4)">
+                <div class="mui-navigate-right" onclick="upload(3,this)">
                     <label>其他证明</label>
-                    <img id="preview_4" class="coachicon icon01 upload-preview" {notempty name='$orgCert.other' }src="{$orgCert.other}" {/notempty}>
-                    <input type="hidden" name="other_cert" class="data" value="{$orgCert.other}">
-                </a>
+                    <div class="viewStyle" {notempty name='$orgCert.other' } style="background-image:url('{$orgCert.other}')" {/notempty}></div>
+                    <input type="hidden" name="other_cert" value="$idCard.photo_positive" class="data">
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -109,7 +115,6 @@
         </div>
 
     </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!--选择器-->
@@ -120,6 +125,11 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script>
         //初始化
         mui.init({
@@ -178,6 +188,49 @@
             });
         }
 
+    </script>
+    <script>
+        // 长方形图片
+        function upload(i, thisDiv) {
+            str = `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+                        <div class="clipAreaStyle clipArea${i}"></div>
+                        <div class="fileFrame">选择图片
+                            <input type="file" class="fileStyle file${i}">
+                        </div>
+                        <button class="clipBtnStyle clipBtn${i}">截取</button>
+                    </div>`
+            $(".mui-content").find("#txpopover" + i).remove();
+            $(".mui-content").append(str);
+            mui("#txpopover" + i).popover("toggle");
+            $(thisDiv).find(".viewStyle").addClass("view" + i)
+            var pc = new PhotoClip('.clipArea' + i, {
+                size: 260,
+                outputSize: 640,
+                adaptive: ['80%', '60%'],
+                file: '.file' + i,
+                view: '.view' + i,
+                ok: '.clipBtn' + i,
+                loadStart: function () {
+                    console.log('开始读取照片');
+                },
+                loadComplete: function () {
+                    console.log('照片读取完成');
+                },
+                done: function (dataURL) {
+                    console.log(dataURL);
+                    mui.post("{:url('api/upload/imgcropupload')}", {
+                        dataurl: dataURL,
+                        path: 'cert'
+                    }, function (res) {
+                        $(thisDiv).find("input").val(res.path)
+                        mui("#txpopover" + i).popover("toggle");
+                    }, 'json');
+                },
+                fail: function (msg) {
+                    alert(msg);
+                }
+            });
+        }
     </script>
 </body>
 
