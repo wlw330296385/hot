@@ -3332,7 +3332,7 @@ class League extends Base
         $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
         // 当前时间超过数据允许修改时间（1天） 不能修改
         $nowtime = time();
-        if ( $nowtime > $matchRecord['record_time'] + 3600*24 ) {
+        if ( !empty($matchRecord['record_time']) && ($nowtime > $matchRecord['record_time'] + 3600*24) ) {
             return json(['code' => 100, 'msg' => '超过允许修改时间']);
         }
 
