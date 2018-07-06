@@ -12,19 +12,6 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .integral {
-            overflow: hidden;
-            padding: 0;
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            z-index: 5;
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            text-align: center;
-        }
-
         .opclick {
             padding: 4px 8px;
         }
@@ -268,35 +255,34 @@
                             for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                 var dataRecord = data.data[i].stage.records[j]
                                 var Ttime = gettimeh(dataRecord.match_timestamp * 1000);
-                                var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                var urls = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 newli += `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body wd">`
+                                                <a href="${urls}"><div class="mui-media-body wd">`
                                 if (dataRecord.home_score > dataRecord.away_score) {
                                     newli += `<p class="f14" style="margin-bottom: 8px;">
-                                            <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
-                                            <font class="tipCorner bgred">胜</font>
-                                            <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
-                                        </p>
-                                        <p class="f14">
-                                            <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
-                                            <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
-                                        </p>`
-                                }else{
+                                                    <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
+                                                    <font class="tipCorner bgred">胜</font>
+                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
+                                                </p>
+                                                <p class="f14">
+                                                    <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
+                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
+                                                </p>`
+                                } else {
                                     newli += `<p class="f14" style="margin-bottom: 8px;">
-                                            <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
-                                           
-                                            <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
-                                        </p>
-                                        <p class="f14">
-                                            <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
-                                            <font class="tipCorner bgred">胜</font>
-                                            <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
-                                        </p>`
+                                                    <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
+                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
+                                                </p>
+                                                <p class="f14">
+                                                    <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
+                                                    <font class="tipCorner bgred">胜</font>
+                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
+                                                </p>`
                                 }
                                 newli += `</div><div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
                                             <p class="lineHeight32">${Ttime}</p>
                                             <p class="lineHeight32">可修改</p>`
-                                newli += `</div></li>`
+                                newli += `</div></a></li>`
                             }
                             newli += `</ul>`
                         }
