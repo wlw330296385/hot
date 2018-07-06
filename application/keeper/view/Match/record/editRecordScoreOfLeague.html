@@ -40,9 +40,11 @@
 
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="match" value="" class="data">
-        <input type="hidden" name="match_id" value="" class="data">
-        <input type="hidden" name="league_id" value="{$league_id}" class="data">
+        <input type="hidden" name="match" value="{$matchRecordInfo.match}" class="data">
+        <input type="hidden" name="match_id" value="{$matchRecordInfo.match_id}" class="data">
+        <input type="hidden" name="match_group" value="{$matchRecordInfo.match_group}" class="data">
+        <input type="hidden" name="match_group_id" value="{$matchRecordInfo.match_group_id}" class="data">
+        <input type="hidden" name="id" value="{$matchRecordInfo.id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
@@ -75,7 +77,7 @@
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchRecordInfo.match_time}</span>
+                    <span id="resultStart" class="ui-alert domData record_time" name="record_time">{$matchRecordInfo.match_time}</span>
                 </div>
             </div>
 
@@ -87,22 +89,21 @@
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="1">主裁判</label>
-                    <span class="domData" name="referee1_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee1_id" value="" class="data">
+                    <span class="domData" name="referee1_name" style="width: 60%">{$matchRecordInfo.referee1}</span>
                     <input type="hidden" name="referee1_id" value="{$matchRecordInfo.referee1_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="2">副裁判</label>
-                    <span class="domData" name="referee2_name" style="width: 60%"></span>
+                    <span class="domData" name="referee2_name" style="width: 60%">{$matchRecordInfo.referee2}</span>
                     <input type="hidden" name="referee2_id" value="{$matchRecordInfo.referee2_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="3">副裁判</label>
-                    <span class="domData" name="referee3_name" style="width: 60%"></span>
+                    <span class="domData" name="referee3_name" style="width: 60%">{$matchRecordInfo.referee3}</span>
                     <input type="hidden" name="referee3_id" value="{$matchRecordInfo.referee3_id}" class="data">
                 </a>
             </div>
@@ -111,10 +112,24 @@
                 <div class="mui-input-row">
                     <label>记分员</label>
                 </div>
-                <div class="box" id="inactiveList"> </div>
-                <div class="box" id="hideStList" style="display: none"></div>
-
-
+                <div class="box" id="inactiveList">
+                    {volist name="matchRecordInfo.scorers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;">{$vol.realname}</label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                    </div>
+                    {/volist}
+                </div>
+                <div class="box" id="hideStList" style="display: none">
+                    {volist name="matchRecordInfo.scorers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;">{$vol.realname}</label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                    </div>
+                    {/volist}
+                </div>
                 <div class="operation-btn">
                     <span class="mui-badge">0</span>
                     <a class="all">全选</a>
@@ -257,10 +272,6 @@
 
         let league_id = "{$league_id}";
         $(function () {
-
-            console.log("{$matchRecordInfo.referee1}")
-            console.log("{$matchRecordInfo.referee2}")
-            console.log("{$matchRecordInfo.referee3}")
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
@@ -594,11 +605,11 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/league/updateschedule')}";
+            var url = "{:url('api/league/updatematchrecord')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert('编辑成功', '确定', function () {
-                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -610,6 +621,20 @@
                 }, 'json');
             }
         };
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        function gettime(h) {
+            var _time = new Date(h);
+            var year = _time.getFullYear();
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            var hours = _time.getHours();
+            var minutes = _time.getMinutes();
+            return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+        }
+        $(".record_time").text(gettime("{$matchRecordInfo.match_time}" * 1000));
 
     </script>
 </body>
