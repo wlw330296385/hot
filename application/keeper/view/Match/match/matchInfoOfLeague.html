@@ -116,8 +116,8 @@
             <div class="mui-segmented-control mb">
                 <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
                 <a class="mui-control-item mui-active" href="#onMatchSetting">比赛信息</a>
-                <a class="mui-control-item" href="#onHomeTeam">A队</a>
-                <a class="mui-control-item" href="#onAwayTeam">B队</a>
+                <a class="mui-control-item" href="#onHomeTeam">{$matchRecordInfo.home_team}</a>
+                <a class="mui-control-item" href="#onAwayTeam">{$matchRecordInfo.away_team}</a>
             </div>
         </div>
     </header>
@@ -136,14 +136,18 @@
                         </div>
                         <div class="mui-input-row">
                             <label>比赛类型</label>
-                            <span>小组赛</span>
+                            <span>{$matchRecordInfo.match_stage}</span>
                         </div>
                         <div class="mui-input-row h-auto">
                             <label>比赛场地</label>
-                            <span></span>
+                            <span>{$matchRecordInfo.court}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>比赛时间</label>
+                            <span class="match_time">{$matchRecordInfo.match_time}</span>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>球衣颜色</label>
                             <span></span>
                         </div>
 
@@ -154,15 +158,15 @@
                         </div>
                         <div class="mui-input-row">
                             <label>主裁判</label>
-                            <span style="width: 60%"></span>
+                            <span style="width: 60%">{$matchRecordInfo.referee1}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>副裁判</label>
-                            <span style="width: 60%"></span>
+                            <span style="width: 60%">{$matchRecordInfo.referee2}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>副裁判</label>
-                            <span style="width: 60%"></span>
+                            <span style="width: 60%">{$matchRecordInfo.referee3}</span>
                         </div>
 
                         <div class="page-header bggray2">
@@ -170,7 +174,15 @@
                                 <strong>记分员</strong>
                             </span>
                         </div>
-                        <input type="hidden" class="data" name="scorers" value="">
+                        <div class="box">
+                            {volist name="matchRecordInfo.scorers_list" id="vol"}
+                            <div class="mui-input-row mui-checkbox">
+                                <label>{$key+1}
+                                    <font style="margin-left: 15px;">{$vol.realname}</font>
+                                </label>
+                            </div>
+                            {/volist}
+                        </div>
                     </form>
                 </div>
             </div>
@@ -181,7 +193,7 @@
                     <form action="" class="mui-input-group mt55">
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span>100</span>
+                            <span>{$matchRecordInfo.home_score}</span>
                         </div>
                         <div class="page-header bggray2">
                             <span class="course">球员数据</span>
@@ -296,7 +308,7 @@
                     <form action="" class="mui-input-group mt55">
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span>120</span>
+                            <span>{$matchRecordInfo.away_score}</span>
                         </div>
                         <div class="page-header bggray2">
                             <span class="course">球员数据</span>
@@ -424,7 +436,7 @@
     });
 
     $(function () {
-
+        $(".match_time").text(gettime())
         // 确认标志完成
         $(document).on("tap", ".confirmBtn button", function () {
             var confirmText = $(this).text();
@@ -567,7 +579,19 @@
 
     }
 
-
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    function gettime() {
+        var _time = new Date();
+        var year = _time.getFullYear();
+        var month = _time.getMonth() + 1;
+        var day = _time.getDate();
+        var hours = _time.getHours();
+        var minutes = _time.getMinutes();
+        return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+    }
 </script>
 
 </html>
