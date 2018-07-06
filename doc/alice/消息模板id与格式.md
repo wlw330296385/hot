@@ -168,6 +168,21 @@ gXXoLU9ccggzyEgKrvDZoNYNnX71k7-A6gXHRAPU1qs
 
 
 
+10. 开奖结果通知
+模板ID:
+nkkz8jGMxYe7PCJjDoZSiK1jwBKU_th9iOnH4nLQm8Q
+
+详细内容
+{{first.DATA}}
+活动奖品：{{keyword1.DATA}}
+开奖时间：{{keyword2.DATA}}
+{{remark.DATA}}
+
+内容示例:
+尊敬的会员，您参与的抽奖活动即将出结果
+活动奖品：元线路由器
+开奖时间：2015年7月21日 18:36
+详情请登陆官网查看开奖结果
 
 
 

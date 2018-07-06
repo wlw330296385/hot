@@ -106,47 +106,94 @@ class Pooltask extends Base{
             $model = new \app\model\PoolWinner;
             // dump($poolList);
             foreach ($poolList as $key => $value) {
-          
+                
                 $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
                 }
-                $c_ids = [];
+                $c_ids = [];//打卡总数数组
                 //将得分转化为简单的1维数组;
                 foreach ($memberList as $k => $val) {
                     $c_ids[$k] = $val['c_id'];
                 }
-                // sort($c_ids,SORT_NUMERIC, SORT_DESC);
-                array_multisort($c_ids,SORT_DESC ,SORT_NUMERIC );
-                dump($c_ids);die;
-                //奖金池总奖金
-                $P;$P = $value['bonus'];
-                //第一名总数
-                $theFirst;
-                //第二名总数
-                $theSecond;
-                //第三名总数
-                $theThird;
-                // 比例
-                $F;$S;$T;
-
-                // 这里是获得以上三个变量的算法
                 
+                array_multisort($c_ids,SORT_DESC ,SORT_NUMERIC );
+                // 比例
+                $F = $value['first_scale'];$S = $value['second_scale'];$T = $value['third_scale'];
+                //奖金池总奖金
+                $P = $value['bonus'];
 
+                //第一名打卡总数
+                $theFirst = 0;
+                $theFirst = $c_ids[0];
+                //第二名打卡总数
+                $theSecond = 0;
+                //第三名打卡总数
+                $theThird = 0;
+                $C = 1;//名次等级阶级
+                foreach ($c_ids as $k => $val) {
+                    if($C == 1){
+                        if($val<$theFirst){
+                            $theSecond = $val;
+                            $C++;
+                        }
+                    }elseif($C == 2){
+                        if($val<$theSecond){
+                            $theThird = $val;
+                            $C++;
+                        }
+                    }else{
+                        continue;
+                    }
+                    
+                }
+
+                
+                // dump($P);
                 // 余数
-                $L = $P%(($theFirst*$F)+($theSecond*$S)+($theThird*$T));
+                $M = $P%((count($c_f_m)*$F)+(count($c_s_m)*$S)+(count($c_t_m)*$T));
+                // dump($M);
                 //基数
-                $V = ($P-$L)/(($theFirst*$F)+($theSecond*$S)+($theThird*$T));
+                $R = ($P-$M)/((count($c_f_m)*$F)+(count($c_s_m)*$S)+(count($c_t_m)*$T));
+                // dump($R);
                 // 第一名奖金;第二名奖金;第三名奖金
-                $theFirstReward = $V*$F;$theSecondReward = $V*$S;$theThirdReward = $V*$T;
+                $theFirstReward = $R*$F;$theSecondReward = $R*$S;$theThirdReward = $R*$T;
+                // dump($theFirstReward*count($c_f_m));
+                // dump($theSecondReward*count($c_s_m));
+                // dump($theThirdReward*count($c_t_m));
 
-
+                // dump($theFirstReward);
+                // dump($theSecondReward);
+                // dump($theThirdReward);
                 // 余数存入奖金池
-
+                $c_f_m = [];//第一名会员数组;
+                $c_s_m = [];//第二名会员数组;
+                $c_t_m = [];//第三名会员数组;
+                foreach ($memberList as $k => &$val) {
+                    if($val['c_id'] == $theFirst){
+                        $val['ranking'] = 1;
+                        $val['winner_bonus'] = $theFirstReward;
+                        $val['bonus'] = $value['bonus'];
+                        $c_f_m[] = $val;
+                    }
+                    if($val['c_id'] == $theSecond){
+                        $val['ranking'] = 2;
+                        $val['winner_bonus'] = $theSecondReward;
+                        $val['bonus'] = $value['bonus'];
+                        $c_s_m[] = $val;
+                    }
+                    if($val['c_id'] == $theThird){
+                        $val['ranking'] = 2;
+                        $val['winner_bonus'] = $theThirdReward;
+                        $val['bonus'] = $value['bonus'];
+                        $c_t_m[] = $val;
+                    }
+                }
                 // 更新奖金池
-                // $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode($winners),'l'=>$L]);
+                $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m)]);
                 // 奖金得主诞生
-                // $model->saveAll($winners);
+                $winners = array_merge($c_f_m,$c_s_m,$c_t_m)
+                $model->saveAll($winners);
                 // $this->updateMembersHotcoin($winners,$bonus);
                 //die;
             }
@@ -176,6 +223,10 @@ class Pooltask extends Base{
         }
         db('member')->where(['id'=>['in',$ids]])->inc('hot_coin',$bonus)->update();
     }
+
+
+
+
     /**
      * 测试用数据插入
      */
@@ -212,7 +263,31 @@ class Pooltask extends Base{
         $group_punch['member_id'] = rand(1,99);
         unset($group_punch['id']);
         $GroupPunch->isUpdate(false)->save($group_punch);
-
-
     }
+
+
+    /**
+     * 发送模板消息
+     */
+    public function sendMessage(){
+        $list = db('pool_winner')->field('member.openid,pool_winner.winner_bonus,pool_winner.create_time')->join('member','member.id = winner_list.member_id')->where(['is_message'=>-1])->select();
+        $WechatService = new \app\service\WechatService();
+        foreach ($list as $key => $value) {
+            $messageData = [
+                "touser" => $value['openid'],
+                "template_id" => "nkkz8jGMxYe7PCJjDoZSiK1jwBKU_th9iOnH4nLQm8Q",
+                "url" => "http://weixin.qq.com/download/openid/{$value['openid']}",
+                "topcolor":"#FF0000",
+                "data" => [
+                    'first' => ['value' => '尊敬的会员，您参与的打卡活动擂台擂主已出结果'],
+                    'keyword1' => ['value' => "{$value['winner_bonus']}热币"],
+                    'keyword2' => ['value' => date('Y-m-d H:i:s',$value['create_time']),
+                    'remark' => ['value' => '篮球管家祝您身体健康']
+                ]
+            ];
+            $WechatService->sendTemplate($messageData);
+        }
+        db('pool_winner')->where(['is_message'=>-1])->update(['is_message'=>1]);
+    }
+
 }
