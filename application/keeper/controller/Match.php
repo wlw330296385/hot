@@ -703,8 +703,14 @@ class Match extends Base {
         $groups = $leagueS->getMatchGroups([
             'match_id' => $this->league_id
         ]);
+        $matchStageGroupInfo = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+
 
         $this->assign('groups', $groups);
+        $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
         return view('Match/schedule/createScheduleOfLeague');
     }
 
@@ -725,9 +731,9 @@ class Match extends Base {
         $id = input('id', 0, 'intval');
         // 获取赛程详情
         $leagueS = new LeagueService();
-        $scheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
+        $matchscheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
 
-        $this->assign('matchScheduleInfo', $scheduleInfo);
+        $this->assign('matchScheduleInfo', $matchscheduleInfo);
         return view('Match/schedule/editScheduleOfLeague');
     }
 
