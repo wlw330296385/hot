@@ -177,20 +177,22 @@
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var dataSchedule = data.data[i].stage.schedules[j]
-                                var urlsEdit = "{:url('match/editscheduleofleague')}" + '/league_id/' + "{$league_id}" + '/id/' + dataSchedule.id;
+                                var urlsEdit = "{:url('match/editscheduleofleague')}" + '/league_id/' + "{$league_id}" + '/id/' + dataSchedule.id + '/?from=matchList';
                                 var urlsRecord = "{:url('match/recordScoreOfLeague')}" + '/league_id/' + "{$league_id}" + '/match_id/' + dataSchedule.id;
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id;
                                 newli += `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body wd">
+                                                <div class="mui-media-body wd60">
                                                     <p class="f14" style="margin-bottom: 8px;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" alt="">${dataSchedule.home_team}</p>
                                                     <p class="f14">
-                                                        <img class="img24" src="${dataSchedule.away_team_logo}" alt="">${dataSchedule.away_team}</p>
+                                                        <img class="img24" src="${dataSchedule.away_team_logo}" alt="">${dataSchedule.away_team}
+                                                    </p>
                                                 </div>
-                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
-                                                        <p style="margin-bottom:8px;"><a href="${urlsEdit}"><button class="opclick bgred">编辑</button></a></p>
-                                                <p><a href="${urlsRecord}"><button class="opclick bggreen">录入</button></a></p>`
-                                newli += `</div></li>`
+                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 23% !important">
+                                                        <p style="margin-bottom:8px;"><a href="${urlsEdit}"><button class="opclick bgred">赛程编辑</button></a></p>
+                                                <p><a href="${urlsRecord}"><button class="opclick bggreen">数据录入</button></a></p></div>
+                                                <div class="fr" style="line-height:62px;margin-right:10px;">${dataSchedule.match_group}</div>`
+                                newli += `</li>`
                             }
                             newli += `</ul>`
                         }
@@ -254,20 +256,24 @@
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                 var dataRecord = data.data[i].stage.records[j]
+
                                 var Ttime = gettimeh(dataRecord.match_timestamp * 1000);
-                                var urls = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                var t2 = new Date(nowTime().replace(/\-/g, "/"));
+                                var t1 = new Date(dataRecord.match_time.replace(/\-/g, "/"))
+                                var tSection = parseInt(t2 - t1) / 1000 / 3600;
+
+                                var urlsEdit = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                var urlsRecord = "{:url('match/matchInfoofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 newli += `<li class="mui-table-view-cell listli">
-                                                <a href="${urls}"><div class="mui-media-body wd">`
+                                                <div class="mui-media-body">`
                                 if (dataRecord.home_score > dataRecord.away_score) {
                                     newli += `<p class="f14" style="margin-bottom: 8px;">
                                                     <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
                                                     <font class="tipCorner bgred">胜</font>
-                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
                                                 </p>
                                                 <p class="f14">
                                                     <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
-                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
-                                                </p>`
+                                                </p></div>`
                                 } else {
                                     newli += `<p class="f14" style="margin-bottom: 8px;">
                                                     <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
@@ -276,15 +282,26 @@
                                                 <p class="f14">
                                                     <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
                                                     <font class="tipCorner bgred">胜</font>
-                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.away_score}</text>
-                                                </p>`
+                                                </p></div>`
                                 }
-                                newli += `</div><div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
-                                            <p class="lineHeight32">${Ttime}</p>
-                                            <p class="lineHeight32">可修改</p>`
-                                newli += `</div></a></li>`
+                                newli += `<div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 23% !important">`
+                                if (tSection > 24) {
+                                    newli += `<p style="line-height:62px;">
+                                                <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">数据录入</button></a>
+                                            </p></div>`
+                                } else {
+                                    newli += `<p style="margin-bottom:8px;">
+                                                <a href="${urlsEdit}"><button class="opclick bgred">赛果编辑</button></a></p><p><a href="${urlsRecord}"><button class="opclick bggreen">数据录入</button></a>
+                                            </p></div>`
+                                }
+                                newli += `<div class="fr mui-text-right" style="padding-right: 5px; width:9%">
+                                            <p class="lineHeight32 colorred">${dataRecord.home_score}</p>
+                                            <p class="lineHeight32 colorred">${dataRecord.away_score}</p>
+                                        </div>`
+                                newli += `<div class="fr" style="line-height:62px;margin-right:10px;">${dataRecord.match_group}</div>`
+                                newli += `</div></li>`
                             }
-                            newli += `</ul>`
+                            newli += `</ul >`
                         }
                         if (gType == 1) {
                             //上拉刷新
@@ -325,6 +342,15 @@
             var hours = _time.getHours();
             var minutes = _time.getMinutes();
             return p(hours) + ":" + p(minutes);
+        }
+        function nowTime() {
+            var myDate = new Date();//获取系统当前时间
+            var year = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+            var month = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+            var day = myDate.getDate(); //获取当前日(1-31)
+            var hours = myDate.getHours(); //获取当前小时数(0-23)
+            var minutes = myDate.getMinutes(); //获取当前分钟数(0-59)
+            return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
         }
     </script>
 </body>

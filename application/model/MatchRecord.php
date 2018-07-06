@@ -17,12 +17,12 @@ class MatchRecord extends Model {
 
     // 获取器
     public function getReferee1Attr($value) {
-        return is_null(json_decode($value)) ? '' : json_decode($value, true);
+        return is_null(json_decode($value)) ? $value : json_decode($value, true);
     }
     public function getReferee2Attr($value) {
-        return is_null(json_decode($value)) ? '' : json_decode($value, true);
+        return is_null(json_decode($value)) ? $value : json_decode($value, true);
     }
     public function getReferee3Attr($value) {
-        return is_null(json_decode($value)) ? '' : json_decode($value, true);
+        return is_null(json_decode($value)) ? $value : json_decode($value, true);
     }
 }
