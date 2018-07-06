@@ -9,12 +9,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style type="text/css">
+        .mui-row.table{ padding: 0px; position: relative; }
+        .mui-row.table h4 { position: absolute; top:26px; right: 20px; color: #da7908; font-weight: normal; }
+    </style>
 </head>
 
 <body>
@@ -113,7 +113,7 @@
                 sInOutCount = 1;//刷新并显示第一页
                 var page = sInOutCount;
                 var gType = 1;//代表下拉刷新
-                toInOutList('inOutList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -123,7 +123,7 @@
                 sInOutCount++;//翻下一页
                 var page = sInOutCount;
                 var gType = 2;//代表上拉加载
-                toInOutList('inOutList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -174,9 +174,9 @@
 
 
     //获取收支明细表
-    var toInOutList = function (wList, page, gType, status) {
+    var toInOutList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salaryin/getSalaryInListByPageApi','','',true)}?page="+page;
+        var url  = "{:url('api/member_finance/getMemberFinanceListApi','','',true)}?page="+page;
         var memberID = "{$memberInfo.id}";
         mui.ajax({
             url: url,
@@ -192,8 +192,18 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].grade + '</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">+' + data.data.data[i].salary + '</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">课时收入金额<span>' + data.data.data[i].salary + '</span></li><li class="mui-table-view-cell listli">课时提成金额<span>' + data.data.data[i].push_salary + '</span></li><li class="mui-table-view-cell listli">训练营<span>' + data.data.data[i].camp + '</span></li><li class="mui-table-view-cell listli">课程<span>' + data.data.data[i].lesson + '</span></li><li class="mui-table-view-cell listli">角色<span>' + data.data.data[i].member_type + '</span></li></ul></div></div></li>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli +=`<li class="mui-table-view-cell">
+                                 <ul class="mui-row table">
+                                 <li class="mui-col-xs-8">
+                                 <p>${data.data[i].system_remarks}</p>
+                                 <p>前余额：${data.data[i].s_balance}</p>
+                                 <p>后余额：${data.data[i].e_balance}</p>
+                                 <p class="f12">时间：${data.data[i].create_time}</p>
+                                 </li>
+                                 <li class="mui-col-xs-4 mui-text-right">￥${data.data[i].money}</li>
+                                 </ul>
+                                </li>`;
                     }
                 }
                 if (gType == 1) {

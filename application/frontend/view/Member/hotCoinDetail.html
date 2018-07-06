@@ -3,51 +3,52 @@
 
 <head>
     <meta charset="utf-8">
-    <title>热币收支明细表</title>
+    <title>热币收支充值</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style type="text/css">
+        .mui-row.table{ padding: 0px; position: relative; }
+        .mui-row.table h4 { position: absolute; top:26px; right: 20px; color: #da7908; font-weight: normal; }
+    </style>
 </head>
 
 <body>
 
 
-<header id="header" class="mui-bar mui-bar-nav for-tab">
-    <div class="camp-lesson-list">
-        <div class="mui-segmented-control">
-            <a class="mui-control-item mui-icon mui-icon-left-nav"
-               href="{:url('member/mywallet',['member_id'=>$memberInfo.id])}"></a>
-            <a class="mui-control-item mui-active" href="#salaryInList">热币收入</a>
-            <a class="mui-control-item" href="#salaryOutList">热币支出</a>
-        </div>
-    </div>
-</header>
-
-<div class="mui-content">
-
-    <div class="tab-pullRefresh message-list">
-        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryIn"></ul>
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-icon mui-icon-left-nav"
+                href="{:url('member/mywallet',['member_id'=>$memberInfo.id])}"></a>
+                <a class="mui-control-item mui-active" href="#inOutList">热币收支</a>
+                <a class="mui-control-item" href="#chargeList">充币记录</a>
             </div>
         </div>
-        <div id="salaryOutList" class="mui-control-content mui-scroll-wrapper whitebg">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryOut"></ul>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh message-list">
+            <div id="inOutList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list item-list inOutList"></ul>
+                </div>
+            </div>
+            <div id="chargeList" class="mui-control-content mui-scroll-wrapper whitebg">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list item-list chargeList"></ul>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 </body>
+
 
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -67,11 +68,10 @@
     $(function () {
 
         //初始化全局变量
-        var sInCount = 1;
-        var sOutCount = 1;
-        var otdCount = 1;
+        var sInOutCount = 1;
+        var sChargeCount = 1;
 
-        mui('#salaryInList').pullRefresh({
+        mui('#inOutList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -94,25 +94,25 @@
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshIn() {
             setTimeout(function () {
-                sInCount = 1;//刷新并显示第一页
-                var page = sInCount;
+                sInOutCount = 1;//刷新并显示第一页
+                var page = sInOutCount;
                 var gType = 1;//代表下拉刷新
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（上架）
         function pullupRefreshIn() {
             setTimeout(function () {
-                sInCount++;//翻下一页
-                var page = sInCount;
+                sInOutCount++;//翻下一页
+                var page = sInOutCount;
                 var gType = 2;//代表上拉加载
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
 
-        mui('#salaryOutList').pullRefresh({
+        mui('#chargeList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -135,20 +135,20 @@
         //下拉刷新具体业务实现（下架）
         function pulldownRefreshOut() {
             setTimeout(function () {
-                sOutCount = 1;//刷新并显示第一页
-                var page = sOutCount;
+                sChargeCount = 1;//刷新并显示第一页
+                var page = sChargeCount;
                 var gType = 1;//代表下拉刷新
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
+                toChargeList('chargeList', page, gType);//具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（下架）
         function pullupRefreshOut() {
             setTimeout(function () {
-                sOutCount++;//翻下一页
-                var page = sOutCount;
+                sChargeCount++;//翻下一页
+                var page = sChargeCount;
                 var gType = 2;//代表上拉加载
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
+                toChargeList('chargeList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -158,9 +158,9 @@
 
 
     //获取收入明细表
-    var toSalaryInList = function (wList, page, gType, status) {
+    var toInOutList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salaryin/getSalaryInListByPageApi','','',true)}?page="+page;
+        var url  = "{:url('api/hotcoin/getHotcoinFinanceListApi','','',true)}?page="+page;
         var memberID = "{$memberInfo.id}";
         mui.ajax({
             url: url,
@@ -176,21 +176,29 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].grade + '</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">+' + data.data.data[i].salary + '</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">课时收入金额<span>' + data.data.data[i].salary + '</span></li><li class="mui-table-view-cell listli">课时提成金额<span>' + data.data.data[i].push_salary + '</span></li><li class="mui-table-view-cell listli">训练营<span>' + data.data.data[i].camp + '</span></li><li class="mui-table-view-cell listli">课程<span>' + data.data.data[i].lesson + '</span></li><li class="mui-table-view-cell listli">角色<span>' + data.data.data[i].member_type + '</span></li></ul></div></div></li>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli +=`<li class="mui-table-view-cell">
+                                 <ul class="mui-row table">
+                                 <li class="mui-col-xs-8">
+                                 <p>${data.data[i].type}</p>
+                                 <p class="f12">时间：${data.data[i].create_time}</p>
+                                 </li>
+                                 <li class="mui-col-xs-4 mui-text-right">￥${data.data[i].hot_coin}</li>
+                                 </ul>
+                                </li>`;
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.salaryIn").empty().append(newli);
+                    $("ul.inOutList").empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.salaryIn").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.inOutList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.salaryIn").append(newli);
+                    $("ul.inOutList").append(newli);
                 }
 
                 if (newli != '') {
@@ -209,14 +217,15 @@
 
 
     //获取支出明细表
-    var toSalaryOutList = function (wList, page, gType, status) {
+    var toChargeList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salary_out/getSalaryoutListByPageApi','','',true)}?page="+page;
+        var url  = "{:url('api/hotcoin/getHotcoinFinanceListApi','','',true)}?page="+page;
         var memberID = "{$memberInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                member_id: memberID
+                member_id: memberID,
+                type:"2"
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -227,23 +236,31 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var salary = '';
-                        if(data.data.data[i].salary>0){salary='-'+data.data.data[i].salary}
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>提现</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">'+salary+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">冻结金额<span>' + data.data.data[i].buffer + '</span></li><li class="mui-table-view-cell listli">出账平台<span>' + data.data.data[i].bank + '</span></li><li class="mui-table-view-cell listli">出账账号<span>' + data.data.data[i].bank_card + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data.data[i].fee + '</span></li><li class="mui-table-view-cell listli">交易单号<span>' + data.data.data[i].tid + '</span></li><li class="mui-table-view-cell listli">状态<span>' + data.data.data[i].status + '</span></li></ul></div></div></li>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var hot_coin = '';
+                        if(data.data[i].hot_coin>0){hot_coin='-'+data.data[i].hot_coin}
+                            newli +=`<li class="mui-table-view-cell">
+                                 <ul class="mui-row table">
+                                 <li class="mui-col-xs-8">
+                                 <p>${data.data[i].type}</p>
+                                 <p class="f12">时间：${data.data[i].create_time}</p>
+                                 </li>
+                                 <li class="mui-col-xs-4 mui-text-right">￥${data.data[i].hot_coin}</li>
+                                 </ul>
+                                </li>`;
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.salaryOut").empty().append(newli);
+                    $("ul.chargeList").empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.salaryOut").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.chargeList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.salaryOut").append(newli);
+                    $("ul.chargeList").append(newli);
                 }
 
                 if (newli != '') {
