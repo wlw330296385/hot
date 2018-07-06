@@ -107,12 +107,18 @@ class Pooltask extends Base{
             // dump($poolList);
             foreach ($poolList as $key => $value) {
           
-                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
                 }
-                
-
+                $c_ids = [];
+                //将得分转化为简单的1维数组;
+                foreach ($memberList as $k => $val) {
+                    $c_ids[$k] = $val['c_id'];
+                }
+                // sort($c_ids,SORT_NUMERIC, SORT_DESC);
+                array_multisort($c_ids,SORT_DESC ,SORT_NUMERIC );
+                dump($c_ids);die;
                 //奖金池总奖金
                 $P;$P = $value['bonus'];
                 //第一名总数
@@ -138,10 +144,10 @@ class Pooltask extends Base{
                 // 余数存入奖金池
 
                 // 更新奖金池
-                $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode($winners),'l'=>$L]);
+                // $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode($winners),'l'=>$L]);
                 // 奖金得主诞生
-                $model->saveAll($winners);
-                $this->updateMembersHotcoin($winners,$bonus);
+                // $model->saveAll($winners);
+                // $this->updateMembersHotcoin($winners,$bonus);
                 //die;
             }
             $data = ['crontab'=>'每日擂台开奖'];

@@ -10,7 +10,7 @@ public function _initialize(){
     $this->MemberFinanceModel = new MemberFinanceModel;
 }
 
-// 获取热币流水列表带分页
+// 获取个人用户流水列表带分页
 public function getMemberFinanceListApi(){
     try{
         $map = input('post.');
@@ -29,7 +29,7 @@ public function getMemberFinanceListApi(){
 }
 
 
-// 获取热币流水无分页page
+// 获取个人用户流水无分页page
 public function getMemberFinanceListNoPageApi(){
     try{
         $map = input('post.');
