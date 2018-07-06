@@ -9,12 +9,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style type="text/css">
+        .mui-row.table{ padding: 0px; position: relative; }
+        .mui-row.table h4 { position: absolute; top:26px; right: 20px; color: #da7908; font-weight: normal; }
+    </style>
 </head>
 
 <body>
@@ -25,8 +25,7 @@
         <div class="mui-segmented-control">
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('member/mywallet',['member_id'=>$memberInfo.id])}"></a>
-            <a class="mui-control-item mui-active" href="#salaryInList">收入明细</a>
-            <a class="mui-control-item" href="#salaryOutList">支出明细</a>
+            <a class="mui-control-item mui-active" href="#inOutList">收支明细</a>
             <a class="mui-control-item" href="#otherInList">间接收入</a>
         </div>
     </div>
@@ -52,14 +51,9 @@
     </div>
     <!--特别说明：上面这数据统计区域是一直存在的，只是下面前两个tab内容用了whitebg白底挡住了，要是不同tab有不同固定的统计区域块，需要在切换时做对应的显示隐藏处理-->
     <div class="tab-pullRefresh message-list">
-        <div id="salaryInList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
+        <div id="inOutList" class="mui-control-content mui-scroll-wrapper whitebg mui-active">
             <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryIn"></ul>
-            </div>
-        </div>
-        <div id="salaryOutList" class="mui-control-content mui-scroll-wrapper whitebg">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list item-list salaryOut"></ul>
+                <ul class="mui-table-view list item-list inOutList"></ul>
             </div>
         </div>
         <div id="otherInList" class="mui-control-content mui-scroll-wrapper" style="top:120px;">
@@ -90,11 +84,10 @@
     $(function () {
 
         //初始化全局变量
-        var sInCount = 1;
-        var sOutCount = 1;
+        var sInOutCount = 1;
         var otdCount = 1;
 
-        mui('#salaryInList').pullRefresh({
+        mui('#inOutList').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -117,63 +110,24 @@
         //下拉刷新具体业务实现（上架）
         function pulldownRefreshIn() {
             setTimeout(function () {
-                sInCount = 1;//刷新并显示第一页
-                var page = sInCount;
+                sInOutCount = 1;//刷新并显示第一页
+                var page = sInOutCount;
                 var gType = 1;//代表下拉刷新
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（上架）
         function pullupRefreshIn() {
             setTimeout(function () {
-                sInCount++;//翻下一页
-                var page = sInCount;
+                sInOutCount++;//翻下一页
+                var page = sInOutCount;
                 var gType = 2;//代表上拉加载
-                toSalaryInList('salaryInList', page, gType, 1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
 
-        mui('#salaryOutList').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshOut
-            },
-            up: {
-                //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshOut
-            }
-        });
-
-        //下拉刷新具体业务实现（下架）
-        function pulldownRefreshOut() {
-            setTimeout(function () {
-                sOutCount = 1;//刷新并显示第一页
-                var page = sOutCount;
-                var gType = 1;//代表下拉刷新
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
-            }, 100);
-        }
-
-        //上拉加载具体业务实现（下架）
-        function pullupRefreshOut() {
-            setTimeout(function () {
-                sOutCount++;//翻下一页
-                var page = sOutCount;
-                var gType = 2;//代表上拉加载
-                toSalaryOutList('salaryOutList', page, gType, -1);//具体取数据的方法
-            }, 100);
-        }
 
         mui('#otherInList').pullRefresh({
             down: {
@@ -219,10 +173,10 @@
     })
 
 
-    //获取收入明细表
-    var toSalaryInList = function (wList, page, gType, status) {
+    //获取收支明细表
+    var toInOutList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salaryin/getSalaryInListByPageApi','','',true)}?page="+page;
+        var url  = "{:url('api/member_finance/getMemberFinanceListApi','','',true)}?page="+page;
         var memberID = "{$memberInfo.id}";
         mui.ajax({
             url: url,
@@ -238,21 +192,31 @@
 
                 var newli = '';
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>' + data.data.data[i].grade + '</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">+' + data.data.data[i].salary + '</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">课时收入金额<span>' + data.data.data[i].salary + '</span></li><li class="mui-table-view-cell listli">课时提成金额<span>' + data.data.data[i].push_salary + '</span></li><li class="mui-table-view-cell listli">训练营<span>' + data.data.data[i].camp + '</span></li><li class="mui-table-view-cell listli">课程<span>' + data.data.data[i].lesson + '</span></li><li class="mui-table-view-cell listli">角色<span>' + data.data.data[i].member_type + '</span></li></ul></div></div></li>';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli +=`<li class="mui-table-view-cell">
+                                 <ul class="mui-row table">
+                                 <li class="mui-col-xs-8">
+                                 <p>${data.data[i].system_remarks}</p>
+                                 <p>前余额：${data.data[i].s_balance}</p>
+                                 <p>后余额：${data.data[i].e_balance}</p>
+                                 <p class="f12">时间：${data.data[i].create_time}</p>
+                                 </li>
+                                 <li class="mui-col-xs-4 mui-text-right">￥${data.data[i].money}</li>
+                                 </ul>
+                                </li>`;
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    $("ul.salaryIn").empty().append(newli);
+                    $("ul.inOutList").empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.salaryIn").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                        $("ul.inOutList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
-                    $("ul.salaryIn").append(newli);
+                    $("ul.inOutList").append(newli);
                 }
 
                 if (newli != '') {
@@ -270,57 +234,6 @@
     };
 
 
-    //获取支出明细表
-    var toSalaryOutList = function (wList, page, gType, status) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/salary_out/getSalaryoutListByPageApi','','',true)}?page="+page;
-        var memberID = "{$memberInfo.id}";
-        mui.ajax({
-            url: url,
-            data: {
-                member_id: memberID
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            //processData:false,
-            success: function (data) {
-
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var salary = '';
-                        if(data.data.data[i].salary>0){salary='-'+data.data.data[i].salary}
-                        newli += '<li class="mui-table-view-cell mui-collapse"><a class="mui-navigate-right" href="#"><div class="list-cont"><h4>提现</h4><p>' + data.data.data[i].create_time + '</p></div><span class="date money">'+salary+'</span></a><div class="mui-collapse-content"><div class="list camp-list camp-lesson-list detalis-list coach"><ul class="mui-table-view mb"><li class="mui-table-view-cell listli">冻结金额<span>' + data.data.data[i].buffer + '</span></li><li class="mui-table-view-cell listli">出账平台<span>' + data.data.data[i].bank + '</span></li><li class="mui-table-view-cell listli">出账账号<span>' + data.data.data[i].bank_card + '</span></li><li class="mui-table-view-cell listli">手续费<span>' + data.data.data[i].fee + '</span></li><li class="mui-table-view-cell listli">交易单号<span>' + data.data.data[i].tid + '</span></li><li class="mui-table-view-cell listli">状态<span>' + data.data.data[i].status + '</span></li></ul></div></div></li>';
-                    }
-                }
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.salaryOut").empty().append(newli);
-                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                    mui('#' + wList).pullRefresh().refresh(true);
-                    if (newli == '') {
-                        $("ul.salaryOut").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                    }
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.salaryOut").append(newli);
-                }
-
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
-
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-            }
-        });
-    };
 
 
     //获取间接收入明细表

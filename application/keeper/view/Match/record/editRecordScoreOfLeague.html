@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>比赛录入</title>
+    <title>赛果编辑</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -35,7 +35,7 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">比赛录入</h1>
+        <h1 class="mui-title">赛果编辑</h1>
     </header>
 
     <div class="mui-content">
@@ -47,35 +47,35 @@
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
-                <label>主队</label>
-                <input type="text" name="home_score" value="" class="data" placeholder="请填写主队比分">
-                <input type="hidden" name="home_team" value="" class="data">
-                <input type="hidden" name="home_team_id" value="" class="data">
+                <label name="home_team" class="domData">{$matchRecordInfo.home_team}</label>
+                <input type="text" name="home_score" value="{$matchRecordInfo.home_score}" class="data" placeholder="请填写主队比分">
+                <input type="hidden" name="home_team_logo" value="{$matchRecordInfo.home_team_logo}" class="data">
+                <input type="hidden" name="home_team_id" value="{$matchRecordInfo.home_team_id}" class="data">
             </div>
 
             <div class="mui-input-row">
-                <label>客队</label>
-                <input type="text" name="away_score" value="" class="data" placeholder="请填写客队比分">
-                <input type="hidden" name="away_team" value="" class="data">
-                <input type="hidden" name="away_team_id" value="" class="data">
+                <label name="away_team" class="domData">{$matchRecordInfo.away_team}</label>
+                <input type="text" name="away_score" value="{$matchRecordInfo.away_score}" class="data" placeholder="请填写客队比分">
+                <input type="hidden" name="away_team_logo" value="{$matchRecordInfo.away_team_logo}" class="data">
+                <input type="hidden" name="away_team_id" value="{$matchRecordInfo.away_team_id}" class="data">
             </div>
 
             <div class="mui-input-row">
                 <label>比赛类型</label>
-                <span>小组赛</span>
-                <input type="hidden" name="type" value="1" class="data">
+                <span>{$matchRecordInfo.match_stage}</span>
+                <input type="hidden" name="type" value="{$matchRecordInfo.match_stage_id}" class="data">
             </div>
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛场地</label>
-                    <span class="courtCont domData wd60" name="court"></span>
-                    <input type="hidden" name="court_id" value="" class="court_id data">
+                    <span class="courtCont domData wd60" name="court">{$matchRecordInfo.court}</span>
+                    <input type="hidden" name="court_id" value="{$matchRecordInfo.court_id}" class="court_id data">
                 </a>
             </div>
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData match_time" name="match_time"></span>
+                    <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchRecordInfo.match_time}</span>
                 </div>
             </div>
 
@@ -89,20 +89,21 @@
                     <label data-num="1">主裁判</label>
                     <span class="domData" name="referee1_name" style="width: 60%"></span>
                     <input type="hidden" name="referee1_id" value="" class="data">
+                    <input type="hidden" name="referee1_id" value="{$matchRecordInfo.referee1_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="2">副裁判</label>
                     <span class="domData" name="referee2_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee2_id" value="" class="data">
+                    <input type="hidden" name="referee2_id" value="{$matchRecordInfo.referee2_id}" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="3">副裁判</label>
                     <span class="domData" name="referee3_name" style="width: 60%"></span>
-                    <input type="hidden" name="referee3_id" value="" class="data">
+                    <input type="hidden" name="referee3_id" value="{$matchRecordInfo.referee3_id}" class="data">
                 </a>
             </div>
 
@@ -256,6 +257,10 @@
 
         let league_id = "{$league_id}";
         $(function () {
+
+            console.log("{$matchRecordInfo.referee1}")
+            console.log("{$matchRecordInfo.referee2}")
+            console.log("{$matchRecordInfo.referee3}")
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;

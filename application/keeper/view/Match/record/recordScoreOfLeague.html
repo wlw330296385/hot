@@ -40,30 +40,32 @@
 
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="match" value="" class="data">
-        <input type="hidden" name="match_id" value="" class="data">
-        <input type="hidden" name="league_id" value="{$league_id}" class="data">
+        <input type="hidden" name="match" value="{$matchScheduleInfo.match}" class="data">
+        <input type="hidden" name="match_id" value="{$matchScheduleInfo.match_id}" class="data">
+        <input type="hidden" name="match_group" value="{$matchScheduleInfo.match_group}" class="data">
+        <input type="hidden" name="match_group_id" value="{$matchScheduleInfo.match_group_id}" class="data">
+        <input type="hidden" name="match_schedule_id" value="{$matchScheduleInfo.id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
-                <label>主队</label>
+                <label name="home_team" class="domData">{$matchScheduleInfo.home_team}</label>
                 <input type="text" name="home_score" value="" class="data" placeholder="请填写主队比分">
-                <input type="hidden" name="home_team" value="" class="data">
-                <input type="hidden" name="home_team_id" value="" class="data">
+                <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
+                <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
             </div>
 
             <div class="mui-input-row">
-                <label>客队</label>
+                <label name="away_team" class="domData">{$matchScheduleInfo.away_team}</label>
                 <input type="text" name="away_score" value="" class="data" placeholder="请填写客队比分">
-                <input type="hidden" name="away_team" value="" class="data">
-                <input type="hidden" name="away_team_id" value="" class="data">
+                <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
+                <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
             </div>
 
             <div class="mui-input-row">
                 <label>比赛类型</label>
-                <span>小组赛</span>
-                <input type="hidden" name="type" value="1" class="data">
+                <span name="match_stage" class="domData">{$matchScheduleInfo.match_stage}</span>
+                <input type="hidden" name="match_stage_id" value="{$matchScheduleInfo.match_stage_id}" class="data">
             </div>
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
@@ -87,21 +89,21 @@
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="1">主裁判</label>
-                    <span class="domData" name="referee1_name" style="width: 60%"></span>
+                    <span class="domData" name="referee1" style="width: 60%"></span>
                     <input type="hidden" name="referee1_id" value="" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="2">副裁判</label>
-                    <span class="domData" name="referee2_name" style="width: 60%"></span>
+                    <span class="domData" name="referee2" style="width: 60%"></span>
                     <input type="hidden" name="referee2_id" value="" class="data">
                 </a>
             </div>
             <div class="mui-input-row">
                 <a href="#referee" class="mui-navigate-right refereeTap">
                     <label data-num="3">副裁判</label>
-                    <span class="domData" name="referee3_name" style="width: 60%"></span>
+                    <span class="domData" name="referee3" style="width: 60%"></span>
                     <input type="hidden" name="referee3_id" value="" class="data">
                 </a>
             </div>
@@ -589,15 +591,15 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/league/updateschedule')}";
+            var url = "{:url('api/league/creatematchrecord')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert('编辑成功', '确定', function () {
+                mui.alert('录入成功', '确定', function () {
                     var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '编辑失败');
+                mui.alert(ajaxResult.msg, '录入失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);

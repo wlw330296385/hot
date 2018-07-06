@@ -34,6 +34,6 @@ class MatchRecordVal extends Validate
 
     protected $scene = [
         'league_add' => [ 'match_id', 'match_schedule_id', 'match_stage_id', 'court_id', 'home_team_id', 'home_team_score', 'away_team_id', 'away_team_score' ],
-        'league_edit' => [ 'id','match_id', 'match_schedule_id', 'match_stage_id', 'court_id', 'home_team_id', 'home_team_score', 'away_team_id', 'away_team_score' ]
+        'league_edit' => [ 'id','match_id', 'court_id', 'home_team_id', 'home_team_score', 'away_team_id', 'away_team_score' ]
     ];
 }

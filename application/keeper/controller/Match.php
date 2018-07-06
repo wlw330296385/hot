@@ -770,28 +770,28 @@ class Match extends Base {
         $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
-        $scheduleInfo = $leagueS->getMatchSchedule([
+        $matchScheduleInfo = $leagueS->getMatchSchedule([
             'id' => $id,
             'match_id' => $leagueId
         ]);
 
-        $this->assign('matchScheduleInfo', $scheduleInfo);
+        $this->assign('matchScheduleInfo', $matchScheduleInfo);
         return view('Match/record/recordScoreOfLeague');
     }
 
     // 球队赛果编辑
     public function editRecordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
-        $id = input('match_id', 0, 'intval');
+        $id = input('id', 0, 'intval');
         $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
-        $recordInfo = $matchS->getMatchRecord([
+        $matchRecordInfo = $matchS->getMatchRecord([
             'id' => $id,
             'match_id' => $leagueId
         ]);
 
-        $this->assign('matchRecordInfo', $recordInfo);
+        $this->assign('matchRecordInfo', $matchRecordInfo);
         return view('Match/record/editRecordScoreOfLeague');
     }
   

@@ -115,7 +115,7 @@
                 sInCount = 1;//刷新并显示第一页
                 var page = sInCount;
                 var gType = 1;//代表下拉刷新
-                toIncomeList('incomeList', page, gType, 1);//具体取数据的方法
+                toIncomeList('incomeList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -125,7 +125,7 @@
                 sInCount++;//翻下一页
                 var page = sInCount;
                 var gType = 2;//代表上拉加载
-                toIncomeList('incomeList', page, gType, 1);//具体取数据的方法
+                toIncomeList('incomeList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -156,7 +156,7 @@
                 sOutCount = 1;//刷新并显示第一页
                 var page = sOutCount;
                 var gType = 1;//代表下拉刷新
-                toOutputList('outputList', page, gType, -1);//具体取数据的方法
+                toOutputList('outputList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -166,7 +166,7 @@
                 sOutCount++;//翻下一页
                 var page = sOutCount;
                 var gType = 2;//代表上拉加载
-                toOutputList('outputList', page, gType, -1);//具体取数据的方法
+                toOutputList('outputList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -239,7 +239,7 @@
                 sInOutCount = 1;//刷新并显示第一页
                 var page = sInOutCount;
                 var gType = 1;//代表下拉刷新
-                toInOutList('inOutList', page, gType, -1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -249,7 +249,7 @@
                 sInOutCount++;//翻下一页
                 var page = sInOutCount;
                 var gType = 2;//代表上拉加载
-                toInOutList('inOutList', page, gType, -1);//具体取数据的方法
+                toInOutList('inOutList', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -353,7 +353,73 @@
     };
 
 
-    //获取提现明细表
+    //获取收支明细表
+    var toInOutList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/camp_finance/getCampFinanceListByPageApi')}?page="+page;
+        mui.ajax({
+            url: url,
+            data: {
+                camp_id:{$campInfo.id}
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var alink = '#';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        alink = typeLink(data.data.data[i].type,data.data.data[i].f_id);
+                        newli +=`<li class="mui-table-view-cell">
+                                 <a class="mui-navigate-right" href="`+alink+`">
+                                 <ul class="mui-row table">
+                                 <li class="mui-col-8">
+                                 <p>${data.data.data[i].type}</p>
+                                 <p>前余额：${data.data.data[i].s_balance}</p>
+                                 <p>后余额：${data.data.data[i].e_balance}</p>
+                                 <p>时间：${data.data.data[i].create_time}</p>
+                                 </li>
+                                 <li class="mui-col-4 mui-text-right"><h4>￥${data.data.data[i].money}</h4></li>
+                                 </ul>
+                                 </a>
+                                </li>`;
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.inOutList").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.inOutList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.inOutList").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+
+
+
+    //获取收入明细表
     var toIncomeList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/income/getIncomeListByPageApi')}?page="+page;
@@ -374,7 +440,7 @@
                 var alink = '#';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        alink = inTypeLink(data.data.data[i].type)+data.data.data[i].f_id;
+                        alink = typeLink(data.data.data[i].type,data.data.data[i].f_id);
                         newli +=`<li class="mui-table-view-cell">
                                  <a class="mui-navigate-right" href="`+alink+`">
                                  <ul class="mui-row table">
@@ -420,7 +486,7 @@
 
 
 
-    //获取提现明细表
+    //获取支出明细表
     var toOutputList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
         var url  = "{:url('api/output/getOutputListByPageApi')}?page="+page;
@@ -441,7 +507,7 @@
                 var alink = '#';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-//                        alink = outTypeLink(data.data.data[i].type)+data.data.data[i].f_id;
+                       alink = typeLink(data.data.data[i].type,data.data.data[i].f_id);
                         newli +=`<li class="mui-table-view-cell">
                                  <a class="mui-navigate-right" href="`+alink+`">
                                  <ul class="mui-row table">
@@ -511,49 +577,43 @@
     }
 
 
-    //根据收入类型获取对应的详细页面
-    function inTypeLink(n){
+    //根据类型获取对应的详细页面
+    function typeLink(n,id){
         var link="";
         switch (n)
         {
             case "课程订单收入":
-                link="/frontend/bill/billinfoofcamp/bill_id/";
+                link="/frontend/bill/billinfoofcamp/bill_id/"+id+"?backUrl=/frontend/camp/campsalarydetail/camp_id/{$campInfo.id}";
                 break;
             case "活动订单收入":
-                link="/frontend/bill/billinfoofcamp/bill_id/";
+                link="/frontend/bill/billinfoofcamp/bill_id/"+id+"?backUrl=/frontend/camp/campsalarydetail/camp_id/{$campInfo.id}";
                 break;
             case "课时收入":
-                link="/frontend/schedule/scheduleInfo/schedule_id/";
+                link="/frontend/schedule/scheduleInfo/schedule_id/"+id;
                 break;
             case "充值":
                 link="#";
                 break;
             case "退款收入":
-                link="/frontend/refund/refundInfo/refund_id/";
+                link="/frontend/bill/billinfoofcamp/bill_id/"+id+"?backUrl=/frontend/camp/campsalarydetail/camp_id/{$campInfo.id}";
                 break;
-        }
-        return link;
-    }
-
-    //根据支出类型获取对应的详细页面
-    function outTypeLink(n){
-        var link="";
-        switch (n)
-        {
             case "赠课":
-                link="/frontend/schedule/giftrecordinfo/id/";
+                link="/frontend/schedule/giftrecordinfo/id/"+id;
                 break;
             case "课时退费":
-                link="/frontend/refund/refundInfo/refund_id/";
+                link="/frontend/refund/refundInfo/refund_id/"+id;
                 break;
             case "提现":
-                link="/frontend/camp/camp_withdraw/camp_withdraw_id/";
+                link="#";
                 break;
             case "课时教练支出":
-                link="/frontend/schedule/scheduleInfo/schedule_id/";
+                link="/frontend/schedule/scheduleInfo/schedule_id/"+id;
+                break;
+            case "教练工资支出":
+                link="/frontend/schedule/scheduleInfo/schedule_id/"+id;
                 break;
             case "平台分成":
-                link="/frontend/schedule/scheduleInfo/schedule_id/";
+                link="/frontend/schedule/scheduleInfo/schedule_id/"+id;
                 break;
             case "其他支出":
                 link="";
