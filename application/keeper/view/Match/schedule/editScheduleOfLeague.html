@@ -56,11 +56,33 @@
                 <span class="HomeTeam" style="width: 60%">{$matchScheduleInfo.home_team}</span>
                 <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
             </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>主队球衣颜色</label>
+                    <span class="select-row">
+                        <select id="homeTeamColor" class="data" name="home_team_color">
+                            <option value="深色">深色</option>
+                            <option value="浅色">浅色</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
 
             <div class="mui-input-row">
                 <label>客队</label>
                 <span class="AwayTeam" style="width: 60%">{$matchScheduleInfo.away_team}</span>
                 <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
+            </div>
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>客队球衣颜色</label>
+                    <span class="select-row">
+                        <select id="awayTeamColor" class="data" name="away_team_color">
+                            <option value="浅色">浅色</option>
+                            <option value="深色">深色</option>
+                        </select>
+                    </span>
+                </div>
             </div>
 
             <div class="mui-input-row">
@@ -80,17 +102,7 @@
                     <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchScheduleInfo.match_time}</span>
                 </div>
             </div>
-            <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>球衣颜色</label>
-                    <span class="select-row">
-                        <select class="data" name="">
-                            <option value="1">深色</option>
-                            <option value="2">浅色</option>
-                        </select>
-                    </span>
-                </div>
-            </div>
+
 
             <div class="page-header bggray2">
                 <span class="course wd45">
@@ -366,6 +378,11 @@
         let referee3_id = "{$matchScheduleInfo.referee3_id}";
         let from = wooApi.GetQueryString('from');
         $(function () {
+
+            // 设置球衣颜色默认值
+            $('#homeTeamColor option[value="{$matchScheduleInfo.home_team_color}"').prop("selected", true);
+            $('#awayTeamColor option[value="{$matchScheduleInfo.away_team_color}"').prop("selected", true);
+
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
