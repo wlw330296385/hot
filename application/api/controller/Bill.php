@@ -73,7 +73,15 @@ class Bill extends Frontend{
             $data['member_id'] = $this->memberInfo['id'];
 
             if($bill_id){
-                $refundData = [];
+                if($data['refundData']!='[]' && !empty($data['refundData'])){
+                    $refundData = json_decode($data['refundData'],true);
+                    $refundData['process_id'] = $this->memberInfo['id'];
+                    $refundData['process'] = $this->memberInfo['member'];
+                    $refundData['process_time'] = time();
+                    unset($data['refundData']);
+                }else{
+                    $refundData = [];
+                }
                 $result = $this->BillService->updateBill($data,['id'=>$bill_id],$refundData);
             }else{
                 $result = $this->BillService->createBill($data);

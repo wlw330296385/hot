@@ -654,11 +654,13 @@ class BillService {
                         }
                         //扣除赠课
                         $refundTotal = ($lesson_member['rest_schedule']<$billInfo['total'])?($lesson_member['rest_schedule']- $billInfo['total_gift']):($billInfo['total'] - $billInfo['total_gift']);
-
+                        if($refundData['refund'] >($refundTotal*$billInfo['price'])){
+                            return ['code'=>100,'msg'=>"该用户的剩余课时为{$lesson_member['rest_schedule']}, 订单总数量为{$billInfo['total']},该订单下赠课数量为{$billInfo['total_gift']},因此您最多只能申退{$refundTotal}*{$billInfo['price']} 元"];
+                        }
                         $updateData = [
-                            'refundamount'=>($refundTotal*$billInfo['price']),
+                            'refundamount'=>$refundData['refund'],
                             'status'=>-2,
-                            'remarks' => "您的剩余课时为{$lesson_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},该订单下赠课数量为{$billInfo['total_gift']},因此您最多只能申请退{$refundTotal}节课的钱"
+                            'system_remarks' => "您的剩余课时为{$lesson_member['rest_schedule']}, 您的订单总数量为{$billInfo['total']},该订单下赠课数量为{$billInfo['total_gift']},因此您最多只能申请退{$refundTotal}节课的钱"
                         ]; 
                         $result = $this->Bill->save($updateData,['id'=>$billInfo['id']]);
                         if($result){
@@ -672,11 +674,11 @@ class BillService {
                         }
                     }else{
                         // 其他订单
-                        
+                        $result = $this->Bill->save(['refundamount'=>$refundData['refund'],'status'=>-2],['id'=>$billInfo['id']]);
                     }
                    
                     $Refund = new \app\model\Refund;
-                    $Refund->save(['status'=>2],['bill_id'=>$billInfo['id']]);
+                    $Refund->save($refundData,['bill_id'=>$billInfo['id']]);
                     if($result){
                         //发送信息给用户
                         $MessageData = [
@@ -693,7 +695,7 @@ class BillService {
                         ];
                         $saveData = [
                                         'title'=>"{$billInfo['goods']}退款申请已被同意",
-                                        'content'=>"订单号: {$billInfo['bill_order']}<br/>支付金额: ({$billInfo['refundamount']})元<br/>支付信息:{$billInfo['student']}",
+                                        'content'=>"订单号: {$billInfo['bill_order']}<br/>退款金额: ({$refundData['refund']})元<br/>支付信息:{$billInfo['student']}",
                                         'url'=>url('frontend/bill/billInfo',['bill_id'=>$billInfo['id']],'',true),
                                         'member_id'=>$billInfo['member_id']
                                     ];
