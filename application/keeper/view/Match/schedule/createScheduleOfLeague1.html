@@ -110,7 +110,7 @@
     <!--球队A-->
     <div id="HomeTeam" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd45">
                 <strong>选择球队</strong>
             </span>
@@ -118,20 +118,17 @@
                 <button class="mui-btn" id="teamADel">清除</button>
             </span>
         </div>
-        <div class="pop-search">
-            <input type="search" class="keywordTA" placeholder="请输入球队名称搜索">
-            <span class="mui-icon mui-icon-search searchicon" id="searchTA"></span>
-        </div>
-        <div class="mui-scroll-wrapper" style="top:88px !important;">
+        <div class="mui-scroll-wrapper" style="top:50px !important;">
             <div class="mui-scroll">
-                <div class="teamAList teamList"></div></div>
+                <div class="teamAList teamList"></div>
+            </div>
         </div>
     </div>
 
     <!--球队B-->
     <div id="AwayTeam" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
+        <div class="page-header border-b">
             <span class="course wd45">
                 <strong>选择球队</strong>
             </span>
@@ -139,11 +136,7 @@
                 <button class="mui-btn" id="teamBDel">清除</button>
             </span>
         </div>
-        <div class="pop-search">
-            <input type="search" class="keywordTB" placeholder="请输入球队名称搜索">
-            <span class="mui-icon mui-icon-search searchicon" id="searchTB"></span>
-        </div>
-        <div class="mui-scroll-wrapper" style="top:88px !important;">
+        <div class="mui-scroll-wrapper" style="top:50px !important;">
             <div class="mui-scroll">
                 <div class="teamBList teamList"></div>
             </div>
@@ -287,12 +280,15 @@
                 $(".courtList li").attr("data-num", dataNum);
             });
 
-
             // 选择主队
             $(document).on('tap', '.teamAList .tlistli', function () {
-                let team = $.trim($(this).text());
+                let team = $.trim($(this).find("text").text());
                 let home_team_id = $(this).attr("data-team_id");
                 let liNum = $(this).attr("data-num");
+                // if ($(".scheduleList input[type=hidden]").val() == home_team_id) {
+                //     mui.toast("球队已在列表中");
+                //     return false;
+                // }
                 $(".homeTeamTap").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
@@ -316,9 +312,10 @@
 
             // 选择客队
             $(document).on('tap', '.teamBList .tlistli', function () {
-                let team = $.trim($(this).text());
+                let team = $.trim($(this).find("text").text());
                 let away_team_id = $(this).attr("data-team_id");
                 let liNum = $(this).attr("data-num");
+
                 $(".awayTeamTap").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
@@ -498,10 +495,10 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli += ` <ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
                             newli += `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
-                            newli += `<div class="mui-collapse-content" style="padding-bottom:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
+                            newli += `<div class="mui-collapse-content" style="padding-left:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}" style="padding-left:42px;">
-                                            ${data.data.data[i].group_teams[j].team.team}
+                                newli += `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}">
+                                            <img class="img24 mui-pull-left" src="${data.data.data[i].group_teams[j].team_logo}"><text>${data.data.data[i].group_teams[j].team.team}</text>
                                         <li>`;
                             }
                             newli += `</ul></div></li></ul>`
@@ -531,7 +528,7 @@
                 var court = $(this).find(".court").text();
                 var court_id = $(this).find("input[name=court_id]").val();
                 var match_time = $(this).find(".ui-alert").text();
-                scheduleList.push({ home_team, home_team_id,away_team,away_team_id, type, court, court_id, match_time })
+                scheduleList.push({ home_team, home_team_id, away_team, away_team_id, type, court, court_id, match_time })
             })
             console.log(scheduleList)
             //     var data = wooApi.getInputData('input', 'data');
