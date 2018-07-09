@@ -184,13 +184,7 @@
                                                     <p class="f14">
                                                         <img class="img24" src="${data.data.battles[j].away_team_logo}" alt="">${data.data.battles[j].away_team}</p>
                                                 </div>`
-                                                // <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
-                                // newli += `<p style="line-height:62px;">sdss</p>`
                                 newli += `</div></li>`
-                                // newli += `<li class="mui-table-view-cell listli">
-                                //             <div class="fl"><img class="img45" src="${data.data.battles[j].home_team_logo}" alt="">${data.data.battles[j].home_team}</div>
-                                //             <div class="fr">${data.data.battles[j].away_team}<img class="img45 marginLeft10 marginRight0" src="${data.data.battles[j].away_team_logo}" alt=""></div>
-                                //         </li>`;
                             }
                         } else {
                             for (var i = 0; i <= data.data.length - 1; i++) {
@@ -205,13 +199,7 @@
                                                     <p class="f14">
                                                         <img class="img24" src="${data.data[i].battles[j].away_team_logo}" alt="">${data.data[i].battles[j].away_team}</p>
                                                 </div>`
-                                                // <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
-                                    // newli += `<p style="line-height:62px;">sdss</p>`
                                     newli += `</div></li>`
-                                    // newli += `<li class="mui-table-view-cell listli">
-                                    //             <div class="fl mui-ellipsis" style="width:50%"><img class="img45" src="${data.data[i].battles[j].home_team_logo}" alt="">${data.data[i].battles[j].home_team}</div>
-                                    //             <div class="fr">${data.data[i].battles[j].away_team}<img class="img45 marginLeft10 marginRight0" src="${data.data[i].battles[j].away_team_logo}" alt=""></div>
-                                    //         </li>`;
                                     var match_group_id = data.data[i].group_id;
                                     var match_group = data.data[i].group_name;
                                     var home_team_id = data.data[i].battles[j].home_team_id;
@@ -239,6 +227,12 @@
 
         // 提交
         function submitAction() {
+
+            if ($(".matchStageType option:selected").val() == '') {
+                mui.toast("请选择比赛阶段");
+                return false;
+            }
+
             console.log(scheduleList)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);

@@ -11,14 +11,10 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .opclick {
-            padding: 4px 8px;
-        }
-    </style>
 </head>
 
 <body>
+
     <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
@@ -44,23 +40,24 @@
                     <div class="finishedMatchList"></div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
         mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
         $(function () {
+
             //初始化全局变量
             var onCount1 = 1;
             var onCount2 = 1;
@@ -106,7 +103,6 @@
             });
 
 
-
             //1下拉刷新具体业务实现（学员）
             function pulldownRefresh1() {
                 setTimeout(function () {
@@ -145,9 +141,9 @@
                 }, 100);
             }
 
-        });
+        })
 
-        //未结束
+        // 接口获取数据并追加到页面
         var toNotFinishedList = function (wList, page, gType) {
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/getmatchschedulelistbytime','','',true)}" + '/?page=' + page;
@@ -181,35 +177,34 @@
                                 var urlsRecord = "{:url('match/recordScoreOfLeague')}" + '/league_id/' + "{$league_id}" + '/match_id/' + dataSchedule.id;
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id;
                                 newli += `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body wd60">
-                                                    <p class="f14" style="margin-bottom: 8px;">
+                                                <div class="mui-media-body wd52">
+                                                    <p class="f14" style="margin-bottom: 8px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" alt="">${dataSchedule.home_team}</p>
                                                     <p class="f14">
                                                         <img class="img24" src="${dataSchedule.away_team_logo}" alt="">${dataSchedule.away_team}
                                                     </p>
                                                 </div>
-                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 23% !important">
+                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">
                                                         <p style="margin-bottom:8px;"><a href="${urlsEdit}"><button class="opclick bgred">赛程编辑</button></a></p>
-                                                <p><a href="${urlsRecord}"><button class="opclick bggreen">数据录入</button></a></p></div>
+                                                <p><a href="${urlsRecord}"><button class="opclick bggreen">比赛结果</button></a></p></div>
                                                 <div class="fr" style="line-height:62px;margin-right:10px;">${dataSchedule.match_group}</div>`
                                 newli += `</li>`
                             }
                             newli += `</ul>`
                         }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $(".notFinishedMatchList").empty().append(newli);
-                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                            mui('#' + wList).pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $(".notFinishedMatchList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $(".notFinishedMatchList").append(newli);
+                    }
+
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".notFinishedMatchList").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $(".notFinishedMatchList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        //下拉加载 gType==2
+                        $(".notFinishedMatchList").empty().append(newli);
                     }
 
                     if (newli != '') {
@@ -226,7 +221,7 @@
             });
         };
 
-        //已结束
+        // 接口获取数据并追加到页面
         var tofinishedList = function (wList, page, gType) {
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/matchrecordlistbystage','','',true)}/?page=" + page;
@@ -265,9 +260,9 @@
                                 var urlsEdit = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 var urlsRecord = "{:url('match/matchInfoofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 newli += `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body">`
+                                                <div class="mui-media-body wd45">`
                                 if (dataRecord.home_score > dataRecord.away_score) {
-                                    newli += `<p class="f14" style="margin-bottom: 8px;">
+                                    newli += `<p class="f14" style="margin-bottom: 8px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                                                     <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
                                                     <font class="tipCorner bgred">胜</font>
                                                 </p>
@@ -275,23 +270,22 @@
                                                     <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
                                                 </p></div>`
                                 } else {
-                                    newli += `<p class="f14" style="margin-bottom: 8px;">
+                                    newli += `<p class="f14" style="margin-bottom: 8px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                                                     <img class="img24" src="${dataRecord.home_team_logo}" alt="">${dataRecord.home_team}
-                                                    <text class="fr colorred" style="padding-right: 5px;">${dataRecord.home_score}</text>
                                                 </p>
                                                 <p class="f14">
                                                     <img class="img24" src="${dataRecord.away_team_logo}" alt="">${dataRecord.away_team}
                                                     <font class="tipCorner bgred">胜</font>
                                                 </p></div>`
                                 }
-                                newli += `<div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 23% !important">`
+                                newli += `<div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">`
                                 if (tSection > 24) {
                                     newli += `<p style="line-height:62px;">
-                                                <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">数据录入</button></a>
+                                                <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">技术统计</button></a>
                                             </p></div>`
                                 } else {
                                     newli += `<p style="margin-bottom:8px;">
-                                                <a href="${urlsEdit}"><button class="opclick bgred">赛果编辑</button></a></p><p><a href="${urlsRecord}"><button class="opclick bggreen">数据录入</button></a>
+                                                <a href="${urlsEdit}"><button class="opclick bgred">赛果编辑</button></a></p><p><a href="${urlsRecord}"><button class="opclick bggreen">技术统计</button></a>
                                             </p></div>`
                                 }
                                 newli += `<div class="fr mui-text-right" style="padding-right: 5px; width:9%">
@@ -303,20 +297,19 @@
                             }
                             newli += `</ul >`
                         }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $(".finishedMatchList").empty().append(newli);
-                            mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                            mui('#' + wList).pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $(".finishedMatchList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $(".finishedMatchList").append(newli);
+                    }
+
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".finishedMatchList").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $(".finishedMatchList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
                         }
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        //下拉加载 gType==2
+                        $(".finishedMatchList").empty().append(newli);
                     }
 
                     if (newli != '') {
@@ -332,6 +325,7 @@
                 }
             });
         };
+
 
         //创建补0函数
         function p(s) {
