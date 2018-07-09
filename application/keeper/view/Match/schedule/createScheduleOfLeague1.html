@@ -64,19 +64,21 @@
                     <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
                         <label>主队</label>
                         <span class="HomeTeam" style="width: 60%"></span>
+                        <input type="hidden" name="home_team_id" value="">
                     </a>
                 </div>
                 <div class="mui-input-row">
                     <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
                         <label>客队</label>
                         <span class="AwayTeam" style="width: 60%"></span>
+                        <input type="hidden" name="away_team_id" value="">
                     </a>
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>比赛类型</label>
                         <span class="select-row">
-                            <select class="data matchStageType" name="type"></select>
+                            <select class="matchStageType"></select>
                         </span>
                     </div>
                 </div>
@@ -90,7 +92,7 @@
                 <div class="mui-input-row timeTap" data-tnum="1">
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
-                        <span class="ui-alert" name="match_time"></span>
+                        <span class="ui-alert" class="match_time1"></span>
                     </div>
                 </div>
             </div>
@@ -122,11 +124,7 @@
         </div>
         <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
-                <ul class="mui-table-view list teamAList">
-                    <li class="mui-table-view-cell listli" data-team_id="1">中国队</li>
-                    <li class="mui-table-view-cell listli" data-team_id="2">荣光队</li>
-                </ul>
-            </div>
+                <div class="teamAList teamList"></div></div>
         </div>
     </div>
 
@@ -147,10 +145,7 @@
         </div>
         <div class="mui-scroll-wrapper" style="top:88px !important;">
             <div class="mui-scroll">
-                <ul class="mui-table-view list teamBList">
-                    <li class="mui-table-view-cell listli" data-team_id="1">测试1队</li>
-                    <li class="mui-table-view-cell listli" data-team_id="2">大热队</li>
-                </ul>
+                <div class="teamBList teamList"></div>
             </div>
         </div>
     </div>
@@ -248,21 +243,21 @@
                                 <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
                                     <label>主队</label>
                                     <span class="HomeTeam" style="width: 60%"></span>
-                                    <input type="hidden" name="home_team_id" value="" class="data">
+                                    <input type="hidden" name="home_team_id" value="">
                                 </a>
                             </div>
                             <div class="mui-input-row">
                                 <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
                                     <label>客队</label>
                                     <span class="AwayTeam" style="width: 60%"></span>
-                                    <input type="hidden" name="away_team_id" value="" class="data">
+                                    <input type="hidden" name="away_team_id" value="">
                                 </a>
                             </div>
                             <div class="mui-input-row">
                                 <div class="mui-navigate-right">
                                     <label>比赛类型</label>
                                     <span class="select-row">
-                                        <select class="data matchStageType" name="type"></select>
+                                        <select class="matchStageType" name="type"></select>
                                     </span>
                                 </div>
                             </div>
@@ -276,7 +271,7 @@
                             <div class="mui-input-row timeTap" data-tnum="${listLength}">
                                 <div class="mui-navigate-right">
                                     <label>比赛时间</label>
-                                    <span class="ui-alert" name="match_time"></span>
+                                    <span class="ui-alert" class="match_time"></span>
                                 </div>
                             </div>
                         </div>`;
@@ -294,13 +289,15 @@
 
 
             // 选择主队
-            $(document).on('tap', '.teamAList li', function () {
-                let team = $(this).text();
+            $(document).on('tap', '.teamAList .tlistli', function () {
+                let team = $.trim($(this).text());
+                let home_team_id = $(this).attr("data-team_id");
                 let liNum = $(this).attr("data-num");
                 $(".homeTeamTap").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text(team);
+                        $(this).find("input").val(home_team_id);
                         mui("#HomeTeam").popover("toggle");
                     }
                 })
@@ -311,19 +308,22 @@
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text('');
+                        $(this).find("input").val('');
                         mui("#HomeTeam").popover("toggle");
                     }
                 })
             });
 
             // 选择客队
-            $(document).on('tap', '.teamBList li', function () {
-                let team = $(this).text();
+            $(document).on('tap', '.teamBList .tlistli', function () {
+                let team = $.trim($(this).text());
+                let away_team_id = $(this).attr("data-team_id");
                 let liNum = $(this).attr("data-num");
                 $(".awayTeamTap").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text(team);
+                        $(this).find("input").val(away_team_id);
                         mui("#AwayTeam").popover("toggle");
                     }
                 })
@@ -334,6 +334,7 @@
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text('');
+                        $(this).find("input").val('');
                         mui("#AwayTeam").popover("toggle");
                     }
                 })
@@ -396,6 +397,9 @@
                     }
                 })
             });
+
+
+            getbattle();
         });
 
         // 比赛阶段
@@ -475,6 +479,45 @@
             });
         };
 
+        function getbattle() {
+            var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
+            let league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += ` <ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
+                            newli += `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
+                            newli += `<div class="mui-collapse-content" style="padding-bottom:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}" style="padding-left:42px;">
+                                            ${data.data.data[i].group_teams[j].team.team}
+                                        <li>`;
+                            }
+                            newli += `</ul></div></li></ul>`
+                        }
+                        if (newli != '') {
+                            $(".teamList").empty().append(newli);
+                        }
+                    } else {
+                        $(".teamList").html('<p class="nodata">没有相关数据哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
         // 获取数据并进行提交
         function submitAction() {
@@ -482,11 +525,13 @@
             $(".scheduleList").each(function () {
                 var home_team = $(this).find(".HomeTeam").text();
                 var home_team_id = $(this).find("input[name=home_team_id]").val();
+                var away_team = $(this).find(".AwayTeam").text();
+                var away_team_id = $(this).find("input[name=away_team_id]").val();
                 var type = $(this).find(".matchStageType option:checked").val();
                 var court = $(this).find(".court").text();
                 var court_id = $(this).find("input[name=court_id]").val();
-                var match_time = $(this).find(".match_time").text();
-                scheduleList.push({ home_team, home_team_id, type, court, court_id, match_time })
+                var match_time = $(this).find(".ui-alert").text();
+                scheduleList.push({ home_team, home_team_id,away_team,away_team_id, type, court, court_id, match_time })
             })
             console.log(scheduleList)
             //     var data = wooApi.getInputData('input', 'data');

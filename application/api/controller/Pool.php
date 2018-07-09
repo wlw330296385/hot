@@ -94,7 +94,7 @@ class Pool extends Base{
             $pool_id = input('param.pool_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            $group_id = $
+       
             if(isset($data['starts'])){
                 $data['start'] = strtotime($data['starts'])+86399;
             }
@@ -103,10 +103,10 @@ class Pool extends Base{
                 $data['end_str'] = date('Ymd',$data['end']);
             }
             $poolInfo = db('pool')->where(['id'=>$pool_id])->find();
-            if($poolInfo){
+            if(!$poolInfo){
                 return json(['code'=>100,'msg'=>'参数错误']);
             }
-            $groupInfo = db('group')->where(['id'=>$poolInfo['gourp_id']])->find();
+            $groupInfo = db('group')->where(['id'=>$poolInfo['group_id']])->find();
             if($groupInfo['member_id']<>$this->memberInfo['id']){
                 return json(['code'=>100,'msg'=>'权限不足']);
             }

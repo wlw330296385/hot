@@ -119,6 +119,17 @@
                     return false;
                 }
                 //余额充币接口
+                var objData = {
+                        total:sum
+                }
+                result = wooApi.asyncF("{:url('api/charge/balanceToHotcoin')}",objData);
+                if(result.code == 200){
+                     mui.alert('',result.msg,'确定',function(){
+                        top.location.reload();
+                     });
+                }else{
+                    mui.alert(result.msg);
+                }
             }
         });
 
