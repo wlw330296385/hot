@@ -15,10 +15,6 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
         #bonus_assign2,#bonus_assign3{
             display:none;
         }
@@ -34,6 +30,7 @@
 
     <div class="mui-content">
         <input type="hidden" class="data" name="pool_id" value="{$poolInfo.id}">
+        <input type="hidden" class="data" name="group_id" value="{$poolInfo.group_id}">
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>奖金池名称</label>
@@ -47,7 +44,7 @@
 
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label>奖金分配</label>
+                    <label>奖金分配 <a href="#bonusAssignTips" class="f12"><i class="mui-icon mui-icon-info"></i></a></label>
                     <span class="select-row">
                         <select class="data" name="bonus_assign">
                             <option value="1">奖励第一名</option>
@@ -100,7 +97,25 @@
                     <span id="resultEnd" class="ui-alert domData" name="ends">{$poolInfo.end}</span>
                 </div>
             </div>
+            <div class="mui-input-row">
+                <label class="wd45">个人单日打卡上限</label>
+                <input type="number" name="times" class="data wd52" value="{$poolInfo.times}" placeholder="默认为1次">
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>打卡说明</label>
+                <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写说明内容" style="text-align: left;width: 96%;margin: 0 auto;">{$poolInfo.rule}</textarea>
+            </div>
         </form>
+        <div class="publicTip mb44">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、必须创建打卡规则才能在社群打卡</p>
+                <p>2、为保护打卡会员权益，打卡规则创建后，一旦产生打卡记录，将不可修改</p>
+            </div>
+        </div>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
@@ -110,6 +125,24 @@
 
     </div>
 
+<!--奖金分配说明-->
+<div id="bonusAssignTips" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header explain-title">
+        <span class="course">奖金分配说明</span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="mine">
+                <div class="explain">
+                    <div class="explain-cont">
+                        <p>当前奖金分配规则是按所有获奖的人分配，获奖人数越多大家分配的奖金就越少，如规则是“奖励前三名”，即使第一名只有一人，但二三名的人很多，第一名奖金同样也会被分薄，这就会出现奖金很高，但第一名擂主奖金不高的情况。此按人头分配算法能保证排名前的人奖金永远比排名后的人多。如有任何疑问？欢迎来电反馈 0755-26677733。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -172,14 +205,63 @@
                 $("select[name='bonus_assign']").find('option[value="2"]').prop("selected", true);
                 var getAssign = "{$poolInfo.first_scale}:{$poolInfo.second_scale}:0";
                 $("select[name='bonus_assign2']").find('option[value="'+getAssign+'"]').prop("selected", true);
+                $("#bonus_assign2").show();
             {else/}
                 $("select[name='bonus_assign']").find('option[value="3"]').prop("selected", true);
                 var getAssign = "{$poolInfo.first_scale}:{$poolInfo.second_scale}:{$poolInfo.third_scale}";
                 $("select[name='bonus_assign3']").find('option[value="'+getAssign+'"]').prop("selected", true);
+                $("#bonus_assign3").show();
             {/if}
 
 
+            var createGroupId = wooApi.GetQueryString('createGroupId');
+            if (createGroupId != null) {
+                $(".backHref").attr("href", "{:url('group/groupInfo')}/" +"group_id/"+ createGroupId);
+            } else {
+                $(".backHref").addClass("mui-action-back");
+            }
+
+            // 选择奖金分配
+            $("select[name='bonus_assign']").change(function () {
+                if ($(this).children('option:selected').val() == '2') {
+                    $("#bonus_assign2").show();
+                    $("#bonus_assign3").hide();
+                    setBonusAssign($("#bonus_assign2 select").children('option:selected').val());
+                } else if ($(this).children('option:selected').val() == '3') {
+                    $("#bonus_assign3").show();
+                    $("#bonus_assign2").hide();
+                    setBonusAssign($("#bonus_assign3 select").children('option:selected').val());
+                } else{
+                    $("#bonus_assign3").hide();
+                    $("#bonus_assign2").hide();
+                    $("input[name='first_scale']").val("10");
+                    $("input[name='second_scale']").val("0");
+                    $("input[name='third_scale']").val("0");
+                }
+            });
+
+
+            // 选择奖金分配
+            $("select[name='bonus_assign2']").change(function () {
+                setBonusAssign($(this).children('option:selected').val());
+            });
+            // 选择奖金分配
+            $("select[name='bonus_assign3']").change(function () {
+                setBonusAssign($(this).children('option:selected').val());
+            });
+
         })
+
+
+        // 设置奖金分配
+        function setBonusAssign(abc) {
+            console.log(abc)
+            var bsArray = new Array();
+            bsArray = abc.split(":");
+            $("input[name='first_scale']").val(bsArray[0]);
+            $("input[name='second_scale']").val(bsArray[1]);
+            $("input[name='third_scale']").val(bsArray[2]);
+        }
 
         // 获取数据并进行提交
         function submitAction() {
@@ -205,6 +287,9 @@
             if (end == '') {
                 mui.toast("请选择结束时间");
                 return false;
+            }
+            if ($("input[name='times']").val() == ''||$("input[name='times']").val() == null) {
+                $("input[name='times']").val("1");
             }
 
 

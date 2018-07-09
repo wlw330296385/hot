@@ -15,10 +15,6 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
 
         .publicTip {
             padding: 15px;
@@ -76,7 +72,7 @@
 
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
-                    <label>奖金分配</label>
+                    <label>奖金分配 <a href="#bonusAssignTips" class="f12"><i class="mui-icon mui-icon-info"></i></a></label>
                     <span class="select-row">
                         <select class="data" name="bonus_assign">
                             <option value="1">奖励第一名</option>
@@ -144,7 +140,7 @@
             </p>
             <div class="publicText">
                 <p>1、必须创建打卡规则才能在社群打卡</p>
-                <p>2、为保护打卡会员权益，打卡规则一旦创建，将不可修改</p>
+                <p>2、为保护打卡会员权益，打卡规则创建后，一旦产生打卡记录，将不可修改</p>
             </div>
         </div>
 
@@ -156,6 +152,24 @@
 
     </div>
 
+<!--奖金分配说明-->
+<div id="bonusAssignTips" class="mui-popover">
+    <div class="mui-popover-arrow"></div>
+    <div class="page-header explain-title">
+        <span class="course">奖金分配说明</span>
+    </div>
+    <div class="mui-scroll-wrapper">
+        <div class="mui-scroll">
+            <div class="mine">
+                <div class="explain">
+                    <div class="explain-cont">
+                        <p>当前奖金分配规则是按所有获奖的人分配，获奖人数越多大家分配的奖金就越少，如规则是“奖励前三名”，即使第一名只有一人，但二三名的人很多，第一名奖金同样也会被分薄，这就会出现奖金很高，但第一名擂主奖金不高的情况。此按人头分配算法能保证排名前的人奖金永远比排名后的人多。如有任何疑问？欢迎来电反馈 0755-26677733。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
@@ -280,6 +294,9 @@
             if (end == '') {
                 mui.toast("请选择结束时间");
                 return false;
+            }
+            if ($("input[name='times']").val() == ''||$("input[name='times']").val() == null) {
+                $("input[name='times']").val("1");
             }
 
             var data = wooApi.getInputData('input', 'data');
