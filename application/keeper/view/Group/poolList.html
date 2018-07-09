@@ -61,11 +61,16 @@
             window.top.location.href = this.href;
         });
 
-        $(function () {
-
             //初始化全局变量
             var count = 1;
             var teamId = wooApi.GetQueryString('team_id');
+            var hasCurrPool = false;
+
+        $(function () {
+
+            //判断是否有进行中的打卡规则
+            //checkStatusList()
+
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
                 pullRefresh: {
@@ -90,6 +95,9 @@
                     }
                 }
             });
+
+
+        })
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
@@ -125,16 +133,8 @@
                     success: function (data) {
                         console.log(data)
                         var newli = '';
-                        if (data.data == '') {
-                            $(".createPool").show();
-                        }
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                if (data.data[i].status == -1) {
-                                    $(".createPool").show();
-                                } else {
-                                    $(".nowPool").show();
-                                }
                                 var urls = "{:url('group/poolInfo')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
                                 newli += '<a href="' + urls + '" class="mui-navigate-right"><label>' + data.data[i].group + '</label>';
@@ -147,6 +147,10 @@
                                 }
                                 newli += '<span class="wd25"><text class="colororange">' + data.data[i].stake + '&nbsp;</text>HT</sapn>';
                                 newli += '</li>';
+                                //判断是否有正在进行中或未开启的打卡规则（此方法需保证这两种状态的记录在第一页出现）
+                                if(hasCurrPool==false&&(data.data[i].status==1||data.data[i].status==2)){
+                                    hasCurrPool=true;
+                                }
                             }
                         }
                         if (gType == 1) {
@@ -159,15 +163,17 @@
                             }
                         } else {
                             //下拉加载 gType==2
-                            if (data.data == '') {
-                                $(".createPool").hide();
-                            }
                             $("ul.pool").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
                         } else {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
+                        if (hasCurrPool==true) {
+                            $(".nowPool").show();
+                        } else {
+                            $(".createPool").show();
                         }
                     },
                     error: function (xhr, type, errerThrown) {
@@ -176,7 +182,41 @@
                     }
                 });
             };
-        })
+
+                                
+
+            //接口获取数据并追加到页面
+            var checkStatusList = function () {
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/pool/getPoolListApi','','',true)}";
+                var group_id = "{$groupInfo.id}"
+                mui.ajax({
+                    url: url,
+                    data: {
+                        group_id: group_id,
+                        status:2
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            if (data.data.length > 0) {
+                                    $(".nowPool").show();
+                                } else {
+                                    $(".createPool").show();
+                                }
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    }
+                });
+            };
     </script>
 </body>
 

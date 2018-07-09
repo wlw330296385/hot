@@ -120,9 +120,59 @@ class Charge extends Frontend{
     // 热币转余额
     public function hotcoinToBalance(){
     	try {
-    		
+    		$total = input('param.total');
+    		$l = 1;
+    		$balance = $l *$total;
+    		if ($this->memberInfo['id']<1) {
+    			return json(['code'=>100,'msg'=>'请先登录']);
+    		}
+    		if($this->memberInfo['balance'] < $balance){
+    			return json(['code'=>100,'msg'=>'余额不足']);
+    		}
+    		$result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('balance',$balance)->inc('hot_coin',$total)->update();
+    		if($result){
+    			session('memberInfo.balance',($this->memberInfo['balance'] - $balance));
+    			session('memberInfo.hot_coin',($this->memberInfo['balance'] + $total));
+    			$Charge = new \app\model\Charge;
+	        	$result = $Charge->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'charge'		=>$total,
+	        		'charge_order'	=>getTID($this->memberInfo['balance']),
+	        		'status'		=>1,
+	        		'type'			=>2
+	        	]);
+	        	$Hotcoin = new \app\model\Hotcoin;
+				$Hotcoin->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'f_id'			=>$Charge->id,
+	        		'hot_coin'		=>$total,
+	        		'type'			=>2,
+	        		'status'		=>1
+	        	]);
+	        	$MemberFinance = new \app\model\MemberFinance;
+	        	$MemberFinance->save([
+	        		'member'		=>$this->memberInfo['member'],
+	        		'member_id'		=>$this->memberInfo['id'],
+	        		'avatar'		=>$this->memberInfo['avatar'],
+	        		'f_id'			=>$Charge->id,
+	        		'money'			=>$total,
+	        		'type'			=>-2,
+	        		'status'		=>1,
+	        		's_balance'		=>$this->memberInfo['balance'],
+	        		'e_balance'		=>$this->memberInfo['balance']-$total,
+	        		'date_str'		=>date('Ymd',time()),
+	        		'system_remarks'=>'余额转热币'
+	        	]);
+    			return json(['code'=>200,'msg'=>'操作成功']);
+    		}else{
+    			return json(['code'=>100,'msg'=>'操作失败']);
+    		}
     	} catch (Exception $e) {
-    		
+    		return json(['code'=>100,'msg'=>$e->getMessage()]);
     	}
     }
 
