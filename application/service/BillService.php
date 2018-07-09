@@ -674,6 +674,9 @@ class BillService {
                         }
                     }else{
                         // 其他订单 
+                        if($refundData['refund'] >$billInfo['balance_pay']){
+                            return ['code'=>100,'msg'=>"最多只能退{$billInfo['balance_pay']}元"];
+                        }
                         $result = $this->Bill->save(['refundamount'=>$refundData['refund'],'status'=>-2],['id'=>$billInfo['id']]);
                     }
                    
