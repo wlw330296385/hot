@@ -673,7 +673,7 @@ class BillService {
                             }
                         }
                     }else{
-                        // 其他订单
+                        // 其他订单 
                         $result = $this->Bill->save(['refundamount'=>$refundData['refund'],'status'=>-2],['id'=>$billInfo['id']]);
                     }
                    
