@@ -253,9 +253,9 @@
                                 var dataRecord = data.data[i].stage.records[j]
 
                                 var Ttime = gettimeh(dataRecord.match_timestamp * 1000);
-                                var t2 = new Date(nowTime().replace(/\-/g, "/"));
-                                var t1 = new Date(dataRecord.match_time.replace(/\-/g, "/"))
-                                var tSection = parseInt(t2 - t1) / 1000 / 3600;
+                                // var t2 = new Date(nowTime().replace(/\-/g, "/"));
+                                // var t1 = new Date(dataRecord.match_time.replace(/\-/g, "/"))
+                                // var tSection = parseInt(t2 - t1) / 1000 / 3600;
 
                                 var urlsEdit = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 var urlsRecord = "{:url('match/matchInfoofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
@@ -279,7 +279,7 @@
                                                 </p></div>`
                                 }
                                 newli += `<div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">`
-                                if (tSection > 24) {
+                                if (dataRecord.is_record == 1) {
                                     newli += `<p style="line-height:62px;">
                                                 <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">技术统计</button></a>
                                             </p></div>`
@@ -337,15 +337,15 @@
             var minutes = _time.getMinutes();
             return p(hours) + ":" + p(minutes);
         }
-        function nowTime() {
-            var myDate = new Date();//获取系统当前时间
-            var year = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
-            var month = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
-            var day = myDate.getDate(); //获取当前日(1-31)
-            var hours = myDate.getHours(); //获取当前小时数(0-23)
-            var minutes = myDate.getMinutes(); //获取当前分钟数(0-59)
-            return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
-        }
+        // function nowTime() {
+        //     var myDate = new Date();//获取系统当前时间
+        //     var year = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        //     var month = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+        //     var day = myDate.getDate(); //获取当前日(1-31)
+        //     var hours = myDate.getHours(); //获取当前小时数(0-23)
+        //     var minutes = myDate.getMinutes(); //获取当前分钟数(0-59)
+        //     return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+        // }
     </script>
 </body>
 

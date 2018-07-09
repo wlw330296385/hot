@@ -45,14 +45,15 @@
         <input type="hidden" name="match_group" value="{$matchScheduleInfo.match_group}" class="data">
         <input type="hidden" name="match_group_id" value="{$matchScheduleInfo.match_group_id}" class="data">
         <input type="hidden" name="match_schedule_id" value="{$matchScheduleInfo.id}" class="data">
-
+        <input type="hidden" name="is_record" value="" class="data">
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
                 <label name="home_team" class="domData">{$matchScheduleInfo.home_team}</label>
-                <input type="text" name="home_score" value="" class="data" placeholder="请填写比分">
+                <input type="number" name="home_score" value="" class="data" placeholder="请填写比分">
                 <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
                 <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
+
             </div>
             <div class="mui-input-row">
                 <label>主队球衣颜色</label>
@@ -61,7 +62,7 @@
 
             <div class="mui-input-row">
                 <label name="away_team" class="domData">{$matchScheduleInfo.away_team}</label>
-                <input type="text" name="away_score" value="" class="data" placeholder="请填写比分">
+                <input type="number" name="away_score" value="" class="data" placeholder="请填写比分">
                 <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
                 <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
             </div>
@@ -87,6 +88,10 @@
                     <label>比赛时间</label>
                     <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchScheduleInfo.match_time}</span>
                 </div>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>备注</label>
+                <textarea class="remarks" value="" placeholder="请填写备注"></textarea>
             </div>
 
             <div class="page-header bggray2">
@@ -153,6 +158,8 @@
                     <a href="#score" id="setleagueScoreBox" class="mui-icon mui-icon-personadd add"></a>
                 </div>
                 <input type="hidden" class="data" name="scorers" value="">
+
+
             </div>
 
         </form>
@@ -604,7 +611,11 @@
                 mui.toast("比分不能为空");
                 return false;
             }
-            if (court_id == '') {
+            if (home_score == away_score) {
+                mui.toast("比分不能相同");
+                return false;
+            }
+            if (court_id == 0) {
                 mui.toast("请选择比赛场地");
                 return false;
             }
@@ -625,27 +636,60 @@
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
-
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/league/creatematchrecord')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert('录入成功', '确定', function () {
-                    var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '录入失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
+            var btnArray = ['保存', '发布'];
+            mui.confirm('1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    $("input[name=is_record]").val(1);
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    var remarks = $('textarea.remarks').val();
+                    objData.remarks = remarks;
+                    var url = "{:url('api/league/creatematchrecord')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('编辑成功', '确定', function () {
+                            var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '录入失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
                     }
-                }, 'json');
-            }
+                } else {
+                    $("input[name=is_record]").val(0);
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    var remarks = $('textarea.remarks').val();
+                    objData.remarks = remarks;
+                    var url = "{:url('api/league/creatematchrecord')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('编辑成功', '确定', function () {
+                            var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '录入失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    }
+                }
+            })
+
+
         };
 
     </script>

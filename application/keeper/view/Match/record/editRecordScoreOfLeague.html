@@ -45,7 +45,7 @@
         <input type="hidden" name="match_group" value="{$matchRecordInfo.match_group}" class="data">
         <input type="hidden" name="match_group_id" value="{$matchRecordInfo.match_group_id}" class="data">
         <input type="hidden" name="id" value="{$matchRecordInfo.id}" class="data">
-
+        <input type="hidden" name="is_record" value="{$matchRecordInfo.is_record}" class="data">
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
@@ -87,6 +87,10 @@
                     <label>比赛时间</label>
                     <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchRecordInfo.match_time}</span>
                 </div>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label>备注</label>
+                <textarea class="remarks" value="{$matchRecordInfo.remarks}" placeholder="请填写备注">{$matchRecordInfo.remarks}</textarea>
             </div>
 
             <div class="page-header bggray2">
@@ -624,6 +628,8 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
+            var remarks = $('textarea.remarks').val();
+            objData.remarks = remarks;
             var url = "{:url('api/league/updatematchrecord')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
