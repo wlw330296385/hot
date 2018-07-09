@@ -22,7 +22,7 @@ class Group extends Base{
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
         $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>-1])->find();//上一期
-        $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//本期
+        $nowPool = db('pool')->where(['group_id'=>$group_id])->find();//本期
         $winnerList = [];
         
         if($lastPool){
