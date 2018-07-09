@@ -54,12 +54,20 @@
                 <input type="hidden" name="home_team_logo" value="{$matchRecordInfo.home_team_logo}" class="data">
                 <input type="hidden" name="home_team_id" value="{$matchRecordInfo.home_team_id}" class="data">
             </div>
+            <div class="mui-input-row">
+                <label>主队球衣颜色</label>
+                <span class="domData">{$matchRecordInfo.home_team_color}</span>
+            </div>
 
             <div class="mui-input-row">
                 <label name="away_team" class="domData">{$matchRecordInfo.away_team}</label>
                 <input type="text" name="away_score" value="{$matchRecordInfo.away_score}" class="data" placeholder="请填写客队比分">
                 <input type="hidden" name="away_team_logo" value="{$matchRecordInfo.away_team_logo}" class="data">
                 <input type="hidden" name="away_team_id" value="{$matchRecordInfo.away_team_id}" class="data">
+            </div>
+            <div class="mui-input-row">
+                <label>客队球衣颜色</label>
+                <span class="domData">{$matchRecordInfo.away_team_color}</span>
             </div>
 
             <div class="mui-input-row">
@@ -77,7 +85,7 @@
             <div class="mui-input-row picker btnStart">
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData record_time" name="record_time">{$matchRecordInfo.match_time}</span>
+                    <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchRecordInfo.match_time}</span>
                 </div>
             </div>
 
@@ -532,12 +540,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[i].referee.id + '>' + data.data[i].realname + '</li>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".refereeList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".refereeList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -569,12 +574,9 @@
                             newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".scoreList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".scoreList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -586,6 +588,23 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            let home_score = $("input[name=home_score]").val();
+            let away_score = $("input[name=away_score]").val();
+            let court_id = $("input[name=court_id]").val();
+            let match_time = $(".match_time").text();
+            if (home_score == '' || away_score == '') {
+                mui.toast("比分不能为空");
+                return false;
+            }
+            if (court_id == '') {
+                mui.toast("请选择比赛场地");
+                return false;
+            }
+            if (match_time == '') {
+                mui.toast("请选择比赛时间");
+                return false;
+            }
 
             // 记分员
             let scorersList = []
@@ -634,7 +653,7 @@
             var minutes = _time.getMinutes();
             return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
         }
-        $(".record_time").text(gettime("{$matchRecordInfo.match_time}" * 1000));
+        $(".match_time").text(gettime("{$matchRecordInfo.match_time}" * 1000));
 
     </script>
 </body>

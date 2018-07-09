@@ -42,10 +42,13 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred hide isEmpty">
                 <a href="{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}">创建赛程</a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue hide isEmpty">
+                <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建下一阶段赛程</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgblue notEmpty">
                 <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建下一阶段赛程</a>
             </li>
         </ul>
@@ -143,7 +146,7 @@
                                 } else {
                                     var Ttime = gettimeh(dataSchedule.match_timestamp * 1000);
                                 }
-                                var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id+'/?from=scheduleList';
+                                var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
                                 newli += `<li class="mui-table-view-cell listli">
                                                 <a href="${urls}"><div class="mui-media-body wd">
                                                     <p class="f14" style="margin-bottom: 8px;">
@@ -165,11 +168,16 @@
                     }
                     if (gType == 1) {
                         //上拉刷新
-                        $(".schedule").empty().append(newli);
+                        if (newli != '') {
+                            $(".schedule").empty().append(newli);
+                            $(".notEmpty").show();
+                        }
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
                             $(".schedule").html('<p class="nodata">没有相关数据哦</p>');
+                            $(".isEmpty").show();
+                            $(".notEmpty").hide();
                         }
                     } else {
                         //下拉加载 gType==2
