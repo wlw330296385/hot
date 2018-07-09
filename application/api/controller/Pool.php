@@ -94,12 +94,25 @@ class Pool extends Base{
             $pool_id = input('param.pool_id');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $group_id = $
             if(isset($data['starts'])){
                 $data['start'] = strtotime($data['starts'])+86399;
             }
             if(isset($data['ends'])){
                 $data['end'] = strtotime($data['ends']);
                 $data['end_str'] = date('Ymd',$data['end']);
+            }
+            $poolInfo = db('pool')->where(['id'=>$pool_id])->find();
+            if($poolInfo){
+                return json(['code'=>100,'msg'=>'参数错误']);
+            }
+            $groupInfo = db('group')->where(['id'=>$poolInfo['gourp_id']])->find();
+            if($groupInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            $is_punch = db('group_punch')->where(['pool_id'=>$pool_id])->find();
+            if($is_punch){
+                return json(['code'=>100,'msg'=>'已有打卡不允许编辑']);
             }
             $result = $this->PoolService->updatePool($data,['id'=>$pool_id]);
             return json($result);
