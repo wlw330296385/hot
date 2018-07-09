@@ -3237,15 +3237,17 @@ class League extends Base
                         $_arr['team'] = $kExplode[0];
                         $_arr['team_logo'] = $kExplode[2];
                         // 球队在比赛阶段的积分累加
-                        $score = 0;
+                        $score = $winCount = $loseCount = 0;
                         for ( $i = 0; $i < count($val); $i++ ) {
                             if ( $val[$i]['score'] > 0 ) {
                                 $score += 1;
                             }
+                            $winCount =  $leagueS->getMatchRecordCount([ 'match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'win_team_id' => $kExplode[1] ]);
+                            $loseCount = $leagueS->getMatchRecordCount([ 'match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'lose_team_id' => $kExplode[1] ]);
                         }
                         $_arr['score'] = $score;
-                        $_arr['win_count'] = 0;
-                        $_arr['lose_count'] = 0;
+                        $_arr['win_count'] = $winCount;
+                        $_arr['lose_count'] = $loseCount;
                         array_push( $_array['teams'], $_arr );
                     }
                 }
@@ -3285,10 +3287,6 @@ class League extends Base
         }
         $data['match_time'] = strtotime($data['match_time']);
         $data['status'] = 1;
-        // 确认填写比赛结果时间（当前时间）24小时内允许修改
-        if ( input('?post.is_record') && input('post.is_record') == 1 ) {
-            $data['record_time'] = time();
-        }
         // 根据双方球队比分获取胜负方队
         if ( $data['home_score'] > $data['away_score'] ) {
             $data['win_team_id'] = $data['home_team_id'];
@@ -3340,16 +3338,15 @@ class League extends Base
         $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
         // 当前时间超过数据允许修改时间（1天） 不能修改
         $nowtime = time();
+        if ( $matchRecord['is_record'] ) {
+            return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
+        }
         if ( !empty($matchRecord['record_time']) && ($nowtime > $matchRecord['record_time'] + 3600*24) ) {
             return json(['code' => 100, 'msg' => '超过允许修改时间']);
         }
 
         $data['match_time'] = strtotime($data['match_time']);
         $data['status'] = 1;
-        // 确认填写比赛结果时间（当前时间）24小时内允许修改
-        if ( input('?post.is_record') && input('post.is_record') == 1 ) {
-            $data['record_time'] = time();
-        }
         // 根据双方球队比分获取胜负方队
         if ( $data['home_score'] > $data['away_score'] ) {
             $data['win_team_id'] = $data['home_team_id'];
@@ -3365,6 +3362,179 @@ class League extends Base
         } catch (Exception $e) {
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        // 返回结果
+        return json($result);
+    }
+
+    // 确认发布比赛结果记录
+    public function publishmatchrecord() {
+        $data = input('post.');
+        // 验证器
+        $validate = validate('MatchRecordVal');
+        if ( !$validate->scene('league_add')->check($data) ) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 验证会员操作权限 记分员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if ( $power < 8 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 传入id 查询比赛成绩数据
+        if ( input('?post.id') ) {
+            // 获取比赛成绩数据
+            $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
+            if ($matchRecord && $matchRecord['is_record'] ) {
+                return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
+            }
+        }
+
+        // 比赛比分数据组合
+        $data['match_time'] = strtotime($data['match_time']);
+        $data['status'] = 1;
+        // 根据双方球队比分获取胜负方队
+        if ( $data['home_score'] > $data['away_score'] ) {
+            $data['win_team_id'] = $data['home_team_id'];
+            $data['lose_team_id'] = $data['away_team_id'];
+        } else if ($data['home_score'] < $data['away_score']) {
+            $data['win_team_id'] = $data['away_team_id'];
+            $data['lose_team_id'] = $data['home_team_id'];
+        }
+        $data['is_record'] = 1;
+        $data['record_time'] = time();
+
+        try {
+            // 保存比赛结果数据
+            $matchS = new MatchService();
+            $result = $matchS->saveMatchRecord($data);
+            // 对应赛程更新完成状态 status=2
+            $leagueS->saveMatchSchedule([
+                'id' => $data['match_schedule_id'],
+                'status' => 2
+            ]);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        // 保存比赛结果数据 比赛双方球队比赛数+1，相关裁判执裁比赛记录
+        if ( $result['code'] == 200 ) {
+            $matchRecordId = ( input('?post.id') ) ? input('post.id') : $result['data'];
+            $refereeIds = $matchRefereeData = [];
+            $refereeS = new RefereeService();
+            // 裁判1（主裁判）
+            if (input('?post.referee1_id') && input('post.referee1_id')) {
+                $referee1Info = $refereeS->getReferee(['id' => $data['referee1_id']]);
+                $referee1MatchRefereeId = $matchS->getMatchReferee([
+                    'referee_id' => $data['referee1_id'],
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $matchRecordId
+                ]);
+                $_array =  [
+                    'match_id' => $data['match_id'],
+                    'match' => $data['match'],
+                    'match_record_id' => $matchRecordId,
+                    'referee_id' => $referee1Info['id'],
+                    'referee' => $referee1Info['referee'],
+                    'member_id' => $referee1Info['member_id'],
+                    'member' => $referee1Info['member'],
+                    'referee_type' => 1,
+                    'appearance_fee' => 0,
+                    'is_attend' => 2,
+                    'status' => 1
+                ];
+                if ($referee1MatchRefereeId) {
+                    $_array['id'] = $referee1MatchRefereeId;
+                } else {
+                    array_push( $refereeIds, $referee1Info['id']);
+                }
+                array_push( $matchRefereeData, $_array);
+            }
+            // 裁判2（副裁判）
+            if (input('?post.referee2_id') && input('post.referee2_id')) {
+                $referee2Info = $refereeS->getReferee(['id' => $data['referee2_id']]);
+                $referee2MatchRefereeId = $matchS->getMatchReferee([
+                    'referee_id' => $data['referee1_id'],
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $matchRecordId
+                ]);
+                $_array =  [
+                    'match_id' => $data['match_id'],
+                    'match' => $data['match'],
+                    'match_record_id' => $matchRecordId,
+                    'referee_id' => $referee2Info['id'],
+                    'referee' => $referee2Info['referee'],
+                    'member_id' => $referee2Info['member_id'],
+                    'member' => $referee2Info['member'],
+                    'referee_type' => 1,
+                    'appearance_fee' => 0,
+                    'is_attend' => 2,
+                    'status' => 1
+                ];
+                if ($referee2MatchRefereeId) {
+                    $_array['id'] = $referee2MatchRefereeId;
+                } else {
+                    array_push( $refereeIds, $referee2Info['id']);
+                }
+                array_push( $matchRefereeData, $_array);
+            }
+            // 裁判3（副裁判）
+            if (input('?post.referee3_id') && input('post.referee3_id')) {
+                $referee3Info = $refereeS->getReferee(['id' => $data['referee3_id']]);
+                $referee3MatchRefereeId = $matchS->getMatchReferee([
+                    'referee_id' => $data['referee1_id'],
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $matchRecordId
+                ]);
+                $_array =  [
+                    'match_id' => $data['match_id'],
+                    'match' => $data['match'],
+                    'match_record_id' => $matchRecordId,
+                    'referee_id' => $referee3Info['id'],
+                    'referee' => $referee3Info['referee'],
+                    'member_id' => $referee3Info['member_id'],
+                    'member' => $referee3Info['member'],
+                    'referee_type' => 1,
+                    'appearance_fee' => 0,
+                    'is_attend' => 2,
+                    'status' => 1
+                ];
+                if ($referee3MatchRefereeId) {
+                    $_array['id'] = $referee3MatchRefereeId;
+                } else {
+                    array_push( $refereeIds, $referee3Info['id']);
+                }
+                array_push( $matchRefereeData, $_array);
+            }
+            // 启动事务
+            Db::startTrans();
+            try {
+                // 双方球队比赛场数+1
+                db('team')->where('id', $data['home_team_id'])->setInc('match_num', 1);
+                db('team')->where('id', $data['away_team_id'])->setInc('match_num', 1);
+                // 相关裁判 保存比赛-执裁数据
+                if ( !empty($matchRefereeData) ) {
+                    $matchS->saveAllMatchReferee($matchRefereeData);
+                }
+                if ( !empty($refereeIds) ) {
+                    db('referee')->where('id', 'in', $refereeIds)->setInc('total_played',1);
+                }
+                // 提交事务
+                Db::commit();
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+                trace('error: ' . $e->getMessage(), 'error');
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
+            }
         }
         // 返回结果
         return json($result);
