@@ -235,18 +235,39 @@
 
             // 打卡提示
             $(".createPunch").on("tap", function () {
+
+
+
                 if (group_member != member && "{$nowPool.status}" != 2) {
-                    $(this).attr("href", "javascript:;");
-                    mui.alert("该群还未设置打卡规则,暂不能在该群打卡");
-                    return false;
-                } else if (group_member == member && "{$nowPool.status}" != 2) {
-                    $(this).attr("href", "javascript:;");
-                    var btnArray = ['取消', '前往'];
-                    mui.confirm('该群还未设置打卡规则,请前往创建', '提示', btnArray, function (e) {
-                        if (e.index == 1) {
-                            window.location.href = "{:url('group/createPool')}" + '/group_id/' + "{$groupInfo.id}";
-                        }
-                    })
+                    if("{$nowPool.status}" == -1){
+                        $(this).attr("href", "javascript:;");
+                        mui.alert("该群还未设置打卡规则，暂不能在该群打卡");
+                        return false;
+                    }else if("{$nowPool.status}" == 1){
+                        $(this).attr("href", "javascript:;");
+                        mui.alert("当前打卡规则未开启，暂不能在该群打卡");
+                        return false;
+                    }
+                } else if (group_member == member) {
+                    if("{$nowPool.status}" == -1){
+                       $(this).attr("href", "javascript:;");
+                        var btnArray = ['取消', '前往'];
+                        mui.confirm('您还没为此群设置打卡规则，请前往创建', '提示', btnArray, function (e) {
+                            if (e.index == 1) {
+                                window.location.href = "{:url('group/createPool')}" + '/group_id/' + "{$groupInfo.id}";
+                            }
+                        })
+                        return false;
+                    }else if("{$nowPool.status}" == 1){
+                        $(this).attr("href", "javascript:;");
+                        var btnArray = ['取消', '前往'];
+                        mui.confirm('当前打卡规则未开启，请前往调整开启时间', '提示', btnArray, function (e) {
+                            if (e.index == 1) {
+                                window.location.href = "{:url('group/poolEdit')}" + '/group_id/' + "{$groupInfo.id}" + '/pool_id/' + "{$nowPool.id}";
+                            }
+                        })
+                        return false;
+                    }
                 }
             });
 
