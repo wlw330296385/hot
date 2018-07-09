@@ -48,6 +48,10 @@
             margin-bottom: 0;
             font-size: 12px
         }
+        #bonus_assign2,#bonus_assign3{
+            display:none;
+        }
+        
     </style>
 </head>
 
@@ -66,8 +70,52 @@
             <div class="mui-input-row">
                 <label>打卡金额</label>
                 <span class="colororange">HT</span>
-                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额请输入0" style="padding-right: 5px;height: 41px;">
+                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额默认为0" style="padding-right: 5px;height: 41px;">
             </div>
+
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>奖金分配</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign">
+                            <option value="1">奖励第一名</option>
+                            <option value="2">奖励前两名</option>
+                            <option value="3">奖励前三名</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <input type="hidden" class="data" name="first_scale" value="10">
+            <input type="hidden" class="data" name="second_scale" value="0">
+            <input type="hidden" class="data" name="third_scale" value="0">
+
+            <div class="mui-input-row" id="bonus_assign2">
+                <div class="mui-navigate-right">
+                    <label>前两名分配比例</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign2">
+                            <option value="8:2:0" selected>8:2</option>
+                            <option value="7:3:0">7:3</option>
+                            <option value="6:4:0">6:4</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row" id="bonus_assign3">
+                <div class="mui-navigate-right">
+                    <label>前三名分配比例</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign3">
+                            <option value="7:2:1" selected>7:2:1</option>
+                            <option value="6:3:1">6:3:1</option>
+                            <option value="5:3:2">5:3:2</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
             <div class="mui-input-row picker btnStart" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>开始时间</label>
@@ -82,7 +130,7 @@
             </div>
             <div class="mui-input-row">
                 <label class="wd45">个人单日打卡上限</label>
-                <input type="number" name="times" class="data wd52" value="" placeholder="不填默认为1次">
+                <input type="number" name="times" class="data wd52" value="" placeholder="默认为1次">
             </div>
             <div class="mui-input-row h-auto">
                 <label>打卡说明</label>
@@ -160,13 +208,54 @@
 
 
         $(function () {
+
             var createGroupId = wooApi.GetQueryString('createGroupId');
             if (createGroupId != null) {
                 $(".backHref").attr("href", "{:url('group/groupInfo')}/" +"group_id/"+ createGroupId);
             } else {
                 $(".backHref").addClass("mui-action-back");
             }
+
+            // 选择奖金分配
+            $("select[name='bonus_assign']").change(function () {
+                if ($(this).children('option:selected').val() == '2') {
+                    $("#bonus_assign2").show();
+                    $("#bonus_assign3").hide();
+                    setBonusAssign($("#bonus_assign2 select").children('option:selected').val());
+                } else if ($(this).children('option:selected').val() == '3') {
+                    $("#bonus_assign3").show();
+                    $("#bonus_assign2").hide();
+                    setBonusAssign($("#bonus_assign3 select").children('option:selected').val());
+                } else{
+                    $("#bonus_assign3").hide();
+                    $("#bonus_assign2").hide();
+                    $("input[name='first_scale']").val("10");
+                    $("input[name='second_scale']").val("0");
+                    $("input[name='third_scale']").val("0");
+                }
+            });
+
+
+            // 选择奖金分配
+            $("select[name='bonus_assign2']").change(function () {
+                setBonusAssign($(this).children('option:selected').val());
+            });
+            // 选择奖金分配
+            $("select[name='bonus_assign3']").change(function () {
+                setBonusAssign($(this).children('option:selected').val());
+            });
+
         })
+
+        // 设置奖金分配
+        function setBonusAssign(abc) {
+            console.log(abc)
+            var bsArray = new Array();
+            bsArray = abc.split(":");
+            $("input[name='first_scale']").val(bsArray[0]);
+            $("input[name='second_scale']").val(bsArray[1]);
+            $("input[name='third_scale']").val(bsArray[2]);
+        }
 
         // 获取数据并进行提交
         function submitAction() {

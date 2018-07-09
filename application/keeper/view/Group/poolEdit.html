@@ -19,6 +19,9 @@
             display: table;
             width: 100%;
         }
+        #bonus_assign2,#bonus_assign3{
+            display:none;
+        }
     </style>
 </head>
 
@@ -40,6 +43,50 @@
                 <label>下注金额</label>
                 <input type="text" name="stake" class="data" value="{$poolInfo.stake}" placeholder="下注金额">
             </div>
+
+
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>奖金分配</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign">
+                            <option value="1">奖励第一名</option>
+                            <option value="2">奖励前两名</option>
+                            <option value="3">奖励前三名</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <input type="hidden" class="data" name="first_scale" value="{$poolInfo.first_scale}">
+            <input type="hidden" class="data" name="second_scale" value="{$poolInfo.second_scale}">
+            <input type="hidden" class="data" name="third_scale" value="{$poolInfo.third_scale}">
+
+            <div class="mui-input-row" id="bonus_assign2">
+                <div class="mui-navigate-right">
+                    <label>前两名分配比例</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign2">
+                            <option value="8:2:0" selected>8:2</option>
+                            <option value="7:3:0">7:3</option>
+                            <option value="6:4:0">6:4</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mui-input-row" id="bonus_assign3">
+                <div class="mui-navigate-right">
+                    <label>前三名分配比例</label>
+                    <span class="select-row">
+                        <select class="data" name="bonus_assign3">
+                            <option value="7:2:1" selected>7:2:1</option>
+                            <option value="6:3:1">6:3:1</option>
+                            <option value="5:3:2">5:3:2</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
             <div class="mui-input-row picker btnStart" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>开始时间</label>
@@ -57,7 +104,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
-                提交
+                提交修改
             </li>
         </ul>
 
@@ -111,10 +158,56 @@
                 });
 
             });
+
         })(mui, document);
+
+
+
+        $(function () {
+
+            //根据奖金分配比例设定初始值
+            {if ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && ($poolInfo.second_scale==0||$poolInfo.second_scale==null)}
+               $("select[name='bonus_assign']").find('option[value="1"]').prop("selected", true);
+            {elseif ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && $poolInfo.second_scale>0}
+                $("select[name='bonus_assign']").find('option[value="2"]').prop("selected", true);
+                var getAssign = "{$poolInfo.first_scale}:{$poolInfo.second_scale}:0";
+                $("select[name='bonus_assign2']").find('option[value="'+getAssign+'"]').prop("selected", true);
+            {else/}
+                $("select[name='bonus_assign']").find('option[value="3"]').prop("selected", true);
+                var getAssign = "{$poolInfo.first_scale}:{$poolInfo.second_scale}:{$poolInfo.third_scale}";
+                $("select[name='bonus_assign3']").find('option[value="'+getAssign+'"]').prop("selected", true);
+            {/if}
+
+
+        })
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = time.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var day = time.getDate();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            var nowTime = year + "-" + month + "-" + day;
+            var start = $("#resultStart").text();
+            var end = $("#resultEnd").text();
+
+            if (start == '') {
+                mui.toast("请选择开始时间");
+                return false;
+            }
+            if (end == '') {
+                mui.toast("请选择结束时间");
+                return false;
+            }
+
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值

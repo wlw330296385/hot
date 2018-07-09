@@ -66,6 +66,20 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>奖金分配
+                    </label>
+                    <span class="wd60">
+                            {if ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && ($poolInfo.second_scale==0||$poolInfo.second_scale==null)}
+                                奖励第一名
+                            {elseif ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && $poolInfo.second_scale>0}
+                                奖励前二名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}）
+                            {else/}
+                                奖励前三名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}:{$poolInfo.third_scale}）
+                            {/if}
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
                         <span class="icon iconfont icon-activity-Contact colororange"></span>擂主
                     </label>
                     <span class="wd60"></span>
@@ -100,6 +114,18 @@
 
         </div>
     </div>
+
+    <ul class="mui-table-view operation">
+        {if $poolInfo.members==0}
+        <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen">
+            <a href="{:url('group/poolEdit',['group_id'=>$poolInfo.group_id])}">修改打卡规则</a>
+        </li>
+        {else/}
+        <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggray">
+            已有打卡记录，不允许修改
+        </li>
+        {/if}
+    </ul>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script>
