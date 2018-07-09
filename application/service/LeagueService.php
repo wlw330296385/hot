@@ -985,4 +985,12 @@ class LeagueService
         }
         return $result;
     }
+
+    // 获取比赛成绩记录条数
+    public function getMatchRecordCount($map) {
+        $model = new MatchRecord();
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
+    }
+
 }
