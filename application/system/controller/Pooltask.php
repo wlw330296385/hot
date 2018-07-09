@@ -30,7 +30,7 @@ class Pooltask extends Base{
     * find winner每日晚上22点;
     * @param 作者:woo
     */
-    public function lottery(){
+    public function lotteryOLD(){
     	try{
             $date_str = date('Ymd',time());
             $date_str = 20180611;
@@ -95,19 +95,19 @@ class Pooltask extends Base{
     * find winner每日晚上22点;
     * @param 作者:woo
     */
-    public function lottery2(){
+    public function lottery(){
         try{
             $date_str = date('Ymd',time());
             // $date_str = 20180611;
             $poolList = db('pool')->where([
-                    // 'end_str'=>$date_str,
-                    // 'status'=>2
+                    'end_str'=>$date_str,
+                    'status'=>2
                 ])->select();
             $model = new \app\model\PoolWinner;
             // dump($poolList);
             foreach ($poolList as $key => $value) {
                 
-                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id')->where(['pool_id'=>$value['id']])->group('member_id')->select();
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
                 }
@@ -147,7 +147,30 @@ class Pooltask extends Base{
                     }
                     
                 }
-
+                // 余数存入奖金池
+                $c_f_m = [];//第一名会员数组;
+                $c_s_m = [];//第二名会员数组;
+                $c_t_m = [];//第三名会员数组;
+                foreach ($memberList as $k => &$val) {
+                    if($val['c_id'] == $theFirst){
+                        $val['ranking'] = 1;
+                        $val['bonus'] = $value['bonus'];
+                        $val['punchs'] = $val['c_id'];
+                        $c_f_m[] = $val;
+                    }
+                    if($val['c_id'] == $theSecond){
+                        $val['ranking'] = 2;
+                        $val['bonus'] = $value['bonus'];
+                        $val['punchs'] = $val['c_id'];
+                        $c_s_m[] = $val;
+                    }
+                    if($val['c_id'] == $theThird){
+                        $val['ranking'] = 2;
+                        $val['bonus'] = $value['bonus'];
+                        $val['punchs'] = $val['c_id'];
+                        $c_t_m[] = $val;
+                    }
+                }
                 
                 // dump($P);
                 // 余数
@@ -161,38 +184,23 @@ class Pooltask extends Base{
                 // dump($theFirstReward*count($c_f_m));
                 // dump($theSecondReward*count($c_s_m));
                 // dump($theThirdReward*count($c_t_m));
-
+                foreach ($c_f_m as $k => &$val) {
+                    $val['winner_bonus'] = $theFirstReward;  
+                }
+                foreach ($c_s_m as $k => &$val) {
+                    $val['winner_bonus'] = $theSecondReward;  
+                }
+                foreach ($c_t_m as $k => &$val) {
+                    $val['winner_bonus'] = $theThirdReward;  
+                }
                 // dump($theFirstReward);
                 // dump($theSecondReward);
                 // dump($theThirdReward);
-                // 余数存入奖金池
-                $c_f_m = [];//第一名会员数组;
-                $c_s_m = [];//第二名会员数组;
-                $c_t_m = [];//第三名会员数组;
-                foreach ($memberList as $k => &$val) {
-                    if($val['c_id'] == $theFirst){
-                        $val['ranking'] = 1;
-                        $val['winner_bonus'] = $theFirstReward;
-                        $val['bonus'] = $value['bonus'];
-                        $c_f_m[] = $val;
-                    }
-                    if($val['c_id'] == $theSecond){
-                        $val['ranking'] = 2;
-                        $val['winner_bonus'] = $theSecondReward;
-                        $val['bonus'] = $value['bonus'];
-                        $c_s_m[] = $val;
-                    }
-                    if($val['c_id'] == $theThird){
-                        $val['ranking'] = 2;
-                        $val['winner_bonus'] = $theThirdReward;
-                        $val['bonus'] = $value['bonus'];
-                        $c_t_m[] = $val;
-                    }
-                }
+                
                 // 更新奖金池
                 $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m)]);
                 // 奖金得主诞生
-                $winners = array_merge($c_f_m,$c_s_m,$c_t_m)
+                $winners = array_merge($c_f_m,$c_s_m,$c_t_m);
                 $model->saveAll($winners);
                 // $this->updateMembersHotcoin($winners,$bonus);
                 //die;
@@ -277,13 +285,13 @@ class Pooltask extends Base{
                 "touser" => $value['openid'],
                 "template_id" => "nkkz8jGMxYe7PCJjDoZSiK1jwBKU_th9iOnH4nLQm8Q",
                 "url" => "http://weixin.qq.com/download/openid/{$value['openid']}",
-                "topcolor":"#FF0000",
+                "topcolor"=>"#FF0000",
                 "data" => [
                     'first' => ['value' => '尊敬的会员，您参与的打卡活动擂台擂主已出结果'],
                     'keyword1' => ['value' => "{$value['winner_bonus']}热币"],
-                    'keyword2' => ['value' => date('Y-m-d H:i:s',$value['create_time']),
-                    'remark' => ['value' => '篮球管家祝您身体健康']
-                ]
+                    'keyword2' => ['value' => date('Y-m-d H:i:s',$value['create_time'])],
+                    'remark' => ['value' => '篮球管家祝您身体健康'],
+                ],
             ];
             $WechatService->sendTemplate($messageData);
         }
