@@ -174,11 +174,12 @@
                     <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色" class="data mui-text-left"
                         style="padding:0;height: initial;">
                 </label>
-                <a href="#work" class="mui-navigate-right" style="width: 55%;">
+                <a href="#work" class="mui-navigate-right" style="width: 55%;height: 40px;">
                     <span>
                         {volist name="matchScheduleInfo.custom_member_list" id="vol"}
                         <input type="text" value="{$vol.workMember}" data-member_id="{$vol.member_id}" placeholder="请选择角色" class="custom_member"> {/volist}
                         <input type="hidden" name="custom_member" value='{$matchScheduleInfo.custom_member}' placeholder="请选择角色" class="data">
+
                     </span>
                 </a>
             </div>
@@ -647,12 +648,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[i].referee.id + '>' + data.data[i].realname + '</li>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".refereeList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".refereeList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -684,12 +682,9 @@
                             newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".scoreList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".scoreList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -713,12 +708,9 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell listli" data-member_id="' + data.data[i].member_id + '">' + data.data[i].realname + '</li>'
                         }
-                        if (newli == '') {
-                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
-                        }
                         $(".workList").empty().append(newli);
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        $(".workList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -732,6 +724,17 @@
         let page_referee3_id = $("input[name=referee3_id]").val();
         // 获取数据并进行提交
         function submitAction() {
+
+            let court_id = $("input[name=court_id]").val();
+            let match_time = $(".match_time").text();
+            if (court_id == 0) {
+                mui.toast("请选择比赛场地");
+                return false;
+            }
+            if (match_time == '') {
+                mui.toast("请选择比赛时间");
+                return false;
+            }
 
             // 记分员
             let scorersList = []
