@@ -3290,10 +3290,10 @@ class League extends Base
             $data['record_time'] = time();
         }
         // 根据双方球队比分获取胜负方队
-        if ( $data['home_team_score'] > $data['away_team_score'] ) {
+        if ( $data['home_score'] > $data['away_score'] ) {
             $data['win_team_id'] = $data['home_team_id'];
             $data['lose_team_id'] = $data['away_team_id'];
-        } else if ($data['home_team_score'] < $data['away_team_score']) {
+        } else if ($data['home_score'] < $data['away_score']) {
             $data['win_team_id'] = $data['away_team_id'];
             $data['lose_team_id'] = $data['home_team_id'];
         }
@@ -3351,10 +3351,10 @@ class League extends Base
             $data['record_time'] = time();
         }
         // 根据双方球队比分获取胜负方队
-        if ( $data['home_team_score'] > $data['away_team_score'] ) {
+        if ( $data['home_score'] > $data['away_score'] ) {
             $data['win_team_id'] = $data['home_team_id'];
             $data['lose_team_id'] = $data['away_team_id'];
-        } else if ($data['home_team_score'] < $data['away_team_score']) {
+        } else if ($data['home_score'] < $data['away_score']) {
             $data['win_team_id'] = $data['away_team_id'];
             $data['lose_team_id'] = $data['home_team_id'];
         }
