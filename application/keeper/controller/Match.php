@@ -684,7 +684,7 @@ class Match extends Base {
         // 获取球队数据
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
 
-        return view('Match/completePlayerByTeam', [
+        return view('Match/team/completePlayerByTeam', [
             'matchApplyInfo' => $matchApplyInfo,
             'matchTeamInfo' => $matchTeamInfo,
             'teamInfo' => $teamInfo

@@ -180,7 +180,15 @@
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '" data-avatar="' + $(this).attr('data-avatar') + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '" data-avatar="' + $(this).attr('data-avatar') + '"></div>';
+                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                                <label class="number" style="width:20%"></label>
+                                    <font class="f14">${$(this).val()}</font>
+                                    <input name="member" value="${$(this).val()}" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}"  type="checkbox">
+                                    <input type="hidden" class="stdList" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}"></div>`;
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                 });
@@ -259,7 +267,7 @@
             var ajaxResult = wooApi.asyncF(apiUrl, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
-                    window.history.go(-1); 
+                    window.history.go(-1);
                 })
             } else {
                 mui.alert(ajaxResult.msg, '提交失败');
@@ -344,7 +352,12 @@
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-tmid="' + data.data[i].id + '" data-avatar="' + data.data[i].avatar + '" type="checkbox" ></div>'
+                            div = div + `<div class="mui-input-row mui-checkbox mui-left">
+                                            <label>${data.data[i].name}</label>
+                                            <input name="checkbox-member" class="member stdlist" value="${data.data[i].name}" data-member="${data.data[i].member}" 
+                                                data-name="${data.data[i].name}" data-member_id="${data.data[i].member_id}" data-tmid="${data.data[i].id}" 
+                                                data-avatar="${data.data[i].avatar}" data-number="${data.data[i].number}" data-position="${data.data[i].position}" type="checkbox" >
+                                        </div>`
                         }
                         $("#newdiv").empty();
                         $("#newdiv").append(div);
