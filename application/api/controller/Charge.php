@@ -141,7 +141,7 @@ class Charge extends Frontend{
 	        		'charge'		=>$total,
 	        		'charge_order'	=>getTID($this->memberInfo['id']),
 	        		'status'		=>1,
-	        		'type'			=>2
+	        		'type'			=>1
 	        	]);
 	        	$Hotcoin = new \app\model\Hotcoin;
 				$Hotcoin->save([
@@ -149,8 +149,8 @@ class Charge extends Frontend{
 	        		'member_id'		=>$this->memberInfo['id'],
 	        		'avatar'		=>$this->memberInfo['avatar'],
 	        		'f_id'			=>$Charge->id,
-	        		'hot_coin'		=>$total,
-	        		'type'			=>2,
+	        		'hot_coin'		=>-$total,
+	        		'type'			=>-2,
 	        		'status'		=>1
 	        	]);
 	        	$MemberFinance = new \app\model\MemberFinance;
@@ -160,12 +160,12 @@ class Charge extends Frontend{
 	        		'avatar'		=>$this->memberInfo['avatar'],
 	        		'f_id'			=>$Charge->id,
 	        		'money'			=>$total,
-	        		'type'			=>-2,
+	        		'type'			=>2,
 	        		'status'		=>1,
 	        		's_balance'		=>$this->memberInfo['balance'],
 	        		'e_balance'		=>$this->memberInfo['balance']+$balance,
 	        		'date_str'		=>date('Ymd',time()),
-	        		'system_remarks'=>'余额转热币'
+	        		'system_remarks'=>'热币转余额'
 	        	]);
     			return json(['code'=>200,'msg'=>'操作成功']);
     		}else{
