@@ -339,7 +339,7 @@ class ItemCoupon extends Base{
                 if(!$result){
                     return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'data'=>null]);
                 }else{
-                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member'=>$result['id'],'data'=>$result]);
+                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member_id'=>$result['id'],'data'=>$result]);
                 }
             }elseif ($billInfo['goods_type'] == 1) {
                 $itemcounponInfo = db('item_coupon')->where(['target_id'=>$billInfo['goods_id']])->where('target_type',['=',1],['=',3],'or')->find();
@@ -350,7 +350,7 @@ class ItemCoupon extends Base{
                 if(!$result){
                     return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'data'=>null]);
                 }else{
-                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member'=>$result['id'],'data'=>$result]);
+                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member_id'=>$result['id'],'data'=>$result]);
                 }
             }
 

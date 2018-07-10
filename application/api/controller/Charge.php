@@ -126,20 +126,20 @@ class Charge extends Frontend{
     		if ($this->memberInfo['id']<1) {
     			return json(['code'=>100,'msg'=>'请先登录']);
     		}
-    		if($this->memberInfo['balance'] < $balance){
-    			return json(['code'=>100,'msg'=>'余额不足']);
+    		if($this->memberInfo['hot_coin'] < $total){
+    			return json(['code'=>100,'msg'=>'热币不足']);
     		}
-    		$result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('balance',$balance)->inc('hot_coin',$total)->update();
+    		$result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('hot_coin',$total)->inc('balance',$balance)->update();
     		if($result){
-    			session('memberInfo.balance',($this->memberInfo['balance'] - $balance));
-    			session('memberInfo.hot_coin',($this->memberInfo['balance'] + $total));
+    			session('memberInfo.balance',($this->memberInfo['balance'] + $balance));
+    			session('memberInfo.hot_coin',($this->memberInfo['hot_coin'] - $total));
     			$Charge = new \app\model\Charge;
 	        	$result = $Charge->save([
 	        		'member'		=>$this->memberInfo['member'],
 	        		'member_id'		=>$this->memberInfo['id'],
 	        		'avatar'		=>$this->memberInfo['avatar'],
 	        		'charge'		=>$total,
-	        		'charge_order'	=>getTID($this->memberInfo['balance']),
+	        		'charge_order'	=>getTID($this->memberInfo['id']),
 	        		'status'		=>1,
 	        		'type'			=>2
 	        	]);
@@ -163,7 +163,7 @@ class Charge extends Frontend{
 	        		'type'			=>-2,
 	        		'status'		=>1,
 	        		's_balance'		=>$this->memberInfo['balance'],
-	        		'e_balance'		=>$this->memberInfo['balance']-$total,
+	        		'e_balance'		=>$this->memberInfo['balance']+$balance,
 	        		'date_str'		=>date('Ymd',time()),
 	        		'system_remarks'=>'余额转热币'
 	        	]);
@@ -194,7 +194,7 @@ class Charge extends Frontend{
     		$result = db('member')->where(['id'=>$this->memberInfo['id']])->dec('balance',$balance)->inc('hot_coin',$total)->update();
     		if($result){
     			session('memberInfo.balance',($this->memberInfo['balance'] - $balance));
-    			session('memberInfo.hot_coin',($this->memberInfo['balance'] + $total));
+    			session('memberInfo.hot_coin',($this->memberInfo['hot_coin'] + $total));
     			$Charge = new \app\model\Charge;
 	        	$result = $Charge->save([
 	        		'member'		=>$this->memberInfo['member'],
