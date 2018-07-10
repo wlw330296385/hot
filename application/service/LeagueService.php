@@ -3,6 +3,7 @@
 namespace app\service;
 
 
+use app\model\Article;
 use app\model\Match;
 use app\model\MatchGroup;
 use app\model\MatchGroupTeam;
@@ -1001,6 +1002,33 @@ class LeagueService
         $model = new MatchRecord();
         $res = $model->where($map)->count();
         return ($res) ? $res : 0;
+    }
+
+    // 保存联赛文章
+    public function saveArticle($data) {
+        $model = new Article();
+        if (!empty($condi) && is_array($condi)) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $model->id;
     }
 
 }

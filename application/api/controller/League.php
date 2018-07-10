@@ -3618,4 +3618,79 @@ class League extends Base
         }
     }
 
+    // 创建联赛文章
+    public function createarticle() {
+        $data = input('post.');
+        // 验证器
+        $validate = validate('ArticleVal');
+        if ( !$validate->scene('add')->check($data) ) {
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        // 验证会员操作权限 管理员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['organization_id'],
+            'status' => 1
+        ]);
+        if ( $power < 9 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 数据组合
+        $data['category'] = input('post.category', 3,'intval');
+        $data['member'] = $this->memberInfo['member'];
+        $data['organization_type'] = input('post.organization_type', 4, 'intval');
+        $data['status'] = input('post.status', -1,'intval');
+        $data['likes'] = 0;
+        try {
+            $result = $leagueS->saveArticle($data);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
+    // 编辑联赛文章
+    public function updatearticle() {
+        $data = input('post.');
+        // 验证器
+        $validate = validate('ArticleVal');
+        if ( !$validate->scene('edit')->check($data) ) {
+            return ['msg' => $validate->getError(), 'code' => 100];
+        }
+        // 验证会员操作权限 管理员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['organization_id'],
+            'status' => 1
+        ]);
+        if ( $power < 9 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $leagueS->saveArticle($data);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
 }
