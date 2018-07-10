@@ -3375,6 +3375,7 @@ class League extends Base
         if ( !$validate->scene('league_add')->check($data) ) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
+
         // 验证会员操作权限 记分员以上才能操作
         if ( !$this->memberInfo['id'] === 0 ) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
@@ -3389,6 +3390,7 @@ class League extends Base
         if ( $power < 8 ) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+
         // 传入id 查询比赛成绩数据
         if ( input('?post.id') ) {
             // 获取比赛成绩数据
@@ -3411,7 +3413,6 @@ class League extends Base
         }
         $data['is_record'] = 1;
         $data['record_time'] = time();
-
         try {
             // 保存比赛结果数据
             $matchS = new MatchService();
@@ -3425,6 +3426,7 @@ class League extends Base
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
+
         // 保存比赛结果数据 比赛双方球队比赛数+1，相关裁判执裁比赛记录
         if ( $result['code'] == 200 ) {
             $matchRecordId = ( input('?post.id') ) ? input('post.id') : $result['data'];
@@ -3474,7 +3476,7 @@ class League extends Base
                     'referee' => $referee2Info['referee'],
                     'member_id' => $referee2Info['member_id'],
                     'member' => $referee2Info['member'],
-                    'referee_type' => 1,
+                    'referee_type' => 2,
                     'appearance_fee' => 0,
                     'is_attend' => 2,
                     'status' => 1
@@ -3502,7 +3504,7 @@ class League extends Base
                     'referee' => $referee3Info['referee'],
                     'member_id' => $referee3Info['member_id'],
                     'member' => $referee3Info['member'],
-                    'referee_type' => 1,
+                    'referee_type' => 2,
                     'appearance_fee' => 0,
                     'is_attend' => 2,
                     'status' => 1
@@ -3514,6 +3516,42 @@ class League extends Base
                 }
                 array_push( $matchRefereeData, $_array);
             }
+
+            // 双方球队积分数据
+            $matchRankData = [
+                // 主队数据
+                [
+                    'match_id' => $data['match_id'],
+                    'match' => $data['match'],
+                    'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
+                    'match_group' => ($data['match_group']) ? $data['match_group'] : '',
+                    'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
+                    'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
+                    'match_schedule_id' => $data['match_schedule_id'],
+                    'match_record_id' => $matchRecordId,
+                    'team' => $data['home_team'],
+                    'team_id' => $data['home_team_id'],
+                    'team_logo' => $data['home_team_logo'],
+                    'score' => ( $data['win_team_id'] == $data['home_team_id'] ) ? 1 : 0,
+                    'status' => 1
+                ],
+                // 客队数据
+                [
+                    'match_id' => $data['match_id'],
+                    'match' => $data['match'],
+                    'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
+                    'match_group' => ($data['match_group']) ? $data['match_group'] : '',
+                    'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
+                    'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
+                    'match_schedule_id' => $data['match_schedule_id'],
+                    'match_record_id' => $matchRecordId,
+                    'team' => $data['away_team'],
+                    'team_id' => $data['away_team_id'],
+                    'team_logo' => $data['away_team_logo'],
+                    'score' => ( $data['win_team_id'] == $data['away_team_id'] ) ? 1 : 0,
+                    'status' => 1
+                ]
+            ];
             // 启动事务
             Db::startTrans();
             try {
@@ -3527,6 +3565,8 @@ class League extends Base
                 if ( !empty($refereeIds) ) {
                     db('referee')->where('id', 'in', $refereeIds)->setInc('total_played',1);
                 }
+                // 保存双方球队积分数据
+                $leagueS->saveAllMatchRank($matchRankData);
                 // 提交事务
                 Db::commit();
             } catch (\Exception $e) {

@@ -414,7 +414,7 @@ class Match extends Base {
         $leagueService = new LeagueService();
         $leagueOrgInfo = $leagueService->getMatchOrg(['id' => $org_id]);
 
-        return view('Match/adminListOfOrganization', [
+        return view('Match/organization/adminListOfOrganization', [
             'org_id' => $org_id,
             'leagueOrgInfo' => $leagueOrgInfo
         ]);

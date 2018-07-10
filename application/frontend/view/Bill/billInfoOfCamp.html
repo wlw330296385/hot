@@ -9,12 +9,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css"/>
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <style>
+        #agreeRefund input{
+            padding-left:25px;
+        }
+        #agreeRefund p{
+            position:relative;
+        }
+        #agreeRefund p span {
+            position: absolute;
+            left: 8px;
+            top: 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -114,11 +124,15 @@
         {/case}
         {case value="-1" }
         
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" id="agreeRefund">同意退款</li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred"><a href="#agreeRefund">同意退款</a></li>
             
         
         {/case}   
         {case value="-2" }
+        
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已同意退<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
+        {/case}  
+        {case value="-3" }
         
                     <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
         {/case} 
@@ -128,6 +142,26 @@
     </div>
 
 </div>
+
+
+
+    <div id="agreeRefund" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="margin-bottom: 0">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view mui-text-left operation">
+                <h5 class="mui-text-left">同意退款<a class="mui-icon mui-icon-closeempty" href="#agreeRefund"></a></h5>
+                <div class="mui-input-row" style="font-size: 14px;color: #737373">
+
+                </div>
+                <li class="mui-table-view-cell">
+                    <p><span>￥</span><input type="Number" name="refund" class="data" placeholder="请填写可退金额" value=""></p>
+                    <textarea name="reason" class="mui-input-clear" placeholder="请在此处填写退款备注..."></textarea>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="tjBtn"><a href="#" >确认同意</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -148,18 +182,53 @@
             $("#header .mui-icon-left-nav span").text("收支明细");
         }
 
-        $('#agreeRefund').on('click',function(){
-            var re = confirm('是否确认同意退款?');
-            if(re===true){
-                result = wooApi.asyncF("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{action:3});
-                if(result.code == 200){
-                     mui.alert('',result.msg,'确定',function(){
-                        location.reload();
-                     });
-                }else{
-                    mui.alert(result.msg);
-                }
+        $('#tjBtn').on('click',function(){
+
+            var reason = $("textarea[name='reason']").val();
+            var refund = $("input[name='refund']").val();
+            if(refund==''){
+                mui.toast("请填写退款金额");
+                return false;
             }
+            mui.confirm('是否确认同意退款?', '', ['取消', '确认'], function (e) {
+                if (e.index == 1) {
+
+                    let data = {
+                            "action":3,
+                            "agree_time":"{:time()}"
+                    };
+                    let refundData ={
+                            "reason":reason,
+                            "refund":refund,
+                    }
+                    data.refundData = JSON.stringify(refundData);
+
+                    mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{
+                        data:data,
+                        dataType:'json',//服务器返回json格式数据
+                        type:'post',//HTTP请求类型
+                        timeout:10000,//超时时间设置为10秒；
+                        headers:{'Content-Type':'application/json'},
+                        success:function(result){
+                            //服务器返回响应，根据响应结果，分析是否登录成功；
+                            if(result.code == 200){
+                                mui.alert('',result.msg,'确定',function(){
+                                    location.reload();
+                                });
+                            }else{
+                                mui.alert('',result.msg,'确定',function(){
+                                });
+                            }
+                        },
+                        error:function(xhr,type,errorThrown){
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
+            })
+
+
             
         })
     })

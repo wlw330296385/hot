@@ -971,6 +971,16 @@ class LeagueService
         return $result;
     }
 
+    // 批量保存联赛球队积分
+    public function saveAllMatchRank($data) {
+        $model = new MatchRank();
+        $res = $model->allowField(true)->saveAll($data);
+        if ($res === false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $res;
+    }
+
     // 比赛结果列表
     public function getMatchRecords($map, $order='id desc') {
         $model = new MatchRecord();
