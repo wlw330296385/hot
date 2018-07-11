@@ -377,7 +377,7 @@ class Match extends Base {
         return view('Match/match/matchListOfLeague');
     }
 
-    // 比赛技术数据编辑
+    // 比赛技术数据创建
     public function matchInfoOfLeague() {
         $id = input('id', 0, 'intval');
         $matchS = new MatchService();
@@ -385,6 +385,16 @@ class Match extends Base {
 
         $this->assign('matchRecordInfo',$matchRecordInfo);
         return view('Match/match/matchInfoOfLeague');
+    }
+
+    // 比赛技术数据编辑
+    public function editMatchOfLeague() {
+        $id = input('id', 0, 'intval');
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $id]);
+
+        $this->assign('matchRecordInfo',$matchRecordInfo);
+        return view('Match/match/editMatchOfLeague');
     }
 
     // 联赛编辑比赛
