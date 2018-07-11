@@ -678,6 +678,7 @@ class BillService {
                             return ['code'=>100,'msg'=>"最多只能退{$billInfo['balance_pay']}元"];
                         }
                         $result = $this->Bill->save(['refundamount'=>$refundData['refund'],'status'=>-2],['id'=>$billInfo['id']]);
+                        db('event_member')->where(['event_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id']])->update(['status'=>4,'update_time'=>time()]);
                     }
                    
                     $Refund = new \app\model\Refund;
