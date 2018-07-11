@@ -348,9 +348,9 @@ class ItemCoupon extends Base{
                 }
                 $result = db('item_coupon_member')->where(['member_id'=>$this->memberInfo['id'],'item_coupon_id'=>$itemcounponInfo['id']])->find();
                 if(!$result){
-                    return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'data'=>null]);
+                    return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'item_coupon_id'=>$itemcounponInfo['id'],'data'=>null]);
                 }else{
-                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member_id'=>$result['id'],'data'=>$result]);
+                    return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member_id'=>$result['id'],'item_coupon_id'=>$itemcounponInfo['id'],'data'=>$result]);
                 }
             }
 

@@ -33,7 +33,7 @@ class Pooltask extends Base{
     public function lotteryOLD(){
     	try{
             $date_str = date('Ymd',time());
-            $date_str = 20180611;
+            // $date_str = 20180611;
             $poolList = db('pool')->where([
                     'end_str'=>$date_str,
                     'status'=>2
@@ -278,7 +278,8 @@ class Pooltask extends Base{
      * 发送模板消息
      */
     public function sendMessage(){
-        $list = db('pool_winner')->field('member.openid,pool_winner.winner_bonus,pool_winner.create_time')->join('member','member.id = winner_list.member_id')->where(['is_message'=>-1])->select();
+        $list = db('pool_winner')->field('member.openid,pool_winner.winner_bonus,pool_winner.create_time')->join('member','member.id = pool_winner.member_id')->where(['is_message'=>-1])->order('pool_winner.id desc')->select();
+        // $list = [['member_id'=>8,'winner_bonus'=>999,'create_time'=>1531404000,'openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q']];
         $WechatService = new \app\service\WechatService();
         foreach ($list as $key => $value) {
             $messageData = [
