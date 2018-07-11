@@ -17,7 +17,13 @@
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
-    <style type="text/css">
+    <style>
+        .mui-iframe-wrapper {
+            position:fixed;
+            display: none;
+            z-index: 9999;
+            height: 300px;
+        }
         .mui-input-row a {
             display: table;
             width: 100%;
@@ -456,6 +462,40 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        var backTotal = wooApi.GetQueryString('backTotal');
+        var paySuccess = wooApi.GetQueryString('paySuccess');
+            //初始化
+        mui.init({
+            swipeBack: false,
+            statusBarBackground: '#f7f7f7',
+            gestureConfig: {
+                doubletap: true
+            },
+            subpages: [{
+                id: "charge",
+                url: "{:url('/frontend/member/chargeHotcoin')}?backTotal="+backTotal,
+                styles: {
+                    top: 'auto',
+                    bottom: '0',
+                    bounce: 'vertical'
+                }
+            }]
+        });
+
+        var mask = mui.createMask(function(){
+            $('.mui-iframe-wrapper').hide();
+        });
+
+
+        var closeWindow = function () {
+            mask.close();
+            $('.mui-iframe-wrapper').hide();
+        };
+
+        var reloadWindow = function () {
+            location.reload();
+        };
+
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $(".mui-scroll-wrapper").scroll({
@@ -510,7 +550,23 @@
         var groupList = [];
 
         var group_id = wooApi.GetQueryString('group_id');
+
+
+        
+
         $(function () {
+
+             //如果支付成功返回yes，清空充值数量
+            if(paySuccess=="yes"){
+                backTotal = "";
+            }
+            //判断是否有返回充值数量，有则打开充值小窗口
+            if(backTotal!=""&&backTotal!=null){
+                mask.show();
+                $('.mui-iframe-wrapper').show();
+            }
+
+
             matchList();
 
             // 获取当前时间为打卡时间
@@ -522,8 +578,8 @@
             groupListAboutMember(time);
 
             ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
-            var stake = '';
-            $(".groupslist input[name='checkbox1']").not(":disabled").each(function () {
+            var stake = 0;
+            $(".groupslist input[name='checkbox1']:checked").not(":disabled").each(function () {
                 stake = $(this).siblings(".stakeNum").text();
                 console.log(stake)
                 if (group_id == $(this).attr("data-group_id")) {
@@ -791,6 +847,8 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+
             console.log($("input[name=duration]").val());
             console.log($("input[name=extent]").val());
             //提示框
@@ -798,6 +856,21 @@
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                     if (e.index === 1) {
                         window.location.href = "{$fasturl}";
+                    }
+                });
+                return false;
+            }
+
+
+            //判断是否热币不足，不足引导充值
+            var stakeCount = $(".Hbin").text();
+            if(parseInt(stakeCount)> parseInt("{$memberInfo['hot_coin']}")){
+
+                mui.confirm('您的热币不足，请前往充币，谢谢！', '提示', ['取消', '前往充币'], function (e) {
+                    if(e.index === 1) {
+                        mui('#reward').popover('toggle');
+                            mask.show();
+                            $('.mui-iframe-wrapper').show();
                     }
                 });
                 return false;

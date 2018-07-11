@@ -34,6 +34,19 @@ class Coupon extends Base{
         return view('Coupon/itemCouponList');
     }
 
+    public function itemCouponListOfEvent(){
+        $organization_id = input('param.organization_id');
+        $coupon_id = input('param.coupon_id');
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $itemCouponList = $this->ItemCouponService->getItemCouponMemberListByPage(['member_id'=>$member_id]);
+        $CampService = new \app\service\CampService;
+        $organizationInfo = $CampService->getCampInfo(['id'=>$organization_id]);
+        $this->assign('organizationInfo',$organizationInfo);
+        $this->assign('coupon_id',$coupon_id);
+        $this->assign('itemCouponList',$itemCouponList);
+        return view('Coupon/itemCouponListOfEvent');
+    }
+
     public function couponListOfCamp(){
 
         $organization_id = input('param.organization_id');

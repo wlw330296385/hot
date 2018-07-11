@@ -694,7 +694,8 @@
         var url = "{:url('api/Bill/payApi')}/bill_order/"+billOrder;
         var result = wooApi.asyncF(url,{
             'balance_pay' : total_fee,
-            'callback_str':callbackStr
+            'callback_str':callbackStr,
+
         });
 
         if(result.code == 200){
@@ -758,9 +759,10 @@
         });
 
         if(result.code == 200){
-            mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
-                window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
-            });
+            updateCouponID(item_coupon_id)
+            // mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
+            //     window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
+            // });
         }else{
             mui.toast(result.msg);
         }
@@ -768,6 +770,29 @@
 
     }
 
+
+    //赠送成功后更新订单的coupon_id
+    function updateCouponID(item_coupon_id){
+
+        var coupon_ids = [];
+        coupon_ids.Push(item_coupon_id)
+        var item_coupon_ids = JSON.stringify(coupon_ids);
+
+        var url = "{:url('api/Bill/payApi')}/bill_order/"+buyCouponForm.billOrder;
+        var result = wooApi.asyncF(url,{
+            'item_coupon_id' : item_coupon_ids
+            
+        });
+
+        if(result.code == 200){
+            mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
+                window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
+            });
+        }else{
+            mui.toast(result.msg);
+            $("#submitAction").show();
+        }
+    }
 
     //url 目标url
     //arg 需要替换的参数名称
