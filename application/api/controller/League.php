@@ -2,6 +2,7 @@
 // 联赛api
 namespace app\api\controller;
 
+use app\service\ArticleService;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
@@ -3575,6 +3576,8 @@ class League extends Base
                 trace('error: ' . $e->getMessage(), 'error');
                 return json(['code' => 100, 'msg' => $e->getMessage()]);
             }
+            // 收到通知人群：2支球队的领队和队长、相关裁判员、记分员、自定义人物会员
+            $sendMessageMembers = [];
         }
         // 返回结果
         return json($result);
@@ -3619,7 +3622,7 @@ class League extends Base
     }
 
     // 创建联赛文章
-    public function createarticle() {
+    public function createleaguearticle() {
         $data = input('post.');
         // 验证器
         $validate = validate('ArticleVal');
@@ -3660,7 +3663,7 @@ class League extends Base
     }
 
     // 编辑联赛文章
-    public function updatearticle() {
+    public function updateleaguearticle() {
         $data = input('post.');
         // 验证器
         $validate = validate('ArticleVal');
@@ -3691,6 +3694,84 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         } else {
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
+    // 删除联赛文章
+    public function delleaguearticle() {
+        $id = input('post.id');
+        // 查询文章数据
+        $articleS = new ArticleService();
+        $articleInfo = $articleS->getArticleInfo($id);
+        if (!$articleInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 验证会员操作权限 管理员以上才能操作
+        if ( !$this->memberInfo['id'] === 0 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $articleInfo['organization_id'],
+            'status' => 1
+        ]);
+        if ( $power < 9 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $result = $articleS->SoftDeleteArticle($articleInfo['id']);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        return json($result);
+    }
+
+    // 联赛文章列表
+    public function getleaguearticlelist() {
+        $map = input('param.');
+        $page = input('page', 1, 'intval');
+        // 参数league_id -> organization_id
+        if (input('?param.league_id')) {
+            unset($map['league_id']);
+            $map['organization_id'] = input('param.league_id');
+        }
+        if (input('?page')) {
+            unset($map['page']);
+        }
+        $map['organization_type'] = input('post.organization_type', 4, 'intval');
+        $map['category'] = input('post.category', 3,'intval');
+        $orberby = ['hit' => 'desc', 'id' => 'desc'];
+        $articleS = new ArticleService();
+        $result = $articleS->getArticleList($map, $page, $orberby);
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result->toArray()]);
+        }
+    }
+
+    // 联赛文章列表（页码）
+    public function getleaguearticlepage() {
+        $map = input('param.');
+        // 参数league_id -> organization_id
+        if (input('?param.league_id')) {
+            unset($map['league_id']);
+            $map['organization_id'] = input('param.league_id');
+        }
+        if (input('?page')) {
+            unset($map['page']);
+        }
+        $map['organization_type'] = input('post.organization_type', 4, 'intval');
+        $map['category'] = input('post.category', 3,'intval');
+        $orberby = ['hit' => 'desc', 'id' => 'desc'];
+        $articleS = new ArticleService();
+        $result = $articleS->getArticleListByPage($map, $orberby);
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result->toArray()]);
         }
     }
 }
