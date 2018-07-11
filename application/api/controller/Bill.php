@@ -148,5 +148,32 @@ class Bill extends Frontend{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         } 
    }
+
+
+   public function editBillApi(){
+    try {
+        $item_coupon_id = input('param.item_coupon_id');
+        $remarks = input('param.remarks');
+        $system_remarks = input('param.system_remarks');
+        if($item_coupon_id){
+            $data['item_coupon_id'] = $item_coupon_id;
+        }
+        if($remarks){
+            $data['remarks'] = $remarks;
+        }
+        if($system_remarks){
+            $data['system_remarks'] = $system_remarks;
+        }
+        $bill_order = input('param.bill_order');
+        $res = db('bill')->where(['bill_order'=>$bill_order])->update($data);
+        if($res){
+            return json(['code'=>200,'msg'=>'操作成功']);
+        }else{
+            return json(['code'=>100,'msg'=>'操作失败,请检查订单号']);
+        }
+    } catch (Exception $e) {
+        return json(['code'=>100,'msg'=>$e->getMessage()]);
+    }
+   }
     
 }

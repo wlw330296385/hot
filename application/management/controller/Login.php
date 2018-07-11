@@ -71,10 +71,10 @@ class Login extends Controller
     }
 
     public function clearCache(){
-        cookie('member_id', null);
+        // cookie('member_id', null);
         Cache::clear(); 
-        Session::delete('memberInfo');
-        Session::delete('camp_member');
+        // Session::delete('memberInfo');
+        // Session::delete('camp_member');
         $this->success('清空成功');
     }
 

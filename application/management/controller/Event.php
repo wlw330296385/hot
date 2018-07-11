@@ -15,8 +15,7 @@ class Event extends Camp {
 
         $field = input('param.field');
         $keyword = input('param.keyword');
-        if($keyword==''){
-            $map = [];
+        if($keyword == ''){
             $field = '请选择搜索关键词';
         }else{
             if($field){
