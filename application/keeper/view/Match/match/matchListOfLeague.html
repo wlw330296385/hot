@@ -152,7 +152,7 @@
                 url: url,
                 data: {
                     league_id: league_id,
-                    status:1
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -251,14 +251,13 @@
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                 var dataRecord = data.data[i].stage.records[j]
-
                                 var Ttime = gettimeh(dataRecord.match_timestamp * 1000);
-                                // var t2 = new Date(nowTime().replace(/\-/g, "/"));
-                                // var t1 = new Date(dataRecord.match_time.replace(/\-/g, "/"))
-                                // var tSection = parseInt(t2 - t1) / 1000 / 3600;
-
                                 var urlsEdit = "{:url('match/editRecordScoreofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
-                                var urlsRecord = "{:url('match/matchInfoofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                if (dataRecord.has_statics == 0) {
+                                    var urlsRecord = "{:url('match/matchInfoofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                } else {
+                                    var urlsRecord = "{:url('match/editMatchofleague')}" + '/league_id/' + league_id + '/id/' + dataRecord.id;
+                                }
                                 newli += `<li class="mui-table-view-cell listli">
                                                 <div class="mui-media-body wd45">`
                                 if (dataRecord.home_score > dataRecord.away_score) {
@@ -337,15 +336,6 @@
             var minutes = _time.getMinutes();
             return p(hours) + ":" + p(minutes);
         }
-        // function nowTime() {
-        //     var myDate = new Date();//获取系统当前时间
-        //     var year = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
-        //     var month = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
-        //     var day = myDate.getDate(); //获取当前日(1-31)
-        //     var hours = myDate.getHours(); //获取当前小时数(0-23)
-        //     var minutes = myDate.getMinutes(); //获取当前分钟数(0-59)
-        //     return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
-        // }
     </script>
 </body>
 

@@ -3,6 +3,7 @@
 namespace app\keeper\controller;
 
 use app\model\MatchRefereeApply;
+use app\service\ArticleService;
 use app\service\CertService;
 use app\service\LeagueService;
 use app\service\MatchService;
@@ -317,8 +318,6 @@ class Match extends Base {
     public function leagueData() {
         return view('Match/data/leagueData');
     }
-
- 
 
     /*=======以上是外部展示页，以下是管理操作页=======*/
 
@@ -819,12 +818,54 @@ class Match extends Base {
     public function dynamicCreateOfLeague() {
         return view('Match/dynamic/createOfLeague');
     }
+
+    // 联赛动态详情（外部展示）
+    public function dynamicinfo() {
+        $id = input('param.article_id');
+        $articleS = new ArticleService();
+        $articleInfo = $articleS->getArticleInfo([
+            'id' => $id,
+            'organization_type' => 4,
+            'category' => 3
+        ]);
+        if(!$articleInfo){
+            $this->error('找不到文章信息');
+        }
+
+        $this->assign('articleInfo', $articleInfo);
+        return view('Match/dynamic/info');
+    }
+
     // 联赛动态详情
     public function dynamicinfoOfLeague() {
+        $id = input('param.article_id');
+        $articleS = new ArticleService();
+        $articleInfo = $articleS->getArticleInfo([
+            'id' => $id,
+            'organization_type' => 4,
+            'category' => 3
+        ]);
+        if(!$articleInfo){
+            $this->error('找不到文章信息');
+        }
+
+        $this->assign('articleInfo', $articleInfo);
         return view('Match/dynamic/infoOfLeague');
     }
     // 联赛编辑动态
     public function dynamicEditOfLeague() {
+        $id = input('param.article_id');
+        $articleS = new ArticleService();
+        $articleInfo = $articleS->getArticleInfo([
+            'id' => $id,
+            'organization_type' => 4,
+            'category' => 3
+        ]);
+        if(!$articleInfo){
+            $this->error('找不到文章信息');
+        }
+
+        $this->assign('articleInfo', $articleInfo);
         return view('Match/dynamic/editOfLeague');
     }
     // 联赛展示列表
