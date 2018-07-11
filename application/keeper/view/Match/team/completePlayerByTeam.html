@@ -11,35 +11,10 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <!--icon扩展样式icons-extra.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
-    <!--自定义多色图标icon.js-->
-    <script src="/static/frontend/iconfont/iconfont.js"></script>
-    <style>
-        .coloricon {
-            width: 2.3em;
-            height: 2.3em;
-            vertical-align: -0.7em;
-            fill: currentColor;
-            overflow: hidden;
-        }
-
-        .operationFrame {
-            padding: 30px !important;
-        }
-
-        .operationFrame button {
-            padding: 8px 14px
-        }
-
-        .mui-popup-button {
-            font-size: 15px !important;
-        }
-    </style>
 </head>
 
 <body>
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
@@ -51,12 +26,12 @@
         <input type="hidden" name="match_apply_id" value="{$matchApplyInfo.id}" class="data"> {if condition="$matchTeamInfo"}
         <input type="hidden" name="match_team_id" value="{$matchTeamInfo.id}"> {/if}
 
-        <form action="" class="mui-input-group mt55">
+        <form action="" class="mui-input-group mb44">
             <div class="mui-input-row">
                 <label>球队</label>
-                <input type="text" class="data" name="team" placeholder="球队名称" value="{$teamInfo.name}">
-                <input type="hidden" name="team_id" value="{$teamInfo.id}" class="data">
-                <input type="hidden" name="team_logo" value="{$teamInfo.logo}" class="data">
+                <input type="text" name="team" class="data" placeholder="球队名称" value="{$teamInfo.name}">
+                <input type="hidden" name="team_id" class="data" value="{$teamInfo.id}">
+                <input type="hidden" name="team_logo" class="data" value="{$teamInfo.logo}">
             </div>
 
             <div class="mui-input-row">
@@ -66,6 +41,7 @@
             </div>
 
             <p class="pline"></p>
+
             <!-- 参赛球员名单 -->
             <div class="operation-box">
                 <div class="mui-input-row">
@@ -82,32 +58,32 @@
                     <a href="#addTeamMember" id="setTeamMemberBox" class="mui-icon mui-icon-personadd add"></a>
                 </div>
             </div>
-            <p class="pline"></p>
+
         </form>
+
         <ul class="mui-table-view operation">
             <li class="mui-col-xs-12 opli bggreen" onclick="submitAction()">提交</li>
         </ul>
 
-        <!--参赛球员名单层-->
-        <div id="addTeamMember" class="mui-popover">
-            <div class="mui-popover-arrow"></div>
-            <div class="page-header">
-                <span class="course">
-                    <strong>参赛球员名单</strong>
-                </span>
-                <span class="fr">
-                    <button class="mui-btn-blue" id="HomeMemberConfirm">确认</button>
-                </span>
-            </div>
-            <div class="mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <form id="newdiv" class="mui-input-group addTeamMemberList"></form>
-                </div>
+    </div>
+
+    <!--参赛球员名单层-->
+    <div id="addTeamMember" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course">
+                <strong>参赛球员名单</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="HomeMemberConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form id="newdiv" class="mui-input-group addTeamMemberList"></form>
             </div>
         </div>
-
     </div>
-    <!-- ./mui-content -->
 
     <!-- script -->
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -115,8 +91,6 @@
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
-    <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
@@ -156,7 +130,17 @@
                 changeIndexHome();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number"></label><font>' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '"  type="checkbox"><input type="hidden" class="stdList"  data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr('data-tmid') + '" data-avatar="' + $(this).attr('avatar') + '"></div>';
+                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label class="number"></label><font>${$(this).val()}</font>
+                                    <input name="member" value="${$(this).val()}" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}" 
+                                        data-number="${$(this).attr('data-number')}" data-position="${$(this).attr('data-position')}" type="checkbox">
+                                    <input type="hidden" class="stdList" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}"
+                                        data-number="${$(this).attr('data-number')}" data-position="${$(this).attr('data-position')}">
+                                </div>`;
                     $("#hideStList").append(str);
                 })
                 totalNum = $("#inactiveList .checkboxCont").length;
@@ -175,12 +159,24 @@
                     }).prop("checked", true);
                 });
             });
+
             // 选择添加主队参赛人员点击事件
             $("#HomeMemberConfirm").on('click', function () {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".addTeamMemberList input[type=checkbox]:checked").each(function () {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%"></label><font class="f14">' + $(this).val() + '</font><input name="member" value="' + $(this).val() + '" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '" data-avatar="' + $(this).attr('data-avatar') + '"  type="checkbox"><input type="hidden" class="stdList" data-member_id="' + $(this).attr("data-member_id") + '" data-member="' + $(this).attr("data-member") + '" data-name="' + $(this).attr("data-name") + '" data-tmid="' + $(this).attr("data-tmid") + '" data-avatar="' + $(this).attr('data-avatar') + '"></div>';
+                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                                <label class="number" style="width:20%"></label>
+                                    <font class="f14">${$(this).val()}</font>
+                                    <input name="member" value="${$(this).val()}" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}" 
+                                        data-number="${$(this).attr('data-number')}" data-position="${$(this).attr('data-position')}" type="checkbox">
+                                    <input type="hidden" class="stdList" data-member_id="${$(this).attr("data-member_id")}" 
+                                        data-member="${$(this).attr("data-member")}" data-name="${$(this).attr("data-name")}" 
+                                        data-tmid="${$(this).attr("data-tmid")}" data-avatar="${$(this).attr('data-avatar')}"
+                                        data-number="${$(this).attr('data-number')}" data-position="${$(this).attr('data-position')}">
+                                </div>`;
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                 });
@@ -191,23 +187,125 @@
             });
         });
 
-        // 获取数据并进行提交
+        // 更新参赛球员序号
+        function changeIndexHome() {
+            var i = 1;
+            $("#inactiveList .checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++);//更新序号
+            });
+        }
+
+        //获取已经报名的参赛人员列表
+        var toSignUpList = function () {
+            var url = "{:url('api/league/getmatchteammemberlist')}";
+            var match_id = "{$leagueInfo.id}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: match_id,
+                    status: 1,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var inactiveDiv = '';
+                        totalLength = data.data.length;
+                        $(".mui-badge").text(totalLength);
+                        $("#inactiveList").empty();
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            inactiveDiv += `<div class="mui-input-row mui-checkbox checkboxCont">
+                                                <label class="number" style="width:20%">${(i + 1)}</label>
+                                                <font class="f14">${data.data[i].name}</font>
+                                                <input name="member" value="${data.data[i].id}" data-member_id="${data.data[i].member_id}" data-member="${data.data[i].member}"  
+                                                    data-name="${data.data[i].name}" data-tmid="${data.data[i].team_member_id}" data-avatar="${data.data[i].avatar}" 
+                                                    data-number="${data.data[i].number}" data-position="${data.data[i].position}"  type="checkbox">
+                                                <input type="hidden" class="stdList" data-member_id="${data.data[i].member_id}" data-member="${data.data[i].member}" 
+                                                    data-name="${data.data[i].name}" data-tmid="${data.data[i].team_member_id}" data-avatar="${data.data[i].avatar}"
+                                                    data-number="${data.data[i].number}" data-position="${data.data[i].position}">
+                                            </div>`
+                        };
+                        $("#inactiveList").append(inactiveDiv);
+                        $("#hideStList").append(inactiveDiv);
+                        $("#hideStListIni").append(inactiveDiv);
+
+                        if ($("#inactiveList").html() == '') {
+                            $(".checkChecked").append('<p class="nohave">没有球员/p>');
+                        }
+
+                        changeIndexHome();//调用-更新序号
+                        totalNum = $(".checkboxCont").length;
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
+        //获取球队成员列表
+        function toHomeMemberList() {
+            var team_id = "{$teamInfo.id}";
+            mui.ajax("{:url('api/team/teammemberlist')}", {
+                data: {
+                    team_id: team_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            div = div + `<div class="mui-input-row mui-checkbox mui-left">
+                                            <label>${data.data[i].name}</label>
+                                            <input name="checkbox-member" class="member stdlist" value="${data.data[i].name}" data-member="${data.data[i].member}" 
+                                                data-name="${data.data[i].name}" data-member_id="${data.data[i].member_id}" data-tmid="${data.data[i].id}" 
+                                                data-avatar="${data.data[i].avatar}" data-number="${data.data[i].number}" data-position="${data.data[i].position}" type="checkbox" >
+                                        </div>`
+                        }
+                        $("#newdiv").empty();
+                        $("#newdiv").append(div);
+                        if (div == '') {
+                            $("#newdiv").append('<p class="nodata">没有相关数据哦</p>');
+                        }
+                        if ($("#inactiveList").html() == '') {
+                            $("#inactiveList").append('<p class="nohave">还没有参赛人员哦</p>');
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        // 获取数据并进行提交   team_member_id == tmid
         function submitAction() {
             TeamMemberData = [];
             TeamMemberDataDel = [];
             ////////////////////////最终选择的参加人员/////////////////////////////////////////
             $("#inactiveList input[name=member]").each(function () {
-                member = $(this).attr("data-member");
-                member_id = $(this).attr("data-member_id");
-                tm_name = $(this).attr('data-name');
-                team_member_id = $(this).attr("data-tmid");
-                id = $(this).attr('data-id');
-                avatar = $(this).attr('data-avatar');
-                TeamMemberData.push({ member: member, member_id: member_id, name: tm_name, team_member_id: team_member_id, id: id, avatar: avatar });
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                var name = $(this).attr('data-name');
+                var team_member_id = $(this).attr("data-tmid");
+                var avatar = $(this).attr('data-avatar');
+                var number = $(this).attr('data-number');
+                var position = $(this).attr('data-position');
+                TeamMemberData.push({ member, member_id, name, team_member_id, avatar, number, position });
             });
             console.log(TeamMemberData)
 
-            ////////////////////////在已选列表中删除了的人员/////////////////////////////////////////
+            ////////////////////////在已选列表中删除了的人员//////////////////
             var idDelID = ""
             //去除活动人员
             $("#hideStListIni input[name=member]").each(function (i) {
@@ -259,7 +357,7 @@
             var ajaxResult = wooApi.asyncF(apiUrl, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
-                    window.history.go(-1); 
+                    window.history.go(-1);
                 })
             } else {
                 mui.alert(ajaxResult.msg, '提交失败');
@@ -269,99 +367,6 @@
                     }
                 }, 'json');
             }
-        }
-
-        // 更新参赛球员序号
-        function changeIndexHome() {
-            var i = 1;
-            $("#inactiveList .checkboxCont").each(function () { //循环checkboxCont
-                $(this).find("label").text(i++);//更新序号
-            });
-        }
-
-        //获取已经报名的参赛人员列表
-        var toSignUpList = function () {
-            var url = "{:url('api/league/getmatchteammemberlist')}";
-            var match_id = "{$leagueInfo.id}";
-            var team_id = "{$teamInfo.id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    match_id: match_id,
-                    status: 1,
-                    team_id: team_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        var inactiveDiv = '';
-                        totalLength = data.data.length;
-                        $(".mui-badge").text(totalLength);
-                        HomeMemberList = [];//报名人员列表数组
-                        $("#inactiveList").empty();
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="' + data.data[i].team_member_id + '" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-tmid="' + data.data[i].team_member_id + '" data-avatar="' + data.data[i].avatar + '"></div>'
-                            HomeMemberList.push({ name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, tm_id: data.data[i].team_member_id, avatar: data.data[i].avatar });
-                        };
-                        console.log(HomeMemberList)
-
-                        $("#inactiveList").append(inactiveDiv);
-                        $("#hideStList").append(inactiveDiv);
-                        $("#hideStListIni").append(inactiveDiv);
-
-                        if ($("#inactiveList").html() == '') {
-                            $(".checkChecked").append('<p class="nohave">没有球员/p>');
-                        }
-
-                        changeIndexHome();//调用-更新序号
-                        totalNum = $(".checkboxCont").length;
-                    }
-
-                },
-                error: function (xhr, type, errerThrown) {
-                    console.log(type);
-                }
-            });
-        };
-
-        //获取球队成员列表
-        function toHomeMemberList() {
-            var team_id = "{$teamInfo.id}";
-            mui.ajax("{:url('api/team/teammemberlist')}", {
-                data: {
-                    team_id: team_id,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var div = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-member" class="member stdlist" value="' + data.data[i].name + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '" data-member_id="' + data.data[i].member_id + '" data-tmid="' + data.data[i].id + '" data-avatar="' + data.data[i].avatar + '" type="checkbox" ></div>'
-                        }
-                        $("#newdiv").empty();
-                        $("#newdiv").append(div);
-
-                        if (div == '') {
-                            $("#newdiv").append('<p class="nodata">没有相关数据哦</p>');
-                        }
-                        if ($("#inactiveList").html() == '') {
-                            $("#inactiveList").append('<p class="nohave">还没有参赛人员哦</p>');
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
         }
 
     </script>

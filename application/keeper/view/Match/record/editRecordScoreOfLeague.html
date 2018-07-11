@@ -44,6 +44,7 @@
         <input type="hidden" name="match_id" value="{$matchRecordInfo.match_id}" class="data">
         <input type="hidden" name="match_group" value="{$matchRecordInfo.match_group}" class="data">
         <input type="hidden" name="match_group_id" value="{$matchRecordInfo.match_group_id}" class="data">
+        <input type="hidden" name="match_schedule_id" value="{$matchRecordInfo.match_schedule_id}" class="data">
         <input type="hidden" name="id" value="{$matchRecordInfo.id}" class="data">
         <input type="hidden" name="is_record" value="{$matchRecordInfo.is_record}" class="data">
         <form action="" class="mui-input-group mt55">
@@ -72,8 +73,8 @@
 
             <div class="mui-input-row">
                 <label>比赛类型</label>
-                <span>{$matchRecordInfo.match_stage}</span>
-                <input type="hidden" name="type" value="{$matchRecordInfo.match_stage_id}" class="data">
+                <span class="domData" name="match_stage">{$matchRecordInfo.match_stage}</span>
+                <input type="hidden" name="match_stage_id" value="{$matchRecordInfo.match_stage_id}" class="data">
             </div>
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
@@ -621,29 +622,60 @@
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
-
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            var remarks = $('textarea.remarks').val();
-            objData.remarks = remarks;
-            var url = "{:url('api/league/updatematchrecord')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert('编辑成功', '确定', function () {
-                    var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '编辑失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
+            var btnArray = ['保存', '发布'];
+            mui.confirm('1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    $("input[name=is_record]").val(1);
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    var remarks = $('textarea.remarks').val();
+                    objData.remarks = remarks;
+                    var url = "{:url('api/league/publishmatchrecord')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('提交成功', '确定', function () {
+                            var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '录入失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
                     }
-                }, 'json');
-            }
+                } else {
+                    $("input[name=is_record]").val(0);
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    var remarks = $('textarea.remarks').val();
+                    objData.remarks = remarks;
+                    var url = "{:url('api/league/updatematchrecord')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('提交成功', '确定', function () {
+                            var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '提交失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    }
+                }
+            })
+
+
         };
         //创建补0函数
         function p(s) {

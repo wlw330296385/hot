@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 
 use app\model\MatchStatistics;
+use app\service\LeagueService;
 use app\service\MatchDataService;
 use app\service\MatchService;
 use app\service\MemberService;
@@ -359,4 +360,36 @@ class Matchdata extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
+
+    // 保存（联赛）单场比赛双方球队的统计数据+球员出席比赛数据
+    public function savematchstatisticsbyleague() {
+        $data = input('post.');
+        // 验证数据字段
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛id']);
+        }
+        if ( !array_key_exists('match_record_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛战绩id']);
+        }
+        $model = new MatchStatistics();
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $memberS = new MemberService();
+        $leagueS = new LeagueService();
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        // 需要联赛记分员以上
+        if (!$power || $power < 8) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 比赛时间格式转化
+        $data['match_time'] = checkDatetimeIsValid($data['match_time']) ? strtotime($data['match_time']) : $data['match_time'];
+    }
+
 }
