@@ -33,10 +33,12 @@
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="organization_id" value="{campInfo.id}" class="data">
-        <input type="hidden" name="organization" value="{campInfo.camp}" class="data">
-        <input type="hidden" name="organization_type" value="2" class="data">
+        <input type="hidden" name="organization_id" value="{$league_id}" class="data">
+        <input type="hidden" name="organization" value="{$leagueInfo.name}" class="data">
+        <input type="hidden" name="organization_type" value="4" class="data">
         <input type="hidden" name="category" value="3" class="data">
+        <input type="hidden" name="member" value="{$memberInfo.member}" class="data">
+        <input type="hidden" name="member_id" value="{$memberInfo.id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
@@ -75,7 +77,7 @@
                 </div>
             </div>
 
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header bggray2">
                 <span class="course">动态内容</span>
             </div>
             <textarea name="content" class="data content" style="display: none"></textarea>
@@ -84,7 +86,7 @@
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
                 提交
             </li>
         </ul>
@@ -149,11 +151,11 @@
             var objData = wooApi.arrTOobj(arrData);
             var content = $('textarea.content').val();
             objData.content = content;
-            var url = "{:url('api/article/createArticleApi')}";
+            var url = "{:url('api/league/createleaguearticle')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '动态发布成功', '确定', function () {
-                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "{campInfo.id}";
+                    var goUrl = "{:url('match/dynamicListOfLeague')}" + '/article_id/' + ajaxResult.data + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
