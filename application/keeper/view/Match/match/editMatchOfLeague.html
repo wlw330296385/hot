@@ -325,15 +325,16 @@
 
     // 主队球员名单
     function toHomeMembersList() {
-        var url = "{:url('api/league/getmatchteammembers','','',true)}";
-        var team_id = "{$matchRecordInfo.home_team_id}";
+        var url = "{:url('api/matchdata/getleaguerecordstaticsbyteam','','',true)}";
+        var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
+        var team_id = "{$matchRecordInfo.home_team_id}";
         mui.ajax({
             url: url,
             data: {
                 team_id: team_id,
                 match_id: match_id,
-                status: 1
+                match_record_id: match_record_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -369,62 +370,62 @@
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fga" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fga" class="checkNum" value="${data.data[i].fga}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">二分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fg" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fg" class="checkNum" value="${data.data[i].fg}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfga" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="threepfga" class="checkNum" value="${data.data[i].threepfga}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">三分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfg" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="threepfg" class="checkNum" value="${data.data[i].threepfg}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fta" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fta" class="checkNum" value="${data.data[i].fta}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">罚中</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="ft" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="ft" class="checkNum" value="${data.data[i].ft}" placeholder="0">
                                         </div>
                                     </div>
                                     <p class="pline"></p>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="reb" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="reb" class="checkNum" value="${data.data[i].reb}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">助攻</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="ast" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="ast" class="checkNum" value="${data.data[i].ast}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="stl" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="stl" class="checkNum" value="${data.data[i].stl}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">封盖</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="blk" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="blk" class="checkNum" value="${data.data[i].blk}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="turnover" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="turnover" class="checkNum" value="${data.data[i].turnover}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">犯规</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="foul" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="foul" class="checkNum" value="${data.data[i].foul}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
@@ -433,11 +434,10 @@
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
-                                            <input type="hidden" name="lineup" value="0">
+                                            <input type="hidden" name="lineup" value="${data.data[i].lineup}">
                                         </div>
-                                        <div class="mui-col-xs-2 sfButton attend">
+                                        <div class="mui-col-xs-2 sfButton">
                                             <button type="button" class="mui-btn">出席</button>
-                                            <input type="hidden" name="is_attend" value="0">
                                         </div>
                                         <div class="mui-col-xs-3 mui-text-right clearBtn">
                                             <button type="button" class="mui-btn">清空</button>
@@ -464,15 +464,16 @@
 
     // 主队球员名单
     function toAwayMembersList() {
-        var url = "{:url('api/league/getmatchteammembers','','',true)}";
-        var team_id = "{$matchRecordInfo.away_team_id}";
+        var url = "{:url('api/matchdata/getleaguerecordstaticsbyteam','','',true)}";
+        var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
+        var team_id = "{$matchRecordInfo.away_team_id}";
         mui.ajax({
             url: url,
             data: {
                 team_id: team_id,
                 match_id: match_id,
-                status: 1
+                match_record_id: match_record_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -508,62 +509,62 @@
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fga" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fga" class="checkNum" value="${data.data[i].fga}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">二分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fg" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fg" class="checkNum" value="${data.data[i].fg}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfga" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="threepfga" class="checkNum" value="${data.data[i].threepfga}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">三分</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfg" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="threepfg" class="checkNum" value="${data.data[i].threepfg}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="fta" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="fta" class="checkNum" value="${data.data[i].fta}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">罚中</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="ft" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="ft" class="checkNum" value="${data.data[i].ft}" placeholder="0">
                                         </div>
                                     </div>
                                     <p class="pline"></p>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="reb" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="reb" class="checkNum" value="${data.data[i].reb}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">助攻</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="ast" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="ast" class="checkNum" value="${data.data[i].ast}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="stl" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="stl" class="checkNum" value="${data.data[i].stl}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">封盖</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="blk" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="blk" class="checkNum" value="${data.data[i].blk}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="turnover" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="turnover" class="checkNum" value="${data.data[i].turnover}" placeholder="0">
                                         </div>
                                         <div class="mui-col-xs-2 dataText">犯规</div>
                                         <div class="mui-col-xs-4">
-                                            <input type="text" name="foul" class="checkNum" value="" placeholder="0">
+                                            <input type="text" name="foul" class="checkNum" value="${data.data[i].foul}" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="mui-row">
@@ -572,7 +573,7 @@
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
-                                            <input type="hidden" name="lineup" value="0">
+                                            <input type="hidden" name="lineup" value="${data.data[i].lineup}">
                                         </div>
                                         <div class="mui-col-xs-2 sfButton">
                                             <button type="button" class="mui-btn">出席</button>

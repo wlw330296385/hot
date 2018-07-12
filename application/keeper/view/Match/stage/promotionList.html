@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>晋级球队预览列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <style>
+        .mui-popover-arrow {
+            left: auto;
+            right: 6px;
+        }
+
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-input-group .mui-input-row label {
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">晋级球队预览列表</h1>
+    </header>
+
+    <div class="mui-content">
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="league_id" class="data" value="{$leagueInfo.id}">
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>比赛阶段</label>
+                <span>比赛阶段</span>
+            </div>
+        </form>
+        <p class="pline"></p>
+        <ul class="mui-table-view list teamList"></ul>
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                创建分组
+            </li>
+        </ul>
+
+        <!-- <div class="publicTip mb44">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、组名可自定义设置</p>
+                <p>2、右侧序号为小组序号</p>
+            </div>
+        </div> -->
+
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{$homeurl}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <a href="#shareGuide">分享</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-7 mui-col-xs-7 opli bgred">确认生成</li>
+        </ul>
+    </div>
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        $(function () {
+            let league_id = "{$league_id}"
+            mui.ajax("{:url('api/league/leaguegroupwithteamspage','','',true)}", {
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell listli ">
+                                            <img class="img40 mui-pull-left " src="${data.data.data[i].group_teams[j].team_logo}">
+                                            <div class="mui-media-body lineHeight20">
+                                                <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}</p>
+                                                <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
+                                            </div>
+                                        </li>`;
+                            }
+                        }
+                        $(".teamList").empty().append(newli)
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        })
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.groupList = JSON.stringify(groupList);
+            var url = "{:url('api/league/saveleaguegroup')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+
+        };
+
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "s",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{s}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: "{s}",
+                desc: "{a}",
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{s}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
+    </script>
+</body>
+
+</html>

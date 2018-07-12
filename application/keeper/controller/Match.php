@@ -311,7 +311,18 @@ class Match extends Base {
 
     // 联赛战绩
     public function leagueRecord() {
+
         return view('Match/record/leagueRecord');
+    }
+
+    // 联赛战绩详情
+    public function leaguerecordinfo() {
+        $id = input('param.id', 0, 'intval');
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $id]);
+
+        $this->assign('matchRecordInfo', $matchRecordInfo);
+        return view('Match/record/recordInfo');
     }
 
     // 联赛数据
@@ -771,6 +782,11 @@ class Match extends Base {
     // 比赛阶段管理列表
     public function matchstageListofleague() {
         return view('Match/stage/matchstageListofleague');
+    }
+
+      // 联赛比赛阶段出线（晋级）球队预览页
+      public function stagePromotionList() {
+        return view('Match/stage/promotionList');
     }
 
     // 球队积分列表

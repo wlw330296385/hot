@@ -124,14 +124,19 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('match/editmatchstage')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
-                            newli += `<li class="mui-table-view-cell listli">
+                            newli += `<li class="mui-table-view-cell listli" style="line-height:27px;">
                                         <div class="mui-slider-right mui-disabled">
                                             <span class="mui-btn mui-btn-red" data-action="del" data-id="${data.data.data[i].id}">删除</span>
                                         </div>
                                         <div class="mui-slider-handle">
                                             <a href="${urls}">
-                                                <div class="fl">${data.data.data[i].name}</div>
-                                                <div class="fr">${data.data.data[i].type_text}</div>
+                                                <div class="fl wd52">${data.data.data[i].name}</div>
+                                                <div class="fr">
+                                                    ${data.data.data[i].type_text}
+                                                    <a href="{:url('match/stagePromotionList',['league_id'=>$league_id])}">
+                                                        <button type="button" class="bgred" style="padding: 3px 5px;margin-left:8px;">晋级球队</button>
+                                                    </a>
+                                                </div>
                                             </a>
                                         </div>
                                       </li>`;

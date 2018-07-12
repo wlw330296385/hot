@@ -34,7 +34,7 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="match" class="data" value="{$leagueInfo.name}">
         <input type="hidden" name="match_id" class="data" value="{$league_id}">
-        <form action="" class="mui-input-group mb44">
+        <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>阶段别名</label>
                 <input type="text" name="name" class="data" value="" placeholder="请输入比赛阶段别名（如:16强赛）">
@@ -63,8 +63,55 @@
                 <label>出线规则</label>
                 <textarea name="" rows="2" value="" class="advance_setting" placeholder="请填写出线规则"></textarea>
             </div> -->
-        </form>
 
+            <div class="mui-input-row advance_div">
+                <div class="mui-navigate-right">
+                    <label>积分排名</label>
+                    <span class="select-row">
+                        <select name="" class="data choiseOrder" style="margin-bottom: 0;padding: 0 10px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="mui-input-row advance_div">
+                <div class="mui-navigate-right">
+                    <label>胜负场数</label>
+                    <span class="select-row">
+                        <select name="" class="data choiseOrder" style="margin-bottom: 0;padding: 0 10px;">
+                            <option value="2">2</option>
+                            <option value="1">1</option>
+                            <option value="3">3</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="mui-input-row advance_div">
+                <div class="mui-navigate-right">
+                    <label>得失分</label>
+                    <span class="select-row">
+                        <select name="" class="data choiseOrder" style="margin-bottom: 0;padding: 0 10px;">
+                            <option value="3">3</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+        </form>
+        <div class="publicTip mb44 advance_div">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、出线球队按照积分排名，胜负场数，得失分选出。</p>
+                <p>2、积分不同，按积分高的出线；积分相同，按胜负场数高低出线；以此类推</p>
+            </div>
+        </div>
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
                 提交
@@ -87,12 +134,13 @@
                 let selection = $(this).find("option:selected").val();
                 if (selection == 1) {
                     $(".advance_div").show();
+                    $(".choiseOrder").addClass("data");
                 } else {
                     $(".advance_div").hide();
+                    $("input[name=advance_number]").val('');
+                    $(".choiseOrder").removeClass("data");
                 };
             });
-
-
         });
 
         // 提交
@@ -108,10 +156,6 @@
             if (type == 1 && advance_number == '') {
                 mui.toast("请填写出线球队数量");
                 return false;
-            }
-            let selection = $(".stageSelect").find("option:selected").val();
-            if (selection != 1) {
-                $("input[name=advance_number]").val('');
             }
 
             var data = wooApi.getInputData('input', 'data');
