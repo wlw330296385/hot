@@ -140,7 +140,7 @@
         <h4>恭喜您购买成功！</h4>
         <p>请关注微信公众号【篮球管家】<br />以便随时查看并使用您的卡券！</p>
         <p><img src="/static/frontend/images/qrcode_hot.jpg" /> </p>
-        <a href="{:url('frontend/Coupon/itemCouponList')}"><button type="button">立即使用卡券</button></a>
+        <a href="{:url('/frontend/Coupon/itemcouponlistofevent/organization_id/')}{$eventInfo.organization_id}"><button type="button">立即使用卡券</button></a>
     </div>
 
     <ul class="mui-table-view list" id="eventDes">
@@ -678,21 +678,21 @@
 
         var objBillInfo = {};//订单参数
         objBillInfo.bill_order = "{$billOrder}";
-        objBillInfo.goods_des = member+'购买深圳2018动漫展大热篮球投篮卡券';
+        objBillInfo.goods_des = '{$eventInfo.event}'+domName;
         objBillInfo.total = total;
         objBillInfo.student_id = member_id;
         objBillInfo.student = member;
-        objBillInfo.remarks = member+'购买'+total+'张深圳2018动漫展大热篮球投篮卡券'+domName;
+        objBillInfo.remarks = member+'购买'+total+'{$eventInfo.event}'+domName;
         objBillInfo.balance_pay = 0;
-        objBillInfo.goods = "深圳2018动漫展大热篮球投篮卡券";
+        objBillInfo.goods = "{$eventInfo.event}";
         objBillInfo.goods_id = "{$eventInfo.id}"
         objBillInfo.price = domPrice;
         objBillInfo.score_pay = 0;
-        objBillInfo.organization_type = 1;
+        objBillInfo.organization_type = '{$eventInfo.organization_type}';
         objBillInfo.goods_type = 2;
         objBillInfo.pay_type = "wxpay";
-        objBillInfo.camp = '大热篮球';
-        objBillInfo.camp_id = 9;
+        objBillInfo.camp = '{$eventInfo.organization}';
+        objBillInfo.camp_id = '{$eventInfo.organization_id}';
         objBillInfo.item_coupon_id = item_coupon_ids
 
         objBillInfo.__token__ = "{$Request.token}";

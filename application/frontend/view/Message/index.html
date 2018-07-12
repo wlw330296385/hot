@@ -50,6 +50,9 @@
             color: #777777;
             padding: 10px 20px 20px;
         }
+        .page-header{
+            padding: 8px 15px;
+        }
     </style>
 </head>
 
@@ -70,11 +73,18 @@
         <div class="tab-pullRefresh">
             <div id="memberMsg" class="mui-scroll-wrapper mui-control-content mui-active">
                 <div class="mui-scroll">
+                    <div class="page-header">
+                        <span class="f12">总共 <span class="mCount colorred"></span> 条个人消息，<span class="muCount colorred"></span> 条未读</span>
+                       <span class="f12 mui-pull-right" id="setMemberAll">全部标记已读</span>
+                    </div>
                     <ul class="mui-table-view detalis-list list border-b memberMsg"></ul>
                 </div>
             </div>
             <div id="systemMsg" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
+                    <div class="page-header">
+                        <span class="f12">总共 <span class="sCount colorred"></span> 条个人消息，<span class="suCount colorred"></span> 条未读</span>
+                    </div>
                     <ul class="mui-table-view detalis-list list border-b systemMsg"></ul>
                 </div>
             </div>
@@ -141,6 +151,11 @@
 
     $(function () {
 
+        //获取个人未读消息数量
+        toMemberListUnread()
+        //获取系统未读消息数量
+        toSystemListUnread()
+
         //打开消息改变其未读已读状态
         $(".memberMsg").on("tap", '.mui-navigate-right', function () {
             var msgID = $(this).attr("msg_id");
@@ -202,6 +217,40 @@
                 });
             }
         });
+
+
+        //设置所有个人信息为已读
+        $(".page-header").on("tap", '#setMemberAll', function () {
+
+            mui.confirm('确定全部个人消息设为已读吗?', '提示', ['取消', '确定'], function (e) {
+                if (e.index === 1) {
+                    var apiurl = "{:url('api/message/setMessageMemberStatusAllApi')}";
+                    mui.ajax(apiurl, {
+                        data: {
+                            status: 2
+                        },
+                        dataType: 'json',
+                        type: 'post',
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            //console.log(data);
+                            if (data.code == 200) {
+                                mui.toast(data.msg);
+                                window.location.reload();
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errotThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+                }
+            });
+
+                
+        });
+
 
         //初始化全局变量
         var onCount = 1;
@@ -328,6 +377,7 @@
         //     }, 100);
         // }
 
+
     })
 
     //接口获取数据并追加到页面
@@ -346,9 +396,12 @@
 
                 var newli = '';
                 if (data.code == 200) {
+                    $(".mCount").text(data.data.total);
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="' + data.data.data[i].status + '" msg_id="' + data.data.data[i].id + '" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-msg-news' + data.data.data[i].status + '"></use></svg><p>' + data.data.data[i].title + '</p><p>' + data.data.data[i].create_time + '</p></a><div class="mui-collapse-content"><a href="' + data.data.data[i].url + '"><p>' + data.data.data[i].content + '</p></a></div></li>';
                     }
+                }else{
+                    $(".mCount").text("0");
                 }
                 if (gType == 1) {
                     //上拉刷新
@@ -378,6 +431,33 @@
     };
 
     //接口获取数据并追加到页面
+    var toMemberListUnread = function () {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/message/getMessageMemberListByPageApi','','',true)}" + '/?page=1';
+        mui.ajax({
+            url: url,
+            data: {
+                status:1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+                if (data.code == 200) {
+                    $(".muCount").text(data.data.total);
+                }else{
+                    $(".muCount").text("0");
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+    //接口获取数据并追加到页面
     var toSystemList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/message/getMessageListByPageApi','','',true)}" + '/?page=' + page;
@@ -393,9 +473,12 @@
 
                 var newli = '';
                 if (data.code == 200) {
+                    $(".sCount").text(data.data.total);
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         newli += '<li class="mui-table-view-cell mui-collapse listli"><a class="mui-navigate-right" msg_status="' + data.data.data[i].isread + '" msg_id="' + data.data.data[i].id + '" href="#"><svg class="coloricon" aria-hidden="true"><use xlink:href="#icon-msg-notice' + data.data.data[i].isread + '"></use></svg><p>' + data.data.data[i].title + '</p><p>' + data.data.data[i].create_time + '</p></a><div class="mui-collapse-content"><a href="' + data.data.data[i].url + '"><p>' + data.data.data[i].content + '</p></a></div></li>';
                     }
+                }else{
+                    $(".sCount").text("0");
                 }
                 if (gType == 1) {
                     //上拉刷新
@@ -420,6 +503,34 @@
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
                 mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+    //接口获取数据并追加到页面
+    var toSystemListUnread = function () {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/message/getMessageListByPageApi','','',true)}" + '/?page=1';
+        mui.ajax({
+            url: url,
+            data: {
+                status:1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            //processData:false,
+            success: function (data) {
+
+                if (data.code == 200) {
+                    $(".suCount").text(data.data.total);
+                }else{
+                    $(".suCount").text("0");
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
             }
         });
     };
