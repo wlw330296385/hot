@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$organizationInfo.camp}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/frontend/css/coupon.css" />
+	<style>
+		.giftCoupon{
+			float: left !important;
+			font-size: 14px !important;
+			margin-left: 20px;
+		}
+
+        .coach .table { font-size: 13px; }
+        .list-cont1 { white-space:normal; padding-right: 15px; text-align: left; }
+        .mui-table-view-cell { border-bottom: 1px solid #EEEEEE; }
+        .mui-table-view-cell:after { background: none !important;}
+        .mui-control-item { line-height: 26px !important; padding: 10px 0px 8px;}
+        .mui-control-item span { font-size: 16px; display: block;}
+        .listli small { display: block; margin-top: 10px; margin-bottom: -5px; color: #CCC; text-align: left; font-size: 12px; }
+        .tipCorner{ margin-right: 5px; margin-left: 0px; }
+        .mui-scroll {padding-top:15px !important;}
+    </style>
+</head>
+<body>
+
+
+	<header id="header" class="mui-bar mui-bar-nav for-tab">
+		<div class="camp-lesson-list">
+			<div class="mui-segmented-control mb">
+				<a class="mui-control-item mui-icon mui-icon-left-nav mui-action-back"></a>
+				<a class="mui-control-item mui-active" href="#itemCouponList">活动卡券</a>
+                <a class="mui-control-item" href="#billList">活动订单</a>
+				<a class="mui-control-item link" href="{:url('frontend/member/index')}">个人中心</a>
+			</div>
+		</div>
+	</header>
+
+	<div class="mui-content">
+
+		<div class="tab-pullRefresh">
+			<div id="itemCouponList" class="mui-scroll-wrapper mui-control-content mui-active">
+				<div class="mui-scroll"></div>
+			</div>
+            <div id="billList" class="mui-scroll-wrapper mui-control-content coach">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view mui-text-center detalis-list billList"></ul>
+                </div>
+            </div>
+		</div>
+
+	</div>
+
+</body>
+</html>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+
+<script type="text/javascript">
+	//初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+    mui(".mui-segmented-control").on("tap", ".link", function () {
+        window.top.location.href = this.href;
+    });
+
+
+    $(function(){
+
+    	$(document).on('tap','.useCard',function(){
+
+    		var itemCouponID = $(this).attr("data-itemCouponID");
+    		var itemCouponMemberID = $(this).attr("data-itemCouponMemberID");
+
+
+            var currBtn = $(this);
+            mui.confirm('确定使用该卡券吗?', '提示', ['取消', '确定'], function (e) {
+                if (e.index === 1) {
+                    var objData = {
+                        item_coupon_id:itemCouponID,
+                        item_coupon_member_id : itemCouponMemberID
+                    }
+                    var ajaxResult = wooApi.asyncF("{:url('api/item_coupon/useItemCoupon')}", objData);
+                    if(ajaxResult.code == 200){
+                        currBtn.attr("disabled", true);
+                        currBtn.removeClass("bggreen");
+                        currBtn.removeClass("useCard");
+                        currBtn.text('已使用');
+                        currBtn.parent().find(".giftCoupon").hide();
+                    }else{
+                        mui.toast(ajaxResult.msg);
+                    }
+                }
+            });
+
+    	})
+
+
+        $(".billList").on('tap','button',function(){
+
+            var billOrder = $(this).attr("data-bill-id");
+            var couponID = $(this).attr("data-coupon-id");
+            var total = $(this).attr("data-total");
+            
+            var result =  wooApi.asyncF("{:url('api/Item_coupon/createItemCouponMemberAllApi')}", {
+                'item_coupon_id' : couponID,
+                'total':total
+            });
+
+            if(result.code == 200){
+                updateCouponID(couponID,total,billOrder)
+            }else{
+                mui.toast(result.msg);
+            }
+
+        })
+
+        //初始化全局变量
+        var onItemCount = 1;
+
+        mui('#itemCouponList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onItemCount = 1;//刷新并显示第一页
+                var page = onItemCount;
+                var gType = 1;//代表下拉刷新
+                toItemCouponList('itemCouponList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现（上架）
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onItemCount++;//翻下一页
+                var page = onItemCount;
+                var gType = 2;//代表上拉加载
+                toItemCouponList('itemCouponList', page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+
+        //初始化全局变量
+        var Count1 = 1;
+
+        //已付款订单
+        mui('#billList').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto:true,//可选,默认false.自动下拉刷新一次
+                contentdown : "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover : "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh : "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefresh1
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefresh1
+            }
+        });
+        //下拉刷新具体业务实现（上架）
+        function pulldownRefresh1() {
+            setTimeout(function() {
+                Count1 = 1;//刷新并显示第一页
+                var page = Count1;
+                var gType = 1;//代表下拉刷新
+                toBillList('billList',page,gType,1);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现（上架）
+        function pullupRefresh1() {
+            setTimeout(function() {
+                Count1++;//翻下一页
+                var page = Count1;
+                var gType =2;//代表上拉加载
+                toBillList('billList',page,gType,1);//具体取数据的方法
+            }, 100);
+        }
+
+
+
+    })
+
+
+
+    //赠送成功后更新订单的coupon_id
+    function updateCouponID(item_coupon_id,total,billOrder){
+        
+        ////////////////////////////////////////////////
+        var coupon_ids = [];
+        coupon_ids.push({item_coupon_id:item_coupon_id,total:total,is_coupon:"1"});
+        var item_coupon_ids = JSON.stringify(coupon_ids);
+        /////////////////////////////////////////////////
+
+        var url = "{:url('api/Bill/editBillApi')}/bill_order/"+billOrder;
+        var result = wooApi.asyncF(url,{
+            'item_coupon_id' : item_coupon_ids
+            
+        });
+
+        if(result.code == 200){
+            mui.alert("补发成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
+                window.location.reload();
+            });
+        }
+    }
+
+    //接口获取数据并追加到页面
+    var toItemCouponList = function (wList, page, gType) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/item_coupon/getItemCouponMemberListByPageApi','','',true)}" + '/?page=' + page;
+        var memberID = "{$memberInfo.id}";
+        var organizationID = "{$organizationInfo.id}";
+        mui.ajax({
+            url: url,
+            data: {
+                member_id: memberID,
+                organization_id:organizationID
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                var btn = '';
+                var currTimestamp = Date.parse(new Date());
+                var startDate = '';
+                var endDate = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+
+                        var urls = "{:url('frontend/Coupon/itemCouponInfo')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id+'/itemCouponMember_id/'+data.data.data[i].id;
+
+                        startDate = data.data.data[i].item_coupon.start+' 00:00:00';
+                        endDate = data.data.data[i].item_coupon.end+' 23:59:59';
+                        startDate = new Date(Date.parse(startDate.replace(/-/g, "/")));
+                        endDate = new Date(Date.parse(endDate.replace(/-/g, "/")));
+                        startDate = startDate.getTime();
+                        endDate = endDate.getTime();
+
+                        if(startDate>currTimestamp||endDate<currTimestamp) {
+                            btn = '<button type="button" class="mui-btn bggray"  disabled="true">已失效</button>';
+                        } else if(data.data.data[i].status == '未使用'){
+                            var giftUrl = "{:url('frontend/Coupon/itemCouponGift')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id+'/itemCouponMember_id/'+data.data.data[i].id+'?gift=1';
+                            btn = '<button type="button" class="mui-btn bggreen useCard mui-pull-left" data-itemCouponID="'+data.data.data[i].item_coupon.id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'">立即使用</button> &nbsp; <a href='+giftUrl+' class="giftCoupon">转赠</a>';
+                        } else {
+                            btn = '<button type="button" class="mui-btn" disabled="true">'+data.data.data[i].status+'</button>';
+                        }
+                        newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>'+btn+'</div></div>'
+
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("#itemCouponList .mui-scroll").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("#itemCouponList .mui-scroll").append('<ul><li class="nodata"><p>没有相关数据哦!</p></li></ul>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("#itemCouponList .mui-scroll").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+    //接口获取数据并追加到页面
+    var toBillList = function(wList,page,gType,status) {
+        var memberID = "{$memberInfo.id}";
+        var organizationID = "{$organizationInfo.id}";
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/bill/getBillListByPageApi',['balancePay'=>1])}?page="+page;
+        mui.ajax({
+            url:url,
+            data: {
+                member_id:memberID,
+                camp_id:organizationID,
+                status:1
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+                var newli='';
+                if (data.code == 200) {
+                    for(var i=0;i<=data.data.data.length-1;i++){
+                        ///////////////////////////////////////////////////////////////检查是否已发放卡券
+                        var bufaBtn = "";
+                        var itemCoupon = JSON.parse(data.data.data[i].item_coupon_id);
+                        if(itemCoupon!="[]"&&itemCoupon!=null&&itemCoupon!=""){
+                            if(itemCoupon[0].is_coupon=="-1"){
+                                bufaBtn = '<button data-coupon-id="'+itemCoupon[0].item_coupon_id+'" data-total="'+itemCoupon[0].total+'" data-bill-id="'+data.data.data[i].bill_order+'">补卡券</button>'
+                            }
+                        }
+                        ////////////////////////////////////////////////////////////////
+                        if(data.data.data[i].expire>0){
+                            newli +=  '<li class="mui-table-view-cell listli" data-id="' + data.data.data[i].id + '"><ul class="mui-row table  item-list"><li class="mui-col-sm-9 mui-col-xs-9"><div class="list-cont1"><font class="tipCorner bgred">'+data.data.data[i].goods_type+'</font>' + data.data.data[i].goods_des + '<p class="f12">购买时间：'+data.data.data[i].create_time+' &nbsp; 数量：' + data.data.data[i].total + '</p><p style="color:red">['+wooApi.dateIt('Y-m-d H:i',data.data.data[i].expire)+']&nbsp;过期</p></div></li><li class="mui-col-sm-3 mui-col-xs-3">￥' + data.data.data[i].balance_pay + bufaBtn +'</li></ul><small>订单号：' + data.data.data[i].bill_order + '</small></li>';
+                        }else{
+                            newli +=  '<li class="mui-table-view-cell listli" data-id="' + data.data.data[i].id + '"><ul class="mui-row table  item-list"><li class="mui-col-sm-9 mui-col-xs-9"><div class="list-cont1"><font class="tipCorner bggreen">'+data.data.data[i].goods_type+'</font>' + data.data.data[i].goods_des + '<p class="f12">购买时间：'+data.data.data[i].create_time+' &nbsp; 数量：' + data.data.data[i].total + '</p></div></li><li class="mui-col-sm-3 mui-col-xs-3">￥' + data.data.data[i].balance_pay + bufaBtn + '</li></ul><small>订单号：' + data.data.data[i].bill_order + '</small></li>';
+                        }
+                        
+                    }
+                }
+                if(gType==1){
+                    //上拉刷新
+                    $(".billList").empty().append(newli);
+                    mui('#'+wList).pullRefresh().endPulldownToRefresh();
+                    mui('#'+wList).pullRefresh().refresh(true);
+                    if(newli=='') {
+                        $(".billList").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                }else{
+                    //下拉加载 gType==2
+                    $(".billList").append(newli);
+                }
+
+                if(newli!=''){
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(false);
+                }else{
+                    mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function(xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#'+wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
+</script>

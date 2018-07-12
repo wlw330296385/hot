@@ -98,7 +98,7 @@ class Message extends Base{
         }
     }
 
-    // 设置消息状态
+    // 设置个人消息状态（1）
     public function setMessageMemberStatusApi(){
         try{
             $message_id = input('param.message_id');
@@ -115,7 +115,7 @@ class Message extends Base{
         }
     }
 
-    // 全部已读
+    // 全部已读（all）
     public function setMessageMemberStatusAllApi(){
         try{
   
@@ -154,6 +154,8 @@ class Message extends Base{
         }
     }
 
+
+    //设置系统消息已读
     public function setMessageStatus(){
         try{
             $message_id = input('param.message_id');

@@ -9,11 +9,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
-
-
 <body class=whitebg>
 
     <header class="mui-bar mui-bar-nav subheader">
@@ -22,13 +22,11 @@
     </header>
 
     <div class="mui-content">
-
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b team"></ul>
+                <ul class="mui-table-view detalis-list list border-b dunamicList"></ul>
             </div>
         </div>
-
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -88,14 +86,15 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/team/myteamlist','','',true)}";
-                var member_id = "{$memberInfo.id}"
+                var url = "{:url('api/league/getleaguearticlelist','','',true)}";
+                var league_id = "{$league_id}";
                 mui.ajax({
                     url: url,
                     data: {
-                        page: page,
-                        status: 1,
-                        member_id: member_id,
+                        league_id: league_id,
+                        organization_type: 4,
+                        category: 3,
+                        page: page
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
@@ -106,24 +105,23 @@
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('/keeper/team/teamInfo')}" + '/team_id/' + data.data[i].team.id;
-                                newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].team.logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;"><div class="mui-media-body"><font style="font-size:15px">' + data.data[i].team.name + '</font>';
-                                newli += '<p class="mui-ellipsis">队员：<font class="colororange">' + data.data[i].team.member_num + '</font>&nbsp;&nbsp;平均年龄：<font class="colororange">' + data.data[i].team.avg_age + '</font>&nbsp;&nbsp;身高：<font class="colororange">' + data.data[i].team.avg_height + '</font></p></div><div class="price-frame mui-text-center" style="line-height: 52px;padding-right: 15px;padding-top: 0;"><p class="address">' + data.data[i].team.area + '</p></div></a>'
-                                newli += '</li>';
+                                var urls = "{:url('match/dynamicInfo')}" + '/article_id/' + data.data[i].id + '/league_id/' + data.data[i].organization_id;
+                                newli += '<li class="mui-table-view-cell listli"><a href="' + urls + '"><img class="mui-pull-left proportion4x3" src="' + data.data[i].covers + '"><div class="mui-media-body wd73"><strong class="newline">' + data.data[i].title + '</strong>';
+                                newli += '<p class="mui-ellipsis f12">' + data.data[i].create_time + '<span class="wd45"><font style="margin-right: 8px !important;"><i class="mui-icon-extra mui-icon-extra-comment f14"></i>&nbsp;' + data.data[i].comments + '</font><font><i class="mui-icon-extra mui-icon-extra-like f14"></i>&nbsp;' + data.data[i].likes + '</span></span></p></div>';
+                                newli += '</a></li>';
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
-                            $("ul.team").empty().append(newli);
+                            $("ul.dunamicList").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.dunamicList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
-                            $("ul.team").append(newli);
+                            $("ul.dunamicList").append(newli);
                         }
                         if (newli != '') {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -137,8 +135,6 @@
                     }
                 });
             };
-
-
         })
     </script>
 </body>

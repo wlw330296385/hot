@@ -831,8 +831,16 @@ class Match extends Base {
         if(!$articleInfo){
             $this->error('找不到文章信息');
         }
+        //点击率+1;
+        $articleS->incArticle([ 'id' => $articleInfo['id'] ],'hit');
+
+        //收藏列表
+        $isCollect = $articleS->getCollectInfo([ 'article_id'=> $articleInfo['id'],' member_id'=>$this->memberInfo['id'] ]);
+        $isLikes = $articleS->getLikesInfo([ 'article_id' => $articleInfo['id'], 'member_id'=>$this->memberInfo['id'] ]);
 
         $this->assign('articleInfo', $articleInfo);
+        $this->assign('isLikes',$isLikes);
+        $this->assign('isCollect',$isCollect);
         return view('Match/dynamic/info');
     }
 

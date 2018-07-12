@@ -85,19 +85,22 @@
                     mui.alert("请填写数值大于零的整数，谢谢！");
                     return false;
                 }else if(parseFloat(sum)> parseFloat("{$memberInfo['balance']}") ){
-                    mui.alert("您填写的金额不能大于你的个人余额哦！");
+                    mui.alert("您填写的数值不能大于你的个人热币总额哦！");
                     return false;
                 }
 
-                var data1 = wooApi.getInputData();
-                var objData = wooApi.arrTOobj(data1);
+                //余额充币接口
+                var objData = {
+                        total:sum
+                }
 
-                //转换接口
-                //var result = wooApi.asyncF("{:url('api/salaryOut/applySalaryOut')}",objData);
-
-                mui.alert(result.msg)
+                result = wooApi.asyncF("{:url('api/charge/hotcoinToBalance')}",objData);
                 if(result.code == 200){
-                    window.location.href="{:url('member/myHotcoin')}";
+                     mui.alert('',result.msg,'确定',function(){
+                        top.location.reload();
+                     });
+                }else{
+                    mui.alert(result.msg);
                 }
 
             }
@@ -105,17 +108,22 @@
         })
 
 
+
+
+
         // 提现金额
         $('input[name=hot_coin]').on('blur',function(){
             var sum = $(this).val();
-            if(!(/^[1-9]+?[0-9]*$/).test(sum)){
-                mui.toast("请填写数值大于零的整数，谢谢！");
-                ok = false;
-                return false;
-            }else if(parseFloat(sum)> parseFloat("{$memberInfo['hot_coin']}") ){
-                mui.toast("您填写的金额不能大于你的个人余额哦！");
-                ok = false;
-                return false;
+            if(sum!=""){
+                if(!(/^[1-9]+?[0-9]*$/).test(sum)){
+                    mui.toast("请填写数值大于零的整数，谢谢！");
+                    ok = false;
+                    return false;
+                }else if(parseFloat(sum)> parseFloat("{$memberInfo['hot_coin']}") ){
+                    mui.toast("您填写的数值不能大于你的个人热币总额哦！");
+                    ok = false;
+                    return false;
+                }
             }
         })
     })
