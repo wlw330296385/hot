@@ -784,6 +784,11 @@ class Match extends Base {
         return view('Match/stage/matchstageListofleague');
     }
 
+      // 联赛比赛阶段出线（晋级）球队预览页
+      public function stagePromotionList() {
+        return view('Match/stage/promotionList');
+    }
+
     // 球队积分列表
     public function integralList() {
         return view('Match/record/integralList');
