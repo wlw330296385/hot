@@ -185,41 +185,10 @@
                     <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
-                    <a class="mui-navigate-right">更多</a>
+                    <a href="{:url('match/dynamicList',['league_id'=>$league_id])}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b recordMatch">
-                <li class="mui-table-view-cell mui-media listli">
-                    <a class="mui-navigate-right">
-                        <img class="mui-pull-left proportion4x3" src="/uploads/images/team/2018/02/thumb_5a77fcf8e6b94.png">
-                        <div class="showTitle">
-                            <strong>2018深圳宝安城市学院社区篮球篮球篮球篮球篮球</strong>
-                        </div>
-                        <div class="mui-media-body" style="width:65% !important">
-                            <p>2018-12-12 &nbsp;
-                                <font class="fr">
-                                    <i class="mui-icon-extra mui-icon-extra-heart-filled colororange f14"></i>&nbsp;255&nbsp;
-                                    <i class="mui-icon-extra mui-icon-extra-comment colororange f12"></i>&nbsp;196</font>
-                            </p>
-                        </div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media listli">
-                    <a class="mui-navigate-right">
-                        <img class="mui-pull-left proportion4x3" src="/uploads/images/team/2018/02/thumb_5a77fcf8e6b94.png">
-                        <div class="showTitle">
-                            <strong>2018深圳宝安城市学院社区篮球篮球篮球</strong>
-                        </div>
-                        <div class="mui-media-body" style="width:65% !important">
-                            <p>2018-12-12 &nbsp;
-                                <font class="fr">
-                                    <i class="mui-icon-extra mui-icon-extra-heart-filled colororange f14"></i>&nbsp;255&nbsp;
-                                    <i class="mui-icon-extra mui-icon-extra-comment colororange f12"></i>&nbsp;196</font>
-                            </p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+            <ul class="mui-table-view list border-b dynamicList"></ul>
 
             <div class="page-header border-b">
                 <span class="course">联赛简介
@@ -287,7 +256,9 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view list typeList">
                     {volist name="types" id="vo"}
-                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}"><font class="type">{$vo}</font></li>
+                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}">
+                        <font class="type">{$vo}</font>
+                    </li>
                     {/volist}
                 </ul>
             </div>
@@ -433,20 +404,20 @@
             isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             toCommentList(); //获取评论列表
-            // toRecordEventList(); //活动纪录
+            toDynamicList(); //获取联赛动态列表
 
             // 工作人员角色popover点击绑定
-            $('.typeList').on('tap', 'li', function() {
+            $('.typeList').on('tap', 'li', function () {
                 // 需要会员实名
                 var realname = "{$memberInfo.realname}";
-                if ( realname.length == 0 || realname == "" ) {
-                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function(e) {
+                if (realname.length == 0 || realname == "") {
+                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function (e) {
                         if (e.index === 1) {
                             window.location.href = "{:url('member/memberInfo')}";
                         }
                     });
                     mui("#typePopover").popover("toggle");
-                    return ;
+                    return;
                 }
                 var type = $(this).attr('data-type');
                 var match_id = $('#typePopover').attr('data-matchid');
@@ -601,15 +572,16 @@
             });
         };
 
-        //获取活动纪录列表
-        function toRecordEventList() {
-            var url = "{:url('api/team/teameventlist','','',true)}";
-            var team_id = "{teamInfo.id}";
+        //获取联赛动态列表
+        function toDynamicList() {
+            var url = "{:url('api/league/getleaguearticlelist','','',true)}";
+            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
-                    team_id: team_id,
-                    status: 1,
+                    league_id: league_id,
+                    organization_type: 4,
+                    category: 3
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -619,23 +591,30 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('team/eventInfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + "{team_id}";
-                            newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data[i].cover + '" style="width:70px!important;height: 56px!important;"><div class="mui-media-body" style="width:51%">' + data.data[i].event + '';
-                            if (data.data[i].is_max == "已满人") {
-                                newli += '<font class="tipCorner bgred">满人</font>';
-                            }
-                            if (data.data[i].is_finished == "已结束") {
-                                newli += '<font class="tipCorner bggray">结束</font>';
-                            }
-                            newli += '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame rightLocation">' + data.data[i].reg_number + '人参与</div></a>'
-                            newli += '</li>';
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            var urls = "{:url('match/dynamicinfo')}" + '/article_id/' + data.data[i].id + '/league_id/' + data.data[i].organization_id;
+                            newli += `
+                                <li class="mui-table-view-cell mui-media listli">
+                                    <a href="${urls}" class="mui-navigate-right">
+                                        <img class="mui-pull-left proportion4x3" src="${data.data[i].covers}">
+                                        <div class="showTitle">
+                                            <strong>${data.data[i].title}</strong>
+                                        </div>
+                                        <div class="mui-media-body" style="width:70% !important">
+                                            <p>${data.data[i].update_time} &nbsp;
+                                                <font class="fr">
+                                                    <i class="mui-icon-extra mui-icon-extra-heart-filled colororange f14"></i>&nbsp;${data.data[i].hit}&nbsp;
+                                                    <i class="mui-icon-extra mui-icon-extra-comment colororange f12"></i>&nbsp;${data.data[i].comments}
+                                                </font>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </li>`
                         }
                     }
-                    $("ul.recordMatch").empty().append(newli);
+                    $("ul.dynamicList").empty().append(newli);
                     if (newli == '') {
-                        $("ul.recordMatch").html('<p class="nohave">没有相关数据哦</p>');
+                        $("ul.dynamicList").html('<p class="nohave">没有相关数据哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {

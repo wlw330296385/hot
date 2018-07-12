@@ -33,33 +33,36 @@
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="organization_id" value="{campInfo.id}" class="data">
-        <input type="hidden" name="organization" value="{campInfo.camp}" class="data">
-        <input type="hidden" name="organization_type" value="2" class="data">
+        <input type="hidden" name="organization_id" value="{$articleInfo.organization_id}" class="data">
+        <input type="hidden" name="organization" value="{$articleInfo.organization}" class="data">
+        <input type="hidden" name="organization_type" value="4" class="data">
         <input type="hidden" name="category" value="3" class="data">
+        <input type="hidden" name="member" value="{$memberInfo.member}" class="data">
+        <input type="hidden" name="member_id" value="{$memberInfo.id}" class="data">
+        <input type="hidden" name="id" value="{$articleInfo.id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
             <div class="mui-input-row">
                 <label>标题</label>
-                <input type="text" name="title" class="data" value="" placeholder="请输入动态标题">
+                <input type="text" name="title" class="data" value="{$articleInfo.title}" placeholder="请输入动态标题">
             </div>
 
             <div class="mui-input-row">
                 <label>作者</label>
-                <input type="text" name="author" class="data" value="" placeholder="请填写作者">
+                <input type="text" name="author" class="data" value="{$articleInfo.author}" placeholder="请填写作者">
             </div>
 
             <div class="mui-input-row">
                 <label>摘要</label>
-                <input type="text" name="abstract" class="data" value="" placeholder="请输入动态摘要">
+                <input type="text" name="abstract" class="data" value="{$articleInfo.abstract}" placeholder="请输入动态摘要">
             </div>
 
             <div class="mui-input-row h-auto">
                 <a href="#txpopover" class="mui-navigate-right">
                     <label>动态封面</label>
-                    <div class="viewStyle view"></div>
-                    <input type="hidden" name="covers" value="" class="data">
+                    <div class="viewStyle view" style="background-image:url('{$articleInfo.covers}')"></div>
+                    <input type="hidden" name="covers" value="{$articleInfo.covers}" class="data">
                 </a>
             </div>
 
@@ -78,8 +81,8 @@
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">动态内容</span>
             </div>
-            <textarea name="content" class="data content" style="display: none"></textarea>
-            <div id="articleEditor" class="tuwenIntro"></div>
+            <textarea name="content" class="data content" style="display: none">{$articleInfo.content}</textarea>
+            <div id="articleEditor" class="tuwenIntro">{$articleInfo.content}</div>
 
         </form>
 
@@ -133,6 +136,10 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        $(function () {
+            $('#isStatus option[value="{$articleInfo.status}"').prop("selected", true);
+        })
+
         // 获取数据并进行提交
         function submitAction() {
 
@@ -149,11 +156,11 @@
             var objData = wooApi.arrTOobj(arrData);
             var content = $('textarea.content').val();
             objData.content = content;
-            var url = "{:url('api/article/createArticleApi')}";
+            var url = "{:url('api/league/updateleaguearticle')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '动态发布成功', '确定', function () {
-                    var goUrl = "{:url('article/articlelistOfCamp')}" + '/article_id/' + ajaxResult.data + '/camp_id/' + "{campInfo.id}";
+                    var goUrl = "{:url('match/dynamicListOfLeague')}" + '/article_id/' + "{$articleInfo.id}" + '/league_id/' + "{$articleInfo.organization_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
