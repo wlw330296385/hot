@@ -311,7 +311,18 @@ class Match extends Base {
 
     // 联赛战绩
     public function leagueRecord() {
+
         return view('Match/record/leagueRecord');
+    }
+
+    // 联赛战绩详情
+    public function leaguerecordinfo() {
+        $id = input('param.id', 0, 'intval');
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord(['id' => $id]);
+
+        $this->assign('matchRecordInfo', $matchRecordInfo);
+        return view('Match/record/recordInfo');
     }
 
     // 联赛数据
