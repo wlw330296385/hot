@@ -94,9 +94,18 @@
                         <p class="update_time">{$articleInfo.update_time}</p>
                     </div>
                     <div class="price-frame">
+                        {if $isCollect} {eq name="isCollect.status" value='1' }
+                        <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">已收藏</button>
+                        {else /}
                         <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
+                        {/eq} {else /}
+                        <button type="button" class="mui-btn mui-btn-danger collect" style="padding: 2px 9px;margin-bottom:17px;">收藏</button>
+                        {/if}
                         <span id="dianzan">
-                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>
+                            {if $isLikes} {eq name="isLikes.status" value='1' }
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color" style="color:red"></i>&nbsp; {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/eq} {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/if}
                             <font class="thumbup_count">{$articleInfo.likes}</font>
                         </span>
                     </div>
