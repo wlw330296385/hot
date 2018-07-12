@@ -120,7 +120,8 @@ class Message extends Base{
         try{
   
             $status = input('param.status');
-            $result = db('message_member')->where(['member_id'=>$this->memberInfo['id']])->update(['status'=>$status]);
+            $steward_type = intpu('param.steward_type',1);
+            $result = db('message_member')->where(['member_id'=>$this->memberInfo['id'],'steward_type'=>$steward_type])->update(['status'=>$status]);
             if($result){
                 return json(['code'=>200,'msg'=>'设置成功']);
             }else{
