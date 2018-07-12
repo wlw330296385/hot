@@ -623,7 +623,9 @@
             $("input[name=scorers]").val(scorers);
 
             var btnArray = ['保存', '发布'];
-            mui.confirm('1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！', '提示', btnArray, function (e) {
+            mui.confirm(`1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！
+                            <div style="margin-top:7px;"><input type="checkbox" name="sendmessage" value="0" class="data" style="vertical-align: text-bottom;margin-right: 5px;">保存并发送消息</div>`,
+                             '提示', btnArray, function (e) {
                 if (e.index == 1) {
                     $("input[name=is_record]").val(1);
                     var data = wooApi.getInputData('input', 'data');
@@ -649,6 +651,11 @@
                         }, 'json');
                     }
                 } else {
+                    if ($("input[name=sendmessage]").is(':checked')) {
+                        $("input[name=sendmessage]").val(1)
+                    } else {
+                        $("input[name=sendmessage]").val(0)
+                    }
                     $("input[name=is_record]").val(0);
                     var data = wooApi.getInputData('input', 'data');
                     datas = wooApi.getInputData('select', 'data', data);
