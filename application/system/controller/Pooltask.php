@@ -165,7 +165,7 @@ class Pooltask extends Base{
                         $c_s_m[] = $val;
                     }
                     if($val['c_id'] == $theThird){
-                        $val['ranking'] = 2;
+                        $val['ranking'] = 3;
                         $val['bonus'] = $value['bonus'];
                         $val['punchs'] = $val['c_id'];
                         $c_t_m[] = $val;
@@ -232,65 +232,24 @@ class Pooltask extends Base{
         db('member')->where(['id'=>['in',$ids]])->inc('hot_coin',$bonus)->update();
     }
 
-
-
-
-    /**
-     * 测试用数据插入
-     */
-    public function test(){
-        // $Group = new \app\model\Group;
-        // $group = db('group')->find();
-        // $gourp['group'] = rand(10000,99999);
-        // $group['member_id'] = rand(1,99);
-        // unset($group['id']);
-        // $Group->isUpdate(false)->save($group);
-
-
-        $GroupMember = new \app\model\GroupMember;
-        $group_member = db('group_member')->find();
-        $group_member['group_id'] = rand(1,30);
-        $group_member['member_id'] = rand(1,99);
-        unset($group_member['id']);
-        $GroupMember->isUpdate(false)->save($group_member);
-
-
-        // $Pool = new \app\model\Pool;
-        // $pool = db('pool')->find();
-        // $pool['group_id'] = rand(1,30);
-        // $pool['bonus'] = rand(999,9999);
-        // $pool['end_str'] = 20180531;
-        // $pool['status'] = 1;
-        // unset($pool['id']);
-        // $Pool->isUpdate(false)->save($pool);
-
-        $GroupPunch = new \app\model\GroupPunch;         
-        $group_punch = db('group_punch')->find();
-        $group_punch['group_id'] = rand(1,30);
-        $group_punch['pool_id'] = rand(1,30);
-        $group_punch['member_id'] = rand(1,99);
-        unset($group_punch['id']);
-        $GroupPunch->isUpdate(false)->save($group_punch);
-    }
-
-
     /**
      * 发送模板消息
      */
     public function sendMessage(){
-        $list = db('pool_winner')->field('member.openid,pool_winner.winner_bonus,pool_winner.create_time')->join('member','member.id = pool_winner.member_id')->where(['is_message'=>-1])->order('pool_winner.id desc')->select();
+        $list = db('pool_winner')->field('member.openid,member.member,pool_winner.winner_bonus,pool_winner.create_time,pool_winner.pool,pool_winner.')->join('member','member.id = pool_winner.member_id')->where(['is_message'=>-1,'winner_bonus'=>['gt',0]])->order('pool_winner.id desc')->select();
         // $list = [['member_id'=>8,'winner_bonus'=>999,'create_time'=>1531404000,'openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q']];
         $WechatService = new \app\service\WechatService();
         foreach ($list as $key => $value) {
             $messageData = [
                 "touser" => $value['openid'],
-                "template_id" => "nkkz8jGMxYe7PCJjDoZSiK1jwBKU_th9iOnH4nLQm8Q",
+                "template_id" => "pZCJbOXrNQXkH5zWwghEMP5WK0ejENN-l3F_qUbeABU",
                 "url" => "http://weixin.qq.com/download/openid/{$value['openid']}",
                 "topcolor"=>"#FF0000",
                 "data" => [
-                    'first' => ['value' => '尊敬的会员，您参与的打卡活动擂台擂主已出结果'],
-                    'keyword1' => ['value' => "{$value['winner_bonus']}热币"],
-                    'keyword2' => ['value' => date('Y-m-d H:i:s',$value['create_time'])],
+                    'first' => ['value' => '尊敬的会员，您参与的运动打卡擂台擂主已出结果'],
+                    'keyword1' => ['value' => "{$value['member']}"],
+                    'keyword2' => ['value' => "{$value['pool']}"],
+                    'keyword3' => ['value' => "您获得第{$value['ranking']}名,奖品为{$value['winner_bonus']}热币"],
                     'remark' => ['value' => '篮球管家祝您身体健康'],
                 ],
             ];

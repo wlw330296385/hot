@@ -186,6 +186,37 @@ nkkz8jGMxYe7PCJjDoZSiK1jwBKU_th9iOnH4nLQm8Q
 
 
 
+11. 运动结果通知
+
+pZCJbOXrNQXkH5zWwghEMP5WK0ejENN-l3F_qUbeABU
+
+{{first.DATA}}
+参赛者：{{keyword1.DATA}}
+参赛期数：{{keyword2.DATA}}
+参赛结果：{{keyword3.DATA}}
+{{remark.DATA}}
+
+
+一起来健步参赛结果
+参赛者：张三
+参赛期数：0112-0115
+参赛结果：击败了50人
+请在本周一前登录“一起来健步”活动，刷新上期（0122—0128）最终步数，最终成绩将在本周二公布。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
