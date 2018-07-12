@@ -517,11 +517,49 @@ class Matchdata extends Base
                 'has_statics' => 1,
                 'statics_time' => time()
             ]);
-            // 球队录入比赛统计数据次数+1
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         } else {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
+    }
+
+    // 根据球队ID获取联赛单场比赛球员技术统计
+    public function getleaguerecordstaticsbyteam() {
+        // 验收参数
+        $data = input('post.');
+        // 验证数据字段
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛id']);
+        }
+        if ( !array_key_exists('match_record_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛战绩id']);
+        }
+        if ( !array_key_exists( 'team_id', $data ) ) {
+            return json(['code' => 100, 'msg' => '请输入球队id']);
+        }
+        // 查询比赛技术统计数据
+        try {
+            $matchS = new MatchService();
+            $statistics = $matchS->getMatchStatisticsAll($data);
+        }  catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if (!$statistics) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 遍历获取球员的出席比赛信息
+        foreach ($statistics as $key => $value) {
+            // 默认输出未出席（-1）
+            $statistics[$key]['is_attend'] = -1;
+            $matchRecordMember = $matchS->getMatchRecordMember([
+                'match_record_id' => $data['match_record_id'],
+                'team_member_id' => $value['team_member_id']
+            ]);
+            if ($matchRecordMember) {
+                $statistics[$key]['is_attend'] = $matchRecordMember['is_attend'];
+            }
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $statistics]);
     }
 
 }
