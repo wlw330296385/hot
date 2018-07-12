@@ -655,11 +655,26 @@
     //创建订单
     function createBill(){
 
+
         var member = $("input[name='member']").val();
         var member_id = $("input[name='member_id']").val();
         var total = $("input[name='total']").val();
         var domName = $('.selectDom.bggreen').find("span").text();
         var domPrice = $('.selectDom.bggreen').attr("value");
+
+
+        //////////////////////////////根据选择套餐选择卡券ID
+        var item_coupon_id = "";
+        //后期考虑套餐对应指定卡券
+        if(domName=="单项卡"){
+            item_coupon_id = "21";
+        }else if(domName=="三项卡"){
+            item_coupon_id = "22";
+        }
+        var coupon_ids = [];
+        coupon_ids.push({item_coupon_id:item_coupon_id,total:total,is_coupon:"-1"});
+        var item_coupon_ids = JSON.stringify(coupon_ids);
+        /////////////////////////////////////////////////
 
         var objBillInfo = {};//订单参数
         objBillInfo.bill_order = "{$billOrder}";
@@ -678,6 +693,7 @@
         objBillInfo.pay_type = "wxpay";
         objBillInfo.camp = '大热篮球';
         objBillInfo.camp_id = 9;
+        objBillInfo.item_coupon_id = item_coupon_ids
 
         objBillInfo.__token__ = "{$Request.token}";
         var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
@@ -759,7 +775,7 @@
         });
 
         if(result.code == 200){
-            updateCouponID(item_coupon_id)
+            updateCouponID(item_coupon_id,total)
             // mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
             //     window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
             // });
@@ -772,13 +788,15 @@
 
 
     //赠送成功后更新订单的coupon_id
-    function updateCouponID(item_coupon_id){
-
+    function updateCouponID(item_coupon_id,total){
+        
+        ////////////////////////////////////////////////
         var coupon_ids = [];
-        coupon_ids.Push(item_coupon_id)
+        coupon_ids.push({item_coupon_id:item_coupon_id,total:total,is_coupon:"1"});
         var item_coupon_ids = JSON.stringify(coupon_ids);
+        /////////////////////////////////////////////////
 
-        var url = "{:url('api/Bill/payApi')}/bill_order/"+buyCouponForm.billOrder;
+        var url = "{:url('api/Bill/editBillApi')}/bill_order/"+buyCouponForm.billOrder;
         var result = wooApi.asyncF(url,{
             'item_coupon_id' : item_coupon_ids
             
