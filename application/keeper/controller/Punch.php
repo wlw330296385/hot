@@ -59,16 +59,23 @@ class Punch extends Base{
         if($group_id){
             $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->value('id');
         }
+
+        $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
+        if($sport_plan_schedule_id){
+            $sportPlanScheduleInfo = db('sport_plan_schedule')->where(['id'=>$sport_plan_schedule_id])->find();
+        }else{
+            $sportPlanScheduleInfo = [];
+        }
+
     	$month_str = date('Ym',time());
+
     	//本月打卡
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
 
         
-   
-        // dump($groupList);
         $this->assign('is_pool',$is_pool?$is_pool:-1);
     	$this->assign('monthPunch',$monthPunch);
-        // $this->assign('groupList',$groupList);
+        $this->assign('sportPlanScheduleInfo',$sportPlanScheduleInfo);
     	return view('Punch/createPunch');
 	}
 	

@@ -162,17 +162,8 @@ class Coach extends Backend {
             if ( true !== $validate ) {
                 $this->error($validate);
             }
-            /*$data = [
-                'id' => $id,
-                'coach_rank' => input('coach_rank'),
-                'coach_year' => input('coach_year'),
-                'coach_level' => input('coach_level'),
-                'student_flow' => input('student_flow'),
-                'lesson_flow' => input('lesson_flow'),
-                'sys_remarks' => input('sys_remarks'),
-                'update_time' => time()
-            ];*/
-            $data = input('post.');
+
+            $data = input('post.');    
             $data['update_time'] = time();
             unset($data['__token__']);
             //dump($data);
@@ -181,6 +172,31 @@ class Coach extends Backend {
 
             $Auth = new AuthService();
             if ( $execute ) {
+                if ($data['status'] <> 1) {
+                    $status = $data['status']== 2?"审核未通过":"被禁用";
+                    $member_id = Db::name('coach')->where(['id'=>$id])->value('member_id');
+                    $memberInfo = db('member')->where(['id'=>$member_id])->find();
+                    $sendTemplateData = [
+                        'touser' => $memberInfo['openid'],
+                        'template_id' => 'xohb4WrWcaDosmQWQL27-l-zNgnMc03hpPORPjVjS88',
+                        'url' => url('frontend/coach/updatecoach', ['openid' => $memberInfo['openid']], '', true),
+                        'data' => [
+                            'first' => ['value' => '您好,您的教练员资料需要修改,平台重新审核'],
+                            'keyword1' => ['value' => $status],
+                            'keyword2' => ['value' => date('Y年m月d日 H时i分')],
+                            'remark' => ['value' => "点击进入修改完善资料页面"]
+                        ]
+                    ];
+                    $wechatS = new WechatService();
+                    $sendTemplateResult = $wechatS->sendTemplate($sendTemplateData);
+                    $log_sendTemplateData = [
+                        'wxopenid' => $memberInfo['openid'],
+                        'member_id' => $memberInfo['id'],
+                        'url' => $sendTemplateData['url'],
+                        'content' => serialize($sendTemplateData),
+                        'create_time' => time()
+                    ];
+                }
                 $Auth->record('教练id:'. $id .' 修改 成功');
                 $this->success(__lang('MSG_200'), 'coach/index');
             } else {
