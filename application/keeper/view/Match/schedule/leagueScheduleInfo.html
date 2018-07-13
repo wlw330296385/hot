@@ -1,10 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>联赛赛程详情页</title>
+    <meta charset="utf-8">
+    <title>赛程详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+
+        .mbNumber {
+            width: 14%;
+            font-size: 24px;
+            line-height: 55px;
+            float: left;
+            font-weight: bold;
+            text-align: center;
+            margin-right: 12px;
+        }
+    </style>
 </head>
+
 <body>
 
+    <header class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
+                <a class="mui-control-item mui-active" href="#onMatchSetting">比赛信息</a>
+                <a class="mui-control-item" href="#onHomeTeam">{$matchScheduleInfo.home_team}</a>
+                <a class="mui-control-item" href="#onAwayTeam">{$matchScheduleInfo.away_team}</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <!-- 比赛设置信息 -->
+            <div id="onMatchSetting" class="mui-control-content mui-active">
+                <div class="list mb44">
+                    <!-- 基本信息 -->
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-Startingtim colororange"></span>主队</label>
+                            <span>{$matchScheduleInfo.home_team}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EndTime colororange"></span>客队</label>
+                            <span>{$matchScheduleInfo.away_team}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-Location colororange"></span>比赛类型</label>
+                            <span>{$matchScheduleInfo.match_stage}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛场地</label>
+                            <span>{$matchScheduleInfo.court}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛时间</label>
+                            <span>{$matchScheduleInfo.match_time}</span>
+                        </li>
+                    </ul>
+
+                    <!-- 裁判 -->
+                    <div class="page-header bggray2">
+                        <span class="course wd45">
+                            <strong>裁判名单</strong>
+                        </span>
+                    </div>
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-Startingtim colororange"></span>主裁判</label>
+                            <span>{$matchScheduleInfo.referee1}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EndTime colororange"></span>副裁判</label>
+                            <span>{$matchScheduleInfo.referee2}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EndTime colororange"></span>副裁判</label>
+                            <span>{$matchScheduleInfo.referee3}</span>
+                        </li>
+                    </ul>
+
+
+                    <!-- 记分员 -->
+                    <div class="page-header bggray2">
+                        <span class="course wd45">
+                            <strong>记分员</strong>
+                        </span>
+                    </div>
+                    <div class="box mui-input-group">
+                        {volist name="matchScheduleInfo.scorers_list" id="vol"}
+                        <div class="mui-input-row mui-checkbox">
+                            <label>{$key+1}
+                                <font style="margin-left: 15px;">{$vol.realname}</font>
+                            </label>
+                        </div>
+                        {/volist}
+                    </div>
+
+                    <p class="pline"></p>
+
+                    <!-- 自定义内容 -->
+                    <ul class="mui-table-view mb">
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-Startingtim colororange"></span>{$matchScheduleInfo.custom_role}</label>
+                            <span>{volist name="matchScheduleInfo.custom_member_list" id="vol"}{$vol.workMember}{/volist}</span>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <label>
+                                <span class="icon iconfont icon-activity-EndTime colororange"></span>联系电话</label>
+                            <span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 主队信息 -->
+            <div id="onHomeTeam" class="mui-scroll-wrapper mui-control-content teamTap" data-team="{matchRecordInfo.home_team}" data-team_id="{matchRecordInfo.home_team_id}">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list">
+                        <li class="mui-table-view-cell listli">
+                            <label>球衣颜色</label>
+                            <span class="wd52">{$matchScheduleInfo.home_team_color}</span>
+                        </li>
+                    </ul>
+                    <div class="page-header bggray2">
+                        <span class="course">球员数据</span>
+                    </div>
+                    <ul class="mui-table-view list border-b dataList homeMembersList">
+                        <li class="mui-table-view-cell listli ">
+                            <label class="colororange wd24 f18">16</label>
+                            <span class="mui-text-left wd83">wayen</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 客队信息 -->
+            <div id="onAwayTeam" class="mui-scroll-wrapper mui-control-content teamTap" data-team="{matchRecordInfo.away_team}" data-team_id="{matchRecordInfo.away_team_id}">
+                <div class="mui-scroll">
+                    <div class="mui-scroll">
+                        <ul class="mui-table-view list">
+                            <li class="mui-table-view-cell listli">
+                                <label>球衣颜色</label>
+                                <span class="wd52">{$matchScheduleInfo.away_team_color}</span>
+                            </li>
+                        </ul>
+                        <div class="page-header bggray2">
+                            <span class="course">球员数据</span>
+                        </div>
+                        <ul class="mui-table-view list border-b dataList awayMembersList">
+                            <li class="mui-table-view-cell mui-media listli ">
+                                <a href="" class="mui-navigate-right">
+                                    <div class="mbNumber colorred">16</div>
+                                    <img class="img45 mui-pull-left " src="/uploads/images/teammember/2018/02/thumb_5a72e7f70dda0.jpg" style="margin-top:4px;">
+                                    <div class="mui-media-body wd60">wayen&nbsp;&nbsp;
+                                        <font class="colororange f12">组织后卫</font>
+                                        <p>年龄:25&nbsp;&nbsp;&nbsp;身高:170cm&nbsp;&nbsp;&nbsp;体重:52kg</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </body>
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+        // 关闭弹出菜单
+        $("body").on('tap', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
+    })(mui);
+
+    $(function () {
+
+        $(".match_time").text(gettime())
+
+        // toHomeMembersList();
+        // toAwayMembersList();
+    });
+
+    // 主队球员名单
+    function toHomeMembersList() {
+        var url = "{:url('api/league/getmatchteammemberlist','','',true)}";
+        var match_id = "{$leagueInfo.id}";
+        var team_id = "{$matchScheduleInfo.home_team_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                match_id: match_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i < data.data.length; i++) {
+                        newli += `<li class="mui-table-view-cell listli ">
+                                    <label class="colororange wd24 f18">16</label>
+                                    <span class="mui-text-left wd83">wayen</span>
+                                </li>`
+                    }
+                    $(".homeMembersList").empty().append(newli);
+                    mui('.mui-switch').switch();
+                } else {
+                    $(".homeMembersList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    }
+
+    // 主队球员名单
+    function toAwayMembersList() {
+        var url = "{:url('api/league/getmatchteammemberlist','','',true)}";
+        var match_id = "{$leagueInfo.id}";
+        var team_id = "{$matchScheduleInfo.away_team_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                team_id: team_id,
+                match_id: match_id,
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    var newli = '';
+                    for (var i = 0; i < data.data.length; i++) {
+                        newli += `<li class="mui-table-view-cell listli ">
+                                    <label class="colororange wd24 f18">16</label>
+                                    <span class="mui-text-left wd83">wayen</span>
+                                </li>`
+                    }
+                    $(".homeMembersList").empty().append(newli);
+                    mui('.mui-switch').switch();
+                } else {
+                    $(".homeMembersList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    }
+
+    //创建补0函数
+    function p(s) {
+        return s < 10 ? '0' + s : s;
+    }
+    function gettime() {
+        var _time = new Date();
+        var year = _time.getFullYear();
+        var month = _time.getMonth() + 1;
+        var day = _time.getDate();
+        var hours = _time.getHours();
+        var minutes = _time.getMinutes();
+        return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+    }
+</script>
+
 </html>

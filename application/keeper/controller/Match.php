@@ -301,11 +301,16 @@ class Match extends Base {
         $matchScheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
 
         $this->assign('matchScheduleInfo', $matchScheduleInfo);
-        return view('Match/leagueScheduleInfo');
+        return view('Match/schedule/leagueScheduleInfo');
     }
 
     // 联赛赛程
     public function leagueSchedule() {
+        $id = input('param.id', 0, 'intval');
+        $leagueS = new LeagueService();
+        $matchScheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
+
+        $this->assign('matchScheduleInfo', $matchScheduleInfo);
         return view('Match/schedule/leagueSchedule');
     }
 
@@ -808,6 +813,21 @@ class Match extends Base {
 
         $this->assign('matchScheduleInfo', $matchScheduleInfo);
         return view('Match/record/recordScoreOfLeague');
+    }
+    // 球队赛果（比赛）详情
+    public function recordInfo() {
+        // 获取比赛比分数据，没有则获取赛程数据
+        $id = input('id', 0, 'intval');
+        $leagueId = input('league_id', 0,'intval');
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord([
+            'id' => $id,
+            'match_id' => $leagueId
+        ]);
+
+        $this->assign('matchRecordInfo', $matchRecordInfo);
+        return view('Match/record/recordInfo');
     }
 
     // 球队赛果编辑

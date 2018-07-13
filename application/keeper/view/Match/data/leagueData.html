@@ -121,40 +121,39 @@
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli">
-                    <h4>2018深圳宝安城市学院篮球联赛</h4>
+                    <h4>{$leagueInfo.name}</h4>
                     <div class="mui-media-body wd73" style="line-height:20px !important">
-                        <p class="mui-ellipsis">主办单位：深圳市大热篮球体育文化有限公司</p>
-                        <p>深圳市 南山区</p>
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org}</p>
+                        <p>{$leagueInfo.province} {$leagueInfo.city}</p>
                         <p>参赛队：
-                            <strong class="colororange">32</strong>支 | 粉丝：
-                            <strong class="colororange">350</strong>
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong>
                         </p>
                     </div>
-                    <div class="price-frame" style="padding-top:22px">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 6px 7px;">取消关注</button>
+                    <div class="price-frame" style="padding-top:17px">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
             </ul>
 
             <nav class="mui-bar-tab leagueNav">
-                <a class="mui-tab-item " href="{:url('match/leagueGulations')}">
+                <a class="mui-tab-item" href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-home"></span>
                     <span class="mui-tab-label">章程</span>
                 </a>
-                <a class="mui-tab-item" href="{:url('match/leagueSchedule')}">
+                <a class="mui-tab-item" href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-email"></span>
                     <span class="mui-tab-label">赛程</span>
                 </a>
-                <a class="mui-tab-item" href="{:url('match/leagueRecord')}">
+                <a class="mui-tab-item" href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-contact"></span>
                     <span class="mui-tab-label">战绩</span>
                 </a>
-                <a class="mui-tab-item mui-active" href="{:url('match/leagueData')}">
+                <a class="mui-tab-item mui-active" href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon mui-icon-gear"></span>
                     <span class="mui-tab-label">数据</span>
                 </a>
             </nav>
-
             <!-- <div id="tabbar04" class="mui-control-content mui-active"> -->
 
             <div class="camp-lesson-list">
@@ -473,7 +472,9 @@
                     <a href="">咨询</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
-                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">返回</li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                </li>
             </ul>
 
         </div>

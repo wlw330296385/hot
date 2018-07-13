@@ -449,3 +449,13 @@ function page_array($count, $page, $array) {
     $pagedata = array_slice($array, $start, $count);
     return $pagedata;
 }
+
+// 二维数组根据某个字段排序
+function arraySort($array, $keys, $sort = 'SORT_DESC') {
+    $keysValue = [];
+    foreach ($array as $k => $v) {
+        $keysValue[$k] = $v[$keys];
+    }
+    array_multisort($keysValue, $sort, $array);
+    return $array;
+}

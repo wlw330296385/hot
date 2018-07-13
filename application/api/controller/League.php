@@ -3198,6 +3198,38 @@ class League extends Base
         }
     }
 
+    // 查看联赛阶段出线球队名单
+    public function getstageadvanceteams() {
+        $id = input('post.stage_id', 0, 'intval');
+        $matchId = input('post.match_id', 0, 'intval');
+        // 查询比赛阶段数据
+        $leagueS = new LeagueService();
+        $stageInfo = $leagueS->getMatchStage([
+            'id' => $id,
+            'match_id' => $matchId
+        ]);
+        if (!$stageInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 检查此阶段的比赛赛程是否已完成（赛程记录数=比赛结果记录数）
+        $scheduleCount = $leagueS->getMatchScheduleCount([
+            'match_stage_id' => $id,
+            'match_id' => $matchId
+        ]);
+        $recordCount = $leagueS->getMatchRecordCount([
+            'match_stage_id' => $id,
+            'match_id' => $matchId
+        ]);
+        if ( $scheduleCount != $recordCount ) {
+            return json(['code' => 100, 'msg' => '此阶段赛程尚未完成，待完成后才可查看晋级球队']);
+        }
+        // 获取联赛球队积分数据
+        $_result = $leagueS->getMatchRanks([
+            'match_stage_id' => $id,
+            'match_id' => $matchId
+        ]);
+    }
+
     // 联赛积分排名
     public function getmatchranklist()
     {
@@ -3253,6 +3285,8 @@ class League extends Base
                         $_arr['lose_count'] = $loseCount;
                         array_push($_array['teams'], $_arr);
                     }
+                    // 根据球队获得积分降序排列
+                    $_array['teams'] = arraySort($_array['teams'], 'score', SORT_DESC);
                 }
                 array_push($result, $_array);
             }
