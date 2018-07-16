@@ -281,6 +281,7 @@ class Match extends Base {
             $btnApplyWorkerShow = 1;
         }
 
+
         $this->assign('types', $types);
         $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
         return view('Match/leagueInfo');
