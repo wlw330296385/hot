@@ -59,16 +59,23 @@ class Punch extends Base{
         if($group_id){
             $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->value('id');
         }
+
+        $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
+        if($sport_plan_schedule_id){
+            $sportPlanScheduleInfo = db('sport_plan_schedule')->where(['id'=>$sport_plan_schedule_id])->find();
+        }else{
+            $sportPlanScheduleInfo = [];
+        }
+
     	$month_str = date('Ym',time());
+
     	//本月打卡
     	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
 
         
-   
-        // dump($groupList);
         $this->assign('is_pool',$is_pool?$is_pool:-1);
     	$this->assign('monthPunch',$monthPunch);
-        // $this->assign('groupList',$groupList);
+        $this->assign('sportPlanScheduleInfo',$sportPlanScheduleInfo);
     	return view('Punch/createPunch');
 	}
 	
@@ -78,18 +85,21 @@ class Punch extends Base{
     }
 
     // 运动计划
-	public function plan() {
-        return view('Punch/plan');
+	public function sportPlanScheduleList() {
+
+        return view('Punch/sportPlanScheduleList');
     }
 
     // 创建运动计划
-	public function createPlan() {
-        return view('Punch/createPlan');
+	public function createSportPlan() {
+
+        return view('Punch/createSportPlan');
     }
 
     // 运动计划详情
-	public function planInfo() {
-        return view('Punch/planInfo');
+	public function sportPlanInfo() {
+        
+        return view('Punch/sportPlanInfo');
     }
 
 }

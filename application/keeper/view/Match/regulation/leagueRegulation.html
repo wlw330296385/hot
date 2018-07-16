@@ -45,7 +45,7 @@
             }
         }
 
-      
+
         .coloricon {
             width: 2.4em;
             height: 2.4em;
@@ -117,8 +117,8 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <h4>{$leagueInfo.name}</h4>
                     <div class="mui-media-body wd73" style="line-height:20px !important">
-                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org}</p>
-                        <p>{$leagueInfo.province} {$leagueInfo.city}</p>
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                        <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p>参赛队：
                             <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
                             <strong class="colororange">{$leagueInfo.fans_num}</strong>
@@ -148,88 +148,19 @@
                     <span class="mui-tab-label">数据</span>
                 </a>
             </nav>
-            <!-- <div id="tabbar01" class="mui-control-content"> -->
+
             <!--联赛章程-->
             <div class="page-header border-b">
                 <span class="course">联赛章程
                     <span class="noDataTip"></span>
                 </span>
             </div>
-            <div>{$leagueInfo.regulation}</div>
-
-            <!--参赛队分组表-->
-            <div class="page-header border-b">
-                <span class="course">参赛队分组表</span>
-                <span class="more">A组</span>
-            </div>
-
-            <ul class="mui-table-view mui-text-center leagueTypeSet">
-                <li class="mui-table-view-cell lineHeight32">
-                    <ul class="mui-table-view mui-row">
-                        <li class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="f18">A1</strong>
-                        </li>
-                        <li class="mui-col-sm-9 mui-col-xs-9 leagueGroup">
-                            <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                            <span>xxxx篮球队</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class="mui-table-view-cell lineHeight32">
-                    <ul class="mui-table-view mui-row">
-                        <li class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="f18">A1</strong>
-                        </li>
-                        <li class="mui-col-sm-9 mui-col-xs-9 leagueGroup">
-                            <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                            <span>xxxx篮球队</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class="mui-table-view-cell lineHeight32">
-                    <ul class="mui-table-view mui-row">
-                        <li class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="f18">A1</strong>
-                        </li>
-                        <li class="mui-col-sm-9 mui-col-xs-9 leagueGroup">
-                            <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                            <span>xxxx篮球队</span>
-                        </li>
-                    </ul>
-                </li>
+            <ul class="mui-table-view">
+                <li class="listli desimg">{$leagueInfo.regulation}</li>
             </ul>
 
-            <!--参赛队分组表-->
-            <div class="page-header border-b">
-                <span class="course">参赛队分组表</span>
-                <span class="more">B组</span>
-            </div>
-            <ul class="mui-table-view mui-text-center leagueTypeSet">
-                <li class="mui-table-view-cell lineHeight32">
-                    <ul class="mui-table-view mui-row">
-                        <li class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="f18">A1</strong>
-                        </li>
-                        <li class="mui-col-sm-9 mui-col-xs-9 leagueGroup">
-                            <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                            <span>xxxx篮球队</span>
-                        </li>
-                    </ul>
-                </li>
-                <li class="mui-table-view-cell lineHeight32">
-                    <ul class="mui-table-view mui-row">
-                        <li class="mui-col-sm-3 mui-col-xs-3">
-                            <strong class="f18">A1</strong>
-                        </li>
-                        <li class="mui-col-sm-9 mui-col-xs-9 leagueGroup">
-                            <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                            <span>xxxx篮球队</span>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- </div> -->
-
+            <!-- 分组列表 -->
+            <div class="teamList"></div>
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
@@ -242,7 +173,9 @@
                     <a href="">咨询</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
-                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">返回</li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                </li>
             </ul>
 
         </div>
@@ -262,7 +195,7 @@
 
         $(function () {
             followStatus();
-
+            getbattle();
             var league_id = "{$league_id}";
             // 关注联赛
             $(".follow").on("tap", '', function () {
@@ -293,35 +226,89 @@
                 });
             });
 
-            // 判断当前的关注状态
-            function followStatus() {
-                var league_id = "{$league_id}";
-                mui.ajax("{:url('api/follow/getfollow')}", {
-                    data: {
-                        type: 5,
-                        team_id: league_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            if (data.data === 1) {
-                                $(".follow").text("取消关注");
-                            } else {
-                                $(".follow").text("关注");
-                            }
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            }
+
         });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 5,
+                    team_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        // 小组列表
+        function getbattle() {
+            var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
+            let league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += `
+                                    <div class="page-header border-b">
+                                        <span class="course">参赛队分组表</span>
+                                        <span class="more">${data.data.data[i].name}</span>
+                                    </div>
+                                    <ul class="mui-table-view mui-text-center leagueTypeSet">`
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell lineHeight32">
+                                            <ul class="mui-table-view mui-row">
+                                                <li class="mui-col-sm-2 mui-col-xs-2">
+                                                    <strong class="f18">${j + 1}</strong>
+                                                </li>
+                                                <li class="mui-col-sm-10 mui-col-xs-10 leagueGroup">
+                                                    <img src="${data.data.data[i].group_teams[j].team_logo}" class="circleIcon" />
+                                                    <span>${data.data.data[i].group_teams[j].team.team}</span>
+                                                </li>
+                                            </ul>
+                                        </li>`;
+                            }
+                            newli += `</ul>`;
+                        }
+                        if (newli != '') {
+                            $(".teamList").empty().append(newli);
+                        }
+                    } else {
+                        $(".teamList").html('<p class="nodata">没有相关数据哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
     </script>
 

@@ -531,7 +531,7 @@ class Schedule extends Base
                         'e_balance'=>($campInfo['balance']-$totalCost),
                         's_balance'=>$campInfo['balance'],
                         'rebate_type'=>$campInfo['rebate_type'],
-                        'shcedule_rebate'=>$campInfo['shcedule_rebate'],
+                        'schedule_rebate'=>$campInfo['schedule_rebate'],
                         'output'=>$totalCost,
                         'member'=>$this->memberInfo['member'],
                         'member_id'=>$this->memberInfo['member_id']

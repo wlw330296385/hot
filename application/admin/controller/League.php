@@ -32,7 +32,7 @@ class League extends Backend
         $id = input('id', 0, 'intval');
         $leagueS = new LeagueService();
         // 联赛详情
-        $matchInfo = $leagueS->getMatchWithOrg(['id' => $id]);
+        $matchInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $id]);
         // 联赛组织证件信息
         $orgCert = $leagueS->getOrgCert($matchInfo['match_org_id']);
         // 创建人身份证
@@ -60,7 +60,7 @@ class League extends Backend
         // 审核状态
         $status = input('status', 0, 'intval');
         // 联赛详情
-        $matchInfo = $leagueS->getMatchWithOrg(['id' => $id]);
+        $matchInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $id]);
         $checkstr = '审核未通过';
         if ($status == 1) {
             // 审核通过 更新数据status=1

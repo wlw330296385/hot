@@ -19,6 +19,7 @@ class Withdraw extends Backend{
         $keyword = input('param.keyword');
         $status = input('param.status');
         $camp_type = input('param.camp_type');
+        $camp_id = input('param.camp_id');
         $map = [];
         if($status){
             $map['status'] = $status;
@@ -26,7 +27,9 @@ class Withdraw extends Backend{
         if($camp_type){
             $map['camp_type'] = $camp_type;
         }
-
+        if($camp_id){
+            $map['camp_id'] = $camp_id;
+        }
         $CampWithdraw = new \app\model\CampWithdraw;
         if($keyword){
             $hasWhere['camp'] = ['like',"%$keyword%"];

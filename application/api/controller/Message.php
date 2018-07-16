@@ -127,7 +127,6 @@ class Message extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'没有这条消息']);
             }
-            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
