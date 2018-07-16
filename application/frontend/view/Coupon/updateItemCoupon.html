@@ -257,14 +257,13 @@
         var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'coupon'])}";
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script> {if $itemCouponInfo.status == -1}
-    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script> 
     <!--上传截图头像-->
     <script src="/static/plugins/cropper/hammer.min.js"></script>
     <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
     <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
     <script src="/static/plugins/cropper/PhotoClip.js"></script>
-    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    {if $itemCouponInfo.status == -1}
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
@@ -370,27 +369,27 @@
             });
 
 
-            // 初始化Web Uploader
-            var uploader = WebUploader.create({
-                auto: true,
-                server: uploadApiUrl,
-                pick: '#filePicker',
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/*'
-                }
-            });
-            // 上传成功
-            uploader.on('uploadSuccess', function (file, responce) {
-                if (eval('responce').status == 0) {
-                    mui.toast('上传失败,请重试', { 'duration': 'long' });
-                } else {
-                    mui.toast('上传成功', { 'duration': 'long' });
-                    var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
-                    $(".introBox").append($li);
-                }
-            });
+            // // 初始化Web Uploader
+            // var uploader = WebUploader.create({
+            //     auto: true,
+            //     server: uploadApiUrl,
+            //     pick: '#filePicker',
+            //     accept: {
+            //         title: 'Images',
+            //         extensions: 'gif,jpg,jpeg,bmp,png',
+            //         mimeTypes: 'image/*'
+            //     }
+            // });
+            // // 上传成功
+            // uploader.on('uploadSuccess', function (file, responce) {
+            //     if (eval('responce').status == 0) {
+            //         mui.toast('上传失败,请重试', { 'duration': 'long' });
+            //     } else {
+            //         mui.toast('上传成功', { 'duration': 'long' });
+            //         var $li = '<div class="operationDiv"><i class="delbtn mui-icon mui-icon-close"></i><img class="desimg" src="' + responce.path + '" style="padding-top:5px"></div>';
+            //         $(".introBox").append($li);
+            //     }
+            // });
             //添加图片end·····································································
 
 
@@ -487,6 +486,7 @@
                 alert(msg);
             }
         });
+
 
     </script>
 </body>

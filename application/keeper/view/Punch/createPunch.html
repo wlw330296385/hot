@@ -136,6 +136,12 @@
         .groupslist .mui-checkbox.mui-left label{
             padding-left: 48px;
         }
+        #view{
+            width: 51px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+        }
     </style>
 </head>
 
@@ -462,6 +468,9 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+
+        ////////////////////////////////////////////////////////////////////////////////
+
         var backTotal = wooApi.GetQueryString('backTotal');
         var paySuccess = wooApi.GetQueryString('paySuccess');
             //初始化
@@ -495,6 +504,7 @@
         var reloadWindow = function () {
             location.reload();
         };
+        ///////////////////////////////////////////////////////////////////////////////////
 
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
@@ -552,9 +562,76 @@
         var group_id = wooApi.GetQueryString('group_id');
 
 
+        //获取cookie参数值
+        let getCPF = wooApi.getCookie('createPunchForm');
+        if(getCPF!=null&&getCPF!=''){
+            var createPunchForm = JSON.parse(getCPF);
+        }else{
+            var createPunchForm = {};
+        }
+        //获取cookie参数值
+        let getCPFG = wooApi.getCookie('createPunchFormGroup');
+        if(getCPFG!=null&&getCPFG!=''){
+            var createPunchFormGroup = JSON.parse(getCPFG);
+        }else{
+            var createPunchFormGroup = {};
+        }
         
 
         $(function () {
+
+            //判断是否保存有cookie参数值////////////////////////////////////////////////////////////////////////////////
+            if(createPunchForm!=null&&createPunchForm!=''&&!$.isEmptyObject(createPunchForm)){
+                console.log(createPunchForm);
+                //根据获取套餐选上对应项
+                $(".punch_time").text(createPunchForm.punch_time);
+                $(".punch_category").text(createPunchForm.punch_categoryCN);
+                $("input[name=punch_category]").val(createPunchForm.punch_category);
+
+                $("input[name=name]").val(createPunchForm.name);
+                $(".sportProject input[name=name]").parent().show();
+                if(createPunchForm.duration!="undefined"&&createPunchForm.duration!=null&&createPunchForm.duration!=0){
+                    $(".sportProject input[name=duration]").val(createPunchForm.duration);
+                    $(".sportProject input[name=duration]").parent().show();
+                }
+                if(createPunchForm.extent!="undefined"&&createPunchForm.extent!=null&&createPunchForm.extent!=0){
+                    $(".sportProject input[name=extent]").val(createPunchForm.extent);
+                    $(".sportProject input[name=extent]").parent().show();
+                }
+                if(createPunchForm.amount!="undefined"&&createPunchForm.amount!=null&&createPunchForm.amount!=0){
+                    $(".sportProject input[name=amount]").val(createPunchForm.amount);
+                    $(".sportProject input[name=amount]").parent().show();
+                }
+
+                $("input[name=is_anonymous]").val(createPunchForm.is_anonymous);
+                if(createPunchForm.is_anonymous==-1){
+                    $(".isAnonymous").addClass("mui-active");
+                }
+                $("input[name=image_url]").val(createPunchForm.image_url);
+                $("#view").css("background-image","url("+createPunchForm.image_url+")");
+
+                $(".Hbin").text(createPunchForm.stakes);
+
+            }
+            if(createPunchFormGroup!=null&&createPunchFormGroup!=''&&!$.isEmptyObject(createPunchFormGroup)){
+                console.log(createPunchFormGroup);
+                //根据获取套餐选上对应项
+                    for (var gi = 0; gi <= createPunchFormGroup.length - 1; gi++) {
+                        //如果从某社区进入（带有group_id参数值）就无需列入，下面658行还会插入
+                        if(createPunchFormGroup[gi].group_id!=group_id){
+                            var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + createPunchFormGroup[gi].group + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + createPunchFormGroup[gi].stake + 'HT</text><input name="group" class="stdList" data-group_id="' + createPunchFormGroup[gi].group_id + '" data-member="' + createPunchFormGroup[gi].member + '" data-member_id="' + createPunchFormGroup[gi].member_id + '"  data-pool="' + createPunchFormGroup[gi].pool + '" data-pool_id="' + createPunchFormGroup[gi].pool_id + '" data-stake="' + createPunchFormGroup[gi].stake + '" type="checkbox"></div>';
+                            $("#inactiveList").append(str);
+                            $("#hideStList").append(str);
+                        }
+
+                    }
+                changeIndex();//调用-更新序号
+                totalNum = $("#inactiveList .checkboxCont").length;
+                $(".mui-badge").text(totalNum);
+
+            }
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
              //如果支付成功返回yes，清空充值数量
             if(paySuccess=="yes"){
@@ -579,11 +656,10 @@
 
             ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
             var stake = 0;
-            $(".groupslist input[name='checkbox1']:checked").not(":disabled").each(function () {
-                stake = $(this).siblings(".stakeNum").text();
-                console.log(stake)
+            $(".groupslist input[name='checkbox1']").not(":disabled").each(function () {
                 if (group_id == $(this).attr("data-group_id")) {
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"><input type="hidden" class="stdList" data-id="' + $(this).attr("data-id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '" data-status="' + $(this).attr("data-status") + '"></div>';
+                    stake = $(this).siblings(".stakeNum").text();
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"></div>';
                     $("#inactiveList").append(str);
                     $("#hideStList").append(str);
                     return false;
@@ -862,19 +938,6 @@
             }
 
 
-            //判断是否热币不足，不足引导充值
-            var stakeCount = $(".Hbin").text();
-            if(parseInt(stakeCount)> parseInt("{$memberInfo['hot_coin']}")){
-
-                mui.confirm('您的热币不足，请前往充币，谢谢！', '提示', ['取消', '前往充币'], function (e) {
-                    if(e.index === 1) {
-                        mui('#reward').popover('toggle');
-                            mask.show();
-                            $('.mui-iframe-wrapper').show();
-                    }
-                });
-                return false;
-            }
 
             if ($(".punch_category").text() == '') {
                 mui.toast("请选择运动类型");
@@ -906,12 +969,41 @@
              //获取其他标签值
              arrData = wooApi.getDomData('domData', datas);
              var objData = wooApi.arrTOobj(arrData);
+
              let list = JSON.stringify(groupList);
              objData.groupList = list;
+
+            //判断是否热币不足，不足引导充值/////////////////////////////////////////////////////////////////
+            var stakeCount = $(".Hbin").text();
+            if(parseInt(stakeCount)> parseInt("{$memberInfo['hot_coin']}")){
+
+                mui.confirm('您的热币不足，请前往充币，谢谢！', '提示', ['取消', '前往充币'], function (e) {
+                    if(e.index === 1) {
+                        //设定cookie参数值////////////////////////////////////////////////////////
+                        
+                         objData.punch_categoryCN = $(".punch_category").text();
+                         wooApi.setCookie('createPunchForm',JSON.stringify(objData),300);
+                         wooApi.setCookie('createPunchFormGroup',JSON.stringify(groupList),300);
+
+                        console.log(objData)
+                        //////////////////////////////////////////////////////////////////////////
+                        mui('#reward').popover('toggle');
+                        mask.show();
+                        $('.mui-iframe-wrapper').show();
+                    }
+                });
+                return false;
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            
              var url = "{:url('api/punch/createPunchApi')}";
              var ajaxResult = wooApi.asyncF(url, objData);
              if (ajaxResult.code == 200) {
                  mui.alert("打卡成功", '提示', '确定', function () {
+                    //清空cookie
+                     wooApi.setCookie('createPunchForm',null,300);
+                     wooApi.setCookie('createPunchFormGroup',null,300);
+
                      var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
                      window.top.location.href = goUrl;
                  })
