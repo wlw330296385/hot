@@ -91,8 +91,8 @@
                 <li class="mui-table-view-cell mui-media listli">
                     <h4>{$leagueInfo.name}</h4>
                     <div class="mui-media-body wd73" style="line-height:20px !important">
-                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
-                        <p>{$leagueInfo.province} {$leagueInfo.city}</p>
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org}</p>
+                        <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p>参赛队：
                             <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
                             <strong class="colororange">{$leagueInfo.fans_num}</strong>
@@ -113,7 +113,7 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-EndTime colororange"></span>报名开始时间</label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>报名开始时间</label>
                     <span class="wd60">{$leagueInfo.reg_start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
@@ -123,7 +123,7 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-EndTime colororange"></span>联赛开始时间</label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>联赛开始时间</label>
                     <span class="wd60">{$leagueInfo.start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
@@ -192,7 +192,7 @@
                 </span>
             </div>
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli desimg">{$leagueInfo.introduce}</li>
+                <li class="mui-table-view-cell listli desimg introduce">{$leagueInfo.introduce}</li>
             </ul>
 
             <!-- 评论 -->
@@ -271,6 +271,7 @@
         mui.init({
             swipeBack: false
         });
+
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
                 indicators: true //是否显示滚动条
@@ -280,10 +281,12 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             })
         })(mui);
+
         // a标签跳转
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
         $(function () {
             var count = 1;
             // 判断是否登陆
@@ -295,10 +298,9 @@
                 });
                 return false;
             }
-
             // 联赛简介默认的提示
-            if ($(".introBox").html() == '') {
-                $(".introBox").append("<p class='nohave'>还没有联赛简介哦</p>")
+            if ($(".introduce").html() == '') {
+                $(".introduce").append("还没有联赛简介哦")
             }
 
             // 关注
