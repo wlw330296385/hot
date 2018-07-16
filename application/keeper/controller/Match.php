@@ -281,6 +281,7 @@ class Match extends Base {
             $btnApplyWorkerShow = 1;
         }
 
+
         $this->assign('types', $types);
         $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
         return view('Match/leagueInfo');
@@ -920,6 +921,16 @@ class Match extends Base {
     // 联赛比赛动态列表
     public function leagueDynamicList() {
         return view('Match/dynamic/leagueDynamicList');
+    }
+
+    // 联赛球员数据
+    public function teamMemberData() {
+        return view('Match/data/teamMemberData');
+    }
+
+    // 联赛球队数据
+    public function teamData() {
+        return view('Match/data/teamData');
     }
    
 }
