@@ -85,18 +85,21 @@ class Punch extends Base{
     }
 
     // 运动计划
-	public function plan() {
-        return view('Punch/plan');
+	public function sportPlanScheduleList() {
+
+        return view('Punch/sportPlanScheduleList');
     }
 
     // 创建运动计划
-	public function createPlan() {
-        return view('Punch/createPlan');
+	public function createSportPlan() {
+
+        return view('Punch/createSportPlan');
     }
 
     // 运动计划详情
-	public function planInfo() {
-        return view('Punch/planInfo');
+	public function sportPlanInfo() {
+        
+        return view('Punch/sportPlanInfo');
     }
 
 }
