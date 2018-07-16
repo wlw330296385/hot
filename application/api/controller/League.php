@@ -2947,6 +2947,7 @@ class League extends Base
             $scheduleData[$k]['status'] = 1;
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
+            $scheduleData[$k]['add_mode'] = 1;
         }
         try {
             $result = $leagueS->saveAllMatchSchedule($scheduleData);
@@ -3030,6 +3031,53 @@ class League extends Base
         } catch (Exception $e) {
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 批量保存自定义赛程数据
+    public function saveallcustommatchschedule() {
+        $data = input('post.');
+        $data['member_id'] = $this->memberInfo['id'];
+        // 数据验证器
+        $validate = validate('MatchScheduleVal');
+        if (!$validate->scene('custom_add')->check($data)) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 检查会员操作权限（联赛工作人员-管理员以上）
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        if ( !array_key_exists('scheduleList', $data) || is_null(json_decode($data['scheduleList'])) ) {
+            return json(['code' => 100, 'msg' => '请提交赛程']);
+        }
+        // 遍历组合赛程数据
+        $scheduleData = json_decode($data['scheduleList'], true);
+        foreach ($scheduleData as $key => $value) {
+            $scheduleData[$key]['match_id'] = $data['match_id'];
+            $scheduleData[$key]['match'] = $data['match'];
+            $scheduleData[$key]['match_time'] = checkDatetimeIsValid($value['match_time']) ? strtotime($value['match_time']) : $value['match_time'];
+            $scheduleData[$key]['add_mode'] = 2;
+            $scheduleData[$key]['status'] = 1;
+        }
+        // 批量保存赛程数据
+        try {
+            $leagueS = new LeagueService();
+            $result = $leagueS->saveAllMatchSchedule($scheduleData);
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        // 返回结果
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         }
     }
 
