@@ -86,10 +86,15 @@ class Member extends Backend{
 		$studentList = db('student')->where(['member_id'=>$member_id])->select();
 		// 推荐人
 		$referer = $this->MemberService->getMemberInfo(['id'=>$memberInfo['pid']]);
+		//银行卡列表
+		$Bankcard = new \app\model\Bankcard;
+		$bankcardList = $Bankcard->where(['member_id'=>$memberInfo['id']])->select();
+
 
 		$this->assign('referer',$referer);
 		$this->assign('studentList',$studentList);
 		$this->assign('certList',$certList);
+		$this->assign('bankcardList',$bankcardList);
 		$this->assign('coachInfo',$coachInfo);
 		$this->assign('memberInfo',$memberInfo);
 		return view('member/memberInfo');

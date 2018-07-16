@@ -81,6 +81,7 @@ class Punch extends Base{
 	
 	// 打卡列表
 	public function punchList() {
+        
         return view('Punch/punchList');
     }
 
