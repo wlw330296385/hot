@@ -226,7 +226,7 @@
         })(mui, document);
 
         $(function () {
-            matchStage(); //比赛阶段
+            matchStage(1); //比赛阶段
 
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
@@ -276,7 +276,7 @@
                             </div>
                         </div>`;
                 $("form").append(str);
-                matchStage(); //比赛阶段
+                matchStage(listLength); //比赛阶段
             });
 
             // 给每个模块传标记值
@@ -414,7 +414,7 @@
             });
 
             // 比赛类型（即比赛阶段）change事件
-            $(document).on('change', 'select.matchStageType', function() {
+            $(document).on('change', 'select.matchStageType', function () {
                 let liNum = $(this).parents(".scheduleList").attr("data-num");
                 $(".matchStageType").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
@@ -430,7 +430,7 @@
         });
 
         // 比赛阶段
-        function matchStage() {
+        function matchStage(stageNum) {
             let league_id = "{$league_id}";
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -444,7 +444,7 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        if ( data.data.length > 0 ) {
+                        if (data.data.length > 0) {
                             newli += '<option>选择比赛类型</option>';
                         }
                         for (var i = 0; i <= data.data.length - 1; i++) {
@@ -453,7 +453,8 @@
                         if (newli == '') {
                             newli = '<option>请先创建比赛阶段</option>'
                         }
-                        $(".matchStageType").empty().append(newli);
+                        $(".scheduleList").eq(stageNum - 1).find(".matchStageType").empty().append(newli);
+
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -568,27 +569,27 @@
                 scheduleList.push({ home_team, home_team_id, home_team_logo, away_team, away_team_id, away_team_logo, match_stage_id, match_stage, court, court_id, match_time })
             })
             console.log(scheduleList)
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                var objData = wooApi.arrTOobj(arrData);
-                objData.scheduleList = JSON.stringify(scheduleList);
-                var url = "{:url('api/league/saveallcustommatchschedule')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert('编辑成功', '确定', function () {
-                        var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '编辑失败');
-                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                        if (data.code === 200) {
-                            $('input[name=__token__]').val(data.data);
-                        }
-                    }, 'json');
-                }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.scheduleList = JSON.stringify(scheduleList);
+            var url = "{:url('api/league/saveallcustommatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('编辑成功', '确定', function () {
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '编辑失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
 
     </script>

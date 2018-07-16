@@ -33,13 +33,13 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred hide isEmpty">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred hide notEmpty">
                 <a href="{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}">创建赛程</a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue hide isEmpty">
-                <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建赛程</a>
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue hide notEmpty">
+                <a href="{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}">创建下一赛程</a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgblue notEmpty">
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgblue hide isEmpty">
                 <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建赛程</a>
             </li>
         </ul>
@@ -115,12 +115,30 @@
                         }
                         if (newli != '') {
                             $(".schedule").empty().append(newli);
-                            $(".notEmpty").show();
-                        } else {
-                            $(".schedule").html('<p class="nodata">没有相关数据哦</p>');
-                            $(".isEmpty").show();
-                            $(".notEmpty").hide();
                         }
+                    } else {
+                        $(".schedule").html('<p class="nodata">没有相关数据哦</p>');
+                    }
+                },
+            });
+
+            // 判断是否已经分组
+            var urls = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
+            mui.ajax({
+                url: urls,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.data.data == '') {
+                        $(".isEmpty").show();
+                    } else {
+                        $(".notEmpty").show();
                     }
                 },
             });
