@@ -485,7 +485,7 @@ class League extends Base
         }
         // 根据league_id获取联赛信息
         $leagueService = new LeagueService();
-        $league = $leagueService->getMatchWithOrg([
+        $league = $leagueService->getLeaugeInfoWithOrg([
             'id' => $data['league_id'],
             'match_org_id' => ['gt', 0]
         ]);
@@ -1825,7 +1825,7 @@ class League extends Base
         }
         $leagueService = new LeagueService();
         // 查询联赛数据
-        $match = $leagueService->getMatchWithOrg(['id' => $data['match_id']]);
+        $match = $leagueService->getLeaugeInfoWithOrg(['id' => $data['match_id']]);
         if (!$match || $match['status_num'] != 1) {
             return json(['code' => 100, 'msg' => '联赛不存在或未通过审核']);
         }
@@ -2021,7 +2021,7 @@ class League extends Base
             // 同意，保存联赛组织人员数据
             if ($status == 2) {
                 // 获取联赛信息
-                $match = $leagueS->getMatchWithOrg(['id' => $apply['organization_id']]);
+                $match = $leagueS->getLeaugeInfoWithOrg(['id' => $apply['organization_id']]);
                 // 保存联赛工作人员数据
                 $dataMatchMember = [
                     'match_id' => $match['id'],
@@ -2067,7 +2067,7 @@ class League extends Base
         }
         $leagueService = new LeagueService();
         // 查询联赛数据
-        $match = $leagueService->getMatchWithOrg(['id' => $data['match_id']]);
+        $match = $leagueService->getLeaugeInfoWithOrg(['id' => $data['match_id']]);
         if (!$match || $match['status_num'] != 1) {
             return json(['code' => 100, 'msg' => '联赛不存在或未通过审核']);
         }
@@ -2192,7 +2192,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         }
         // 查询联赛数据
-        $match = $leagueS->getMatchWithOrg(['id' => $apply['organization_id']]);
+        $match = $leagueS->getLeaugeInfoWithOrg(['id' => $apply['organization_id']]);
         // 检查当前会员登录信息
         if ($this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
@@ -2259,7 +2259,7 @@ class League extends Base
             // 同意，更新联赛组织人员数据
             if ($status == 2) {
                 // 获取联赛信息
-                $match = $leagueS->getMatchWithOrg(['id' => $apply['organization_id']]);
+                $match = $leagueS->getLeaugeInfoWithOrg(['id' => $apply['organization_id']]);
                 // 获取申请工作人员的会员详细数据
                 $memberS = new MemberService();
                 $memberInfo = $memberS->getMemberInfo(['id' => $apply['member_id']]);

@@ -156,7 +156,7 @@ class LeagueService
     }
 
     // 获取联赛信息带有联赛组织
-    public function getMatchWithOrg($map)
+    public function getLeaugeInfoWithOrg($map)
     {
         $model = new Match();
         $res = $model->with('matchOrg')->where($map)->find();
@@ -168,6 +168,9 @@ class LeagueService
         $result = $res->toArray();
         // 组合原始数据
         $result['status_num'] = $getData['status'];
+        $result['type_num'] = $getData['type'];
+        $result['is_finished_num'] = $getData['is_finished'];
+        $result['apply_status_num'] = $getData['apply_status'];
         // 粉丝数
         $result['fans_num'] = getfansnum($result['id'], 5);
         return $result;
