@@ -122,7 +122,7 @@ class Follow extends Base {
                         return json(['code' => 100, 'msg' => '关注联赛'.__lang('MSG_402')]);
                     }
                     $leagueS = new LeagueService();
-                    $leagueInfo = $leagueS->getMatchWithOrg(['id' => $league_id]);
+                    $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $league_id]);
                     if (!$leagueInfo || $leagueInfo['status_num'] != 1) {
                         return json(['code' => 100, 'msg' => '没有联赛信息']);
                     }
