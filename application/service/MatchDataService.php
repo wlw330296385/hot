@@ -93,4 +93,26 @@ class MatchDataService
         $res = $model->where($map)->count();
         return ($res) ? $res : 0;
     }
+
+    // 根据球员id作分组，获取单个技术统计字段的总和
+    public function getMatchStaticSumListByFieldGroupByTmId($map=[], $field='pts') {
+        $model = new MatchStatistics();
+        $res = $model->where($map)->field(['team_member_id', 'name', "sum($field)" => $field])->group('team_member_id')->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 根据球队id作分组，获取单个技术统计字段的总和
+    public function getMatchStaticSumListByFieldGroupByTeamId($map=[], $field='pts') {
+        $model = new MatchStatistics();
+        $res = $model->where($map)->field(['team_id', 'team', "sum($field)" => $field])->group('team_id')->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
 }
