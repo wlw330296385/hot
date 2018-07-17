@@ -426,7 +426,7 @@
                     }
                 })
             });
-            getbattle();
+            allTeamList()
         });
 
         // 比赛阶段
@@ -456,7 +456,7 @@
                         $(".scheduleList").eq(stageNum - 1).find(".matchStageType").empty().append(newli);
 
                     } else {
-                        mui.toast('数据获取失败,请稍候再试');
+                        mui.alert('暂无比赛阶段，请先前往创建比赛阶段');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -510,6 +510,45 @@
             });
         };
 
+        function allTeamList() {
+            var url = "{:url('api/league/leagueteampage')}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var urls = "{:url('team/teamInfo')}" + '/team_id/' + data.data.data[i].team.id + '/id/' + data.data.data[i].id;
+                            newli += `<li class="mui-table-view-cell listli">
+                                        <a href="${urls}">
+                                        <img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}">
+                                        <div class="mui-media-body lineHeight20">
+                                            <p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
+                                            <p>${data.data.data[i].members_num}人参赛</p>
+                                        </div>
+                                    </li>`;
+                        }
+                        $(".teamList").empty().append(newli);
+                    } else {
+                        getbattle();
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+
         function getbattle() {
             var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
             let league_id = "{$league_id}";
@@ -541,7 +580,7 @@
                             $(".teamList").empty().append(newli);
                         }
                     } else {
-                        $(".teamList").html('<p class="nodata">没有相关数据哦</p>');
+                        aaa()
                     }
                 },
                 error: function (xhr, type, errerThrown) {

@@ -135,29 +135,29 @@
 
             <div class="mui-input-row">
                 <label class="wd60">赛制</label>
-                <span class="select-row">{$leagueInfo.format}</span>
+                <span id="format" class="select-row">{$leagueInfo.format}</span>
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队成员下限数</label>
-                <input type="text" name="min_teammembers" value="{$leagueInfo.min_teammembers}" class="data wd52" placeholder="请输入球队成员下限数(0为不限)">
+                <input type="number" name="min_teammembers" value="{$leagueInfo.min_teammembers}" class="data wd52" placeholder="球员下限数不小于5">
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队成员上限数</label>
-                <input type="text" name="max_teammembers" value="{$leagueInfo.max_teammembers}" class="data wd52" placeholder="请输入球队成员上限数(0为不限)">
+                <input type="number" name="max_teammembers" value="{$leagueInfo.max_teammembers}" class="data wd52" placeholder="球员上限数不大于20">
             </div>
 
             <div class="mui-input-row">
                 <label class="wd45">最多参赛队伍数</label>
-                <input type="text" name="teams_max" value="{$leagueInfo.teams_max}" class="data wd52" placeholder="请输入最多参赛队伍数">
+                <input type="number" name="teams_max" value="{$leagueInfo.teams_max}" class="data wd52" placeholder="请输入最多参赛队伍数">
             </div>
 
             <div class="mui-input-row">
                 <label class="wd45">球队参赛费用</label>
-                <input type="text" name="entry_fees" value="{$leagueInfo.entry_fees}" class="data wd52" placeholder="输入参赛费用">
+                <input type="number" name="entry_fees" value="{$leagueInfo.entry_fees}" class="data wd52" placeholder="输入参赛费用">
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队参赛保证金</label>
-                <input type="text" name="deposit" value="{$leagueInfo.deposit}" class="data wd52" placeholder="输入球队参赛保证金">
+                <input type="number" name="deposit" value="{$leagueInfo.deposit}" class="data wd52" placeholder="输入球队参赛保证金">
             </div>
 
             <div class="page-header" style="background: #efeff4;">
@@ -340,10 +340,47 @@
         $(function () {
             // 设置比赛类型默认值
             $('#leagueType option[value="{$leagueInfo.type_num}"]').prop("selected", true);
+            var format = "{$leagueInfo.format}";
+            if (format == "5v5") {
+                $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于5");
+                $("input[name=max_teammembers]").attr("placeholder", "球员上限数不大于20");
+            } else {
+                $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于3");
+                $("input[name=max_teammembers]").attr("placeholder", "球员上限数不大于20");
+            }
         })
 
         // 获取数据并进行提交
         function submitAction() {
+
+            var format = "{$leagueInfo.format}";
+            if (format == "5v5") {
+                var min_teammembers = Number($("input[name=min_teammembers]").val());
+                var max_teammembers = Number($("input[name=max_teammembers]").val());
+                if (min_teammembers < 5) {
+                    mui.toast("球员下限数不小于5,请重新输入");
+                    $("input[name=min_teammembers]").val('').focus();
+                    return false;
+                }
+                if (max_teammembers > 20) {
+                    mui.toast("球员上限数不大于20,请重新输入");
+                    $("input[name=max_teammembers]").val('').focus();
+                    return false;
+                }
+            } else if (format == "3v3") {
+                var min_teammembers = Number($("input[name=min_teammembers]").val());
+                var max_teammembers = Number($("input[name=max_teammembers]").val());
+                if (min_teammembers < 3) {
+                    mui.toast("球员下限数不小于3,请重新输入");
+                    $("input[name=min_teammembers]").val('').focus();
+                    return false;
+                }
+                if (max_teammembers > 20) {
+                    mui.toast("球员上限数不大于20,请重新输入");
+                    $("input[name=max_teammembers]").val('').focus();
+                    return false;
+                }
+            }
 
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
