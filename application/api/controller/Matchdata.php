@@ -562,4 +562,101 @@ class Matchdata extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $statistics]);
     }
 
+    // 球队单位获取联赛技术统计排名
+    public function getleaguestaticrankbyteam() {
+        $match_id = input('match_id', 0, 'intval');
+        $field = input('field', 'pts');
+        $page = input('page', 1, 'intval');
+        $size = input('size', 10, 'intval');
+        if (!$match_id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 检查查询技术统计字段
+        $allowFields = ['pts', 'reb', 'ast', 'stl', 'blk', 'turnover', 'foul', 'fg', 'fga', 'threepfg', 'threepfga', 'off_reb', 'def_reb', 'ft', 'fta'];
+        if ( !in_array( $field, $allowFields ) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_405')]);
+        }
+        // 查询联赛详情
+        $leagueS = new LeagueService();
+        $matchDataS = new MatchDataService();
+        $teamS = new TeamService();
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $match_id]);
+        if (!$leagueInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 查询技术统计数据
+        // 查询技术统计数据
+        $map = [];
+        $map['match_id'] = $match_id;
+        $map['status'] = 1;
+        $data = $matchDataS->getMatchStaticSumListByFieldGroupByTeamId($map, $field);
+        if (!$data) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 遍历计算场均与获取头像信息
+        foreach ($data as $key => $value) {
+            // 获取球队比赛次数
+            $teamRecordCount = $leagueS->getMatchRecordCountByTeam(['match_id' => $match_id] , $value['team_id']);
+            $data[$key]["$field"] = ($teamRecordCount > 0) ? round($value["$field"]/$teamRecordCount, 1) : 0;
+            // 获取球队logo
+            $teamInfo = $teamS->getTeam(['id' => $value['team_id']]);
+            $data[$key]['cover'] = $teamInfo['cover'];
+        }
+        // 数据降序排列
+        $data = arraySort($data, $field, SORT_DESC);
+        // 数据分页
+        $data = page_array($size, $page, $data);
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
+    }
+
+    // 球员单位获取联赛技术统计排名
+    public function getleaguestaticrankbyteammember() {
+        $match_id = input('match_id', 0, 'intval');
+        $field = input('field', 'pts');
+        $page = input('page', 1, 'intval');
+        $size = input('size', 10, 'intval');
+        if (!$match_id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 检查查询技术统计字段
+        $allowFields = ['pts', 'reb', 'ast', 'stl', 'blk', 'turnover', 'foul', 'fg', 'fga', 'threepfg', 'threepfga', 'off_reb', 'def_reb', 'ft', 'fta'];
+        if ( !in_array( $field, $allowFields ) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_405')]);
+        }
+        // 查询联赛详情
+        $leagueS = new LeagueService();
+        $matchDataS = new MatchDataService();
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $match_id]);
+        if (!$leagueInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 查询技术统计数据
+        $map = [];
+        $map['match_id'] = $match_id;
+        $map['status'] = 1;
+        $data = $matchDataS->getMatchStaticSumListByFieldGroupByTmId($map,$field);
+        if (!$data) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 遍历计算场均与获取头像信息
+        foreach ($data as $key => $value) {
+            // 获取球员出场比赛次数
+            $memberRecordCount = $matchS->getMatchRecordMemberCount([
+                'team_member_id' => $value['team_member_id'],
+                'status' => 1,
+                'is_attend' => 1
+            ]);
+            $data[$key]["$field"] = ($memberRecordCount > 0) ? round($value["$field"]/$memberRecordCount, 1) : 0;
+            // 获取球员头像
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $value['team_member_id']]);
+            $data[$key]['avatar'] = $teamMemberInfo['avatar'];
+        }
+        // 数据降序排列
+        $data = arraySort($data, $field, SORT_DESC);
+        // 数据分页
+        $data = page_array($size, $page, $data);
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
+    }
 }
