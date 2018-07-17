@@ -35,8 +35,9 @@ class Camp extends Backend {
         $camp['cert'] = $campS->getCampCert($id);
         $camp_member = MemberModel::get(['id' => $camp['member_id']])->toArray();
         $camp['member_info'] = $camp_member;
-        $breadcrumb = ['title' => '训练营详情', 'ptitle' => '训练营模块'];
-        $this->assign( 'breadcrumb', $breadcrumb );
+
+        $bankcardList = db('camp_bankcard')->where(['camp_id'=>$id])->select();
+        $this->assign('bankcardList', $bankcardList);
         $this->assign('camp', $camp);
         return view('camp/show');
     }

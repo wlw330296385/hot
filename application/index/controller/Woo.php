@@ -12,13 +12,11 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $a = db('income')->where(['camp_id'=>9])->where('type',1)->where('create_time','between time',['2018-1-1','2018-1-31'])->where('delete_time',null)->sum('balance_pay');
-        $b = db('bill')->where(['camp_id'=>9])->where('goods_type',1)->where('create_time','between time',['2018-1-1','2018-1-31'])->where('delete_time',null)->sum('balance_pay');
-        // dump(db('bill')->getlastsql());
-        echo '收入流水2017-12月';   
-        dump($a);
-        echo '订单收入2017-12月'; 
-        dump($b);
+        $l = [];
+        for ($i=1; $i <200 ; $i++) { 
+            $l[] = $i;
+        }
+        dump(json_encode($l));
     }
 
 

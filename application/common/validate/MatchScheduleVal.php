@@ -28,6 +28,7 @@ class MatchScheduleVal extends Validate
 
     protected $scene = [
         'add' => ['match_id', 'member_id', 'match_stage_id', 'match_stage'],
-        'edit' => ['id', 'match_id', 'member_id']
+        'edit' => ['id', 'match_id', 'member_id'],
+        'custom_add' => ['match_id', 'member_id']
     ];
 }

@@ -922,5 +922,15 @@ class Match extends Base {
     public function leagueDynamicList() {
         return view('Match/dynamic/leagueDynamicList');
     }
+
+    // 联赛球员数据
+    public function teamMemberData() {
+        return view('Match/data/teamMemberData');
+    }
+
+    // 联赛球队数据
+    public function teamData() {
+        return view('Match/data/teamData');
+    }
    
 }
