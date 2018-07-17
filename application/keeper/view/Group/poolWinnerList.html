@@ -182,22 +182,28 @@
                                 SumMembers += parseInt(data.data[i].members)
                                 $(".bonus").text(SumBonus);
                                 $(".members").text(SumMembers);
-                                winner_list = JSON.parse(data.data[i].winner_list);
-                                _winner = '';
-                                _winner_punchs = '';
-                                _winner_bonus = '';
-                                if (winner_list != '') {
-                                    for (var j = 0; j <= winner_list.length - 1; j++) {
-                                        _winner += winner_list[j].member + ',';
-                                        _winner_punchs = winner_list[j].punchs;
-                                        _winner_bonus = parseInt(winner_list[j].bonus / winner_list.length);
-                                    }
+                                var winner_list = JSON.parse(data.data[i].winner_list);
+                                console.log(winner_list);
+                                let f_l = winner_list[0];//1
+                                let s_l = winner_list[1];//2
+                                let t_l = winner_list[2];//3
+                                let f_l_s = '第一名:';
+                                let s_l_s = '第二名:';
+                                let t_l_s = '第三名:';
+                                for (var j = 0; j < f_l.length; j++) {
+                                    f_l_s += `${f_l[j].member}(奖金:${f_l[j].winner_bonus})<br />`;
                                 }
-                                //去除最后一个逗号
-                                winnerList = _winner.substring(0, _winner.length - 1);
+
+                                for (var j = 0; j < s_l.length; j++) {
+                                    s_l_s += `${s_l[j].member}(奖金:${s_l[j].winner_bonus})<br />`;
+                                }
+
+                                for (var j = 0; j < t_l.length; j++) {
+                                    t_l_s += `${t_l[j].member}(奖金:${t_l[j].winner_bonus})<br />`;
+                                }
                                 newli += `<li class="mui-table-view-cell mui-collapse listli">
                                             <a class="mui-navigate-right"  href="#">
-                                                <p class="mui-ellipsis">`+ winnerList + `</p><p>${data.data[i].start}期</p>
+                                                <p class="mui-ellipsis">${f_l_s}${s_l_s}${t_l_s}</p><p>${data.data[i].start}期</p>
                                             </a>
                                             <div class="mui-collapse-content">
                                                 <ul class="mui-table-view mb list" style="margin-top:-8px;margin-left:-40px;">
@@ -205,19 +211,19 @@
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Contact colororange"></span>擂主
                                                         </label>
-                                                        <span class="wd73">`+ winnerList + `</span>
+                                                        <span class="wd73">${f_l_s}${s_l_s}${t_l_s}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Contact colororange"></span>擂主打卡次数
                                                         </label>
-                                                        <span class="wd60">`+ _winner_punchs + `</span>
+                                                        <span class="wd60">打卡次数</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
                                                             <span class="icon iconfont icon-activity-Contact colororange"></span>擂主所得金额
                                                         </label>
-                                                        <span class="wd60">`+ _winner_bonus + `</span>
+                                                        <span class="wd60">擂主奖金</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>

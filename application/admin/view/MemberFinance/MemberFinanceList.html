@@ -1,0 +1,117 @@
+{extend name="layout/common"/}
+{block name="css"}
+<style>
+	.img-md {float:none;}
+</style>
+{/block}
+{block name="page-content"}
+
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>会员财务流水</em>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="box no-border">
+        	<div class="row">
+	        	<!-- 搜索框 -->
+	        	<div class="search-form col-md-10 col-md-offset-1">
+	                <form class="form-inline schedule-list" method="get" action="{:url('admin/member_finance/memberFinanceList')}">
+	                    <fieldset>
+	                         <div class="btn-group">
+			                  <button type="button" class="btn btn-success" id="field">用户名</button>
+			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			                    <span class="caret"></span>
+			                    <span class="sr-only">Toggle Dropdown</span>
+			                  </button>
+			                  <ul class="dropdown-menu search_opt" role="menu">
+			                    <li data = 'member' ><a href="#">用户名</a></li>
+			                  </ul>
+			                </div>
+	                        <div class="form-group">
+	                            <input class="form-control" type="text" name="keyword" required="required">
+	                            <input type="hidden" name="field" value="">
+	                        </div>
+	                        <div class="form-group">
+	                            <div class="col-sm-12 text-center">
+	                                <input type="submit" class="btn btn-success btn-flat btn-sub search" value="搜索">
+	                                <input type="reset" class="btn btn-default btn-flat" value="重置">
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                        <div class="col-sm-12 text-center col-md-12">
+	                            <p>Tips:点击标题可以排序</p>
+                            </div>
+                        	</div>
+	                    </fieldset>
+	                </form>
+
+	            </div>
+	            
+            </div>	
+            <!-- 主体 -->
+            <div class="box-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-center order_by" data-order = 'member'>用户名</th>
+                        <th class="text-center order_by" data-order = 'money'>金额</th>
+                        <th class="text-center order_by" data-order = 'type'>类型</th>
+                        <th class="text-center order_by" data-order = 's_balance'>产生流水前余额</th>
+                        <th class="text-center order_by" data-order = 'e_balance'>产生流水后余额</th>
+                        <th class="text-center order_by" data-order = 'system_remarks'>系统备注</th>
+                        <th class="text-center order_by" data-order = 'id'>日期</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="memberFinanceList" id="vol"}
+                    <tr>
+                        <td class="text-center">{$vol.member}</td>
+						
+                        <td class="text-center">
+                            {$vol.money}
+                        </td>
+                        <td class="text-center">
+                            {$vol.type}
+                        </td>
+                        <td class="text-center">
+                            {$vol.s_balance}
+                        </td>
+                        <td class="text-center">
+                            {$vol.e_balance}
+                        </td>
+                        <td class="text-center">
+                        	{$vol.system_remarks}
+                        </td>
+                        <td class="text-center">{$vol.create_time}</td>
+                        
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            {$memberFinanceList->render()}
+        </div>
+    </div>
+</div>
+	
+{/block}
+
+
+
+
+{block name='js'}
+<script type="text/javascript">
+	$(function(){
+
+	})
+	
+
+	$('input[type=reset]').on('click',function(){
+		$('input[type=hidden]').val('用户名');
+		window.location.href="{:url('admin/member_finance/memberFinanceList',['keyword'=>'woo'])}";
+	})
+
+</script>
+{/block}

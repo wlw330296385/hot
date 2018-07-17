@@ -51,7 +51,8 @@ class AdminMenu extends Model {
             $location = Tree::getParents(self::column('id,pid,title,url_value'), $curr_id);
             // dump($location);die;
             if ($check && empty($location)) {
-                throw new Exception('获取不到当前节点地址，可能节点未收录,请联系woo添加节点', 9001);
+                // throw new Exception('获取不到当前节点地址，可能节点未收录,请联系woo添加节点', 9001);
+                return false;
             }
 
             // 剔除最后一个节点url

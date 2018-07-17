@@ -29,6 +29,9 @@ class Backend extends Base {
             if (!$this->AuthService->checkAuth()) $this->error('权限不足！');
             // 获取面包屑导航
             $_location =  MenuModel::getLocation('', true);
+            if(!$_location){
+                $this->error('请先添加菜单');
+            }
             $this->assign('_location',$_location);
             // dump($_location);
 
@@ -37,6 +40,8 @@ class Backend extends Base {
         }
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
+
+
         $this->assign('_sidebar_menus', $sidebar_menu);
         
     }

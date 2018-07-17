@@ -61,10 +61,6 @@ return [
 	'sms_appid' => '45842',
     'sms_secret' => '9b3c9e8899a7484890ab1c100a8fca82',
 
-
-    //开发者模式,0:非|1:真
-    'develop_mode'=> 1,
-
     // 固定默认图片
     'default_image' => [
         'member_avatar' =>'/static/default/avatar.png', // 默认会员头像
