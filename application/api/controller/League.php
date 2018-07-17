@@ -695,6 +695,11 @@ class League extends Base
                     // 球队公告
                     $teamS = new TeamService();
                     $teamS->saveTeamMessage($message);
+                    // 通过报名球队数达到联赛球队最大数 更新联赛报名状态
+                    $matchTeamCount = $leagueService->getMatchTeamCount(['match_id' => $matchApply['match_id']]);
+                    if ( $matchTeamCount == $matchApply['match']['teams_max'] ) {
+                        db('match')->where('id', $matchApply['match_id'])->update(['apply_status' => 2]);
+                    }
                 }
             }
         } catch (Exception $e) {
