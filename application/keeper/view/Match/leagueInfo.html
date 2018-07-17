@@ -307,16 +307,19 @@
 
             // 状态显示
             var nowTime = gettime()
+            var reg_start_time = "{$leagueInfo.reg_start_time}";
             var reg_end_time = "{$leagueInfo.reg_end_time}";
             var apply_status_num = "{$leagueInfo.apply_status_num}";
-            if (nowTime < reg_end_time) {
+            if (nowTime < reg_start_time) {
                 $(".waitBtn").show();
-            } else if (nowTime > reg_end_time) {
+            } else if (nowTime > reg_start_time) {
                 if (apply_status_num == 1) {
                     $(".signUpBtn").show();
                 } else if (apply_status_num == 2) {
                     $(".endBtn").show();
                 }
+            } else if (nowTime > reg_end_time) {
+                $(".endBtn").show();
             }
 
             // 关注
