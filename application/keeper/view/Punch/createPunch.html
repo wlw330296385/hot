@@ -580,6 +580,34 @@
 
         $(function () {
 
+
+            matchList();
+
+            // 获取当前时间为打卡时间
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            var day = new Date().getDate();
+            var time = year + '-' + ('0'+month).slice(-2) + '-' + ('0'+day).slice(-2)
+            $(".punch_time").text(time)
+            groupListAboutMember(time);
+
+            ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
+            var stake = 0;
+            $(".groupslist input[name='checkbox1']").not(":disabled").each(function () {
+                if (group_id == $(this).attr("data-group_id")) {
+                    stake = $(this).siblings(".stakeNum").text();
+                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"></div>';
+                    $("#inactiveList").append(str);
+                    $("#hideStList").append(str);
+                    return false;
+                }
+            });
+            $(".Hbin").text(stake)
+            changeIndex();//调用-更新序号
+            totalNum = $("#inactiveList .checkboxCont").length;
+            $(".mui-badge").text(totalNum);
+
+
             //判断是否保存有cookie参数值////////////////////////////////////////////////////////////////////////////////
             if(createPunchForm!=null&&createPunchForm!=''&&!$.isEmptyObject(createPunchForm)){
                 console.log(createPunchForm);
@@ -617,7 +645,7 @@
                 console.log(createPunchFormGroup);
                 //根据获取套餐选上对应项
                     for (var gi = 0; gi <= createPunchFormGroup.length - 1; gi++) {
-                        //如果从某社区进入（带有group_id参数值）就无需列入，下面658行还会插入
+                        //如果从某社区进入（带有group_id参数值）就无需列入，上面597行还会插入
                         if(createPunchFormGroup[gi].group_id!=group_id){
                             var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + createPunchFormGroup[gi].group + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + createPunchFormGroup[gi].stake + 'HT</text><input name="group" class="stdList" data-group_id="' + createPunchFormGroup[gi].group_id + '" data-member="' + createPunchFormGroup[gi].member + '" data-member_id="' + createPunchFormGroup[gi].member_id + '"  data-pool="' + createPunchFormGroup[gi].pool + '" data-pool_id="' + createPunchFormGroup[gi].pool_id + '" data-stake="' + createPunchFormGroup[gi].stake + '" type="checkbox"></div>';
                             $("#inactiveList").append(str);
@@ -643,33 +671,6 @@
                 $('.mui-iframe-wrapper').show();
             }
 
-
-            matchList();
-
-            // 获取当前时间为打卡时间
-            var year = new Date().getFullYear();
-            var month = new Date().getMonth() + 1;
-            var day = new Date().getDate();
-            var time = year + '-' + ('0'+month).slice(-2) + '-' + ('0'+day).slice(-2)
-            $(".punch_time").text(time)
-            groupListAboutMember(time);
-
-            ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
-            var stake = 0;
-            $(".groupslist input[name='checkbox1']").not(":disabled").each(function () {
-                if (group_id == $(this).attr("data-group_id")) {
-                    stake = $(this).siblings(".stakeNum").text();
-                    var str = '<div class="mui-input-row mui-checkbox checkboxCont"><label class="lineHeight20" style="width:19% !important;"></label><font class="f14">' + $(this).siblings(".groupName").text() + '</font><text class="f14 fr colororange" style="margin-top: 10px;margin-right: 55px;">' + $(this).siblings(".stakeNum").text() + 'HT</text><input name="group" class="stdList" data-group_id="' + $(this).attr("data-group_id") + '" data-member="' + $(this).attr("data-member") + '" data-member_id="' + $(this).attr("data-member_id") + '"  data-pool="' + $(this).attr("data-pool") + '" data-pool_id="' + $(this).attr("data-pool_id") + '" data-stake="' + $(this).attr("data-stake") + '" type="checkbox"></div>';
-                    $("#inactiveList").append(str);
-                    $("#hideStList").append(str);
-                    return false;
-                }
-            });
-            $(".Hbin").text(stake)
-            changeIndex();//调用-更新序号
-            totalNum = $("#inactiveList .checkboxCont").length;
-            $(".mui-badge").text(totalNum);
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
             if ("{$memberInfo.city}" == '' && "{$memberInfo.area}" == '') {

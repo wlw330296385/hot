@@ -26,6 +26,9 @@
         .listli small { display: block; margin-top: 10px; margin-bottom: -5px; color: #CCC; text-align: left; font-size: 12px; }
         .tipCorner{ margin-right: 5px; margin-left: 0px; }
         .mui-scroll {padding-top:15px !important;}
+        .coupon .tips{ height: 130px; }
+        .coupon .nb{ margin-right:10px; font-size: 20px; line-height: 30px; color:#ff9900; }
+        .coupon h3{ border-top:1px solid #DDD; margin-top: 10px; padding-top: 10px; font-size: 20px; line-height: 30px; font-weight: normal;}
     </style>
 </head>
 <body>
@@ -278,14 +281,14 @@
                         endDate = endDate.getTime();
 
                         if(startDate>currTimestamp||endDate<currTimestamp) {
-                            btn = '<button type="button" class="mui-btn bggray"  disabled="true">无效期</button>';
+                            btn = '<button type="button" class="mui-btn bggray"  disabled="true">非有效期内</button>';
                         } else if(data.data.data[i].status == '未使用'){
                             var giftUrl = "{:url('frontend/Coupon/itemCouponGift')}" + '/item_coupon_id/' + data.data.data[i].item_coupon.id+'/itemCouponMember_id/'+data.data.data[i].id+'?gift=1';
                             btn = '<button type="button" class="mui-btn bggreen useCard mui-pull-left" data-itemCouponID="'+data.data.data[i].item_coupon.id+'"   data-itemCouponMemberID = "'+data.data.data[i].id+'">立即使用</button> &nbsp; <a href='+giftUrl+' class="giftCoupon">转赠</a>';
                         } else {
                             btn = '<button type="button" class="mui-btn" disabled="true">'+data.data.data[i].status+'</button>';
                         }
-                        newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID:' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a>'+btn+'</div></div>'
+                        newli += '<div class="coupon"><div class="orangebg"><div class="cNum">' + data.data.data[i].item_coupon.price + '<span>元</span></div><div class="cFrom">' + data.data.data[i].item_coupon.organization + '</div><div class="cID">ID：' + data.data.data[i].coupon_number + '</div><div class="cName">' + data.data.data[i].item_coupon.coupon + '</div><div class="cDate">' + data.data.data[i].item_coupon.start +'至'+ data.data.data[i].item_coupon.end + '</div><i></i></div><div class="tips"><a href="'+urls+'">查看卡券详情<span class="mui-icon mui-icon-forward"></span></a><span class="nb">No.'+data.data.data[i].id+'</span>'+btn+'<h3>编号：' + data.data.data[i].coupon_number + '<br />电话：'+data.data.data[i].telephone+'</h3></div></div>'
 
                     }
                 }

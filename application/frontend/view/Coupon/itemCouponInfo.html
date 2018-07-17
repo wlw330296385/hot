@@ -15,6 +15,16 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .giftCoupon{
+            float: left !important;
+            font-size: 14px !important;
+            margin-left: 20px;
+        }
+
+        .otherMsg { background-color: #FFEFBF; padding: 15px 15px 10px; }
+        .otherMsg p {font-size: 18px;  color:#CC6600;}
+    </style>
 </head>
 <body>
 	<header class="mui-bar mui-bar-nav">
@@ -27,18 +37,25 @@
                 <div class="mui-card-header mui-card-media" style="height:40vw;background-image:url({$itemCouponInfo.image_url});background-repeat: no-repeat;background-position:center center;  
                     background-size: cover;">
                 </div>
+
                 <div class="mui-card-content">
                     <div class="mui-card-content-inner">
                         <span class="mui-pull-right colorred">价值:  ￥{$itemCouponInfo.price}</span>
-                        <p class="f12">
-                            卡券号：{$itemCouponMemberInfo.coupon_number}
-                        </p>
-                        <p>
                             <strong class="f16">{$itemCouponInfo.coupon}</strong>
-                        </p>
+                    </div>
+                </div>
 
+                <div class="mui-card-content otherMsg">
+                    <p>卡券编号：{$itemCouponMemberInfo.coupon_number}</p>
+                    <p>用户电话：{$itemCouponMemberInfo.telephone}</p>
+                    <p>卡券序号：{$itemCouponMemberInfo.id}</p>
+                </div>
+
+                <div class="mui-card-content">
+                    <div class="mui-card-content-inner">
                         <p style="color: #333;">{$itemCouponInfo.coupon_des}</p>
-                        <a class="mui-card-link" href="tel:{$itemCouponInfo.telephone}">联系电话:{$itemCouponInfo.telephone}</a>
+                        <br />
+                        <a class="mui-card-link" href="tel:{$itemCouponInfo.telephone}">商家联系电话:{$itemCouponInfo.telephone}</a>
                     </div>
                 </div>
                 <div class="mui-card-footer">
@@ -54,7 +71,7 @@
 
     <ul class="mui-table-view operation">
         {if strtotime($itemCouponInfo.start) > time() || strtotime($itemCouponInfo.end) < time()}
-        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true">已失效</li>
+        <li class="mui-table-view-cell mui-col-xs-12 opli bggray"  disabled="true">非有效期内</li>
         {elseif $itemCouponMemberInfo.status == '未使用'}
         <li class="mui-table-view-cell mui-col-xs-12 opli bggreen useCard" data-itemCouponID="{$itemCouponInfo.id}" data-itemCouponMemberID="{$itemCouponMemberInfo.id}">立即使用</li>
         {elseif $itemCouponMemberInfo.status == '已使用'}
