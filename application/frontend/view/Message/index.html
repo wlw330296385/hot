@@ -227,6 +227,7 @@
                     var apiurl = "{:url('api/message/setMessageMemberStatusAllApi')}";
                     mui.ajax(apiurl, {
                         data: {
+                            steward_type:1,
                             status: 2
                         },
                         dataType: 'json',
@@ -248,7 +249,6 @@
                 }
             });
 
-                
         });
 
 
@@ -386,7 +386,9 @@
         var url = "{:url('api/message/getMessageMemberListByPageApi','','',true)}" + '/?page=' + page;
         mui.ajax({
             url: url,
-            data: {},
+            data: {
+                steward_type : 1
+            },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
@@ -430,13 +432,14 @@
         });
     };
 
-    //接口获取数据并追加到页面
+    //接口获取个人消息未读数量
     var toMemberListUnread = function () {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/message/getMessageMemberListByPageApi','','',true)}" + '/?page=1';
         mui.ajax({
             url: url,
             data: {
+                steward_type : 1,
                 status:1
             },
             dataType: 'json',//服务器返回json格式数据
@@ -506,7 +509,7 @@
             }
         });
     };
-    //接口获取数据并追加到页面
+    //接口获取系统消息未读数量
     var toSystemListUnread = function () {
         //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/message/getMessageListByPageApi','','',true)}" + '/?page=1';

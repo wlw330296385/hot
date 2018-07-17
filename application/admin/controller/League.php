@@ -71,6 +71,7 @@ class League extends Backend
                 db('match')->where('id', $matchInfo['id'])->update([
                     'status' => $status,
                     'is_open' => 1,
+                    'apply_status' => 1,
                     'system_remarks' => $datetime.$checkstr
                 ]);
                 // 联赛组织未审核 更新状态

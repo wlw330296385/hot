@@ -720,6 +720,35 @@ class Match extends Base {
 
     // 赛程列表管理
     public function schedulelistofleague() {
+        dump($this->league_id);
+        $leagueS = new LeagueService();
+        // 获取联赛分组记录数
+        $groupCount = $leagueS->getMatchGroupCount(['match_id' => $this->league_id]);
+        // 获取联赛赛程记录数
+        $scheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
+        // 获取是小组阶段的赛程记录数
+        $scheduleCountHasGroupId = $leagueS->getMatchScheduleCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0]
+        ]);
+        // 根据分组、赛程数 控制按钮显示
+        $showBtn = 0;
+
+
+        if ( !$groupCount && !$scheduleCount ) {
+            // 没分组
+            $showBtn = 1;
+        } else if ( $groupCount && !$scheduleCount ) {
+            // 有分组&没赛程
+            $showBtn = 2;
+        } else if ( $groupCount && $scheduleCount ) {
+            // 有分组&有赛程
+            $showBtn = 3;
+        } else if ( $groupCount && $scheduleCountHasGroupId ) {
+            // 有分组的赛程信息
+            $showBtn = 4;
+        }
+        $this->assign('showBtn', $showBtn);
         return view('Match/schedule/scheduleListOfLeague');
     }
 

@@ -5,7 +5,7 @@ class billVal extends Validate{
 
 
 	protected $rule = [
-        'bill_order'        =>  'require|unique:bill|token',
+        'bill_order'        =>  'require|unique:bill',
         'goods_id'	=> 'require',
         'goods'         => 'require',
         'total'         =>'require',
@@ -21,7 +21,7 @@ class billVal extends Validate{
     protected $message = [
         'bill_order.require'        =>  '订单号生成失败',
         'bill_order.unique'        =>  '订单号重复,请刷新页面',
-        'bill.token'        =>'重复提交订单,请刷新页面',
+        // 'bill.token'        =>'重复提交订单,请刷新页面',
         'goods_id'	=> '商品必须',
         'goods'      =>  '商品必须',
         'camp'                  =>'缺少训练营',

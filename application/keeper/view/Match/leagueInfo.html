@@ -219,9 +219,11 @@
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
                     <a href="#fbcomment">评价 </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggray hide waitBtn">等待报名</li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred hide signUpBtn">
                     <a href="{:url('match/signUpLeague', ['league_id' => $leagueInfo.id])}">报名</a>
                 </li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggray hide endBtn">已结束</li>
             </ul>
 
         </div>
@@ -301,6 +303,23 @@
             // 联赛简介默认的提示
             if ($(".introduce").html() == '') {
                 $(".introduce").append("还没有联赛简介哦")
+            }
+
+            // 状态显示
+            var nowTime = gettime()
+            var reg_start_time = "{$leagueInfo.reg_start_time}";
+            var reg_end_time = "{$leagueInfo.reg_end_time}";
+            var apply_status_num = "{$leagueInfo.apply_status_num}";
+            if (nowTime < reg_start_time) {
+                $(".waitBtn").show();
+            } else if (nowTime > reg_start_time) {
+                if (apply_status_num == 1) {
+                    $(".signUpBtn").show();
+                } else if (apply_status_num == 2) {
+                    $(".endBtn").show();
+                }
+            } else if (nowTime > reg_end_time) {
+                $(".endBtn").show();
             }
 
             // 关注
@@ -621,7 +640,19 @@
                 }
             });
         };
-
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        function gettime() {
+            var _time = new Date();
+            var year = _time.getFullYear();
+            var month = _time.getMonth() + 1;
+            var day = _time.getDate();
+            var hours = _time.getHours();
+            var minutes = _time.getMinutes();
+            return p(year) + "-" + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
+        }
     </script>
 </body>
 

@@ -1009,6 +1009,16 @@ class LeagueService
         return ($res) ? $res : 0;
     }
 
+    // 获取球队在联赛的比赛记录条数
+    public function getMatchRecordCountByTeam($map, $team_id) {
+        $model = new MatchRecord();
+        $res = $model
+            ->where($map)
+            ->where('home_team_id|away_team_id', $team_id)
+            ->count();
+        return ($res) ? $res : 0;
+    }
+
     // 保存联赛文章
     public function saveArticle($data) {
         $model = new Article();

@@ -194,6 +194,21 @@ class League extends Base
 
         // 创建联赛 status=0 待审核
         $data['status'] = 0;
+        // 球队成员下限（默认根据赛制）
+        if (!$data['min_teammembers']) {
+            switch ( $data['format'] ) {
+                case '3v3':
+                    $data['min_teammembers'] = 3;
+                    break;
+                case '5v5':
+                    $data['min_teammembers'] = 5;
+                    break;
+            }
+        }
+        // 球队成员上限（默认20）
+        if ( !$data['max_teammembers'] ) {
+            $data['max_teammembers'] = 20;
+        }
         $matchS = new MatchService();
         $leagueS = new LeagueService();
         try {
@@ -680,6 +695,11 @@ class League extends Base
                     // 球队公告
                     $teamS = new TeamService();
                     $teamS->saveTeamMessage($message);
+                    // 通过报名球队数达到联赛球队最大数 更新联赛报名状态
+                    $matchTeamCount = $leagueService->getMatchTeamCount(['match_id' => $matchApply['match_id']]);
+                    if ( $matchTeamCount == $matchApply['match']['teams_max'] ) {
+                        db('match')->where('id', $matchApply['match_id'])->update(['apply_status' => 2]);
+                    }
                 }
             }
         } catch (Exception $e) {
