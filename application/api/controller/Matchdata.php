@@ -563,7 +563,7 @@ class Matchdata extends Base
     }
 
     // 球队单位获取联赛技术统计排名
-    public function getleaguestaticrankbyteam() {
+    public function getleaguestaticsrankbyteam() {
         $match_id = input('match_id', 0, 'intval');
         $field = input('field', 'pts');
         $page = input('page', 1, 'intval');
@@ -610,7 +610,7 @@ class Matchdata extends Base
     }
 
     // 球员单位获取联赛技术统计排名
-    public function getleaguestaticrankbyteammember() {
+    public function getleaguestaticsrankbyteammember() {
         $match_id = input('match_id', 0, 'intval');
         $field = input('field', 'pts');
         $page = input('page', 1, 'intval');
