@@ -19,7 +19,7 @@
         <h1 class="mui-title">赛程列表</h1>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content" style="padding-top:0;">
 
         <div id="refreshContainer" class="mui-scroll-wrapper mb44 mt44">
             <div class="mui-scroll">
@@ -62,6 +62,17 @@
         })(mui);
 
         $(function () {
+            // $showBtn = 1; 没分组 => 创建下一赛程（自填）
+            // $showBtn = 2; 有分组&没赛程 => 创建赛程（预览） + 创建下一赛程（自填）
+            // $showBtn = 3; 有分组&有赛程 => 创建下一赛程（自填）
+            // $showBtn = 4; 有分组的赛程信息 => 创建下一赛程（自填）
+            var showBtn = "{$showBtn}"
+            if (showBtn == 1 || showBtn == 4 || showBtn == 3) {
+                $(".isEmpty").show();
+            } else if (showBtn == 2) {
+                $(".notEmpty").show();
+            }
+
             // 暂无分页列表
             var url = "{:url('api/league/getmatchschedulelistbytime','','',true)}";
             var league_id = "{$league_id}";
@@ -117,33 +128,11 @@
                             $(".schedule").empty().append(newli);
                         }
                     } else {
-                        $(".schedule").html('<p class="nodata">没有相关数据哦</p>');
+                        $(".schedule").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
                 },
             });
-
-            // 判断是否已经分组
-            var urls = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
-            mui.ajax({
-                url: urls,
-                data: {
-                    league_id: league_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    if (data.data.data == '') {
-                        $(".isEmpty").show();
-                    } else {
-                        $(".notEmpty").show();
-                    }
-                },
-            });
-
-        })
+        });
 
         //创建补0函数
         function p(s) {

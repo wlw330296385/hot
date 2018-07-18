@@ -861,6 +861,13 @@ class LeagueService
         return $data;
     }
 
+    // 获取比赛赛程记录数
+    public function getMatchScheduleCount($map) {
+        $model = new MatchSchedule();
+        $res = $model->where($map)->count();
+        return ($res) ? $res : 0;
+    }
+
     // 保存比赛阶段数据
     public function saveMatchStage($data, $condi = [])
     {

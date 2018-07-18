@@ -786,8 +786,10 @@ class MatchService {
         $result = $res->toArray();
         foreach ($result as $k => $val) {
             // 比赛时间戳
-            if ($val['match']['match_time']) {
-                $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+            if ( is_array($val['match']) ) {
+                if ($val['match']['match_time']) {
+                    $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+                }
             }
             // 比赛战绩数据
             $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
@@ -805,8 +807,10 @@ class MatchService {
         $result = $res->toArray();
         foreach ($result as $k => $val) {
             // 比赛时间戳
-            if ($val['match']['match_time']) {
-                $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+            if ( is_array($val['match']) ) {
+                if ($val['match']['match_time']) {
+                    $result[$k]['match']['match_timestamp'] = strtotime($val['match']['match_time']);
+                }
             }
             // 比赛战绩数据
             $result[$k]['record'] = $this->getMatchRecord(['id' => $val['match_record_id'], 'match_id' => $val['match_id']]);
