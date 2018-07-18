@@ -26,7 +26,7 @@ class Group extends Base{
         $winnerList = [];
         
         if($lastPool){
-            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id']])->select();
+            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id'],'ranking'=>1])->select();
         }
         // 是否已加入社群
         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
