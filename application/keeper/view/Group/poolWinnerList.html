@@ -158,7 +158,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/pool/getPoolListApi','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/pool/getPoolListByPageApi','','',true)}" + '/?page=' + page;
                 var group_id = "{$groupInfo.id}"
                 mui.ajax({
                     url: url,
@@ -170,12 +170,13 @@
                     type: 'post',//HTTP请求类型
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
+                    success: function (msg) {
+                        console.log(msg)
                         var newli = '';
                         var SumBonus = 0;
                         var SumMembers = 0;
-                        if (data.code == 200) {
+                        if (msg.code == 200) {
+                            let data = msg.data;
                             $(".totalData").text("共" + data.data.length + "期");
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 SumBonus += parseInt(data.data[i].bonus)
