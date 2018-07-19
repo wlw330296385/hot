@@ -12,11 +12,20 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $l = [];
-        for ($i=1; $i <200 ; $i++) { 
-            $l[] = $i;
+        $l = db('pool')->field('id,winner_list')->where(['status'=>-1])->select();
+        foreach ($l as $key => &$value) {
+            $value['winnerlist'] = json_decode($value['winner_list'],true);
+            foreach ($value['winnerlist'] as $k => &$val) {
+                foreach ($val as $kk => &$vv) {
+                    // dump($vv);
+                    $avatar = db('member')->where(['id'=>$vv['member_id']])->value('avatar');
+                    $vv['avatar'] = $avatar;
+                }
+            }
+            $value['winnerlist'] = json_encode($value['winnerlist']);
+            db('pool')->where(['id'=>$value['id']])->update(['winner_list'=>$value['winnerlist']]);
         }
-        dump(json_encode($l));
+        dump($l);
     }
 
 

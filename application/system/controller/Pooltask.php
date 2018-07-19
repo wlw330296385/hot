@@ -107,7 +107,7 @@ class Pooltask extends Base{
             // dump($poolList);
             foreach ($poolList as $key => $value) {
                 
-                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
                 }
