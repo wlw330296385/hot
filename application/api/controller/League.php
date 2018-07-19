@@ -3146,6 +3146,8 @@ class League extends Base
             foreach ( $_result as $key => $value ) {
                 $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $value['id'], 'match_id' => $value['match_id']]);
                 if ($recordInfo) {
+//                    $_result[$key]['match_time'] = ($recordInfo['match_time']) ? date('Y-m-d H:i', $recordInfo['match_time']) : '';
+//                    $_result[$key]['match_timestamp'] = $recordInfo['match_time'];
                     $_result[$key]['home_team_score'] = $recordInfo['home_score'];
                     $_result[$key]['away_team_score'] = $recordInfo['away_score'];
                 } else {
@@ -3155,16 +3157,17 @@ class League extends Base
             }
             // 根据比赛时间（年月日）对数据分片
             foreach ($_result as $key => $value) {
-                $date = $value['match_timestamp'];
+                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
                 $_result1[$value['match_stage'] . '|' . $date][] = $value;
             }
             $dayArr = ['星期日','星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
             foreach ($_result1 as $key => $value) {
                 $_array = [];
                 $keyExplode = explode('|', $key);
-                $date =  $keyExplode[1];
-                $_array['date'] = ($date) ? date('n月d', $date) : 0;
-                $_array['day'] = ($date) ? $dayArr[date('w', $date)] : '';
+                $datetime =  strtotime($keyExplode[1]);
+                $_array['datetime'] = $datetime;
+                $_array['date'] = ($datetime) ? date('n月d', $datetime) : '';
+                $_array['day'] = ($datetime) ? $dayArr[date('w', $datetime)] : '';
                 $_array['stage']['name'] = $keyExplode[0];
                 $_array['stage']['schedules'] = $value;
                 array_push($result, $_array);
@@ -3172,6 +3175,7 @@ class League extends Base
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {
+                $result = arraySort($result, 'datetime', SORT_DESC);
                 return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
             }
         } catch (Exception $e) {
