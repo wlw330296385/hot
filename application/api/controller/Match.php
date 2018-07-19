@@ -64,53 +64,34 @@ class Match extends Base
         // 保存数据
         $matchS = new MatchService();
         $messageS = new MessageService();
-        // 裁判数据业务：
-        // 1 json数据中referee_id不为空 即邀请裁判，发送比赛邀请裁判消息
-        // 2 只有referee_cost 对符合价钱的裁判发送比赛裁判任务领取消息
-        $inviteeRefereeIds = []; // 发出比赛邀请的裁判名单
-        $sendMatchToRefereeByCost = []; // 发送比赛裁判任务给指定出场费的裁判人群
-        if ( !empty($data['referee1']) && !is_null(json_decode($data['referee1'])) ) {
-            $dataMatchRecord['referee1'] = $data['referee1'];
-            $referee1 = json_decode($data['referee1'], true);
-            if ( $referee1['referee_id']
-                && !in_array($referee1['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee1['referee_id']);
-
-            } elseif ( $referee1['referee_cost']
-                && !in_array($referee1['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee1['referee_cost']);
-            }
+        /**
+         * 根据裁判员数据组合发送比赛邀请、比赛裁判任务领取、撤销邀请的推送消息接收裁判员会员id集合
+         * 1 原数据为空 提交不为空的referee_id：邀请裁判
+         * 2 只有referee_cost： 对符合价钱的裁判发送比赛裁判任务领取消息
+         */
+        $inviteeRefereeIds = [];
+        if ( !empty($dataMatchRecord['referee1_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee1_id']);
         }
-        if ( !empty($data['referee2']) && !is_null(json_decode($data['referee2'])) ) {
-            $dataMatchRecord['referee2'] = $data['referee2'];
-            $referee2 = json_decode($data['referee2'], true);
-            if ( $referee2['referee_id']
-                && !in_array($referee2['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee2['referee_id']);
-
-            } elseif ( $referee2['referee_cost']
-                && !in_array($referee2['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee2['referee_cost']);
-            }
+        if ( !empty($dataMatchRecord['referee2_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee2_id']);
         }
-        if ( !empty($data['referee3']) && !is_null(json_decode($data['referee3'])) ) {
-            $dataMatchRecord['referee3'] = $data['referee3'];
-            $referee3 = json_decode($data['referee3'], true);
-            if ( $referee3['referee_id']
-                && !in_array($referee3['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee3['referee_id']);
-
-            } elseif ( $referee3['referee_cost']
-                && !in_array($referee3['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee3['referee_cost']);
-            }
+        if ( !empty($dataMatchRecord['referee3_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee3_id']);
         }
+        // 发送比赛裁判任务给指定出场费的裁判人群
+        $sendMatchToRefereeByCost = [];
+        if ( !empty($dataMatchRecord['referee1_cost']) && empty($dataMatchRecord['referee1_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee1_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee2_cost']) && empty($dataMatchRecord['referee2_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee2_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee3_cost']) && empty($dataMatchRecord['referee3_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee3_cost']);
+        }
+        // 过滤重复
+        $sendMatchToRefereeByCost = array_unique($sendMatchToRefereeByCost);
         try {
             // 创建match数据
             $res = $matchS->saveMatch($data);
@@ -124,6 +105,7 @@ class Match extends Base
                 $matchRecordId = $resMatchRecord['data'];
 
                 // 执行裁判消息通知业务
+                $sendMatchToRefereeByCost = array_unique($sendMatchToRefereeByCost);
                 $this->setMatchReferee($data, $matchId, $matchRecordId, $inviteeRefereeIds, $sendMatchToRefereeByCost);
 
                 // 发送比赛邀请给对手球队
@@ -350,85 +332,79 @@ class Match extends Base
         } else {
             $data['name'] = $data['record']['home_team'] . '约战';
         }
-        // 裁判数据业务：
-        // 1 json数据中referee_id不为空 即邀请裁判，发送比赛邀请裁判消息
-        // 2 只有referee_cost 对符合价钱的裁判发送比赛裁判任务领取消息
+        /**
+         * 根据裁判员数据组合发送比赛邀请、比赛裁判任务领取、撤销邀请的推送消息接收裁判员会员id集合
+         * 1 原数据为空 提交不为空的referee_id：邀请裁判
+         * 2 只有referee_cost： 对符合价钱的裁判发送比赛裁判任务领取消息
+         * 3 原数据有内容 提交空的referee_id ：撤销邀请该裁判员
+         * 4 提交不为空的referee_id与原数据不相同：撤销邀请原数据的裁判，邀请提交的裁判
+         */
         $inviteeRefereeIds = []; // 发出比赛邀请的裁判名单
         $sendMatchToRefereeByCost = []; // 发送比赛裁判任务给指定出场费的裁判人群
         $withdrawRefereeIds = []; // 撤销了邀请的裁判名单
-        if ( !empty($data['referee1']) && !is_null(json_decode($data['referee1'])) ) {
-            $referee1 = json_decode($data['referee1'], true);
-            // 提交数据发生改变
-            if ( empty($referee1['referee_id']) ) { //提交的裁判内容为空
-                if ($matchRecord['referee1']['referee_id']) {
-                    array_push($withdrawRefereeIds, $matchRecord['referee1']['referee_id']);
-                }
+        if ( !empty($dataMatchRecord['referee1_id']) ) {
+            if ( empty($matchRecord['referee1_id']) ) {
+                // 对referee_id发出邀请
+                array_push($inviteeRefereeIds, $dataMatchRecord['referee1_id']);
             } else {
-                if ( $referee1['referee_id']
-                    && !in_array($referee1['referee_id'], $inviteeRefereeIds)
-                    && $referee1['referee_id'] != $matchRecord['referee1']['referee_id']
-                ) {
-                    array_push($inviteeRefereeIds, $referee1['referee_id']);
-                    array_push($withdrawRefereeIds, $matchRecord['referee1']['referee_id']);
+                // 裁判员更换
+                if (  $matchRecord['referee1_id'] != $dataMatchRecord['referee1_id'] ) {
+                    array_push($inviteeRefereeIds, $dataMatchRecord['referee1_id']);
+                    array_push($withdrawRefereeIds, $matchRecord['referee1_id']);
                 }
             }
-            if ( $referee1['referee_cost']
-                && !in_array($referee1['referee_cost'], $sendMatchToRefereeByCost)
-                && $referee1['referee_cost'] != $matchRecord['referee1']['referee_cost']
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee1['referee_cost']);
+        } else {
+            // 撤销原裁判员的邀请
+            if ( $matchRecord['referee1_id'] ) {
+                array_push($withdrawRefereeIds, $matchRecord['referee1_id']);
             }
-            $dataMatchRecord['referee1'] = $data['referee1'];
         }
-        if ( !empty($data['referee2']) && !is_null(json_decode($data['referee2'])) ) {
-            $referee2 = json_decode($data['referee2'], true);
-            // 提交数据发生改变
-            if ( empty($referee2['referee_id']) ) { //提交的裁判内容为空
-                if ($matchRecord['referee2']['referee_id']) {
-                    array_push($withdrawRefereeIds, $matchRecord['referee2']['referee_id']);
-                }
+        if ( ( !empty($dataMatchRecord['referee1_cost']) && empty($matchRecord['referee1_cost']) ) || ( $dataMatchRecord['referee1_cost'] != $matchRecord['referee1_cost'] ) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee1_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee2_id']) ) {
+            if ( empty($matchRecord['referee2_id']) ) {
+                // 对referee_id发出邀请
+                array_push($inviteeRefereeIds, $dataMatchRecord['referee2_id']);
             } else {
-                if ( $referee2['referee_id']
-                    && !in_array($referee2['referee_id'], $inviteeRefereeIds)
-                    && $referee2['referee_id'] != $matchRecord['referee2']['referee_id']
-                ) {
-                    array_push($inviteeRefereeIds, $referee2['referee_id']);
-                    array_push($withdrawRefereeIds, $matchRecord['referee2']['referee_id']);
+                // 裁判员更换
+                if (  $matchRecord['referee2_id'] != $dataMatchRecord['referee2_id'] ) {
+                    array_push($inviteeRefereeIds, $dataMatchRecord['referee2_id']);
+                    array_push($withdrawRefereeIds, $matchRecord['referee2_id']);
                 }
             }
-            if ( $referee2['referee_cost']
-                && !in_array($referee2['referee_cost'], $sendMatchToRefereeByCost)
-                && $referee2['referee_cost'] != $matchRecord['referee2']['referee_cost']
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee2['referee_cost']);
+        } else {
+            // 撤销原裁判员的邀请
+            if ( $matchRecord['referee2_id'] ) {
+                array_push($withdrawRefereeIds, $matchRecord['referee2_id']);
             }
-            $dataMatchRecord['referee2'] = $data['referee2'];
         }
-        if ( !empty($data['referee3']) && !is_null(json_decode($data['referee3'])) ) {
-            $referee3 = json_decode($data['referee3'], true);
-            // 提交数据发生改变
-            if ( empty($referee2['referee_id']) ) { //提交的裁判内容为空
-                if ($matchRecord['referee3']['referee_id']) {
-                    array_push($withdrawRefereeIds, $matchRecord['referee3']['referee_id']);
-                }
+        if ( ( !empty($dataMatchRecord['referee2_cost']) && empty($matchRecord['referee2_cost']) ) || ( $dataMatchRecord['referee2_cost'] != $matchRecord['referee2_cost'] ) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee2_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee3_id']) ) {
+            if ( empty($matchRecord['referee3_id']) ) {
+                // 对referee_id发出邀请
+                array_push($inviteeRefereeIds, $dataMatchRecord['referee3_id']);
             } else {
-                if ( $referee3['referee_id']
-                    && !in_array($referee3['referee_id'], $inviteeRefereeIds)
-                    && $referee3['referee_id'] != $matchRecord['referee3']['referee_id']
-                ) {
-                    array_push($inviteeRefereeIds, $referee3['referee_id']);
-                    array_push($withdrawRefereeIds, $matchRecord['referee3']['referee_id']);
+                // 裁判员更换
+                if (  $matchRecord['referee3_id'] != $dataMatchRecord['referee3_id'] ) {
+                    array_push($inviteeRefereeIds, $dataMatchRecord['referee3_id']);
+                    array_push($withdrawRefereeIds, $matchRecord['referee3_id']);
                 }
             }
-            if ( $referee3['referee_cost']
-                && !in_array($referee3['referee_cost'], $sendMatchToRefereeByCost)
-                && $referee3['referee_cost'] != $matchRecord['referee3']['referee_cost']
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee3['referee_cost']);
+        } else {
+            // 撤销原裁判员的邀请
+            if ( $matchRecord['referee3_id'] ) {
+                array_push($withdrawRefereeIds, $matchRecord['referee3_id']);
             }
-            $dataMatchRecord['referee3'] = $data['referee3'];
         }
-        // 组合比赛信息数据、比赛战绩数据end
+        if ( ( !empty($dataMatchRecord['referee3_cost']) && empty($matchRecord['referee3_cost']) ) || ( $dataMatchRecord['referee3_cost'] != $matchRecord['referee3_cost'] ) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee3_cost']);
+        }
+        // 过滤重复
+        $sendMatchToRefereeByCost = array_unique($sendMatchToRefereeByCost);
+
         // 比赛队员业务操作
         // 保留显示的成员名单（status=1 报名is_apply=1 、出席is_attend=1）
         if (isset($data['HomeMemberData']) && $data['HomeMemberData'] != "[]") {
@@ -722,53 +698,35 @@ class Match extends Base
             }
         }
 
-        // 裁判数据业务：
-        // 1 json数据中referee_id不为空 即邀请裁判，发送比赛邀请裁判消息
-        // 2 只有referee_cost 对符合价钱的裁判发送比赛裁判任务领取消息
-        $inviteeRefereeIds = []; // 发出比赛邀请的裁判名单
-        $sendMatchToRefereeByCost = []; // 发送比赛裁判任务给指定出场费的裁判人群
-        if ( !empty($data['referee1']) && !is_null(json_decode($data['referee1'])) ) {
-            $dataMatchRecord['referee1'] = $data['referee1'];
-            $referee1 = json_decode($data['referee1'], true);
-            if ( $referee1['referee_id']
-                && !in_array($referee1['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee1['referee_id']);
-
-            } elseif ( $referee1['referee_cost']
-                && !in_array($referee1['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee1['referee_cost']);
-            }
+        /**
+         * 根据裁判员数据组合发送比赛邀请、比赛裁判任务领取、撤销邀请的推送消息接收裁判员会员id集合
+         * 1 原数据为空 提交不为空的referee_id：邀请裁判
+         * 2 只有referee_cost： 对符合价钱的裁判发送比赛裁判任务领取消息
+         */
+        $inviteeRefereeIds = [];
+        if ( !empty($dataMatchRecord['referee1_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee1_id']);
         }
-        if ( !empty($data['referee2']) && !is_null(json_decode($data['referee2'])) ) {
-            $dataMatchRecord['referee2'] = $data['referee2'];
-            $referee2 = json_decode($data['referee2'], true);
-            if ( $referee2['referee_id']
-                && !in_array($referee2['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee2['referee_id']);
-
-            } elseif ( $referee2['referee_cost']
-                && !in_array($referee2['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee2['referee_cost']);
-            }
+        if ( !empty($dataMatchRecord['referee2_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee2_id']);
         }
-        if ( !empty($data['referee3']) && !is_null(json_decode($data['referee3'])) ) {
-            $dataMatchRecord['referee3'] = $data['referee3'];
-            $referee3 = json_decode($data['referee3'], true);
-            if ( $referee3['referee_id']
-                && !in_array($referee3['referee_id'], $inviteeRefereeIds)
-            ) {
-                array_push($inviteeRefereeIds, $referee3['referee_id']);
-
-            } elseif ( $referee3['referee_cost']
-                && !in_array($referee3['referee_cost'], $sendMatchToRefereeByCost)
-            ) {
-                array_push($sendMatchToRefereeByCost, $referee3['referee_cost']);
-            }
+        if ( !empty($dataMatchRecord['referee3_id']) ) {
+            array_push($inviteeRefereeIds, $dataMatchRecord['referee3_id']);
         }
+        // 发送比赛裁判任务给指定出场费的裁判人群
+        $sendMatchToRefereeByCost = [];
+        if ( !empty($dataMatchRecord['referee1_cost']) && empty($dataMatchRecord['referee1_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee1_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee2_cost']) && empty($dataMatchRecord['referee2_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee2_cost']);
+        }
+        if ( !empty($dataMatchRecord['referee3_cost']) && empty($dataMatchRecord['referee3_id']) ) {
+            array_push($sendMatchToRefereeByCost, $dataMatchRecord['referee3_cost']);
+        }
+        // 过滤重复
+        $sendMatchToRefereeByCost = array_unique($sendMatchToRefereeByCost);
+
         // 如果有提交客队信息，获取客队信息
         if ( isset($dataMatchRecord['away_team_id']) ) {
             // 客队不能与主队相同
@@ -780,7 +738,6 @@ class Match extends Base
         } else {
             $data['name'] = $homeTeam['name'].'约战';
         }
-
         // 保存数据
         $matchS = new MatchService();
         $messageS = new MessageService();
