@@ -41,7 +41,7 @@
 
 <body class="whitebg">
 
-    <header id="header" class="mui-bar mui-bar-transparent">
+    <header class="mui-bar mui-bar-transparent">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     </header>
 
@@ -87,7 +87,6 @@
                 </a>
             </nav>
 
-            <!-- <div id="tabbar03" class="mui-control-content"> -->
             <div class="camp-lesson-list">
                 <div id="segmentedControl" class="mui-segmented-control mb">
                     <a class="mui-control-item mui-active" href="#item1">小组赛|循环赛</a>
@@ -107,7 +106,6 @@
                 </div>
 
             </div>
-            <!-- </div> -->
 
             <!--底部操作-->
             <ul class="mui-table-view operation mt">
@@ -138,42 +136,47 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-        $(function () {
 
-            var team_id = "{teamInfo.id}"
-            // 关注球队
-            $(".follow").on("tap", '', function () {
-                var team_id = "{teamInfo.id}";
-                mui.ajax("{:url('api/follow/focus')}", {
-                    data: {
-                        type: 4,
-                        team_id: team_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            followStatus();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+        followStatus(); //判断当前的关注状态
+        rankList(); //淘汰赛列表
+        groupList();//小组循环赛列表
+
+        // 关注联赛
+        $(".follow").on("tap", '', function () {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
                     }
-                });
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
             });
+        });
 
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
-                    type: 4,
-                    team_id: team_id
+                    type: 5,
+                    team_id: league_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -194,11 +197,7 @@
                     console.log(type);
                 }
             });
-
-            rankList(); //淘汰赛
-            groupList();//小组循环赛列表
-
-        });
+        }
 
         function groupList() {
             //搜索关键字不能完全为空，否则查询为空
@@ -218,9 +217,8 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            if (data.data[i].stage_name == '小组循环赛') {
-                                console.log(data.data[i].stage_name)
-                                newli += `
+                            // if (data.data[i].stage_name == '小组循环赛') {
+                            newli += `
                                     <li class="mui-table-view-cell bggray2">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].group_name}排名</li>
@@ -229,8 +227,8 @@
                                             <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
                                         </ul>
                                     </li>`
-                                for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                                    newli += `<li class="mui-table-view-cell">
+                            for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell">
                                             <ul class="mui-table-view mui-row">
                                                 <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32 siteNum">${j + 1}</li>
                                                 <li class="mui-col-sm-4 mui-col-xs-4 leagueGroup">
@@ -242,8 +240,8 @@
                                                 <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].teams[j].score}</li>
                                             </ul>
                                         </li>`
-                                }
                             }
+                            // }
                         }
                         $(".groupsList").empty().append(newli)
                     } else {
@@ -330,7 +328,6 @@
                 }
             });
         }
-
 
     </script>
 

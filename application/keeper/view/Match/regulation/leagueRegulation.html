@@ -191,45 +191,42 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
+        followStatus(); //判断当前的关注状态
+        getbattle(); //分组列表
+
         // 联赛简介默认的提示
         if ($(".regulation").html() == '') {
-                $(".regulation").append("还没有联赛章程哦")
-            }
+            $(".regulation").append("还没有联赛章程哦")
+        }
 
-        $(function () {
-            followStatus();
-            getbattle();
+        // 关注联赛
+        $(".follow").on("tap", '', function () {
             var league_id = "{$league_id}";
-            // 关注联赛
-            $(".follow").on("tap", '', function () {
-                var league_id = "{$league_id}";
-                mui.ajax("{:url('api/follow/focus')}", {
-                    data: {
-                        type: 5,
-                        league_id: league_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            followStatus();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
                     }
-                });
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
             });
-
-
         });
 
         // 判断当前的关注状态
