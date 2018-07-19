@@ -82,120 +82,7 @@
                     </select>
                 </span>
             </div>
-
-            <div class="page-header border-b">
-                <span class="course">比赛日
-                    <font class="colorred">1</font> | 4月12日 星期五</span>
-                <span class="more">小组循环赛</span>
-            </div>
-            <table class="leagueTable">
-                <tbody>
-                    <tr>
-                        <td class="tdpPadding">
-                            <a href="{:url('match/recordinfo',['league_id'=>$league_id,'id'=>24])}">
-                                <p>D组</p>
-                                <p class="siteNum">1</p>
-                                <p>1号场</p>
-                            </a>
-                        </td>
-                        <td class="borderC">
-                            <p class="leagueGroup pGroup border-b">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                            <p></p>
-                            <p class="leagueGroup pGroup">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                        </td>
-                        <td>
-                            <p class="tdpPadding border-b colorred">88</p>
-                            <p></p>
-                            <p class="tdpPadding colorred">102</p>
-                        </td>
-                    </tr>
-                    <tr class="pline"></tr>
-                    <tr>
-                        <td class="tdpPadding">
-                            <a href="{:url('match/leaguescheduleinfo',['league_id'=>$league_id,'id'=>10])}">
-                                <p>D组</p>
-                                <p class="siteNum">2</p>
-                                <p>2号场</p>
-                            </a>
-                        </td>
-                        <td class="borderC">
-                            <p class="leagueGroup pGroup border-b">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                            <p></p>
-                            <p class="leagueGroup pGroup">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                        </td>
-                        <td>
-                            <p>16:30</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="page-header border-b">
-                <span class="course">比赛日
-                    <font class="colorred">1</font> | 4月12日 星期五</span>
-                <span class="more">小组循环赛</span>
-            </div>
-            <table class="leagueTable">
-                <tbody>
-                    <tr>
-                        <td class="tdpPadding">
-                            <p>D组</p>
-                            <p class="siteNum">1</p>
-                            <p>1号场</p>
-                        </td>
-                        <td class="borderC">
-                            <p class="leagueGroup pGroup border-b">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                            <p></p>
-                            <p class="leagueGroup pGroup">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                        </td>
-                        <td>
-                            <p class="tdpPadding border-b colorred">88</p>
-                            <p></p>
-                            <p class="tdpPadding colorred">102</p>
-                        </td>
-                    </tr>
-                    <tr class="pline"></tr>
-                    <tr>
-                        <td class="tdpPadding">
-                            <p>D组</p>
-                            <p class="siteNum">2</p>
-                            <p>2号场</p>
-                        </td>
-                        <td class="borderC">
-                            <p class="leagueGroup pGroup border-b">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                            <p></p>
-                            <p class="leagueGroup pGroup">
-                                <img src="/uploads/images/banner/1.jpg" class="circleIcon" />
-                                <span class="spanText">xxxx篮球队</span>
-                            </p>
-                        </td>
-                        <td>
-                            <p>16:30</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="scheduleList"></div>
 
             <!-- </div> -->
 
@@ -284,8 +171,73 @@
                     console.log(type);
                 }
             });
+            rankList()
         });
 
+
+        function rankList() {
+            var url = "{:url('api/league/getmatchschedulelistbytime','','',true)}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += `  
+                                <div class="page-header border-b">
+                                    <span class="course">比赛日
+                                        <font class="colorred">${i + 1}</font> | 4月12日 星期五</span>
+                                    <span class="more">${data.data[i].stage.name}</span>
+                                </div>
+                                <table class="leagueTable">
+                                    <tbody>`
+                            for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
+                                var scheduleArr = data.data[i].stage.schedules[j]
+                                newli += `
+                                    <tr>
+                                        <td class="tdpPadding">
+                                            <p>D组</p>
+                                            <p class="siteNum">${j + 1}</p>
+                                            <p>${j + 1}号场</p>
+                                        </td>
+                                        <td class="borderC">
+                                            <p class="leagueGroup pGroup border-b">
+                                                <img src="${scheduleArr.home_team_logo}" class="circleIcon" />
+                                                <span class="spanText">${scheduleArr.home_team}</span>
+                                            </p>
+                                            <p></p>
+                                            <p class="leagueGroup pGroup">
+                                                <img src="${scheduleArr.away_team_logo}" class="circleIcon" />
+                                                <span class="spanText">${scheduleArr.away_team}</span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p class="tdpPadding border-b colorred">88</p>
+                                            <p></p>
+                                            <p class="tdpPadding colorred">102</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="pline"></tr>`
+                            }
+                            newli += `</tbody></table>`
+                        }
+                    }
+                    $(".scheduleList").empty().append(newli);
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
 
 
