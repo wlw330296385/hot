@@ -47,6 +47,27 @@
                 margin-top: 386px !important;
             }
         }
+        .mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell{
+            padding-left: 37px;
+        }
+        .pool .avatar{
+            float: right;
+            margin-left: 8px;
+            margin-top: 8px;
+        }
+        .pool a{
+            padding-right: 35px !important;
+        }
+        .pool .avatar text{
+            display: block;
+            font-size: 11px;
+        }
+        .pool .avatar img {
+            width: 45px !important;
+            height: 45px !important;
+            margin-top: 4px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -108,6 +129,15 @@
         $(function () {
 
 
+            // 是否发布通知
+            $(".pool").on("tap", 'a', function () {
+                var listLi = $(this).parent();
+                if (listLi.hasClass("mui-active")==false) {
+                    $(this).find(".avatar").hide();
+                } else {
+                     $(this).find(".avatar").show();
+                }
+            });
 
             //初始化全局变量
             var count = 1;
@@ -177,7 +207,7 @@
                         var SumMembers = 0;
                         if (msg.code == 200) {
                             let data = msg.data;
-                            $(".totalData").text("共" + data.data.length + "期");
+                            $(".totalData").text("共" + data.total + "期");
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 SumBonus += parseInt(data.data[i].bonus)
                                 SumMembers += parseInt(data.data[i].members)
@@ -188,59 +218,84 @@
                                 let f_l = winner_list[0];//1
                                 let s_l = winner_list[1];//2
                                 let t_l = winner_list[2];//3
-                                let f_l_s = '第一名:';
-                                let s_l_s = '第二名:';
-                                let t_l_s = '第三名:';
+                                let f_l_s = '';
+                                let s_l_s = '';
+                                let t_l_s = '';
+                                let sLi = '';
+                                let tLi = '';
+                                //第一名
                                 for (var j = 0; j < f_l.length; j++) {
-                                    f_l_s += `${f_l[j].member}(奖金:${f_l[j].winner_bonus})<br />`;
+                                    //f_l_s += `${f_l[j].member}，`;
+                                    f_l_s += `<div class="avatar"><img src="${f_l[j].avatar}" alt=""><text>${f_l[j].member}</text></div>`
+                                    
+                                }
+                                //判断是否设置有第二名
+                                if(data.data[i].second_scale>0){
+                                    for (var j = 0; j < s_l.length; j++) {
+                                        s_l_s += `<div class="avatar"><img src="${s_l[j].avatar}" alt=""><text>${s_l[j].member}</text></div>`
+                                    }
+                                    sLi = `<li class="mui-table-view-cell listli">
+                                                        <label>
+                                                            <span class="icon iconfont icon-th-data-a colororange"></span>第二名
+                                                        </label>`
+                                    if(s_l!=""){
+                                        sLi+=`<span class="wd73">打卡次数：<text class="colororange">${s_l[0].punchs}</text>，获得奖金：<text class="colororange">${s_l[0].winner_bonus}</text><br />${s_l_s}</span>`
+                                    }else{
+                                        sLi+=` <span class="wd73">无</span>`
+                                    }
+                                    sLi+=`</li>`
+                                }
+                                //判断是否设置有第三名
+                                if(data.data[i].third_scale>0){
+                                    for (var j = 0; j < t_l.length; j++) {
+                                        t_l_s += `<div class="avatar"><img src="${t_l[j].avatar}" alt=""><text>${t_l[j].member}</text></div>`
+                                    }
+                                    tLi = `<li class="mui-table-view-cell listli">
+                                                        <label>
+                                                            <span class="icon iconfont icon-th-data colororange"></span>第三名
+                                                        </label>`
+                                    if(t_l!=""){
+                                        tLi+=` <span class="wd73">打卡次数：<text class="colororange">${t_l[0].punchs}</text>，获得奖金：<text class="colororange">${t_l[0].winner_bonus}</text><br />${t_l_s}</span>`
+                                    }else{
+                                        tLi+=` <span class="wd73">无</span>`
+                                    }
+                                    tLi+=`</li>`
                                 }
 
-                                for (var j = 0; j < s_l.length; j++) {
-                                    s_l_s += `${s_l[j].member}(奖金:${s_l[j].winner_bonus})<br />`;
-                                }
+                                // let PoolNumber = (data.total - data.current_page*data.per_page) + i +1;
+                                let PoolNumber = data.total - (data.current_page-1)*data.per_page - i;;
 
-                                for (var j = 0; j < t_l.length; j++) {
-                                    t_l_s += `${t_l[j].member}(奖金:${t_l[j].winner_bonus})<br />`;
-                                }
+
+
                                 newli += `<li class="mui-table-view-cell mui-collapse listli">
                                             <a class="mui-navigate-right"  href="#">
-                                                <p class="mui-ellipsis">${f_l_s}${s_l_s}${t_l_s}</p><p>${data.data[i].start}期</p>
+                                                <label class="mui-ellipsis">第 ${PoolNumber} 期：${data.data[i].pool}</label>
+                                                <div class="mui-pull-right">${f_l_s}</div>
                                             </a>
                                             <div class="mui-collapse-content">
                                                 <ul class="mui-table-view mb list" style="margin-top:-8px;margin-left:-40px;">
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主
+                                                            <span class="icon iconfont icon-p-game colororange"></span>擂主
                                                         </label>
-                                                        <span class="wd73">${f_l_s}${s_l_s}${t_l_s}</span>
-                                                    </li>
-                                                    <li class="mui-table-view-cell listli">
+                                                        <span class="wd73">打卡次数：<text class="colororange">${f_l[0].punchs}</text>，获得奖金：<text class="colororange">${f_l[0].winner_bonus}</text><br />${f_l_s}</span>
+                                                    </li>`
+                                                    +sLi+tLi+
+                                                    `<li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主打卡次数
-                                                        </label>
-                                                        <span class="wd60">打卡次数</span>
-                                                    </li>
-                                                    <li class="mui-table-view-cell listli">
-                                                        <label>
-                                                            <span class="icon iconfont icon-activity-Contact colororange"></span>擂主所得金额
-                                                        </label>
-                                                        <span class="wd60">擂主奖金</span>
-                                                    </li>
-                                                    <li class="mui-table-view-cell listli">
-                                                        <label>
-                                                            <span class="icon iconfont icon-activity-Quantity colororange"></span>打卡人数
+                                                            <span class="icon iconfont icon-activity-Quantity colororange"></span>总打卡
                                                         </label>
                                                         <span class="wd60">${data.data[i].members}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>奖金池金额
+                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>总热币
                                                         </label>
                                                         <span class="wd60">${data.data[i].bonus}</span>
                                                     </li>
                                                     <li class="mui-table-view-cell listli">
                                                         <label>
-                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>每次打卡金额
+                                                            <span class="icon iconfont icon-activity-opponent colororange"></span>单卡热币
                                                                 </label>
                                                         <span class="wd60">${data.data[i].stake}</span>
                                                     </li>
