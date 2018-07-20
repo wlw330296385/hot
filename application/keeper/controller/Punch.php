@@ -87,7 +87,6 @@ class Punch extends Base{
 
     // 运动计划
 	public function sportPlanScheduleList() {
-
         return view('Punch/sportPlanScheduleList');
     }
 
@@ -99,7 +98,13 @@ class Punch extends Base{
 
     // 运动计划详情
 	public function sportPlanInfo() {
+        $sport_plan_id = input('param.sport_plan_id');
+        $SportPlan = new \app\model\SportPlan;
+        $sportPlanInfo = $SportPlan->where(['id'=>$sport_plan_id])->find();
         
+
+        
+        $this->assign('sportPlanInfo',$sportPlanInfo);
         return view('Punch/sportPlanInfo');
     }
 
