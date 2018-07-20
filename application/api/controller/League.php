@@ -3101,7 +3101,7 @@ class League extends Base
         }
     }
 
-    // 获取外部展示赛程列表
+    // 获取赛程列表(外部展示)
     public function getshowmatchschedulelist() {
         try {
             $map = input('param.');
@@ -3127,8 +3127,13 @@ class League extends Base
                         break;
                     }
                     case 2: {
-                        // 未开始的赛程
-
+                        // 未完成的赛程
+                        $map['status'] = 1;
+                        break;
+                    }
+                    case 3: {
+                        // 已完成有比分信息的赛程
+                        $map['status'] = 2;
                     }
                     default:
                         break;
@@ -3148,9 +3153,11 @@ class League extends Base
                 if ($recordInfo) {
 //                    $_result[$key]['match_time'] = ($recordInfo['match_time']) ? date('Y-m-d H:i', $recordInfo['match_time']) : '';
 //                    $_result[$key]['match_timestamp'] = $recordInfo['match_time'];
+                    $_result[$key]['match_record_id'] = $recordInfo['id'];
                     $_result[$key]['home_team_score'] = $recordInfo['home_score'];
                     $_result[$key]['away_team_score'] = $recordInfo['away_score'];
                 } else {
+                    $_result[$key]['match_record_id'] = 0;
                     $_result[$key]['home_team_score'] = 0;
                     $_result[$key]['away_team_score'] = 0;
                 }
@@ -4100,6 +4107,257 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         } else {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result->toArray()]);
+        }
+    }
+
+    // 联赛模块评论列表
+    public function leaguecommentlist()
+    {
+        try {
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            if (!$comment_type ) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合传参作查询条件
+            $map = input('post.');
+            // 页码参数
+            $page = input('page', 1);
+            unset($map['page']);
+            $leagueS = new LeagueService();
+            // 返回结果
+            $result = $leagueS->getCommentList($map, $page);
+            if ($result) {
+                // 评论列表数据删除按钮标识：
+                foreach ($result as $k => $val) {
+                    $result[$k]['can_delete'] = 0;
+                    // 评论发布者可删自己的评论记录，
+                    if ( $this->memberInfo['id'] == $val['member_id'] ) {
+                        $result[$k]['can_delete'] = 1;
+                    }
+                }
+                // 返回点赞数
+                $thumbupsCount = $leagueS->getCommentThumbsCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupsCount];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 联赛模块评论列表（有页码）
+    public function leaguecommentlistpage()
+    {
+        try {
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            if (!$comment_type) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            // 组合传参作查询条件
+            $page = input('page', 1);
+            $map = input('post.');
+            $leagueS = new LeagueService();
+            // 返回结果
+            $result = $leagueS->getCommentPaginator($map);
+            if ($result) {
+                // 评论列表数据删除按钮标识：
+                foreach ($result['data'] as $k => $val) {
+                    $result['data'][$k]['can_delete'] = 0;
+                    // 评论发布者可删自己的评论记录，
+                    if ( $this->memberInfo['id'] == $val['member_id'] ) {
+                        $result['data'][$k]['can_delete'] = 1;
+                    }
+                }
+                // 返回点赞数
+                $thumbupsCount = $leagueS->getCommentThumbsCount($map);
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result, 'thumbsup_count' => $thumbupsCount];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 发布联赛模块评论
+    public function addleaguecomment()
+    {
+        try {
+            // 检测会员登录
+            if ( $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            // 将接收参数作提交数据
+            $data = input('post.');
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            if (!$comment_type) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $leagueS = new LeagueService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'member_id' => $this->memberInfo['id'],
+            ];
+            if ( input('?post.match_id') ) {
+                $map['match_id'] = $data['match_id'];
+            }
+            if ( input('?post.match_record_id') ) {
+                $map['match_record_id'] = $data['match_record_id'];
+            }
+            $hasCommented = $leagueS->getCommentInfo($map);
+            if ($hasCommented) {
+                // 只能发表一次文字评论
+                if (!is_null($hasCommented['comment'])) {
+                    return json(['code' => 100, 'msg' => '只能发表一次评论']);
+                } else {
+                    $data['id'] = $hasCommented['id'];
+                }
+            }
+            // 防止有传入thumbup参数 过滤掉
+            if (isset($data['thumbup'])) {
+                unset($data['thumbup']);
+            }
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_avatar'] = $this->memberInfo['avatar'];
+            // 发表文字评论时间
+            $data['comment_time'] = time();
+            $res = $leagueS->saveComment($data);
+            return json($res);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 删除联赛模块评论
+    public function delleaguecomment() {
+        $id  = input('post.id');
+        if (!$id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询评论数据
+        $leagueS = new LeagueService();
+        $comment = $leagueS->getCommentInfo(['id' => $id]);
+        if (!$comment) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 可删除数据标识
+        $canDel = 0;
+        // 评论发布者可删自己的评论记录，
+        if ($comment['member_id'] == $this->memberInfo['id']) {
+            $canDel = 1;
+        }
+        // 无权限删除
+        if (!$canDel) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        try {
+            $res = $leagueS->delComment($comment['id']);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        if ($res) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+    // 联赛模块点赞
+    public function dianzan()
+    {
+        try {
+            // 检测会员登录
+            if ( $this->memberInfo['id'] === 0) {
+                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+            }
+            // 将接收参数作提交数据
+            $data = input('post.');
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            if (!$comment_type) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $leagueS = new LeagueService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'member_id' => $this->memberInfo['id'],
+                'match_id' => $data['match_id'],
+                'match_record_id' => $data['match_record_id']
+            ];
+            $hasCommented = $leagueS->getCommentInfo($map);
+            // 有评论记录就更新记录的thumbsup字段
+            if ($hasCommented) {
+                $data['id'] = $hasCommented['id'];
+            }
+            // 防止有传入comment参数 过滤掉
+            if (isset($data['comment'])) {
+                unset($data['comment']);
+            }
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['member_avatar'] = $this->memberInfo['avatar'];
+            $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1)) ? 0 : 1;
+            $result = $leagueS->saveComment($data);
+            if ($result['code'] == 200) {
+                // 返回最新的点赞数统计
+                $thumbsupCount = $leagueS->getCommentThumbsCount([
+                    'comment_type' => $comment_type,
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $data['match_record_id']
+                ]);
+                $result['thumbsup_count'] = $thumbsupCount;
+            }
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 获取会员在联赛模块当前点赞信息
+    public function listhumbup()
+    {
+        try {
+            // 将接收参数作提交数据
+            $data = input('post.');
+            // 判断必传参数
+            // 评论类型
+            $comment_type = input('post.comment_type');
+            if (!$comment_type) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+            }
+            $leagueS = new LeagueService();
+            // 查询会员有无评论记录
+            $map = [
+                'comment_type' => $comment_type,
+                'member_id' => $this->memberInfo['id'],
+                'match_id' => $data['match_id'],
+                'match_record_id' => $data['match_record_id']
+            ];
+            $commentInfo = $leagueS->getCommentInfo($map);
+            // 点赞字段值
+            $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
+            // 点赞数统计
+            $thumbupCount = $leagueS->getCommentThumbsCount([
+                'comment_type' => $comment_type,
+                'match_id' => $data['match_id'],
+                'match_record_id' => $data['match_record_id']
+            ]);
+            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
 }
