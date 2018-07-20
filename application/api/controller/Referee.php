@@ -552,9 +552,9 @@ class Referee extends Base{
         $matchRecordInfo = $matchService->getMatchRecord(['id' => $post['match_record_id']]);
         $matchInfo['record'] = $matchRecordInfo;
         // 判断比赛是否有裁判信息，没有当做不需要裁判
-        if ( empty($matchRecordInfo['referee1']['referee_id']) && empty($matchRecordInfo['referee1']['referee_cost'])
-            && empty($matchRecordInfo['referee2']['referee_id']) && empty($matchRecordInfo['referee2']['referee_cost'])
-            && empty($matchRecordInfo['referee3']['referee_id']) && empty($matchRecordInfo['referee3']['referee_cost'])
+        if ( empty($matchRecordInfo['referee1_id']) && empty($matchRecordInfo['referee1_cost'])
+            && empty($matchRecordInfo['referee2_id']) && empty($matchRecordInfo['referee2_cost'])
+            && empty($matchRecordInfo['referee3_id']) && empty($matchRecordInfo['referee3_cost'])
         ) {
             return json(['code' => 100, 'msg' => '此比赛不需要裁判，请选择其他比赛']);
         }
@@ -577,9 +577,9 @@ class Referee extends Base{
         }
 
         // 检查裁判员有无在比赛战绩数据裁判名单中，有数据就不需操作
-        if ( $matchRecordInfo['referee1']['referee_id'] == $refereeInfo['id']
-            || $matchRecordInfo['referee2']['referee_id'] == $refereeInfo['id']
-            || $matchRecordInfo['referee3']['referee_id'] == $refereeInfo['id']
+        if ( $matchRecordInfo['referee1_id'] == $refereeInfo['id']
+            || $matchRecordInfo['referee2_id'] == $refereeInfo['id']
+            || $matchRecordInfo['referee3_id'] == $refereeInfo['id']
         ) {
             return json(['code' => 100, 'msg' => '您已是此比赛申请或者邀请的裁判员了']);
         }
@@ -634,24 +634,18 @@ class Referee extends Base{
 
             // 匹配比赛裁判价格与裁判出场费符合的数据字段位置
             $updateMatchRecordData = [];
-            if ( empty( $matchRecordInfo['referee1']['referee_id'] ) ) {
-                $updateMatchRecordData['referee1'] = json_encode([
-                    'referee' => $refereeInfo['referee'],
-                    'referee_id' => $refereeInfo['id'],
-                    'referee_cost' => $refereeInfo['appearance_fee']
-                ], JSON_UNESCAPED_UNICODE);
-            } elseif ( empty( $matchRecordInfo['referee2']['referee_id'] ) ) {
-                $updateMatchRecordData['referee2'] = json_encode([
-                    'referee' => $refereeInfo['referee'],
-                    'referee_id' => $refereeInfo['id'],
-                    'referee_cost' => $refereeInfo['appearance_fee']
-                ], JSON_UNESCAPED_UNICODE);
-            } elseif ( empty( $matchRecordInfo['referee3']['referee_id'] ) ) {
-                $updateMatchRecordData['referee3'] =  json_encode([
-                    'referee' => $refereeInfo['referee'],
-                    'referee_id' => $refereeInfo['id'],
-                    'referee_cost' => $refereeInfo['appearance_fee']
-                ], JSON_UNESCAPED_UNICODE);
+            if ( empty( $matchRecordInfo['referee1_id'] ) ) {
+                $updateMatchRecordData['referee1_id'] = $refereeInfo['id'];
+                $updateMatchRecordData['referee1'] = $refereeInfo['referee'];
+                $updateMatchRecordData['referee1_cost'] = $refereeInfo['appearance_fee'];
+            } elseif ( empty( $matchRecordInfo['referee2_id'] ) ) {
+                $updateMatchRecordData['referee2_id'] = $refereeInfo['id'];
+                $updateMatchRecordData['referee2'] = $refereeInfo['referee'];
+                $updateMatchRecordData['referee2_cost'] = $refereeInfo['appearance_fee'];
+            } elseif ( empty( $matchRecordInfo['referee3_id'] ) ) {
+                $updateMatchRecordData['referee3_id'] = $refereeInfo['id'];
+                $updateMatchRecordData['referee3'] = $refereeInfo['referee'];
+                $updateMatchRecordData['referee3_cost'] = $refereeInfo['appearance_fee'];
             }
             if (!empty( $updateMatchRecordData )) {
                 $updateMatchRecordData['id'] = $matchInfo['record']['id'];

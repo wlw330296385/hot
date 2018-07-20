@@ -888,19 +888,25 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                              cha = parseInt(data.data[i].times) - parseInt(data.data[i].punchs);
                              pTips = '';
-                            if(data.data[i].pool == null){
+                            if(data.data[i].p_status == null){
                                 pTips = '未设规则';
-                            }else if(cha <= 0){
-                                pTips = '已打满卡';
+                            }else if(data.data[i].p_status == -1){
+                                pTips = '已结束';
+                            }else if(data.data[i].p_status == 1){
+                                pTips = '未开始';
                             }else{
-                                pTips = data.data[i].stake;
+                                if(cha <= 0){
+                                    pTips = '已打满卡';
+                                }else{
+                                    pTips = data.data[i].stake;
+                                }
                             }
                             newli += `
                             <div class="mui-input-row mui-checkbox mui-left">
                                 <label class="lineHeight20 groupName" style="width:70%">${data.data[i].group}</label>
                                 <span style="width:30%" class="stakeNum">${pTips}</span>`
                             // 此处原本是判断有正在进行的奖金池和会员所剩打卡次数不小于社群所设的打卡次数则显示/否则加disabled
-                             if (data.data[i].pool == null || cha <= 0) {
+                             if (data.data[i].p_status != 2 || cha <= 0) {
 
                                  newli += `<input name="checkbox1" value="" type="checkbox" data-group_id="${data.data[i].group_id}" data-pool="${data.data[i].pool}" data-pool_id="${data.data[i].p_id}"
                                      data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-stake="${data.data[i].stake}" disabled="true"> `

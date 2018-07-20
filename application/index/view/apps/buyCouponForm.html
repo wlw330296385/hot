@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <META HTTP-EQUIV="Pragma"CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control"CONTENT="no-cache">
+<META HTTP-EQUIV="Expires"CONTENT="0">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
@@ -180,11 +183,11 @@
             <input type="text" class="data telephone" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
         </div>
 
-        <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
+       <!--  <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
             <label class="colororange">短信验证码</label>
             <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
             <input id="code" type="text" class="input reg_code reg_validate" placeholder="输入验证码" style="width: 30%;">
-        </div>
+        </div> -->
     </form>
 
 
@@ -256,12 +259,12 @@
 
     //定义全局变量
     var flagPhone = false;
-    var flagSMS = false;
+   // var flagSMS = false;
     var flagMember = false;
     var flagCreate = true;
     var mID = "{$memberInfo.id}";
     var getCurrTel = "";
-
+    var buyCouponForm = {};
     var showDetail = wooApi.GetQueryString('showDetail');
     var showSuccess = wooApi.GetQueryString('showSuccess');
 
@@ -271,9 +274,9 @@
     //获取cookie参数值
     let getBCF = wooApi.getCookie('buyCouponForm');
     if(getBCF!=null&&getBCF!=''){
-        var buyCouponForm = JSON.parse(getBCF);
+         buyCouponForm = JSON.parse(getBCF);
     }else{
-        var buyCouponForm = {};
+         buyCouponForm = {};
     }
 
 
@@ -375,25 +378,25 @@
             $('.price-frame strong').text($(this).val());
         })
 
-        //验证短信验证码
-        $('#code').on("blur", function () {
-            var code = document.getElementById('code').value;
-            var codeReg = /^\d{6,6}$/;
-            if (!codeReg.test(code)) {
-                mui.toast('请填写正确的验证码');
-                flagSMS = false;
-            } else {
-                var telephone = $(".telephone").val();
-                var result = smsCode.validateSmsCodeApi(telephone, code, "{:url('api/sms/validateSmsCodeApi','','',true)}");
-                if (result.code == 200) {
-                    flagSMS = true;
-                    mui.toast(result.msg);
-                } else {
-                    flagSMS = false;
-                    mui.toast(result.msg);
-                }
-            }
-        });
+        // //验证短信验证码
+        // $('#code').on("blur", function () {
+        //     var code = document.getElementById('code').value;
+        //     var codeReg = /^\d{6,6}$/;
+        //     if (!codeReg.test(code)) {
+        //         mui.toast('请填写正确的验证码');
+        //         flagSMS = false;
+        //     } else {
+        //         var telephone = $(".telephone").val();
+        //         var result = smsCode.validateSmsCodeApi(telephone, code, "{:url('api/sms/validateSmsCodeApi','','',true)}");
+        //         if (result.code == 200) {
+        //             flagSMS = true;
+        //             mui.toast(result.msg);
+        //         } else {
+        //             flagSMS = false;
+        //             mui.toast(result.msg);
+        //         }
+        //     }
+        // });
 
         //获取电话焦点时记录当前手机号，用于离开焦点后判断是否有修改
         $('.telephone').on("focus", function () {
@@ -470,7 +473,7 @@
         });
 
 
-        $("#submitAction").on("click", "", function () {
+        $("ul.operation").on("click", "#submitAction", function () {
 
 
             if($('.selectDom.bggreen').length==0){
@@ -506,10 +509,10 @@
                     mui.toast("提交失败，手机号填写有误，请重新填写");
                     return false;
                 };
-                if (flagSMS == false) {
-                    mui.toast("提交失败，验证码填写有误");
-                    return false;
-                };
+                // if (flagSMS == false) {
+                //     mui.toast("提交失败，验证码填写有误");
+                //     return false;
+                // };
                 //如已经通过以上验证则创建会员账号
                 mui.ajax("{:url('api/login/registerApi')}", {
                     data: {
@@ -572,22 +575,28 @@
             //1.提交未付款
 
             var res =  createBill();
+            //alert(res);
             if(res.code == 200){
                 //合计支付金额////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 去除下面/100
               var sum = parseInt(total)*parseInt(domPrice)
                //var sum = 0.01
-
+                buyCouponForm = {};
                     //2.去支付页面
+                    
                 //设定cookie参数值
                 buyCouponForm.total = total;
                 buyCouponForm.domName = domName;
                 buyCouponForm.billOrder = "{$billOrder}";
                 wooApi.setCookie('buyCouponForm',JSON.stringify(buyCouponForm),18000);
+             
+                console.log(buyCouponForm)
                 // 这里是跳转并且支付后返回
-                top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&type=-1&title='+total+'张'+domName+'&backUrl={:request()->url(true)}';
+               top.location = "{:url('/index/wechatpay/wechatpay')}"+'?total='+sum+'&billOrder={$billOrder}&type=-1&title='+total+'张'+domName+'&backUrl={:request()->url(true)}';
 
             }else{
-                mui.alert('订单创建失败,请刷新页面或者重新登录','提示','确定',function(){
+                wooApi.setCookie('buyCouponForm',null,300);
+                buyCouponForm = {};
+                mui.alert('网络堵塞，'+res.msg+'，请点确认刷新页面重新选购','提示','确定',function(){
                     location.reload();
                 })
             }
@@ -683,7 +692,7 @@
         var item_coupon_ids = JSON.stringify(coupon_ids);
         /////////////////////////////////////////////////
 
-        var objBillInfo = {};//订单参数
+        var objBillInfo = {};
         objBillInfo.bill_order = "{$billOrder}";
         objBillInfo.goods_des = '{$eventInfo.event}'+domName;
         objBillInfo.total = total;
@@ -692,7 +701,7 @@
         objBillInfo.remarks = member+'购买'+total+'{$eventInfo.event}'+domName;
         objBillInfo.balance_pay = 0;
         objBillInfo.goods = "{$eventInfo.event}";
-        objBillInfo.goods_id = "{$eventInfo.id}"
+        objBillInfo.goods_id = "{$eventInfo.id}";
         objBillInfo.price = domPrice;
         objBillInfo.score_pay = 0;
         objBillInfo.organization_type = '{$eventInfo.organization_type}';
@@ -703,8 +712,47 @@
         objBillInfo.item_coupon_id = item_coupon_ids
 
         objBillInfo.__token__ = token;
-        var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
-        return result;
+        
+        // var result = wooApi.asyncF("{:url('api/Bill/updateBillApi')}",objBillInfo);
+        var aa =  {code:100};
+        $.ajax({ url:"{:url('api/Bill/updateBillApi')}",
+                                data:{
+                                    bill_order : "{$billOrder}",
+                                    goods_des : '{$eventInfo.event}'+domName,
+                                    total : total,
+                                    student_id : member_id,
+                                    student : member,
+                                    remarks : member+'购买'+total+'{$eventInfo.event}'+domName,
+                                    balance_pay : 0,
+                                    goods : "{$eventInfo.event}",
+                                    goods_id : "{$eventInfo.id}",
+                                    price : domPrice,
+                                    score_pay : 0,
+                                    organization_type : '{$eventInfo.organization_type}',
+                                    goods_type : 2,
+                                    pay_type : "wxpay",
+                                    camp : '{$eventInfo.organization}',
+                                    camp_id : '{$eventInfo.organization_id}',
+                                    item_coupon_id : item_coupon_ids
+                                },
+                                dataType: 'json',//服务器返回json格式数据
+                                type: 'post',//HTTP请求类型
+                                timeout: 10000,//超时时间设置为10秒；
+                                async:false,
+                                //headers: { 'Content-Type': 'application/json' },
+                                success: function (result) {
+                                    
+                                     aa = result
+                                     //alert(aa+"33")
+                                },
+                                error: function (xhr, type, errorThrown) {
+                                    //异常处理；
+                                    console.log(type);
+                                    aa =  {code:100,msg:type};
+                                }
+                            });
+        //alert(aa+"22")
+        return aa;
     }
 
     //支付订单
@@ -783,6 +831,7 @@
 
         if(result.code == 200){
             updateCouponID(item_coupon_id,total)
+            wooApi.setCookie('buyCouponForm',null,300);
             // mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
             //     window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
             // });
@@ -810,9 +859,9 @@
         });
 
         if(result.code == 200){
-            mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
+            //mui.alert("购买成功，请到我的卡券进行使用，谢谢！。",result.msg,function(){
                 window.location.href="{:url('/index/apps/buycouponForm/event_id/')}{$eventInfo.id}?showSuccess=yes";
-            });
+            //});
         }else{
             mui.toast(result.msg);
             $("#submitAction").show();

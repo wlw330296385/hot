@@ -264,23 +264,23 @@
             <div class="mui-input-row refereeChoise">
                 <label>裁判1</label>
                 <a href="#referee1" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="{$matchInfo.record.referee1.referee}" placeholder="裁判名称" disabled class="refereeName1">
-                <input type="hidden" value="{$matchInfo.record.referee1.referee_id}" class="refereeId1">
-                <input type="text" value="{$matchInfo.record.referee1.referee_cost}" placeholder="出场费（0）" class="refereeCost1">
+                <input type="text" value="{$matchInfo.record.referee1}" placeholder="裁判名称" disabled class="refereeName1 data" name="record[referee1]">
+                <input type="hidden" value="{$matchInfo.record.referee1_id}" class="refereeId1 data" name="record[referee1_id]">
+                <input type="text" value="{$matchInfo.record.referee1_cost}" placeholder="出场费（0）" class="refereeCost1 data" name="record[referee1_cost]">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判2</label>
                 <a href="#referee2" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="{$matchInfo.record.referee2.referee}" placeholder="裁判名称" disabled class="refereeName2">
-                <input type="hidden" value="{$matchInfo.record.referee2.referee_id}" class="refereeId2">
-                <input type="text" value="{$matchInfo.record.referee2.referee_cost}" placeholder="出场费（0）" class="refereeCost2">
+                <input type="text" value="{$matchInfo.record.referee2}" placeholder="裁判名称" disabled class="refereeName2 data" name="record[referee2]">
+                <input type="hidden" value="{$matchInfo.record.referee2_id}" class="refereeId2 data" name="record[referee2_id]">
+                <input type="text" value="{$matchInfo.record.referee2_cost}" placeholder="出场费（0）" class="refereeCost2 data" name="record[referee2_cost]">
             </div>
             <div class="mui-input-row refereeChoise">
                 <label>裁判3</label>
                 <a href="#referee3" class="mui-icon mui-icon-search searchicon"></a>
-                <input type="text" value="{$matchInfo.record.referee3.referee}" placeholder="裁判名称" disabled class="refereeName3">
-                <input type="hidden" value="{$matchInfo.record.referee3.referee_id}" class="refereeId3">
-                <input type="text" value="{$matchInfo.record.referee3.referee_cost}" placeholder="出场费（0）" class="refereeCost3">
+                <input type="text" value="{$matchInfo.record.referee3}" placeholder="裁判名称" disabled class="refereeName3 data" name="record[referee3]">
+                <input type="hidden" value="{$matchInfo.record.referee3_id}" class="refereeId3 data" name="record[referee3_id]">
+                <input type="text" value="{$matchInfo.record.referee3_cost}" placeholder="出场费（0）" class="refereeCost3 data" name="record[referee3_cost]">
             </div>
 
             <div class="mui-input-row">
@@ -1532,30 +1532,27 @@
             ////////////////////////在已选列表中删除了的人员/////////////////////////////////////////
 
             // 裁判员1
-            referee1 = [];
-            var referee_1 = $(".refereeName1").val();
-            var referee_id1 = $(".refereeId1").val();
-            var referee_cost1 = $(".refereeCost1").val();
+            var referee1 = $(".refereeName1").val();
+            var referee1_id = $(".refereeId1").val();
+            var referee1_cost = $(".refereeCost1").val();
 
             // 裁判员2
-            referee2 = [];
-            var referee_2 = $(".refereeName2").val();
-            var referee_id2 = $(".refereeId2").val();
-            var referee_cost2 = $(".refereeCost2").val();
+            var referee2 = $(".refereeName2").val();
+            var referee2_id = $(".refereeId2").val();
+            var referee2_cost = $(".refereeCost2").val();
 
             // 裁判员3
-            referee3 = [];
-            var referee_3 = $(".refereeName3").val();
-            var referee_id3 = $(".refereeId3").val();
-            var referee_cost3 = $(".refereeCost3").val();
-            if (!(/^[0-9]*$/).test(referee_cost1) || !(/^[0-9]*$/).test(referee_cost2) || !(/^[0-9]*$/).test(referee_cost3)) {
+            var referee3 = $(".refereeName3").val();
+            var referee3_id = $(".refereeId3").val();
+            var referee3_cost = $(".refereeCost3").val();
+            if (!(/^[0-9]*$/).test(referee1_cost) || !(/^[0-9]*$/).test(referee2_cost) || !(/^[0-9]*$/).test(referee3_cost)) {
                 mui.toast("裁判出场费请填写数字");
                 return false;
             }
 
-            referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
-            referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
-            referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
+            // referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
+            // referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
+            // referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
 
 
             var data = wooApi.getInputData('input', 'data');
@@ -1571,9 +1568,9 @@
             var description = $('textarea.description').val();
             objData.description = description;
 
-            objData.referee1 = JSON.stringify(referee1);
-            objData.referee2 = JSON.stringify(referee2);
-            objData.referee3 = JSON.stringify(referee3);
+            // objData.referee1 = JSON.stringify(referee1);
+            // objData.referee2 = JSON.stringify(referee2);
+            // objData.referee3 = JSON.stringify(referee3);
             var url = "{:url('api/match/updateteammatch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

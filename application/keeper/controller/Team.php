@@ -761,19 +761,7 @@ class Team extends Base
                 if (!empty($matchRecordInfo['album'])) {
                     $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
                 }
-                // 裁判字段数据为空
-                $emptyRefereeArr = [
-                    'referee_id' => 0, 'referee' => '', 'referee_cost' => ''
-                ];
-                if (empty($matchRecordInfo['referee1'])) {
-                    $matchRecordInfo['referee1'] = $emptyRefereeArr;
-                }
-                if (empty($matchRecordInfo['referee2'])) {
-                    $matchRecordInfo['referee2'] = $emptyRefereeArr;
-                }
-                if (empty($matchRecordInfo['referee3'])) {
-                    $matchRecordInfo['referee3'] = $emptyRefereeArr;
-                }
+
                 $matchInfo['record'] = $matchRecordInfo;
             }
             // 裁判列表： 获取已同意的裁判比赛申请|邀请的裁判名单

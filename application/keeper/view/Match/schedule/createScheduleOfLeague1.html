@@ -308,6 +308,26 @@
                     }
                 })
             });
+            $(document).on('tap', '.teamAList .allli', function () {
+                let team = $.trim($(this).attr("data-team"));
+                let home_team_id = $(this).attr("data-team_id");
+                let home_team_logo = $(this).find("img").attr("src");
+                let liNum = $(this).attr("data-num");
+                $(".homeTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    let awayId = $(this).parents(".scheduleList").find("input[name=away_team_id]").val();
+                    if (home_team_id == awayId) {
+                        mui.toast("球队已在列表中");
+                        return false;
+                    }
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        $(this).find("input").val(home_team_id);
+                        $(this).find(".class2").val(home_team_logo);
+                        mui("#HomeTeam").popover("toggle");
+                    }
+                })
+            });
             // 删除主队
             $(document).on('tap', '#teamADel', function () {
                 let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
@@ -324,6 +344,26 @@
             // 选择客队 
             $(document).on('tap', '.teamBList .tlistli', function () {
                 let team = $.trim($(this).find("text").text());
+                let away_team_id = $(this).attr("data-team_id");
+                let away_team_logo = $(this).find(".teamlogo").attr("src");
+                let liNum = $(this).attr("data-num");
+                $(".awayTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    let homeId = $(this).parents(".scheduleList").find("input[name=home_team_id]").val();
+                    if (away_team_id == homeId) {
+                        mui.toast("球队已在列表中");
+                        return false;
+                    }
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        $(this).find("input").val(away_team_id);
+                        $(this).find(".class2").val(away_team_logo);
+                        mui("#AwayTeam").popover("toggle");
+                    }
+                })
+            });
+            $(document).on('tap', '.teamBList .allli', function () {
+                let team = $.trim($(this).attr("data-team"));
                 let away_team_id = $(this).attr("data-team_id");
                 let away_team_logo = $(this).find(".teamlogo").attr("src");
                 let liNum = $(this).attr("data-num");
@@ -426,7 +466,7 @@
                     }
                 })
             });
-            allTeamList()
+            getbattle()
         });
 
         // 比赛阶段
@@ -531,13 +571,14 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('team/teamInfo')}" + '/team_id/' + data.data.data[i].team.id + '/id/' + data.data.data[i].id;
-                            newli += `<li class="mui-table-view-cell listli">
+                            newli += `<li class="mui-table-view-cell listli allli" data-team="${data.data.data[i].team.name}" data-team_id="${data.data.data[i].team_id}">
                                         <a href="${urls}">
-                                        <img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}">
-                                        <div class="mui-media-body lineHeight20">
-                                            <p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
-                                            <p>${data.data.data[i].members_num}人参赛</p>
-                                        </div>
+                                            <img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}">
+                                            <div class="mui-media-body lineHeight20">
+                                                <p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
+                                                <p>${data.data.data[i].members_num}人参赛</p>
+                                            </div>
+                                        </a>
                                     </li>`;
                         }
                         $(".teamList").empty().append(newli);
@@ -577,11 +618,15 @@
                             }
                             newli += `</ul></div></li></ul>`
                         }
-                        if (newli != '') {
-                            $(".teamList").empty().append(newli);
+                        $(".teamList").empty().append(newli);
+                        if (newli == '') {
+                            allTeamList()
                         }
+<<<<<<< HEAD
                     } else {
                         allTeamList()
+=======
+>>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
                     }
                 },
                 error: function (xhr, type, errerThrown) {
