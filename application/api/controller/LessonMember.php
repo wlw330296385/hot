@@ -292,4 +292,10 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 设置过期时间
+    public function setExpireApi(){
+
+    }
 }

@@ -45,6 +45,10 @@
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
@@ -119,20 +123,24 @@
         var isTip = true;
         // 发送模板消息
         $(document).on("tap", '.sendTip', function () {
+            // 过期时间
+            let expire_time = '2018-12-30';
+            alert('过期时间'+expire_time);
+            
+            let aa = $(this);
+            let member_id = aa.attr('data-member_id');
+            let url = "{:url('api/message/sendMessageApi')}/member_id/" + member_id;
+            let total_schedule = aa.attr('data-total_schedule');
+            let rest_schedule = aa.attr('data-rest_schedule');
+            let lesson = aa.attr('data-lesson');
 
-            var aa = $(this);
-            var member_id = aa.attr('data-member_id');
-            var url = "{:url('api/message/sendMessageApi')}/member_id/" + member_id;
-            var total_schedule = aa.attr('data-total_schedule');
-            var rest_schedule = aa.attr('data-rest_schedule');
-            var lesson = aa.attr('data-lesson');
-            var messageData = {
+            let messageData = {
                 touser: '',
                 template_id: "{:config('wxTemplateID.scheduleExpend')}",
                 url: "{:url('frontend/message/index','','',true)}",
                 topcolor: "#FF0000",
                 data: {
-                    'first': { 'value': '您好，您所报的（'+lesson+'课）将于'++'过期。' },
+                    'first': { 'value': '您好，您所报的（'+lesson+'课）将于'+expire_time+'过期。' },
                     'keyword1': { 'value': total_schedule },
                     'keyword2': { 'value': (total_schedule - rest_schedule) },
                     'keyword3': { 'value': rest_schedule },
@@ -140,14 +148,14 @@
                 }
 
             };
-            var saveData = {
+            let saveData = {
                 title: '课时提醒',
-                content: '您好，您所报的（'+lesson+'课）将于'++'过期。' ,
+                content: '您好，您所报的（'+lesson+'课）将于'+expire_time+'过期。' ,
                 url: "{:url('frontend/message/index','','',true)}",
                 member_id: member_id
             };
 
-            var postParam = {
+            let postParam = {
                 messageData: JSON.stringify(messageData),
                 saveData: JSON.stringify(saveData),
             }
@@ -178,7 +186,11 @@
                             newli += `<li class="mui-table-view-cell listli">
                                         <div class="fr">
                                             <button type="button" class="mui-btn mui-btn-outlined sendTip warning" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}" >
+
+                                            <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
                                                 过期时间: ${data.data.data[i].expire}
+                                            </div>
+
                                             </button>
                                         </div>
                                         <strong>${data.data.data[i].student.student}</strong>
