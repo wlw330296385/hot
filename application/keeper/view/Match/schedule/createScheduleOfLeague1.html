@@ -622,11 +622,8 @@
                         if (newli == '') {
                             allTeamList()
                         }
-<<<<<<< HEAD
                     } else {
                         allTeamList()
-=======
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -637,6 +634,12 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
+            if ($("input[name=match_stage_id]").val() == '') {
+                mui.toast("请选择比赛阶段");
+                return false;
+            }
+
             scheduleList = []
             $(".scheduleList").each(function () {
                 var home_team = $(this).find(".HomeTeam").text();
