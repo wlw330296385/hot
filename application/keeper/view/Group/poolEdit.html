@@ -42,11 +42,15 @@
         <input type="hidden" class="data" name="group_id" value="{$poolInfo.group_id}">
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
-                <label>奖金池名称</label>
+                <label>当前社群</label>
                 <span>{$poolInfo.group}</span>
             </div>
             <div class="mui-input-row">
-                <label>下注金额</label>
+                <label>本期主题</label>
+                <input type="text" name="pool" class="data" value="{$poolInfo.pool}" placeholder="请输入本期主题">
+            </div>
+            <div class="mui-input-row">
+                <label>打卡金额</label>
                 <input type="text" name="stake" class="data" value="{$poolInfo.stake}" placeholder="下注金额">
             </div>
 
@@ -274,6 +278,11 @@
 
         // 获取数据并进行提交
         function submitAction() {
+            
+            if ($("input[name='pool']").val() == '') {
+                mui.toast("请填写本期打卡主题");
+                return false;
+            }
 
             var time = new Date();
             var year = time.getFullYear();

@@ -61,12 +61,16 @@
     <div class="mui-content">
         <input type="hidden" class="data" name="group" value="{$groupInfo.group}">
         <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
-        <input type="hidden" class="data" name="pool" value="{$groupInfo.group}">
         <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>本期主题</label>
+                <input type="text" name="pool" class="data" value="{$groupInfo.group}" placeholder="请输入本期主题">
+            </div>
+
             <div class="mui-input-row">
                 <label>打卡金额</label>
                 <span class="colororange">HT</span>
-                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额默认为0" style="padding-right: 5px;height: 41px;">
+                <input type="number" name="stake" class="data wd45" value="" placeholder="不设金额默认填0" style="padding-right: 5px;height: 41px;">
             </div>
 
 
@@ -163,7 +167,9 @@
             <div class="mine">
                 <div class="explain">
                     <div class="explain-cont">
-                        <p>当前奖金分配规则是按所有获奖的人分配，获奖人数越多大家分配的奖金就越少，如规则是“奖励前三名”，即使第一名只有一人，但二三名的人很多，第一名奖金同样也会被分薄，这就会出现奖金很高，但第一名擂主奖金不高的情况。此按人头分配算法能保证排名前的人奖金永远比排名后的人多。如有任何疑问？欢迎来电反馈 0755-26677733。</p>
+                        <p>当前奖金分配规则是按所有获奖的人分配，获奖人数越多大家分配的奖金就越少，如规则是“奖励前三名”，即使第一名只有一人，但二三名的人很多，第一名奖金同样也会被分薄，这就会出现奖金很高，但第一名擂主奖金不高的情况。此按人头分配算法能保证排名前的人奖金永远比排名后的人多。</p>
+                        <p>另外需要注意，要是获奖人数多，而奖金太低，无法做出合理分配时，所以奖金将不进行分配，直接打入社群基金。</p>
+                        <p>如有任何疑问？欢迎来电反馈 0755-26677733。</p>
                     </div>
                 </div>
             </div>
@@ -286,6 +292,11 @@
             var nowTime = year + "-" + month + "-" + day;
             var start = $("#resultStart").text();
             var end = $("#resultEnd").text();
+
+            if ($("input[name='pool']").val() == '') {
+                mui.toast("请填写本期打卡主题");
+                return false;
+            }
 
             if (start == '') {
                 mui.toast("请选择开始时间");
