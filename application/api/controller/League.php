@@ -781,22 +781,28 @@ class League extends Base
             }
             // 不列出status=2（已同意）的数据
             $data['status'] = ['neq', 2];
+            $data['is_league'] = 1;
             if (input('?page')) {
                 unset($data['page']);
             }
-
+            $leagueService = new LeagueService();
             $matchService = new MatchService();
             $result = $matchService->getMatchApplyWithTeamList($data, $page);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+                return json($response);
             }
+            // 遍历获取报名球队登记参赛球员数
+            foreach ($result as $key => $value) {
+                $matchTeamInfo = $leagueService->getMatchTeamInfoSimple([ 'match_id' => $value['match_id'], 'team_id' => $value['team_id'] ]);
+                $result[$key]['checkin_member_num'] = ($matchTeamInfo) ? $matchTeamInfo['members_num'] : 0;
+            }
+            $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
         } catch (Exception $e) {
             trace($e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
 
@@ -812,22 +818,28 @@ class League extends Base
             }
             // 不列出status=2（已同意）的数据
             $data['status'] = ['neq', 2];
+            $data['is_league'] = 1;
             if (input('?page')) {
                 unset($data['page']);
             }
-
+            $leagueService = new LeagueService();
             $matchService = new MatchService();
             $result = $matchService->getMatchApplyWithTeamPaginator($data);
             // 返回结果
-            if ($result) {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
-            } else {
-                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+                return json($response);
             }
+            // 遍历获取报名球队登记参赛球员数
+            foreach ($result['data'] as $key => $value) {
+                $matchTeamInfo = $leagueService->getMatchTeamInfoSimple([ 'match_id' => $value['match_id'], 'team_id' => $value['team_id'] ]);
+                $result['data'][$key]['checkin_member_num'] = ($matchTeamInfo) ? $matchTeamInfo['members_num'] : 0;
+            }
+            $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
         } catch (Exception $e) {
             trace($e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_401')]);
         }
     }
 
