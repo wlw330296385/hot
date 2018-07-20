@@ -512,6 +512,7 @@
             });
         };
 
+        // 联赛全部球队列表
         function allTeamList() {
             var url = "{:url('api/league/leagueteampage')}";
             var league_id = "{$league_id}";
@@ -540,8 +541,6 @@
                                     </li>`;
                         }
                         $(".teamList").empty().append(newli);
-                    } else {
-                        getbattle();
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -550,7 +549,7 @@
             });
         }
 
-
+        // 分组列表
         function getbattle() {
             var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
             let league_id = "{$league_id}";
@@ -568,7 +567,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += ` <ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
+                            newli += `<ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
                             newli += `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
                             newli += `<div class="mui-collapse-content" style="padding-left:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
@@ -582,7 +581,7 @@
                             $(".teamList").empty().append(newli);
                         }
                     } else {
-                        aaa()
+                        allTeamList()
                     }
                 },
                 error: function (xhr, type, errerThrown) {

@@ -562,7 +562,7 @@ class Matchdata extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $statistics]);
     }
 
-    // 球队单位获取联赛技术统计排名
+    // 球队单位获取单项联赛技术统计排名
     public function getleaguestaticsrankbyteam() {
         $match_id = input('match_id', 0, 'intval');
         $field = input('field', 'pts');
@@ -609,7 +609,7 @@ class Matchdata extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
     }
 
-    // 球员单位获取联赛技术统计排名
+    // 球员单位获取单项联赛技术统计排名
     public function getleaguestaticsrankbyteammember() {
         $match_id = input('match_id', 0, 'intval');
         $field = input('field', 'pts');
@@ -659,4 +659,87 @@ class Matchdata extends Base
         $data = page_array($size, $page, $data);
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
     }
+
+    // 球员单位获取多项联赛技术统计排名
+    public function getleaguestaticsallrankbyteammember() {
+        $match_id = input('match_id', 0, 'intval');
+        if (!$match_id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询联赛详情
+        $leagueS = new LeagueService();
+        $matchDataS = new MatchDataService();
+        $matchS = new MatchService();
+        $teamS = new TeamService();
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $match_id]);
+        if (!$leagueInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 查询技术统计数据
+        $map = [];
+        $map['match_id'] = $match_id;
+        $map['status'] = 1;
+        $data = $matchDataS->getMatchStaticALLSumListByFieldGroupByTmId($map);
+        if (!$data) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 遍历计算场均与获取头像信息
+        foreach ($data as $key => $value) {
+            // 获取球员出场比赛次数
+            $memberRecordCount = $matchS->getMatchRecordMemberCount([
+                'team_member_id' => $value['team_member_id'],
+                'status' => 1,
+                'is_attend' => 1
+            ]);
+            $data[$key]['pts'] = ($memberRecordCount > 0) ? round($value['pts']/$memberRecordCount, 1) : 0;
+            $data[$key]['reb'] = ($memberRecordCount > 0) ? round($value['reb']/$memberRecordCount, 1) : 0;
+            $data[$key]['ast'] = ($memberRecordCount > 0) ? round($value['ast']/$memberRecordCount, 1) : 0;
+            $data[$key]['stl'] = ($memberRecordCount > 0) ? round($value['stl']/$memberRecordCount, 1) : 0;
+            $data[$key]['blk'] = ($memberRecordCount > 0) ? round($value['blk']/$memberRecordCount, 1) : 0;
+            $data[$key]['threepfg'] = ($memberRecordCount > 0) ? round($value['threepfg']/$memberRecordCount, 1) : 0;
+            // 获取球员头像
+            $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $value['team_member_id']]);
+            $data[$key]['avatar'] = $teamMemberInfo['avatar'];
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
+    }
+    // 球队单位获取多项联赛技术统计排名
+    public function getleaguestaticsallrankbyteam() {
+        $match_id = input('match_id', 0, 'intval');
+        if (!$match_id) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // 查询联赛详情
+        $leagueS = new LeagueService();
+        $matchDataS = new MatchDataService();
+        $teamS = new TeamService();
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $match_id]);
+        if (!$leagueInfo) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        // 查询技术统计数据
+        // 查询技术统计数据
+        $map = [];
+        $map['match_id'] = $match_id;
+        $map['status'] = 1;
+        $data = $matchDataS->getMatchStaticSumAllListByFieldGroupByTeamId($map);
+        if (!$data) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 遍历计算场均与获取头像信息
+        foreach ($data as $key => $value) {
+            // 获取球队比赛次数
+            $teamRecordCount = $leagueS->getMatchRecordCountByTeam(['match_id' => $match_id] , $value['team_id']);
+            $data[$key]['pts'] = ($teamRecordCount > 0) ? round($value['pts']/$teamRecordCount, 1) : 0;
+            $data[$key]['reb'] = ($teamRecordCount > 0) ? round($value['reb']/$teamRecordCount, 1) : 0;
+            $data[$key]['ast'] = ($teamRecordCount > 0) ? round($value['ast']/$teamRecordCount, 1) : 0;
+            $data[$key]['stl'] = ($teamRecordCount > 0) ? round($value['stl']/$teamRecordCount, 1) : 0;
+            $data[$key]['blk'] = ($teamRecordCount > 0) ? round($value['blk']/$teamRecordCount, 1) : 0;
+            // 获取球队logo
+            $teamInfo = $teamS->getTeam(['id' => $value['team_id']]);
+            $data[$key]['cover'] = $teamInfo['cover'];
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
+    }
+
 }

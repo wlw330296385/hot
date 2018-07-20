@@ -110,10 +110,7 @@ class Coupon extends Backend{
     }
     // 分页获取数据
     public function itemCouponListApi(){
-    	$camp_id = input('param.camp_id');
-        $condition = input('post.');
-        $where = ['status'=>['or',[1,$camp_id]]];
-        $map = array_merge($condition,$where);
+        $map = input('post.');
     	$itemCouponList = $this->ItemCouponService->getItemCouponPage($map,10);
     	return json($result);
     }

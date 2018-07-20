@@ -12,20 +12,7 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $l = db('pool')->field('id,winner_list')->where(['status'=>-1])->select();
-        foreach ($l as $key => &$value) {
-            $value['winnerlist'] = json_decode($value['winner_list'],true);
-            foreach ($value['winnerlist'] as $k => &$val) {
-                foreach ($val as $kk => &$vv) {
-                    // dump($vv);
-                    $avatar = db('member')->where(['id'=>$vv['member_id']])->value('avatar');
-                    $vv['avatar'] = $avatar;
-                }
-            }
-            $value['winnerlist'] = json_encode($value['winnerlist']);
-            db('pool')->where(['id'=>$value['id']])->update(['winner_list'=>$value['winnerlist']]);
-        }
-        dump($l);
+        $billInfo = db('bill')->where(['member_id'=>8])->where('delete_time',null)->find();
     }
 
 

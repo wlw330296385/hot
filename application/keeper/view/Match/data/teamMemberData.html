@@ -11,15 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .coloricon {
-            width: 2.4em;
-            height: 2.4em;
-            vertical-align: -0.7em;
-            fill: currentColor;
-            overflow: hidden;
-        }
-    </style>
 </head>
 
 <body>
@@ -47,7 +38,7 @@
             //初始化全局变量
             var onCount = 1;
             var offCount = 1;
-
+            var fieldType = wooApi.GetQueryString('field');
             mui('#refreshContainer').pullRefresh({
                 down: {
                     //下拉刷新
@@ -74,7 +65,7 @@
                     onCount = 1;//刷新并显示第一页
                     var page = onCount;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, fieldType);//具体取数据的方法
                 }, 100);
             }
 
@@ -84,47 +75,52 @@
                     onCount++;//翻下一页
                     var page = onCount;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    toList(page, gType, fieldType);//具体取数据的方法
                 }, 100);
             }
         })
 
         //接口获取数据并追加到页面
-        var toList = function (page, gType) {
+        var toList = function (page, gType, fieldType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchschedulepage','','',true)}" + '/?page=' + page;
-            var league_id = "{$league_id}";
-            var type = wooApi.GetQueryString('type');
-            $(".typeText").text(type)
-            if (type == "场均得分") {
+            var url = "{:url('api/matchdata/getleaguestaticsrankbyteammember','','',true)}" + '/?page=' + page;
+            var match_id = "{$league_id}";
+            var field = wooApi.GetQueryString('field');
+            if (field == "pts") {
+                $(".typeText").text("场均得分");
                 data = {
-                    league_id: league_id,
-                    // type: 1
+                    match_id: match_id,
+                    field: field
                 }
-            } else if (type == "场均篮板") {
+            } else if (field == "reb") {
+                $(".typeText").text("场均篮板");
                 data = {
-                    league_id: league_id,
-                    // type: 2
+                    match_id: match_id,
+                    field: field
                 }
-            } else if (type == "场均助攻") {
+            } else if (field == "ast") {
+                $(".typeText").text("场均助攻");
                 data = {
-                    league_id: league_id,
-                    // type: 3
+                    match_id: match_id,
+                    field: field
                 }
-            } else if (type == "场均盖帽") {
+            } else if (field == "blk") {
+                $(".typeText").text("场均盖帽");
                 data = {
-                    league_id: league_id,
-                    // type: 4
+                    match_id: match_id,
+                    field: field
                 }
-            } else if (type == "场均抢断") {
+            } else if (field == "stl") {
+                $(".typeText").text("场均抢断");
                 data = {
-                    league_id: league_id,
-                    // type: 5
+                    match_id: match_id,
+                    field: field
                 }
-            } else if (type == "场均三分球") {
+            } else if (field == "threepfg") {
+                $(".typeText").text("场均三分球");
                 data = {
-                    league_id: league_id,
-                    // type: 6
+                    match_id: match_id,
+                    field: field
                 }
             }
             mui.ajax({
@@ -138,21 +134,31 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
+                        for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `
                                     <li class="mui-table-view-cell">
-                                    <ul class="mui-table-view mui-row">
-                                        <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32">
-                                            <strong class="f18">${i + 1}</strong>
-                                        </li>
-                                        <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                            <img src="${data.data.data[i].home_team_logo}" class="circleIcon" />
-                                            <span style="padding-top: 6px;">${data.data.data[i].home_team}</span>
-                                        </li>
-                                        <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data.data[i].id}</li>
-                                    </ul>
-                                </li>`
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32">
+                                                <strong class="f18">${i + 1}</strong>
+                                            </li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${data.data[i].avatar}" class="circleIcon"/>
+                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                            </li>`
+                            if (fieldType == "pts") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].pts}</li>`
+                            } else if (fieldType == "reb") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].reb}</li>`
+                            } else if (fieldType == "ast") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].ast}</li>`
+                            } else if (fieldType == "blk") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].blk}</li>`
+                            } else if (fieldType == "stl") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].stl}</li>`
+                            } else if (fieldType == "threepfg") {
+                                newli += `<li class="mui-col-sm-2 mui-col-xs-2 leagueLine" > ${data.data[i].threepfg}</li>`
+                            }
+                            newli += `</ul></li>`
                         }
                     }
                     if (gType == 1) {
@@ -161,7 +167,7 @@
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.teamMemberData").html('<p class="nodata">没有相关数据哦</p>');
+                            $("ul.teamMemberData").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                         }
                     } else {
                         //下拉加载 gType==2

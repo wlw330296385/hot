@@ -323,7 +323,7 @@ class ItemCoupon extends Base{
     public function checkPublishByBill(){
         try {
             $bill_id = input('param.bill_id');
-            $billInfo = db('bill')->where(['id'=>$bill_id,'member_id'=>$this->memberInfo['id']])->find();
+            $billInfo = db('bill')->where(['id'=>$bill_id,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->find();
             if(!$billInfo){
                 return json(['code'=>100,'msg'=>'订单号错误']);
             }
@@ -331,22 +331,22 @@ class ItemCoupon extends Base{
                 return json(['code'=>100,'msg'=>'订单未支付或已退款,无法补发卡券']);
             }
             if($billInfo['goods_type'] == 2){
-                $itemcounponInfo = db('item_coupon')->where(['target_id'=>$billInfo['goods_id']])->where('target_type',['=',2],['=',3],'or')->find();
+                $itemcounponInfo = db('item_coupon')->where(['target_id'=>$billInfo['goods_id']])->where('target_type',['=',2],['=',3],'or')->where('delete_time',null)->find();
                 if(!$itemcounponInfo){
                     return json(['code'=>100,'msg'=>'该订单无附送卡券']);
                 }
-                $result = db('item_coupon_member')->where(['member_id'=>$this->memberInfo['id'],'item_coupon_id'=>$itemcounponInfo['id']])->find();
+                $result = db('item_coupon_member')->where(['member_id'=>$this->memberInfo['id'],'item_coupon_id'=>$itemcounponInfo['id']])->where('delete_time',null)->find();
                 if(!$result){
                     return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'item_coupon_id'=>$itemcounponInfo['id'],'data'=>null]);
                 }else{
                     return json(['code'=>200,'msg'=>'卡券已发放','item_coupon_member_id'=>$result['id'],'item_coupon_id'=>$itemcounponInfo['id'],'data'=>$result]);
                 }
             }elseif ($billInfo['goods_type'] == 1) {
-                $itemcounponInfo = db('item_coupon')->where(['target_id'=>$billInfo['goods_id']])->where('target_type',['=',1],['=',3],'or')->find();
+                $itemcounponInfo = db('item_coupon')->where(['target_id'=>$billInfo['goods_id']])->where('target_type',['=',1],['=',3],'or')->where('delete_time',null)->find();
                 if(!$itemcounponInfo){
                     return json(['code'=>100,'msg'=>'该订单无附送卡券']);
                 }
-                $result = db('item_coupon_member')->where(['member_id'=>$this->memberInfo['id'],'item_coupon_id'=>$itemcounponInfo['id']])->find();
+                $result = db('item_coupon_member')->where(['member_id'=>$this->memberInfo['id'],'item_coupon_id'=>$itemcounponInfo['id']])->where('delete_time',null)->find();
                 if(!$result){
                     return json(['code'=>200,'msg'=>'未发放卡券','item_coupon_member_id'=>0,'item_coupon_id'=>$itemcounponInfo['id'],'data'=>null]);
                 }else{
