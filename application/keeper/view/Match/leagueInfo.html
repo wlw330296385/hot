@@ -134,7 +134,7 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-Location colororange"></span>比赛地点</label>
-                    <span>{$leagueInfo.court}</span>
+                    <span class="court">{$leagueInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -300,9 +300,14 @@
                 });
                 return false;
             }
+            // 联赛比赛地点提示
+            if ($(".court").html() == '') {
+                $(".court").append("暂无")
+            }
             // 联赛简介默认的提示
             if ($(".introduce").html() == '') {
-                $(".introduce").append("还没有联赛简介哦")
+                $(".introduce").hide();
+                $(".introduce").parents().prev().find(".noDataTip").append("（暂无）");
             }
 
             // 状态显示
@@ -312,7 +317,7 @@
             var apply_status_num = "{$leagueInfo.apply_status_num}";
             if (nowTime < reg_start_time) {
                 $(".waitBtn").show();
-            } else if (nowTime > reg_start_time) {
+            } else if (nowTime >= reg_start_time) {
                 if (apply_status_num == 1) {
                     $(".signUpBtn").show();
                 } else if (apply_status_num == 2) {
@@ -629,9 +634,9 @@
                                 </li>`
                         }
                     }
-                    $("ul.dynamicList").empty().append(newli);
+                    $(".dynamicList").empty().append(newli);
                     if (newli == '') {
-                        $("ul.dynamicList").html('<p class="nohave">没有相关数据哦</p>');
+                        $(".dynamicList").prev().find(".noDataTip").append("（暂无）");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
