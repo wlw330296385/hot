@@ -18,7 +18,15 @@ class LessonMember extends Model {
 
     public function getTypeAttr($value){
         $type = [1=>'正式生',2=>'体验生'];
-         return $type[$value];
+        return $type[$value];
+    }
+
+    public function getExpireAttr($value){
+        if($value ==0){
+            return '永不过期';
+        }else{
+            return date('Y-m-d H:i:s',$value);
+        }
     }
     // 关联训练营
     public function camp(){

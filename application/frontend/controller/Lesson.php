@@ -508,4 +508,15 @@ class Lesson extends Base{
         return view('Lesson/comfirmBillOfSchool');
     }
 
+
+
+    public function lessonMemberList(){
+        $lesson_id = input('param.lesson_id');
+        $LessonMember = new \app\model\LessonMember;
+
+
+        
+        $this->assign('lesson_id',$lesson_id);
+        return view('Lesson/lessonMemberList');
+    }
 }
