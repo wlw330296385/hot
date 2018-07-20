@@ -217,8 +217,8 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            // if (data.data[i].stage_name == '小组循环赛') {
-                            newli += `
+                            if (data.data[i].stage_type == 1) {
+                                newli += `
                                     <li class="mui-table-view-cell bggray2">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].group_name}排名</li>
@@ -227,8 +227,8 @@
                                             <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
                                         </ul>
                                     </li>`
-                            for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell">
+                                for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
+                                    newli += `<li class="mui-table-view-cell">
                                             <ul class="mui-table-view mui-row">
                                                 <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32 siteNum">${j + 1}</li>
                                                 <li class="mui-col-sm-4 mui-col-xs-4 leagueGroup">
@@ -240,8 +240,8 @@
                                                 <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].teams[j].score}</li>
                                             </ul>
                                         </li>`
+                                }
                             }
-                            // }
                         }
                         $(".groupsList").empty().append(newli)
                     } else {
@@ -271,16 +271,17 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `  
+                            if (data.data[i].stage.type != 1) {
+                                newli += `  
                                 <div class="page-header border-b">
                                     <span class="course">第${i + 1}轮 ${data.data[i].stage.name}</span>
                                     <span class="more">A组 8强</span>
                                 </div>
                                 <table class="leagueTable">
                                     <tbody>`
-                            for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
-                                var recordsArr = data.data[i].stage.records[j]
-                                newli += `
+                                for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
+                                    var recordsArr = data.data[i].stage.records[j]
+                                    newli += `
                                 <tr>
                                     <td class="borderC">
                                         <p class="leagueGroup pGroup border-b">
@@ -297,25 +298,26 @@
                                     </td>
                                     <td>
                                         <p>${recordsArr.home_score} ：${recordsArr.away_score}</p>`
-                                if (recordsArr.home_score > recordsArr.away_score) {
-                                    newli += `
+                                    if (recordsArr.home_score > recordsArr.away_score) {
+                                        newli += `
                                         <p class="leagueGroup">
                                             <img src="${recordsArr.home_team_logo}" class="circleIcon" />
                                             <span class="spanText colorred">${recordsArr.home_team}</span>
                                         </p> `
-                                } else {
-                                    newli += `
+                                    } else {
+                                        newli += `
                                         <p class="leagueGroup">
                                             <img src="${recordsArr.away_team_logo}" class="circleIcon" />
                                             <span class="spanText colorred">${recordsArr.away_team}</span>
                                         </p>`
-                                }
+                                    }
 
-                                newli += `<p>（晋级）</p>
+                                    newli += `<p>（晋级）</p>
                                     </td></tr>
                                 <tr class="pline"></tr>`
+                                }
+                                newli += `</tbody></table>`
                             }
-                            newli += `</tbody></table>`
                         }
                         $(".rankList").empty().append(newli);
                     } else {

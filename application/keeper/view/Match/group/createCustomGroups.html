@@ -145,7 +145,7 @@
                 for (let i = 0; i <= groupNum - 1; i++) {
                     str += `<ul class="mui-table-view list border-b">
                                 <div class="page-header border-b bggray2 groupsTip">
-                                    <input type="text" class="course" name="groupName" value="" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
+                                    <input type="text" class="course" name="groupName" value="第${i + 1}组" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
                                     <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
                                         <a href="#team" class="addTeam" style="color:#007aff">添加</a>
                                     </span>
@@ -296,28 +296,28 @@
                 }
             }
 
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.groupList = JSON.stringify(groupList);
-            var url = "{:url('api/league/saveleaguegroup')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            console.log(ajaxResult);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
-                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '创建失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
+            // var data = wooApi.getInputData('input', 'data');
+            // datas = wooApi.getInputData('select', 'data', data);
+            // // 获取其他标签值
+            // arrData = wooApi.getDomData('domData', datas);
+            // var objData = wooApi.arrTOobj(arrData);
+            // objData.groupList = JSON.stringify(groupList);
+            // var url = "{:url('api/league/saveleaguegroup')}";
+            // var ajaxResult = wooApi.asyncF(url, objData);
+            // console.log(ajaxResult);
+            // if (ajaxResult.code == 200) {
+            //     mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+            //         var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '创建失败');
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //             $('input[name=__token__]').val(data.data);
+            //         }
+            //     }, 'json');
+            // }
 
         };
 
