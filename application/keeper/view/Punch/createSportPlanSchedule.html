@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>计划日程</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style type="text/css">
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">
+            <button type="button" class="bgred addPlan" style="margin-top: 6px;">添加计划日程</button>
+        </h1>
+    </header>
+    <div class="mui-content">
+        <div class="list">
+            <input type="hidden" class="data" name="member" value="{$memberInfo.member}">
+            <input type="hidden" class="data" name="member_id" value="{$memberInfo.id}">
+            <input type="hidden" class="data" name="avatar" value="{$memberInfo.avatar}">
+
+            <form action="" class="mui-input-group planArray mb44">
+                <div class="page-header border-b">
+                    <span class="course wd45">
+                        <strong>运动计划#1</strong>
+                    </span>
+                </div>
+                <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动日期</label>
+                        <span id="result" class="ui-alert domData time" name="time"></span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <a href="#sportType" class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-th-data colororange"></i>运动类型</label>
+                        <span class="wd45 type"></span>
+                        <input type="hidden" name="type" value="" class="data">
+                    </a>
+                </div>
+                <div class="mui-input-row sportProject">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-p-workout colororange"></i>运动内容
+                    </label>
+                    <input type="text" class="data wd52" name="content" value="" placeholder="运动内容" />
+                </div>
+                <p class="pline"></p>
+            </form>
+
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                    提交计划
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <!--选择运动类型-->
+    <div id="sportType" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>选择运动类型</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="typeDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli">训练</li>
+                    <li class="mui-table-view-cell listli">比赛</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <!-- 选择器 -->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
+        (function ($, doc) {
+            $.ready(function () {
+                var result = $('#result')[0];
+                var btn = $('.btn');
+                btn.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+                        picker.show(function (rs) {
+                            result.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+            });
+        })(mui, document);
+
+        $(function () {
+
+            $(document).on("tap", ".addPlan", function () {
+                const planStr = `<div class="page-header border-b">
+                    <span class="course wd45">
+                        <strong>运动计划#1</strong>
+                    </span>
+                </div>
+                <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
+                    <div class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-activity-Startingtim colororange"></i>运动日期</label>
+                        <span id="result" class="ui-alert domData time" name="time"></span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <a href="#sportType" class="mui-navigate-right">
+                        <label class="wd45">
+                            <i class="icon iconfont icon-th-data colororange"></i>运动类型</label>
+                        <span class="wd45 type"></span>
+                        <input type="hidden" name="type" value="" class="data">
+                    </a>
+                </div>
+                <div class="mui-input-row sportProject">
+                    <label class="wd45">
+                        <i class="icon iconfont icon-p-workout colororange"></i>运动内容
+                    </label>
+                    <input type="text" class="data wd52" name="content" value="" placeholder="运动内容" />
+                </div>
+                <p class="pline"></p>`
+                $(".planArray").append(planStr);
+            })
+
+            // 选择类型
+            $("#sportType").on('tap', '.listli', function () {
+                var content = $(this).text();
+                $(".type").text(content);
+                mui("#sportType").popover("toggle");
+            });
+            //清除类型
+            $("#typeDel").on('tap', '', function () {
+                $(".type").text('');
+                mui("#sportType").popover("toggle");
+            });
+        })
+
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            //提示框
+            if ("{$memberInfo.id}" == 0) {
+                mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }
+                });
+                return false;
+            }
+
+            // if ($(".punch_category").text() == '') {
+            //     mui.toast("请选择运动类型");
+            //     return false;
+            // }
+            // if ($("input[name=name]").val() == '') {
+            //     mui.toast("运动项目不能为空");
+            //     return false;
+            // }
+            // if ($("input[name=image_url]").val() == '') {
+            //     mui.toast("请上传运动照");
+            //     return false;
+            // }
+            // groupList = [];
+            // $("#hideStList input[name=group]").each(function (i) {
+            //     var group = $(this).siblings("font").text();
+            //     var group_id = $(this).attr("data-group_id");
+            //     var member = $(this).attr("data-member");
+            //     var member_id = $(this).attr("data-member_id");
+            //     var pool = $(this).attr("data-pool");
+            //     var pool_id = $(this).attr("data-pool_id");
+            //     var stake = $(this).attr("data-stake");
+            //     groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
+            //     console.log(groupList)
+            // });
+
+            // var data = wooApi.getInputData('input', 'data');
+            // datas = wooApi.getInputData('select', 'data', data);
+            // // 获取其他标签值
+            // arrData = wooApi.getDomData('domData', datas);
+            // var objData = wooApi.arrTOobj(arrData);
+            // let list = JSON.stringify(groupList);
+            // objData.groupList = list;
+            // var url = "{:url('api/punch/createPunchApi')}";
+            // var ajaxResult = wooApi.asyncF(url, objData);
+            // if (ajaxResult.code == 200) {
+            //     mui.alert("添加计划成功", '提示', '确定', function () {
+            //         var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '添加计划失败');
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //         }
+            //     }, 'json');
+            // }
+        };
+
+    </script>
+
+</body>
+
+</html>

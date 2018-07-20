@@ -86,7 +86,14 @@ class Punch extends Base{
     }
 
     // 运动计划
-	public function sportPlanScheduleList() {
+	public function sportPlanList() {
+
+        return view('Punch/sportPlanList');
+    }
+    // 运动计划日程表
+    public function sportPlanScheduleList() {
+
+
         return view('Punch/sportPlanScheduleList');
     }
 
@@ -94,6 +101,11 @@ class Punch extends Base{
 	public function createSportPlan() {
 
         return view('Punch/createSportPlan');
+    }
+    // 创建运动计划日程
+    public function createSportPlanSchedule() {
+
+        return view('Punch/createSportPlanSchedule');
     }
 
     // 运动计划详情

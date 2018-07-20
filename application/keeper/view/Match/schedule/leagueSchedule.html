@@ -74,11 +74,11 @@
 
             <div class="location-frame">
                 <span class="location-choise">
-                    <select class="">
-                        <option value="">排序</option>
-                        <option value="1">最近</option>
+                    <select id="sort">
+                        <option value="1">最近7天</option>
                         <option value="2">未开始</option>
-                        <option value="3">全部</option>
+                        <option value="3">已结束</option>
+                        <option value="4">全部</option>
                     </select>
                 </span>
             </div>
@@ -114,8 +114,13 @@
             window.top.location.href = this.href;
         });
 
-        rankList(); //赛程列表
+        rankList(1); //赛程列表
         followStatus(); // 当前的关注状态
+        //选择查看赛程类型
+        $("#sort").on("change", function () {
+            sort = $(this).find("option:checked").val();
+            rankList(sort);
+        });
 
         // 关注联赛
         $(".follow").on("tap", '', function () {
@@ -176,13 +181,14 @@
         }
 
         // 赛程列表
-        function rankList() {
-            var url = "{:url('api/league/getmatchschedulelistbytime','','',true)}";
+        function rankList(sort) {
+            var url = "{:url('api/league/getshowmatchschedulelist','','',true)}";
             var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
-                    league_id: league_id
+                    league_id: league_id,
+                    sort: sort
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -194,10 +200,18 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `  
-                                <div class="page-header border-b">
-                                    <span class="course">比赛日
-                                        <font class="colorred">${i + 1}</font> | 4月12日 星期五</span>
-                                    <span class="more">${data.data[i].stage.name}</span>
+                                <div class="page-header border-b">`
+                            if (data.data[i].date == '') {
+                                newli += `<span class="course">比赛日
+                                        <font class="colorred">待定</font> | 时间日期待定
+                                    </span>`
+                            } else {
+                                newli += `<span class="course">比赛日
+                                        <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
+                                    </span>`
+                            }
+
+                            newli += ` <span class="more">${data.data[i].stage.name}</span>
                                 </div>
                                 <table class="leagueTable">
                                     <tbody>`
@@ -222,17 +236,20 @@
                                             </p>
                                         </td>
                                         <td>
-                                            <p class="tdpPadding border-b colorred">88</p>
+                                            <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>
                                             <p></p>
-                                            <p class="tdpPadding colorred">102</p>
+                                            <p class="tdpPadding colorred">${scheduleArr.away_team_score}</p>
                                         </td>
                                     </tr>
                                     <tr class="pline"></tr>`
                             }
                             newli += `</tbody></table>`
                         }
+                        $(".scheduleList").empty().append(newli);
+                    } else {
+                        $(".scheduleList").html('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
-                    $(".scheduleList").empty().append(newli);
+
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');

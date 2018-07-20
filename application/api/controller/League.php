@@ -3408,15 +3408,21 @@ class League extends Base
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
             $_result1 = $result = [];
+            // 获取比赛阶段type字段信息
+            foreach ($_result as $key => $value) {
+                $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
+                $_result[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+            }
             // 根据联赛阶段、分组将数据分片
             foreach ($_result as $key => $value) {
-                $_result1[$value['match_stage'] . '|' . $value['match_group']][] = $value;
+                $_result1[$value['match_stage'] .'|' . $value['match_stage_type'] . '|' . $value['match_group']][] = $value;
             }
             foreach ($_result1 as $key => $value) {
                 $_array = $_array1 = [];
                 $keyExplode = explode('|', $key);
                 $_array['stage_name'] = $keyExplode[0];
-                $_array['group_name'] = $keyExplode[1];
+                $_array['stage_type'] = $keyExplode[1];
+                $_array['group_name'] = $keyExplode[2];
                 $_array['teams'] = [];
                 $ranks = $value;
                 foreach ($ranks as $k => $rank) {
@@ -3930,16 +3936,22 @@ class League extends Base
         if (!$list) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
+        // 获取比赛阶段type字段信息
+        foreach ($list as $key => $value) {
+            $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
+            $list[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+        }
         $_result = $result = [];
         // 根据比赛时间（年月日）对数据分片
         foreach ($list as $key => $value) {
             $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
-            $_result[$value['match_stage'] . '|' . $date][] = $value;
+            $_result[$value['match_stage'] . '|' . $date. '|' . $value['match_stage_type']][] = $value;
         }
         foreach ($_result as $key => $value) {
             $_array = [];
             $keyExplode = explode('|', $key);
             $_array['date'] = $keyExplode[1];
+            $_array['stage']['type'] = $keyExplode[2];
             $_array['stage']['name'] = $keyExplode[0];
             $_array['stage']['records'] = $value;
             array_push($result, $_array);
