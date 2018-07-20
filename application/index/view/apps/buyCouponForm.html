@@ -180,7 +180,7 @@
 
         <div class="mui-input-row">
             <label class="colororange">联系电话</label>
-            <input type="text" class="data telephone" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
+            <input type="number" class="data telephone" name="telephone" value="{$memberInfo.telephone}" placeholder="联系电话">
         </div>
 
        <!--  <div class="mui-input-row smsValidate {if $memberInfo.id>0}hide{else/}show{/if}">
@@ -409,6 +409,7 @@
         $('.telephone').on("blur", function () {
             var telephone = $(this).val();
             if (telephone != "") {
+                //getCurrTel是点击输入框时获取的号码，用来判断是否有更改，有变的话要判断格式和系统是否已有
                 if(getCurrTel!=telephone) {
                     //非会员或会员但修改了号码（帮别人报名）
                     if (!(/^1[34578]\d{9}$/).test(telephone)) {

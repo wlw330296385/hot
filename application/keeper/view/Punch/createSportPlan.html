@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加运动计划</title>
+    <title>运动计划</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -204,13 +204,11 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            let list = JSON.stringify(groupList);
-            objData.groupList = list;
             var url = "{:url('api/sport_plan/createSportPlanApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert("添加计划成功！请去填写计划日程", '提示', '确定', function () {
-                    var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
+                    var goUrl = "{:url('punch/createSportPlanSchedule')}" + '/plan_id/' + ajaxResult.data ;
                     window.top.location.href = goUrl;
                 })
             } else {

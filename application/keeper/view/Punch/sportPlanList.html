@@ -15,6 +15,36 @@
     <!-- <script src="/static/frontend/iconfont/iconfont.js"></script> -->
     <link rel="stylesheet" href="/static/frontend/css/calendar.css">
     <style type="text/css">
+
+        @media screen and (min-width: 320px) {
+            #refreshContainer {
+                margin-top: 180px !important;
+            }
+        }
+       
+        @media screen and (min-width: 375px) {
+            #refreshContainer {
+                margin-top: 180px !important;
+            }
+        }
+
+        @media screen and (min-width: 411px) {
+            #refreshContainer {
+                margin-top: 200px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 200px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 330px !important;
+            }
+        }
         .planTips {
             text-align: center;
             padding: 20px;
@@ -126,8 +156,7 @@
         mui.ajax({
             url: url,
             data: {
-                member_id: member_id,
-                page: page
+                member_id: member_id
             },
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
@@ -137,26 +166,15 @@
                 console.log(data)
                 var newli = "";
                 if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        // var punch_time = data.data[i].punch_time
-                        // $(".calendar-date .item").each(function () {
-                        //     var time = $(this).attr("data");
-                        //     var year = time.substring(0, 4);
-                        //     var month = time.substring(4, 6);
-                        //     var day = time.substring(6, 8);
-                        //     if (day < 10 && day.length == 1) {
-                        //         day = "0" + day
-                        //     }
-                        //     var dateTime = year + "-" + month + "-" + day
-                        //     if (punch_time == dateTime) {
-                        //         $(this).addClass("endDK");
-                        //     }
-                        // });
-                        var urls = "{:url('punch/planInfo')}/" + 'plan_id/' + data.data[i].id;
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        //推算获取期数
+                        let planNumber = data.data.total - (data.data.current_page-1)*data.data.per_page - i;
+                        
+                        var urls = "{:url('punch/sportPlanScheduleList')}/" + 'plan_id/' + data.data.data[i].id;
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                        newli += '<div class="fl f18 colororange mui-text-center" style="line-height:48px; width:8%;margin-right:10px;font-weight:bold">' + (i + 1) + '</div><div class="mui-media-body wd60 f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
-                        newli += '<p class="lineHeight20">计划时间&nbsp;<text class="colororange">' + data.data[i].punch_time + '</text></p></div>';
-                        newli += '<div class="fr pdr15"><p class="colororange" style="margin-top:12px;;">去打卡</p></div>'
+                        newli += '<div class="fl f16" style="line-height:48px; width:8%;margin:0px 6px;">#' + planNumber + '</div><div class="mui-media-body wd60"><text style="font-weight: bold;">' + data.data.data[i].plansport + '</text>';
+                        newli += '<p class="lineHeight20">目标&nbsp;<text class="colororange">' + data.data.data[i].aim + '</text></p></div>';
+                        newli += '<div class="fr pdr15"><p style="margin-top:12px;;">详情</p></div>'
                         newli += '</a></li>'
                     }
                     if (newli == '') {
@@ -167,13 +185,24 @@
                 if (gType == 1) {
                     //上拉刷新
                     $("ul.planList").empty().append(newli);
+                    mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                    mui('#refreshContainer').pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.planList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有创建运动计划哦</p></li>');
+                    }
                 } else {
                     //下拉加载 gType==2
                     $("ul.planList").append(newli);
                 }
+                if (newli != '') {
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
+                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
             }
         });
     };
