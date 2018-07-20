@@ -3115,7 +3115,7 @@ class League extends Base
                 unset($map['page']);
             }
             if ( input('?param.sort') ) {
-                $sort = input('sort');
+                $sort = input('sort', 0, 'intval');
                 unset($map['sort']);
                 switch ($sort) {
                     case 1: {
