@@ -231,39 +231,6 @@
             window.top.location.href = this.href;
         });
 
-<<<<<<< HEAD
-        $(function () {
-
-            var team_id = "{teamInfo.id}";
-            var match_id = "{$league_id}"
-            // 关注球队
-            $(".follow").on("tap", '', function () {
-                var team_id = "{teamInfo.id}";
-                mui.ajax("{:url('api/follow/focus')}", {
-                    data: {
-                        type: 4,
-                        team_id: team_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            followStatus();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-=======
-        followStatus(); //判断当前状态
-
         var league_id = "{$league_id}";
         // 关注联赛
         $(".follow").on("tap", '', function () {
@@ -284,7 +251,6 @@
                         followStatus();
                     } else {
                         mui.toast(data.msg);
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -294,314 +260,266 @@
             });
         });
 
-
-<<<<<<< HEAD
-            // setTimeout(function () {
-            //     var arr = []
-            //     $(".teamMemberPtsList .mui-table-view-cell").each(function () {
-            //         var thisNum = $(this).find(".leagueLine").text();
-            //         console.log(thisNum)
-            //         arr.push(thisNum)
-            //     });
-            //     console.log(arr.sort());
-            // }, 500);
-
-            // 球员数据显示
-            mui.post("{:url('api/matchdata/getleaguestaticsallrankbyteammember')}", {
-                match_id: match_id,
-            }, function (data) {
-                console.log(data)
-                var newlipts = '';
-                var newlireb = '';
-                var newliast = '';
-                var newliblk = '';
-                var newlistl = '';
-                var newlithreepfg = '';
-                var arr = [];
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        arr.push(data.data[i].pts)
-                        for (var j = 0; j <= arr.length - 1; j++) {
-                            newlipts += `<li class="mui-table-view-cell">
-=======
-        // setTimeout(function () {
-        //     var arrAst = $(".teamMemberAstList").find(".mui-table-view-cell");
-        //     arrAst.sort(function (a, b) {
-        //         return b.innerHTML > a.innerHTML ? 1 : -1;;
-        //     });
-        //     $(".teamMemberAstList").empty().append(arrAst.sort());
-        // }, 500);
-
+        followStatus(); //判断当前状态
+        teamMemberData(); //球员数据
+        teamData(); //球队数据
 
         // 球员数据
-        mui.post("{:url('api/matchdata/getleaguestaticsallrankbyteammember')}", {
-            match_id: match_id,
-        }, function (data) {
-            console.log(data)
-            var newlipts = '';
-            var newlireb = '';
-            var newliast = '';
-            var newliblk = '';
-            var newlistl = '';
-            var newlithreepfg = '';
-            if (data.code == 200) {
-                for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
-                    var pts = data.data[i].pts
-                    console.log(pts)
-                    newlipts += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].pts}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
+        function teamMemberData() {
+            var url = "{:url('api/matchdata/getleaguestaticsallrankbyteammember')}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: league_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newlipts = ''; var arrpts = [];
+                    var newlireb = ''; var arrreb = [];
+                    var newliast = ''; var arrast = [];
+                    var newliblk = ''; var arrblk = [];
+                    var newlistl = ''; var arrstl = [];
+                    var newlithreepfg = ''; var arrthreepfg = [];
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            var name = data.data[i].name;
+                            var avatar = data.data[i].avatar;
+                            var pts = data.data[i].pts; arrpts.push({ pts, name, avatar });
+                            var reb = data.data[i].reb; arrreb.push({ reb, name, avatar });
+                            var ast = data.data[i].ast; arrast.push({ ast, name, avatar });
+                            var blk = data.data[i].blk; arrblk.push({ blk, name, avatar });
+                            var stl = data.data[i].stl; arrstl.push({ stl, name, avatar });
+                            var threepfg = data.data[i].threepfg; arrthreepfg.push({ threepfg, name, avatar });
                         }
-
-                        newlireb += `<li class="mui-table-view-cell">
-=======
-
-                    newlireb += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
+                        arrpts.sort(compare("pts")).reverse();
+                        arrreb.sort(compare("reb")).reverse();
+                        arrast.sort(compare("ast")).reverse();
+                        arrblk.sort(compare("blk")).reverse();
+                        arrstl.sort(compare("stl")).reverse();
+                        arrthreepfg.sort(compare("threepfg")).reverse();
+                        for (j = 0; j <= arrpts.length - 1; j++) {
+                            newlipts += `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                                <img src="${arrpts[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrpts[j].name}</span>
                                             </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].reb}</li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrpts[j].pts}</li>
                                         </ul>
                                     </li>`
-<<<<<<< HEAD
-                        newliast += `<li class="mui-table-view-cell">
-=======
-                    newliast += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
+                        }
+                        for (j = 0; j <= arrreb.length - 1; j++) {
+                            newlireb += `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                                <img src="${arrreb[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrreb[j].name}</span>
                                             </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].ast}</li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrreb[j].reb}</li>
                                         </ul>
                                     </li>`
-<<<<<<< HEAD
-                        newliblk += `<li class="mui-table-view-cell">
-=======
-                    newliblk += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
+                        }
+                        for (j = 0; j <= arrast.length - 1; j++) {
+                            newliast += `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                                <img src="${arrast[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrast[j].name}</span>
                                             </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].blk}</li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrast[j].ast}</li>
                                         </ul>
                                     </li>`
-<<<<<<< HEAD
-                        newlistl += `<li class="mui-table-view-cell">
-=======
-                    newlistl += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
+                        }
+                        for (j = 0; j <= arrblk.length - 1; j++) {
+                            newliblk += `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                                <img src="${arrblk[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrblk[j].name}</span>
                                             </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].stl}</li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrblk[j].blk}</li>
                                         </ul>
                                     </li>`
-<<<<<<< HEAD
-                        newlithreepfg += `<li class="mui-table-view-cell">
-=======
-                    newlithreepfg += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
+                        }
+                        for (j = 0; j <= arrstl.length - 1; j++) {
+                            newlistl += `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].avatar}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].name}</span>
+                                                <img src="${arrstl[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrstl[j].name}</span>
                                             </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].threepfg}</li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrstl[j].stl}</li>
                                         </ul>
                                     </li>`
-<<<<<<< HEAD
+                        }
+                        for (j = 0; j <= arrthreepfg.length - 1; j++) {
+                            newlithreepfg += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrthreepfg[j].avatar}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrthreepfg[j].name}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrthreepfg[j].threepfg}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        $(".teamMemberPtsList").empty().append(newlipts);
+                        $(".teamMemberRebList").empty().append(newlireb);
+                        $(".teamMemberAstList").empty().append(newliast);
+                        $(".teamMemberBlkList").empty().append(newliblk);
+                        $(".teamMemberStlList").empty().append(newlistl);
+                        $(".teamMemberThreepfgList").empty().append(newlithreepfg);
                     }
-                    $(".teamMemberPtsList").empty().append(newlipts);
-                    $(".teamMemberRebList").empty().append(newlireb);
-                    $(".teamMemberAstList").empty().append(newliast);
-                    $(".teamMemberBlkList").empty().append(newliblk);
-                    $(".teamMemberStlList").empty().append(newlistl);
-                    $(".teamMemberThreepfgList").empty().append(newlithreepfg);
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                 }
-            }, 'json'
-            );
-
-            mui.post("{:url('api/matchdata/getleaguestaticsallrankbyteam')}", {
-                match_id: match_id,
-                filed: 'pts'
-            }, function (data) {
-                console.log(data)
-                var newlipts = '';
-                var newlireb = '';
-                var newliast = '';
-                var newliblk = '';
-                var newlistl = '';
-                var newlithreepfg = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newlipts += `<li class="mui-table-view-cell">
-=======
-                }
-                $(".teamMemberPtsList").empty().append(newlipts);
-                $(".teamMemberRebList").empty().append(newlireb);
-                $(".teamMemberAstList").empty().append(newliast);
-                $(".teamMemberBlkList").empty().append(newliblk);
-                $(".teamMemberStlList").empty().append(newlistl);
-                $(".teamMemberThreepfgList").empty().append(newlithreepfg);
-            }
-        }, 'json'
-        );
-
-        // 球队数据
-        mui.post("{:url('api/matchdata/getleaguestaticsallrankbyteam')}", {
-            match_id: match_id,
-            filed: 'pts'
-        }, function (data) {
-            console.log(data)
-            var newlipts = '';
-            var newlireb = '';
-            var newliast = '';
-            var newliblk = '';
-            var newlistl = '';
-            var newlithreepfg = '';
-            if (data.code == 200) {
-                for (var i = 0; i <= data.data.length - 1; i++) {
-                    newlipts += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].pts}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                        newlireb += `<li class="mui-table-view-cell">
-=======
-                    newlireb += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].reb}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                        newliast += `<li class="mui-table-view-cell">
-=======
-                    newliast += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].ast}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                        newliblk += `<li class="mui-table-view-cell">
-=======
-                    newliblk += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].blk}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                        newlistl += `<li class="mui-table-view-cell">
-=======
-                    newlistl += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].stl}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                        newlithreepfg += `<li class="mui-table-view-cell">
-=======
-                    newlithreepfg += `<li class="mui-table-view-cell">
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${i + 1}</strong></li>
-                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
-                                                <img src="${data.data[i].cover}" class="circleIcon" />
-                                                <span style="padding-top: 6px;">${data.data[i].team}</span>
-                                            </li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${data.data[i].threepfg}</li>
-                                        </ul>
-                                    </li>`
-<<<<<<< HEAD
-                    }
-                    $(".teamPtsList").empty().append(newlipts);
-                    $(".teamRebList").empty().append(newlireb);
-                    $(".teamAstList").empty().append(newliast);
-                    $(".teamBlkList").empty().append(newliblk);
-                    $(".teamStlList").empty().append(newlistl);
-                    $(".teamThreepfgList").empty().append(newlithreepfg);
-                }
-            }, 'json'
-            );
-
-        });
-
-
-        function sortNumber(a, b) {
-            return b - a;
+            });
         }
 
-        // 关注状态
-        function followStatus() {
-=======
+        function teamData() {
+            var url = "{:url('api/matchdata/getleaguestaticsallrankbyteam')}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: league_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newlipts = ''; var arrpts = [];
+                    var newlireb = ''; var arrreb = [];
+                    var newliast = ''; var arrast = [];
+                    var newliblk = ''; var arrblk = [];
+                    var newlistl = ''; var arrstl = [];
+                    var newlithreepfg = ''; var arrthreepfg = [];
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
+                            var team = data.data[i].team;
+                            var cover = data.data[i].cover;
+                            var pts = data.data[i].pts; arrpts.push({ pts, team, cover });
+                            var reb = data.data[i].reb; arrreb.push({ reb, team, cover });
+                            var ast = data.data[i].ast; arrast.push({ ast, team, cover });
+                            var blk = data.data[i].blk; arrblk.push({ blk, team, cover });
+                            var stl = data.data[i].stl; arrstl.push({ stl, team, cover });
+                            var threepfg = data.data[i].threepfg; arrthreepfg.push({ threepfg, team, cover });
+                        }
+                        arrpts.sort(compare("pts")).reverse();
+                        arrreb.sort(compare("reb")).reverse();
+                        arrast.sort(compare("ast")).reverse();
+                        arrblk.sort(compare("blk")).reverse();
+                        arrstl.sort(compare("stl")).reverse();
+                        arrthreepfg.sort(compare("threepfg")).reverse();
+                        for (j = 0; j <= arrpts.length - 1; j++) {
+                            newlipts += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrpts[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrpts[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrpts[j].pts}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        for (j = 0; j <= arrreb.length - 1; j++) {
+                            newlireb += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrreb[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrreb[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrreb[j].reb}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        for (j = 0; j <= arrast.length - 1; j++) {
+                            newliast += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrast[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrast[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrast[j].ast}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        for (j = 0; j <= arrblk.length - 1; j++) {
+                            newliblk += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrblk[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrblk[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrblk[j].blk}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        for (j = 0; j <= arrstl.length - 1; j++) {
+                            newlistl += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrstl[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrstl[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrstl[j].stl}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        for (j = 0; j <= arrthreepfg.length - 1; j++) {
+                            newlithreepfg += `<li class="mui-table-view-cell">
+                                        <ul class="mui-table-view mui-row">
+                                            <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
+                                            <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
+                                                <img src="${arrthreepfg[j].cover}" class="circleIcon" />
+                                                <span style="padding-top: 6px;">${arrthreepfg[j].team}</span>
+                                            </li>
+                                            <li class="mui-col-sm-2 mui-col-xs-2 leagueLine">${arrthreepfg[j].threepfg}</li>
+                                        </ul>
+                                    </li>`
+                        }
+                        $(".teamPtsList").empty().append(newlipts);
+                        $(".teamRebList").empty().append(newlireb);
+                        $(".teamAstList").empty().append(newliast);
+                        $(".teamBlkList").empty().append(newliblk);
+                        $(".teamStlList").empty().append(newlistl);
+                        $(".teamThreepfgList").empty().append(newlithreepfg);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                 }
-                $(".teamPtsList").empty().append(newlipts);
-                $(".teamRebList").empty().append(newlireb);
-                $(".teamAstList").empty().append(newliast);
-                $(".teamBlkList").empty().append(newliblk);
-                $(".teamStlList").empty().append(newlistl);
-                $(".teamThreepfgList").empty().append(newlithreepfg);
-            }
-        }, 'json'
-        );
+            });
+        }
 
+        // 排序
+        function compare(property) {
+            return function (obj1, obj2) {
+                var value1 = obj1[property];
+                var value2 = obj2[property];
+                return value1 - value2;
+            }
+        }
         // 判断当前的关注状态
         function followStatus() {
             var league_id = "{$league_id}";
->>>>>>> 9231d655791bb0589bff5b7b7ac2e0968987b4ce
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 5,
