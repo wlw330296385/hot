@@ -64,7 +64,7 @@
                 <strong class="f16">温馨提示</strong>
             </p>
             <div class="publicText">
-                <p>1、组名可自定义设置</p>
+                <p>1、组名可自定义设置，不能大于两个文字（如：A，B，甲，乙）</p>
                 <p>2、点击添加可把球队排进对应组别</p>
                 <p>3、每组都可高亮设置种子球队</p>
             </div>
@@ -145,7 +145,7 @@
                 for (let i = 0; i <= groupNum - 1; i++) {
                     str += `<ul class="mui-table-view list border-b">
                                 <div class="page-header border-b bggray2 groupsTip">
-                                    <input type="text" class="course" name="groupName" value="第${i + 1}组" placeholder="第${i + 1}组（可编辑）" style="padding-left:0">
+                                    <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}（可编辑）" style="padding-left:0">
                                     <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
                                         <a href="#team" class="addTeam" style="color:#007aff">添加</a>
                                     </span>
@@ -242,10 +242,12 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i < data.data.length; i++) {
-                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" data-team_id="${data.data[i].team_id}" data-match="${data.data[i].match.name}" data-match_id="${data.data[i].match_id}" data-members_num="${data.data[i].members_num}">
-                                            <label class="wd66">${data.data[i].team.name}</label>
+                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" 
+                                        data-team_id="${data.data[i].team_id}" data-match="${data.data[i].match.name}" data-match_id="${data.data[i].match_id}" 
+                                        data-members_num="${data.data[i].members_num}">
+                                        <label class="wd66">${data.data[i].team.name}</label>
                                             <span class="wd27">参赛：${data.data[i].members_num}人</span>
-                                        </li>`
+                                      </li>`
                         }
                         $(".teamList").empty().append(newli)
                     } else {
@@ -272,8 +274,13 @@
             });
 
             groupList = []
+            var isOk = true  //用变量记住状态
             $(".frame ul").each(function () {
                 let groupName = $(this).find("input[name=groupName]").val();
+                if (!(/^.{0,2}$/).test(groupName)) {
+                    mui.toast("组名只能填写两个文字");
+                    return isOk = false;
+                }
                 groupTeam = [];
                 $(this).find("li").each(function () {
                     let team = $(this).attr("data-team");
@@ -287,6 +294,8 @@
                 })
                 groupList.push({ groupName, groupTeam })
             })
+            if (!isOk) { return isOk }
+
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
                 let group = groupList[i].groupTeam.length
@@ -296,28 +305,28 @@
                 }
             }
 
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.groupList = JSON.stringify(groupList);
-            // var url = "{:url('api/league/saveleaguegroup')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // console.log(ajaxResult);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
-            //         var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.groupList = JSON.stringify(groupList);
+            var url = "{:url('api/league/saveleaguegroup')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            console.log(ajaxResult);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
+                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
 
         };
 
