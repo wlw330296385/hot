@@ -12,7 +12,8 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $billInfo = db('bill')->where(['member_id'=>8])->where('delete_time',null)->find();
+        $list = db('lesson_member')->field('camp.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson_member.lesson_id,lesson.cost')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]]])->select();
+        dump($list);
     }
 
 
