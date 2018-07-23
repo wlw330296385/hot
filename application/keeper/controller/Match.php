@@ -830,6 +830,11 @@ class Match extends Base {
         return view('Match/record/integralList');
     }
 
+    // 球队对阵积分表
+    public function integralTableList() {
+        return view('Match/record/integralTableList');
+    }
+
     // 球队赛果录入
     public function recordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据

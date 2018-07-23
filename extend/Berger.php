@@ -49,9 +49,11 @@ class Berger{
 				$ls['home_team_id']=$arrays[$m]['team_id'];
                 $ls['home_team']=$arrays[$m]['team'];
                 $ls['home_team_logo']=$arrays[$m]['team_logo'];
+                $ls['home_team_alias'] = $arrays[$m]['group_name'].$arrays[$m]['group_number'];
 				$ls['away_team_id']=$arrays[$len-$m-1]['team_id'];
                 $ls['away_team']=$arrays[$len-$m-1]['team'];
                 $ls['away_team_logo']=$arrays[$len-$m-1]['team_logo'];
+                $ls['away_team_alias']=$arrays[$len-$m-1]['group_name'].$arrays[$len-$m-1]['group_number'];
 				$temparray[]=$ls;unset($ls);
 			}
 			$battle[$i]=$temparray;

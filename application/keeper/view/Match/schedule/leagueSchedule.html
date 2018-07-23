@@ -75,10 +75,10 @@
             <div class="location-frame">
                 <span class="location-choise">
                     <select id="sort">
+                        <option value="4">全部</option>
                         <option value="1">最近7天</option>
                         <option value="2">未开始</option>
                         <option value="3">已结束</option>
-                        <option value="4">全部</option>
                     </select>
                 </span>
             </div>
@@ -114,7 +114,7 @@
             window.top.location.href = this.href;
         });
 
-        rankList(1); //赛程列表
+        rankList(4); //赛程列表
         followStatus(); // 当前的关注状态
         //选择查看赛程类型
         $("#sort").on("change", function () {
@@ -234,13 +234,17 @@
                                                 <img src="${scheduleArr.away_team_logo}" class="circleIcon" />
                                                 <span class="spanText">${scheduleArr.away_team}</span>
                                             </p>
-                                        </td>
-                                        <td>
-                                            <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>
-                                            <p></p>
-                                            <p class="tdpPadding colorred">${scheduleArr.away_team_score}</p>
-                                        </td>
-                                    </tr>
+                                        </td>`
+                                if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score == 0) {
+                                    newli += ` <td><p>16:42</p></td>`
+                                } else {
+                                    newli += ` <td>
+                                                    <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>
+                                                    <p></p>
+                                                    <p class="tdpPadding colorred">${scheduleArr.away_team_score}</p>
+                                                </td>`
+                                }
+                                newli += `</tr>
                                     <tr class="pline"></tr>`
                             }
                             newli += `</tbody></table>`
