@@ -995,6 +995,13 @@ class LeagueService
         return $res;
     }
 
+    // 获取球队的联赛积分和
+    public function getMatchRankScoreSumByTeam($map=[]) {
+        $model = new MatchRank();
+        $res = $model->where($map)->sum('score');
+        return ($res) ? $res : 0;
+    }
+
     // 比赛结果列表
     public function getMatchRecords($map, $order='id desc') {
         $model = new MatchRecord();

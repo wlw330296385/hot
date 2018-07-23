@@ -71,7 +71,7 @@
                 <strong class="f16">温馨提示</strong>
             </p>
             <div class="publicText">
-                <p>1、组名可自定义设置</p>
+                <p>1、组名可自定义设置，不能大于两个文字（如：A，B，甲，乙）</p>
                 <p>2、右侧序号为小组序号</p>
                 <p>3、点击球队可以选择移动该球队到其他组</p>
             </div>
@@ -105,6 +105,7 @@
         var teams = '';
         $(function () {
 
+
             $(".fenpei").on("tap", '', function () {
                 var league_id = "{$leagueInfo.id}";
                 var totalNum = $(".totalNum").text();
@@ -132,8 +133,8 @@
                             // console.log(teams)
                             teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
                             for (var i = 0; i < teams.length; i++) {
-                                groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((teams.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
-                                newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="第' + ((teams.slice(0, i).length + 1)) + '组" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((teams.slice(0, i).length + 1)) + '</text></span></div>';
+                                groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">组' + ((teams.slice(0, i).length + 1)) + '</text><input type="hidden" class="checkTeamId" value=""></li>';
+                                newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="组' + ((teams.slice(0, i).length + 1)) + '" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((teams.slice(0, i).length + 1)) + '</text></span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
                                     newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
                                     newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20 wd36"><p class="f14" style="font-weight:bold">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
@@ -177,8 +178,8 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i < data.data.length; i++) {
-                            groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">第' + ((data.data.slice(0, i).length + 1)) + '组</text><input type="hidden" class="checkTeamId" value=""></li>';
-                            newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' + data.data[i].name + '" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
+                            groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">组' + ((data.data.slice(0, i).length + 1)) + '</text><input type="hidden" class="checkTeamId" value=""></li>';
+                            newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' + data.data[i].name + '" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
                             var teams = data.data[i].group_teams;
                             for (var j = 0; j < teams.length; j++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[j].team_logo + '" data-team="' + teams[j].team.team + '" data-team_id="' + teams[j].team.team_id + '" data-match="' + teams[j].team.match + '" data-match_id="' + teams[j].team.match_id + '" data-members_num="' + teams[j].team.members_num + '">';
@@ -259,8 +260,13 @@
             });
 
             groupList = []
+            var isOk = true  //用变量记住状态
             $(".frame ul").each(function () {
                 var groupName = $(this).find("input[name=groupName]").val();
+                if (!(/^.{0,2}$/).test(groupName)) {
+                    mui.toast("组名只能填写两个文字");
+                    return isOk = false;
+                }
                 groupTeam = [];
                 $(this).find("li").each(function () {
                     var team = $(this).attr("data-team");
@@ -274,6 +280,8 @@
                 })
                 groupList.push({ groupName, groupTeam })
             })
+            if (!isOk) { return isOk }
+
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
                 var group = groupList[i].groupTeam.length

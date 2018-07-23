@@ -12,8 +12,8 @@ class Woo extends Controller{
 
 
     public function aa(){
-        $list = db('lesson_member')->field('camp.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson_member.lesson_id,lesson.cost')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]]])->select();
-        dump($list);
+        $a = strtotime('2018-7-23');
+        echo $a;
     }
 
 
