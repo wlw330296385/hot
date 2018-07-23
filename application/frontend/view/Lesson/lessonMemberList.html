@@ -22,6 +22,10 @@
         .list strong {
             margin-right: 10px;
         }
+        .tipStudent button {
+            font-size: 13px;
+        }
+
     </style>
 </head>
 
@@ -30,7 +34,7 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">{$lesson_id}学员列表</h1>
+        <h1 class="mui-title">{$lessonInfo.lesson}学员列表</h1>
     </header>
 
     <div class="mui-content">
@@ -52,18 +56,36 @@
     <div id="dateSelect" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course">
-                <strong>请选择截止日期</strong>
+            <span class="course wd36">
+                <strong>请设置到期日期</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn-blue" id="weekConfirm">确认</button>
+                 <button class="mui-btn" id="setNoExpire">设为永不过期</button> <button class="mui-btn-blue" id="setConfirm">提交</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <form class="mui-input-group weekList">
+                <form class="mui-input-group setStudent">
+                    <input type="hidden" name="lesson_member_id" class="lesson_member_id" value="" />
                     <div class="mui-input-row">
-                        <span class="btnDate btn" data-options='{"type":"time"}'>请选择时间</span>
+                        <label>学生姓名</label>
+                        <span class="student"></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>设置到期时间</label>
+                        <span class="btnDate btn colororange" data-options='{"type":"date"}'>[ 点选时间 ]</span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>购课时间</label>
+                        <span class="create_time"></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>总课时</label>
+                        <span class="total_schedule"></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>剩余课时</label>
+                        <span class="rest_schedule"></span>
                     </div>
                 </form>
             </div>
@@ -78,7 +100,6 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/smsCode.js"></script>
     <script>
         //初始化
         mui.init({
@@ -174,49 +195,116 @@
                 }, 100);
             }
 
-        });
+            //提交设置永不过期
+            $(document).on("tap", '#setNoExpire', function () {
 
-        var isTip = true;
-        // 发送模板消息
-        $(document).on("tap", '.sendTip', function () {
-            // 过期时间
-            let expire_time = '2018-12-30';
-            alert('过期时间'+expire_time);
-            
-            let aa = $(this);
-            let member_id = aa.attr('data-member_id');
-            let url = "{:url('api/message/sendMessageApi')}/member_id/" + member_id;
-            let total_schedule = aa.attr('data-total_schedule');
-            let rest_schedule = aa.attr('data-rest_schedule');
-            let lesson = aa.attr('data-lesson');
-            let messageData = {
-                touser: '',
-                template_id: "{:config('wxTemplateID.scheduleExpend')}",
-                url: "{:url('frontend/message/index','','',true)}",
-                topcolor: "#FF0000",
-                data: {
-                    'first': { 'value': '您好，您所报的（'+lesson+'课）将于'+expire_time+'过期。' },
-                    'keyword1': { 'value': total_schedule },
-                    'keyword2': { 'value': (total_schedule - rest_schedule) },
-                    'keyword3': { 'value': rest_schedule },
-                    'remark': { 'value': '请及时上课,如需请假或延时上课,请与教练联系' }
+                var lesson_member_id = $(".setStudent .lesson_member_id").val();
+                var expire_time = "-1";
+
+                if(lesson_member_id==""){
+                    mui.toast('没指定学生');
+                    return false;
                 }
 
-            };
-            let saveData = {
-                title: '课时提醒',
-                content: '您好，您所报的（'+lesson+'课）将于'+expire_time+'过期。' ,
-                url: "{:url('frontend/message/index','','',true)}",
-                member_id: member_id
-            };
+                if(expire_time==""||expire_time=="[ 点选时间 ]"){
+                    mui.toast('没设置过期时间');
+                    return false;
+                }
 
-            let postParam = {
-                messageData: JSON.stringify(messageData),
-                saveData: JSON.stringify(saveData),
-            }
-            // sendMsg(aa, url, postParam);
-        })
+                var url = "{:url('api/lesson_member/setExpireApi','','',true)}?lesson_member_id="+lesson_member_id;
+                mui.ajax({
+                    url: url,
+                    data: {
+                        expire_time: expire_time
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    //processData:false,
+                    success: function (data) {
+                        if (data.code == 200) {
+                            mui.toast("设置成功");
+                           $(".tipStudent a.hot-active").find("button text").text("永不过期");
+                           mui('#dateSelect').popover('toggle');
+                        } else {
+                           mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+                
+            })
 
+            //提交设置过期日期
+            $(document).on("tap", '#setConfirm', function () {
+
+                var lesson_member_id = $(".setStudent .lesson_member_id").val();
+                var expire_time = $(".setStudent .btnDate").text();
+
+                if(lesson_member_id==""){
+                    mui.toast('没指定学生');
+                    return false;
+                }
+
+                if(expire_time==""||expire_time=="[ 点选时间 ]"){
+                    mui.toast('没设置过期时间');
+                    return false;
+                }
+
+                var url = "{:url('api/lesson_member/setExpireApi','','',true)}?lesson_member_id="+lesson_member_id;
+                mui.ajax({
+                    url: url,
+                    data: {
+                        expire_time: expire_time
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    //processData:false,
+                    success: function (data) {
+                        if (data.code == 200) {
+                            mui.toast("设置成功");
+                           $(".tipStudent a.hot-active").find("button text").text(expire_time);
+                           mui('#dateSelect').popover('toggle');
+                        } else {
+                           mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+                
+            })
+
+
+             // 设置学生有效期弹框
+            $(".tipStudent").on("tap", 'a', function () {
+
+                $(".tipStudent a").removeClass("hot-active");
+                $(this).addClass("hot-active");
+               
+                $(".setStudent .lesson_member_id").val($(this).attr("data-lesson_member_id"));
+                $(".setStudent .student").text($(this).attr("data-student"));
+                $(".setStudent .total_schedule").text($(this).attr("data-total_schedule"));
+                $(".setStudent .rest_schedule").text($(this).attr("data-rest_schedule"));
+                $(".setStudent .create_time").text($(this).attr("data-create_time"));
+
+                var expire = $(this).attr("data-expire");
+                if(expire!="永不过期"){
+                     $(".setStudent .btnDate").text(expire);
+                }else{
+                    $(".setStudent .btnDate").text("[ 点选时间 ]");
+                }
+               // mui('#dateSelect').popover('toggle');
+
+            })
+
+        });
 
         //训练营教练列表接口获取数据并追加到页面
         var toTipStudent = function (page, gType, keyword) {
@@ -238,18 +326,22 @@
                 //processData:false,
                 success: function (data) {
                     var newli = '';
+                    var eDate = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            eDate = data.data.data[i].expire;
+                            if(eDate!="永不过期"){
+                                var exDate = eDate.split(" ");
+                                eDate = exDate[0];
+                            }
                             
                             newli += `<li class="mui-table-view-cell listli">
                                         <div class="fr">
-                                            <a href="#dateSelect" class=" btnDate weektime picker" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}"  data-options='{"type":"date"}'>
-                                            <button type="button" class="mui-btn mui-btn-outlined">过期时间: ${data.data.data[i].expire}</button>
-                                            </a>
+                                           <a href="#dateSelect" data-lesson_member_id="${data.data.data[i].id}" data-student="${data.data.data[i].student.student}" data-total_schedule="${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}" data-create_time="${data.data.data[i].create_time}" data-expire="${eDate}"><button type="button" class="mui-btn mui-btn-outlined">过期时间<br /><text>${eDate}</text></button></a>
                                         </div>
                                         <strong>${data.data.data[i].student.student}</strong>
-                                          课时 :总 ${data.data.data[i].total_schedule} 剩 ${data.data.data[i].rest_schedule} 
-                                        <p >创建时间：${data.data.data[i].create_time}</p>
+                                          课时:总 ${data.data.data[i].total_schedule} 剩 ${data.data.data[i].rest_schedule}
+                                        <p>创建时间：${data.data.data[i].create_time}</p>
                                         </li>`
                         }
                     }
@@ -279,8 +371,6 @@
                 }
             });
         };
-
-
 
 
     </script>
