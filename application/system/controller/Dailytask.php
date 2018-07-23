@@ -180,9 +180,26 @@ class Dailytask extends Base{
     // 发送学生过期提醒模板消息给家长
     public function sendMessageToParents(){
         try {
+            $messageData = [
+                'touser'=>'',
+                'template_id'=>"squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN",
+                'url'=>url('frontend/student/studentinfoofcamp',['type'=>1,'student_id'=>1,'camp_id'=>1],'',true),
+                'topcolor'=>"#FF0000",
+                'data'=>
+                    'first'=> ['value'=>"您好，您所报的（{$value['lesson']}即将过期,仍剩余$value['rest_schedule']节课,联系训练营管理员处理"],
+                    'keyword1'=>['value': $total_schedule],
+                    'keyword2'=> ['value': ($total_schedule - $rest_schedule)],
+                    'keyword3'=> ['value': $rest_schedule] ,
+                    'remark'=>['value'=>'篮球管家'] ,
+                ];
+            $saveData = [
+                'title'=>'课时即将过期提醒',
+                'content'=>"您好，您所报的（{$value['lesson']}即将过期,仍剩余$value['rest_schedule']节课,联系训练营管理员处理",
+                'url'=>url('frontend/student/studentinfoofcamp',['type'=>1,'student_id'=>1,'camp_id'=>1],'',true),
+                'member_id': $value['member_id']
+            ];
 
-            
-            
+
             $data = ['crontab'=>'发送学生过期提醒模板消息给家长'];
             $this->record($data);
         } catch (Exception $e) {

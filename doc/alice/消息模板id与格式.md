@@ -207,6 +207,22 @@ pZCJbOXrNQXkH5zWwghEMP5WK0ejENN-l3F_qUbeABU
 
 
 
+12. 课时消耗通知
+
+squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN-wUFObAV4
+
+{{first.DATA}}
+总课时数：{{keyword1.DATA}}
+消耗：{{keyword2.DATA}}
+剩余：{{keyword3.DATA}}
+{{remark.DATA}}
+
+
+您好，你已成功消耗课时。
+总课时数：50课时
+消耗：20课时
+剩余：30课时
+感谢你的使用。
 
 
 
