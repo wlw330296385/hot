@@ -11,6 +11,62 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            border-right: 1px solid #111;
+            border-top: 1px solid #111;
+        }
+
+        table td,
+        table th {
+            padding: 10px 15px;
+            text-align: center;
+            border-left: 1px solid #111;
+            border-bottom: 1px solid #111;
+        }
+
+        table th {
+            background-color: #333;
+            color: #FFF;
+        }
+
+        table strong {
+            color: #C00;
+        }
+
+        .gData {
+            /* margin: 50px auto; */
+            /* width: 740px; */
+            background-color: #FFF;
+            border: 2px solid #111;
+            /* position: relative; */
+        }
+
+        .gData p {
+            margin: 0px;
+            padding: 20px 30px;
+            border: 1px solid #666;
+        }
+
+        #gameScoreBoard tr:first-child td,
+        #gameScoreBoard tr td:first-child {
+            font-weight: bold;
+            background-color: #F1F1F1;
+        }
+
+        #gameScoreBoard td,
+        #gameScoreBoard th {
+            font-size: 0.6em;
+            padding: 10px 2px;
+            width: 60px;
+        }
+
+        #gameScoreBoard table span {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,7 +75,8 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('match/leagueManage',['league_id'=>$league_id])}"></a>
-                <a class="mui-control-item mui-active" href="#onRankList">排名</a>
+                <a class="mui-control-item mui-active" href="#onIntegralList">积分对阵</a>
+                <a class="mui-control-item" href="#onRankList">排名</a>
                 <a class="mui-control-item" href="#onHonorList">荣誉</a>
             </div>
         </div>
@@ -28,8 +85,154 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <!-- 排名 -->
-            <div id="onRankList" class="mui-scroll-wrapper mui-control-content mui-active">
+            <!-- 积分对阵 -->
+            <div id="onIntegralList" class="mui-scroll-wrapper mui-control-content  mui-active">
+                <div class="mui-scroll">
+                    <!-- <ul class="mui-table-view list integralList"></ul> -->
+                    <div id="gameScoreBoard">
+                        <div class="gData">
+                            <div class="page-header border-b">
+                                <span class="course">
+                                    <strong>A 组</strong> - 对阵积分表
+                                </span>
+                                <span class="more">小组循环赛</span>
+                            </div>
+                            <table width="100%">
+                                <tbody>
+                                    <tr>
+                                        <th>A 组</th>
+                                        <td>机关联队</td>
+                                        <td>平湖所</td>
+                                        <td>机训大队</td>
+                                        <td>平南所</td>
+                                        <td>六约所</td>
+                                        <td>盛平所</td>
+                                        <td>荷坳所</td>
+                                        <td>南岭所</td>
+                                        <td>得失分率</td>
+                                        <td>积分</td>
+                                        <td>名次</td>
+                                    </tr>
+                                    <tr>
+                                        <td>机关联队</td>
+                                        <td class="current">-</td>
+                                        <td>36 : 22</td>
+                                        <td>42 : 34</td>
+                                        <td class="">20 : 0</td>
+                                        <td class="">40 : 20</td>
+                                        <td>18 : 27</td>
+                                        <td class="">41 : 32</td>
+                                        <td>20 : 0</td>
+                                        <td></td>
+                                        <td class="jf">13</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>平湖所</td>
+                                        <td class="">22 : 36</td>
+                                        <td class="current">-</td>
+                                        <td>20 : 26</td>
+                                        <td>26 : 18</td>
+                                        <td>17 : 27</td>
+                                        <td class="" style="color:red">27 : 26</td>
+                                        <td class="">14 : 32</td>
+                                        <td>20 : 0</td>
+                                        <td></td>
+                                        <td class="jf">10</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>机训大队</td>
+                                        <td>34 : 42</td>
+                                        <td>26 : 20</td>
+                                        <td class="current">-</td>
+                                        <td class="">20 : 19</td>
+                                        <td>23 : 28</td>
+                                        <td>40 : 23</td>
+                                        <td>29 : 46</td>
+                                        <td>20 : 0</td>
+                                        <td></td>
+                                        <td class="jf">11</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>平南所</td>
+                                        <td>0 : 20</td>
+                                        <td>18 : 26</td>
+                                        <td>19 : 20</td>
+                                        <td class="current">-</td>
+                                        <td>0 : 20</td>
+                                        <td>0 : 20</td>
+                                        <td>0 : 20</td>
+                                        <td>0 : 20</td>
+                                        <td></td>
+                                        <td class="jf">2</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>六约所</td>
+                                        <td>20 : 40</td>
+                                        <td>27 : 17</td>
+                                        <td>28 : 23</td>
+                                        <td class="">20 : 0</td>
+                                        <td class="current">-</td>
+                                        <td>31 : 21</td>
+                                        <td class="">21 : 23</td>
+                                        <td>33 : 24</td>
+                                        <td></td>
+                                        <td class="jf">12</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>盛平所</td>
+                                        <td>27 : 18</td>
+                                        <td style="color:red">26 : 27</td>
+                                        <td>23 : 40</td>
+                                        <td>20 : 0</td>
+                                        <td>21 : 31</td>
+                                        <td class="current">-</td>
+                                        <td>38 : 16</td>
+                                        <td class="">27 : 40</td>
+                                        <td></td>
+                                        <td class="jf">10</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>荷坳所</td>
+                                        <td>32 : 41</td>
+                                        <td>32 : 14</td>
+                                        <td>46 : 29</td>
+                                        <td>20 : 0</td>
+                                        <td>23 : 21</td>
+                                        <td>16 : 38</td>
+                                        <td class="current">-</td>
+                                        <td>59 : 41</td>
+                                        <td></td>
+                                        <td class="jf">12</td>
+                                        <td class=""></td>
+                                    </tr>
+                                    <tr>
+                                        <td>南岭所</td>
+                                        <td>0 : 20</td>
+                                        <td>0 : 20</td>
+                                        <td>0 : 20</td>
+                                        <td>20 : 0</td>
+                                        <td>24 : 33</td>
+                                        <td>40 : 27</td>
+                                        <td>41 : 59</td>
+                                        <td class="current">-</td>
+                                        <td></td>
+                                        <td class="jf">6</td>
+                                        <td class=""></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 积分排名 -->
+            <div id="onRankList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view mui-text-center" style="margin-top:0">
                         <li class="mui-table-view-cell border-b">
@@ -79,8 +282,29 @@
         $(function () {
 
             //初始化全局变量
+            var setCount = 1;
             var onCount = 1;
             var offCount = 1;
+
+            mui('#onIntegralList').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshSet
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshSet
+                }
+            });
 
             mui('#onRankList').pullRefresh({
                 down: {
@@ -121,6 +345,26 @@
                     callback: pullupRefreshOff
                 }
             });
+
+            //下拉刷新具体业务实现（积分对阵）
+            function pulldownRefreshSet() {
+                setTimeout(function () {
+                    setCount = 1;//刷新并显示第一页
+                    var page = setCount;
+                    var gType = 1;//代表下拉刷新
+                    toIntegralList('onIntegralList', page, gType, 1);//具体取数据的方法
+                }, 100);
+            }
+
+            //上拉加载具体业务实现（积分对阵）
+            function pullupRefreshSet() {
+                setTimeout(function () {
+                    setCount++;//翻下一页
+                    var page = setCount;
+                    var gType = 2;//代表上拉加载
+                    toIntegralList('onIntegralList', page, gType, 1);//具体取数据的方法
+                }, 100);
+            }
 
             //下拉刷新具体业务实现（排名）
             function pulldownRefreshOn() {
@@ -163,6 +407,87 @@
             }
 
         })
+
+        // 接口获取数据并追加到页面
+        var toIntegralList = function (wList, page, gType) {
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/league/getleagueintegraltable')}" + '/?page=' + page;
+            var league_id = "{$league_id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: league_id,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += `
+                        <div class="page-header bggray2">
+                            <span class="course">${data.data[i].stage_name}（${data.data[i].group_name}）</span>
+                        </div>
+                        <ul class="mui-table-view mui-text-center">`
+                            for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell">
+                                <a href="">
+                                    <ul class="mui-row" style="padding:0">
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>${j + 1}</strong>
+                                            </p>
+                                        </li>
+                                        <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
+                                            <p>${data.data[i].teams[j].team}</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>${data.data[i].teams[j].win_count}</p>
+                                        </li>
+                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
+                                            <p>${data.data[i].teams[j].lose_count}</p>
+                                        </li>
+                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
+                                            <p class="colororange">
+                                                <strong>${data.data[i].teams[j].score}</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </a>
+                            </li>`
+                            }
+                            newli += `</ul>`
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $(".integralList").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $(".integralList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $(".integralList").append(newli);
+                    }
+
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+            });
+        };
 
         // 接口获取数据并追加到页面
         var toRankList = function (wList, page, gType) {
