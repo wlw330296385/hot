@@ -9,6 +9,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
@@ -62,6 +65,28 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
+        (function ($, doc) {
+            $.ready(function () {
+                //开始时间
+                //var resultStart = $('#resultStart')[0];
+                var btnStart = $('.btnDate');
+                btnStart.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+
+                        picker.show(function (rs) {
+                            //resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+
+            });
+        })(mui, document);
 
         $(function () {
 
@@ -184,11 +209,8 @@
                             
                             newli += `<li class="mui-table-view-cell listli">
                                         <div class="fr">
-                                            <button type="button" class="mui-btn mui-btn-outlined sendTip warning" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}" >
-
-                                            <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
-                                                过期时间: ${data.data.data[i].expire}
-                                            </div>
+                                            <button type="button" class="mui-btn mui-btn-outlined btnDate picker" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}"  data-options='{"type":"date"}'>
+过期时间: ${data.data.data[i].expire}
 
                                             </button>
                                         </div>

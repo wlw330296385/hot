@@ -105,6 +105,9 @@
 
 
     })
+     mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
 
     mui.init({
         swipeBack: true, //启用右滑关闭功能
@@ -170,9 +173,9 @@
                         //推算获取期数
                         let planNumber = data.data.total - (data.data.current_page-1)*data.data.per_page - i;
                         
-                        var urls = "{:url('punch/sportPlanScheduleList')}/" + 'plan_id/' + data.data.data[i].id;
+                        var urls = "{:url('punch/sportPlanInfo')}/" + 'plan_id/' + data.data.data[i].id;
                         newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                        newli += '<div class="fl f16" style="line-height:48px; width:8%;margin:0px 6px;">#' + planNumber + '</div><div class="mui-media-body wd60"><text style="font-weight: bold;">' + data.data.data[i].plansport + '</text>';
+                        newli += '<div class="fl f16" style="line-height:48px; width:8%;margin:0px 6px;">#' + planNumber + '</div><div class="mui-media-body wd60 f16"><text style="font-weight: bold;">' + data.data.data[i].plansport + '</text>';
                         newli += '<p class="lineHeight20">目标&nbsp;<text class="colororange">' + data.data.data[i].aim + '</text></p></div>';
                         newli += '<div class="fr pdr15"><p style="margin-top:12px;;">详情</p></div>'
                         newli += '</a></li>'
