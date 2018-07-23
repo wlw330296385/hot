@@ -104,10 +104,61 @@ class Dailytask extends Base{
     // 把过期时间的学生status设置为3,并且吞掉钱财,运行时间:每日05:05
     public function dropStudent(){
         try{
-            $list = db('lesson_member')->join('camp','camp.id = lesson_member.camp_id')->where(['lesson_member.expire'=>['lt',time()]])->select();
-            if($list){
-                db('lesson_member')->where(['expire'=>['lt',time()]])->update(['status'=>3,'system_remarks'=>"过期清除"]);
 
+            $list = db('lesson_member')->field('lesson_member.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson.lesson,lesson_member.lesson_id,lesson.cost,camp.balance,lesson_member.rest_schedule,lesson_member.camp,lesson_member.camp_id,lesson_member.student_id,lesson_member.student,lesson_member.member,lesson_member.member_id')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]]])->select();
+
+            $incomeData = [];
+            $campFinanceData = [];
+            if($list){
+                
+                db('lesson_member')->where(['expire'=>['lt',time()]])->update(['status'=>3,'system_remarks'=>"超过上课期限"]);
+                //训练营财务
+                foreach ($list as $key => $value) {
+                    if($value['rebate_type'] == 1){
+                        $incomeData[] = [
+                            'schedule_rebate'   =>$value['schedule_rebate'],
+                            'rebate_type'       =>$value['rebate_type'],
+                            'students'          =>1,
+                            'system_remarks'    =>'超过上课期限',
+                            'date_str'          =>date('Ymd',time()),
+                            's_balance'         =>$value['balance'],
+                            'e_balance'         =>$value['balance'] + ($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'f_id'              =>$value['id'],
+                            'income'            =>($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'lesson_id'         =>$value['lesson_id'],
+                            'lesson'            =>$value['lesson'],
+                            'camp_id'           =>$value['camp_id'],
+                            'camp'              =>$value['camp'],
+                            'total'             =>$value['rest_schedule'],
+                            'price'             =>$value['cost'],
+                            'student_id'        =>$value['student_id'],
+                            'student'           =>$value['student'],
+                            'member_id'         =>$value['member_id'],
+                            'member'            =>$value['member'],
+                            'type'              =>6,
+                        ];
+                        $campFinanceData[] = [
+                            'schedule_rebate'   =>$value['schedule_rebate'],
+                            'rebate_type'       =>$value['rebate_type'],
+                            'system_remarks'    =>'超过上课期限',
+                            'date_str'          =>date('Ymd',time()),
+                            's_balance'         =>$value['balance'],
+                            'e_balance'         =>$value['balance'] + ($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'f_id'              =>$value['id'],
+                            'money'            =>($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'camp_id'           =>$value['camp_id'],
+                            'camp'              =>$value['camp'],
+                            'type'              =>6,
+                        ];
+                    }
+                }
+
+                if(!empty($campFinanceData) && !empty($incomeData)){
+                    $Income = new \app\model\Income;
+                    $CampFinance = new \app\model\CampFinance;
+                    $Income->saveAll($incomeData);
+                    $CampFinance->saveAll($campFinanceData);
+                }
             }
             $data = ['crontab'=>'清除过期学生'];
             $this->record($data);
@@ -117,11 +168,6 @@ class Dailytask extends Base{
             trace($e->getMessage(), 'error');
         }
     }
-
-
-
-
-    
 
     
 }

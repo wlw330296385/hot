@@ -513,9 +513,10 @@ class Lesson extends Base{
     public function lessonMemberList(){
         $lesson_id = input('param.lesson_id');
         $LessonMember = new \app\model\LessonMember;
-
+        $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
 
         
+        $this->assign('lessonInfo',$lessonInfo);
         $this->assign('lesson_id',$lesson_id);
         return view('Lesson/lessonMemberList');
     }
