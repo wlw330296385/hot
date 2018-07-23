@@ -1206,7 +1206,8 @@ class League extends Base
                         'status' => 1,
                         'win_num' => 0,
                         'lost_num' => 0,
-                        'points' => 0
+                        'points' => 0,
+                        'is_seededteam' => isset($team['is_seedTeam']) ? $team['is_seedTeam'] : 0
                     ];
                     $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
                 }
@@ -3474,6 +3475,85 @@ class League extends Base
         } catch (Exception $e) {
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 输出积分对阵表格数据
+    public function getleagueintegraltable() {
+        $data = input('post.');
+        if (input('?param.league_id')) {
+            unset($data['league_id']);
+            $data['match_id'] = input('league_id');
+        }
+        // 查询联赛下分组
+        $leagueS = new LeagueService();
+        $groups = $leagueS->getMatchGroups($data);
+        if (!$groups) {
+            // 联赛没有设置分组
+            return json(['code' => 100, 'msg' => '联赛没有设置分组']);
+        }
+        //dump($groups);
+        // 遍历检查每个分组下的赛程是否完成
+        $result = [];
+        try {
+            foreach ( $groups as $key => $group ) {
+                // 分组已完成赛程记录数
+                $groupFinishedScheduleCount = $leagueS->getMatchScheduleCount([
+                    'match_id' => $group['match_id'],
+                    'match_group_id' => $group['id'],
+                    'status' => 2
+                ]);
+                // 分组已录入比赛结果记录数
+                $groupRecordCount = $leagueS->getMatchRecordCount([
+                    'match_id' => $group['match_id'],
+                    'match_group_id' => $group['id']
+                ]);
+                // 分组赛程全部完成 获取组内每个球队积分、战绩
+                if ( $groupFinishedScheduleCount == $groupRecordCount ) {
+                    $result[$key]['group_name'] = $group['name'];
+                    $result[$key]['group_id'] = $group['id'];
+                    // 获取组内球队
+                    $groupTeams = $leagueS->getMatchGroupTeams([
+                        'match_id' => $group['match_id'],
+                        'group_id' => $group['id']
+                    ]);
+                    $result[$key]['teams'] = [];
+                    foreach ($groupTeams as $key1 => $groupTeam) {
+                        // 获取组内球队在分组比赛的积分总和
+                        $teamGroupScoreSum = $leagueS->getMatchRankScoreSumByTeam(['match_id' => $group['match_id'], 'match_group_id' => $group['id'], 'team_id' => $groupTeam['team_id']]);
+                        // 获取组内球队的比赛结果数据
+                        $teamRecords = $leagueS->getMatchRecords(['match_id' => $group['match_id'], 'match_group_id' => $group['id'], 'home_team_id|away_team_id' => $groupTeam['team_id']]);
+                        //dump($teamRecords);
+                        $teamArray =  [
+                            'team_id' => $groupTeam['team_id'],
+                            'team' => $groupTeam['team'],
+                            'group_number' => $groupTeam['group_number'],
+                            'score' => $teamGroupScoreSum,
+                            'records' => []
+                        ];
+                        foreach ($teamRecords as $key2 => $teamRecord) {
+                            $recordArray = [
+                                'home_team_id' => $teamRecord['home_team_id'],
+                                'home_team' => $teamRecord['home_team'],
+                                'home_score' => $teamRecord['home_score'],
+                                'away_team_id' => $teamRecord['away_team_id'],
+                                'away_team' => $teamRecord['away_team'],
+                                'away_score' => $teamRecord['away_score']
+                            ];
+                            array_push($teamArray['records'], $recordArray);
+                        }
+                        array_push($result[$key]['teams'], $teamArray);
+                    }
+                }
+            }
+        }  catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         }
     }
 
