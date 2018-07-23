@@ -302,7 +302,7 @@ class LessonMember extends Base{
 
             if ($expire_time && $lesson_member_id) {
                 $expire = strtotime($expire_time) + 86399;
-                $result = db('lesson_member')->where(['id'=>$id])->update(['expire'=>$lesson_member_id]);
+                $result = db('lesson_member')->where(['id'=>$lesson_member_id])->update(['expire'=>$expire]);
                 if($result){
                     return json(['code'=>200,'msg'=>'操作成功']);
                 }else{
