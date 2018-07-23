@@ -30,7 +30,7 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">课程学员列表</h1>
+        <h1 class="mui-title">{$lesson_id}学员列表</h1>
     </header>
 
     <div class="mui-content">
@@ -45,6 +45,29 @@
             </div>
         </div>
 
+    </div>
+
+
+    <!--周期选择-->
+    <div id="dateSelect" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>请选择截止日期</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="weekConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group weekList">
+                    <div class="mui-input-row">
+                        <span class="btnDate btn" data-options='{"type":"time"}'>请选择时间</span>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -66,11 +89,16 @@
             window.top.location.href = this.href;
         });
 
+
+
         (function ($, doc) {
             $.ready(function () {
+
+
                 //开始时间
                 //var resultStart = $('#resultStart')[0];
-                var btnStart = $('.btnDate');
+                var result = $(".btnDate");
+                var btnStart = $('.btn');
                 btnStart.each(function (i, btn) {
                     btn.addEventListener('tap', function () {
                         var optionsJson = this.getAttribute('data-options') || '{}';
@@ -80,6 +108,7 @@
 
                         picker.show(function (rs) {
                             //resultStart.innerText = rs.text;
+                            result[i].innerText = rs.text;
                             picker.dispose();
                         });
                     }, false);
@@ -87,6 +116,8 @@
 
             });
         })(mui, document);
+
+
 
         $(function () {
 
@@ -197,10 +228,13 @@
                 url: url,
                 data: {
                     lesson_id: {$lesson_id},
+                    status: 1,
+                    type:1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
+                async: false,
                 headers: { 'Content-Type': 'application/json' },
                 //processData:false,
                 success: function (data) {
@@ -210,14 +244,13 @@
                             
                             newli += `<li class="mui-table-view-cell listli">
                                         <div class="fr">
-                                            <button type="button" class="mui-btn mui-btn-outlined btnDate picker" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}"  data-options='{"type":"date"}'>
-过期时间: ${data.data.data[i].expire}
-
-                                            </button>
+                                            <a href="#dateSelect" class=" btnDate weektime picker" data-member_id = " ${data.data.data[i].member_id}" data-total_schedule="' ${data.data.data[i].total_schedule}" data-rest_schedule="${data.data.data[i].rest_schedule}"  data-lesson=" ${data.data.data[i].lesson}"  data-options='{"type":"date"}'>
+                                            <button type="button" class="mui-btn mui-btn-outlined">过期时间: ${data.data.data[i].expire}</button>
+                                            </a>
                                         </div>
                                         <strong>${data.data.data[i].student.student}</strong>
                                           课时 :总 ${data.data.data[i].total_schedule} 剩 ${data.data.data[i].rest_schedule} 
-                                        <p ><b class="colororange colorblue">${data.data.data[i].type}  </b>状态:  <strong class="colororange"> ${data.data.data[i].status}</strong ></p>
+                                        <p >创建时间：${data.data.data[i].create_time}</p>
                                         </li>`
                         }
                     }
@@ -247,6 +280,9 @@
                 }
             });
         };
+
+
+
 
     </script>
 </body>
