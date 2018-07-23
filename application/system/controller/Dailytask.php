@@ -105,7 +105,7 @@ class Dailytask extends Base{
     public function dropStudent(){
         try{
 
-            $list = db('lesson_member')->field('lesson_member.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson.lesson,lesson_member.lesson_id,lesson.cost,camp.balance,lesson_member.rest_schedule,lesson_member.camp,lesson_member.camp_id,lesson_member.student_id,lesson_member.student,lesson_member.member,lesson_member.member_id')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]]])->select();
+            $list = db('lesson_member')->field('lesson_member.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson.lesson,lesson_member.lesson_id,lesson.cost,camp.balance,lesson_member.rest_schedule,lesson_member.camp,lesson_member.camp_id,lesson_member.student_id,lesson_member.student,lesson_member.member,lesson_member.member_id')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]],'status'=>1])->select();
 
             $incomeData = [];
             $campFinanceData = [];
