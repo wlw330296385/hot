@@ -299,9 +299,13 @@ class LessonMember extends Base{
         try {
             $expire_time = input('param.expire_time');
             $lesson_member_id = input('param.lesson_member_id');
-
             if ($expire_time && $lesson_member_id) {
-                $expire = strtotime($expire_time) + 86399;
+                if($expire_time == -1){
+                    $expire = 0;
+                }else{
+                    $expire = strtotime($expire_time) + 86399;
+                }
+                
                 $result = db('lesson_member')->where(['id'=>$lesson_member_id])->update(['expire'=>$expire]);
                 if($result){
                     return json(['code'=>200,'msg'=>'操作成功']);

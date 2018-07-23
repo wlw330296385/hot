@@ -105,13 +105,13 @@ class Dailytask extends Base{
     public function dropStudent(){
         try{
 
-            $list = db('lesson_member')->field('lesson_member.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson.lesson,lesson_member.lesson_id,lesson.cost,camp.balance,lesson_member.rest_schedule,lesson_member.camp,lesson_member.camp_id,lesson_member.student_id,lesson_member.student,lesson_member.member,lesson_member.member_id')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]],'status'=>1])->select();
+            $list = db('lesson_member')->field('lesson_member.id,camp.schedule_rebate,camp.rebate_type,lesson_member.lesson,lesson.lesson,lesson_member.lesson_id,lesson.cost,camp.balance,lesson_member.rest_schedule,lesson_member.camp,lesson_member.camp_id,lesson_member.student_id,lesson_member.student,lesson_member.member,lesson_member.member_id')->join('camp','camp.id = lesson_member.camp_id')->join('lesson','lesson.id = lesson_member.lesson_id')->where(['lesson_member.expire'=>['between',[99999,time()]],'lesson_member.status'=>1])->select();
 
             $incomeData = [];
             $campFinanceData = [];
             if($list){
                 
-                db('lesson_member')->where(['expire'=>['lt',time()]])->update(['status'=>3,'system_remarks'=>"超过上课期限"]);
+                db('lesson_member')->where(['lesson_member.expire'=>['between',[99999,time()]]])->update(['status'=>3,'system_remarks'=>"超过上课期限"]);
                 //训练营财务
                 foreach ($list as $key => $value) {
                     if($value['rebate_type'] == 1){
@@ -124,7 +124,7 @@ class Dailytask extends Base{
                             's_balance'         =>$value['balance'],
                             'e_balance'         =>$value['balance'] + ($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
                             'f_id'              =>$value['id'],
-                            'income'            =>($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'income'            =>$value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate']),
                             'lesson_id'         =>$value['lesson_id'],
                             'lesson'            =>$value['lesson'],
                             'camp_id'           =>$value['camp_id'],
@@ -145,25 +145,48 @@ class Dailytask extends Base{
                             's_balance'         =>$value['balance'],
                             'e_balance'         =>$value['balance'] + ($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
                             'f_id'              =>$value['id'],
-                            'money'            =>($value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate'])),
+                            'money'             =>$value['cost']*$value['rest_schedule']*(1-$value['schedule_rebate']),
                             'camp_id'           =>$value['camp_id'],
                             'camp'              =>$value['camp'],
                             'type'              =>6,
                         ];
+
                     }
                 }
 
                 if(!empty($campFinanceData) && !empty($incomeData)){
                     $Income = new \app\model\Income;
                     $CampFinance = new \app\model\CampFinance;
+                    $Camp = new \app\model\Camp;
                     $Income->saveAll($incomeData);
                     $CampFinance->saveAll($campFinanceData);
+                    foreach ($campFinanceData as $key => $value) {
+
+                        $Camp->where(['id'=>$value['camp_id']])->inc('balance',$value['money'])->update();
+                    }
                 }
             }
             $data = ['crontab'=>'清除过期学生'];
             $this->record($data);
         }catch(Exception $e){
             $data = ['crontab'=>'清除过期学生','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+    }
+
+
+
+    // 发送学生过期提醒模板消息给家长
+    public function sendMessageToParents(){
+        try {
+
+            
+            
+            $data = ['crontab'=>'发送学生过期提醒模板消息给家长'];
+            $this->record($data);
+        } catch (Exception $e) {
+            $data = ['crontab'=>'发送学生过期提醒模板消息给家长','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data);
             trace($e->getMessage(), 'error');
         }
