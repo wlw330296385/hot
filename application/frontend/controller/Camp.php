@@ -211,6 +211,9 @@ class Camp extends Base{
         $power = $this->CampService->isPower($camp_id,$member_id);
         // 若是教练 获取教练权限
         $level = 0;
+        if($power <2){
+            $this->error('权限不足');
+        }
         if($power==2) {
             $level = $this->CampService->getCampMemberLevel($camp_id,$member_id);
         }

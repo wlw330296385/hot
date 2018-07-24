@@ -533,8 +533,20 @@ class Schedule extends Base
                         'rebate_type'=>$campInfo['rebate_type'],
                         'schedule_rebate'=>$campInfo['schedule_rebate'],
                         'output'=>$totalCost,
-                        'member'=>$this->memberInfo['member'],
-                        'member_id'=>$this->memberInfo['member_id']
+                        'date_str'=>date('Ymd',time()),
+                    ]);
+                    db('camp_finance')->insert([
+                        'camp'=>$campInfo['camp'],
+                        'camp_id'=>$campInfo['id'],
+                        'f_id'=>$res['insid'],
+                        'type'=>1,
+                        'create_time'=>time(),
+                        'e_balance'=>($campInfo['balance']-$totalCost),
+                        's_balance'=>$campInfo['balance'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'schedule_rebate'=>$campInfo['schedule_rebate'],
+                        'money'=>-$totalCost,
+                        'date_str'=>date('Ymd',time()),
                     ]);
                 }
                 
