@@ -154,7 +154,7 @@
                 </div>
                 <li class="mui-table-view-cell">
                     <p><span>￥</span><input type="Number" name="refund" class="data" placeholder="请填写可退金额" value=""></p>
-                    <textarea name="reason" class="mui-input-clear" placeholder="请在此处填写退款备注..."></textarea>
+                    <textarea name="remarks" class="mui-input-clear" placeholder="请在此处填写退款备注..."></textarea>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" id="tjBtn"><a href="#" >确认同意</a>
                 </li>
@@ -184,7 +184,7 @@
 
         $('#tjBtn').on('click',function(){
 
-            var reason = $("textarea[name='reason']").val();
+            var remarks = $("textarea[name='remarks']").val();
             var refund = $("input[name='refund']").val();
             if(refund==''){
                 mui.toast("请填写退款金额");
@@ -192,18 +192,11 @@
             }
             mui.confirm('是否确认同意退款?', '', ['取消', '确认'], function (e) {
                 if (e.index == 1) {
-
-                    let data = {
-                            "action":3,
-                            "agree_time":"{:time()}"
-                    };
-                    let refundData ={
-                            "reason":reason,
+                    let data ={
+                            "remarks":remarks,
                             "refund":refund,
                     }
-                    data.refundData = JSON.stringify(refundData);
-
-                    mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id']])}",{
+                    mui.ajax("{:url('api/bill/agreeBillApi',['bill_id'=>$billInfo['id']])}",{
                         data:data,
                         dataType:'json',//服务器返回json格式数据
                         type:'post',//HTTP请求类型

@@ -75,7 +75,17 @@
 
             <ul class="mui-table-view list detalis-list mb mt55">
                 {volist name="refundList"  id="vol"}
-                <li class="mui-table-view-cell listli"><span class="wd58">{$vol.create_time}<br />{$vol.update_time}</span>申请退款时间<br />退款{$vol.status}</li>
+                <li class="mui-table-view-cell listli">
+                    <span class="wd58">
+                        {$vol.create_time}
+                        <br />
+                        {$vol.update_time}
+                        <br />
+                    </span>
+                    申请退款时间
+                    <br />退款{$vol.status}
+                    <br />实际退款金额￥:{$vol.refund}
+                </li>
                 {/volist}
             </ul>
             
@@ -146,13 +156,9 @@ $(function(){
                 }
                 let data = {
                         "remarks":remarks,
-                        'action':1,
                     };
 
-                {if isset($refundList[0]['id'])}
-                    data.refund_id = {$refundList[0]['id']};
-                {/if}
-                mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
+                mui.ajax("{:url('api/bill/refundBillApi',['bill_id'=>$billInfo['id']])}",{
                     data:data,
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型
@@ -184,16 +190,8 @@ $(function(){
 
         mui.confirm('您确认【撤销退款申请】吗?', '', ['取消', '确认'], function (e) {
             if (e.index == 1) {
-                let data = {
-                        'action':5,
-                    };
-
-                {if isset($refundList[0]['id'])}
-                    data.refund_id = {$refundList[0]['id']};
-                {/if}
-                console.log(data);
-                mui.ajax("{:url('api/bill/updateBillApi',['bill_id'=>$billInfo['id'],'member_id'=>$memberInfo['id']])}",{
-                    data:data,
+                mui.ajax("{:url('api/bill/cancelBillApi',['bill_id'=>$billInfo['id']])}",{
+                    data:{},
                     dataType:'json',//服务器返回json格式数据
                     type:'post',//HTTP请求类型
                     timeout:10000,//超时时间设置为10秒；

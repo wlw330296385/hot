@@ -71,18 +71,8 @@ class Bill extends Frontend{
             $data = input('post.');
             $data['member'] = $this->memberInfo['member'];
             $data['member_id'] = $this->memberInfo['id'];
-
             if($bill_id){
-                if($data['refundData']!='[]' && !empty($data['refundData'])){
-                    $refundData = json_decode($data['refundData'],true);
-                    $refundData['process_id'] = $this->memberInfo['id'];
-                    $refundData['process'] = $this->memberInfo['member'];
-                    $refundData['process_time'] = time();
-                    unset($data['refundData']);
-                }else{
-                    $refundData = [];
-                }
-                $result = $this->BillService->updateBill($data,['id'=>$bill_id],$refundData);
+                $result = $this->BillService->updateBill($data,['id'=>$bill_id]);
             }else{
                 $result = $this->BillService->createBill($data);
             }
@@ -93,6 +83,55 @@ class Bill extends Frontend{
         }   	
     }
 
+    //申请退款
+    public function refundBillApi(){
+        try {
+            $bill_id = input('param.bill_id');
+            $remarks = input('post.remarks');
+            $result = $this->BillService->refundBill(['id'=>$bill_id],$remarks);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    //同意退款
+    public function agreeBillApi(){
+        try {
+            $bill_id = input('param.bill_id');
+            $refund = input('post.refund');
+            $result = $this->BillService->agreeBill(['id'=>$bill_id],$refund);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    // 拒绝退款
+    public function rejectBillApi(){
+        try {
+            $bill_id = input('param.bill_id');
+            $remarks = input('post.remarks');
+            $result = $this->BillService->rejectBill(['id'=>$bill_id],$remarks);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    // 拒绝退款
+    public function cancelBillApi(){
+        try {
+            $bill_id = input('param.bill_id');
+            $result = $this->BillService->cancelBill(['id'=>$bill_id]);
+            return json($result);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
    public function payApi(){
         try{
