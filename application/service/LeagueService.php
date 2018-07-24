@@ -15,6 +15,7 @@ use app\model\MatchRank;
 use app\model\MatchRecord;
 use app\model\MatchSchedule;
 use app\model\MatchStage;
+use app\model\MatchStageAdvteam;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 
@@ -1145,6 +1146,13 @@ class LeagueService
             trace('error message:'.$model->getError().'; \n sql:'.$model->getLastSql().'');
             return false;
         }
+        return $res;
+    }
+
+    // 批量保存比赛阶段晋级球队
+    public function saveAllMatchStageAdvteam($data) {
+        $model = new MatchStageAdvteam();
+        $res = $model->saveAll($data);
         return $res;
     }
 
