@@ -105,7 +105,6 @@
         var teams = '';
         $(function () {
 
-
             $(".fenpei").on("tap", '', function () {
                 var league_id = "{$leagueInfo.id}";
                 var totalNum = $(".totalNum").text();
@@ -178,15 +177,21 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i < data.data.length; i++) {
-                            groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">组' + ((data.data.slice(0, i).length + 1)) + '</text><input type="hidden" class="checkTeamId" value=""></li>';
+                            groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">' +  data.data[i].name + '</text><input type="hidden" class="checkTeamId" value=""></li>';
                             newli += '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' + data.data[i].name + '" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' + ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
                             var teams = data.data[i].group_teams;
                             for (var j = 0; j < teams.length; j++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[j].team_logo + '" data-team="' + teams[j].team.team + '" data-team_id="' + teams[j].team.team_id + '" data-match="' + teams[j].team.match + '" data-match_id="' + teams[j].team.match_id + '" data-members_num="' + teams[j].team.members_num + '">';
                                 newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + teams[j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20" style="widrh:42%;"><p class="f14" style="font-weight:bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">' + teams[j].team.team + '</p><p>参赛' + teams[j].team.members_num + '人</p></div>';
                                 newli += '<div class="fr f12" style="line-height:40px;color: #a9a9a9;">';
-                                newli += `<input type="button" class="seedTeam bggray" value="种子球队" data-is_seedteam="0" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-left:6px;">
+                                if (teams[j].is_seededteam == 1) {
+                                    newli += `<input type="button" class="seedTeam bggreen" value="种子球队" data-is_seedteam="${teams[j].is_seededteam}" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-left:6px;">
                                                 <a href="#move"><input type="button" class="deleteTeam bgred" value="换组" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;"></a>`
+                                } else {
+                                    newli += `<input type="button" class="seedTeam bggray" value="种子球队" data-is_seedteam="${teams[j].is_seededteam}" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-left:6px;">
+                                                <a href="#move"><input type="button" class="deleteTeam bgred" value="换组" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;"></a>`
+                                }
+
                                 newli += '</div></li>';
                             }
                             newli += '</ul>';
@@ -249,18 +254,17 @@
 
         // 获取数据并进行提交
         function submitAction() {
-
+            var isOk = true  //用变量记住状态
             $(".groupsTip").each(function () {
                 let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
-                console.log(checkSeed)
                 if (checkSeed > 1) {
                     mui.toast("每个小组只能有一支种子球队！")
-                    return false;
+                    return isOk = false;
                 }
             });
 
             groupList = []
-            var isOk = true  //用变量记住状态
+
             $(".frame ul").each(function () {
                 var groupName = $(this).find("input[name=groupName]").val();
                 if (!(/^.{0,2}$/).test(groupName)) {
