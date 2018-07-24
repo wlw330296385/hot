@@ -1152,7 +1152,7 @@ class LeagueService
     // 批量保存比赛阶段晋级球队
     public function saveAllMatchStageAdvteam($data) {
         $model = new MatchStageAdvteam();
-        $res = $model->saveAll($data);
+        $res = $model->allowField(true)->saveAll($data);
         return $res;
     }
 

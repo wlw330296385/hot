@@ -4113,7 +4113,6 @@ class League extends Base
             foreach ( $advteamsData as $key => $advteam ) {
                 $advteamsData[$key]['match_id'] = $data['match_id'];
                 $advteamsData[$key]['match'] = $data['match'];
-                $advteamsData[$key]['match_logo'] = $data['match_logo'];
             }
             // 保存比赛阶段晋级球队数据
             $leagueS = new LeagueService();
