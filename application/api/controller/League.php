@@ -3579,6 +3579,16 @@ class League extends Base
         if ($power < 8) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+        // 检查赛程是否已有比赛结果信息
+        $matchS = new MatchService();
+        $checkScheduleHasRecord = $matchS->getMatchRecord([
+            'match_id' =>  $data['match_id'],
+            'match_schedule_id' => $data['match_schedule_id']
+        ]);
+        if ($checkScheduleHasRecord) {
+            return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息']);
+        }
+
         $data['match_time'] = strtotime($data['match_time']);
         $data['status'] = 1;
         // 根据双方球队比分获取胜负方队
@@ -3786,6 +3796,16 @@ class League extends Base
             if ($matchRecord && $matchRecord['is_record']) {
                 return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
             }
+        }
+
+        // 检查赛程是否已有比赛结果信息
+        $matchS = new MatchService();
+        $checkScheduleHasRecord = $matchS->getMatchRecord([
+            'match_id' =>  $data['match_id'],
+            'match_schedule_id' => $data['match_schedule_id']
+        ]);
+        if ($checkScheduleHasRecord) {
+            return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息']);
         }
 
         // 比赛比分数据组合
