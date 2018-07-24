@@ -90,14 +90,8 @@
                 <div class="mui-scroll">
                     <!-- <ul class="mui-table-view list integralList"></ul> -->
                     <div id="gameScoreBoard">
-                        <div class="gData">
-                            <div class="page-header border-b">
-                                <span class="course">
-                                    <strong>A 组</strong> - 对阵积分表
-                                </span>
-                                <span class="more">小组循环赛</span>
-                            </div>
-                            <table width="100%">
+                        <div class="gData integralList">
+                            <!-- <table width="100%">
                                 <tbody>
                                     <tr>
                                         <th>A 组</th>
@@ -226,7 +220,7 @@
                                         <td class=""></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> -->
                         </div>
                     </div>
                 </div>
@@ -411,13 +405,14 @@
         // 接口获取数据并追加到页面
         var toIntegralList = function (wList, page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getleagueintegraltable')}" + '/?page=' + page;
+            var url = "{:url('api/league/leaguegroupwithteamspage')}" + '/?page=' + page;
             var league_id = "{$league_id}"
             mui.ajax({
                 url: url,
                 data: {
-                    match_id: league_id,
+                    league_id: league_id,
                 },
+                async: false,
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
@@ -426,40 +421,19 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `
-                        <div class="page-header bggray2">
-                            <span class="course">${data.data[i].stage_name}（${data.data[i].group_name}）</span>
-                        </div>
-                        <ul class="mui-table-view mui-text-center">`
-                            for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell">
-                                <a href="">
-                                    <ul class="mui-row" style="padding:0">
-                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                            <p class="colororange">
-                                                <strong>${j + 1}</strong>
-                                            </p>
-                                        </li>
-                                        <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
-                                            <p>${data.data[i].teams[j].team}</p>
-                                        </li>
-                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
-                                            <p>${data.data[i].teams[j].win_count}</p>
-                                        </li>
-                                        <li class="mui-col-xs-2 mui-col-sm-2" style="line-height: 36px;">
-                                            <p>${data.data[i].teams[j].lose_count}</p>
-                                        </li>
-                                        <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                            <p class="colororange">
-                                                <strong>${data.data[i].teams[j].score}</strong>
-                                            </p>
-                                        </li>
-                                    </ul>
-                                </a>
-                            </li>`
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += `<table width="100%"><tbody><tr><th>${data.data.data[i].name}</th>`
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<td>${data.data.data[i].group_teams[j].team.team}</td>`
                             }
-                            newli += `</ul>`
+                            newli += `<td>得失分率</td><td>积分</td><td>名次</td></tr>`
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<tr>
+                                            <td>${data.data.data[i].group_teams[j].team.team}</td>
+                                            <td>${j}</td>`
+                                newli += `</tr>`
+                            }
+                            newli += `</tbody ></table>`
                         }
                     }
                     if (gType == 1) {
@@ -508,11 +482,10 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `
-                        <div class="page-header bggray2">
-                            <span class="course">${data.data[i].stage_name}（${data.data[i].group_name}）</span>
-                        </div>
-                        <ul class="mui-table-view mui-text-center">`
+                            newli += `< div class="page-header bggray2" >
+                                        <span class="course">${data.data[i].stage_name}（${data.data[i].group_name}）</span>
+                                      </div >
+            <ul class="mui-table-view mui-text-center">`
                             for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
                                 newli += `<li class="mui-table-view-cell">
                                 <a href="">
@@ -590,20 +563,20 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `
-                            <li class="mui-table-view-cell listli">
-                                <div class="mui-slider-right mui-disabled" data-id="2">
-                                    <span class="mui-btn mui-btn-red" data-action="del">删除</span>
+                    < li class="mui-table-view-cell listli" >
+                        <div class="mui-slider-right mui-disabled" data-id="2">
+                            <span class="mui-btn mui-btn-red" data-action="del">删除</span>
+                        </div>
+                        <div class="mui-slider-handle">
+                            <a href="">
+                                <div class="mui-media-body wd83">
+                                    奖项名称：<strong class="colororange f16"> MVP</strong>
+                                    <p class="mui-ellipsis lineHeight20">授奖单位：大热篮球俱乐部</p>
+                                    <p class="mui-ellipsis lineHeight20">授奖日期：2018-07-10</p>
                                 </div>
-                                <div class="mui-slider-handle">
-                                    <a href="">
-                                        <div class="mui-media-body wd83">
-                                            奖项名称：<strong class="colororange f16"> MVP</strong>
-                                            <p class="mui-ellipsis lineHeight20">授奖单位：大热篮球俱乐部</p>
-                                            <p class="mui-ellipsis lineHeight20">授奖日期：2018-07-10</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>`
+                            </a>
+                        </div>
+                            </li >`
                         }
                     }
                     if (gType == 1) {
