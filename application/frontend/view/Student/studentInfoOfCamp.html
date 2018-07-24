@@ -582,6 +582,7 @@
         var url = "{:url('api/bill/getBillListByPageApi','','',true)}/?page=" + page;
         var campID = "{$camp_id}";
         var studentID = "{$studentInfo.id}";
+        var isStudent = "{$studentcando}"
         mui.ajax({
             url: url,
             data: {
@@ -596,9 +597,15 @@
             success: function (data) {
                 var newli = '';
                 var tips = '';
+                var urls = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('bill/billinfoofcamp')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
+                        if(isStudent=="1"){
+                            urls = "{:url('bill/billinfo')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
+                        }else{
+                            urls = "{:url('bill/billinfoofcamp')}" + '/bill_id/' + data.data.data[i].id + '/camp_id/' + data.data.data[i].camp_id;
+                        }
+                        
                         tips='';
                         if(data.data.data[i].is_pay==='未付款'){
                             tips = '<p class="colorred f12">[ '+data.data.data[i].is_pay+' ]</p>';
