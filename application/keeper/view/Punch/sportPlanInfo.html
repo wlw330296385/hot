@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>计划详情</title>
+    <title>计划</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,70 +11,236 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--自定义多色图标icon.js-->
+    <!-- <script src="/static/frontend/iconfont/iconfont.js"></script> -->
     <link rel="stylesheet" href="/static/frontend/css/calendar.css">
+
+    <style type="text/css">
+
+        @media screen and (min-width: 320px) {
+            #refreshContainer {
+                margin-top: 292px !important;
+            }
+        }
+
+        @media screen and (min-width: 360px) {
+            #refreshContainer {
+                margin-top: 306px !important;
+            }
+        }
+
+        @media screen and (min-width: 375px) {
+            #refreshContainer {
+                margin-top: 310px !important;
+            }
+        }
+
+        @media screen and (min-width: 411px) {
+            #refreshContainer {
+                margin-top: 320px !important;
+            }
+        }
+
+        @media screen and (min-width: 414px) {
+            #refreshContainer {
+                margin-top: 322px !important;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            #refreshContainer {
+                margin-top: 442px !important;
+            }
+        }
+
+        .planTips {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .planTips p {
+            color: #c3c3c3;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div id="calendar" class="calendar"></div>
-    <div class="hide punchTimeList"></div>
-    <p class="pline"></p>
-    <div class="mui-content">
-        <div class="list" style="margin-bottom: 110px;">
+    <header class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    </header>
 
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli">
-                    <img src="{$memberInfo.avatar}" class="img40" style="margin-left: 13px">
-                    <text style="margin-left: 5px;" class="f16">{$memberInfo.member}</text>
-                    <span class="wd36" style="margin-top: 9px;">本月计划
-                        <text class="colororange">0</text> | 完成
-                        <text class="colororange">0</text>
-                    </span>
-                </li>
-            </ul>
+    <div class="mui-content list">
+        <div class="img4x3" style="background-image:url('/static/frontend/images/sport_plan.jpg');padding-bottom: 31%"></div>
+        <ul class="mui-table-view borderStyle" style="margin-top: 3px;">
+            <li class="mui-table-view-cell listli" id="logoframe">
+                <div class="mui-media-body wd66">
+                    <strong class="f16 tmName">{$sportPlanInfo.plansport}</strong>
+                    <img class="mui-media-object mui-pull-left logostyle" src="{$sportPlanInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <p class="mui-ellipsis lineHeight20">开始时间：{$sportPlanInfo.start}</p>
+                    <p class="mui-ellipsis lineHeight20">结束时间：{$sportPlanInfo.end}</p>
+                </div>
 
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell mui-media listli">
-                    <div class="fl f18 colororange mui-text-center" style="line-height:48px; width:8%;margin-right:10px;font-weight:bold">1</div>
-                    <div class="mui-media-body wd60 f16">
-                        <text style="font-weight: bold;">健身</text>
-                        <p class="lineHeight20">计划时间&nbsp;
-                            <text class="colororange">2018-06-15</text>
-                        </p>
-                    </div>
-                </li>
-            </ul>
+                <div class="price-frame" style="margin-top: 15px;">
+                    <p class="f12">计划运动<br />
+                        <text class="colororange f14">{$sportPlanInfo.period}</text> 天 &nbsp;
+                    </p>
+                </div>
+            </li>
+        </ul>
 
-            <div class="page-header">
-                <span class="course" style="padding-left: 38px;">
-                    运动内容
-                </span>
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli">
+                <label>计划目标</label>
+                <span>{$sportPlanInfo.aim}</span>
+            </li>
+        </ul>
+
+
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli">
+                <label>
+                    <span class="icon iconfont icon-p-workout colororange"></span>运动计划日程
+                </label>
+                <text class="fr f14">共 <text class="colororange totalData">0</text> 次</text>
+            </li>
+        </ul>
+
+        <div id="refreshContainer" class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view detalis-list list border-b planSchedule"></ul>
             </div>
-            <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell mui-media listli"  style="padding-left: 53px;">
-                    <h5 class="f16" style="font-weight: bold">标题</h5>
-                    <p>内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</p>
-                </li>
-            </ul>
-
-            <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-col-xs-12 opli bgred" onclick="submitAction()">
-                    打卡
-                </li>
-            </ul>
-
         </div>
+
     </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/js/calendar.js"></script>
+<script src="/static/frontend/js/common.js"></script>
 <script>    
+
+
+    var count = 1
+    mui.init({
+        swipeBack: true, //启用右滑关闭功能
+        pullRefresh: {
+            //下拉刷新上拉加载教练列表
+            container: "#refreshContainer",
+            down: {
+                //下拉刷新
+                height: 50,//可选.默认50.触发下拉刷新拖动距离
+                auto: true,//可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefresh
+            },
+            up: {
+                //上拉加载
+                height: 150,//可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefresh
+            }
+        }
+    });
+
+    //下拉刷新具体业务实现
+    function pulldownRefresh() {
+        setTimeout(function () {
+            count = 1;//刷新并显示第一页
+            var page = count;
+            var gType = 1;//代表下拉刷新
+            toPlanList(page, gType);//具体取数据的方法
+        }, 100);
+    }
+    //上拉加载具体业务实现
+    function pullupRefresh() {
+        setTimeout(function () {
+            count++;//翻下一页
+            var page = count;
+            var gType = 2;//代表上拉加载
+            toPlanList(page, gType);//具体取数据的方法
+        }, 100);
+    }
+    //获取我的打卡记录列表
+    function toPlanList(page, gType) {
+        var url = "{:url('api/sport_plan/getSportPlanScheduleListApi','','',true)}";
+        var sport_plan_id = "{$sportPlanInfo.id}"
+        mui.ajax({
+            url: url,
+            data: {
+                sport_plan_id: sport_plan_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = "";
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        // var punch_time = data.data[i].punch_time
+                        // $(".calendar-date .item").each(function () {
+                        //     var time = $(this).attr("data");
+                        //     var year = time.substring(0, 4);
+                        //     var month = time.substring(4, 6);
+                        //     var day = time.substring(6, 8);
+                        //     if (day < 10 && day.length == 1) {
+                        //         day = "0" + day
+                        //     }
+                        //     var dateTime = year + "-" + month + "-" + day
+                        //     if (punch_time == dateTime) {
+                        //         $(this).addClass("endDK");
+                        //     }
+                        // });
+                        var urls = "{:url('punch/planInfo')}/" + 'plan_id/' + data.data[i].id;
+                        newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                        newli += '<div class="fl f18 colororange mui-text-center" style="line-height:48px; width:8%;margin-right:10px;font-weight:bold">' + (i + 1) + '</div><div class="mui-media-body wd60 f16"><text style="font-weight: bold;">' + data.data[i].name + '</text>';
+                        newli += '<p class="lineHeight20">计划时间&nbsp;<text class="colororange">' + data.data[i].punch_time + '</text></p></div>';
+                        newli += '<div class="fr pdr15"><p class="colororange" style="margin-top:12px;;">去打卡</p></div>'
+                        newli += '</a></li>'
+                    }
+                }
+
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.planSchedule").empty().append(newli);
+                    mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                    mui('#refreshContainer').pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.planSchedule").html('<li class="planTips"><p>Yesterday you said tomorrow</p><p>别总说明天再开始，别等明天了,现在就开始</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.planSchedule").append(newli);
+                }
+                if (newli != '') {
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
     $(function () {
 
-    })
 
+        // $(document).on("tap", ".arrow-prev", function () {
+        //     toPlanList();
+        // })
+        // $(document).on("tap", ".arrow-next", function () {
+        //     toPlanList();
+        // })
+    })
 </script>
 
 </html>
