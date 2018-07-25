@@ -1224,6 +1224,71 @@ class League extends Base
         }
     }
 
+    // 清空联赛分组信息
+    public function clearmatchgroup() {
+        // 接收请求变量
+        $data = input('post.');
+        // 数据验证
+        if (!array_key_exists('league_id', $data)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402') . '传入联赛id']);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['league_id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他联赛']);
+        }
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        // 需要联赛管理员以上
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 查询联赛有无分组信息
+        $groups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
+        if (!$groups) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 查询联赛分组下有无赛程信息
+        $groupIds = [];
+        foreach ($groups as $group) {
+            array_push($groupIds, $group['id']);
+        }
+        $groupScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $data['league_id'],
+            'match_group_id' => ['in', $groupIds],
+        ]);
+        if ($groupScheduleCount) {
+            return json(['code' => 100, 'msg' => '不能清空分组信息，请先删除相关分组赛程信息']);
+        }
+        // 删除联赛分组信息
+        Db::startTrans();
+        try {
+            $matchGroups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
+            $matchGroupTeams = $leagueS->getMatchGroupTeams(['match_id' => $match['id']]);
+            if ($matchGroups) {
+                $leagueS->deleteMatchGroup(['match_id' => $match['id']], true);
+            }
+            if ($matchGroupTeams) {
+                $leagueS->deleteMatchGroupTeam(['match_id' => $match['id']], true);
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            trace('error:' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
     // 获取联赛球队成员列表（无分页）
     public function getmatchteammembers()
     {
@@ -2807,8 +2872,8 @@ class League extends Base
         if (!$id) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
-        // 获取赛程详情
         $leagueS = new LeagueService();
+        // 获取赛程详情
         $scheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
         if (!$scheduleInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
@@ -2825,6 +2890,10 @@ class League extends Base
         ]);
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 有比赛结果不能删除
+        if ($scheduleInfo['status'] == 2) {
+            return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息，不能删除']);
         }
         try {
             $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
@@ -3336,8 +3405,8 @@ class League extends Base
     public function delmatchstage()
     {
         $id = input('post.id', 0, 'intval');
-        // 查询比赛阶段数据
         $leagueS = new LeagueService();
+        // 查询比赛阶段数据
         $stageInfo = $leagueS->getMatchStage(['id' => $id]);
         if (!$stageInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
@@ -3354,6 +3423,27 @@ class League extends Base
         ]);
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // type=1（小组赛）检查有无分组信息
+        $groups = $leagueS->getMatchGroups(['match_id' => $stageInfo['match_id']]);
+        if ($stageInfo['type'] == 1 && $groups) {
+            return json(['code' => 100, 'msg' => '不能删除该阶段，请先删除分组信息']);
+        }
+        // 获取阶段赛程记录数
+        $scheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $stageInfo['match_id'],
+            'match_stage_id' => $stageInfo['id']
+        ]);
+        if ($scheduleCount) {
+            return json(['code' => 100, 'msg' => '不能删除该阶段，请先删除相关赛程信息']);
+        }
+        // 获取阶段比赛结果记录数
+        $recordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $stageInfo['match_id'],
+            'match_stage_id' => $stageInfo['id']
+        ]);
+        if ($recordCount) {
+            return json(['code' => 100, 'msg' => '该阶段已有比赛结果信息，不能删除']);
         }
         // 删除数据
         try {
@@ -4129,29 +4219,61 @@ class League extends Base
         }
         $leagueS = new LeagueService();
         $orderby = ['match_time' => 'asc', 'id' => 'desc'];
-        $list = $leagueS->getMatchRecords($data, $orderby);
-        if (!$list) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        try {
+            $list = $leagueS->getMatchRecords($data, $orderby);
+            if (!$list) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            // 获取比赛阶段type字段信息
+            foreach ($list as $key => $value) {
+                $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
+                $list[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+            }
+            $_result = $result = [];
+            // 根据比赛时间（年月日）对数据分片
+            foreach ($list as $key => $value) {
+                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+                $_result[$value['match_stage'] . '|' . $date. '|' . $value['match_stage_type']][] = $value;
+            }
+            foreach ($_result as $key => $value) {
+                $_array = [];
+                $keyExplode = explode('|', $key);
+                $_array['date'] = $keyExplode[1];
+                $_array['stage']['type'] = $keyExplode[2];
+                $_array['stage']['name'] = $keyExplode[0];
+                $_array['stage']['records'] = $value;
+                array_push($result, $_array);
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
-        // 获取比赛阶段type字段信息
-        foreach ($list as $key => $value) {
-            $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
-            $list[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+    }
+
+    // 获取联赛比分结果比分信息列表
+    public function getresultmatchrecords() {
+        $data = input('param.');
+        // 参数league_id -> match_id
+        if (input('?param.league_id')) {
+            unset($data['league_id']);
+            $data['match_id'] = input('param.league_id');
         }
-        $_result = $result = [];
-        // 根据比赛时间（年月日）对数据分片
-        foreach ($list as $key => $value) {
-            $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
-            $_result[$value['match_stage'] . '|' . $date. '|' . $value['match_stage_type']][] = $value;
+        if (input('?page')) {
+            unset($data['page']);
         }
-        foreach ($_result as $key => $value) {
-            $_array = [];
-            $keyExplode = explode('|', $key);
-            $_array['date'] = $keyExplode[1];
-            $_array['stage']['type'] = $keyExplode[2];
-            $_array['stage']['name'] = $keyExplode[0];
-            $_array['stage']['records'] = $value;
-            array_push($result, $_array);
+        $leagueS = new LeagueService();
+        $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+        $field =  [ "home_team_id", "home_team", "home_score", "away_team_id", "away_team", "away_score" ];
+        try {
+            $result = $leagueS->getMatchRecords($data, $orderby, $field);
+        }  catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -4625,59 +4747,59 @@ class League extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
     public function test() {
         $data = [
-                    [
-                        "home_team_id"=> 2,
-                        "home_team"=> "荣光WTF",
-                        "home_score"=> 63,
-                        "away_team_id"=> 4,
-                        "away_team"=> "大热追梦队",
-                        "away_score"=> 53
-                    ],
-                    [
-                        "home_team_id"=> 8,
-                        "home_team"=> "FireTeam",
-                        "home_score"=> 90,
-                        "away_team_id"=> 2,
-                        "away_team"=> "荣光WTF",
-                        "away_score"=> 102
-                    ],
-                    [
-                        "home_team_id"=> 4,
-                        "home_team"=> "大热追梦队",
-                        "home_score"=> 56,
-                        "away_team_id"=> 8,
-                        "away_team"=> "FireTeam",
-                        "away_score"=> 52
-                    ],
-                    [
-                        "home_team_id"=> 3,
-                        "home_team"=> "H1篮球队",
-                        "home_score"=> 95,
-                        "away_team_id"=> 12,
-                        "away_team"=> "SJX",
-                        "away_score"=> 32
-                    ],
-                    [
-                        "home_team_id"=> 11,
-                        "home_team"=> "F-18",
-                        "home_score"=> 98,
-                        "away_team_id"=> 3,
-                        "away_team"=> "H1篮球队",
-                        "away_score"=> 78
-                    ],
-                    [
-                        "home_team_id"=> 12,
-                        "home_team"=> "SJX",
-                        "home_score"=> 65,
-                        "away_team_id"=> 11,
-                        "away_team"=> "F-18",
-                        "away_score"=> 45
-                    ]
-                    ];
+            [
+                "home_team_id"=> 2,
+                "home_team"=> "荣光WTF",
+                "home_score"=> 63,
+                "away_team_id"=> 4,
+                "away_team"=> "大热追梦队",
+                "away_score"=> 53
+            ],
+            [
+                "home_team_id"=> 8,
+                "home_team"=> "FireTeam",
+                "home_score"=> 90,
+                "away_team_id"=> 2,
+                "away_team"=> "荣光WTF",
+                "away_score"=> 102
+            ],
+            [
+                "home_team_id"=> 4,
+                "home_team"=> "大热追梦队",
+                "home_score"=> 56,
+                "away_team_id"=> 8,
+                "away_team"=> "FireTeam",
+                "away_score"=> 52
+            ],
+            [
+                "home_team_id"=> 3,
+                "home_team"=> "H1篮球队",
+                "home_score"=> 95,
+                "away_team_id"=> 12,
+                "away_team"=> "SJX",
+                "away_score"=> 32
+            ],
+            [
+                "home_team_id"=> 11,
+                "home_team"=> "F-18",
+                "home_score"=> 98,
+                "away_team_id"=> 3,
+                "away_team"=> "H1篮球队",
+                "away_score"=> 78
+            ],
+            [
+                "home_team_id"=> 12,
+                "home_team"=> "SJX",
+                "home_score"=> 65,
+                "away_team_id"=> 11,
+                "away_team"=> "F-18",
+                "away_score"=> 45
+            ]
+        ];
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' =>$data]);
 
     }
-
 }

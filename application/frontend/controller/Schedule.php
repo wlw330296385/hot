@@ -106,7 +106,7 @@ class Schedule extends Base
         if ($scheduleInfo['is_settle'] != 1) {
             // 判断权限
             $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
-            if($isPower>2){
+            if($isPower>=2){
                 $updateSchedule = 1;
             } else if ($isPower == 2) {
                 // 兼职教练 不可见编辑入口
