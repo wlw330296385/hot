@@ -1004,16 +1004,18 @@ class LeagueService
     }
 
     // 比赛结果列表
-    public function getMatchRecords($map, $order='id desc') {
+    public function getMatchRecords($map, $order='id desc', $field="*") {
         $model = new MatchRecord();
-        $res = $model->where($map)->order($order)->select();
+        $res = $model->field($field)->where($map)->order($order)->select();
         if (!$res) {
             return $res;
         }
         $result = $res->toArray();
-        foreach ($result as $key => $value) {
-            $result[$key]['match_timestamp'] = $value['match_time'];
-            $result[$key]['match_time'] = date('Y-m-d H:i', $value['match_time']);
+        if ( $field == "*" ) {
+            foreach ($result as $key => $value) {
+                $result[$key]['match_timestamp'] = $value['match_time'];
+                $result[$key]['match_time'] = date('Y-m-d H:i', $value['match_time']);
+            }
         }
         return $result;
     }

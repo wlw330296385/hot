@@ -4219,29 +4219,61 @@ class League extends Base
         }
         $leagueS = new LeagueService();
         $orderby = ['match_time' => 'asc', 'id' => 'desc'];
-        $list = $leagueS->getMatchRecords($data, $orderby);
-        if (!$list) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        try {
+            $list = $leagueS->getMatchRecords($data, $orderby);
+            if (!$list) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+            // 获取比赛阶段type字段信息
+            foreach ($list as $key => $value) {
+                $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
+                $list[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+            }
+            $_result = $result = [];
+            // 根据比赛时间（年月日）对数据分片
+            foreach ($list as $key => $value) {
+                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+                $_result[$value['match_stage'] . '|' . $date. '|' . $value['match_stage_type']][] = $value;
+            }
+            foreach ($_result as $key => $value) {
+                $_array = [];
+                $keyExplode = explode('|', $key);
+                $_array['date'] = $keyExplode[1];
+                $_array['stage']['type'] = $keyExplode[2];
+                $_array['stage']['name'] = $keyExplode[0];
+                $_array['stage']['records'] = $value;
+                array_push($result, $_array);
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
-        // 获取比赛阶段type字段信息
-        foreach ($list as $key => $value) {
-            $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
-            $list[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+    }
+
+    // 获取联赛比分结果比分信息列表
+    public function getresultmatchrecords() {
+        $data = input('param.');
+        // 参数league_id -> match_id
+        if (input('?param.league_id')) {
+            unset($data['league_id']);
+            $data['match_id'] = input('param.league_id');
         }
-        $_result = $result = [];
-        // 根据比赛时间（年月日）对数据分片
-        foreach ($list as $key => $value) {
-            $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
-            $_result[$value['match_stage'] . '|' . $date. '|' . $value['match_stage_type']][] = $value;
+        if (input('?page')) {
+            unset($data['page']);
         }
-        foreach ($_result as $key => $value) {
-            $_array = [];
-            $keyExplode = explode('|', $key);
-            $_array['date'] = $keyExplode[1];
-            $_array['stage']['type'] = $keyExplode[2];
-            $_array['stage']['name'] = $keyExplode[0];
-            $_array['stage']['records'] = $value;
-            array_push($result, $_array);
+        $leagueS = new LeagueService();
+        $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+        $field =  [ "home_team_id", "home_team", "home_score", "away_team_id", "away_team", "away_score" ];
+        try {
+            $result = $leagueS->getMatchRecords($data, $orderby, $field);
+        }  catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
