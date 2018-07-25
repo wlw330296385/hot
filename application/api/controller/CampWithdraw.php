@@ -94,6 +94,29 @@ class CampWithdraw extends Base{
             }
             $result = $this->CampWithdrawService->createCampWithdraw($data);
             if($result['code'] == 200){
+                $openid = $this->memberInfo['openid'];
+                $messageData = [
+                    "touser" => $openid,
+                    "template_id" => config('wxTemplateID.withdraw'),
+                    "url" => "https://m.hot-basketball.com/frontend/camp/campwallet/camp_id/{$data['camp_id']}",
+                    "topcolor"=>"#FF0000",
+                    "data" => [
+                        'first' => ['value' => '您的提现申请成功'],
+                        'keyword1' => ['value' => "{$data['withdraw']}"],
+                        'keyword2' => ['value' => "{$data['camp_withdraw_fee']}"],
+                        'keyword3' => ['value' => ($data['withdraw'] - $data['camp_withdraw_fee'])],
+                        'keyword4' => ['value' => "篮球管家公众号"],
+                        'remark' => ['value' => "该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。"]
+                    ]
+                ];
+                $saveData = [
+                    'title'=>"您的提现申请成功",
+                    'content'=>"该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。",
+                    'url'=>url('frontend/camp/campwallet',['camp_id'=>$data['camp_id']],'',true),
+                    'member_id'=>$this->memberInfo['id']
+                ];
+                $MessageService = new \app\service\MessageService;
+                $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
                 db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
             }
             return json($result);   
