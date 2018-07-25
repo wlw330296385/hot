@@ -1224,6 +1224,71 @@ class League extends Base
         }
     }
 
+    // 清空联赛分组信息
+    public function clearmatchgroup() {
+        // 接收请求变量
+        $data = input('post.');
+        // 数据验证
+        if (!array_key_exists('league_id', $data)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402') . '传入联赛id']);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        // 查询联赛数据
+        $match = $matchS->getMatch(['id' => $data['league_id']]);
+        if (!$match) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他联赛']);
+        }
+        // 当前会员有无操作权限（查询联赛工作人员）
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        // 需要联赛管理员以上
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 查询联赛有无分组信息
+        $groups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
+        if (!$groups) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+        // 查询联赛分组下有无赛程信息
+        $groupIds = [];
+        foreach ($groups as $group) {
+            array_push($groupIds, $group['id']);
+        }
+        $groupScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $data['league_id'],
+            'match_group_id' => ['in', $groupIds],
+        ]);
+        if ($groupScheduleCount) {
+            return json(['code' => 100, 'msg' => '不能清空分组信息，请先删除相关分组赛程信息']);
+        }
+        // 删除联赛分组信息
+        Db::startTrans();
+        try {
+            $matchGroups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
+            $matchGroupTeams = $leagueS->getMatchGroupTeams(['match_id' => $match['id']]);
+            if ($matchGroups) {
+                $leagueS->deleteMatchGroup(['match_id' => $match['id']], true);
+            }
+            if ($matchGroupTeams) {
+                $leagueS->deleteMatchGroupTeam(['match_id' => $match['id']], true);
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            trace('error:' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
     // 获取联赛球队成员列表（无分页）
     public function getmatchteammembers()
     {
