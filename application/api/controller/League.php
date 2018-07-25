@@ -2807,8 +2807,8 @@ class League extends Base
         if (!$id) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
-        // 获取赛程详情
         $leagueS = new LeagueService();
+        // 获取赛程详情
         $scheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
         if (!$scheduleInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
@@ -2825,6 +2825,10 @@ class League extends Base
         ]);
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 有比赛结果不能删除
+        if ($scheduleInfo['status'] == 2) {
+            return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息，不能删除']);
         }
         try {
             $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
@@ -3336,8 +3340,8 @@ class League extends Base
     public function delmatchstage()
     {
         $id = input('post.id', 0, 'intval');
-        // 查询比赛阶段数据
         $leagueS = new LeagueService();
+        // 查询比赛阶段数据
         $stageInfo = $leagueS->getMatchStage(['id' => $id]);
         if (!$stageInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
@@ -3354,6 +3358,27 @@ class League extends Base
         ]);
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // type=1（小组赛）检查有无分组信息
+        $groups = $leagueS->getMatchGroups(['match_id' => $stageInfo['match_id']]);
+        if ($stageInfo['type'] == 1 && $groups) {
+            return json(['code' => 100, 'msg' => '不能删除该阶段，请先删除分组信息']);
+        }
+        // 获取阶段赛程记录数
+        $scheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $stageInfo['match_id'],
+            'match_stage_id' => $stageInfo['id']
+        ]);
+        if ($scheduleCount) {
+            return json(['code' => 100, 'msg' => '不能删除该阶段，请先删除相关赛程信息']);
+        }
+        // 获取阶段比赛结果记录数
+        $recordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $stageInfo['match_id'],
+            'match_stage_id' => $stageInfo['id']
+        ]);
+        if ($recordCount) {
+            return json(['code' => 100, 'msg' => '该阶段已有比赛结果信息，不能删除']);
         }
         // 删除数据
         try {
@@ -4625,59 +4650,59 @@ class League extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+
     public function test() {
         $data = [
-                    [
-                        "home_team_id"=> 2,
-                        "home_team"=> "荣光WTF",
-                        "home_score"=> 63,
-                        "away_team_id"=> 4,
-                        "away_team"=> "大热追梦队",
-                        "away_score"=> 53
-                    ],
-                    [
-                        "home_team_id"=> 8,
-                        "home_team"=> "FireTeam",
-                        "home_score"=> 90,
-                        "away_team_id"=> 2,
-                        "away_team"=> "荣光WTF",
-                        "away_score"=> 102
-                    ],
-                    [
-                        "home_team_id"=> 4,
-                        "home_team"=> "大热追梦队",
-                        "home_score"=> 56,
-                        "away_team_id"=> 8,
-                        "away_team"=> "FireTeam",
-                        "away_score"=> 52
-                    ],
-                    [
-                        "home_team_id"=> 3,
-                        "home_team"=> "H1篮球队",
-                        "home_score"=> 95,
-                        "away_team_id"=> 12,
-                        "away_team"=> "SJX",
-                        "away_score"=> 32
-                    ],
-                    [
-                        "home_team_id"=> 11,
-                        "home_team"=> "F-18",
-                        "home_score"=> 98,
-                        "away_team_id"=> 3,
-                        "away_team"=> "H1篮球队",
-                        "away_score"=> 78
-                    ],
-                    [
-                        "home_team_id"=> 12,
-                        "home_team"=> "SJX",
-                        "home_score"=> 65,
-                        "away_team_id"=> 11,
-                        "away_team"=> "F-18",
-                        "away_score"=> 45
-                    ]
-                    ];
+            [
+                "home_team_id"=> 2,
+                "home_team"=> "荣光WTF",
+                "home_score"=> 63,
+                "away_team_id"=> 4,
+                "away_team"=> "大热追梦队",
+                "away_score"=> 53
+            ],
+            [
+                "home_team_id"=> 8,
+                "home_team"=> "FireTeam",
+                "home_score"=> 90,
+                "away_team_id"=> 2,
+                "away_team"=> "荣光WTF",
+                "away_score"=> 102
+            ],
+            [
+                "home_team_id"=> 4,
+                "home_team"=> "大热追梦队",
+                "home_score"=> 56,
+                "away_team_id"=> 8,
+                "away_team"=> "FireTeam",
+                "away_score"=> 52
+            ],
+            [
+                "home_team_id"=> 3,
+                "home_team"=> "H1篮球队",
+                "home_score"=> 95,
+                "away_team_id"=> 12,
+                "away_team"=> "SJX",
+                "away_score"=> 32
+            ],
+            [
+                "home_team_id"=> 11,
+                "home_team"=> "F-18",
+                "home_score"=> 98,
+                "away_team_id"=> 3,
+                "away_team"=> "H1篮球队",
+                "away_score"=> 78
+            ],
+            [
+                "home_team_id"=> 12,
+                "home_team"=> "SJX",
+                "home_score"=> 65,
+                "away_team_id"=> 11,
+                "away_team"=> "F-18",
+                "away_score"=> 45
+            ]
+        ];
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' =>$data]);
 
     }
-
 }
