@@ -30,7 +30,7 @@
 <body class=whitebg>
 
 <header id="header" class="mui-bar mui-bar-nav subheader">
-    <a class=" mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('bill/billList')}?camp_id={$billInfo['camp_id']}"><span class="return">训练营订单</span></a>
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href="#"><span class="return"></span></a>
     <p class="mui-pull-right f12" style="padding-top:10px">订单号：{$billInfo.bill_order}</p>
 </header>
 
@@ -130,11 +130,11 @@
         {/case}   
         {case value="-2" }
         
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已同意退<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已同意退<span><b class="">￥{$billInfo.refund}</b>元</span></li>
         {/case}  
         {case value="-3" }
         
-                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款<span><b class="">￥{$billInfo.refundamount}</b>元</span></li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray">已退款<span><b class="">￥{$billInfo.refund}</b>元</span></li>
         {/case} 
         {/switch}
         </ul>
@@ -172,14 +172,18 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    var backUrl = wooApi.GetQueryString('backUrl');
+    var backUrl = "{:request()->url(true)}";
+    var reg = RegExp(/is_template/); 
+    console.log(reg.test(backUrl));
 
     $(function(){
 
-        if(backUrl!=""&&backUrl!=null){
+        //判断是否模板消息进入该页面，是则左上角返回页面跳转到指定页面
+        if(reg.test(backUrl)==true){
             console.log(backUrl)
-            $("#header .mui-icon-left-nav").attr("href",backUrl);
-            $("#header .mui-icon-left-nav span").text("收支明细");
+            $("#header .mui-icon-left-nav").attr("class","mui-icon mui-icon-left-nav mui-pull-left arrow");
+            $("#header .mui-icon-left-nav").attr("href","{:url('bill/billList')}?camp_id={$billInfo['camp_id']}")
+            $("#header .mui-icon-left-nav").find(".return").text("训练营订单");            
         }
 
         $('#tjBtn').on('click',function(){
