@@ -12,5 +12,20 @@ class SportPlan extends Model {
     //                         'type',
     //                         ];
 
+	public function getEndAttr($value){
+		if($value>99999){
+			return date('Y-m-d',time());
+		}else{
+			return '无期限';
+		}
+	}
 
+
+	public function getStartAttr($value){
+		if($value>99999){
+			return date('Y-m-d',time());
+		}else{
+			return '无期限';
+		}
+	}
 }
