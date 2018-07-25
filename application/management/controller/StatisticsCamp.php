@@ -754,7 +754,6 @@ class StatisticsCamp extends Camp{
         if(request()->isPost()){
             $refund = input('param.refund');
             $remarks = input('param.remarks');
-            $refund_type = input('param.refund_type');
             $action = input('param.action');//-1=拒绝;2=同意
             
             $Refund = new \app\model\Refund;
@@ -776,66 +775,19 @@ class StatisticsCamp extends Camp{
             }
             $BillService = new \app\service\BillService;
             if($action == 2){
-            
-                $refundData = [
-                    'refund'=>$refund,
-                    'refund_fee'=>$refund_fee,
-                    'remarks'=>$remarks,
-                    'refund_type'=>$refund_type,
-                    'process'=>$this->memberInfo['member'],
-                    'process_id'=>$this->memberInfo['id'],
-                    'process_time'=>time(),
-                    'agree_time'=>time(),
-                    'status'=>2,                
-                ]; 
-                
-                $res = $BillService->updateBill(['action'=>3,'output'=>$output],['id'=>$refundInfo['bill_id']],$refundData);
+                $res = $BillService->agreeBill(['id'=>$refundInfo['bill_id']],$refund);
                 if($res['code'] == 100){
                     $this->error($res['msg']);
                 }
             }elseif ($action == -1) {
-                $refundData = [
-                    'refund'=>0,
-                    'refund_fee'=>0,
-                    'remarks'=>$remarks,
-                    'refund_type'=>$refund_type,
-                    'process'=>$this->memberInfo['member'],
-                    'process_id'=>$this->memberInfo['id'],
-                    'process_time'=>time(),
-                    'status'=>-1,
-                    'reject_time'=>time()
-                ]; 
-                
-                $res = $BillService->updateBill(['action'=>4,'output'=>0],['id'=>$refundInfo['bill_id']],$refundData);
+                $res = $BillService->rejectBill(['id'=>$refundInfo['bill_id']],$remarks);
                 if($res['code'] == 100){
                     $this->error($res['msg']);
                 }
             }else{
                 $this->error('传参错误');
             }
-            // if($action == 3 || $action == 4) {
-                // if($this->campInfo['rebate_type'] == 1){
-                    // $this->error('训练营为[课时版结算],不可以操作打款');
-                // }
-                
-                // //训练营营业额支出
-                // db('output')->insert([
-                //     'output'        => $output,
-                //     'camp_id'       => $refundInfo['camp_id'],
-                //     'camp'          => $refundInfo['camp'],
-                //     'member_id'     => $refundInfo['member_id'],
-                //     'member'        => $refundInfo['member'],
-                //     'type'          => 2,
-                //     'e_balance'     => ($this->campInfo['balance'] - $output),
-                //     's_balance'     => $this->campInfo['balance'],
-                //     'f_id'          => $refundInfo['id'],
-                //     'create_time'   => time(),
-                //     'update_time'   => time(),
-                // ]);
-                // // 减少训练营营业额
-                // db('camp')->where(['id'=>$refundInfo['camp_id']])->dec('balance',$output)->update();
-                // $Refund->save(['status'=>3],['id'=>$refund_id]);
-            // }
+            
             $this->success('操作成功');    
         }else{
             $Refund = new \app\model\Refund;

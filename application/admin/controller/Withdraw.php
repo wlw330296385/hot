@@ -173,6 +173,18 @@ class Withdraw extends Backend{
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,139行');
                 }
+                $member_id = $CampWithdraw->where(['id'=>$campWithdraw_id])->value('member_id');
+                $openid = db('member')->where(['id'=>$member_id])->value('openid');
+                $messageData = [
+                "touser" => $openid,
+                "template_id" => config('wxTemplateID.withdraw'),
+                "url" => "http://weixin.qq.com/download/openid/$openid",
+                "topcolor":"#FF0000",
+                "data" => [
+                    'first' => ['value' => 'ddddd'],
+                    'keyword1' => ['value' => 'ccccc'],
+                    'remark' => ['value' => 'xxxxx']
+                ];
                 $this->record("{$this->admin['username']}打款{$campWithdrawInfo['camp']}的提现申请");
             }
             // Db::commit();

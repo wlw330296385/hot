@@ -61,6 +61,13 @@ class SportPlan extends Base{
     public function createSportPlanApi(){
         try{
             $data = input('post.');
+            if($data['starts']){
+                $data['start'] = strtotime($data['starts']);
+            }
+
+            if($data['ends']){
+                $data['end'] = strtotime($data['ends'])+86399;
+            }
             $sport_plan_id = input('param.sport_plan_id');
             if($sport_plan_id){
                 $result = $this->SportPlan->save($data,$sport_plan_id);

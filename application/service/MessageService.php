@@ -89,6 +89,7 @@ class MessageService
             if($memberInfo['openid']){
                 $messageData['touser'] = $memberInfo['openid'];
                 $WechatService = new \app\service\WechatService();
+                $messageData['url'] = $messageData['url'].'/is_template/1';
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
                     $logData = ['wxopenid' => $messageData['touser'], 'member_id' => $saveData['member_id'], 'status' => 1, 'content' => serialize($messageData),'system_remarks'=>'给用户的通知','url'=>$messageData['url']];
@@ -112,11 +113,11 @@ class MessageService
         $memberIDs = db('camp_member')->where(['camp_id' => $camp_id, 'status' => 1])->where('type', 'egt', 3)->column('member_id');
         $memberList = db('member')->where('id', 'in', $memberIDs)->select();
         $WechatService = new \app\service\WechatService();
+        $messageData['url'] = $messageData['url'].'/is_template/1';
         // 发送模板消息
         foreach ($memberList as $key => $value) {
             if ($value['openid']) {
                 $messageData['touser'] = $value['openid'];
-                $messageData['url'] = $messageData['url'].'/openid/'.$value['openid'];
                 
                 $result = $WechatService->sendTemplate($messageData);
                 if ($result) {
