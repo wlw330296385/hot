@@ -4625,4 +4625,59 @@ class League extends Base
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
     }
+    public function test() {
+        $data = [
+                    [
+                        "home_team_id"=> 2,
+                        "home_team"=> "荣光WTF",
+                        "home_score"=> 63,
+                        "away_team_id"=> 4,
+                        "away_team"=> "大热追梦队",
+                        "away_score"=> 53
+                    ],
+                    [
+                        "home_team_id"=> 8,
+                        "home_team"=> "FireTeam",
+                        "home_score"=> 90,
+                        "away_team_id"=> 2,
+                        "away_team"=> "荣光WTF",
+                        "away_score"=> 102
+                    ],
+                    [
+                        "home_team_id"=> 4,
+                        "home_team"=> "大热追梦队",
+                        "home_score"=> 56,
+                        "away_team_id"=> 8,
+                        "away_team"=> "FireTeam",
+                        "away_score"=> 52
+                    ],
+                    [
+                        "home_team_id"=> 3,
+                        "home_team"=> "H1篮球队",
+                        "home_score"=> 95,
+                        "away_team_id"=> 12,
+                        "away_team"=> "SJX",
+                        "away_score"=> 32
+                    ],
+                    [
+                        "home_team_id"=> 11,
+                        "home_team"=> "F-18",
+                        "home_score"=> 98,
+                        "away_team_id"=> 3,
+                        "away_team"=> "H1篮球队",
+                        "away_score"=> 78
+                    ],
+                    [
+                        "home_team_id"=> 12,
+                        "home_team"=> "SJX",
+                        "home_score"=> 65,
+                        "away_team_id"=> 11,
+                        "away_team"=> "F-18",
+                        "away_score"=> 45
+                    ]
+                    ];
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' =>$data]);
+
+    }
+
 }

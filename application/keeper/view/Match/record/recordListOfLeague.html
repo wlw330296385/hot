@@ -223,7 +223,10 @@
                             </table> -->
                         </div>
                     </div>
+
+                    <div class="recordContent"></div>
                 </div>
+
             </div>
             <!-- 积分排名 -->
             <div id="onRankList" class="mui-scroll-wrapper mui-control-content">
@@ -259,8 +262,13 @@
                 </div>
             </div>
         </div>
+        <!--底部操作-->
+        <!-- <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 opli bgred">
+                <a href="#" class="create-league">创建联赛</a>
+            </li>
+        </ul> -->
     </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
@@ -410,7 +418,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    league_id: league_id,
+                    league_id: league_id
                 },
                 async: false,
                 dataType: 'json',//服务器返回json格式数据
@@ -422,16 +430,23 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `<table width="100%"><tbody><tr><th>${data.data.data[i].name}</th>`
+                            newli += `<table width="100%"><tbody><tr><td>${data.data.data[i].name}</td>`
+                            // 横向
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<td>${data.data.data[i].group_teams[j].team.team}</td>`
+                                newli += `<td class="h${data.data.data[i].group_teams[j].team.team_id}">${data.data.data[i].group_teams[j].team.team}</td>`
                             }
                             newli += `<td>得失分率</td><td>积分</td><td>名次</td></tr>`
+                            // 竖向
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<tr>
-                                            <td>${data.data.data[i].group_teams[j].team.team}</td>
-                                            <td>${j}</td>`
-                                newli += `</tr>`
+                                newli += `<tr class="s${data.data.data[i].group_teams[j].team.team_id}"><td>${data.data.data[i].group_teams[j].team.team}</td>`
+                                for (var tt = 0; tt <= data.data.data[i].group_teams.length - 1; tt++) {
+                                    if(tt==j){
+                                        newli += `<td>-</td>`
+                                    }else{
+                                        newli += `<td></td>`
+                                    }
+                                }
+                                newli += `<td></td><td>${data.data.data[i].group_teams[j].team.score}</td><td></td></tr>`
                             }
                             newli += `</tbody ></table>`
                         }
@@ -454,13 +469,53 @@
                     } else {
                         mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                     }
-
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
             });
+
+            // 比分
+            mui.ajax("{:url('api/league/test')}", {
+                data: {
+                    league_id: league_id,
+                },
+                async: false,
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli1 = ''
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var st = $(".s" + data.data[i].home_team_id).index();
+                            var ht = $(".h" + data.data[i].away_team_id).index();
+                            $(".s" + data.data[i].home_team_id).find("td:eq(" + ht + ")").text(data.data[i].home_score + ':' + data.data[i].away_score);
+                            $(".s" + data.data[i].away_team_id).find("td:eq(" + st + ")").text(data.data[i].away_score + ':' + data.data[i].home_score);
+                            console.log($(".s" + data.data[i].home_team_id).index())
+                            console.log($(".h" + data.data[i].away_team_id).index())
+                            newli1 += `<p><span data-team_id="${data.data[i].home_team_id}">${data.data[i].home_team}</span>:<span data-team_id="${data.data[i].away_team_id}">${data.data[i].away_team}</span></p>`
+                        }
+                        $(".recordContent").append(newli1)
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+
+            // 操作
+            $(".recordContent span").each(function () {
+                var team_id = $(this).attr("data-team_id");
+            })
+            $("table td").each(function () {
+                var id = $(this).attr("data-leftid");
+                console.log(id)
+            })
+
         };
 
         // 接口获取数据并追加到页面
@@ -482,10 +537,10 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `< div class="page-header bggray2" >
+                            newli += `<div class="page-header bggray2">
                                         <span class="course">${data.data[i].stage_name}（${data.data[i].group_name}）</span>
-                                      </div >
-            <ul class="mui-table-view mui-text-center">`
+                                      </div>
+                        <ul class="mui-table-view mui-text-center">`
                             for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
                                 newli += `<li class="mui-table-view-cell">
                                 <a href="">
@@ -563,7 +618,7 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `
-                    < li class="mui-table-view-cell listli" >
+                    <li class="mui-table-view-cell listli">
                         <div class="mui-slider-right mui-disabled" data-id="2">
                             <span class="mui-btn mui-btn-red" data-action="del">删除</span>
                         </div>
@@ -576,7 +631,7 @@
                                 </div>
                             </a>
                         </div>
-                            </li >`
+                            </li>`
                         }
                     }
                     if (gType == 1) {
@@ -604,6 +659,7 @@
                 }
             });
         };
+
 
     </script>
 </body>
