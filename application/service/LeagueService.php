@@ -1156,4 +1156,32 @@ class LeagueService
         return $res;
     }
 
+    // 获取比赛阶段晋级球队信息
+    public function findMatchStageAdvteam($map) {
+        $model = new MatchStageAdvteam();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    // 保存比赛阶段晋级球队
+    public function saveMatchStageAdvteam($data) {
+        $model = new MatchStageAdvteam();
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
 }
