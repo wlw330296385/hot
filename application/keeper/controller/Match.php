@@ -825,13 +825,22 @@ class Match extends Base {
         return view('Match/stage/promotionList');
     }
 
-    // 球队积分列表
-    public function integralList() {
-        return view('Match/record/integralList');
-    }
 
     // 球队对阵积分表
     public function integralTableList() {
+        // 判断有无小组赛晋级数据 显示提交数据按钮
+        $showBtn = 1;
+        $leagueS = new LeagueService();
+        $matchStageAdvteams = $leagueS->getMatchStageAdvteams([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0]
+        ]);
+        // 不显示按钮
+        if ($matchStageAdvteams) {
+            $showBtn = 0;
+        }
+
+        $this->assign('showBtn', $showBtn);
         return view('Match/record/integralTableList');
     }
 

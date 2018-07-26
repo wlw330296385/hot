@@ -1168,6 +1168,16 @@ class LeagueService
         return $res->toArray();
     }
 
+    // 获取比赛阶段晋级球队信息
+    public function getMatchStageAdvteams($map) {
+        $model = new MatchStageAdvteam();
+        $res = $model->where($map)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 保存比赛阶段晋级球队
     public function saveMatchStageAdvteam($data) {
         $model = new MatchStageAdvteam();

@@ -3571,6 +3571,98 @@ class League extends Base
         }
     }
 
+    // 获取分组积分排名
+    public function getgroupranklist()
+    {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $leagueS = new LeagueService();
+            // 获取联赛分组信息
+            $matchGroups = $leagueS->getMatchGroups([
+                'match_id' => $data['match_id']
+            ]);
+            if (!$matchGroups) {
+                // 没有分组信息
+                return json(['code' => 100, 'msg' => '暂无分组信息']);
+            }
+            $groupIds = [];
+            foreach ($matchGroups as $key => $group) {
+                array_push($groupIds, $group['id']);
+            }
+            $data['match_group_id'] = ['in', $groupIds];
+            // 获取联赛球队积分数据
+            $_result = $leagueS->getMatchRanks($data);
+            if (!$_result) {
+                return json(['code' => 100, 'msg' => '暂无分组比赛结果发布信息']);
+            }
+            $_result1 = $result = [];
+            // 获取比赛阶段type字段信息
+            foreach ($_result as $key => $value) {
+                $stageInfo = $leagueS->getMatchStage(['id' => $value['match_stage_id']]);
+                $_result[$key]['match_stage_type'] = ($stageInfo) ? $stageInfo['type'] : 0;
+            }
+            // 根据联赛阶段、分组将数据分片
+            foreach ($_result as $key => $value) {
+                $_result1[$value['match_stage_id'] .'|'. $value['match_stage'] .'|' . $value['match_stage_type'] . '|' . $value['match_group'] . '|' . $value['match_group_id']][] = $value;
+            }
+            foreach ($_result1 as $key => $value) {
+                $_array = $_array1 = [];
+                $keyExplode = explode('|', $key);
+                $_array['match_stage_id'] = $keyExplode[0];
+                $_array['match_stage'] = $keyExplode[1];
+                $_array['match_stage_type'] = $keyExplode[2];
+                $_array['match_group'] = $keyExplode[3];
+                $_array['match_group_id'] = $keyExplode[4];
+                $_array['teams'] = [];
+                $ranks = $value;
+                foreach ($ranks as $k => $rank) {
+                    $_array1[$rank['team'] . '|' . $rank['team_id'] . '|' . $rank['team_logo']][] = $rank;
+                }
+                if (!empty($_array1)) {
+                    foreach ($_array1 as $k => $val) {
+                        $kExplode = explode('|', $k);
+                        $_arr = [];
+                        $_arr['team_id'] = $kExplode[1];
+                        $_arr['team'] = $kExplode[0];
+                        $_arr['team_logo'] = $kExplode[2];
+                        // 球队在比赛阶段的积分累加
+                        $score = $winCount = $loseCount = 0;
+                        for ($i = 0; $i < count($val); $i++) {
+                            if ($val[$i]['score'] > 0) {
+                                $score += 1;
+                            }
+                            $winCount = $leagueS->getMatchRecordCount(['match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'win_team_id' => $kExplode[1]]);
+                            $loseCount = $leagueS->getMatchRecordCount(['match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'lose_team_id' => $kExplode[1]]);
+                        }
+                        $_arr['score'] = $score;
+                        $_arr['win_count'] = $winCount;
+                        $_arr['lose_count'] = $loseCount;
+                        array_push($_array['teams'], $_arr);
+                    }
+                    // 根据球队获得积分降序排列
+                    $_array['teams'] = arraySort($_array['teams'], 'score', SORT_DESC);
+                }
+                array_push($result, $_array);
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace('error: ' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 输出积分对阵表格数据
     public function getleagueintegraltable() {
         $data = input('post.');
