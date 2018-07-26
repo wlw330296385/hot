@@ -3620,10 +3620,12 @@ class League extends Base
                     $result[$key]['match_stage_id'] = $stageInfo['id'];
                     $result[$key]['match_stage'] = $stageInfo['name'];
                     $result[$key]['match_stage_type'] = $stageInfo['type'];
+                    $result[$key]['match_stage_advance_number'] = $stageInfo['advance_number'];
                 } else {
                     $result[$key]['match_stage_id'] = 0;
                     $result[$key]['match_stage'] = '';
                     $result[$key]['match_stage_type'] = 0;
+                    $result[$key]['match_stage_advance_number'] = 0;
                 }
                 $result[$key]['match_group'] = $group['name'];
                 $result[$key]['match_group_id'] = $group['id'];
@@ -3632,7 +3634,7 @@ class League extends Base
                     'match_id' => $group['match_id'],
                     'group_id' => $group['id']
                 ], ['group_number' => 'asc']);
-                $result[$key]['teams'] = [];
+                $result[$key]['teams'] = $teamsArray = [];
                 foreach ($groupTeams as $key1 => $groupTeam) {
                     // 获取组内球队在分组比赛的积分总和
                     $teamGroupScoreSum = $leagueS->getMatchRankScoreSumByTeam(['match_id' => $group['match_id'], 'match_group_id' => $group['id'], 'team_id' => $groupTeam['team_id']]);
@@ -3657,8 +3659,12 @@ class League extends Base
                         ];
                         array_push($teamArray['records'], $recordArray);
                     }*/
-                    array_push($result[$key]['teams'], $teamArray);
+                    array_push($teamsArray, $teamArray);
+                    // 获得积分降序排列
+                    $teamsArray = arraySort($teamsArray, 'score', SORT_DESC);
                 }
+                // 将球队信息集合插入到数据结果集中
+                array_push($result[$key]['teams'], $teamsArray);
                 //}
             }
         } catch (Exception $e) {
@@ -3668,6 +3674,7 @@ class League extends Base
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         } else {
+
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         }
     }
