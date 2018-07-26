@@ -724,8 +724,10 @@ class Match extends Base {
         $leagueS = new LeagueService();
         // 获取联赛分组记录数
         $groupCount = $leagueS->getMatchGroupCount(['match_id' => $this->league_id]);
-        // 获取联赛赛程记录数
-        $scheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
+        // 获取系统添加的联赛赛程记录数
+        $scheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id, 'add_mode' => 1]);
+        // 获取自填的联赛赛程记录数
+        $scheduleCustomCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id, 'add_mode' => 2]);
         // 获取是小组阶段的赛程记录数
         $scheduleCountHasGroupId = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
@@ -741,12 +743,15 @@ class Match extends Base {
         } else if ( $groupCount && !$scheduleCount ) {
             // 有分组&没赛程
             $showBtn = 2;
-        } else if ( $groupCount && $scheduleCount ) {
-            // 有分组&有赛程
+        } else if ( $groupCount && $scheduleCustomCount ) {
+            // 有分组&有自填赛程
             $showBtn = 3;
-        } else if ( $groupCount && $scheduleCountHasGroupId ) {
-            // 有分组的赛程信息
+        } else if ( $groupCount && $scheduleCountHasGroupId && $scheduleCount ) {
+            // 有分组&有系统添加赛程
             $showBtn = 4;
+        } else if ( $groupCount && $scheduleCountHasGroupId && $scheduleCustomCount) {
+            // 有分组的赛程信息
+            $showBtn = 5;
         }
         $this->assign('showBtn', $showBtn);
         return view('Match/schedule/scheduleListOfLeague');
