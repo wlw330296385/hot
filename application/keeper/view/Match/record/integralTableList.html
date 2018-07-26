@@ -15,8 +15,8 @@
     table {
       border-collapse: collapse;
       border-spacing: 0;
-      border-right: 1px solid #111;
-      border-top: 1px solid #111;
+      border-right: 1px solid #ccc;
+      border-top: 1px solid #ccc;
       table-layout: fixed;
     }
 
@@ -24,8 +24,8 @@
     table th {
       padding: 8px;
       text-align: center;
-      border-left: 1px solid #111;
-      border-bottom: 1px solid #111;
+      border-left: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
       word-break: break-word;
     }
 
@@ -51,29 +51,42 @@
     #gameScoreBoard tr:first-child td,
     #gameScoreBoard tr td:first-child {
       font-weight: bold;
-      background-color: #F1F1F1;
+      background-color: #efeff4;
     }
 
     #gameScoreBoard td,
     #gameScoreBoard th {
       font-size: 0.6em;
       word-break: break-word;
+      color: #000;
     }
 
     #gameScoreBoard table span {
       display: block;
     }
+
+    /* .divScroll {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow-x: scroll;
+      width: 100%;
+    } */
+
+    .teamTitle td:first-child {
+      background-color: #111 !important;
+      color: #fff !important
+    }
   </style>
 </head>
 
-<body>
+<body class=whitebg>
 
   <header class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
     <h1 class="mui-title">小组赛对阵排名预览</h1>
   </header>
 
-  <div class="mui-content">
+  <div class="mui-content ">
     <div id="gameScoreBoard" class="mb44">
       <div class="gData integralList"></div>
     </div>
@@ -99,7 +112,7 @@
 
     // 积分对阵表
     var league_id = "{$league_id}"
-    mui.ajax("{:url('api/league/getmatchranklist')}", {
+    mui.ajax("{:url('api/league/getleagueintegraltable')}", {
       data: {
         league_id: league_id
       },
@@ -113,7 +126,7 @@
         var newli = '';
         if (data.code == 200) {
           for (var i = 0; i <= data.data.length - 1; i++) {
-            newli += `<table width="100%"><tbody>
+            newli += `<div class="divScroll mb"><table width=100%><tbody>
                         <tr class="teamTitle">
                           <td data-match_stage="${data.data[i].match_stage}" data-match_stage_id="${data.data[i].match_stage_id}" data-match_group_id="${data.data[i].match_group_id}">${data.data[i].match_group}</td>`
             // 横向
@@ -133,7 +146,7 @@
               }
               newli += `<td></td><td class="jf">${data.data[i].teams[j].score}</td><td class="rank"></td></tr>`
             }
-            newli += `</tbody ></table>`
+            newli += `</tbody ></table></div>`
           }
         }
         $(".integralList").empty().append(newli);
@@ -192,6 +205,7 @@
         var match_group = $(this).siblings(".teamTitle").find("td:eq(0)").text();
         var match_group_id = $(this).siblings(".teamTitle").find("td:eq(0)").attr("data-match_group_id");
         var adv_num = $(this).find(".rank").text();
+        var jf = $(this).find("jf").text();
         advteams.push({ team, team_id, match_group, match_group_id, adv_num })
       })
       advteams = JSON.stringify(advteams);
