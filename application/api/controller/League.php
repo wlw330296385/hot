@@ -3519,14 +3519,16 @@ class League extends Base
             }
             // 根据联赛阶段、分组将数据分片
             foreach ($_result as $key => $value) {
-                $_result1[$value['match_stage'] .'|' . $value['match_stage_type'] . '|' . $value['match_group']][] = $value;
+                $_result1[$value['match_stage_id'] .'|'. $value['match_stage'] .'|' . $value['match_stage_type'] . '|' . $value['match_group'] . '|' . $value['match_group_id']][] = $value;
             }
             foreach ($_result1 as $key => $value) {
                 $_array = $_array1 = [];
                 $keyExplode = explode('|', $key);
-                $_array['stage_name'] = $keyExplode[0];
-                $_array['stage_type'] = $keyExplode[1];
-                $_array['group_name'] = $keyExplode[2];
+                $_array['match_stage_id'] = $keyExplode[0];
+                $_array['match_stage'] = $keyExplode[1];
+                $_array['match_stage_type'] = $keyExplode[2];
+                $_array['match_group'] = $keyExplode[3];
+                $_array['match_group_id'] = $keyExplode[4];
                 $_array['teams'] = [];
                 $ranks = $value;
                 foreach ($ranks as $k => $rank) {
