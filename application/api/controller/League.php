@@ -3634,7 +3634,7 @@ class League extends Base
                     'match_id' => $group['match_id'],
                     'group_id' => $group['id']
                 ], ['group_number' => 'asc']);
-                $result[$key]['teams'] = $teamsArray = [];
+                $result[$key]['teams'] = [];
                 foreach ($groupTeams as $key1 => $groupTeam) {
                     // 获取组内球队在分组比赛的积分总和
                     $teamGroupScoreSum = $leagueS->getMatchRankScoreSumByTeam(['match_id' => $group['match_id'], 'match_group_id' => $group['id'], 'team_id' => $groupTeam['team_id']]);
@@ -3659,12 +3659,10 @@ class League extends Base
                         ];
                         array_push($teamArray['records'], $recordArray);
                     }*/
-                    array_push($teamsArray, $teamArray);
-                    // 获得积分降序排列
-                    $teamsArray = arraySort($teamsArray, 'score', SORT_DESC);
+                    array_push($result[$key]['teams'], $teamArray);
                 }
-                // 将球队信息集合插入到数据结果集中
-                array_push($result[$key]['teams'], $teamsArray);
+                // 获得积分降序排列
+                $result[$key]['teams'] = arraySort($result[$key]['teams'], 'score', SORT_DESC);
                 //}
             }
         } catch (Exception $e) {
@@ -3674,7 +3672,6 @@ class League extends Base
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         } else {
-
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         }
     }
