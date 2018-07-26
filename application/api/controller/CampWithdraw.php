@@ -17,6 +17,15 @@ class CampWithdraw extends Base{
         return $isPower;
     }
 
+    public function getCountApi(){
+        try {
+            $map = input('param.');
+            $count = db('camp_withdraw')->where($map)->count();
+            return json(['code'=>200,'data'=>$count?$count:0]);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     // 获取提现列表
     public function getCampWithdrawListApi(){
@@ -35,7 +44,7 @@ class CampWithdraw extends Base{
             }  
             
          }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
     

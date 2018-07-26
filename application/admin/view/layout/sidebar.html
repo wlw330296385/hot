@@ -1,3 +1,86 @@
+
+
+<script type="text/javascript">
+    var getTips = function(a_m_n){
+    
+        switch(a_m_n){
+            case "a_m_155":
+            getWithdrawN();
+            break;
+        }
+    }
+
+
+    //获取申请中的训练营提现数量
+    function getWithdrawN(){
+        let data = JSON.stringify({
+            status:1
+        })
+        let result = sendRequest('post',"{:url('api/camp_withdraw/getCountApi')}",1,data,function(result){
+            console.log(result);
+            let a_m_p_4 = document.getElementById("a_m_p_4");
+            let a_m_155 = document.getElementById("a_m_155");
+            // console.log(a_m_p_4);
+            let a_m_p_4_v = a_m_p_4.innerText;
+            a_m_p_4.innerText = (a_m_p_4_v+result.data);
+
+            let a_m_155_v = a_m_155.innerText;
+            a_m_155.innerText = (result.data);
+        });
+        
+    }
+
+
+
+
+    var xmlhttp;
+    if (window.XMLHttpRequest){
+        xmlhttp=new XMLHttpRequest();
+    }else{
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    function sendRequest(method,url,async,data,Fn){
+        xmlhttp.responseType = 'json';
+        async?async="true" : async ="false";
+        xmlhttp.open(method,url,async);
+        xmlhttp.setRequestHeader("Content-type","application/json; charset=utf-8");
+        xmlhttp.send(data);
+        xmlhttp.onreadystatechange = function(){
+            //0->（未初始化）：还没有调用 open() 方法。
+            //1->（载入）：已调用 send() 方法，正在发送请求。
+            //2->载入完成）：send() 方法完成，已收到全部响应内容。
+            //3->（解析）：正在解析响应内容。
+            //4->（完成）：响应内容解析完成，可以在客户端调用。
+            
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                Fn(xmlhttp.response)
+                    // console.log(xmlhttp.response);
+                // return xmlhttp.response;
+    
+                    // console.log(xmlhttp.status);
+                    // console.log(xmlhttp.readyStatus);
+                
+            }
+        }
+    }  
+
+
+
+    function convertData(data){ 
+      if( typeof data === 'object' ){ 
+        var convertResult = "" ;  
+        for(var c in data){  
+          convertResult+= c + "=" + data[c] + "&";  
+        }  
+        convertResult=convertResult.substring(0,convertResult.length-1) 
+        return convertResult; 
+      }else{ 
+        return data; 
+      } 
+    }
+</script>
+
+
 <aside class="main-sidebar">
     <section class="sidebar">
         <!-- Sidebar user panel (optional) -->
@@ -7,7 +90,7 @@
             </div>
             <div class="pull-left info">
                 <p>{$admin.username}</p>
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                <a href="#"><i class="fa fa-circle text-success aaa"></i> Online</a>
             </div>
         </div>
 
@@ -24,8 +107,7 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                     <span class="pull-right-container">
-                      <small class="label pull-right bg-yellow a_m_{$vol.id}"></small>
-                      <script type="text/javascript">getTips('a_m_'+{$vol.id})</script>
+                      <small class="label pull-right bg-red a_m_p_{$vol.id}" id="a_m_p_{$vol.id}"></small>
                     </span>
                 </a>
                 <ul class="treeview-menu">
@@ -33,8 +115,13 @@
                     <li>
                         <a href="/{$v.url_value}">
                             <i class="{$v.icon}"></i> <span>{$v.title}</span>
+                            <span class="pull-right-container">
+                              <small class="label pull-right bg-yellow a_m_{$v.id}" id="a_m_{$v.id}"></small>
+                              <script type="text/javascript">getTips('a_m_'+{$v.id})</script>
+                            </span>
                         </a>
                     </li>
+                      
                     {/volist}
                 </ul>
                 
@@ -58,38 +145,3 @@
 </aside>
 
 
-
-
-<script type="text/javascript">
-    function getTips(a_m_n){
-        switch(a_m_n){
-            case "a_m_155":
-
-        }
-    }
-
-
-
-    //获取申请中的训练营提现数量
-    function getWithdrawN(){
-
-    }
-
-
-
-
-    var xmlhttp;
-    if (window.XMLHttpRequest)
-      {// code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp=new XMLHttpRequest();
-      }
-    else
-      {// code for IE6, IE5
-      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-      }
-    function sendRequest(method,url,async){
-        async?async=true : async =false;
-        xmlhttp.open(method,url,async);
-        xmlhttp.send();
-    }  
-</script>
