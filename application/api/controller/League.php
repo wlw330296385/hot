@@ -4291,12 +4291,10 @@ class League extends Base
         $validate = new Validate([
             'match_id' => 'require',
             'match_stage_id' => 'require|number',
-            'match_group_id' => 'number'
         ], [
             'match_id.require' => '请选择联赛id',
             'match_stage_id.require' => '请选择比赛阶段',
             'match_stage_id.number' => '比赛阶段id不合法',
-            'match_group_id.number' => '比赛分组不合法'
         ]);
         $validateResult = $validate->check($data);
         if (!$validateResult) {
@@ -4321,6 +4319,8 @@ class League extends Base
             foreach ( $advteamsData as $key => $advteam ) {
                 $advteamsData[$key]['match_id'] = $data['match_id'];
                 $advteamsData[$key]['match'] = $data['match'];
+                $advteamsData[$key]['match_stage_id'] = $data['match_stage_id'];
+                $advteamsData[$key]['match_stage'] = $data['match_stage'];
             }
             // 保存比赛阶段晋级球队数据
             $leagueS = new LeagueService();
