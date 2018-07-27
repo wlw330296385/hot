@@ -272,7 +272,7 @@
             </div>
 
 
-            <ul class="mui-table-view operation">
+            <ul class="mui-table-view operation" id="bottomBtn">
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
                     提交打卡
                 </li>
@@ -375,6 +375,7 @@
                                 <li class="mui-table-view-cell listli">
                                     <text>俯卧撑</text>
                                     <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时长/min">
                                         <input type="number" name="amount" value="" placeholder="数量/total">
                                         <button class="fr bgred confirmBtn">确认</button>
                                     </div>
@@ -382,6 +383,7 @@
                                 <li class="mui-table-view-cell listli">
                                     <text>仰卧起坐</text>
                                     <div class="hideDiv">
+                                        <input type="number" name="duration" value="" placeholder="时长/min">
                                         <input type="number" name="amount" value="" placeholder="数量/total">
                                         <button class="fr bgred confirmBtn">确认</button>
                                     </div>
@@ -932,8 +934,8 @@
         function submitAction() {
 
 
-            console.log($("input[name=duration]").val());
-            console.log($("input[name=extent]").val());
+            // console.log($("input[name=duration]").val());
+            // console.log($("input[name=extent]").val());
             //提示框
             if ("{$memberInfo.id}" == 0) {
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
@@ -944,8 +946,7 @@
                 return false;
             }
 
-
-
+            //必填项判断
             if ($(".punch_category").text() == '') {
                 mui.toast("请选择运动类型");
                 return false;
@@ -958,70 +959,92 @@
                 mui.toast("请上传运动照");
                 return false;
             }
-            groupList = [];
-            $("#hideStList input[name=group]").each(function (i) {
-                var group = $(this).siblings("font").text();
-                var group_id = $(this).attr("data-group_id");
-                var member = $(this).attr("data-member");
-                var member_id = $(this).attr("data-member_id");
-                var pool = $(this).attr("data-pool");
-                var pool_id = $(this).attr("data-pool_id");
-                var stake = $(this).attr("data-stake");
-                groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
-                console.log(groupList)
-            });
 
-             var data = wooApi.getInputData('input', 'data');
-             datas = wooApi.getInputData('select', 'data', data);
-             //获取其他标签值
-             arrData = wooApi.getDomData('domData', datas);
-             var objData = wooApi.arrTOobj(arrData);
-
-             let list = JSON.stringify(groupList);
-             objData.groupList = list;
-
-            //判断是否热币不足，不足引导充值/////////////////////////////////////////////////////////////////
-            var stakeCount = $(".Hbin").text();
-            if(parseInt(stakeCount)> parseInt("{$memberInfo['hot_coin']}")){
-
-                mui.confirm('您的热币不足，请前往充币，谢谢！', '提示', ['取消', '前往充币'], function (e) {
-                    if(e.index === 1) {
-                        //设定cookie参数值////////////////////////////////////////////////////////
-                        
-                         objData.punch_categoryCN = $(".punch_category").text();
-                         wooApi.setCookie('createPunchForm',JSON.stringify(objData),300);
-                         wooApi.setCookie('createPunchFormGroup',JSON.stringify(groupList),300);
-
-                        console.log(objData)
-                        //////////////////////////////////////////////////////////////////////////
-                        mui('#reward').popover('toggle');
-                        mask.show();
-                        $('.mui-iframe-wrapper').show();
+            var passGroup = true;
+            //检测是否没有选择任何社群，给个提示
+            var getGroupLen = $('.groupslist input[name="checkbox1"]').length;
+            var checkboxContLen = $('.checkboxCont').length;
+            if (getGroupLen != 0 && checkboxContLen==0) {
+                mui.confirm('您当前没有选择任何社群，<br />确定此卡不记录到社群吗？', '提示', ['选择社群', '确定'], function (e) {
+                    if (e.index === 1) {
+                        finalSubmit();
+                    }else{
+                        //$("#groups").css("bottom","20px");
+                        mui("#groups").popover("toggle",document.getElementById("bottomBtn"));
                     }
                 });
-                return false;
+            }else{
+                finalSubmit();
             }
-            ///////////////////////////////////////////////////////////////////////////////////////////////
-            
-             var url = "{:url('api/punch/createPunchApi')}";
-             var ajaxResult = wooApi.asyncF(url, objData);
-             if (ajaxResult.code == 200) {
-                 mui.alert("打卡成功", '提示', '确定', function () {
-                    //清空cookie
-                     wooApi.setCookie('createPunchForm',null,300);
-                     wooApi.setCookie('createPunchFormGroup',null,300);
 
-                     var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
-                     window.top.location.href = goUrl;
-                 })
-             } else {
-                 mui.alert(ajaxResult.msg, '打卡失败');
-                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                     if (data.code === 200) {
-                     }
-                 }, 'json');
-             }
         };
+
+
+        function finalSubmit(){
+                groupList = [];
+                $("#hideStList input[name=group]").each(function (i) {
+                    var group = $(this).siblings("font").text();
+                    var group_id = $(this).attr("data-group_id");
+                    var member = $(this).attr("data-member");
+                    var member_id = $(this).attr("data-member_id");
+                    var pool = $(this).attr("data-pool");
+                    var pool_id = $(this).attr("data-pool_id");
+                    var stake = $(this).attr("data-stake");
+                    groupList.push({ group, group_id, member, member_id, pool, pool_id, stake });
+                    console.log(groupList)
+                });
+
+                 var data = wooApi.getInputData('input', 'data');
+                 datas = wooApi.getInputData('select', 'data', data);
+                 //获取其他标签值
+                 arrData = wooApi.getDomData('domData', datas);
+                 var objData = wooApi.arrTOobj(arrData);
+
+                 let list = JSON.stringify(groupList);
+                 objData.groupList = list;
+
+                //判断是否热币不足，不足引导充值/////////////////////////////////////////////////////////////////
+                var stakeCount = $(".Hbin").text();
+                if(parseInt(stakeCount)> parseInt("{$memberInfo['hot_coin']}")){
+
+                    mui.confirm('您的热币不足，请前往充币，谢谢！', '提示', ['取消', '前往充币'], function (e) {
+                        if(e.index === 1) {
+                            //设定cookie参数值////////////////////////////////////////////////////////
+                            
+                             objData.punch_categoryCN = $(".punch_category").text();
+                             wooApi.setCookie('createPunchForm',JSON.stringify(objData),300);
+                             wooApi.setCookie('createPunchFormGroup',JSON.stringify(groupList),300);
+
+                            console.log(objData)
+                            //////////////////////////////////////////////////////////////////////////
+                            mui('#reward').popover('toggle');
+                            mask.show();
+                            $('.mui-iframe-wrapper').show();
+                        }
+                    });
+                    return false;
+                }
+                ///////////////////////////////////////////////////////////////////////////////////////////////
+                
+                 var url = "{:url('api/punch/createPunchApi')}";
+                 var ajaxResult = wooApi.asyncF(url, objData);
+                 if (ajaxResult.code == 200) {
+                     mui.alert("太棒了，继续加油！", '打卡成功', '确定', function () {
+                        //清空cookie
+                         wooApi.setCookie('createPunchForm',null,300);
+                         wooApi.setCookie('createPunchFormGroup',null,300);
+
+                         var goUrl = "{:url('punch/punchInfo')}" + '/punch_id/' + ajaxResult.data + '/?punch=create';
+                         window.top.location.href = goUrl;
+                     })
+                 } else {
+                     mui.alert(ajaxResult.msg, '打卡失败');
+                     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                         if (data.code === 200) {
+                         }
+                     }, 'json');
+                 }
+        }
 
     </script>
     <script>
