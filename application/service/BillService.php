@@ -585,9 +585,11 @@ class BillService {
                 // 查询剩余课时
                 $lesson_member = db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'student_id'=>$billInfo['student_id'],'status'=>1,'type'=>1])->find();
                 if(($lesson_member['rest_schedule'] - $billInfo['total_gift']) < 1){
-                    return ['code'=>100,'msg'=>'您已上完课,不允许退款了'];
+                    return ['code'=>100,'msg'=>'您购买的课已上完,不允许退款'];
                 }
-                $refundTotal = ($lesson_member['rest_schedule']<($billInfo['total'] - $billInfo['total_gift']))?(($billInfo['total'] - $billInfo['total_gift']) - $lesson_member['rest_schedule']):($billInfo['total'] - $billInfo['total_gift']);
+                //扣除赠课
+                $canRefundTotal = $billInfo['total'] + $billInfo['total_gift'];
+                $refundTotal = ($lesson_member['rest_schedule']<$canRefundTotal)?($lesson_member['rest_schedule'] - $billInfo['total_gift']):($billInfo['total']);
             }else{
                 $refundTotal = $billInfo['total'];
             }
@@ -689,7 +691,8 @@ class BillService {
                     return ['code'=>100,'msg'=>'该生课时不足,不允许退款'];
                 }
                 //扣除赠课
-                $refundTotal = ($lesson_member['rest_schedule']<($billInfo['total'] - $billInfo['total_gift']))?(($billInfo['total'] - $billInfo['total_gift']) - $lesson_member['rest_schedule']):($billInfo['total'] - $billInfo['total_gift']);
+                $canRefundTotal = $billInfo['total'] + $billInfo['total_gift'];
+                $refundTotal = ($lesson_member['rest_schedule']<$canRefundTotal)?($lesson_member['rest_schedule'] - $billInfo['total_gift']):($billInfo['total']);
                 if($refund >($refundTotal*$billInfo['price'])){
                     return ['code'=>100,'msg'=>"该用户的剩余课时为{$lesson_member['rest_schedule']}, 订单总数量为{$billInfo['total']},该订单下赠课数量为{$billInfo['total_gift']},因此您最多只能申退{$refundTotal}*{$billInfo['price']} 元"];
                 }
@@ -701,7 +704,7 @@ class BillService {
                 $result = $this->Bill->save($updateData,['id'=>$billInfo['id']]);
                 if($result){
                     // 剩余课时的变化
-                    $rest_schedule = $lesson_member['rest_schedule']-$refundTotal;
+                    $rest_schedule = $lesson_member['rest_schedule']-$refundTotal-$billInfo['total_gift'];
                     if($rest_schedule == 0){
                         db('lesson_member')->where(['lesson_id'=>$billInfo['goods_id'],'member_id'=>$billInfo['member_id'],'status'=>1,'type'=>1])->update(['rest_schedule'=>$rest_schedule,'status'=>2]);
                     }else{

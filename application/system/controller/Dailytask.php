@@ -185,18 +185,19 @@ class Dailytask extends Base{
                 'template_id'=>"squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN",
                 'url'=>url('frontend/student/studentinfoofcamp',['type'=>1,'student_id'=>1,'camp_id'=>1],'',true),
                 'topcolor'=>"#FF0000",
-                'data'=>
-                    'first'=> ['value'=>"您好，您所报的（{$value['lesson']}即将过期,仍剩余$value['rest_schedule']节课,联系训练营管理员处理"],
-                    'keyword1'=>['value': $total_schedule],
-                    'keyword2'=> ['value': ($total_schedule - $rest_schedule)],
-                    'keyword3'=> ['value': $rest_schedule] ,
-                    'remark'=>['value'=>'篮球管家'] ,
-                ];
+                'data'=>[
+                            'first'=> ['value'=>"您好，您所报的（{$value['lesson']})即将过期,仍剩余{$value['rest_schedule']}节课,联系训练营管理员处理"],
+                            'keyword1'=>['value'=> $total_schedule],
+                            'keyword2'=> ['value'=> ($total_schedule - $rest_schedule)],
+                            'keyword3'=> ['value'=> $rest_schedule] ,
+                            'remark'=>['value'=>'篮球管家'] ,
+                        ]
+                    ];
             $saveData = [
                 'title'=>'课时即将过期提醒',
-                'content'=>"您好，您所报的（{$value['lesson']}即将过期,仍剩余$value['rest_schedule']节课,联系训练营管理员处理",
+                'content'=>"您好，您所报的（{$value['lesson']}即将过期,仍剩余{$value['rest_schedule']}节课,联系训练营管理员处理",
                 'url'=>url('frontend/student/studentinfoofcamp',['type'=>1,'student_id'=>1,'camp_id'=>1],'',true),
-                'member_id': $value['member_id']
+                'member_id'=> $value['member_id']
             ];
 
 
@@ -210,4 +211,38 @@ class Dailytask extends Base{
     }
 
     
+
+    //退款返回赠课
+    public function giftBack(){
+        try {
+            $list = db('bill')->field('bill.id,camp.rebate_type,bill.total_gift,bill.goods,bill.goods_id,bill.camp_id,bill.camp,bill.organization_type')->join('camp','camp.id = bill.camp_id')->where(['bill.status'=>-2,'bill.total_gift'=>['egt',1],'bill.is_gift_back'=>-1,'bill.goods_type'=>1])->select();
+        dump($list);
+            foreach ($list as $key => $value) {
+                // 课时版训练营,返还赠课
+                 if($value['rebate_type'] == 1 && $value['organization_type'] == 1){
+                    // dump($value);
+                    db('schedule_giftbuy')->insert([
+                        'camp_id'       =>$value['camp_id'],
+                        'camp'          =>$value['camp'],
+                        'lesson_id'     =>$value['goods_id'],
+                        'lesson'        =>$value['goods'],
+                        'member_id'     =>0,
+                        'member'        =>'篮球管家平台',
+                        'quantity'      =>$value['total_gift'],
+                        'create_time'   =>time(),
+                        's_sys'         =>1
+                    ]);
+                    db('lesson')->where(['id'=>$value['goods_id']])->inc('total_giftschedule',$value['total_gift'])->inc('resi_giftschedule',$value['total_gift'])->inc('unbalanced_giftschedule',$value['total_gift'])->update();
+                }   
+            }  
+              db('bill')->where(['bill.status'=>-2,'bill.total_gift'=>['egt',1],'bill.is_gift_back'=>-1,'bill.goods_type'=>1])->update(['is_gift_back'=>1]);
+            $data = ['crontab'=>'返回赠课'];
+            $this->record($data);  
+        } catch (Exception $e) {
+            $data = ['crontab'=>'返回赠课','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+    }
+
 }

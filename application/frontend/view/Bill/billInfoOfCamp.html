@@ -180,7 +180,7 @@
 
         //判断是否模板消息进入该页面，是则左上角返回页面跳转到指定页面
         if(reg.test(backUrl)==true){
-            console.log(backUrl)
+            
             $("#header .mui-icon-left-nav").attr("class","mui-icon mui-icon-left-nav mui-pull-left arrow");
             $("#header .mui-icon-left-nav").attr("href","{:url('bill/billList')}?camp_id={$billInfo['camp_id']}")
             $("#header .mui-icon-left-nav").find(".return").text("训练营订单");            
@@ -192,6 +192,10 @@
             var refund = $("input[name='refund']").val();
             if(refund==''){
                 mui.toast("请填写退款金额");
+                return false;
+            }
+            if(refund>{$billInfo.refundamount}){
+                mui.toast("最多允许退{$billInfo.refundamount}元");
                 return false;
             }
             mui.confirm('是否确认同意退款?', '', ['取消', '确认'], function (e) {
