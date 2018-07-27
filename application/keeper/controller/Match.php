@@ -854,7 +854,29 @@ class Match extends Base {
             $showBtn = 0;
         }
 
+        // 控制能否提交排名数据：小组赛阶段比赛赛程未完成不能提交
+        $canSubmit = 0;
+        $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $this->league_id,
+            'status' => 2,
+            'match_group_id' => ['>', 0]
+        ]);
+        $normalMatchRecordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0],
+            'is_record' => 0
+        ]);
+        $isRecordMatchRecordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0],
+            'is_record' => 1
+        ]);
+        if ( !$normalMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+            $canSubmit = 1;
+        }
+
         $this->assign('showBtn', $showBtn);
+        $this->assign('canSubmit', $canSubmit);
         return view('Match/record/integralTableList');
     }
 
