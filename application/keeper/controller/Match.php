@@ -863,22 +863,25 @@ class Match extends Base {
 
         // 控制能否提交排名数据：小组赛阶段比赛赛程未完成不能提交
         $canSubmit = 0;
+        // 已完成分组赛程记录数
         $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
             'status' => 2,
             'match_group_id' => ['>', 0]
         ]);
+        // 未发布的分组比赛结果
         $normalMatchRecordCount = $leagueS->getMatchRecordCount([
             'match_id' => $this->league_id,
             'match_group_id' => ['>', 0],
             'is_record' => 0
         ]);
+        // 已发布的分组比赛结果
         $isRecordMatchRecordCount = $leagueS->getMatchRecordCount([
             'match_id' => $this->league_id,
             'match_group_id' => ['>', 0],
             'is_record' => 1
         ]);
-        if ( !$normalMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+        if ( !$normalMatchRecordCount && $normalMatchRecordCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
             $canSubmit = 1;
         }
 
