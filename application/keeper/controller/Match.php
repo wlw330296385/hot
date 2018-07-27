@@ -801,9 +801,18 @@ class Match extends Base {
     // 比赛阶段创建
     public function createMatchStage() {
         $leagueS = new LeagueService();
-        $types = $leagueS->getMatchStageTypes();
+        // 比赛阶段类型选择
+        $matchTypeSelect = $leagueS->getMatchStageTypes();
+        // 获取联赛有无小组赛比赛阶段信息，若已有小组赛（type=1)比赛阶段不能选择
+        $matchStageInfoType1 = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+        if ($matchStageInfoType1) {
+            unset($matchTypeSelect[$matchStageInfoType1['type']]);
+        }
 
-        $this->assign('types', $types);
+        $this->assign('matchTypeSelect', $matchTypeSelect);
         return view('Match/stage/createMatchStage');
     }
 
@@ -813,10 +822,10 @@ class Match extends Base {
         // 获取比赛阶段详情
         $leagueS = new LeagueService();
         $stageInfo = $leagueS->getMatchStage(['id' => $id]);
-        $types = $leagueS->getMatchStageTypes();
+        $matchTypeSelect = $leagueS->getMatchStageTypes();
 
         $this->assign('matchStageInfo', $stageInfo);
-        $this->assign('types', $types);
+        $this->assign('matchTypeSelect', $matchTypeSelect);
         return view('Match/stage/editMatchStage');
     }
 
