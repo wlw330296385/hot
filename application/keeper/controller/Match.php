@@ -720,12 +720,13 @@ class Match extends Base {
 
     // 赛程列表管理
     public function schedulelistofleague() {
-        dump($this->league_id);
         $leagueS = new LeagueService();
         // 获取联赛分组记录数
         $groupCount = $leagueS->getMatchGroupCount(['match_id' => $this->league_id]);
-        // 获取联赛赛程记录数
-        $scheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
+        // 获取系统添加的联赛赛程记录数
+        $scheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id, 'add_mode' => 1]);
+        // 获取自填的联赛赛程记录数
+        $scheduleCustomCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id, 'add_mode' => 2]);
         // 获取是小组阶段的赛程记录数
         $scheduleCountHasGroupId = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
@@ -733,21 +734,23 @@ class Match extends Base {
         ]);
         // 根据分组、赛程数 控制按钮显示
         $showBtn = 0;
-
-
         if ( !$groupCount && !$scheduleCount ) {
             // 没分组
             $showBtn = 1;
         } else if ( $groupCount && !$scheduleCount ) {
             // 有分组&没赛程
             $showBtn = 2;
-        } else if ( $groupCount && $scheduleCount ) {
-            // 有分组&有赛程
+        } else if ( $groupCount && $scheduleCustomCount ) {
+            // 有分组&有自填赛程
             $showBtn = 3;
-        } else if ( $groupCount && $scheduleCountHasGroupId ) {
-            // 有分组的赛程信息
+        } else if ( $groupCount && $scheduleCountHasGroupId && $scheduleCount ) {
+            // 有分组&有系统添加赛程
             $showBtn = 4;
+        } else if ( $groupCount && $scheduleCountHasGroupId && $scheduleCustomCount) {
+            // 有分组的赛程信息
+            $showBtn = 5;
         }
+        
         $this->assign('showBtn', $showBtn);
         return view('Match/schedule/scheduleListOfLeague');
     }
@@ -778,7 +781,16 @@ class Match extends Base {
             'match_id' => $this->league_id
         ]);
 
+
+        // 通道预览赛程保存的小组赛阶段赛程记录数
+        $sysbuildMatchScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0],
+            'add_mode' => 1,
+        ]);
+        $showMatchStageType1 = ($sysbuildMatchScheduleCount) ? 0 : 1;
         $this->assign('groups', $groups);
+        $this->assign('showMatchStageType1', $showMatchStageType1);
         return view('Match/schedule/createScheduleOfLeague1');
     }
 
@@ -796,9 +808,18 @@ class Match extends Base {
     // 比赛阶段创建
     public function createMatchStage() {
         $leagueS = new LeagueService();
-        $types = $leagueS->getMatchStageTypes();
+        // 比赛阶段类型选择
+        $matchTypeSelect = $leagueS->getMatchStageTypes();
+        // 获取联赛有无小组赛比赛阶段信息，若已有小组赛（type=1)比赛阶段不能选择
+        $matchStageInfoType1 = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+        if ($matchStageInfoType1) {
+            unset($matchTypeSelect[$matchStageInfoType1['type']]);
+        }
 
-        $this->assign('types', $types);
+        $this->assign('matchTypeSelect', $matchTypeSelect);
         return view('Match/stage/createMatchStage');
     }
 
@@ -808,10 +829,10 @@ class Match extends Base {
         // 获取比赛阶段详情
         $leagueS = new LeagueService();
         $stageInfo = $leagueS->getMatchStage(['id' => $id]);
-        $types = $leagueS->getMatchStageTypes();
+        $matchTypeSelect = $leagueS->getMatchStageTypes();
 
         $this->assign('matchStageInfo', $stageInfo);
-        $this->assign('types', $types);
+        $this->assign('matchTypeSelect', $matchTypeSelect);
         return view('Match/stage/editMatchStage');
     }
 
@@ -825,13 +846,47 @@ class Match extends Base {
         return view('Match/stage/promotionList');
     }
 
-    // 球队积分列表
-    public function integralList() {
-        return view('Match/record/integralList');
-    }
 
     // 球队对阵积分表
     public function integralTableList() {
+        // 判断有无小组赛晋级数据 显示提交数据按钮
+        $showBtn = 1;
+        $leagueS = new LeagueService();
+        $matchStageAdvteams = $leagueS->getMatchStageAdvteams([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0]
+        ]);
+        // 不显示按钮
+        if ($matchStageAdvteams) {
+            $showBtn = 0;
+        }
+
+        // 控制能否提交排名数据：小组赛阶段比赛赛程未完成不能提交
+        $canSubmit = 0;
+        // 已完成分组赛程记录数
+        $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $this->league_id,
+            'status' => 2,
+            'match_group_id' => ['>', 0]
+        ]);
+        // 未发布的分组比赛结果
+        $normalMatchRecordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0],
+            'is_record' => 0
+        ]);
+        // 已发布的分组比赛结果
+        $isRecordMatchRecordCount = $leagueS->getMatchRecordCount([
+            'match_id' => $this->league_id,
+            'match_group_id' => ['>', 0],
+            'is_record' => 1
+        ]);
+        if ( !$normalMatchRecordCount && $normalMatchRecordCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+            $canSubmit = 1;
+        }
+
+        $this->assign('showBtn', $showBtn);
+        $this->assign('canSubmit', $canSubmit);
         return view('Match/record/integralTableList');
     }
 

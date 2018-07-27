@@ -60,6 +60,16 @@
                     <span class="course">赛程1</span>
                 </div>
                 <div class="mui-input-row">
+                    <div class="mui-navigate-right">
+                        <label>比赛类型</label>
+                        <span class="select-row">
+                            <select class="matchStageType"></select>
+                            <input class="data" type="hidden" name="match_stage_id" value="">
+                            <input class="data" type="hidden" name="match_stage" value="">
+                        </span>
+                    </div>
+                </div>
+                <div class="mui-input-row">
                     <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
                         <label>主队</label>
                         <span class="HomeTeam" style="width: 60%"></span>
@@ -74,16 +84,6 @@
                         <input type="hidden" name="away_team_id" value="">
                         <input type="hidden" class="class2" name="away_team_logo" value="">
                     </a>
-                </div>
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>比赛类型</label>
-                        <span class="select-row">
-                            <select class="matchStageType"></select>
-                            <input class="data" type="hidden" name="match_stage_id" value="">
-                            <input class="data" type="hidden" name="match_stage" value="">
-                        </span>
-                    </div>
                 </div>
                 <div class="mui-input-row h-auto">
                     <a href="#court" class="mui-navigate-right clickTap courtTap">
@@ -228,12 +228,27 @@
         $(function () {
             matchStage(1); //比赛阶段
 
+            if ("{$showMatchStageType1}" == 0) {
+                allTeamList();
+            } else {
+                getbattle();
+            }
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
                 let listLength = $(".scheduleList").length + 1;
                 let str = `<div class="scheduleList" data-num="${listLength}">
                             <div class="page-header bggray2 border-b">
                                 <span class="course">赛程${listLength}</span>
+                            </div>
+                              <div class="mui-input-row">
+                                <div class="mui-navigate-right">
+                                    <label>比赛类型</label>
+                                    <span class="select-row">
+                                        <select class="matchStageType" name="type"></select>
+                                        <input class="data" type="hidden" name="match_stage_id" value="">
+                                        <input class="data" type="hidden" name="match_stage" value="">
+                                    </span>
+                                </div>
                             </div>
                             <div class="mui-input-row">
                                 <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
@@ -251,16 +266,7 @@
                                     <input type="hidden" class="class2" name="away_team_logo" value="">
                                 </a>
                             </div>
-                            <div class="mui-input-row">
-                                <div class="mui-navigate-right">
-                                    <label>比赛类型</label>
-                                    <span class="select-row">
-                                        <select class="matchStageType" name="type"></select>
-                                        <input class="data" type="hidden" name="match_stage_id" value="">
-                                        <input class="data" type="hidden" name="match_stage" value="">
-                                    </span>
-                                </div>
-                            </div>
+                          
                             <div class="mui-input-row h-auto">
                                 <a href="#court" class="mui-navigate-right clickTap courtTap">
                                     <label>比赛场地</label>
@@ -460,13 +466,20 @@
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     let match_stage_id = $(this).children('option:selected').attr('data-match-stage-id');
                     let match_stage = $(this).children('option:selected').attr('data-match-stage');
+                    let type = $(this).children('option:selected').attr('data-type');
                     if (liNum == datanum) {
                         $(this).siblings().eq(0).val(match_stage_id);
                         $(this).siblings().eq(1).val(match_stage);
+                        if (type == 1) {
+                            getbattle()
+                        } else {
+                            allTeamList()
+                        }
                     }
                 })
             });
-            getbattle()
+            console.log("{$showMatchStageType1}")
+
         });
 
         // 比赛阶段
@@ -484,11 +497,15 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        if (data.data.length > 0) {
-                            newli += '<option>选择比赛类型</option>';
-                        }
+                        // if (data.data.length > 0) {
+                        //     newli += '<option>选择比赛类型</option>';
+                        // }
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" >' + data.data[i].name + '</option>'
+                            if ("{$showMatchStageType1}" == 0 && data.data[i].type != 1) {
+                                newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            } else if ("{$showMatchStageType1}" == 1) {
+                                newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            }
                         }
                         if (newli == '') {
                             newli = '<option>请先创建比赛阶段</option>'
@@ -619,11 +636,6 @@
                             newli += `</ul></div></li></ul>`
                         }
                         $(".teamList").empty().append(newli);
-                        if (newli == '') {
-                            allTeamList()
-                        }
-                    } else {
-                        allTeamList()
                     }
                 },
                 error: function (xhr, type, errerThrown) {

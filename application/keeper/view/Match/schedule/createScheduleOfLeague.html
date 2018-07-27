@@ -68,17 +68,13 @@
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
-                    <span class="select-row">
-                        <select class="data matchStageType" name="match_stage_id">
-                            <option value="" class="selectAfter">请选择比赛阶段</option>
-                        </select>
-                    </span>
-                    <input type="hidden" class="data" name="match_stage" value="">
+                    <span class="domData matchStageType" name="match_stage"></span>
+                    <input type="hidden" class="data" name="match_stage_id" value="">
                 </div>
             </div>
             <div class="mui-input-row">
                 <label>每组出线球队</label>
-                <span></span>
+                <span class="data advance_number"></span>
             </div>
         </form>
 
@@ -130,17 +126,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
+                    var newli = '';
                     if (data.code == 200) {
-                        var newli = '';
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
-                        }
-                        if (newli == '') {
-                            newli = '<option>请先创建比赛阶段</option>'
-                        }
-                        $(".selectAfter").after(newli);
+                        $(".matchStageType").text(data.data[0].name);
+                        $("input[name=match_stage_id]").val(data.data[0].id);
+                        $(".advance_number").text(data.data[0].advance_number);
                     } else {
-                        mui.alert('暂无比赛阶段，请先前往创建比赛阶段', function () {
+                        mui.alert('暂无小组比赛阶段，请先前往创建比赛阶段', function () {
                             window.location.href = "{:url('match/createMatchStage',['league_id'=>$league_id])}";
                         });
                     }
@@ -148,11 +140,6 @@
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                 }
-            });
-
-            $('.matchStageType').change(function () {
-                var match_stage = $(this).children("option:selected").text();
-                $("input[name=match_stage]").val(match_stage);
             });
 
         });
@@ -230,11 +217,6 @@
         // 提交
         function submitAction() {
 
-            if ($(".matchStageType option:selected").val() == '') {
-                mui.toast("请选择比赛阶段");
-                return false;
-            }
-
             console.log(scheduleList)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -247,10 +229,11 @@
                     var url = "{:url('api/league/saveallmatchschedule')}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
-                        mui.alert('赛程创建成功', '确定', function () {
+                        mui.toast("赛程创建成功");
+                        setTimeout(() => {
                             var goUrl = "{:url('match/schedulelistofleague')}" + '/league_id/' + match_id;
                             window.top.location.href = goUrl;
-                        })
+                        }, 2000);
                     } else {
                         mui.alert(ajaxResult.msg, '赛程创建失败');
                         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
