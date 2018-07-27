@@ -127,7 +127,7 @@
         if (data.code == 200) {
           for (var i = 0; i <= data.data.length - 1; i++) {
             newli += `<div class="divScroll mb"><table width=100%><tbody>
-                        <tr class="teamTitle">
+                        <tr class="teamTitle" data-match_stage_advance_number="${data.data[i].match_stage_advance_number}">
                           <td data-match_stage="${data.data[i].match_stage}" data-match_stage_id="${data.data[i].match_stage_id}" data-match_group_id="${data.data[i].match_group_id}">${data.data[i].match_group}</td>`
             // 横向
             for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
@@ -198,16 +198,23 @@
       var match_id = "{$league_id}";
       var match_stage = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage");
       var match_stage_id = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage_id");
-      var advteams = []
-      $("table .teamColumnl").each(function () {
-        var team = $(this).find(".team").text();
-        var team_id = $(this).attr("data-team_id");
-        var match_group = $(this).siblings(".teamTitle").find("td:eq(0)").text();
-        var match_group_id = $(this).siblings(".teamTitle").find("td:eq(0)").attr("data-match_group_id");
-        var adv_num = $(this).find(".rank").text();
-        var jf = $(this).find("jf").text();
-        advteams.push({ team, team_id, match_group, match_group_id, adv_num })
+      advteams = [];
+      $("table").each(function () {
+        var match_group = $(this).find(".teamTitle").children("td:eq(0)").text();
+        var match_group_id = $(this).find(".teamTitle").children("td:eq(0)").attr("data-match_group_id");
+        var match_stage_advance_number = $(this).find(".teamTitle").attr("data-match_stage_advance_number");
+        var team = '';
+        var team_id = '';
+        var adv_num = '';
+        // 根据出线球队数量截取数据
+        $(this).find(".teamColumnl").slice(0, match_stage_advance_number).each(function () {
+          team = $(this).find(".team").text();
+          team_id = $(this).attr("data-team_id");
+          adv_num = $(this).find(".rank").text();
+        })
+        advteams.push({ match_group, match_group_id, match_stage_advance_number, team, team_id, adv_num })
       })
+      // 数组转成json格式
       advteams = JSON.stringify(advteams);
       console.log(advteams)
       mui.ajax("{:url('api/league/savematchstageadvteam')}", {
