@@ -130,29 +130,18 @@
         $(function () {
             teamList(); //获取球队列表
             $(document).on("tap", ".fenpei", function () {
-                let league_id = "{$leagueInfo.id}";
-                let totalNum = $(".totalNum").text();
-                let groupNum = $("input[name=groupNum]").val();
-                if (groupNum == '') {
-                    mui.toast("请输入分组数");
-                    return false;
+                var frameCont = $(".frame").html();
+                if (frameCont != '') {
+                    var btnArray = ['取消', '确定'];
+                    mui.confirm("重新分组将清空原有分组数据，是否重新分组？", "提示", btnArray, function (e) {
+                        if (e.index == 1) {
+                            fenPeiCont()
+                        }
+                    })
+                } else {
+                    fenPeiCont()
                 }
-                if (Number(totalNum) < Number(groupNum)) {
-                    mui.toast("分组数不能大于球队总数");
-                    return false;
-                }
-                let str = '';
-                for (let i = 0; i <= groupNum - 1; i++) {
-                    str += `<ul class="mui-table-view list border-b">
-                                <div class="page-header border-b bggray2 groupsTip">
-                                    <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}（可编辑）" style="padding-left:0">
-                                    <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
-                                        <a href="#team" class="addTeam" style="color:#007aff">添加</a>
-                                    </span>
-                                </div>
-                            </ul>`
-                }
-                $(".frame").append(str);
+
             });
 
             //获取分组序号并且赋值到球队列表
@@ -224,6 +213,33 @@
             });
 
         });
+
+        // 
+        var fenPeiCont = function () {
+            let league_id = "{$leagueInfo.id}";
+            let totalNum = $(".totalNum").text();
+            let groupNum = $("input[name=groupNum]").val();
+            if (groupNum == '') {
+                mui.toast("请输入分组数");
+                return false;
+            }
+            if (Number(totalNum) < Number(groupNum)) {
+                mui.toast("分组数不能大于球队总数");
+                return false;
+            }
+            let str = '';
+            for (let i = 0; i <= groupNum - 1; i++) {
+                str += `<ul class="mui-table-view list border-b">
+                                <div class="page-header border-b bggray2 groupsTip">
+                                    <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}（可编辑）" style="padding-left:0">
+                                    <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
+                                        <a href="#team" class="addTeam" style="color:#007aff">添加</a>
+                                    </span>
+                                </div>
+                            </ul>`
+            }
+            $(".frame").empty().append(str);
+        }
 
         // 获取球队列表
         function teamList() {

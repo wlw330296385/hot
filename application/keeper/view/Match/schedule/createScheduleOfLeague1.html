@@ -95,7 +95,7 @@
                 <div class="mui-input-row timeTap" data-tnum="1">
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
-                        <span class="ui-alert" class="match_time1"></span>
+                        <span class="ui-alert"></span>
                     </div>
                 </div>
             </div>
@@ -110,41 +110,41 @@
     </div>
 
 
-    <!--选择对手-->
-    <div id="AwayTeam" class="mui-popover" style="margin: 0">
+
+
+    <!--球队A-->
+    <div id="HomeTeam" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36">
                 <strong>选择对手</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn" id="awayTeamDel">清除</button>
+                <button class="mui-btn" id="teamADel">清除</button>
             </span>
         </div>
         <div class="camp-lesson-list">
             <div class="mui-segmented-control">
-                <a class="mui-control-item mui-active" href="#item1">搜索球队</a>
-                <a class="mui-control-item" href="#item2">历史对手</a>
+                <a class="mui-control-item mui-active" href="#item1">晋级球队</a>
+                <a class="mui-control-item" href="#item2">全部球队</a>
             </div>
         </div>
         <div id="item1" class="mui-control-content mui-active">
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <div class="teamBList promotionList"></div>
+                    <div class="teamAList promotionList"></div>
                 </div>
             </div>
         </div>
         <div id="item2" class="mui-control-content">
             <div class="mui-scroll-wrapper">
                 <div class="mui-scroll">
-                    <div class="teamBList teamList"></div>
+                    <div class="teamAList teamList"></div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!--球队A-->
-    <div id="HomeTeam" class="mui-popover">
+    <!-- <div id="HomeTeam" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd45">
@@ -159,10 +159,41 @@
                 <div class="teamAList teamList"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!--球队B-->
-    <div id="1" class="mui-popover">
+    <div id="AwayTeam" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>选择对手</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamBDel">清除</button>
+            </span>
+        </div>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item3">晋级球队</a>
+                <a class="mui-control-item" href="#item4">全部球队</a>
+            </div>
+        </div>
+        <div id="item3" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList promotionList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="item4" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList teamList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div id="1" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd45">
@@ -177,7 +208,7 @@
                 <div class="teamBList teamList"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!--常驻场地-->
     <div id="court" class="mui-popover" style="margin: 0">
@@ -261,7 +292,7 @@
         $(function () {
             matchStage(1); //比赛阶段
             promotionTeamList();//晋级球队列表
-            if ("{$showMatchStageType1}" == 0) {
+            if ("{$hasGroup}" == 0) {
                 allTeamList();
             } else {
                 getbattle();
@@ -327,6 +358,28 @@
             });
 
             // 选择主队
+            // 晋级球队列表选择操作
+            $(document).on('tap', '.teamAList .promotionli', function () {
+                let team = $(this).attr("data-team");
+                let home_team_id = $(this).attr("data-team_id");
+                let home_team_logo = $(this).find(".teamlogo").attr("src");
+                let liNum = $(this).attr("data-num");
+                $(".homeTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    let awayId = $(this).parents(".scheduleList").find("input[name=away_team_id]").val();
+                    if (home_team_id == awayId) {
+                        mui.toast("球队已在列表中");
+                        return false;
+                    }
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        $(this).find("input").val(home_team_id);
+                        $(this).find(".class2").val(home_team_logo);
+                        mui("#HomeTeam").popover("toggle");
+                    }
+                })
+            });
+            // 分组球队列表选择操作
             $(document).on('tap', '.teamAList .tlistli', function () {
                 let team = $.trim($(this).find("text").text());
                 let home_team_id = $(this).attr("data-team_id");
@@ -347,6 +400,7 @@
                     }
                 })
             });
+            // 全部球队列表选择操作
             $(document).on('tap', '.teamAList .allli', function () {
                 let team = $.trim($(this).attr("data-team"));
                 let home_team_id = $(this).attr("data-team_id");
@@ -380,7 +434,9 @@
                 })
             });
 
+
             // 选择客队 
+            // 晋级球队列表选择操作
             $(document).on('tap', '.teamBList .promotionli', function () {
                 let team = $.trim($(this).attr("data-team"));
                 let away_team_id = $(this).attr("data-team_id");
@@ -401,6 +457,7 @@
                     }
                 })
             });
+            //分组球队列表选择操作
             $(document).on('tap', '.teamBList .tlistli', function () {
                 let team = $.trim($(this).find("text").text());
                 console.log(team)
@@ -422,6 +479,7 @@
                     }
                 })
             });
+            //全部球队列表选择操作
             $(document).on('tap', '.teamBList .allli', function () {
                 let team = $.trim($(this).attr("data-team"));
                 let away_team_id = $(this).attr("data-team_id");
@@ -532,7 +590,7 @@
                     }
                 })
             });
-            console.log("{$showMatchStageType1}")
+            // console.log("{$showMatchStageType1}")
 
         });
 
@@ -644,7 +702,7 @@
                             var urls = "{:url('team/teamInfo')}" + '/team_id/' + data.data[i].team.id + '/id/' + data.data[i].id;
                             newli += `<li class="mui-table-view-cell listli promotionli" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}">
                                         <a href="${urls}">
-                                            <img class="img40 mui-pull-left" src="${data.data[i].team.logo}">
+                                            <img class="img40 teamlogo mui-pull-left" src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
                                                 <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
                                                 <p>${data.data[i].match_stage} / ${data.data[i].match_group}</p>
@@ -653,6 +711,8 @@
                                     </li>`;
                         }
                         $(".promotionList").empty().append(newli);
+                    } else {
+                        $(".promotionList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -691,6 +751,8 @@
                                     </li>`;
                         }
                         $(".teamList").empty().append(newli);
+                    } else {
+                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -728,6 +790,8 @@
                             newli += `</ul></div></li></ul>`
                         }
                         $(".teamList").empty().append(newli);
+                    } else {
+                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {

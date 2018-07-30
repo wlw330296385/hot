@@ -68,7 +68,7 @@
             // $showBtn = 4; 有分组&有系统添加的赛程 => 创建下一赛程（自填）
             // $showBtn = 5; 有分组的赛程信息 => 创建下一赛程（自填）
             var showBtn = "{$showBtn}"
-            if (showBtn == 1 || showBtn == 4 || showBtn == 3 ||showBtn == 5) {
+            if (showBtn == 1 || showBtn == 4 || showBtn == 3 || showBtn == 5) {
                 $(".isEmpty").show();
             } else if (showBtn == 2) {
                 $(".notEmpty").show();
@@ -80,7 +80,7 @@
             mui.ajax({
                 url: url,
                 data: {
-                    league_id: league_id
+                    league_id: league_id,
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -108,8 +108,15 @@
                                     var Ttime = gettimeh(dataSchedule.match_timestamp * 1000);
                                 }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
-                                newli += `<li class="mui-table-view-cell listli">
-                                                <a href="${urls}"><div class="mui-media-body wd">
+                                var urlToRecordInfo = "{:url('match/leagueScheduleInfo')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id;
+                                newli += `<li class="mui-table-view-cell listli">`
+                                // 根据状态判断跳转链接
+                                if (dataSchedule.status == 1) {
+                                    newli += `<a href="${urls}">`
+                                } else {
+                                    newli += `<a href="${urlToRecordInfo}">`
+                                }
+                                newli += `<div class="mui-media-body wd">
                                                     <p class="f14" style="margin-bottom: 8px;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" alt="">${dataSchedule.home_team}</p>
                                                     <p class="f14">
