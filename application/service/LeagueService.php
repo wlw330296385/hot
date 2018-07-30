@@ -1175,7 +1175,13 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result as $key => $value ) {
+            $result[$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
     }
 
     // 获取比赛阶段晋级球队列表
@@ -1185,7 +1191,13 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result as $key => $value ) {
+            $result[$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
     }
 
     // 获取比赛阶段晋级球队列表
@@ -1195,7 +1207,13 @@ class LeagueService
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result['data'] as $key => $value ) {
+            $result['data'][$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
     }
 
     // 保存比赛阶段晋级球队
