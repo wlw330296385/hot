@@ -110,6 +110,39 @@
     </div>
 
 
+    <!--选择对手-->
+    <div id="AwayTeam" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>选择对手</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="awayTeamDel">清除</button>
+            </span>
+        </div>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item1">搜索球队</a>
+                <a class="mui-control-item" href="#item2">历史对手</a>
+            </div>
+        </div>
+        <div id="item1" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList promotionList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="item2" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList teamList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--球队A-->
     <div id="HomeTeam" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -129,7 +162,7 @@
     </div>
 
     <!--球队B-->
-    <div id="AwayTeam" class="mui-popover">
+    <div id="1" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd45">
@@ -227,7 +260,7 @@
 
         $(function () {
             matchStage(1); //比赛阶段
-
+            promotionTeamList();//晋级球队列表
             if ("{$showMatchStageType1}" == 0) {
                 allTeamList();
             } else {
@@ -348,8 +381,29 @@
             });
 
             // 选择客队 
+            $(document).on('tap', '.teamBList .promotionli', function () {
+                let team = $.trim($(this).attr("data-team"));
+                let away_team_id = $(this).attr("data-team_id");
+                let away_team_logo = $(this).find(".teamlogo").attr("src");
+                let liNum = $(this).attr("data-num");
+                $(".awayTeamTap").each(function () {
+                    let datanum = $(this).parents(".scheduleList").attr("data-num");
+                    let homeId = $(this).parents(".scheduleList").find("input[name=home_team_id]").val();
+                    if (away_team_id == homeId) {
+                        mui.toast("球队已在列表中");
+                        return false;
+                    }
+                    if (liNum == datanum) {
+                        $(this).find("span").text(team);
+                        $(this).find("input").val(away_team_id);
+                        $(this).find(".class2").val(away_team_logo);
+                        mui("#AwayTeam").popover("toggle");
+                    }
+                })
+            });
             $(document).on('tap', '.teamBList .tlistli', function () {
                 let team = $.trim($(this).find("text").text());
+                console.log(team)
                 let away_team_id = $(this).attr("data-team_id");
                 let away_team_logo = $(this).find(".teamlogo").attr("src");
                 let liNum = $(this).attr("data-num");
@@ -497,15 +551,15 @@
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
-                        // if (data.data.length > 0) {
-                        //     newli += '<option>选择比赛类型</option>';
-                        // }
+                        if (data.data.length > 0) {
+                            newli += '<option>选择比赛类型</option>';
+                        }
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            if ("{$showMatchStageType1}" == 0 && data.data[i].type != 1) {
-                                newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
-                            } else if ("{$showMatchStageType1}" == 1) {
-                                newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
-                            }
+                            // if ("{$showMatchStageType1}" == 0 && data.data[i].type != 1) {
+                            // newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            // } else if ("{$showMatchStageType1}" == 1) {
+                            newli += '<option value="' + data.data[i].type + '" data-match-stage-id="' + data.data[i].id + '" data-match-stage="' + data.data[i].name + '" data-type="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            // }
                         }
                         if (newli == '') {
                             newli = '<option>请先创建比赛阶段</option>'
@@ -568,6 +622,44 @@
                 }
             });
         };
+
+        // 联赛晋级球队列表
+        function promotionTeamList() {
+            var url = "{:url('api/league/getmatchstageadvteams')}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('team/teamInfo')}" + '/team_id/' + data.data[i].team.id + '/id/' + data.data[i].id;
+                            newli += `<li class="mui-table-view-cell listli promotionli" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}">
+                                        <a href="${urls}">
+                                            <img class="img40 mui-pull-left" src="${data.data[i].team.logo}">
+                                            <div class="mui-media-body lineHeight20">
+                                                <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
+                                                <p>${data.data[i].match_stage} / ${data.data[i].match_group}</p>
+                                            </div>
+                                        </a>
+                                    </li>`;
+                        }
+                        $(".promotionList").empty().append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
 
         // 联赛全部球队列表
         function allTeamList() {

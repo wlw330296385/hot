@@ -10,7 +10,7 @@
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         table {
             border-collapse: collapse;
@@ -81,263 +81,279 @@
 
 <body class=whitebg>
 
-<header class="mui-bar mui-bar-nav subheader">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-    <h1 class="mui-title">小组赛对阵排名预览</h1>
-</header>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">小组赛对阵排名预览</h1>
+    </header>
 
-<div class="mui-content ">
-    <div id="gameScoreBoard" class="mb44">
-        <div class="gData integralList"></div>
+    <div class="mui-content ">
+        <div id="gameScoreBoard" class="mb44">
+            <div class="gData integralList"></div>
+        </div>
+        {if condition="$showBtn eq 1 && $canSubmit eq 1"}
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen submitAction">
+                确认无误，提交排名数据
+            </li>
+        </ul>
+        {/if}
     </div>
-    {if condition="$showBtn eq 1 && $canSubmit eq 1"}
-    <ul class="mui-table-view operation">
-        <li class="mui-table-view-cell mui-col-xs-12 opli bggreen submitAction">
-            确认无误，提交排名数据
-        </li>
-    </ul>
-    {/if}
-</div>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
 
-    //弹出框滚动必须写在mui专用的初始化
-    (function ($) {
-        $(".mui-scroll-wrapper").scroll({
-            //bounce: false,//滚动条是否有弹力默认是true
-            indicators: true //是否显示滚动条,默认是true
-        });
-    })(mui);
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+        })(mui);
 
-    // 积分对阵表
-    var league_id = "{$league_id}"
-    mui.ajax("{:url('api/league/getleagueintegraltable')}", {
-        data: {
-            league_id: league_id
-        },
-        async: false,
-        dataType: 'json',//服务器返回json格式数据
-        type: 'post',//HTTP请求类型
-        timeout: 10000,//超时时间设置为10秒；
-        headers: {'Content-Type': 'application/json'},
-        success: function (data) {
-            console.log(data)
-            var newli = '';
-            if (data.code == 200) {
-                for (var i = 0; i <= data.data.length - 1; i++) {
-                    newli += `<div class="divScroll mb"><table width=100%><tbody>
-                        <tr class="teamTitle" data-match_stage_advance_number="${data.data[i].match_stage_advance_number}">
-                          <td data-match_stage="${data.data[i].match_stage}" data-match_stage_id="${data.data[i].match_stage_id}" data-match_group_id="${data.data[i].match_group_id}">${data.data[i].match_group}</td>`
-                    // 横向
-                    for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                        newli += `<td class="h${data.data[i].teams[j].team_id}">${data.data[i].teams[j].team}</td>`
-                    }
-                    newli += `<td>得失分率</td><td>积分</td><td>名次</td></tr>`
-                    // 竖向
-                    for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                        newli += `<tr data-team_id="${data.data[i].teams[j].team_id}" class="s${data.data[i].teams[j].team_id} teamColumnl"><td class="team">${data.data[i].teams[j].team}</td>`
-                        for (var t = 0; t <= data.data[i].teams.length - 1; t++) {
-                            if (t == j) {
-                                newli += `<td>--</td>`
-                            } else {
-                                newli += `<td></td>`
-                            }
-                        }
-                        newli += `<td></td><td class="jf">${data.data[i].teams[j].score}</td><td class="rank"></td></tr>`
-                    }
-                    newli += `</tbody ></table></div>`
-                }
-            }
-            $(".integralList").empty().append(newli);
-            if (newli == '') {
-                $(".integralList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-            }
-        },
-        error: function (xhr, type, errerThrown) {
-            mui.toast('网络异常,请稍候再试');
-        }
-    });
-
-    // 比赛球队数据
-    mui.ajax("{:url('api/league/getresultmatchrecords')}", {
-        data: {
-            league_id: league_id,
-        },
-        async: false,
-        dataType: 'json',//服务器返回json格式数据
-        type: 'post',//HTTP请求类型
-        timeout: 10000,//超时时间设置为10秒；
-        headers: {'Content-Type': 'application/json'},
-        success: function (data) {
-            console.log(data)
-            var newli1 = ''
-            if (data.code == 200) {
-                for (var i = 0; i <= data.data.length - 1; i++) {
-                    var st = $(".s" + data.data[i].home_team_id).index();
-                    var ht = $(".h" + data.data[i].away_team_id).index();
-                    $(".s" + data.data[i].home_team_id).find("td:eq(" + ht + ")").text(data.data[i].home_score + ':' + data.data[i].away_score);
-                    $(".s" + data.data[i].away_team_id).find("td:eq(" + st + ")").text(data.data[i].away_score + ':' + data.data[i].home_score);
-                    newli1 += `<p><span data-team_id="${data.data[i].home_team_id}">${data.data[i].home_team}</span>:<span data-team_id="${data.data[i].away_team_id}">${data.data[i].away_team}</span></p>`
-                }
-            }
-        },
-        error: function (xhr, type, errerThrown) {
-            mui.toast('网络异常,请稍候再试');
-        }
-    });
-
-    // 计算积分排名
-    $(".gData table").each(function () {
-        if ($(this).find(".jf").text() != 0) {
-            PaiMing($(this).find(".jf"))
-        }
-    });
-
-    // 提交数据
-    $(".submitAction").on("tap", function () {
-        var match = "{$leagueInfo.name}";
-        var match_id = "{$league_id}";
-        var match_stage = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage");
-        var match_stage_id = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage_id");
-        advteams = [];
-        $("table").each(function () {
-            var match_group = $(this).find(".teamTitle").children("td:eq(0)").text();
-            var match_group_id = $(this).find(".teamTitle").children("td:eq(0)").attr("data-match_group_id");
-            var match_stage_advance_number = $(this).find(".teamTitle").attr("data-match_stage_advance_number");
-            var team = '';
-            var team_id = '';
-            var adv_num = '';
-            // 根据出线球队数量截取数据
-            $(this).find(".teamColumnl").slice(0, match_stage_advance_number).each(function () {
-                team = $(this).find(".team").text();
-                team_id = $(this).attr("data-team_id");
-                adv_num = $(this).find(".rank").text();
-            })
-            advteams.push({match_group, match_group_id, match_stage_advance_number, team, team_id, adv_num})
-        })
-        // 数组转成json格式
-        advteams = JSON.stringify(advteams);
-        console.log(advteams)
-        mui.ajax("{:url('api/league/savematchstageadvteam')}", {
+        // 积分对阵表
+        var league_id = "{$league_id}"
+        mui.ajax("{:url('api/league/getleagueintegraltable')}", {
             data: {
-                match: match,
-                match_id: match_id,
-                match_stage,
-                match_stage_id,
-                advteams: advteams
+                league_id: league_id
             },
             async: false,
             dataType: 'json',//服务器返回json格式数据
             type: 'post',//HTTP请求类型
             timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             success: function (data) {
                 console.log(data)
-                mui.toast(data.msg);
-                setTimeout('window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"', 2000)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli += `<div class="divScroll mb"><table width=100%><tbody>
+                        <tr class="teamTitle" data-match_stage_advance_number="${data.data[i].match_stage_advance_number}">
+                          <td data-match_stage="${data.data[i].match_stage}" data-match_stage_id="${data.data[i].match_stage_id}" data-match_group_id="${data.data[i].match_group_id}">${data.data[i].match_group}</td>`
+                        // 横向
+                        for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
+                            newli += `<td class="h${data.data[i].teams[j].team_id}">${data.data[i].teams[j].team}</td>`
+                        }
+                        newli += `<td>得失分率</td><td>积分</td><td>名次</td></tr>`
+                        // 竖向
+                        for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
+                            newli += `<tr data-team_id="${data.data[i].teams[j].team_id}" class="s${data.data[i].teams[j].team_id} teamColumnl"><td class="team">${data.data[i].teams[j].team}</td>`
+                            for (var t = 0; t <= data.data[i].teams.length - 1; t++) {
+                                if (t == j) {
+                                    newli += `<td>--</td>`
+                                } else {
+                                    newli += `<td></td>`
+                                }
+                            }
+                            newli += `<td></td><td class="jf">${data.data[i].teams[j].score}</td><td class="rank"></td></tr>`
+                        }
+                        newli += `</tbody ></table></div>`
+                    }
+                }
+                $(".integralList").empty().append(newli);
+                if (newli == '') {
+                    $(".integralList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                }
             },
             error: function (xhr, type, errerThrown) {
-                mui.toast(data.msg);
+                mui.toast('网络异常,请稍候再试');
             }
         });
-    })
 
-    //小组赛对战表排名
-    function PaiMing($sTable) {
-        //根据积分计算排名（含并列排名）
-        var sArr = [];
-        $sTable.each(function () {
-            if ($.isNumeric($(this).text()))
-                sArr.push($(this).text());
-        });
-        sArr.sort(function (a, b) {
-            return parseFloat(a) - parseFloat(b);
-        }).reverse();
-        $sTable.each(function () {
-            for (var j = 0; j < sArr.length; j++) {
-                if ($.isNumeric($(this).text()) && $(this).text() == sArr[j].toString()) {
-                    $(this).next().text(j + 1);
-                    break;
-                }
-            }
-        });
-        // console.log(sArr)
-        //判断两队并列排名并根据“胜负关系”再次排名
-        $sTable.next().each(function () {
-            var $getPM = $(this).text();
-            if ($sTable.next().filter(function (index) {
-                return $(this).text() == $getPM
-            }).length == 2) {
-                var t1x = $(this).parent().index();
-                var t2x = $sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM && $(this).parent().index() != t1x
-                }).parent().index();
-                var $tb = $sTable.parent().parent();
-                var getGS = $tb.find("tr:eq(" + t1x + ") td:eq(" + t2x + ")").text().split(":");
-                if (getGS.length > 1) {
-                    if (Number(getGS[0]) > Number(getGS[1])) {
-                        $tb.find("tr:eq(" + t2x + ") .jf").next().text(Number($(this).text()) + 1);
-                    } else {
-                        $tb.find("tr:eq(" + t1x + ") .jf").next().text(Number($(this).text()) + 1);
+        // 比赛球队数据
+        mui.ajax("{:url('api/league/getresultmatchrecords')}", {
+            data: {
+                league_id: league_id,
+            },
+            async: false,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli1 = ''
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var st = $(".s" + data.data[i].home_team_id).index();
+                        var ht = $(".h" + data.data[i].away_team_id).index();
+                        $(".s" + data.data[i].home_team_id).find("td:eq(" + ht + ")").text(data.data[i].home_score + ':' + data.data[i].away_score);
+                        $(".s" + data.data[i].away_team_id).find("td:eq(" + st + ")").text(data.data[i].away_score + ':' + data.data[i].home_score);
+                        newli1 += `<p><span data-team_id="${data.data[i].home_team_id}">${data.data[i].home_team}</span>:<span data-team_id="${data.data[i].away_team_id}">${data.data[i].away_team}</span></p>`
                     }
                 }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
             }
         });
-        //判断三队或以上并列排名并根据“得失分率”再次排名
-        $sTable.next().each(function () {
-            var $getPM = $(this).text();
-            if ($sTable.next().filter(function (index) {
-                return $(this).text() == $getPM
-            }).length > 2) {
-                var t1x = $(this).parent().index();
-                var $tb = $sTable.parent().parent();
-                var df = 0;
-                var sf = 0;
-                $sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM && $(this).parent().index() != t1x
-                }).each(function () {
-                    var t2x = $(this).parent().index();
+
+        // 计算积分排名
+        $(".gData table").each(function () {
+            if ($(this).find(".jf").text() != 0) {
+                PaiMing($(this).find(".jf"))
+            }
+        });
+
+        // 提交数据
+        // $(".submitAction").on("tap", function () {
+            var match = "{$leagueInfo.name}";
+            var match_id = "{$league_id}";
+            var match_stage = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage");
+            var match_stage_id = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage_id");
+            advteams = []
+            $("table").each(function () {
+                var match_group = $(this).find(".teamTitle").children("td:eq(0)").text();
+                var match_group_id = $(this).find(".teamTitle").children("td:eq(0)").attr("data-match_group_id");
+                var match_stage_advance_number = $(this).find(".teamTitle").attr("data-match_stage_advance_number");
+                var team = '';
+                var team_id = '';
+                var adv_num = '';
+
+                advteamsChild = []
+                $(this).find(".teamColumnl").each(function () {
+                    team = $(this).find(".team").text();
+                    team_id = $(this).attr("data-team_id");
+                    adv_num = $(this).find(".rank").text();
+                    advteamsChild.push({ team, team_id, adv_num })
+                    advteamsChild.sort(compare("adv_num")).reverse();  // 对组别进行排名排序
+                    advteamsChild = advteamsChild.slice(0, match_stage_advance_number);  // 根据出线球队数量截取数据
+                })
+                for (var i = 0; i <= advteamsChild.length - 1; i++) {
+                    var team = advteamsChild[i].team;
+                    var team_id = advteamsChild[i].team_id;
+                    var adv_num = advteamsChild[i].adv_num;
+                    advteams.push({ match_group, match_group_id, match_stage_advance_number, team, team_id, adv_num })
+                }
+            })
+            // 数组转成json格式
+            advteams = JSON.stringify(advteams);
+            console.log(advteams)
+            // mui.ajax("{:url('api/league/savematchstageadvteam')}", {
+            //     data: {
+            //         match: match,
+            //         match_id: match_id,
+            //         match_stage,
+            //         match_stage_id,
+            //         advteams: advteams
+            //     },
+            //     async: false,
+            //     dataType: 'json',//服务器返回json格式数据
+            //     type: 'post',//HTTP请求类型
+            //     timeout: 10000,//超时时间设置为10秒；
+            //     headers: { 'Content-Type': 'application/json' },
+            //     success: function (data) {
+            //         console.log(data)
+            //         mui.toast(data.msg);
+            //         setTimeout('window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"', 2000)
+            //     },
+            //     error: function (xhr, type, errerThrown) {
+            //         mui.toast(data.msg);
+            //     }
+            // });
+        // })
+        // 排序
+        function compare(property) {
+            return function (obj1, obj2) {
+                var value1 = obj1[property];
+                var value2 = obj2[property];
+                return value2 - value1;
+            }
+        }
+        //小组赛对战表排名
+        function PaiMing($sTable) {
+            //根据积分计算排名（含并列排名）
+            var sArr = [];
+            $sTable.each(function () {
+                if ($.isNumeric($(this).text()))
+                    sArr.push($(this).text());
+            });
+            sArr.sort(function (a, b) {
+                return parseFloat(a) - parseFloat(b);
+            }).reverse();
+            $sTable.each(function () {
+                for (var j = 0; j < sArr.length; j++) {
+                    if ($.isNumeric($(this).text()) && $(this).text() == sArr[j].toString()) {
+                        $(this).next().text(j + 1);
+                        break;
+                    }
+                }
+            });
+            // console.log(sArr)
+            //判断两队并列排名并根据“胜负关系”再次排名
+            $sTable.next().each(function () {
+                var $getPM = $(this).text();
+                if ($sTable.next().filter(function (index) {
+                    return $(this).text() == $getPM
+                }).length == 2) {
+                    var t1x = $(this).parent().index();
+                    var t2x = $sTable.next().filter(function (index) {
+                        return $(this).text() == $getPM && $(this).parent().index() != t1x
+                    }).parent().index();
+                    var $tb = $sTable.parent().parent();
                     var getGS = $tb.find("tr:eq(" + t1x + ") td:eq(" + t2x + ")").text().split(":");
                     if (getGS.length > 1) {
-                        df = df + Number(getGS[0]);
-                        sf = sf + Number(getGS[1]);
-                    }
-                });
-                $tb.find("tr:eq(" + t1x + ") .jf").prev().text(df - sf);
-            }
-        });
-        //计算得失分后再排名
-        $sTable.next().each(function () {
-            var $getPM = $(this).text();
-            if ($sTable.next().filter(function (index) {
-                return $(this).text() == $getPM
-            }).length > 2) {
-                var $repeatPM = $sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM
-                });
-                var sArr = [];
-                $repeatPM.each(function () {
-                    if ($.isNumeric($(this).prev().prev().text()))
-                        sArr.push($(this).prev().prev().text());
-                });
-                sArr.sort(function (a, b) {
-                    return parseFloat(a) - parseFloat(b);
-                }).reverse();
-                $repeatPM.each(function () {
-                    for (var j = 0; j < sArr.length; j++) {
-                        if ($.isNumeric($(this).prev().prev().text()) && $(this).prev().prev().text() == sArr[j].toString()) {
-                            $(this).text(j + Number($getPM));
-                            break;
+                        if (Number(getGS[0]) > Number(getGS[1])) {
+                            $tb.find("tr:eq(" + t2x + ") .jf").next().text(Number($(this).text()) + 1);
+                        } else {
+                            $tb.find("tr:eq(" + t1x + ") .jf").next().text(Number($(this).text()) + 1);
                         }
                     }
-                });
+                }
+            });
+            //判断三队或以上并列排名并根据“得失分率”再次排名
+            $sTable.next().each(function () {
+                var $getPM = $(this).text();
+                if ($sTable.next().filter(function (index) {
+                    return $(this).text() == $getPM
+                }).length > 2) {
+                    var t1x = $(this).parent().index();
+                    var $tb = $sTable.parent().parent();
+                    var df = 0;
+                    var sf = 0;
+                    $sTable.next().filter(function (index) {
+                        return $(this).text() == $getPM && $(this).parent().index() != t1x
+                    }).each(function () {
+                        var t2x = $(this).parent().index();
+                        var getGS = $tb.find("tr:eq(" + t1x + ") td:eq(" + t2x + ")").text().split(":");
+                        if (getGS.length > 1) {
+                            df = df + Number(getGS[0]);
+                            sf = sf + Number(getGS[1]);
+                        }
+                    });
+                    $tb.find("tr:eq(" + t1x + ") .jf").prev().text(df - sf);
+                }
+            });
+            //计算得失分后再排名
+            $sTable.next().each(function () {
+                var $getPM = $(this).text();
+                if ($sTable.next().filter(function (index) {
+                    return $(this).text() == $getPM
+                }).length > 2) {
+                    var $repeatPM = $sTable.next().filter(function (index) {
+                        return $(this).text() == $getPM
+                    });
+                    var sArr = [];
+                    $repeatPM.each(function () {
+                        if ($.isNumeric($(this).prev().prev().text()))
+                            sArr.push($(this).prev().prev().text());
+                    });
+                    sArr.sort(function (a, b) {
+                        return parseFloat(a) - parseFloat(b);
+                    }).reverse();
+                    $repeatPM.each(function () {
+                        for (var j = 0; j < sArr.length; j++) {
+                            if ($.isNumeric($(this).prev().prev().text()) && $(this).prev().prev().text() == sArr[j].toString()) {
+                                $(this).text(j + Number($getPM));
+                                break;
+                            }
+                        }
+                    });
 
-            }
-        });
-    }
+                }
+            });
+        }
 
-</script>
+    </script>
 </body>
 
 </html>
