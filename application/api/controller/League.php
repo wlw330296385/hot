@@ -4311,63 +4311,6 @@ class League extends Base
         }
     }
 
-    // 保存比赛阶段晋级球队数据
-    public function savematchstageadvteam()
-    {
-        $data = input('post.');
-        // 独立验证器
-        $validate = new Validate([
-            'match_id' => 'require',
-            'match_stage_id' => 'require|number',
-        ], [
-            'match_id.require' => '请选择联赛id',
-            'match_stage_id.require' => '请选择比赛阶段',
-            'match_stage_id.number' => '比赛阶段id不合法',
-        ]);
-        $validateResult = $validate->check($data);
-        if (!$validateResult) {
-            return json(['code' => 100, 'msg' => $validate->getError()]);
-        }
-        // 验证会员操作权限 记分员以上才能操作
-        if (!$this->memberInfo['id'] === 0) {
-            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
-        }
-        $leagueS = new LeagueService();
-        $matchS = new MatchService();
-        $power = $leagueS->getMatchMemberType([
-            'member_id' => $this->memberInfo['id'],
-            'match_id' => $data['match_id'],
-            'status' => 1
-        ]);
-        if ($power < 8) {
-            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
-        }
-        if (input('?post.advteams') && !is_null(json_decode($data['advteams']))) {
-            $advteamsData = json_decode($data['advteams'], true);
-            foreach ($advteamsData as $key => $advteam) {
-                $advteamsData[$key]['match_id'] = $data['match_id'];
-                $advteamsData[$key]['match'] = $data['match'];
-                $advteamsData[$key]['match_stage_id'] = $data['match_stage_id'];
-                $advteamsData[$key]['match_stage'] = $data['match_stage'];
-            }
-            // 保存比赛阶段晋级球队数据
-            $leagueS = new LeagueService();
-            try {
-                $result = $leagueS->saveAllMatchStageAdvteam($advteamsData);
-            } catch (Exception $e) {
-                trace('error:' . $e->getMessage());
-                return json(['code' => 100, 'msg' => $e->getMessage()]);
-            }
-            if (!$result) {
-                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-            } else {
-                return json(['code' => 200, 'msg' => __lang('MSG_200')]);
-            }
-        } else {
-            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-        }
-    }
-
     // 创建联赛文章
     public function createleaguearticle()
     {
@@ -4779,59 +4722,122 @@ class League extends Base
         }
     }
 
-    public function test()
+    // 保存比赛阶段晋级球队数据
+    public function savematchstageadvteam()
     {
-        $data = [
-            [
-                "home_team_id" => 2,
-                "home_team" => "荣光WTF",
-                "home_score" => 63,
-                "away_team_id" => 4,
-                "away_team" => "大热追梦队",
-                "away_score" => 53
-            ],
-            [
-                "home_team_id" => 8,
-                "home_team" => "FireTeam",
-                "home_score" => 90,
-                "away_team_id" => 2,
-                "away_team" => "荣光WTF",
-                "away_score" => 102
-            ],
-            [
-                "home_team_id" => 4,
-                "home_team" => "大热追梦队",
-                "home_score" => 56,
-                "away_team_id" => 8,
-                "away_team" => "FireTeam",
-                "away_score" => 52
-            ],
-            [
-                "home_team_id" => 3,
-                "home_team" => "H1篮球队",
-                "home_score" => 95,
-                "away_team_id" => 12,
-                "away_team" => "SJX",
-                "away_score" => 32
-            ],
-            [
-                "home_team_id" => 11,
-                "home_team" => "F-18",
-                "home_score" => 98,
-                "away_team_id" => 3,
-                "away_team" => "H1篮球队",
-                "away_score" => 78
-            ],
-            [
-                "home_team_id" => 12,
-                "home_team" => "SJX",
-                "home_score" => 65,
-                "away_team_id" => 11,
-                "away_team" => "F-18",
-                "away_score" => 45
-            ]
-        ];
-        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
+        $data = input('post.');
+        // 独立验证器
+        $validate = new Validate([
+            'match_id' => 'require',
+            'match_stage_id' => 'require|number',
+        ], [
+            'match_id.require' => '请选择联赛id',
+            'match_stage_id.require' => '请选择比赛阶段',
+            'match_stage_id.number' => '比赛阶段id不合法',
+        ]);
+        $validateResult = $validate->check($data);
+        if (!$validateResult) {
+            return json(['code' => 100, 'msg' => $validate->getError()]);
+        }
+        // 验证会员操作权限 记分员以上才能操作
+        if (!$this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if ($power < 8) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        if (input('?post.advteams') && !is_null(json_decode($data['advteams']))) {
+            $advteamsData = json_decode($data['advteams'], true);
+            foreach ($advteamsData as $key => $advteam) {
+                $advteamsData[$key]['match_id'] = $data['match_id'];
+                $advteamsData[$key]['match'] = $data['match'];
+                $advteamsData[$key]['match_stage_id'] = $data['match_stage_id'];
+                $advteamsData[$key]['match_stage'] = $data['match_stage'];
+            }
+            // 保存比赛阶段晋级球队数据
+            $leagueS = new LeagueService();
+            try {
+                $result = $leagueS->saveAllMatchStageAdvteam($advteamsData);
+            } catch (Exception $e) {
+                trace('error:' . $e->getMessage());
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
+            }
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+            }
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+    }
 
+    // 比赛阶段晋级球队列表
+    public function getmatchstageadvteamlist() {
+        $map = input('post.');
+        $page = input('page', 1, 'intval');
+        if (input('?page')) {
+            unset($map['page']);
+        }
+
+        $leagueS = new LeagueService();
+        try {
+            $result = $leagueS->getMatchStageAdvteamList($map, $page);
+        } catch (Exception $e) {
+            trace('error:' . $e->getMessage());
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
+    }
+
+    // 比赛阶段晋级球队列表
+    public function getmatchstageadvteampage() {
+        $map = input('post.');
+        $page = input('page', 1, 'intval');
+        if (input('?page')) {
+            unset($map['page']);
+        }
+
+        $leagueS = new LeagueService();
+        try {
+            $result = $leagueS->getMatchStageAdvteamPaginator($map);
+        } catch (Exception $e) {
+            trace('error:' . $e->getMessage());
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
+    }
+
+    // 比赛阶段晋级球队列表
+    public function getmatchstageadvteams() {
+        $map = input('post.');
+
+        $leagueS = new LeagueService();
+        try {
+            $result = $leagueS->getMatchStageAdvteams($map);
+        } catch (Exception $e) {
+            trace('error:' . $e->getMessage());
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
     }
 }
