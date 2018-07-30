@@ -3754,6 +3754,9 @@ class League extends Base
             // 对应赛程更新完成状态 status=2
             $leagueS->saveMatchSchedule([
                 'id' => $data['match_schedule_id'],
+                'match_time' => $data['match_time'],
+                'court_id' => $data['court_id'],
+                'court' => $data['court'],
                 'status' => 2
             ]);
         } catch (Exception $e) {
@@ -4026,6 +4029,9 @@ class League extends Base
             // 对应赛程更新完成状态 status=2
             $leagueS->saveMatchSchedule([
                 'id' => $data['match_schedule_id'],
+                'match_time' => $data['match_time'],
+                'court_id' => $data['court_id'],
+                'court' => $data['court'],
                 'status' => 2
             ]);
         } catch (Exception $e) {
