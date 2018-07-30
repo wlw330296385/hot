@@ -780,7 +780,7 @@ class Match extends Base {
         $groups = $leagueS->getMatchGroups([
             'match_id' => $this->league_id
         ]);
-
+        $hasGroup = ($groups) ? 1 : 0;
 
         // 通道预览赛程保存的小组赛阶段赛程记录数
         $sysbuildMatchScheduleCount = $leagueS->getMatchScheduleCount([
@@ -789,8 +789,10 @@ class Match extends Base {
             'add_mode' => 1,
         ]);
         $showMatchStageType1 = ($sysbuildMatchScheduleCount) ? 0 : 1;
+
         $this->assign('groups', $groups);
         $this->assign('showMatchStageType1', $showMatchStageType1);
+        $this->assign('hasGroup', $hasGroup);
         return view('Match/schedule/createScheduleOfLeague1');
     }
 
