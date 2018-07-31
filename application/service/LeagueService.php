@@ -1168,14 +1168,52 @@ class LeagueService
         return $res->toArray();
     }
 
-    // 获取比赛阶段晋级球队信息
-    public function getMatchStageAdvteams($map) {
+    // 获取比赛阶段晋级球队列表
+    public function getMatchStageAdvteams($map, $order='id desc') {
         $model = new MatchStageAdvteam();
-        $res = $model->where($map)->select();
+        $res = $model->where($map)->order($order)->select();
         if (!$res) {
             return $res;
         }
-        return $res->toArray();
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result as $key => $value ) {
+            $result[$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
+    }
+
+    // 获取比赛阶段晋级球队列表
+    public function getMatchStageAdvteamList($map, $page = 1, $order='id desc', $limit=10) {
+        $model = new MatchStageAdvteam();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result as $key => $value ) {
+            $result[$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
+    }
+
+    // 获取比赛阶段晋级球队列表
+    public function getMatchStageAdvteamPaginator($map, $order = 'id desc', $paginate = 10) {
+        $model = new MatchStageAdvteam();
+        $res = $model->where($map)->order($order)->paginate($paginate);
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        // 获取球队logo
+        $dbTeam = db('team');
+        foreach ( $result['data'] as $key => $value ) {
+            $result['data'][$key]['team_logo'] = $dbTeam->where(['id' => $value['team_id']])->value('logo');
+        }
+        return $result;
     }
 
     // 保存比赛阶段晋级球队

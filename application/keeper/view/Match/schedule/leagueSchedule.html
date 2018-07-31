@@ -199,6 +199,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
+
                             newli += `  
                                 <div class="page-header border-b">`
                             if (data.data[i].date == '') {
@@ -216,9 +217,15 @@
                                 <table class="leagueTable">
                                     <tbody>`
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
-                                var scheduleArr = data.data[i].stage.schedules[j]
+                                var scheduleArr = data.data[i].stage.schedules[j];
+                                urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' + scheduleArr.match_id + '/id/' + scheduleArr.id;
+                                urlRecord = "{:url('match/recordInfo')}" + '/league_id/' + league_id + '/id/' + scheduleArr.match_record_id;
+                                if (scheduleArr.status == 1) {
+                                    newli += `<tr onclick="location.href='${urlSchedule}'" >`
+                                } else {
+                                    newli += `<tr onclick="location.href='${urlRecord}'" >`
+                                }
                                 newli += `
-                                    <tr>
                                         <td class="tdpPadding">
                                             <p>D组</p>
                                             <p class="siteNum">${j + 1}</p>
@@ -248,7 +255,9 @@
                                     <tr class="pline"></tr>`
                             }
                             newli += `</tbody></table>`
+
                         }
+
                         $(".scheduleList").empty().append(newli);
                     } else {
                         $(".scheduleList").html('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');

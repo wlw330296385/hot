@@ -45,7 +45,7 @@
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <label>比赛阶段</label>
-                <span>比赛阶段</span>
+                <span class="match_stage">比赛阶段</span>
             </div>
         </form>
         <p class="pline"></p>
@@ -73,10 +73,9 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli">
                 <a href="#shareGuide">分享</a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-7 mui-col-xs-7 opli bgred">确认生成</li>
         </ul>
     </div>
     <!--分享-->
@@ -98,34 +97,41 @@
             swipeBack: true //启用右滑关闭功能
         });
         $(function () {
+            var match_stage = wooApi.GetQueryString('match_stage');
+            $(".match_stage").text(match_stage)
             let league_id = "{$league_id}"
-            mui.ajax("{:url('api/league/leaguegroupwithteamspage','','',true)}", {
+            mui.ajax("{:url('api/league/getmatchstageadvteams','','',true)}", {
                 data: {
-                    league_id: league_id
+                    match_id: league_id,
+                    match_stage: match_stage
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
                 timeout: 10000,//超时时间设置为10秒；
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell listli ">
-                                            <img class="img40 mui-pull-left " src="${data.data.data[i].group_teams[j].team_logo}">
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            if (data.data[i].match_group != '') {
+                                newli += `<div class="page-header bggray2">
+                                            <span class="course wd45">
+                                                <strong>${data.data[i].match_group}</strong>
+                                            </span>
+                                        </div>`
+                            }
+                            newli += `<li class="mui-table-view-cell listli ">
+                                            <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
-                                                <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}</p>
-                                                <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
+                                                <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
+                                                <p>参赛${data.data[i].team}人</p>
                                             </div>
                                         </li>`;
-                            }
                         }
                         $(".teamList").empty().append(newli)
                     } else {
-                        mui.toast(data.msg);
+                        $(".teamList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -134,35 +140,6 @@
                 }
             });
         })
-
-        // 获取数据并进行提交
-        function submitAction() {
-
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.groupList = JSON.stringify(groupList);
-            var url = "{:url('api/league/saveleaguegroup')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            console.log(ajaxResult);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建分组成功', '确定', function () {
-                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '创建失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
-
-        };
-
     </script>
     <script>
         wx.config({
@@ -182,7 +159,7 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: "s",
+                title: "{$leagueInfo.name}$('.match_stage').text()晋级球队",
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{s}",
                 success: function () { },
@@ -190,10 +167,10 @@
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: "{s}",
-                desc: "{a}",
+                title: "{$leagueInfo.name}$('.match_stage').text()晋级球队",
+                desc: "$('.match_stage').text()晋级球队预览列表",
                 link: "{$shareurl}/pid/{$mid}",
-                imgUrl: "{:request()->root(true)}{s}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.cover}",
                 type: "",
                 dataUrl: '',
                 success: function () { },
