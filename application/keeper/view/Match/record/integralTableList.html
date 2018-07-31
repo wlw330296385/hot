@@ -195,7 +195,7 @@
         });
 
         // 提交数据
-        // $(".submitAction").on("tap", function () {
+        $(".submitAction").on("tap", function () {
             var match = "{$leagueInfo.name}";
             var match_id = "{$league_id}";
             var match_stage = $("table .teamTitle").find("td:eq(0)").attr("data-match_stage");
@@ -228,29 +228,29 @@
             // 数组转成json格式
             advteams = JSON.stringify(advteams);
             console.log(advteams)
-            // mui.ajax("{:url('api/league/savematchstageadvteam')}", {
-            //     data: {
-            //         match: match,
-            //         match_id: match_id,
-            //         match_stage,
-            //         match_stage_id,
-            //         advteams: advteams
-            //     },
-            //     async: false,
-            //     dataType: 'json',//服务器返回json格式数据
-            //     type: 'post',//HTTP请求类型
-            //     timeout: 10000,//超时时间设置为10秒；
-            //     headers: { 'Content-Type': 'application/json' },
-            //     success: function (data) {
-            //         console.log(data)
-            //         mui.toast(data.msg);
-            //         setTimeout('window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"', 2000)
-            //     },
-            //     error: function (xhr, type, errerThrown) {
-            //         mui.toast(data.msg);
-            //     }
-            // });
-        // })
+            mui.ajax("{:url('api/league/savematchstageadvteam')}", {
+                data: {
+                    match: match,
+                    match_id: match_id,
+                    match_stage,
+                    match_stage_id,
+                    advteams: advteams
+                },
+                async: false,
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    mui.toast(data.msg);
+                    setTimeout('window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"', 2000)
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast(data.msg);
+                }
+            });
+        })
         // 排序
         function compare(property) {
             return function (obj1, obj2) {
