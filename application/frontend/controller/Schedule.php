@@ -61,12 +61,12 @@ class Schedule extends Base
     	$gradeList = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->select();
     	$gradeIDS = db('grade_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id])->where('delete_time',null)->column('grade_id');
     	// 剩余课量
-    	$restSchedule = db('lesson_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id,'status'=>1])->where('delete_time',null)->sum('rest_schedule');
+    	$lessonMember = db('lesson_member')->where(['student_id'=>$student_id,'camp_id'=>$camp_id,'status'=>1])->where('delete_time',null)->find();
         // 课时统计
         $scheuldeIDS = db('schedule')->where(['grade_id'=>['in',$gradeIDS],'camp_id'=>$camp_id])->where('delete_time',null)->column('id');
-        $scheduleCount = $this->ScheduleService->countScheduleMembers(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id]);
+        $scheduleCount = $this->ScheduleService->countScheduleMembers(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id,'status'=>1]);
         $this->assign('gradeIDS',json_encode($gradeIDS));
-        $this->assign('restSchedule',$restSchedule);
+        $this->assign('lessonMember',$lessonMember);
     	$this->assign('scheduleCount',$scheduleCount);
   		$this->assign('gradeList',$gradeList);
   		$this->assign('studentList',$studentList);
