@@ -2543,8 +2543,10 @@ class League extends Base
         if (!$validate->scene('add')->check($data)) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
-        // 检查会员操作权限（联赛工作人员-管理员以上）
         $leagueS = new LeagueService();
+        // 获取联赛信息
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $data['match_id']]);
+        // 检查会员操作权限（联赛工作人员-管理员以上）
         $power = $leagueS->getMatchMemberType([
             'match_id' => $data['match_id'],
             'member_id' => $this->memberInfo['id'],
@@ -2555,6 +2557,19 @@ class League extends Base
         }
         // 插入赛程数据
         $data['match_time'] = strtotime($data['match_time']);
+        $matchTime = strtotime($data['match_time']);
+        $nowTime = time();
+        // 赛程比赛时间必须大于当前时间
+        if ( $matchTime < $nowTime ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于当前时间']);
+        }
+        // 赛程比赛时间要求在联赛开始时间与结束时间区间
+        if ( $matchTime < $leagueInfo['start_time'] ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于联赛开始时间']);
+        }
+        if ( $matchTime < $leagueInfo['end_time'] ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于联赛结束时间']);
+        }
         try {
             $result = $leagueS->saveMatchSchedule($data);
         } catch (Exception $e) {
@@ -2579,6 +2594,8 @@ class League extends Base
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
         $leagueS = new LeagueService();
+        // 获取联赛信息
+        $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $data['match_id']]);
         // 获取赛程数据
         $scheduleInfo = $leagueS->getMatchSchedule([
             'id' => $data['id'],
@@ -2596,8 +2613,21 @@ class League extends Base
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
-        // 修改赛程数据
         $data['match_time'] = strtotime($data['match_time']);
+        $matchTime = strtotime($data['match_time']);
+        $nowTime = time();
+        // 赛程比赛时间必须大于当前时间
+        if ( $matchTime < $nowTime ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于当前时间']);
+        }
+        // 赛程比赛时间要求在联赛开始时间与结束时间区间
+        if ( $matchTime < $leagueInfo['start_time'] ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于联赛开始时间']);
+        }
+        if ( $matchTime < $leagueInfo['end_time'] ) {
+            return json(['code' => 100, 'msg' => '比赛时间不能小于联赛结束时间']);
+        }
+        // 修改赛程数据
         try {
             $result = $leagueS->saveMatchSchedule($data);
         } catch (Exception $e) {
