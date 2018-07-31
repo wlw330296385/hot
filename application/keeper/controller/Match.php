@@ -883,7 +883,7 @@ class Match extends Base {
             'match_group_id' => ['>', 0],
             'is_record' => 1
         ]);
-        if ( !$normalMatchRecordCount && $normalMatchRecordCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+        if ( !$normalMatchRecordCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
             $canSubmit = 1;
         }
 
