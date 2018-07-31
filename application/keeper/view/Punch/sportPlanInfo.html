@@ -9,11 +9,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
-    <!--自定义style.css-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <!--自定义多色图标icon.js-->
     <!-- <script src="/static/frontend/iconfont/iconfont.js"></script> -->
     <link rel="stylesheet" href="/static/frontend/css/calendar.css">
@@ -193,15 +193,15 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
 
-                <form class="mui-input-group addScheduleList">
+                <form class="mui-input-group addScheduleList" id="scheduleForm">
                     <div class="punchList">
                         <div class="mui-input-row bggray2">
-                            <label><strong>运动计划 # <text class="colororange pNumber">3</text></strong></label>
+                            <label><strong>运动计划 # <text class="colororange pNumber">1</text></strong></label>
                             <span class="copyPunch f12">复制</span>
                         </div>
-                        <div class="mui-input-row btnDate" data-options='{"type":"date"}'>
+                        <div class="mui-input-row btnDate" data-tnum="1">
                             <label>运动日期</label>
-                            <span class="btnDateTxt mui-navigate-right"></span>
+                            <span class="mui-navigate-right btnDateTxt"></span>
                         </div>
                         <div class="mui-input-row sportType">
                                 <label class="wd45">运动内容</label>
@@ -334,46 +334,47 @@
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/common.js"></script>
-<script>    
+<script>
 
-
-    //弹出框滚动必须写在mui专用的初始化
-    (function ($) {
-        $(".mui-scroll-wrapper").scroll({
-            //bounce: false,//滚动条是否有弹力默认是true
-            indicators: true //是否显示滚动条,默认是true
+        //初始化
+        mui.init({
+            swipeBack: true, //启用右滑关闭功能
         });
 
-        $.ready(function () {
 
-                //开始时间
-                //var resultStart = $('#resultStart')[0];
-                var result = $(".btnDateTxt");
-                var btnStart = $('.btnDate');
-                btnStart.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
+        //选择器
+        (function ($, doc) {
 
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            //resultStart.innerText = rs.text;
-                            result[i].innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
             });
-    })(mui);
 
+            $(document).on("tap", ".btnDate", function () {
+                var tnum = this.getAttribute('data-tnum');
+                this.classList.add("btnDate" + tnum);
+                this.children[1].classList.add("btnDateTxt" + tnum);
+                var resultTime = $('.btnDateTxt' + tnum)[0];
+                var btnTime = $('.btnDate' + tnum)[0];
+                //btnTime.each(function (i, btn) {
+                    var optionsJson = btnTime.getAttribute('data-options') || '{"type":"date"}';
+                    var options = JSON.parse(optionsJson);
+                    var id = btnTime.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+                    picker.show(function (rs) {
+                        resultTime.innerText = rs.text;
+                        picker.dispose();
+                    });
+                //});
+            })
+        })(mui, document);
+
+   
 
     var count = 1
     mui.init({
@@ -561,14 +562,15 @@
         //复制当前日程
         $(document).on('tap', '.copyPunch', function () {
 
-            console.log($(this).parent().nextAll().html())
-            return false;
+            $(".punchList").removeClass("hot-active");
             var getNewNumber = parseInt($(".punchList:first-child").find(".pNumber").text())+1;
             var getCurrPunch = '';
-            getCurrPunch += '<div class="punchList"><div class="mui-input-row bggray2"><label><strong>运动计划 # <text class="colororange pNumber">'+getNewNumber+'</text></strong></label><span class="copyPunch f12">复制</span></div>';
-            getCurrPunch += $(this).parent().nextAll().html()+'</div>';
-
-            $(this).parent().parent().before(getCurrPunch);
+            // getCurrPunch += '<div class="punchList"><div class="mui-input-row bggray2"><label><strong>运动计划 # <text class="colororange pNumber">'+getNewNumber+'</text></strong></label><span class="copyPunch f12">复制</span></div>';
+            getCurrPunch += '<div class="punchList hot-active">'+$(this).parent().parent().html()+'</div>';
+            console.log(getCurrPunch)
+            $(".punchList:first-child").before(getCurrPunch);
+            $(".hot-active").find(".pNumber").text(getNewNumber);
+            $(".hot-active").find(".btnDate").attr("data-tnum",getNewNumber);
 
         });
 
