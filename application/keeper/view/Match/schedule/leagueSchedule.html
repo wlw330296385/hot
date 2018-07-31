@@ -243,7 +243,8 @@
                                             </p>
                                         </td>`
                                 if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score == 0) {
-                                    newli += ` <td><p>16:42</p></td>`
+                                    var Ttime = gettimeh(scheduleArr.match_timestamp * 1000);
+                                    newli += ` <td><p>${Ttime}</p></td>`
                                 } else {
                                     newli += ` <td>
                                                     <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>
@@ -269,7 +270,16 @@
                 }
             });
         }
-
+        //创建补0函数
+        function p(s) {
+            return s < 10 ? '0' + s : s;
+        }
+        function gettimeh(h) {
+            var _time = new Date(h);
+            var hours = _time.getHours();
+            var minutes = _time.getMinutes();
+            return p(hours) + ":" + p(minutes);
+        }
     </script>
 
 </body>
