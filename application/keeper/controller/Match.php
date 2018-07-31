@@ -840,7 +840,7 @@ class Match extends Base {
 
     // 比赛阶段管理列表
     public function matchstageListofleague() {
-        return view('Match/stage/matchstageListofleague');
+        return view('Match/stage/matchStageListOfLeague');
     }
 
       // 联赛比赛阶段出线（晋级）球队预览页
