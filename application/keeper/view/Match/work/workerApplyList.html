@@ -24,30 +24,11 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b fans"></ul>
+                <ul class="mui-table-view detalis-list list border-b worker"></ul>
             </div>
         </div>
 
-        <!--<ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{$homeurl}">
-                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
-                <a href="{:url('match/addworkerofleague',['league_id'=> $league_id])}">
-                    邀请工作人员
-                </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
-                <a href="{:url('match/workerapplylist',['league_id'=> $league_id])}">
-                    工作人员申请列表
-                </a>
-            </li>
-        </ul>-->
-
     </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -128,33 +109,39 @@
                             var status = data.data.data[i].status;
                             var typeStr = '';
                             switch (data.data.data[i].type) {
-                                case 3: typeStr='管理员';break;
-                                case 8: typeStr='记分员';break;
-                                case 6: typeStr='裁判员';break;
-                                default: typeStr='工作人员';break;
+                                case 3: typeStr = '管理员'; break;
+                                case 8: typeStr = '记分员'; break;
+                                case 6: typeStr = '裁判员'; break;
+                                default: typeStr = '工作人员'; break;
                             }
                             if (status == 1) {
                                 var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data.data[i].member_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '">' + data.data.data[i].member + '['+ typeStr +']<span>'+ data.data.data[i].status +'</span></li>'
+                                newli += `<li class="mui-table-view-cell mui-media listli">
+                                                <a href="${urls}">${data.data.data[i].member}<font class="tipCorner bgred" style="margin-left: 10px !important;">${typeStr}</font>
+                                                <span class="wd45">${data.data.data[i].status}</span>
+                                            </li>`
                             } else {
                                 // 非正式工作人员
                                 var urls = "{:url('match/workerapplyinfo')}" + '/apply_id/' + data.data.data[i].id;
-                                newli += '<li class="mui-table-view-cell mui-media listli"><a href="'+ urls +'">' + data.data.data[i].member + '['+ typeStr +']<span>'+ data.data.data[i].status +'</span></li>'
+                                newli += `<li class="mui-table-view-cell mui-media listli">
+                                                <a href="${urls}">${data.data.data[i].member}<font class="tipCorner bgred" style="margin-left: 10px !important;">${typeStr}</font>
+                                                <span class="wd45">${data.data.data[i].status}</span>
+                                            </li>`
                             }
                         }
                     }
 
                     if (gType == 1) {
                         //上拉刷新
-                        $("ul.fans").empty().append(newli);
+                        $("ul.worker").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.fans").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $("ul.worker").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.fans").append(newli);
+                        $("ul.worker").append(newli);
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
