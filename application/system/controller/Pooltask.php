@@ -1,14 +1,16 @@
 <?php
 namespace app\system\controller;
 use app\system\controller\Base;
+use app\model\Pool;
 /**
  * 每日学生数\场地数
  * @param  
  */
 class Pooltask extends Base{
- 
+    public $Pool;
     public function _initialize(){
     	parent::_initialize();
+        $this->Pool = new Pool;
     }
 
     /**
@@ -18,7 +20,7 @@ class Pooltask extends Base{
     public function startPool(){
         try{
             $data = ['crontab'=>'每日擂台开启'];
-            db('pool')->where(['status'=>1,'start'=>['elt',time()]])->update(['status'=>2]);
+            $this->Pool->where(['status'=>1,'start'=>['elt',time()]])->update(['status'=>2]);
             $this->record($data);
         }catch(Exception $e){
             $data = ['crontab'=>'每日擂台开启','status'=>0,'callback_str'=>$e->getMessage()];
@@ -89,20 +91,39 @@ class Pooltask extends Base{
     	
     }
 
+    public function lottery(){
+        $date_str = date('Ymd',time());
+        $poolList_3 = $this->Pool->where([
+                    'end_str'=>$date_str,
+                    'status'=>2,
+                    'type'  =>3
+                ])->select();
+        $this->lottery2($poolList_3);
+        $this->lottery1($poolList_3);
 
+        $poolList_2 = $this->Pool->where([
+                    'end_str'=>$date_str,
+                    'status'=>2,
+                    'type'  =>2
+                ])->select();
+        $this->lottery2($poolList_2);
+
+        $poolList_1 = $this->Pool->where([
+                    'end_str'=>$date_str,
+                    'status'=>2,
+                    'type'  =>1
+                ])->select();
+        $this->lottery1($poolList_1);
+
+        $this->Pool->save(['status'=>-1],['end_str'=>$date_str,'status'=>2]);
+    }
 
     /**
-    * find winner每日晚上22点;
+    * find winner每日晚上22点,仅仅是奖金池开奖的热币排名;
     * @param 作者:woo
     */
-    public function lottery(){
+    private function lottery1($poolList){
         try{
-            $date_str = date('Ymd',time());
-            // $date_str = 20180611;
-            $poolList = db('pool')->where([
-                    'end_str'=>$date_str,
-                    'status'=>2
-                ])->select();
             $model = new \app\model\PoolWinner;
             // dump($poolList);
             foreach ($poolList as $key => $value) {
@@ -198,17 +219,17 @@ class Pooltask extends Base{
                 // dump($theThirdReward);
                 
                 // 更新奖金池
-                $result = db('pool')->where(['id'=>$value['id']])->update(['status'=>-1,'winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m)]);
+                $result = $this->Pool->save(['winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m)],['id'=>$value['id']]);
                 // 奖金得主诞生
                 $winners = array_merge($c_f_m,$c_s_m,$c_t_m);
                 $model->saveAll($winners);
                 $this->updateMembersHotcoin($winners);
 
             }
-            $data = ['crontab'=>'每日擂台开奖(手动)'];
+            $data = ['crontab'=>'每日擂台开奖(热币)'];
             $this->record($data);
         }catch(Exception $e){
-            $data = ['crontab'=>'每日擂台开奖','status'=>0,'callback_str'=>$e->getMessage()];
+            $data = ['crontab'=>'每日擂台开奖(热币)','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data);
             trace($e->getMessage(), 'error');
         }
@@ -218,7 +239,65 @@ class Pooltask extends Base{
 
 
 
-
+    /**
+    * find winner每日晚上22点,仅仅是卡券奖品单排名名次;
+    * @param 作者:woo
+    */
+    public function lottery2($poolList){
+        try {
+            $model = new \app\model\PoolWinnerS;
+            foreach ($poolList as $key => $value) {
+                $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->order('c_id desc')->limit($value['the_first_winners']+$value['the_second_winners']+$value['the_third_winners'])->select();
+         
+                if(empty($memberList)){
+                    continue;
+                }
+                // dump($memberList);
+                // $totalWinners = $value['the_first_winners'] + $value['the_second_winners'] + $value['the_third_winners'] - 1;//一共有几个奖品,包括123...789等奖
+                $totalWinners = 3;
+                $the_first_winner_list = array_slice($memberList,0,$value['the_first_winners']);
+                $the_second_winner_list = array_slice($memberList,$value['the_first_winners'],$value['the_second_winners']);
+                $the_third_winner_list = array_slice($memberList,$value['the_second_winners']+$value['the_first_winners'],$value['the_third_winners']);
+                $winner_list = [];
+                foreach ($the_first_winner_list as $k => &$val) {
+                    $val['award_id'] = $value['the_first_award_id'];
+                    $val['award_id'] = $value['the_first_award'];
+                    $val['ranking'] = 1;
+                    $val['bonus'] = $value['bonus'];
+                    $val['punchs'] = $val['c_id'];
+                }
+                // dump($the_first_winner_list);
+                foreach ($the_second_winner_list as $k => &$val) {
+                    $val['award_id'] = $value['the_first_award_id'];
+                    $val['award_id'] = $value['the_first_award'];
+                    $val['ranking'] = 2;
+                    $val['bonus'] = $value['bonus'];
+                    $val['punchs'] = $val['c_id'];
+                }
+                // dump($the_second_winner_list);
+                foreach ($the_third_winner_list as $k => &$val) {
+                    $val['award_id'] = $value['the_first_award_id'];
+                    $val['award_id'] = $value['the_first_award'];
+                    $val['ranking'] = 3;
+                    $val['bonus'] = $value['bonus'];
+                    $val['punchs'] = $val['c_id'];
+                }
+                // dump($the_third_winner_list);
+                $winner_list = array_merge($the_first_winner_list,$the_second_winner_list,$the_third_winner_list);
+                // 更新奖金池
+                $result = $this->Pool->save(['winner_list_s'=>json_encode([$the_first_winner_list,$the_second_winner_list,$the_third_winner_list])],['id'=>$value['id']]);
+                // 奖金得主诞生
+                $model->saveAll($winner_list);
+            }
+            
+            $data = ['crontab'=>'每日擂台开奖(卡券)'];
+            $this->record($data);
+        } catch (Exception $e) {
+            $data = ['crontab'=>'每日擂台开奖(卡券)','status'=>0,'callback_str'=>$e->getMessage()];
+            $this->record($data);
+            trace($e->getMessage(), 'error');
+        }
+    }
 
     /**
      * 热币更新

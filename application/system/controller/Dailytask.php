@@ -180,6 +180,9 @@ class Dailytask extends Base{
     // 发送学生过期提醒模板消息给家长
     public function sendMessageToParents(){
         try {
+
+            // 提前一个月?
+            
             $messageData = [
                 'touser'=>'',
                 'template_id'=>"squ4uaAVXJ52Dhfjtlol08cpo49FonbFwN",

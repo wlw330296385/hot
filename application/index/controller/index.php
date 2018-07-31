@@ -17,8 +17,13 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$testService = new \app\service\TestService(['otion'=>'a']);
-    	$testService->test();
+    	$l = [1,2,3,4,5,6,7,8,9];
+        $l1 = array_slice($l, 0,2);
+        $l2 = array_slice($l,2,3);
+        $l3 = array_slice($l,2+3,4);
+        dump($l1);
+        dump($l2);
+        dump($l3);
     }
 
     public function index2(){
