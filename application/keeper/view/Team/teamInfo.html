@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>球队主页</title>
+    <title>{$teamInfo.name}主页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -876,7 +876,7 @@
             toLastMatchList(); //获取最新比赛列表
             toCommentList(); //获取评论列表
             toRecordEventList(); //活动纪录
-            toRecordMatchList(); //赛事纪录
+            //toRecordMatchList(); //赛事纪录
             toTeam(); //获取所在的球队列表
             toHonorList(); //荣誉列表
         });
@@ -1467,7 +1467,13 @@
             return p(year) + "年";
         }
     </script>
+
+
+
     <script>
+
+        var wxDesc = $(".about").text().replace(/[\r\n]/g,"");
+
         wx.config({
             //debug: true,
             appId: "{$jsapi['appId']}",
@@ -1486,6 +1492,7 @@
             // 分享到朋友圈
             wx.onMenuShareTimeline({
                 title: "{$teamInfo.name}",
+                desc: wxDesc,
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
                 success: function () { },
@@ -1494,7 +1501,7 @@
             // 分享给朋友
             wx.onMenuShareAppMessage({
                 title: "{$teamInfo.name}",
-                desc: "{$teamInfo.descri}",
+                desc: wxDesc,
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
                 type: "",
