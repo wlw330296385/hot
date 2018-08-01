@@ -79,7 +79,7 @@
             </li>
         </ul>
 
-        <form action="" class="mui-input-group mt55">
+        <form action="" class="mui-input-group">
             <input type="hidden" class="data" name="group_id" value="{$groupInfo.id}">
             <div class="mui-input-row">
                 <a href="{:url('group/groupApplyList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">
@@ -125,8 +125,9 @@
                 <label>社群公告</label>
                 <textarea name="notice" rows="3" value="{$groupInfo.notice}" class="notice mui-text-left" placeholder="请填写内容">{$groupInfo.notice}</textarea>
             </div>
-
         </form>
+
+         <p class="" style="margin:30px 20px 60px;"><a href="#reDeleteGroup"><span class="mui-icon mui-icon-trash f18"></span> 解散社群</a></p>
 
         <ul class="mui-table-view operation">
             <!-- <li class="mui-table-view-cell mui-col-xs-6 mui-col-sm-6 opli bgred deleteOut">
@@ -174,6 +175,30 @@
             </div>
         </div>
     </div>
+
+
+    <!--删除社群确认窗口-->
+    <div id="reDeleteGroup" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>解散社群说明：</strong>
+            </span>
+            <span class="fr">
+                <button type="button" class="mui-btn mui-btn-danger">确定解散</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:50px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli">解散社群前请先了解以下说明：</li>
+                    <li class="mui-table-view-cell listli">1、即将解散的社群当前必须没有正在启用的打卡规则（奖金池），如当前有正在使用的打卡规则，请待本期规则结束后再进行解散操作。</li>
+                    <li class="mui-table-view-cell listli">2、社群解散后，本社群的信息将不会在社群成员的“我的社群”列表内展示。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- 头像截图弹框 -->
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div id="clipArea"></div>
@@ -199,6 +224,21 @@
     <script>
         var group_id = "{$groupInfo.id}";
         var member_id = "{$groupInfo.member_id}"
+
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        //弹出菜单
+        mui('.mui-scroll-wrapper').scroll();
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                indicators: true //是否显示滚动条,默认是true
+            });
+        })(mui);
+
         $(function () {
             // 设置社群类型默认值
             $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
