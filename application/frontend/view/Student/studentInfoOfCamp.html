@@ -35,7 +35,7 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回学员列表</span></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"><span class="return">返回</span></a>
         <ul class="mui-table-view list detalis-list" style="margin-top: 44px;">
             <li class="mui-table-view-cell mui-media listli list-wide">
                 <a href="javascript:;">
@@ -54,10 +54,10 @@
         </ul>
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#item1">档案</a>
-                <a class="mui-control-item" href="#item2">班级</a>
-                <a class="mui-control-item" href="#item3">课量</a>
-                <a class="mui-control-item" href="#item4">订单</a>
+                <a class="mui-control-item mui-active" href="#cFile" id="tFile">档案</a>
+                <a class="mui-control-item" href="#cClass" id="tClass">班级</a>
+                <a class="mui-control-item" href="#cSchedule" id="tSchedule">课量</a>
+                <a class="mui-control-item" href="#cBill" id="tBill">订单</a>
             </div>
         </div>
     </header>
@@ -67,7 +67,7 @@
         <div class="tab-pullRefresh list coach">
 
             <!--档案-->
-            <div id="item1" class="mui-control-content mui-active">
+            <div id="cFile" class="mui-control-content mui-active">
                 <ul class="mui-table-view list detalis-list mt55">
                     <li class="mui-table-view-cell listli">学员姓名<span>{$studentInfo['student']}</span></li>
                     <li class="mui-table-view-cell listli">性别<span>{switch name="studentInfo.student_sex" }
@@ -96,7 +96,7 @@
             </div>
 
             <!--班级-->
-            <div id="item2" class="mui-scroll-wrapper mui-control-content">
+            <div id="cClass" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <ul class="mui-table-view mui-text-center">
                         <li class="mui-table-view-cell border-b">
@@ -112,7 +112,7 @@
             </div>
 
             <!--课量-->
-            <div id="item3" class="mui-scroll-wrapper mui-control-content">
+            <div id="cSchedule" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
 
                     <div class="nav-list">
@@ -157,7 +157,7 @@
             </div>
 
             <!--订单-->
-            <div id="item4" class="mui-scroll-wrapper mui-control-content">
+            <div id="cBill" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
                     <div class="nav-list">
                         <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
@@ -251,7 +251,6 @@
         window.top.location.href = this.href;
     });
 
-
     jQuery(function ($) {
         $('#leaveapply').on('click', '', function () {
             mui.confirm('如有未完成课程请与训练营沟通', '确定要提交离营申请吗？', ['取消', '确定'], function (e) {
@@ -285,6 +284,18 @@
         });
     });
 
+
+    var getTab = wooApi.GetQueryString('tab');
+    if(getTab!=""&&getTab!=null){
+        var wTab = "#t"+getTab;
+        $(".mui-control-item").removeClass("mui-active");
+        $(wTab).addClass("mui-active");
+        var wContent = "#c"+getTab;
+        $(".mui-control-content").removeClass("mui-active");
+        $(wContent).addClass("mui-active");
+    }
+
+
     $(function () {
 
         //初始化全局变量
@@ -314,7 +325,7 @@
         }
         ////////////////////////////////////////////////////////////////
 
-        mui('#item2').pullRefresh({
+        mui('#cClass').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -334,7 +345,7 @@
             }
         });
 
-        mui('#item3').pullRefresh({
+        mui('#cSchedule').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -354,7 +365,7 @@
             }
         });
 
-        mui('#item4').pullRefresh({
+        mui('#cBill').pullRefresh({
             down: {
                 //下拉刷新
                 height: 50,//可选.默认50.触发下拉刷新拖动距离
@@ -380,7 +391,7 @@
                 gCount = 1;//刷新并显示第一页
                 var page = gCount;
                 var gType = 1;//代表下拉刷新
-                toGradeList('item2', page, gType);//具体取数据的方法
+                toGradeList('cClass', page, gType);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（班级）
@@ -389,7 +400,7 @@
                 gCount++;//翻下一页
                 var page = gCount;
                 var gType = 2;//代表上拉加载
-                toGradeList('item2', page, gType);//具体取数据的方法
+                toGradeList('cClass', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -399,7 +410,7 @@
                 sCount = 1;//刷新并显示第一页
                 var page = sCount;
                 var gType = 1;//代表下拉刷新
-                toScheduleList('item3', page, gType);//具体取数据的方法
+                toScheduleList('cSchedule', page, gType);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（课量）
@@ -408,7 +419,7 @@
                 sCount++;//翻下一页
                 var page = sCount;
                 var gType = 2;//代表上拉加载
-                toScheduleList('item3', page, gType);//具体取数据的方法
+                toScheduleList('cSchedule', page, gType);//具体取数据的方法
             }, 100);
         }
 
@@ -418,7 +429,7 @@
                 bCount = 1;//刷新并显示第一页
                 var page = bCount;
                 var gType = 1;//代表下拉刷新
-                toBillList('item4', page, gType);//具体取数据的方法
+                toBillList('cBill', page, gType);//具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现（订单）
@@ -427,7 +438,7 @@
                 bCount++;//翻下一页
                 var page = bCount;
                 var gType = 2;//代表上拉加载
-                toBillList('item4', page, gType);//具体取数据的方法
+                toBillList('cBill', page, gType);//具体取数据的方法
             }, 100);
         }
 

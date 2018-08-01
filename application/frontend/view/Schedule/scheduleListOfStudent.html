@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style type="text/css">
         select[name=grade_id] {
-            width: 50%;
+            width: 80%;
             direction: rtl
         }
 
@@ -30,7 +30,7 @@
             <span class="return">返回</span>
         </a>
         <h1 class="mui-title" style="font-size: 14px">
-            我的课时进度
+            我的班级课时进度
         </h1>
     </header>
 
@@ -39,22 +39,28 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
 
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>本月课量</span>
                             <div class="mui-media-body curmonthcount">{$scheduleCount.month}</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>本年课量</span>
                             <div class="mui-media-body">{$scheduleCount.year}</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="#">
+                            <span>总已上课</span>
+                            <div class="mui-media-body">{$scheduleCount.sum}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>剩余课量</span>
-                            <div class="mui-media-body">{$restSchedule}</div>
+                            <div class="mui-media-body">{$lessonMember.rest_schedule-$totalCount}</div>
                         </a>
                     </li>
                 </ul>
@@ -71,7 +77,7 @@
                             </li>
                             <li class="mui-col-xs-8 mui-col-sm-8">
                                 <select class="select mui-text-center" name="grade_id">
-                                    <option>所有班级</option>
+                                    <option value="{$gradeIDS}">所有班级</option>
                                     {volist name='gradeList' id='vol'}
                                     <option value="{$vol.grade_id}">{$vol.grade}</option>
                                     {/volist}
@@ -83,7 +89,7 @@
                 </ul>
             </div>
             <div class="tab-pullRefresh">
-                <div id="onlineScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top: 168px">
+                <div id="onlineScheduleList" class="mui-scroll-wrapper mui-control-content mui-active" style="top: 168px; bottom: 50px;">
                     <div class="mui-scroll">
                         <ul class="mui-table-view mui-text-center detalis-list list schedule"></ul>
                     </div>
@@ -92,6 +98,12 @@
             </div>
         </div>
     </div>
+
+    <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bgblue">
+                <a href="{:url('student/studentInfoOfCamp',['type'=>1,'student_id'=>$student_id,'camp_id'=>$camp_id])}?tab=Schedule">查看我的个人课时记录</a>
+            </li>
+        </ul>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
