@@ -11,21 +11,7 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <!--选择器样式-->
-    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
-    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
-    <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-        .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
-
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
@@ -40,33 +26,15 @@
     </header>
 
     <div class="mui-content">
-        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="league_id" class="data" value="{$leagueInfo.id}">
-        <form action="" class="mui-input-group">
-            <div class="mui-input-row">
+
+        <ul class="mui-table-view mb list" style="margin-top:0">
+            <li class="mui-table-view-cell listli">
                 <label>比赛阶段</label>
                 <span class="match_stage">比赛阶段</span>
-            </div>
-        </form>
-        <p class="pline"></p>
-        <ul class="mui-table-view list teamList"></ul>
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
-                创建分组
             </li>
         </ul>
 
-        <!-- <div class="publicTip mb44">
-            <p class="publicTitle">
-                <img src="/static/frontend/images/hot.png" alt="">
-                <strong class="f16">温馨提示</strong>
-            </p>
-            <div class="publicText">
-                <p>1、组名可自定义设置</p>
-                <p>2、右侧序号为小组序号</p>
-            </div>
-        </div> -->
-
+        <ul class="mui-table-view list teamList"></ul>
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                 <a href="{$homeurl}">
@@ -78,6 +46,7 @@
             </li>
         </ul>
     </div>
+
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
         <div class="shareGuideText">1、点击右上角的
@@ -114,20 +83,22 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            if (data.data[i].match_group != '') {
-                                newli += `<div class="page-header bggray2">
-                                            <span class="course wd45">
-                                                <strong>${data.data[i].match_group}</strong>
-                                            </span>
-                                        </div>`
-                            }
-                            newli += `<li class="mui-table-view-cell listli ">
+                            if (data.data[i].match_group == '') {
+                                newli += `<li class="mui-table-view-cell listli ">
+                                            <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
+                                            <div class="mui-media-body lineHeight20">
+                                                <p class="f14" style="font-weight:bold;line-height:40px;">${data.data[i].team}</p>
+                                            </div>
+                                        </li>`;
+                            } else {
+                                newli += `<li class="mui-table-view-cell listli ">
                                             <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
                                                 <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
-                                                <p>参赛${data.data[i].team}人</p>
+                                                <p>${data.data[i].match_group}</p>
                                             </div>
                                         </li>`;
+                            }
                         }
                         $(".teamList").empty().append(newli)
                     } else {

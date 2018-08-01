@@ -373,9 +373,6 @@
         let league_id = "{$league_id}";
         let court_id = "{$matchScheduleInfo.court_id}";
         let match_time = "{$matchScheduleInfo.match_time}";
-        let referee1_id = "{$matchScheduleInfo.referee1_id}";
-        let referee2_id = "{$matchScheduleInfo.referee2_id}";
-        let referee3_id = "{$matchScheduleInfo.referee3_id}";
         let from = wooApi.GetQueryString('from');
         $(function () {
 
@@ -436,6 +433,8 @@
             $(".refereeList1").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee1_id = $(this).attr("data-referee_id");
+                let page_referee2_id = $("input[name=referee2_id]").val();
+                let page_referee3_id = $("input[name=referee3_id]").val();
                 if (referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -454,6 +453,8 @@
             $(".refereeList2").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee2_id = $(this).attr("data-referee_id");
+                let page_referee1_id = $("input[name=referee1_id]").val();
+                let page_referee3_id = $("input[name=referee3_id]").val();
                 if (referee2_id == page_referee1_id || referee2_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -473,6 +474,8 @@
             $(".refereeList3").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee3_id = $(this).attr("data-referee_id");
+                let page_referee1_id = $("input[name=referee1_id]").val();
+                let page_referee2_id = $("input[name=referee2_id]").val();
                 if (referee3_id == page_referee1_id || referee3_id == page_referee2_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -582,7 +585,6 @@
             $(".mui-badge").text(totalNum);
             changeIndex();
         }
-
 
         //场地列表接口获取数据并追加到页面 
         var toCourtList = function (keyword, wCourt, page) {
@@ -719,9 +721,7 @@
             });
         };
 
-        let page_referee1_id = $("input[name=referee1_id]").val();
-        let page_referee2_id = $("input[name=referee2_id]").val();
-        let page_referee3_id = $("input[name=referee3_id]").val();
+
         // 获取数据并进行提交
         function submitAction() {
 

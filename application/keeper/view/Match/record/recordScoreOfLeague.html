@@ -441,7 +441,6 @@
                 $(".mui-badge").text(totalNum);
             });
 
-
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -470,6 +469,15 @@
                     mui.toast('网络异常,请稍候再试');
                 }
             });
+            
+            // 修改了比赛时间原赛程时间给提示
+            $(document).on("tap", ".mui-dtpicker-header .mui-btn-blue", function () {
+                var defaultMatchTime = '{$matchScheduleInfo.match_time}'
+                var nowMatchTime = $(".match_time").text();
+                if (defaultMatchTime != nowMatchTime) {
+                    mui.toast("温馨提示：你修改了比赛时间！");
+                }
+            });
 
         });
 
@@ -487,7 +495,6 @@
             $(".mui-badge").text(totalNum);
             changeIndex();
         }
-
 
         //场地列表接口获取数据并追加到页面 
         function toCourtList(keyword, wCourt, page) {
@@ -622,6 +629,7 @@
                 mui.toast("请选择比赛时间");
                 return false;
             }
+
 
             // 记分员
             let scorersList = []

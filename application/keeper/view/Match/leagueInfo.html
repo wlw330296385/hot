@@ -105,7 +105,9 @@
                 {eq name="$btnApplyWorkerShow" value="1"}
                 <!-- 申请联赛工作人员 -->
                 <li class="mui-table-view-cell mui-media listli">
-                    <a href="#typePopover" class="colororange mui-text-center"><strong>申请成为联赛工作人员</strong></a>
+                    <a href="#typePopover" class="colororange mui-text-center">
+                        <strong>申请成为联赛工作人员</strong>
+                    </a>
                 </li>
                 {/eq}
             </ul>
@@ -313,19 +315,28 @@
             }
 
             // 状态显示
-            var nowTime = gettime()
-            var reg_start_time = "{$leagueInfo.reg_start_time}";
-            var reg_end_time = "{$leagueInfo.reg_end_time}";
-            var apply_status_num = "{$leagueInfo.apply_status_num}";
-            if (nowTime < reg_start_time) {
+            // var nowTime = gettime()
+            // var reg_start_time = "{$leagueInfo.reg_start_time}";
+            // var reg_end_time = "{$leagueInfo.reg_end_time}";
+            // var apply_status_num = "{$leagueInfo.apply_status_num}";
+            // if (nowTime < reg_start_time) {
+            //     $(".waitBtn").show();
+            // } else if (nowTime >= reg_start_time) {
+            //     if (apply_status_num == 1) {
+            //         $(".signUpBtn").show();
+            //     } else if (apply_status_num == 2) {
+            //         $(".endBtn").show();
+            //     }
+            // } else if (nowTime > reg_end_time) {
+            //     $(".endBtn").show();
+            // }
+
+            var cansignup = "{$cansignup}"
+            if (cansignup == -1) {
                 $(".waitBtn").show();
-            } else if (nowTime >= reg_start_time) {
-                if (apply_status_num == 1) {
-                    $(".signUpBtn").show();
-                } else if (apply_status_num == 2) {
-                    $(".endBtn").show();
-                }
-            } else if (nowTime > reg_end_time) {
+            } else if (cansignup == 1) {
+                $(".signUpBtn").show();
+            } else if (cansignup == 0) {
                 $(".endBtn").show();
             }
 
@@ -358,44 +369,43 @@
                 });
             });
 
-
             //评论功能
-            // $(".commentBtn").on('tap', function () {
-            //     var commented_id = "{teamInfo.id}";
-            //     var comment = $(".comment").val();
-
-            //     if (comment == '') {
-            //         mui.toast("评价内容不能为空哦");
-            //         return false;
-            //     }
-
-            //     mui.ajax("{:url('api/team/addteamcomment')}", {
-            //         data: {
-            //             commented_id: commented_id,
-            //             comment_type: 1,
-            //             comment: comment
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 mui.toast('评价成功，感谢你的评价！', function () {
-            //                     location.reload();
-            //                 });
-            //                 mui('#fbcomment').popover('toggle');
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
+            $(".commentBtn").on('tap', function () {
+                var match_id = "{$league_id}";
+                var comment = $(".comment").val();
+                if (comment == '') {
+                    mui.toast("评价内容不能为空哦");
+                    return false;
+                }
+                mui.ajax("{:url('api/league/addleaguecomment')}", {
+                    data: {
+                        match_id: match_id,
+                        match_record_id: 0,
+                        comment_type: 1,
+                        comment: comment
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
@@ -538,7 +548,7 @@
                 }
             });
         }
-
+        var count = 1
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
@@ -559,12 +569,13 @@
         }
         //获取评论列表
         function toCommentList(page, gType) {
-            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{teamInfo.id}";
+            var url = "{:url('api/league/leaguecommentlist','','',true)}";
+            var match_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
-                    commented_id: commented_id,
+                    match_id: match_id,
+                    match_record_id: 0,
                     comment_type: 1,
                 },
                 dataType: 'json',//服务器返回json格式数据
