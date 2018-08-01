@@ -283,8 +283,9 @@ class Group extends Base{
     public function getGroupMemberWithTotalPunchListApi(){
         try{
             $group_id = input('param.group_id');
+            $status = input('param.status',1);
             $page = input('param.page',1);
-            $group_member = db('group_member')->where(['group_id'=>$group_id])->page($page)->select();
+            $group_member = db('group_member')->where(['group_id'=>$group_id,'status'=>$status])->page($page)->select();
             $poolInfo = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();
             foreach ($group_member as $key => $value) {
                     $group_member[$key]['c_p'] = 0;

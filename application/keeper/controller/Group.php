@@ -29,7 +29,16 @@ class Group extends Base{
             $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id'],'ranking'=>1])->select();
         }
         // 是否已加入社群
-        $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
+        $status_val = db('group_member')->where(['group_id'=>$group_id,'member_id'=>$this->memberInfo['id']])->value('status');
+
+        if (!$status_val) {
+            $GroupApply = new \app\model\GroupApply;
+            $status_s = $GroupApply->where(['group_id'=>$group_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('id');
+
+            if($status_s){
+                $status_val = 0;
+            } 
+        }
         $totalPunch = 0;
         $membersPunch = 0;
         $totalBonus = 0;
@@ -41,7 +50,7 @@ class Group extends Base{
         }
         
         $this->assign('lastPool',$lastPool);
-        $this->assign('id',$id);
+        $this->assign('status_val',$status_val);
         $this->assign('winnerList',$winnerList);
         $this->assign('nowPool',$nowPool);
         $this->assign('groupInfo',$groupInfo);

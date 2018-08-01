@@ -76,10 +76,17 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <button class="mui-btn bgred joinGroup" style="margin-top:26px">加入</button>
+                        {if $status_val === 0}
+                        <button class="mui-btn bgred" style="margin-top:26px">申请中</button>
+                        {elseif  $status_val <> 1 }
+                        <button class="mui-btn bgred joinGroup" style="margin-top:26px">申请加入</button>
+                        {/if}
+
+                        {if $groupInfo.member_id == $memberInfo.id}
                         <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">
                             <button class="mui-btn bgred groupAdmin hide" style="margin-top:26px">管理</button>
                         </a>
+                        {/if}
                     </div>
                 </li>
             </ul>
@@ -232,7 +239,6 @@
         var group_id = "{$groupInfo.id}";
         var group_member_id = "{$groupInfo.member_id}";
         var avatar = "{$memberInfo.avatar}";
-        var id = "{$id}"; //是否在社群内，是则id有值，否则为空
         $(function () {
 
             $('.dowebok').liMarquee({
@@ -298,16 +304,6 @@
                 $(".otherBottom").show();
             }
 
-            // 判断底部按钮退出与管理 
-            if (id != '' && group_member != member) {
-                $(".outGroup").show();
-                $(".joinGroup").hide();
-            } else if (id != '' && group_member == member) {
-                $(".groupAdmin").show();
-                $(".joinGroup").hide();
-            } else if (id == '' && group_member == member) {
-                $(".groupAdmin").show();
-            }
 
             // 加入社群
             $(".joinGroup").on("tap", '', function () {
