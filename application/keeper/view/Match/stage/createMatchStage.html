@@ -53,6 +53,16 @@
                     </span>
                 </div>
             </div>
+            <div class="mui-input-row pstage_div">
+                <div class="mui-navigate-right">
+                    <label>前一个比赛阶段</label>
+                    <span class="select-row">
+                        <select name="pstage_id" class="pstageSelect data">
+                            <option value="" class="prevstagelist">请选择前一个比赛阶段</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
             <div class="mui-input-row advance_div">
                 <label class="wd45">每组出线球队数量</label>
                 <input type="text" name="advance_number" class="data wd52" value="" placeholder="请填写出线球队数量">
@@ -66,7 +76,7 @@
             </p>
             <div class="publicText">
                 <p>1、出线球队按照积分排名，胜负关系，得失分选出。</p>
-                <p>2、积分不同，按积分高的出线；积分相同，按胜负关系出线；以此类推</p>
+                <p>2、积分不同，按积分高的出线；积分相同，按胜负关系出线；胜负关系相同，按得失分关系出线</p>
             </div>
         </div>
         <ul class="mui-table-view operation">
@@ -86,16 +96,56 @@
         });
 
         $(function () {
+            prevStageList();
+            // 如果还未有比赛阶段则则不显示前一个比赛阶段选项
+            let pstage_id = $(".pstageSelect").children("option:selected").val();
+            if (pstage_id == '') {
+                $(".pstage_div").hide();
+            }
+            // 选择比赛阶段显示隐藏球队数量和前一个比赛阶段的内容
             $(".stageSelect").on("change", '', function () {
                 let selection = $(this).find("option:selected").val();
-                if (selection == 1) {
+                if (selection == 1 && pstage_id == '') {
                     $(".advance_div").show();
-                } else {
+                    $(".pstage_div").hide();
+                } else  {
                     $(".advance_div").hide();
+                    $(".pstage_div").show();
                     $("input[name=advance_number]").val('');
                 };
             });
+
         });
+
+        // 阶段别名列表
+        var prevStageList = function () {
+            var url = "{:url('api/league/getmatchstagelist','','',true)}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
+                        }
+                    }
+                    $(".prevstagelist").after(newli);
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
 
         // 提交
         function submitAction() {
@@ -103,6 +153,8 @@
             let name = $("input[name=name]").val();
             let advance_number = $("input[name=advance_number]").val();
             let type = $(".stageSelect").children("option:selected").val();
+            let pstage_id = $(".pstageSelect").children("option:selected").val();
+            console.log(pstage_id)
             if (name == '') {
                 mui.toast("阶段别名不能为空");
                 return false;
@@ -111,14 +163,16 @@
                 mui.toast("请填写出线球队数量");
                 return false;
             }
+            if (type != 1 && pstage_id == 0) {
+                mui.toast("请选择前一个比赛阶段");
+                return false;
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            // var advance_setting = $('textarea.advance_setting').val();
-            // objData.advance_setting = advance_setting;
             var url = "{:url('api/league/addmatchstage')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

@@ -2556,8 +2556,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 插入赛程数据
-        $data['match_time'] = strtotime($data['match_time']);
-        $matchTime = strtotime($data['match_time']);
+        $data['match_time'] = $matchTime = strtotime($data['match_time']);
         $nowTime = time();
         // 赛程比赛时间必须大于当前时间
         if ( $matchTime < $nowTime ) {
@@ -2613,8 +2612,7 @@ class League extends Base
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
-        $data['match_time'] = strtotime($data['match_time']);
-        $matchTime = strtotime($data['match_time']);
+        $data['match_time'] = $matchTime = strtotime($data['match_time']);
         $nowTime = time();
         // 赛程比赛时间必须大于当前时间
         if ( $matchTime < $nowTime ) {

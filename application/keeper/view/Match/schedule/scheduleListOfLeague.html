@@ -16,7 +16,9 @@
 <body class="whitebg">
     <header class="mui-bar mui-bar-nav subheader">
         <a href="{:url('match/leagueManage',['league_id'=>$leagueInfo.id])}" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">赛程列表</h1>
+        <h1 class="mui-title">
+            <span class="colorblue clearList">清空列表</span>
+        </h1>
     </header>
 
     <div class="mui-content" style="padding-top:0;">
@@ -62,6 +64,7 @@
         })(mui);
 
         $(function () {
+            var league_id = "{$league_id}";
             // $showBtn = 1; 没分组 => 创建下一赛程（自填）
             // $showBtn = 2; 有分组&没赛程 => 创建赛程（预览） + 创建下一赛程（自填）
             // $showBtn = 3; 有分组&有赛程 => 创建下一赛程（自填）
@@ -74,9 +77,34 @@
                 $(".notEmpty").show();
             }
 
+            // 清空赛程操作-未产生赛果情况下才可以清空
+            $(document).on("tap", ".clearList", function () {
+                mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
+                            data: {
+                                match_id: league_id,
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                    setTimeout('location.reload()', 2000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                        });
+                    }
+                })
+            })
+
             // 暂无分页列表
             var url = "{:url('api/league/getmatchschedulelistbytime','','',true)}";
-            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
