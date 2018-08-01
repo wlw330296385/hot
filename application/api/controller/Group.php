@@ -249,6 +249,35 @@ class Group extends Base{
         }
     }
 
+    //解散社群
+    public function dissolveGroupApi(){
+        try {
+            $member_id = input('param.member_id',$this->memberInfo['id']);
+            $group_id = input('param.group_id');
+            $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+            if($groupInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            if($groupInfo['status']<>1){
+                return json(['code'=>100,'msg'=>'社群已解散']);
+            }
+            $isPool = db('pool')->where(['group_id'=>$group_id,'status'=>['gt',0]])->find();
+            if($isPool){
+                return json(['code'=>100,'msg'=>'已有奖金池规则在进行中,不可解散']);
+            }
+            $result = $this->GroupService->dissolveGroup($group_id);
+            if($result){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
 
     // 获取带本期打卡总数的社群群员列表
     public function getGroupMemberWithTotalPunchListApi(){

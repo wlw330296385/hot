@@ -132,8 +132,12 @@ class GroupService {
         }
     }
 
-    
-    // 踢出社群/退出社群
+    /**
+     * 踢出社群/退出社群
+     * @param $id 被踢\要退出的人,即被操作对象
+     * @param $member_id 操作对象
+     */
+     
     public function dropGroup($member_id,$group_id,$id){
         $GroupInfo = $this->GroupModel->where(['id'=>$group_id])->find();
         if($member_id == $GroupInfo['member_id']){
@@ -188,6 +192,16 @@ class GroupService {
     }
 
 
+    public function dissolveGroup($group_id){
+        $result = $this->GroupModel->save(['status'=>-1],['id'=>$group_id]);
+        if($result){
+            $res = db('group_member')->where(['group_id'=>$group_id])->update(['status'=>-1]);
+        }
+        if($res){
+            return $result;
+        }
+        return $res;
+    }
 
     public function getGroupMemberListByPage($map,$paginate = 10){
         $result = $this->GroupMemberModel->with('group')->where($map)->paginate($paginate);
@@ -203,7 +217,9 @@ class GroupService {
         return $result;
     }
 
+    public function dissolveGroup(){
 
+    }
 
 
 }
