@@ -371,17 +371,25 @@ class Match extends Base {
 
         // 获取联赛球队信息
         $leagueService = new LeagueService();
-        $matchTeam = $leagueService->getMatchTeamInfo([
+        $matchTeam = $leagueService->getMatchTeamInfoSimple([
             'match_id' => $league_id,
             'team_id' => $team_id
         ]);
         if (!$matchTeam) {
             $this->error(__lang('MSG_404'));
         }
-
-        return view('Match/team/teamInfoOfLeague', [
-            'matchTeamInfo' => $matchTeam
+        // 球队详情信息
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $matchTeam['team_id']]);
+        // 获取球队提交的参加联赛球员信息
+        $matchTeamMembers = $leagueService->getMatchTeamMembers([
+            'match_id' => $league_id,
+            'team_id' => $team_id
         ]);
+
+        $this->assign('teamInfo', $teamInfo);
+        $this->assign('matchTeamMembers', $matchTeamMembers);
+        return view('Match/team/teamInfoOfLeague');
     }
 
     // 联赛报名球队详情
@@ -727,7 +735,7 @@ class Match extends Base {
             $this->error('无报名联赛数据');
         }
         // 查询球队-联赛关系数据
-        $matchTeamInfo = $leagueS->getMatchTeamInfo(['team_id' => $team_id, 'match_id' => $this->league_id]);
+        $matchTeamInfo = $leagueS->getMatchTeamInfoSimple(['team_id' => $team_id, 'match_id' => $this->league_id]);
         // 获取球队数据
         $teamInfo = $teamS->getTeam(['id' => $team_id]);
 
@@ -869,7 +877,7 @@ class Match extends Base {
     }
 
 
-    // 球队对阵积分表
+    // 联赛对阵积分表
     public function integralTableList() {
         // 判断有无小组赛晋级数据 显示提交数据按钮
         $showBtn = 1;
@@ -883,8 +891,14 @@ class Match extends Base {
             $showBtn = 0;
         }
 
-        // 控制能否提交排名数据：小组赛阶段比赛赛程未完成不能提交
+        // 控制能否提交排名数据：小组赛阶段赛程无完成，已发布的小组赛阶段比赛结果记录数等于已完成小组赛阶段赛程记录数
         $canSubmit = 0;
+        // 未完成分组赛程记录数
+        $normalMatchScheduleCount = $leagueS->getMatchScheduleCount([
+            'match_id' => $this->league_id,
+            'status' => 1,
+            'match_group_id' => ['>', 0]
+        ]);
         // 已完成分组赛程记录数
         $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
@@ -903,7 +917,7 @@ class Match extends Base {
             'match_group_id' => ['>', 0],
             'is_record' => 1
         ]);
-        if ( !$normalMatchRecordCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+        if ( !$normalMatchScheduleCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
             $canSubmit = 1;
         }
 
@@ -912,7 +926,7 @@ class Match extends Base {
         return view('Match/record/integralTableList');
     }
 
-    // 球队赛果录入
+    // 比赛结果录入
     public function recordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('match_id', 0, 'intval');
@@ -927,7 +941,8 @@ class Match extends Base {
         $this->assign('matchScheduleInfo', $matchScheduleInfo);
         return view('Match/record/recordScoreOfLeague');
     }
-    // 球队赛果（比赛）详情
+
+    // 比赛结果详情
     public function recordInfo() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('id', 0, 'intval');
@@ -943,7 +958,7 @@ class Match extends Base {
         return view('Match/record/recordInfo');
     }
 
-    // 球队赛果编辑
+    // 比赛结果编辑
     public function editRecordScoreOfLeague() {
         // 获取比赛比分数据，没有则获取赛程数据
         $id = input('id', 0, 'intval');
@@ -963,6 +978,7 @@ class Match extends Base {
     public function dynamicListOfLeague() {
         return view('Match/dynamic/listOfLeague');
     }
+
     // 联赛创建动态
     public function dynamicCreateOfLeague() {
         return view('Match/dynamic/createOfLeague');
