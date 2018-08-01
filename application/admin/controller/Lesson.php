@@ -120,7 +120,7 @@ class Lesson extends Backend {
                     'bill_order'=>$billOrder,
                     'goods'=>$lessonInfo['lesson'],
                     'goods_id'=>$lessonInfo['id'],
-                    'goods_des'=>"{$studentList[$postData['studentIndex']]['student']}购买{$lessonInfo['lesson']}",
+                    'goods_des'=>"{$studentList[$postData['studentIndex']]['student']}报名{$lessonInfo['lesson']}",
                     'camp_id'=>$lessonInfo['camp_id'],
                     'camp'=>$lessonInfo['camp'],
                     'price'=>$lessonInfo['cost'],
@@ -138,7 +138,12 @@ class Lesson extends Backend {
                 $BillService = new \app\service\BillService;
                 $result = $BillService->createBill($billInfo);
                 if($result['code']==200){
-                    $res = $BillService->payNoNotice(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
+                    if($lessonInfo['is_school'] == 1){
+                         $res = $BillService->paySchool(['pay_time'=>time(),'expire'=>0,'balance_pay'=>0,'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
+                    }else{
+                        $res = $BillService->payNoNotice(['pay_time'=>time(),'expire'=>0,'balance_pay'=>$lessonInfo['cost']*$postData['total'],'status'=>1,'is_pay'=>1],['bill_order'=>$billOrder]);
+                    }
+                    
                     if($res){
                         echo '<script type="text/javascript">alert("'.$result["msg"].'");window.opener=null;window.close();</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);

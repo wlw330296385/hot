@@ -128,7 +128,11 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli = newli + '<option value='+data.data[i].id+'>'+data.data[i].lesson+'('+data.data[i].status+')</option>';
+                    	let is_school ='';
+                    	if(data.data[i].is_school == 1){
+                    		is_school = '[校园版]';
+                    	}
+                        newli = newli + `<option value='${data.data[i].id}'>${data.data[i].lesson}(${data.data[i].status})${is_school}</option>`;
                     }
                     if (newli == '') {
                         newli = "<option disabled>没有任何课程</option>"
