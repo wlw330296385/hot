@@ -147,7 +147,7 @@
 
 <body>
     <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" onclick="goBack()"></a>
         <h1 class="mui-title">打卡</h1>
     </header>
     <div class="mui-content">
@@ -582,6 +582,17 @@
 
         $(function () {
 
+            //页面打开时判断是否登陆会员，不是则屏蔽页面并提示注册
+            if ("{$memberInfo.id}" == 0) {
+                mui.confirm('请完善您的信息，再进行打卡，谢谢！', '提示', ['打卡首页', '前往完善'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{$fasturl}";
+                    }else{
+                        window.location.href = "{:url('/keeper/punch/index')}";
+                    }
+                });
+                return false;
+            }
 
             matchList();
 
@@ -833,6 +844,14 @@
             });
 
         })
+
+
+        //判断是否有上一页，没有返回打卡首页
+        function goBack() {
+            console.log(document.referrer)
+            document.referrer == '' ? window.location.href = "{:url('/keeper/punch/index')}" : window.history.go(-1);
+        };
+        
 
         //自定义获取球员列表
         function matchList() {

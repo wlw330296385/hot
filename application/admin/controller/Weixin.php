@@ -33,9 +33,25 @@ class Weixin extends Backend {
                         'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex','', '', true))
                     ],
                     [
-                        'type' => 'view',
                         'name' => '运动打卡',
-                        'url' => $WechatS->oauthRedirect(url('keeper/punch/','', '', true))
+                        'sub_button' => [
+                            [
+                                'type' => 'view',
+                                'name' => '打卡首页',
+                                'url' => $WechatS->oauthRedirect(url('keeper/punch/','', '', true))
+                            ],
+                            [
+                                'type' => 'view',
+                                'name' => '我的社群',
+                                'url' => $WechatS->oauthRedirect(url('keeper/group/index','', '', true))
+                            ],
+                            [
+                                'type' => 'view',
+                                'name' => '立即打卡',
+                                'url' => $WechatS->oauthRedirect(url('keeper/punch/createpunch','', '', true))
+                            ]
+                        ]
+                        
                     ]
                     // 两栏简单版 end
 
