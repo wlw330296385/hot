@@ -173,6 +173,10 @@ class LeagueService
         $result['type_num'] = $getData['type'];
         $result['is_finished_num'] = $getData['is_finished'];
         $result['apply_status_num'] = $getData['apply_status'];
+        $result['reg_start_timestamp'] = $getData['reg_start_time'];
+        $result['reg_end_timestamp'] = $getData['reg_end_time'];
+        $result['start_timestamp'] = $getData['start_time'];
+        $result['end_timestamp'] = $getData['end_time'];
         // 粉丝数
         $result['fans_num'] = getfansnum($result['id'], 5);
         // 比赛场次数

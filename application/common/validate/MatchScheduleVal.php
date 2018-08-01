@@ -8,7 +8,7 @@ class MatchScheduleVal extends Validate
 {
     protected $rule = [
         'id' => 'require|number',
-        'match_id' => 'require|number',
+        'match_id' => 'require|number|token',
         'member_id' => 'gt:0',
         'match_stage_id' => 'require|number|gt:0',
         'match_stage' => 'require',
@@ -19,6 +19,7 @@ class MatchScheduleVal extends Validate
         'id.number' => '赛程id不合法',
         'match_id.require' => '传入比赛id',
         'match_id.number' => '比赛id不合法',
+        'match_id.token' => '请不要重复提交',
         'member_id.gt' => '请先登录或注册会员',
         'match_stage_id.require' => '请选择比赛阶段',
         'match_stage_id.number' => '比赛阶段id不合法',
