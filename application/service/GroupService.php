@@ -217,9 +217,7 @@ class GroupService {
         return $result;
     }
 
-    public function dissolveGroup(){
 
-    }
 
 
 }
