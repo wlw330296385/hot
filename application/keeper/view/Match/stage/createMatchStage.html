@@ -53,7 +53,7 @@
                     </span>
                 </div>
             </div>
-            <div class="mui-input-row pstage_div">
+            <div class="mui-input-row pstage_div hide">
                 <div class="mui-navigate-right">
                     <label>前一个比赛阶段</label>
                     <span class="select-row">
@@ -63,7 +63,7 @@
                     </span>
                 </div>
             </div>
-            <div class="mui-input-row advance_div">
+            <div class="mui-input-row advance_div hide">
                 <label class="wd45">每组出线球队数量</label>
                 <input type="text" name="advance_number" class="data wd52" value="" placeholder="请填写出线球队数量">
             </div>
@@ -95,56 +95,56 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        $(function () {
-            prevStageList();
-            // 如果还未有比赛阶段则则不显示前一个比赛阶段选项
-            let pstage_id = $(".pstageSelect").children("option:selected").val();
-            if (pstage_id == '') {
-                $(".pstage_div").hide();
-            }
-            // 选择比赛阶段显示隐藏球队数量和前一个比赛阶段的内容
-            $(".stageSelect").on("change", '', function () {
-                let selection = $(this).find("option:selected").val();
-                if (selection == 1 && pstage_id == '') {
-                    $(".advance_div").show();
-                    $(".pstage_div").hide();
-                } else  {
-                    $(".advance_div").hide();
-                    $(".pstage_div").show();
-                    $("input[name=advance_number]").val('');
-                };
-            });
-
-        });
-
         // 阶段别名列表
-        var prevStageList = function () {
-            var url = "{:url('api/league/getmatchstagelist','','',true)}";
-            var league_id = "{$league_id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    league_id: league_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var newli = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
-                        }
+        var url = "{:url('api/league/getmatchstagelist','','',true)}";
+        var league_id = "{$league_id}";
+        mui.ajax({
+            url: url,
+            data: {
+                league_id: league_id
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                console.log(data)
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
                     }
-                    $(".prevstagelist").after(newli);
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
+                    // 选择比赛阶段显示隐藏球队数量和前一个比赛阶段的内容
+                    $(".stageSelect").on("change", '', function () {
+                        let selection = $(this).find("option:selected").val();
+                        if (selection == 1) {
+                            $(".advance_div").show();
+                        } else if (selection == 4 || selection == 5) {
+                            $(".pstage_div").show();
+                        } else {
+                            $(".advance_div").hide();
+                            $(".pstage_div").hide();
+                            $("input[name=advance_number]").val('');
+                        };
+                    });
+                } else {
+                    // 选择比赛阶段显示隐藏球队数量和前一个比赛阶段的内容
+                    $(".stageSelect").on("change", '', function () {
+                        let selection = $(this).find("option:selected").val();
+                        if (selection == 1) {
+                            $(".advance_div").show();
+                        } else {
+                            $(".advance_div").hide();
+                            $("input[name=advance_number]").val('');
+                        };
+                    });
                 }
-            });
-        };
+                $(".prevstagelist").after(newli);
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
 
 
         // 提交
@@ -154,17 +154,13 @@
             let advance_number = $("input[name=advance_number]").val();
             let type = $(".stageSelect").children("option:selected").val();
             let pstage_id = $(".pstageSelect").children("option:selected").val();
-            console.log(pstage_id)
+            let pstageSelect = $(".pstageSelect").css("display", "block");
             if (name == '') {
                 mui.toast("阶段别名不能为空");
                 return false;
             }
             if (type == 1 && advance_number == '') {
                 mui.toast("请填写出线球队数量");
-                return false;
-            }
-            if (type != 1 && pstage_id == 0) {
-                mui.toast("请选择前一个比赛阶段");
                 return false;
             }
 
