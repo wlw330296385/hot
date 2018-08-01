@@ -185,14 +185,15 @@
                 <strong>解散社群说明：</strong>
             </span>
             <span class="fr">
-                <button type="button" class="mui-btn mui-btn-danger">确定解散</button>
+                <button type="button" class="mui-btn mui-btn-danger" id="delGroup">确定解散</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper" style="top:50px !important;">
             <div class="mui-scroll">
                 <ul class="mui-table-view list">
-                    <li class="mui-table-view-cell listli">解散社群前请先了解以下说明：</li>
-                    <li class="mui-table-view-cell listli">1、即将解散的社群当前必须没有正在启用的打卡规则（奖金池），如当前有正在使用的打卡规则，请待本期规则结束后再进行解散操作。</li>
+                    <li class="mui-table-view-cell listli">1、即将解散的社群必须没有正在启用的打卡规则（奖金池）.</li>
+                    <li class="mui-table-view-cell listli">如当前有正在使用的打卡规则未正式启用（未产生打卡记录或未到开始启用日期），您可以到打卡规则页面进行“终止规则”操作 ,然后再解散该社群。</li>
+                    <li class="mui-table-view-cell listli">如当前有正在使用的打卡规则，并且已经正式启用（已产生打卡记录），请待本期规则结束后再进行解散操作。</li>
                     <li class="mui-table-view-cell listli">2、社群解散后，本社群的信息将不会在社群成员的“我的社群”列表内展示。</li>
                 </ul>
             </div>
@@ -243,37 +244,36 @@
             // 设置社群类型默认值
             $('#groupType option[value="{$groupInfo.type}"]').prop("selected", true);
 
-            //删除并退出
-            // $(".deleteOut").on('tap', function () {
-            //     mui.confirm("确认删除并退出社群吗？", "提示", function (e) {
-            //         if (e.index == 1) {
-            //             var group_id = "{$groupInfo.id}";
-            //             var member_id = "{$groupInfo.member_id}"
-            //             mui.ajax("{:url('api/group/dropGroup')}", {
-            //                 data: {
-            //                     group_id: group_id,
-            //                     member_id: member_id
-            //                 },
-            //                 dataType: 'json',//服务器返回json格式数据
-            //                 type: 'post',//HTTP请求类型
-            //                 timeout: 10000,//超时时间设置为10秒；
-            //                 headers: { 'Content-Type': 'application/json' },
-            //                 success: function (data) {
-            //                     console.log(data);
-            //                     if (data.code == 200) {
-            //                         mui.toast(data.msg);
-            //                     } else {
-            //                         mui.toast(data.msg);
-            //                     }
-            //                 },
-            //                 error: function (xhr, type, errorThrown) {
-            //                     //异常处理；
-            //                     console.log(type);
-            //                 }
-            //             });
-            //         }
-            //     });
-            // });
+            //解散社群
+            $("#delGroup").on('tap', function () {
+                mui.confirm("确认删除当前社群吗？", "提示", function (e) {
+                    if (e.index == 1) {
+                        var group_id = "{$groupInfo.id}";
+                        mui.ajax("{:url('api/group/dissolveGroupApi')}", {
+                            data: {
+                                group_id: group_id
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                     window.location.href = "{:url('Group/index')}";
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    }
+                });
+            });
 
 
             // 分享邀请成员
@@ -347,6 +347,7 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
+                                    window.location.reload();
                                 } else {
                                     mui.toast(data.msg);
                                 }

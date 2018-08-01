@@ -11,9 +11,16 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .tips {
+            color:#999;
+            font-size: 12px;
+        }
+
+    </style>
 </head>
 
-<body class=whitebg>
+<body class="whitebg mt55">
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">申请列表</h1>
@@ -114,30 +121,19 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">';
-
-
-
-                                
-
-
-
-                                
-                                newli += `<div class="mui-slider-right mui-disabled" data-id="${data.data.data[i].id}"><button class="mui-btn mui-btn-grey refuse" onclick="refuse(${data.data.data[i].id})">拒绝</button><button class="mui-btn mui-btn-red agree" onclick="agree(${data.data.data[i].id},'${data.data.data[i].member}',${data.data.data[i].member_id},'${data.data.data[i].avatar}')">同意</button></div>`;
-
-
-
-
-
-
-
+                                if (data.data.data[i].status == '申请中') {
+                                    newli += `<div class="mui-slider-right mui-disabled" data-id="${data.data.data[i].id}"><button class="mui-btn mui-btn-grey refuse" onclick="refuse(${data.data.data[i].id})">拒绝</button><button class="mui-btn mui-btn-red agree" onclick="agree(${data.data.data[i].id},'${data.data.data[i].member}',${data.data.data[i].member_id},'${data.data.data[i].avatar}')">同意</button></div>`;
+                                } else {
+                                    newli += `<div class="mui-slider-right mui-disabled" data-id="${data.data.data[i].id}"><button class="mui-btn mui-btn-grey">已处理</button></div>`;
+                                }
                                 newli += '<div class="mui-slider-handle"><div class="mui-media-body wd83"><img class="mui-pull-left img45" src="' + data.data.data[i].avatar + '">';
                                 newli += '<p class="lineHeight20">' + data.data.data[i].member + '</p><p>' + data.data.data[i].create_time + '</p></div>';
                                 if (data.data.data[i].status == '申请中') {
-                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">未回复</span>'
+                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">立即处理</span>'
                                 } else if (data.data.data[i].status == '已同意') {
-                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">已同意</span>'
+                                    newli += '<span style="margin-top:14px;width:17%">已同意</span>'
                                 } else if (data.data.data[i].status == '已拒绝') {
-                                    newli += '<span class="colororange" style="margin-top:14px;width:17%">已拒绝</span>'
+                                    newli += '<span style="margin-top:14px;width:17%">已拒绝</span>'
                                 }
                                 newli += '</li>';
                             }
@@ -167,6 +163,13 @@
                     }
                 });
             };
+
+
+
+            
+             $(".groupApplyList").on('tap','li span.colororange', function () {
+                mui.toast("请向左滑动");
+            });
 
         });
 

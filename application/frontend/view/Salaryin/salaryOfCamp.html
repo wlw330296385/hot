@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>教练工资列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+        <h1 class="mui-title">每月工资列表</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list camp-list camp-lesson-list detalis-list coach">
+            <div class="mui-control-content mui-active mt55">
+                <div class="nav-list mb">
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>教练人数</span>
+                                <div class="mui-media-body">{$coachCount}</div>
+                            </a>
+                        </li>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+                            <a href="#">
+                                <span>工资总额</span>
+                                <div class="mui-media-body" id="salarysum"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli">
+                        <p class="mui-navigate-right">
+                            选择时间
+                            <span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                        </p>
+                    </li>
+                    <input id="year" type="hidden" name="year" value="{$y}">
+                    <input id="month" type="hidden" name="month" value="{$m}">
+                </ul>
+
+                <ul class="mui-table-view" id="salary-ul"></ul>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
+<script src="/static/frontend/js/mui.picker.min.js"></script>
+<script src="/static/frontend/js/mui.poppicker.js"></script>
+<script>
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    mui(".mui-content").on("tap", "a", function () {
+        window.top.location.href = this.href;
+    });
+
+    (function ($, doc) {
+        $.ready(function () {
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            //开始时间
+            var btnTimes = $('.btnTime');
+            btnTimes.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var optionsJson = this.getAttribute('data-options') || '{}';
+                    var options = JSON.parse(optionsJson);
+                    var wTime = this;
+                    var id = this.getAttribute('id');
+                    var picker = new $.DtPicker(options);
+
+                    picker.show(function (rs) {
+                        //wTime.innerText = rs.text;
+                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';
+                        document.getElementById('month').value = rs.m.text;
+                        document.getElementById('year').value = rs.y.text;
+                        getSalaryInList();
+                        picker.dispose();
+                    });
+                }, false);
+            });
+
+        });
+    })(mui, document);
+
+    $(function () {
+        // 初始化读取
+        getSalaryInList();
+
+        // 月份选择改变
+        $('.month-select').change(function () {
+            var month_txt = $(this).val();
+            month_txt = month_txt.substring(0, month_txt.length - 1);
+            $('input[name=month]').val(month_txt);
+            getSalaryInList();
+        });
+
+        // 月份选择改变
+        $('.year-select').change(function () {
+            var year_txt = $(this).val();
+            year_txt = year_txt.substring(0, year_txt.length - 1);
+            $('input[name=year]').val(year_txt);
+            getSalaryInList();
+        });
+
+    });
+
+    // 请求训练营工资列表
+    function getSalaryInList() {
+        var year = $('input[name=year]').val();
+        var month = $('input[name=month]').val();
+        mui.ajax("{:url('api/salaryin/campsalarylist')}", {
+            data: {
+                camp_id: "{$camp_id}",
+                year: year,
+                month: month
+            },
+            dataType: 'json',
+            type: 'post',
+            timeout: 10000,
+            headers: { 'Content-Type': 'application/json' },
+            success: function (data) {
+                //console.log(data);
+                var newli = '';
+                if (data.code === 200) {
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+                        newli += ' <li class="mui-table-view-cell listli first-li" style="color:#000">教练名称<span>工资</span></li>';
+                        for (var i = 0; i < data.data.length; i++) {
+                            var urls = "{:url('salaryin/salaryinfo')}/camp_id/" + "{$camp_id}" + "/member_id/" + data.data[i].member_id + "/month/" + month + "/year/" + year;
+                            newli += '<li class="mui-table-view-cell listli">';
+                            newli += '<a class="mui-navigate-right" style="color:#000" href="' + urls + '">';
+                            newli += data.data[i].member + '<span class="wd45">' + (data.data[i].month_salary) + '</span>';
+                            newli += '</a></li>';
+                        }
+                        $('#salarysum').text(data.sum);
+                    } else {
+                        newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
+                        $('#salarysum').text(0);
+                    }
+                    //console.log(newli);
+                    $('#salary-ul').html(newli);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        })
+    }
+</script>
+
+</html>

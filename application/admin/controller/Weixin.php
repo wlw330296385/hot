@@ -31,6 +31,11 @@ class Weixin extends Backend {
                         'type' => 'view',
                         'name' => '篮球管家',
                         'url' => $WechatS->oauthRedirect(url('keeper/index/wxindex','', '', true))
+                    ],
+                    [
+                        'type' => 'view',
+                        'name' => '运动打卡',
+                        'url' => $WechatS->oauthRedirect(url('keeper/punch/','', '', true))
                     ]
                     // 两栏简单版 end
 
