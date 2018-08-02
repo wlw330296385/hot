@@ -49,13 +49,24 @@
         <input type="hidden" name="check_referee" value="0" class="data">
         <input type="hidden" name="check_scorers" value="0" class="data">
 
-        <form action="" class="mui-input-group mt55">
+        <form action="" class="mui-input-group mb44">
 
-            <div class="mui-input-row">
+            <div class="mui-input-row defaultTeam">
                 <label>主队</label>
-                <span class="HomeTeam" style="width: 60%">{$matchScheduleInfo.home_team}</span>
+                <span class="HomeTeam domData" name="home_team" style="width: 60%">{$matchScheduleInfo.home_team}</span>
                 <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
+                <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
             </div>
+
+            <div class="mui-input-row selectTeam hide">
+                <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
+                    <label>主队</label>
+                    <span class="HomeTeam domData" name="home_team" style="width: 60%">{$matchScheduleInfo.home_team}</span>
+                    <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
+                    <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
+                </a>
+            </div>
+
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>主队球衣颜色</label>
@@ -68,10 +79,19 @@
                 </div>
             </div>
 
-            <div class="mui-input-row">
+            <div class="mui-input-row defaultTeam">
                 <label>客队</label>
-                <span class="AwayTeam" style="width: 60%">{$matchScheduleInfo.away_team}</span>
+                <span class="AwayTeam domData" name="away_team" style="width: 60%">{$matchScheduleInfo.away_team}</span>
                 <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
+                <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
+            </div>
+            <div class="mui-input-row selectTeam hide">
+                <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
+                    <label>客队</label>
+                    <span class="AwayTeam domData" name="away_team" style="width: 60%">{$matchScheduleInfo.away_team}</span>
+                    <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
+                    <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
+                </a>
             </div>
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
@@ -198,6 +218,79 @@
         </ul>
     </div>
 
+
+    <!--球队A-->
+    <div id="HomeTeam" class="mui-popover list" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>选择对手</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamADel">清除</button>
+            </span>
+        </div>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item1">晋级球队</a>
+                <a class="mui-control-item" href="#item2">全部球队</a>
+            </div>
+        </div>
+        <div id="item1" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamAList promotionList">
+                        <li class="nodata">
+                            <i class="icon iconfont icon-logo-Big"></i>
+                            <p>没有相关数据,请先选择比赛阶段</p>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="item2" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamAList teamList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--球队B-->
+    <div id="AwayTeam" class="mui-popover list" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>选择对手</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="teamBDel">清除</button>
+            </span>
+        </div>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item3">晋级球队</a>
+                <a class="mui-control-item" href="#item4">全部球队</a>
+            </div>
+        </div>
+        <div id="item3" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList promotionList">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="item4" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="teamBList teamList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--常驻场地-->
     <div id="court" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -301,7 +394,6 @@
         </div>
     </div>
 
-
     <!--工作人员-->
     <div id="work" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -375,18 +467,62 @@
         let match_time = "{$matchScheduleInfo.match_time}";
         let from = wooApi.GetQueryString('from');
         $(function () {
+            var courtKeyword = '';
+            var wCourt = '';
+            var pageCR = 1;
 
             // 设置球衣颜色默认值
             $('#homeTeamColor option[value="{$matchScheduleInfo.home_team_color}"').prop("selected", true);
             $('#awayTeamColor option[value="{$matchScheduleInfo.away_team_color}"').prop("selected", true);
+            // 非联赛球队显示选择操作
+            if ($("input[name=home_team_id]").val() == -1) {
+                $(".selectTeam").show();
+                $(".defaultTeam").hide();
+            }
+            // 判断有无分组显示分组列表或全部球队列表
+            if ("{$hasGroup}" == 0) {
+                allTeamList();
+            } else {
+                getbattle();
+            }
 
-            var courtKeyword = '';
-            var wCourt = '';
-            var pageCR = 1;
-            toCourtList(wCourt, courtKeyword, 1);
+            promotionTeamList() //晋级球队列表
+            allTeamList(); //全部球队列表
+            getbattle(); //球队分组列表
             toRefereelist(); //裁判列表
             toScorelist();  //记分员列表
             toScorersInital(); // 记分员赋值
+            toCourtList(wCourt, courtKeyword, 1);
+
+            // 选择主队
+            $(document).on('tap', '.teamAList li', function () {
+                let home_team = $.trim($(this).attr("data-team"));
+                let home_team_id = $(this).attr("data-team_id");
+                let home_team_logo = $(this).attr("data-team_logo");
+                if ($("input[name=away_team_id]").val() == home_team_id) {
+                    mui.toast("球队已存在,请重新选择");
+                    return false;
+                }
+                $(".HomeTeam").text(home_team)
+                $("input[name=home_team_id]").val(home_team_id)
+                $("input[name=home_team_logo]").val(home_team_logo)
+                mui("#HomeTeam").popover("toggle");
+            });
+            // 选择客队
+            $(document).on('tap', '.teamBList li', function () {
+                let away_team = $.trim($(this).attr("data-team"));
+                let away_team_id = $(this).attr("data-team_id");
+                let away_team_logo = $(this).attr("data-team_logo");
+                if ($("input[name=home_team_id]").val() == away_team_id) {
+                    mui.toast("球队已存在,请重新选择");
+                    return false;
+                }
+                $(".AwayTeam").text(away_team)
+                $("input[name=away_team_id]").val(away_team_id)
+                $("input[name=away_team_logo]").val(away_team_logo)
+                mui("#AwayTeam").popover("toggle");
+            });
+
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
@@ -584,6 +720,114 @@
             totalNum = $("#inactiveList .checkboxCont").length;
             $(".mui-badge").text(totalNum);
             changeIndex();
+        }
+
+        // 联赛晋级球队列表
+        function promotionTeamList() {
+            var url = "{:url('api/league/getmatchstageadvteams')}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    match_id: league_id,
+                    match_stage_id: "{$pstageid}"
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += `<li class="mui-table-view-cell listli promotionli" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}" data-team_logo="${data.data[i].team_logo}">
+                                            <label><img class="img24 teamlogo mui-pull-left" src="${data.data[i].team_logo}">${data.data[i].team}</label>
+                                            <span class="wd36">${data.data[i].match_group}</span>
+                                        </li>`
+                        }
+                        $(".promotionList").empty().append(newli);
+                    } else {
+                        $(".promotionList").append('<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对阵名称" /><button class="mui-btn addBtn">确认</button></div>');
+
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+        // 联赛全部球队列表
+        function allTeamList() {
+            var url = "{:url('api/league/leagueteampage')}";
+            var league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += `<li class="mui-table-view-cell listli allli" data-team="${data.data.data[i].team.name}" data-team_id="${data.data.data[i].team_id}">
+                                            <img class="img24 teamlogo mui-pull-left" src="${data.data.data[i].team.logo}">${data.data.data[i].team.name}
+                                        </li>`
+                        }
+                        $(".teamList").empty().append(newli);
+                    } else {
+                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+        // 分组列表
+        function getbattle() {
+            var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
+            let league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += `<ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
+                            newli += `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
+                            newli += `<div class="mui-collapse-content" style="padding-left:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli += `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}">
+                                            <img class="img24 mui-pull-left teamlogo" src="${data.data.data[i].group_teams[j].team_logo}"><text>${data.data.data[i].group_teams[j].team.team}</text>
+                                        <li>`;
+                            }
+                            newli += `</ul></div></li></ul>`
+                        }
+                        $(".teamList").empty().append(newli);
+                    } else {
+                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
         }
 
         //场地列表接口获取数据并追加到页面 
