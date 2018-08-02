@@ -455,6 +455,8 @@ class Team extends Base
                         'member_id' => $teamMemberInfo['member_id'], 'member' => $teamMemberInfo['member'], 'member_avatar' => $teamMemberInfo['avatar'],
                     ]);
                 }
+                // 更新球队统计字段
+                $teamS->autoUpdateTeam($data['team_id']);
                 $replystr = '已通过';
             }
             // 发送消息模板给申请人
@@ -629,7 +631,7 @@ class Team extends Base
                     ]);
                 }
                 // 更新球队统计字段
-                // $teamS->autoUpdateTeam($data['team_id']);
+                 $teamS->autoUpdateTeam($data['team_id']);
             }
 
             return json($res);
@@ -694,7 +696,7 @@ class Team extends Base
                     $messageS->sendMessageToMember($member_id, $messageData, config('wxTemplateID.memberQuit'));
                 }
                 // 更新球队统计字段
-                // $teamS->autoUpdateTeam($team_id);
+                 $teamS->autoUpdateTeam($team_id);
             }
             // 返回结果
             return json($res);
@@ -1062,7 +1064,7 @@ class Team extends Base
                 }
                 $replystr = '已加入';
                 // 更新球队统计字段
-                // $teamS->autoUpdateTeam($applyInfo['organization_id']);
+                $teamS->autoUpdateTeam($applyInfo['organization_id']);
             }
             // 发送结果通知给邀请人
             if (!empty($reply)) {
