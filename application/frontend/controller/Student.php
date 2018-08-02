@@ -75,29 +75,39 @@ class Student extends Base
                 'student_id' => $student_id,
                 'type' => $type,
                 //'status' => 1
-            ])->field("sum(rest_schedule) as rest_schedule, sum(total_schedule) as total_scheulde")->select();
+            ])->field("sum(rest_schedule) as s_rest_schedule, sum(total_schedule) as s_total_scheulde")->find();
         //dump($schedulenum);
         if (!$schedulenum) {
             $restSchedule = 0;
             $totalSchedule = 0;
         } else {
-            $restSchedule = $schedulenum[0]['rest_schedule'];
-            $totalSchedule = $schedulenum[0]['total_scheulde'];
+            $restSchedule = $schedulenum['s_rest_schedule'];
+            $totalSchedule = $schedulenum['s_total_scheulde'];
         }
 
 		// 学生课量
-		$studentScheduleList = Db::view('schedule_member','*')
-								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
-								->where([
-								    'schedule.status' => 1,
-									'schedule_member.user_id'=>$student_id,
-									'schedule_member.status'=>1,
+		// $studentScheduleList = Db::view('schedule_member','*')
+		// 						->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
+		// 						->where([
+		// 						    'schedule.status' => 1,
+		// 							'schedule_member.user_id'=>$student_id,
+		// 							'schedule_member.status'=>1,
+		// 						])
+  //                               ->whereNull('schedule.delete_time')
+  //                               ->whereNull('schedule_member.delete_time')
+		// 						->order('schedule_member.id desc')
+		// 						->select();	
+		
+		$finishedSchedule = db('schedule_member')
+							->where([
+									'user_id'=>$student_id,
+									'status'=>1,
+									'type' =>1,
+									'is_school'=>-1
 								])
-                                ->whereNull('schedule.delete_time')
-                                ->whereNull('schedule_member.delete_time')
-								->order('schedule_member.id desc')
-								->select();	
-
+							->count();
+		$finishedSchedule?$finishedSchedule:0;	
+						
 		// 学生订单
 		$billService = new \app\service\BillService;
 		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
@@ -119,11 +129,12 @@ class Student extends Base
 		$this->assign('notPayBill',$notPayBill);
 		$this->assign('payBill',$payBill);
 		$this->assign('repayBill',$repayBill);
-		$this->assign('studentScheduleList',$studentScheduleList);
+		// $this->assign('studentScheduleList',$studentScheduleList);
 		$this->assign('studentBillList',$studentBillList);
 		$this->assign('totalBill',$totalBill);
 		$this->assign('studentcando', $studentcando);
 		$this->assign('camp_id', $camp_id);
+		$this->assign('finishedSchedule', $finishedSchedule);
 		return view('Student/studentInfoOfCamp');
 	}
 
