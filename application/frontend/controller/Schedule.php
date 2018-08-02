@@ -65,12 +65,14 @@ class Schedule extends Base
         // 课时统计
         $scheuldeIDS = db('schedule')->where(['grade_id'=>['in',$gradeIDS],'camp_id'=>$camp_id])->where('delete_time',null)->column('id');
         $scheduleCount = $this->ScheduleService->countScheduleMembers(['camp_id' => $camp_id,'user_id'=>$student_id]);
-
-        $totalCount = db('schedule_member')->where(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id,'status'=>-1])->count();
+        //未结算非校园课
+        $totalCount = db('schedule_member')->where(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id,'is_school'=>-1,'status'=>-1])->count();
+        //校园课
+        $schoolSchedule = db('schedule_member')->where(['camp_id' => $camp_id,'schedule_id'=>['in',$scheuldeIDS],'user_id'=>$student_id,'is_school'=>1])->count();
         $this->assign('gradeIDS',json_encode($gradeIDS));
         $this->assign('lessonMember',$lessonMember);
     	$this->assign('scheduleCount',$scheduleCount);
-
+        $this->assign('schoolSchedule',$schoolSchedule);
         $this->assign('totalCount',$totalCount);
   		$this->assign('gradeList',$gradeList);
   		$this->assign('studentList',$studentList);

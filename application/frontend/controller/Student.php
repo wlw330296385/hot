@@ -102,7 +102,7 @@ class Student extends Base
 							->where([
 									'user_id'=>$student_id,
 									'status'=>1,
-									'type' =>1,
+									// 'type' =>1,
 									'is_school'=>-1
 								])
 							->count();
