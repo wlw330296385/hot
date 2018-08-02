@@ -199,23 +199,17 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-
-                            newli += `  
-                                <div class="page-header border-b">`
+                            newli += `<div class="page-header border-b">`
                             if (data.data[i].date == '') {
                                 newli += `<span class="course">比赛日
-                                        <font class="colorred">待定</font> | 时间日期待定
-                                    </span>`
+                                            <font class="colorred">待定</font> | 时间日期待定
+                                        </span>`
                             } else {
                                 newli += `<span class="course">比赛日
-                                        <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
-                                    </span>`
+                                            <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
+                                        </span>`
                             }
-
-                            newli += ` <span class="more">${data.data[i].stage.name}</span>
-                                </div>
-                                <table class="leagueTable">
-                                    <tbody>`
+                            newli += `<span class="more">${data.data[i].stage.name}</span></div><table class="leagueTable"><tbody>`
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var scheduleArr = data.data[i].stage.schedules[j];
                                 urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' + scheduleArr.match_id + '/id/' + scheduleArr.id;
@@ -225,10 +219,11 @@
                                 } else {
                                     newli += `<tr onclick="location.href='${urlRecord}'" >`
                                 }
-                                newli += `
-                                        <td class="tdpPadding">
-                                            <p>D组</p>
-                                            <p class="siteNum">${j + 1}</p>
+                                newli += `<td class="tdpPadding">`
+                                if (scheduleArr.match_group != '') {
+                                    newli += `<p>${scheduleArr.match_group}</p>`
+                                }
+                                newli += `<p class="siteNum">${j + 1}</p>
                                             <p>${j + 1}号场</p>
                                         </td>
                                         <td class="borderC">
@@ -256,9 +251,7 @@
                                     <tr class="pline"></tr>`
                             }
                             newli += `</tbody></table>`
-
                         }
-
                         $(".scheduleList").empty().append(newli);
                     } else {
                         $(".scheduleList").html('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');

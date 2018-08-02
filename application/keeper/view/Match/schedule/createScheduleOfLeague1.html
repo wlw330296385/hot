@@ -53,7 +53,7 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <a class="addSchedule">添加</a>
+            <a class="addSchedule colorblue">添加赛程</a>
         </h1>
     </header>
 
@@ -273,7 +273,7 @@
                         var t1 = new Date(leagueStartTime.replace(/\-/g, "\/"));
                         var t2 = new Date(leagueEndTime.replace(/\-/g, "\/"));
                         var t3 = new Date(match_time.replace(/\-/g, "\/"));
-                        if (t3 >= t2 || t3 <= t1) {
+                        if (t3 > t2 || t3 < t1) {
                             mui.toast("比赛时间不能小于联赛开始时间，不能大于联赛结束时间，请重新选择");
                             resultTime.innerText = '';
                         }
@@ -349,6 +349,7 @@
                 $(".teamAList li").attr("data-num", dataNum);
                 $(".teamAList .addBtn").attr("data-num", dataNum);
                 $(".teamBList li").attr("data-num", dataNum);
+                $(".teamBList .addBtn").attr("data-num", dataNum);
                 $(".courtList li").attr("data-num", dataNum);
             });
 
@@ -446,13 +447,13 @@
             });
 
             // 选择客队 
-            // 主队自主填写
+            // 客队自主填写
             $(document).on('tap', '.teamBList .addBtn', function () {
                 let team = $(this).siblings(".addInput").val();
                 let away_team_id = -1;
                 let away_team_logo = "{:url('/static/frontend/images/basketball.png')}";
                 let liNum = $(this).attr("data-num");
-                $(".homeTeamTap").each(function () {
+                $(".awayTeamTap").each(function () {
                     let datanum = $(this).parents(".scheduleList").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text(team);
