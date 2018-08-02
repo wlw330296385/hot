@@ -145,13 +145,13 @@ class Lesson extends Backend {
                     }
                     
                     if($res){
-                        // $this->success($result["msg"],url('admin/member/memberList'));
-                        echo '<script type="text/javascript">alert("'.$result["msg"].'");window.opener=null;window.close();</script>';
+                        $this->success($result["msg"],url('admin/lesson/buyLesson',['member_id'=>$member_id]));
+                        // echo '<script type="text/javascript">alert("'.$result["msg"].'");window.opener=null;window.close();</script>';
                         // return json(['code'=>100,'msg'=>'操作成功']);
                     }else{
-                        echo "<script type='text/javascript'>alert('".$result['msg']."并联系woo')</script>";
+                        // echo "<script type='text/javascript'>alert('".$result['msg']."并联系woo')</script>";
                         // return json(['code'=>100,'msg'=>'后续操作有bug,请联系woo']);
-                        // $this->error($result["msg"],url('admin/member/memberList'));
+                        $this->error($result["msg"],url('admin/lesson/buyLesson',['member_id'=>$member_id]));
                     }
                     
                 }else{
