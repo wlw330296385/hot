@@ -97,11 +97,11 @@ class Student extends Base
   //                               ->whereNull('schedule_member.delete_time')
 		// 						->order('schedule_member.id desc')
 		// 						->select();	
-		
+		// 非校园课课时总数
 		$finishedSchedule = db('schedule_member')
 							->where([
 									'user_id'=>$student_id,
-									'status'=>1,
+									// 'status'=>1,
 									// 'type' =>1,
 									'is_school'=>-1
 								])
@@ -134,7 +134,7 @@ class Student extends Base
 		$this->assign('totalBill',$totalBill);
 		$this->assign('studentcando', $studentcando);
 		$this->assign('camp_id', $camp_id);
-		$this->assign('finishedSchedule', $finishedSchedule);
+		$this->assign('finishedSchedule', $finishedSchedule);//schoolSchedule
 		return view('Student/studentInfoOfCamp');
 	}
 
