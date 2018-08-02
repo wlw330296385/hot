@@ -194,13 +194,17 @@
                 var newli = '';
                 if (data.code == 200) {
                     var newDate = new Date();
+                    var studentID = "{$student_id}";
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + "{$camp_id}";
                         var lesson_time = data.data.data[i].lesson_time;
                         var haveCome = '<font class="tipCorner bggray">未参与</font>';
                         var studentStrs = data.data.data[i].student_strs;
                         for (var s = 0; s <= studentStrs.length - 1; s++) {
-                            console.log(studentStrs[s].student_id)
+                            if(studentStrs[s].student_id==studentID){
+                                haveCome = '<font class="tipCorner bggreen">已参与</font>';
+                                break;
+                            }
                         }
                         // 已审，未审内容
                         newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b">';

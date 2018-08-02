@@ -286,7 +286,7 @@ class Grade extends Base{
         }
     }
 
-    // 操作班级当前/鱼排状态 2017/10/2
+    // 操作班级当前/预排状态 2017/10/2
     public function removegrade() {
         $gradeId = input('grade_id');
         if (!$gradeId) {
@@ -302,6 +302,14 @@ class Grade extends Base{
         $power = getCampPower($grade['camp_id'], $this->memberInfo['id']);
         if ($power < 2) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        // 若是教练角色 区分全职教练与兼职教练，全职教练可上下架班级+不能删除班级，兼职教练都不能操作
+        if ($power == 2) {
+            // 获取教练等级
+            $powerLevel = getCampMemberLevel($grade['camp_id'], $this->memberInfo['id']);
+            if ($powerLevel == 1) {
+                return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+            }
         }
         // status字段更新值
         $statusTo = ($grade['status_num'] == 1) ? -1 : 1;
@@ -333,7 +341,7 @@ class Grade extends Base{
         }
         // 训练营角色权限 教练以上才能操作
         $power = getCampPower($grade['camp_id'], $this->memberInfo['id']);
-        if ($power < 2) {
+        if ($power < 3) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 当前班级不能删除，改为预排班级才能操作删除

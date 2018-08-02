@@ -26,6 +26,13 @@
         #haveStudent{
             display: none;
         }
+        .noIn{
+            color: #CCC;
+            padding: 10px 0px;
+        }
+        .noIn .mui-media-body{
+            color: #CCC !important;
+        }
     </style>
 </head>
 
@@ -41,6 +48,7 @@
             <a href="{:url('camp/index')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
             <span class="more"> {$campInfo['camp']}管理</span>
         </div>
+        
         <div class="nav-list" style="margin-bottom: 5px;">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
@@ -79,11 +87,13 @@
                         <div class="mui-media-body colororange">{$totalSchedule}</div>
                     </a>
                 </li>
+                {if !($power==2&&$level==1)}
                 <li class="mui-table-view-cell mui-media mui-col-xs-12 mui-col-sm-12">
                     <a href="{:url('camp/campStatistics',['camp_id'=>$campInfo['id']])}">
                         <span class="f12">查看更多统计及图表</span>
                     </a>
                 </li>
+                {/if}
             </ul>
         </div>
 
@@ -99,7 +109,8 @@
 
         <!--操作模块-->
         <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg">
-
+            {if !($power==2&&$level==1)}
+             <!-- 除兼职教练可见-->
             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                 <a href="{:url('student/tipStudentListOfCamp',['camp_id'=>$campInfo['id']])}">
                     <span class="icon iconfont icon-training-remind"></span>
@@ -198,6 +209,110 @@
                     <div class="mui-media-body">工资</div>
                 </a>
             </li>
+
+            {else /}
+
+            <!-- 兼职教练可见-->
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-remind"></span>
+                    <div class="mui-media-body">提醒</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <a href="{:url('grade/gradeListWeek',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-record"></span>
+                    <div class="mui-media-body">录课</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <a href="{:url('schedule/scheduleList',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-classtime"></span>
+                    <div class="mui-media-body">课时</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <a href="{:url('grade/gradeListOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-class"></span>
+                    <div class="mui-media-body">班级</div>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-activity"></span>
+                    <div class="mui-media-body">活动</div>
+                </div>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-game"></span>
+                    <div class="mui-media-body">比赛</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-site"></span>
+                    <div class="mui-media-body">场地</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-course"></span>
+                    <div class="mui-media-body">课程</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-Order"></span>
+                    <div class="mui-media-body">订单</div>
+                </div>
+            </li>
+
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-Students"></span>
+                    <div class="mui-media-body">学员</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-Experience"></span>
+                    <div class="mui-media-body">体验生</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-fans"></span>
+                    <div class="mui-media-body">粉丝</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-teaching"></span>
+                    <div class="mui-media-body">教务</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-coach"></span>
+                    <div class="mui-media-body">教练</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <div class="noIn">
+                    <span class="icon iconfont icon-training-case"></span>
+                    <div class="mui-media-body">教案</div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <a href="{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}">
+                    <span class="icon iconfont icon-training-wage"></span>
+                    <div class="mui-media-body">工资</div>
+                </a>
+            </li>
+
+            {/if}
 
         </ul>
 
@@ -331,7 +446,12 @@
         });
 
         $(function () {
-            toList()
+            toList();
+
+
+            $(document).on("click", ".noIn", function () {
+                mui.toast('权限不足');
+            })
         });
 
 

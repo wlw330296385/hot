@@ -30,6 +30,8 @@
                                未开启
                             {elseif $poolInfo.status==2}
                                 进行中
+                            {elseif $poolInfo.status==-2}
+                                已终止
                             {else/}
                                 已结束
                             {/if}</span>
@@ -119,6 +121,9 @@
                 <textarea name="rule" rows="3" value="" class="rule" placeholder="请填写说明内容" style="text-align: left;width: 96%;margin: 0 auto;">{$poolInfo.rule}</textarea>
             </div>
         </form>
+
+         <p class="mui-text-right" style="margin:20px"><span id="stopPool"><span class="mui-icon mui-icon-minus f18"></span> 我要终止当前规则</span></p>
+
         <div class="publicTip mb44">
             <p class="publicTitle">
                 <img src="/static/frontend/images/hot.png" alt="">
@@ -130,12 +135,13 @@
             </div>
         </div>
 
+        {if $poolInfo.status>=1}
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 mui-col-sm-12 opli bggreen" onclick="submitAction()">
                 提交修改
             </li>
         </ul>
-
+        {/if}
     </div>
 
 <!--奖金分配说明-->
@@ -263,6 +269,60 @@
                 setBonusAssign($(this).children('option:selected').val());
             });
 
+            $(document).on('tap','#stopPool',function(){
+
+                    mui.confirm('终止后不能再作修改，<br />请问确定终止当前规则吗?', '提示', ['取消', '确定'], function (e) {
+                        if (e.index === 1) {
+                            
+                                if ($("input[name='pool']").val() == '') {
+                                    mui.toast("本期打卡主题为空，请不要清除原内容");
+                                    return false;
+                                }
+
+                                var start = $("#resultStart").text();
+                                var end = $("#resultEnd").text();
+
+                                if (start == '') {
+                                    mui.toast("开始时间为空，请不要清除原内容");
+                                    return false;
+                                }
+                                if (end == '') {
+                                    mui.toast("结束时间为空，请不要清除原内容");
+                                    return false;
+                                }
+                                if ($("input[name='times']").val() == ''||$("input[name='times']").val() == null) {
+                                    $("input[name='times']").val("1");
+                                }
+
+
+                                var data = wooApi.getInputData('input', 'data');
+                                datas = wooApi.getInputData('select', 'data', data);
+                                // 获取其他标签值
+                                arrData = wooApi.getDomData('domData', datas);
+                                var objData = wooApi.arrTOobj(arrData);
+                                objData.status = -2;
+                                objData.rule = $(".rule").val();
+                                var url = "{:url('api/pool/updatePoolApi')}";
+                                var ajaxResult = wooApi.asyncF(url, objData);
+                                console.log(ajaxResult)
+                                if (ajaxResult.code == 200) {
+                                    var goUrl = "{:url('group/poolInfo')}" + "/pool_id/" + "{$poolInfo.id}";
+                                    window.top.location.href = goUrl;
+                                } else {
+                                    mui.alert(ajaxResult.msg, '终止失败');
+                                    mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                        if (data.code === 200) {
+                                        }
+                                    }, 'json');
+                                }
+
+                        }
+                    });
+
+                })
+
+
+
         })
 
 
@@ -305,7 +365,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.tenet = $(".tenet").val();
+            objData.rule = $(".rule").val();
             var url = "{:url('api/pool/updatePoolApi')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             console.log(ajaxResult)
