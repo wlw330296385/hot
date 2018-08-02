@@ -830,8 +830,22 @@ class Match extends Base {
         // 获取赛程详情
         $leagueS = new LeagueService();
         $matchscheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
+        if (!$matchscheduleInfo) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 获取联赛分组列表
+        $groups = $leagueS->getMatchGroups([
+            'match_id' => $this->league_id
+        ]);
+        // 有无联赛分组信息标识
+        $hasGroup = ($groups) ? 1 : 0;
+        // 获取赛程的比赛阶段信息中所设上一个阶段id
+        $parentMatchStageInfo = $leagueS->getMatchStage(['id' => $matchscheduleInfo['match_stage_id']]);
+        $pstageid = ($parentMatchStageInfo) ? $parentMatchStageInfo['pstage_id'] : 0;
 
         $this->assign('matchScheduleInfo', $matchscheduleInfo);
+        $this->assign('hasGroup', $hasGroup);
+        $this->assign('pstageid', $pstageid);
         return view('Match/schedule/editScheduleOfLeague');
     }
 
