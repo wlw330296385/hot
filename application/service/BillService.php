@@ -438,7 +438,7 @@ class BillService {
         // 训练营的余额和历史会员增加
         $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
         $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('total_member',1)->update();
-        
+        $CampMember = new CampMember;
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
             //购买人数+1;
@@ -495,7 +495,7 @@ class BillService {
             if($is_campMember){
                 // 强制更新
                 if($is_campMember['type']<1){
-                    db('camp_member')->where(['id'=>$is_campMember['id']])->update(['type'=>1,'status'=>1]);
+                    $CampMember->save(['type'=>1,'status'=>1],['id'=>$is_campMember['id']]);
                 }
             }else{
                 $CampMember->save(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1]);
@@ -529,7 +529,7 @@ class BillService {
         //结束课程操作
         }elseif ($data['goods_type'] == '活动') {
             // camp_member操作
-            $CampMember = new CampMember;
+            
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
             if(!$is_campMember){
                 //成为粉丝
