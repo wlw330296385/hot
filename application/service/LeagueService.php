@@ -500,6 +500,16 @@ class LeagueService
         }
     }
 
+    // 获取联赛球队id集合
+    public function getMatchTeamIdsByMatchId($match_id) {
+        if (!$match_id) {
+            return null;
+        }
+        $model = new MatchTeam();
+        $result = $model->where(['match_id' => $match_id])->column('team_id');
+        return $result;
+    }
+
     // 保存联赛分组球队数据
     public function saveMatchGroup($data)
     {
