@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .tipCorner{
+           white-space:nowrap;
+        }
+    </style>
 
 </head>
 
@@ -34,6 +39,7 @@
             <span class="location-choise max">
                 <select id="eventType" class="data" name="event_type">
                     <option value="">活动类型</option>
+                    <option value="冬夏令营">冬夏令营</option>
                     <option value="团队建设">团队建设</option>
                     <option value="校园活动">校园活动</option>
                     <option value="亲子教育">亲子教育</option>
@@ -74,6 +80,7 @@
             $('.keyword').val(keyword);
             var campID = wooApi.GetQueryString('camp_id');
             var campName = wooApi.GetQueryString('camp_name');
+            var eType = wooApi.GetQueryString('eType');
 
             //获取定位省市区
             var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
@@ -100,6 +107,7 @@
                 campID = '';
                 searchToList();
             })
+
             //选择活动类型下拉
             $("#eventType").on("change", function () {
                 sEventType = $(this).find("option:checked").val();
@@ -214,7 +222,7 @@
                                 var urls = "{:url('event/eventInfo')}" + '/event_id/' + data.data[i].id;
 
                                     newli += '<li class="mui-table-view-cell mui-media listli">'
-                                    newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="proportion4x3 mui-pull-left " src="' + data.data[i].cover + '" ><div class="mui-media-body wd52">' + data.data[i].event + '';
+                                    newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="proportion4x3 mui-pull-left " src="' + data.data[i].cover + '" ><div class="mui-media-body wd52">'+ data.data[i].event;
                                     if (data.data[i].is_max == "已满人") {
                                         newli += '<font class="tipCorner bgred">满人</font>';
                                     }
@@ -259,6 +267,13 @@
                 });
             };
 
+
+
+            if(eType=="camp"){
+                sEventType="冬夏令营"
+                $('#eventType option[value="冬夏令营"]').prop("selected", true);
+                searchToList();
+            }
 
         })
     </script>

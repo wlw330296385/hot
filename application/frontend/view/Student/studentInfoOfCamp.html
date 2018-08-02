@@ -28,6 +28,9 @@
             margin: 12px 20px;
             text-align: center;
         }
+        .mui-grid-view.mui-grid-9 .mui-table-view-cell{
+            padding: 11px 10px;
+        }
 
     </style>
 </head>
@@ -117,48 +120,48 @@
 
                     <div class="nav-list">
                         <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                                <a href="#totalScheuleTips">
+                                    <span>剩余课</span>
+                                    <div class="mui-media-body colorred" id="restSchedule" data-org="{$restSchedule}">{$restSchedule}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2">
+                                <a href="#totalScheuleTips" class="showTips">
+                                    <span>总课</span>
+                                    <div class="mui-media-body colorred" id="totalSchedule">{$totalSchedule}</div>
+                                </a>
+                            </li>
+                            <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2">
+                                <a href="#giftList">
+                                    <span>赠送</span>
+                                    <div class="mui-media-body colorred giftScheduleTotal">0</div>
+                                </a>
+                            </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2">
                                 <a href="#totalScheuleTips">
-                                    <span>总课时</span>
-                                    <div class="mui-media-body" id="totalSchedule">{$totalSchedule}</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2">
-                                <a href="#">
-                                    <span>剩余课时</span>
-                                    <div class="mui-media-body" id="restSchedule" data-org="{$restSchedule}">{$restSchedule}</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2">
-                                <a href="#">
-                                    <span>已上课时</span>
-                                    <div class="mui-media-body" >{$finishedSchedule}</div>
+                                    <span>已上</span>
+                                    <div class="mui-media-body colorred" >{$finishedSchedule}</div>
                                 </a>
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#giftList">
-                                    <span>赠送课时</span>
-                                    <div class="mui-media-body giftScheduleTotal">0</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
-                                    <span>校园课时</span>
+                                <a href="#totalScheuleTips">
+                                    <span>公益课</span>
                                     <div class="mui-media-body" id="schoolSchedule">0</div>
                                 </a>
                             </li>
                         </ul>
-                        <ul class="mui-table-view mui-text-center">
+                        <ul class="mui-table-view">
                             <li class="mui-table-view-cell border-b">
                                 <ul class="mui-row table">
-                                    <li class="mui-col-sm-5 mui-col-xs-5">上课时间</li>
-                                    <li class="mui-col-sm-7 mui-col-xs-7">班级</li>
+                                    <li class="mui-col-sm-8 mui-col-xs-8" style="padding-left: 10px;">上课时间 / 班级</li>
+                                    <li class="mui-col-sm-4 mui-col-xs-4 mui-text-center">状态</li>
                                 </ul>
                             </li>
                         </ul>
                     </div>
 
-                    <ul class="mui-table-view detalis-list list mui-text-center schedule "></ul>
+                    <ul class="mui-table-view detalis-list list mui-text-center schedule" style="padding-left: 10px;"></ul>
                 </div>
             </div>
 
@@ -231,11 +234,15 @@
     <div id="totalScheuleTips" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header explain-title border-b">
-            <span class="course wd49">总课量说明</span>
+            <span class="course wd49">课量说明</span>
         </div>
         <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <p class="moreData">总课量是您购买课程的总量加上赠送的课量，您的总课量中包含<span class="giftScheduleTotal"></span>赠课</p>
+            <div class="mui-scroll" style="padding: 15px 25px;">
+                <p><span class="colorred">1、剩余课</span>：您未上的课时数量。</p>
+                <p><span class="colorred">2、总课</span>：您购买课程的总量加上赠送的课量，您的总课量中包含<span class="giftScheduleTotal"></span>赠课</p>
+                <p><span class="colorred">3、赠送</span>：当前训练营给您赠送的课量，点击赠课数量可查看赠课记录。</p>
+                <p><span class="colorred">4、已上</span>：您已上课的数量，<span class="colorblue">当中不包含公益课量</span></p>
+                <p><span class="colorred">5、公益课</span>：您上过的免费课程数量</p>
             </div>
         </div>
     </div>
@@ -544,7 +551,15 @@
                         // // 将时间戳转成日期格式(建议后端转换)
                         // var time = data.data.data[i].schedule_time * 1000;//js时间戳精确到毫秒,所以要乘以1000后转换
                         // var schedule_time = gettime(time)
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].schedule_time + '</li><li class="mui-col-xs-7 mui-col-sm-7">' + data.data.data[i].schedule +'['+data.data.data[i].status+'] </li></ul></li></a>';
+                        var scheduleStatus = '';
+                        if(data.data.data[i].is_school == 1){
+                            scheduleStatus = '<font class="tipCorner bggreen">公益课</font>';
+                        }else if(data.data.data[i].status=="未结算"){
+                            scheduleStatus = '<font class="tipCorner bgblue">未结算</font>';
+                        }else{
+                            scheduleStatus = '<font class="tipCorner bggray">已结算</font>';
+                        }
+                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].schedule_time + '<br />' + data.data.data[i].schedule +'</li><li class="mui-col-xs-4 mui-col-sm-4">'+scheduleStatus+' </li></ul></li></a>';
                         //判断第一页是否有未结算的课时
 
                         if(data.data.data[i].status=="未结算" && data.data.data[i].is_school == -1){
