@@ -305,6 +305,38 @@ class TeamService
         }
     }
 
+    public function getTeamMembers($map = [], $order='id desc') {
+        $model = new TeamMember();
+        $res = $model->with('team')->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+
+        }
+        // 遍历获取成员在球队的角色身份
+        $result = $res->toArray();
+        $roleModel = new TeamMemberRole();
+        foreach ($result as $k => $val) {
+            // 球队成员创建时间戳原始数据 换算入队时间，入队年数(
+            $createTimeStamp = $res[$k]->getData('create_time');
+            $result[$k]['join_date'] = date('Y-m-d', $createTimeStamp);
+            $result[$k]['join_years'] = ceil(date('Y', time())-date('Y', $createTimeStamp));
+            // 获取球队角色
+            $result[$k]['role_text'] = '';
+            $result[$k]['role_arr'] = [];
+            $memberRole = $roleModel->where([
+                'member_id' => $val['member_id'],
+                'member' => $val['member'],
+                'name' => $val['name'],
+                'team_id' => $val['team_id'],
+                'status' => 1
+            ])->order('type desc')->select();
+            foreach ($memberRole as $val2) {
+                $result[$k]['role_text'] .= $val2['type_text'] . ',';
+                array_push($result[$k]['role_arr'], $val2['type_text']);
+            }
+        }
+        return $result;
+    }
 
     // 获取球队成员列表
     public function getTeamMemberList($map = [], $page = 1, $order = 'id asc', $limit = 10)

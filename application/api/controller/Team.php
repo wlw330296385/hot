@@ -554,6 +554,34 @@ class Team extends Base
         }
     }
 
+    // 球队成员列表
+    public function teammembers()
+    {
+        try {
+            // 球队id比传
+            $team_id = input('param.team_id');
+            if (!$team_id) {
+                return json(['code' => 100, 'msg' => __lang('MSG_402') . ',请选择球队']);
+            }
+            // 组合传入参数作查询条件
+            $map = input('post.');
+            $page = input('page', 1);
+            if (isset($map['page'])) {
+                unset($map['page']);
+            }
+            $teamS = new TeamService();
+            $result = $teamS->getTeamMembers($map);
+            if ($result) {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            } else {
+                $response = ['code' => 100, 'msg' => __lang('MSG_401')];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 修改球队成员信息
     public function updateteammember()
     {
