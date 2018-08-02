@@ -70,7 +70,7 @@
                 </div>
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
-                        <label>比赛类型</label>
+                        <label>比赛阶段</label>
                         <span class="select-row">
                             <select class="matchStageType"></select>
                             <input class="data" type="hidden" name="match_stage_id" value="">
@@ -141,7 +141,7 @@
                     <div class="teamAList promotionList">
                         <li class="nodata">
                             <i class="icon iconfont icon-logo-Big"></i>
-                            <p>没有相关数据,请先选择比赛类型</p>
+                            <p>没有相关数据,请先选择比赛阶段</p>
                         </li>
                     </div>
                 </div>
@@ -300,7 +300,7 @@
                             </div>
                               <div class="mui-input-row">
                                 <div class="mui-navigate-right">
-                                    <label>比赛类型</label>
+                                    <label>比赛阶段</label>
                                     <span class="select-row">
                                         <select class="matchStageType" name="type"></select>
                                         <input class="data" type="hidden" name="match_stage_id" value="">
@@ -642,7 +642,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         if (data.data.length > 0) {
-                            newli += '<option>选择比赛类型</option>';
+                            newli += '<option>选择比赛阶段</option>';
                         }
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `<option value="${data.data[i].type}" data-match-stage-id="${data.data[i].id}" data-match-stage="${data.data[i].name}" 
@@ -820,12 +820,6 @@
 
         // 获取数据并进行提交
         function submitAction() {
-
-            if ($("input[name=match_stage_id]").val() == '') {
-                mui.toast("请选择比赛阶段");
-                return false;
-            }
-
             scheduleList = []
             $(".scheduleList").each(function () {
                 var home_team = $(this).find(".HomeTeam").text();
@@ -839,6 +833,19 @@
                 var court = $(this).find(".court").text();
                 var court_id = $(this).find("input[name=court_id]").val();
                 var match_time = $(this).find(".ui-alert").text();
+                var scheduleName = $(this).find(".course").text();
+                if (match_stage_id == '') {
+                    mui.toast("请选择" + scheduleName + "的比赛阶段");
+                    return false;
+                }
+                if (home_team_id == '') {
+                    mui.toast("请选择" + scheduleName + "的主队");
+                    return false;
+                }
+                if (away_team_id == '') {
+                    mui.toast("请选择" + scheduleName + "的客队");
+                    return false;
+                }
                 scheduleList.push({ home_team, home_team_id, home_team_logo, away_team, away_team_id, away_team_logo, match_stage_id, match_stage, court, court_id, match_time })
             })
             console.log(scheduleList)
