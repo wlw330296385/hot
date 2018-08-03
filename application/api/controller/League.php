@@ -198,8 +198,17 @@ class League extends Base
         // 球队成员下限（默认根据赛制）
         if (!$data['min_teammembers']) {
             switch ($data['format']) {
+                case '1v1':
+                    $data['min_teammembers'] = 1;
+                    break;
+                case '2v2':
+                    $data['min_teammembers'] = 2;
+                    break;
                 case '3v3':
                     $data['min_teammembers'] = 3;
+                    break;
+                case '4v4':
+                    $data['min_teammembers'] = 4;
                     break;
                 case '5v5':
                     $data['min_teammembers'] = 5;
@@ -207,9 +216,9 @@ class League extends Base
             }
         }
         // 球队成员上限（默认20）
-        if (!$data['max_teammembers']) {
+       /* if (!$data['max_teammembers']) {
             $data['max_teammembers'] = 20;
-        }
+        }*/
         $matchS = new MatchService();
         $leagueS = new LeagueService();
         try {
@@ -697,7 +706,7 @@ class League extends Base
                     $teamS->saveTeamMessage($message);
                     // 通过报名球队数达到联赛球队最大数 更新联赛报名状态
                     $matchTeamCount = $leagueService->getMatchTeamCount(['match_id' => $matchApply['match_id']]);
-                    if ($matchTeamCount == $matchApply['match']['teams_max']) {
+                    if (  $matchApply['match']['teams_max']  && $matchTeamCount == $matchApply['match']['teams_max']) {
                         db('match')->where('id', $matchApply['match_id'])->update(['apply_status' => 2]);
                     }
                 }

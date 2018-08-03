@@ -48,7 +48,7 @@
         <form action="" class="mui-input-group">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <div class="mui-input-row organizationname">
-                <label>组织名称
+                <label>组织方名称
                     <i class="tip">*</i>
                 </label>
                 <input type="text" class="input organization data" name="name" placeholder="请输入组织名称">
@@ -68,9 +68,9 @@
                 </span>
             </div>
 
-            <div class="mui-input-row">
-                <label>机构单位</label>
-                <input type="text" class="input data" name="company" placeholder="请输入机构单位">
+            <div class="mui-input-row hide companyDiv">
+                <label>机构全称</label>
+                <input type="text" class="input data" name="company" placeholder="请输入机构全称">
             </div>
             <div class="mui-input-row">
                 <label>负责人姓名
@@ -98,8 +98,8 @@
                 </a>
             </div>
             <div class="mui-input-row">
-                <label>具体地址</label>
-                <input type="text" name="address" value="" class="data" placeholder="请输入具体地址">
+                <label>联系地址</label>
+                <input type="text" name="address" value="" class="data" placeholder="请输入联系地址">
             </div>
 
             <div class="mui-input-row h-auto">
@@ -120,10 +120,11 @@
                 </a>
             </div>
 
-            <div class="mui-input-row h-auto">
+            <!-- <div class="mui-input-row h-auto">
                 <label>组织宣言</label>
                 <textarea rows="3" name="descri" class="data descri" placeholder="请填写宣言"></textarea>
-            </div>
+            </div> -->
+
             <textarea name="introduce" class="data introduce" style="display: none"></textarea>
             <div id="articleEditor" class="tuwenIntro"></div>
 
@@ -275,6 +276,15 @@
                 },
                 error: function (xhr, type, errorThrown) {
                     console.log(type);
+                }
+            });
+
+            $(".pbselect").on("change", '', function () {
+                let selection = $(this).find("option:selected").val();
+                if (selection == 1) {
+                    $(".companyDiv").show();
+                } else{
+                    $(".companyDiv").hide();
                 }
             });
         });
