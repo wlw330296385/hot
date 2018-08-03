@@ -1488,6 +1488,28 @@ class League extends Base
     }
 
     // 获取联赛组织-人员列表
+    public function getmatchorgmembers() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            if (input('?param.page')) {
+                unset($data['page']);
+            }
+            $orderby = ['type' => 'desc', 'id' => 'desc'];
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchOrgMembers($data, $orderby);
+
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 获取联赛组织-人员列表
     public function getmatchorgmemberlist()
     {
         try {
@@ -1865,6 +1887,33 @@ class League extends Base
             $orderby = ['status' => 'desc', 'type' => 'desc', 'id' => 'desc'];
             $leagueS = new LeagueService();
             $result = $leagueS->getMatchMemberPaginator($data, $orderby);
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            trace($e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+    }
+
+    // 联赛工作人员列表
+    public function getmatchmembers()
+    {
+        try {
+            $data = input('param.');
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            $orderby = ['status' => 'desc', 'type' => 'desc', 'id' => 'desc'];
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchMembers($data, $orderby);
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {
