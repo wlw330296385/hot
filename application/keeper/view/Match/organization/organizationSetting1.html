@@ -71,9 +71,9 @@
                     </select>
                 </span>
             </div>
-            <div class="mui-input-row">
-                <label>机构单位</label>
-                <input type="text" class="input data" name="company" placeholder="请输入机构单位" value="{$matchOrgInfo.company}">
+            <div class="mui-input-row hide companyDiv">
+                <label>机构全称</label>
+                <input type="text" class="input data" name="company" placeholder="请输入机构全称" value="{$matchOrgInfo.company}">
             </div>
             <div class="mui-input-row">
                 <label>
@@ -100,10 +100,8 @@
                 </a>
             </div>
             <div class="mui-input-row">
-                <label>具体地址
-
-                </label>
-                <input type="text" name="address" value="{$matchOrgInfo.address}" class="data" placeholder="请输入具体地址">
+                <label>联系地址</label>
+                <input type="text" name="address" value="{$matchOrgInfo.address}" class="data" placeholder="请输入联系地址">
             </div>
 
             <div class="mui-input-row h-auto">
@@ -124,10 +122,11 @@
                 </a>
             </div>
 
-            <div class="mui-input-row h-auto">
+            <!-- <div class="mui-input-row h-auto">
                 <label>组织宣言</label>
                 <textarea rows="3" name="descri" class="data descri mui-text-left" placeholder="请填写宣言">{$matchOrgInfo.descri}</textarea>
-            </div>
+            </div> -->
+
             <textarea name="introduce" class="data introduce" style="display: none"></textarea>
             <div id="articleEditor" class="tuwenIntro">{$matchOrgInfo.introduce}</div>
         </form>
@@ -192,6 +191,8 @@
             window.top.location.href = this.href;
         });
 
+
+
         //选择器
         (function ($, doc) {
             $.init();
@@ -231,6 +232,16 @@
         $(function () {
             // 组织类型选择
             $('#orgType option[value="{$matchOrgInfo.type}"]').prop("selected", true);
+
+            $(".pbselect").on("change", '', function () {
+                let selection = $(this).find("option:selected").val();
+                if (selection == 1) {
+                    $(".companyDiv").show();
+                } else {
+                    $(".companyDiv").hide();
+                }
+            });
+
         });
 
         function submitAction() {

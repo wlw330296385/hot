@@ -25,6 +25,14 @@
         .nav-list .nav-list-frame .navli {
             width: 25%;
         }
+
+        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
+            font-size: 2.2em;
+        }
+
+        .colactive {
+            color: #dd524d !important
+        }
     </style>
 </head>
 
@@ -48,7 +56,7 @@
                         <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">
                             参赛队：
-                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 粉丝：
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 关注：
                             <strong class="colororange">{$leagueInfo.fans_num}</strong>
                         </p>
                     </div>
@@ -58,24 +66,35 @@
                 </li>
             </ul>
 
-            <nav class="mui-bar-tab leagueNav">
-                <a class="mui-tab-item" href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <span class="mui-tab-label">章程</span>
-                </a>
-                <a class="mui-tab-item" href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-email"></span>
-                    <span class="mui-tab-label">赛程</span>
-                </a>
-                <a class="mui-tab-item" href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-contact"></span>
-                    <span class="mui-tab-label">战绩</span>
-                </a>
-                <a class="mui-tab-item mui-active" href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-gear"></span>
-                    <span class="mui-tab-label">数据</span>
-                </a>
-            </nav>
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
+                            <span class="mui-icon mui-icon-home"></span>
+                            <span class="f14" style="display: block;">章程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
+                            <span class="mui-icon mui-icon-email"></span>
+                            <span class="f14" style="display: block;">赛程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
+
+                            <span class="mui-icon mui-icon-contact"></span>
+                            <span class="f14" style="display: block;">战绩</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}" class="colactive">
+                            <span class="mui-icon mui-icon-gear"></span>
+                            <span class="f14" style="display: block;">数据</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
             <div class="camp-lesson-list">
                 <div id="segmentedControl" class="mui-segmented-control mb">
