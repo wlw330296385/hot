@@ -323,21 +323,33 @@ class Group extends Base{
                 $punchTime_start = strtotime($punch_time);
                 $punchTime_end = $punchTime_start+86399;
             }else{
-                return jsoin(['code'=>100,'msg'=>'请选择时间']);
+                return json(['code'=>100,'msg'=>'请选择时间']);
             }
-            $groupList = db('group_member')
-                ->field('group_member.*,pool.stake,pool.pool,pool.status as p_status,pool.id as p_id,pool.times')
-                ->join('pool','pool.group_id = group_member.group_id','left')
+            // $groupList = db('group_member')
+            //     ->field('group_member.*,pool.stake,pool.pool,max(pool.status) as p_status,max(pool.id) as p_id,pool.times')
+            //     ->join('pool','pool.group_id = group_member.group_id','left')
+            //     ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
+            //     // ->where(['pool.status'=>2])
+            //     ->group('pool.group_id')
+            //     ->order('pool.id desc')
+            //     ->select();
+            $groupList = db('pool')
+                ->field('group_member.*,pool.stake,pool.pool,(pool.status) as p_status,(pool.id) as p_id,pool.times,pool.create_time')
+                ->join('group_member','pool.group_id = group_member.group_id','left')
                 ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
                 // ->where(['pool.status'=>2])
-                ->order('group_member.id desc')
+                // ->group('pool.group_id')
+                ->order('pool.create_time desc')
                 ->select();
-             
+
             //如果某人当天已在奖金池里打卡超过times(不允许打卡)
             $pool_ids = [];
             if(!empty($groupList)){
                 foreach ($groupList as $key => $value) {
-                    $pool_ids[] = $value['p_id'];
+                    //只有进行中的奖金池才统计打卡次数
+                    if($value['status'] == 2){
+                        $pool_ids[] = $value['p_id'];
+                    }
                     $groupList[$key]['punchs'] = 0;
                 }
                 $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->where(['create_time'=>['between',[$punchTime_start,$punchTime_end]]])->group('pool_id')->select();
