@@ -90,7 +90,10 @@ class Group extends Base{
             $this->error('权限不足');
         }
 
+        // thelastpool
+        $lastSeason = db('pool')->where(['group_id'=>$group_id,'status'=>['egt',-1]])->value('season');//上一期     
 
+        $this->assign('lastSeason',$lastSeason?$lastSeason:0);
         $this->assign('groupInfo',$groupInfo);
         return view('Group/createPool');
     }
