@@ -386,7 +386,7 @@ class Team extends Base
                 ];
                 //dump($messageData);
                 $messageS = new MessageService();
-                $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.successJoin'));
+                $messageS->sendMessageToMember($teamInfo['leader_id'], $messageData, config('wxTemplateID.successJoin'),3600);
             }
             return json($saveApply);
         } catch (Exception $e) {
@@ -474,7 +474,7 @@ class Team extends Base
             ];
             //dump($messageData);
             $messageS = new MessageService();
-            $messageS->sendMessageToMember($applyInfo['member']['id'], $messageData, config('wxTemplateID.applyResult'));
+            $messageS->sendMessageToMember($applyInfo['member']['id'], $messageData, config('wxTemplateID.applyResult'),3600);
             return json($applySaveResult);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

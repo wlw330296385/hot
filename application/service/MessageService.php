@@ -327,7 +327,6 @@ class MessageService
                 ->where([
                 'steward_type' => $data['steward_type'],
                 'title' => $data['title'],
-                'content' => $data['content'],
                 'member_id' => $member_id,
                 'url' => $data['url']
                 ])
