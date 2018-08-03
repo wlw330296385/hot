@@ -456,7 +456,7 @@ class Team extends Base
                     ]);
                 }
                 // 更新球队统计字段
-                $teamS->autoUpdateTeam($data['team_id']);
+                $teamS->autoUpdateTeam($applyInfo['organization_id']);
                 $replystr = '已通过';
             }
             // 发送消息模板给申请人
@@ -742,7 +742,8 @@ class Team extends Base
             if ($res['code'] == 100) {
                 return json($res);
             }
-
+            // 更新球队统计字段
+            $teamS->autoUpdateTeam($team_id);
             // 发送消息通知给球队领队
             $messageS = new MessageService();
             $messageData = [
@@ -922,6 +923,8 @@ class Team extends Base
                         ]);
                     }
                 }
+                // 更新球队统计字段
+                $teamS->autoUpdateTeam($teamInfo['id']);
                 // 返回结果
                 return json($resultSaveTeamMember);
             } else {
@@ -1003,6 +1006,8 @@ class Team extends Base
                     $messageS->sendMessageToMember($memberInfo['id'], $messageData, config('wxTemplateID.checkPend'));
                     // 发送邀请通知给会员 end
                 }
+                // 更新球队统计字段
+                $teamS->autoUpdateTeam($teamInfo['id']);
                 // 返回结果
                 return json($resultSaveTeamMember);
             }
@@ -1365,6 +1370,8 @@ class Team extends Base
                 // 执行保存球队成员数据
                 $resultSaveTeamMember = $teamS->saveTeamMember($data);
             }
+            // 更新球队统计字段
+            $teamS->autoUpdateTeam($teamInfo['id']);
             return json($resultSaveTeamMember);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
