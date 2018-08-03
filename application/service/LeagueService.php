@@ -215,10 +215,10 @@ class LeagueService
     }
 
     // 获取联赛组织人员列表
-    public function getMatchOrgMembers($map)
+    public function getMatchOrgMembers($map,$order='id desc')
     {
         $model = new MatchOrgMember();
-        $res = $model->where($map)->select();
+        $res = $model->where($map)->order($order)->select();
         $result = $res->toArray();
         foreach ($result as $k => $val) {
             $result[$k]['type_num'] = $res[$k]->getData('type');
