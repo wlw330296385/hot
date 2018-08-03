@@ -30,8 +30,8 @@
 <body class=whitebg>
 
     <header class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('group/groupInfo',['group_id'=>$groupInfo.id])}" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">奖池与打卡规则</h1>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow" onclick="goBack()"></a>
+        <h1 class="mui-title">奖池打卡规则</h1>
     </header>
 
     <div class="mui-content">
@@ -42,15 +42,13 @@
             </div>
         </div>
 
+        {if $memberInfo.id==$groupInfo.member_id}
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred hide createPool">
                 <a href="{:url('group/createPool',['group_id'=>$groupInfo.id])}">创建奖池打卡规则</a>
             </li>
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggray hide nowPool">
-                奖池进行中
-            </li>
         </ul>
-
+        {/if}
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -65,6 +63,15 @@
             var count = 1;
             var teamId = wooApi.GetQueryString('team_id');
             var hasCurrPool = false;
+
+            var pageFrom = wooApi.GetQueryString('pageFrom');
+
+
+
+        var member = "{$memberInfo.member}";
+        var member_id = "{$memberInfo.id}";
+        var group_id = "{$groupInfo.id}";
+        var group_member_id = "{$groupInfo.member_id}";
 
         $(function () {
 
@@ -137,7 +144,7 @@
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('group/poolInfo')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><label>' + data.data[i].group + '</label>';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><label>第'+data.data[i].season+ '期 - ' + data.data[i].pool + '</label>';
                                 if (data.data[i].status == 1) {
                                     newli += '<font class="tipCorner bgorange">未开启</font>';
                                 } else if (data.data[i].status == 2) {
@@ -172,9 +179,7 @@
                         } else {
                             mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                         }
-                        if (hasCurrPool==true) {
-                            $(".nowPool").show();
-                        } else {
+                        if (hasCurrPool==false) {
                             $(".createPool").show();
                         }
                     },
@@ -219,6 +224,16 @@
                     }
                 });
             };
+
+
+        //判断返回上一页还是返回社群首页
+        function goBack() {
+            if(pageFrom=="groupEdit"){
+                window.location.href = "{:url('group/groupEdit',['group_id'=>$groupInfo.id])}"
+            }else{
+                window.location.href = "{:url('group/groupInfo',['group_id'=>$groupInfo.id])}"
+            }
+        };
     </script>
 </body>
 

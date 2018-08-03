@@ -101,15 +101,14 @@ class Group extends Base{
     // 奖金池详情
     public function poolInfo() {
 
+        $group_id = input('param.group_id');
+        $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
         $pool_id = input('param.pool_id');
         $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
 
-
-
-
+        $this->assign('groupInfo',$groupInfo);
         $this->assign('poolInfo',$poolInfo);
         
-
         return view('Group/poolInfo');
     }
 

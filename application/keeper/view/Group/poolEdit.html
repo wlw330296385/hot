@@ -25,18 +25,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">当前规则
-                            <span class="colorred">{if $poolInfo.status==1}
-                               未开启
-                            {elseif $poolInfo.status==2}
-                                进行中
-                            {elseif $poolInfo.status==-2}
-                                已终止
-                            {else/}
-                                已结束
-                            {/if}</span>
-                            
-        </h1>
+        <h1 class="mui-title">第 {$poolInfo.season} 期 - 奖池与打卡规则</h1>
     </header>
 
     <div class="mui-content">
@@ -306,7 +295,7 @@
                                 var ajaxResult = wooApi.asyncF(url, objData);
                                 console.log(ajaxResult)
                                 if (ajaxResult.code == 200) {
-                                    var goUrl = "{:url('group/poolInfo')}" + "/pool_id/" + "{$poolInfo.id}";
+                                    var goUrl = "{:url('group/poolInfo')}" + "/group_id/" + "{$poolInfo.group_id}" + "/pool_id/" + "{$poolInfo.id}?pageFrom=poolEdit";
                                     window.top.location.href = goUrl;
                                 } else {
                                     mui.alert(ajaxResult.msg, '终止失败');
@@ -371,7 +360,7 @@
             console.log(ajaxResult)
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '修改成功', '确定', function () {
-                    var goUrl = "{:url('group/poolInfo')}" + "/pool_id/" + "{$poolInfo.id}";
+                    var goUrl = "{:url('group/poolInfo')}" + "/group_id/" + "{$poolInfo.group_id}" + "/pool_id/" + "{$poolInfo.id}?pageFrom=poolEdit";
                     window.top.location.href = goUrl;
                 })
             } else {
