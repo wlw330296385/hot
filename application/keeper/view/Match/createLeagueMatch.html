@@ -171,12 +171,12 @@
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队成员上限数</label>
-                <input type="number" name="max_teammembers" value="" class="data wd52" placeholder="球员上限数不大于20">
+                <input type="number" name="max_teammembers" value="" class="data wd52" placeholder="球队成员上限数">
             </div>
 
             <div class="mui-input-row">
-                <label class="wd45">最多参赛队伍上限</label>
-                <input type="number" name="teams_max" value="" class="data wd52" placeholder="最多参赛队伍上限">
+                <label class="wd45">参赛队伍上限</label>
+                <input type="number" name="teams_max" value="" class="data wd52" placeholder="参赛队伍上限">
             </div>
 
             <div class="mui-input-row">
@@ -365,12 +365,16 @@
 
         $('#format').change(function () {
             var format = $(this).find("option:selected").val();
-            if (format == "5v5") {
+            if (format == "5") {
                 $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于5");
-                $("input[name=max_teammembers]").attr("placeholder", "球员上限数不大于20");
-            } else {
+            } else if (format == "4") {
+                $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于4");
+            } else if (format == "3") {
                 $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于3");
-                $("input[name=max_teammembers]").attr("placeholder", "球员上限数不大于20");
+            } else if (format == "2") {
+                $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于2");
+            } else if (format == "1") {
+                $("input[name=min_teammembers]").attr("placeholder", "球员下限数不小于1");
             }
         });
 
@@ -378,6 +382,8 @@
         $('.select-matchOrg').change(function () {
             var matchOrgId = $(this).find('option:selected').val();
             var matchOrg = $(this).find('option:selected').text();
+            console.log(matchOrgId)
+            console.log(matchOrg)
             if (matchOrgId == 0) {
                 matchOrg = '';
             }
@@ -389,30 +395,35 @@
         function submitAction() {
 
             var format = $("#format").find("option:selected").val();
-            if (format == "5v5") {
-                var min_teammembers = Number($("input[name=min_teammembers]").val());
-                var max_teammembers = Number($("input[name=max_teammembers]").val());
+            var min_teammembers = Number($("input[name=min_teammembers]").val());
+            if (format == "5") {
                 if (min_teammembers < 5) {
                     mui.toast("球员下限数不小于5,请重新输入");
                     $("input[name=min_teammembers]").val('').focus();
                     return false;
                 }
-                if (max_teammembers > 20) {
-                    mui.toast("球员上限数不大于20,请重新输入");
-                    $("input[name=max_teammembers]").val('').focus();
+            } else if (format == "4") {
+                if (min_teammembers < 4) {
+                    mui.toast("球员下限数不小于4,请重新输入");
+                    $("input[name=min_teammembers]").val('').focus();
                     return false;
                 }
-            } else if (format == "3v3") {
-                var min_teammembers = Number($("input[name=min_teammembers]").val());
-                var max_teammembers = Number($("input[name=max_teammembers]").val());
+            } else if (format == "3") {
                 if (min_teammembers < 3) {
                     mui.toast("球员下限数不小于3,请重新输入");
                     $("input[name=min_teammembers]").val('').focus();
                     return false;
                 }
-                if (max_teammembers > 20) {
-                    mui.toast("球员上限数不大于20,请重新输入");
-                    $("input[name=max_teammembers]").val('').focus();
+            } else if (format == "2") {
+                if (min_teammembers < 2) {
+                    mui.toast("球员下限数不小于2,请重新输入");
+                    $("input[name=min_teammembers]").val('').focus();
+                    return false;
+                }
+            } else if (format == "1") {
+                if (min_teammembers < 1) {
+                    mui.toast("球员下限数不小于1,请重新输入");
+                    $("input[name=min_teammembers]").val('').focus();
                     return false;
                 }
             }
