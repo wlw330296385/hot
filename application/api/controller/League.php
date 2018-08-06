@@ -10,6 +10,7 @@ use app\service\MemberService;
 use app\service\MessageService;
 use app\service\RefereeService;
 use app\service\TeamService;
+use app\service\FollowService;
 use think\Db;
 use think\Exception;
 use think\Validate;
@@ -238,6 +239,18 @@ class League extends Base
                     'type' => 10,
                     'status' => 1
                 ]);
+                // 添加 创建人关注联赛
+                $followS = new FollowService();
+                $followData = [
+                    'type' => 5,
+                    'follow_id' => $matchId,
+                    'follow_name' => $data['name'],
+                    'follow_avatar' => $data['logo'],
+                    'member_id' => $this->memberInfo['id'],
+                    'member' => $this->memberInfo['member'],
+                    'member_avatar' => $this->memberInfo['avatar'],
+                ];
+                $followS->saveFollow($followData);
             }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

@@ -321,6 +321,20 @@ class Follow extends Base {
                     $map['follow_id'] = $teamInfo['id'];
                     break;
                 }
+                case 5: {
+                    // 关注联赛
+                    $league_id = input('param.league_id');
+                    if (!$league_id) {
+                        return json(['code' => 100, 'msg' => '联赛'.__lang('MSG_402')]);
+                    }
+                    $leagueS = new LeagueService();
+                    $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $league_id]);
+                    if (!$leagueInfo) {
+                        return json(['code' => 100, 'msg' => '没有联赛信息']);
+                    }
+                    $map['follow_id'] = $leagueInfo['id'];
+                    break;
+                }
             }
             $followS = new FollowService();
             $res = $followS->getfollow($map);
