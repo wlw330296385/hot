@@ -288,8 +288,8 @@ class Match extends Base {
         $nowtime = time();
         $leagueScheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
         if (
-            $nowtime > $this->leagueInfo['reg_start_timestamp'] && $nowtime < $this->leagueInfo['reg_end_timestamp'] &&
-            $this->leagueInfo['apply_status'] == 1 && !$leagueScheduleCount
+            $nowtime > $this->leagueInfo['reg_start_timestamp'] && $nowtime < $this->leagueInfo['reg_end_timestamp']
+            && $this->leagueInfo['apply_status_num'] == 1 && !$leagueScheduleCount
         ) {
             // 可报名
             $cansignup = 1;
@@ -300,7 +300,7 @@ class Match extends Base {
             // 其他情况 当结束报名
             $cansignup = 0;
         }
-
+        
         $this->assign('types', $types);
         $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
         $this->assign('cansignup', $cansignup);
