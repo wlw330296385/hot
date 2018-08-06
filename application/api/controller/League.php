@@ -4813,7 +4813,7 @@ class League extends Base
     }
 
     // 获取会员在联赛模块当前点赞信息
-    public function listhumbup()
+    public function isthumbup()
     {
         try {
             // 将接收参数作提交数据
