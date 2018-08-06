@@ -130,7 +130,7 @@
                 <div class="mui-row hide hasMember">
                     <div class="mui-col-sm-8 mui-col-xs-8 tmFrameLeft">
                         <img src="{$memberInfo.avatar}" alt="" class="avatarImg" style="border: 1px solid #4e4e4e;">
-                        <div class="nameFrame">
+                        <div class="nameFrame" style="white-space: nowrap;">
                             <span class="tmName">{$memberInfo.member}</span>
                             <i class="icon iconfont icon-sex{$memberInfo.sex}"></i>
                             <em class="colorred">
@@ -614,6 +614,10 @@
             if (day < 10) {
                 day = "0" + day
             }
+            var hours = new Date().getHours();
+            if (hours < 10) {
+                hours = "0" + hours
+            }
             var mintues = new Date().getMinutes();
             if (mintues < 10) {
                 mintues = "0" + mintues
@@ -622,7 +626,7 @@
             if (seconds < 10) {
                 seconds = "0" + seconds
             }
-            return year + '-' + month + '-' + day + ' ' + mintues + '-' + seconds
+            return year + '-' + month + '-' + day + ' ' + hours + ':' + mintues
             console.log(time)
         }
 
@@ -642,7 +646,8 @@
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
-
+                        console.log(nowTime())
+                        console.log(data.data[0].start_time)
                         // 将时间戳转成日期格式
                         var Tmonth = gettimem(data.data[0].start_time_stamp * 1000);
                         var Tday = gettimed(data.data[0].start_time_stamp * 1000);

@@ -54,6 +54,15 @@
         .scrollDiv .mui-table-view-cell::after {
             height: 0;
         }
+        .aboutGroup{
+            float: right;
+            font-size: 13px;
+            padding-right: 15px;
+        }
+        .aboutGroup .mui-navigate-right::after{
+            top: 20px;
+        }
+
     </style>
 </head>
 
@@ -68,23 +77,25 @@
             <ul class="mui-table-view borderStyle" style="margin-top: 3px;">
                 <li class="mui-table-view-cell listli" id="logoframe">
                     <div class="mui-media-body  wd66">
-                        <strong class="f16 tmName">{$groupInfo.group}</strong>
+                        <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}"><strong class="f16 tmName">{$groupInfo.group}</strong></a>
                         <img class="mui-media-object mui-pull-left logostyle" src="{$groupInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                         <p class="mui-ellipsis lineHeight20">发起人：{$groupInfo.member}</p>
                         <p class="mui-ellipsis lineHeight20">成员:
                             <text class="colororange">{$groupInfo.members}</text>
                         </p>
                     </div>
+
+                    <div class="aboutGroup"><a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">社群介绍</a></div>
                     <div class="price-frame">
                         {if $status_val === 0}
-                        <button class="mui-btn bgred" style="margin-top:26px">申请中</button>
+                        <button class="mui-btn bgred">申请中</button>
                         {elseif  $status_val <> 1 }
-                        <button class="mui-btn bgred joinGroup" style="margin-top:26px">申请加入</button>
+                        <button class="mui-btn bgred joinGroup">申请加入</button>
                         {/if}
 
                         {if $groupInfo.member_id == $memberInfo.id}
                         <a href="{:url('group/groupEdit',['group_id'=>$groupInfo.id])}">
-                            <button class="mui-btn bgred groupAdmin" style="margin-top:26px">管理</button>
+                            <button class="mui-btn bgred groupAdmin">管理</button>
                         </a>
                         {/if}
                     </div>
@@ -96,13 +107,13 @@
                     <ul class="mui-table-view">
                         <li class="mui-table-view-cell listli">
                             <label>
-                                <span class="icon iconfont icon-msg-notice-active colororange" style="display: inline-block;margin-top: -3px;"></span>公告：{$groupInfo.notice}
+                                <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}"><span class="icon iconfont icon-msg-notice-active colororange" style="display: inline-block;margin-top: -3px;"></span>公告：{$groupInfo.notice}</a>
                             </label>
                         </li>
                         <li class="mui-table-view-cell listli">
                             <label>
-                                <span class="icon iconfont icon-p-game colororange" style="display: inline-block;margin-top: -3px;"></span>上期擂主：
-                                <text class="colororange winer">{volist name="winnerList" id="vol" empty="暂无擂主"}{$vol.member},{/volist}</text>
+                                <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}"><span class="icon iconfont icon-p-game colororange" style="display: inline-block;margin-top: -3px;"></span>上期擂主：
+                                <text class="colororange winer">{volist name="winnerList" id="vol" empty="暂无擂主"}{$vol.member},{/volist}</text></a>
                             </label>
                         </li>
                     </ul>
@@ -116,40 +127,49 @@
             <ul class="mui-table-view whitebg" style="border-bottom: 1px solid #f5f5f5;">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>本期打卡
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>本期动态 <font class="tipCorner bggray">第{$nowPool.season}期</font>
                     </label>
                     <span class="wd25 pdr15 mui-navigate-right">
-                        <a href="{:url('group/groupTenet',['group_id'=>$groupInfo.id])}" class="mui-navigate-right" style="font-size: 13px;">社群规则</a>
+                        <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" style="font-size: 13px;">奖池与规则</a>
                     </span>
                 </li>
             </ul>
 
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm4">
-                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id])}">
-                            <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-punch-Personal"></use>
-                            </svg>
-                            <span class="f14" style="display: block;">个人卡</span>
-                            <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$totalPunch}</div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('group/groupMemberList',['group_id'=>$groupInfo.id])}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-masses"></use>
                             </svg>
-                            <span class="f14" style="display: block;">群成员</span>
+                            <span class="f14" style="display: block;">成员</span>
+                            <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$groupInfo.members}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id])}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-punch-Personal"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">个人</span>
+                            <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$totalPunch}</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm3">
+                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id])}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-workout"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">全员</span>
                             <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$membersPunch}</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
-                        <a href="" class="createPool">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="javascript:;" class="createPool">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-bonuspool"></use>
                             </svg>
-                            <span class="f14" style="display: block;">奖金池</span>
+                            <span class="f14" style="display: block;">奖池</span>
                             <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$totalBonus}</div>
                         </a>
                     </li>
@@ -287,16 +307,16 @@
 
             // 判断是否可以创建奖金池
             $(".createPool").on("tap", function () {
-                if (group_member != member) {
-                    mui.toast("只有社群群主才能创建奖金池");
-                    return false;
+                var currPoolStatus = "{$nowPool.status}";
+                if(currPoolStatus == 2 || currPoolStatus == 1){
+                    window.location.href = "{:url('group/poolInfo')}" + '/group_id/' + "{$groupInfo.id}" + '/pool_id/' + "{$nowPool.id}";
+                }else{
+                    mui.alert("群主还没创建本期奖池与打卡规则哦，去看看历史奖池与规则吧", '温馨提示', '确定', function () {
+                        window.location.href = "{:url('group/poolList',['group_id'=>$groupInfo.id])}";
+                     })
                 }
             });
-            if (group_member != member) {
-                $(".createPool").attr("href", "javascript:;");
-            } else {
-                $(".createPool").attr("href", "{:url('group/poolList',['group_id'=>$groupInfo.id])}");
-            }
+            
 
             var groupIndex = wooApi.GetQueryString('groupIndex');
             if (groupIndex == "otherGroup") {
