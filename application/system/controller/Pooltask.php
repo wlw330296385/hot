@@ -347,7 +347,7 @@ class Pooltask extends Base{
         $WechatService = new \app\service\WechatService();
         //给获奖名单发消息
         $messageData = [
-            "touser" => $$openid,
+            "touser" => $openid,
             "template_id" => "pZCJbOXrNQXkH5zWwghEMP5WK0ejENN-l3F_qUbeABU",
             "url" => "https://m.hot-basketball.com/keeper/group/poolWinnerList/group_id/{$info['group_id']}",
             "topcolor"=>"#FF0000",
@@ -355,7 +355,7 @@ class Pooltask extends Base{
                 'first' => ['value' => '尊敬的会员，您发起的运动打卡擂台擂主已出结果'],
                 'keyword1' => ['value' => "{$info['group']}"],//参赛者
                 'keyword2' => ['value' => "{$info['pool']}"],//期数
-                'keyword3' => ['value' => ""],//结果
+                'keyword3' => ['value' => "具体奖品请进入页面查看"],//结果
                 'remark' => ['value' => '篮球管家祝您身体健康'],
             ],
         ];
