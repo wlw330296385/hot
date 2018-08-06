@@ -29,10 +29,10 @@
         .nav-list .nav-list-frame .navli {
             width: 25%;
         }
-        .mui-grid-view.mui-grid-9 .mui-media .mui-icon{
+
+        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
             font-size: 2.2em;
         }
-
 
         @media screen and (min-width: 320px) {
             .imgShowEvent {
@@ -89,6 +89,7 @@
         <div class="list mt55">
 
             <div class="img16x9" style="background-image:url('{$leagueInfo.cover}')"></div>
+            <!-- 联赛主模块 -->
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
@@ -106,11 +107,9 @@
                         <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
-              
             </ul>
 
-
-
+            <!-- 联赛基本信息 -->
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -157,24 +156,7 @@
                 </li>
             </ul>
 
-            <!-- <nav class="mui-bar-tab leagueNav">
-                <a class="mui-tab-item" href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <span class="mui-tab-label">章程</span>
-                </a>
-                <a class="mui-tab-item" href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-email"></span>
-                    <span class="mui-tab-label">赛程</span>
-                </a>
-                <a class="mui-tab-item" href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-contact"></span>
-                    <span class="mui-tab-label">战绩</span>
-                </a>
-                <a class="mui-tab-item" href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
-                    <span class="mui-icon mui-icon-gear"></span>
-                    <span class="mui-tab-label">数据</span>
-                </a>
-            </nav> -->
+            <!-- 模块导航 -->
             <div class="nav-list record mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -216,6 +198,7 @@
             </div>
             <ul class="mui-table-view list border-b dynamicList"></ul>
 
+            <!-- 联赛简介 -->
             <div class="page-header border-b">
                 <span class="course">联赛简介
                     <span class="noDataTip"></span>
@@ -225,7 +208,7 @@
                 <li class="mui-table-view-cell listli desimg introduce">{$leagueInfo.introduce}</li>
             </ul>
 
-            <!-- 评论 -->
+            <!-- 联赛评论 -->
             <div class="page-header whitebg border-b">
                 <span class="course wd52">评论</span>
                 <span class="more f14">评论
@@ -342,24 +325,8 @@
                 $(".introduce").parents().prev().find(".noDataTip").append("（暂无）");
             }
 
-            // 状态显示
-            // var nowTime = gettime()
-            // var reg_start_time = "{$leagueInfo.reg_start_time}";
-            // var reg_end_time = "{$leagueInfo.reg_end_time}";
-            // var apply_status_num = "{$leagueInfo.apply_status_num}";
-            // if (nowTime < reg_start_time) {
-            //     $(".waitBtn").show();
-            // } else if (nowTime >= reg_start_time) {
-            //     if (apply_status_num == 1) {
-            //         $(".signUpBtn").show();
-            //     } else if (apply_status_num == 2) {
-            //         $(".endBtn").show();
-            //     }
-            // } else if (nowTime > reg_end_time) {
-            //     $(".endBtn").show();
-            // }
-
             var cansignup = "{$cansignup}"
+            console.log(cansignup)
             if (cansignup == -1) {
                 $(".waitBtn").show();
             } else if (cansignup == 1) {
@@ -368,7 +335,7 @@
                 $(".endBtn").show();
             }
 
-            // 关注
+            // 关注联赛
             $(".follow").on("tap", '', function () {
                 var league_id = "{$league_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
@@ -435,39 +402,6 @@
                 });
             });
 
-            //点赞功能
-            $(".thumbsup").on('tap', function () {
-                var commented_id = "{teamInfo.id}";
-                mui.ajax("{:url('api/team/dianzan')}", {
-                    data: {
-                        commented_id: commented_id,
-                        comment_type: 1,
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            $(".thumbup_count").text(data.thumbup_count);
-                            isthumbsup();
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            isthumbsup() //点赞状态
-            followStatus(); //判断当前的关注状态
-            toCommentList(); //获取评论列表
-            toDynamicList(); //获取联赛动态列表
-
             // 工作人员角色popover点击绑定
             $('.typeList').on('tap', 'li', function () {
                 // 需要会员实名
@@ -513,40 +447,73 @@
                 });
             });
 
+            //点赞功能
+            // $(".thumbsup").on('tap', function () {
+            //     var commented_id = "{teamInfo.id}";
+            //     mui.ajax("{:url('api/team/dianzan')}", {
+            //         data: {
+            //             commented_id: commented_id,
+            //             comment_type: 1,
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 $(".thumbup_count").text(data.thumbup_count);
+            //                 isthumbsup();
+            //             } else {
+            //                 mui.toast(data.msg);
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
+
+            // isthumbsup() //点赞状态
+            followStatus(); //判断当前的关注状态
+            toCommentList(); //获取评论列表
+            toDynamicList(); //获取联赛动态列表
 
         });
 
         // 点赞状态
-        function isthumbsup() {
-            var commented_id = "{teamInfo.id}";
-            mui.ajax("{:url('api/team/isthumbup')}", {
-                data: {
-                    commented_id: commented_id,
-                    comment_type: 1,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        $(".thumbup_count").text(data.thumbsup_count);
-                        if (data.thumbsup == 1) {
-                            $(".thumbsup").css("color", "red");
-                        } else {
-                            $(".thumbsup").css("color", "#737373");
-                        }
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
+        // function isthumbsup() {
+        //     var match_id = "{$league_id}";
+        //     mui.ajax("{:url('api/league/isthumbup')}", {
+        //         data: {
+        //             match_id: match_id,
+        //             comment_type: 1,
+        //             match_record_id: 0
+        //         },
+        //         dataType: 'json',//服务器返回json格式数据
+        //         type: 'post',//HTTP请求类型
+        //         timeout: 10000,//超时时间设置为10秒；
+        //         headers: { 'Content-Type': 'application/json' },
+        //         success: function (data) {
+        //             console.log(data);
+        //             if (data.code == 200) {
+        //                 $(".thumbup_count").text(data.thumbsup_count);
+        //                 if (data.thumbsup == 1) {
+        //                     $(".thumbsup").css("color", "red");
+        //                 } else {
+        //                     $(".thumbsup").css("color", "#737373");
+        //                 }
+        //             } else {
+        //                 mui.toast(data.msg);
+        //             }
+        //         },
+        //         error: function (xhr, type, errorThrown) {
+        //             //异常处理；
+        //             console.log(type);
+        //         }
+        //     });
+        // }
 
         // 判断当前的关注状态
         function followStatus() {
@@ -554,7 +521,7 @@
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 5,
-                    team_id: league_id
+                    league_id: league_id
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -686,6 +653,7 @@
                 }
             });
         };
+
         //创建补0函数
         function p(s) {
             return s < 10 ? '0' + s : s;
