@@ -40,17 +40,20 @@
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
 
             <form action="" class="mui-input-group mt55">
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <a href="" class="mui-text-center f14 colorgreen direct">[直接录入活动]</a>
+                </div> -->
+
+                <div class="mui-input-row">
+                    <label>活动类型</label>
+                    <span class="eventType"></span>
+                    <input type="hidden" name="event_type" class="data" value="">
                 </div>
 
-                <!-- <div class="mui-input-row h-auto">
-                    <a class="portraits filePicker mui-navigate-right" onclick="add_id(1)">
-                        <label>活动封面</label>
-                        <img id="preview_1" class="upload-preview" alt="">
-                        <input type="hidden" name="cover" value='' class="data">
-                    </a>
-                </div> -->
+                <div class="mui-input-row">
+                    <label>活动标题</label>
+                    <input type="text" name="event" class="data" value="" placeholder="请输入活动标题">
+                </div>
 
                 <div class="mui-input-row h-auto">
                     <a href="#txpopover" class="mui-navigate-right">
@@ -60,33 +63,14 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
-                    <label>活动主题</label>
-                    <input type="text" name="event" class="data" value="" placeholder="请输入活动主题">
-                </div>
-
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>活动类型</label>
-                        <span class="select-row">
-                            <select id="eventType" class="data" name="event_type">
-                                <option value="">请选择</option>
-                                <option value="1">对内训练</option>
-                                <option value="2">团队建设</option>
-                                <option value="3">日常活动</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnStart" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>开始时间</label>
                         <span id="resultStart" class="ui-alert domData" name="start_time"></span>
                     </div>
                 </div>
 
-                <div class="mui-input-row picker btnEnd" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
+                <div class="mui-input-row picker btnEnd" data-options='{"beginYear":2017,"endYear":2050}'>
                     <div class="mui-navigate-right">
                         <label>结束时间</label>
                         <span id="resultEnd" class="ui-alert domData" name="end_time"></span>
@@ -108,7 +92,7 @@
                     <input type="text" name="location" value="" class="data location" placeholder="请输入活动地点">
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
@@ -124,7 +108,7 @@
                         <input class="mui-input-numbox data" type="number" name="max" value="">
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="mui-input-row">
                     <label class="wd52">发布通知并通知队员</label>
@@ -135,7 +119,7 @@
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
-                    <span class="course">活动详情</span>
+                    <span class="course">活动说明</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro"></div>
@@ -286,10 +270,20 @@
 
         $(function () {
 
+            var typeVal = wooApi.GetQueryString('val');
+            $("input[name=event_type]").val(typeVal);
+            if (typeVal == 1) {
+                $(".eventType").text("队内训练");
+            } else if (typeVal == 2) {
+                $(".eventType").text("团建活动");
+            } else if (typeVal == 3) {
+                $(".eventType").text("其它活动");
+            }
+
             // 点击直接编辑录入
-            $(".direct").on("tap", '', function () {
-                location.href = "{:url('team/eventEdit',['team_id' => $team_id])}";
-            });
+            // $(".direct").on("tap", '', function () {
+            //     location.href = "{:url('team/eventEdit',['team_id' => $team_id])}";
+            // });
 
             // 是否发布通知
             $(".isRelease").on("tap", '', function () {
@@ -306,12 +300,12 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            var min = $("input[name=min]").val();
-            var max = $("input[name=max]").val();
-            if (min > max) {
-                mui.toast("请选择正确的人数区间值");
-                return false;
-            }
+            // var min = $("input[name=min]").val();
+            // var max = $("input[name=max]").val();
+            // if (min > max) {
+            //     mui.toast("请选择正确的人数区间值");
+            //     return false;
+            // }
 
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
@@ -346,7 +340,7 @@
         };
     </script>
 
-<script>
+    <script>
         var pc = new PhotoClip('.clipArea', {
             size: 260,
             outputSize: 640,

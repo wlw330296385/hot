@@ -943,7 +943,7 @@
 
         //自定义获取球员列表
         function teamMemberlist() {
-            var url = "{:url('api/team/teammemberlist','','',true)}";
+            var url = "{:url('api/team/teammembers','','',true)}";
             mui.ajax({
                 url: url,
                 data: {
@@ -1134,8 +1134,12 @@
                         div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' + data.data[0].location + '</p><p>活动类型：' + data.data[0].event_type + '</p></div><div class=opFrame><button class="mui-btn opbtn" style="margin-right: 8px"><a href="' + url + '">详情</a></button>';
                         if (data.data[0].is_finished_num == 1) {
                             div += '<button class="mui-btn opbtn bggray">已结束</button>';
-                        } else {
-                            div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                        } else if (data.data[0].is_finished_num == -1) {
+                            if (nowTime() < data.data[0].end_time) {
+                                div += '<button class="mui-btn opbtn bggreen signupEventBtn">参加</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bggray">已结束</button>';
+                            }
                         }
                         div += ' </div></div></li>';
                         // 人员头像版块
@@ -1144,7 +1148,6 @@
                             div += '<img src="' + data.data[0].memberlist[j].avatar + '" alt="">';
                         }
                         div += '</div><span class="singUpTip"><font class="colorred reg_number">' + data.data[0].reg_number + '</font>/<font class="reg_all">' + data.data[0].max + '</font> 已报名</span></li>';
-                        // }
                         $(".newEvent").empty().append(div);
                     }
                     if (data.code == 100) {
@@ -1421,8 +1424,10 @@
                             newli += '<div class="mui-media-body wd83"><strong class="colororange f16"> ' + data.data[i].name + '</strong><p class="mui-ellipsis lineHeight20" >授奖单位： ' + data.data[i].award_org + '</p ><p class="mui-ellipsis lineHeight20">授奖日期：' + data.data[i].honor_time + '</p></div >'
                             newli += '</a></li >';
                         }
+                        $(".honor").prev().find(".noDataTip").append('（' + data.data.length + '）');
                     }
                     $("ul.honor").empty().append(newli);
+
                     if (newli == '') {
                         $(".honor").prev().find(".noDataTip").append("（暂无）");
                     }
@@ -1466,13 +1471,22 @@
             var year = _time.getFullYear();
             return p(year) + "年";
         }
+        function nowTime() {
+                var _time = new Date();
+                var year = _time.getFullYear();
+                var month = _time.getMonth() + 1;
+                var day = _time.getDate();
+                var hours = _time.getHours();
+                var minutes = _time.getMinutes();
+                return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+            }
     </script>
 
 
 
     <script>
 
-        var wxDesc = $(".about").text().replace(/[\r\n]/g,"");
+        var wxDesc = $(".about").text().replace(/[\r\n]/g, "");
 
         wx.config({
             //debug: true,

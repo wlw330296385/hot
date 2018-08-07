@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>向导页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body class="whitebg">
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">向导页</h1>
+    </header>
+
+    <div class="mui-content whitebg">
+        <div class="success-frame" style="margin-top: 60px">
+
+            <div class="choise-identity">
+                请选择你要发布的<span class="type"></span>类型
+            </div>
+
+            <!-- 活动类型 -->
+            <div class="eventType hide">
+                <div class="choise">
+                    <a href="{:url('team/createEvent',['team_id'=>$team_id])}/?val=1">
+                        <button type="button" class="mui-btn bgblue">发布队内训练</button>
+                    </a>
+                </div>
+                <div class="choise">
+                    <a href="{:url('team/createEvent',['team_id'=>$team_id])}/?val=2">
+                        <button type="button" class="mui-btn bgblue">发布团建活动</button>
+                    </a>
+                </div>
+                <div class="choise">
+                    <a href="{:url('team/createEvent',['team_id'=>$team_id])}/?val=3">
+                        <button type="button" class="mui-btn bgblue">发布其他活动</button>
+                    </a>
+                </div>
+                <div class="choise" style="margin-top: 50px;">
+                    <a href="{:url('team/eventedit',['team_id'=>$team_id])}">
+                        <button type="button" class="mui-btn bggreen">直接录入活动</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 比赛类型 -->
+            <div class="matchType hide">
+                <div class="choise">
+                    <a href="{:url('team/createMatch',['team_id'=>$team_id])}/?val=2">
+                        <button type="button" class="mui-btn bgblue">发布友谊赛</button>
+                    </a>
+                </div>
+                <div class="choise">
+                    <a href="{:url('team/createMatch',['team_id'=>$team_id])}/?val=4">
+                        <button type="button" class="mui-btn bgblue">发布公开赛</button>
+                    </a>
+                </div>
+                <div class="choise" style="margin-top: 50px;">
+                    <a href="{:url('team/directmatch',['team_id'=>$team_id])}">
+                        <button type="button" class="mui-btn bggreen">直接录入比赛</button>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        // 获取传参的类型
+        var type = wooApi.GetQueryString('type');
+        if (type == "活动") {
+            $(".eventType").show();
+        } else {
+            $(".matchType").show();
+        }
+        $(".type").text(type)
+
+    </script>
+</body>
+
+</html>

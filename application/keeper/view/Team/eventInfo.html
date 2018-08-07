@@ -189,7 +189,7 @@
 
             <!-- 活动详情 -->
             <div class="page-header">
-                <span class="course">活动详情</span>
+                <span class="course">活动说明</span>
             </div>
             <ul class="mui-table-view mb">
                 <li class="listli desimg">{$eventInfo.event_des}</li>
@@ -319,11 +319,15 @@
 
                 // 判断身份显示操作按钮
                 var is_finished = "{$eventInfo.is_finished}";
-
+                var end_time = "{$eventInfo.end_time}";
                 if (is_finished == "已结束") {
                     $(".status1").show();
                 } else {
-                    $(".status2").show();
+                    if (nowTime() > end_time) {
+                        $(".status1").show();
+                    } else {
+                        $(".status2").show();
+                    }
                 }
 
                 // 报名/参与人员的文字显示
@@ -550,6 +554,20 @@
                     }
                 });
             };
+
+            //创建补0函数
+            function p(s) {
+                return s < 10 ? '0' + s : s;
+            }
+            function nowTime() {
+                var _time = new Date();
+                var year = _time.getFullYear();
+                var month = _time.getMonth() + 1;
+                var day = _time.getDate();
+                var hours = _time.getHours();
+                var minutes = _time.getMinutes();
+                return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+            }
         </script>
 </body>
 
