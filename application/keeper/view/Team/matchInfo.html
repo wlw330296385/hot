@@ -222,12 +222,12 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-EndTime colororange"></span>时间</label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>比赛时间</label>
                     <span class="match_time">{$matchInfo.match_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Location colororange"></span>地区</label>
+                        <span class="icon iconfont icon-activity-Location colororange"></span>比赛地区</label>
                     <span>{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
@@ -270,7 +270,8 @@
                     </span>
                     <span class="more f14">
                         <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
-                            <b class="colororange signup_num">0</b>/{$countTeamMember}
+                            <b class="colororange signup_num">0</b>/
+                            <b class="allTeamMember">0</b>
                         </a>
                     </span>
                 </div>
@@ -360,10 +361,15 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
-
+            toHomeMemberList()
             // 去逗号
             var refereeList = $(".refereeList").text()
             $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
+            
+            // 如果客队为手动填写的球队，则输出默认图片
+            if ("{$matchInfo.record.away_team_id}" == -1) {
+                $(".awayLogo").attr("src","/static/frontend/images/basketball.png")
+            }
 
             // 没有对手比分不显示
             var homeTeam = "{$matchInfo.record.home_score}";
@@ -679,6 +685,32 @@
                     }
                 },
                 error: function (xhr, type, errerThrown) {
+                    console.log(type);
+                }
+            });
+        };
+
+        //获取主队成员列表
+        function toHomeMemberList() {
+            var team_id = "{$team_id}";
+            mui.ajax("{:url('api/team/teammembers')}", {
+                data: {
+                    team_id: team_id,
+                    status: 1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var div = '';
+                    if (data.code == 200) {
+                        $(".allTeamMember").empty().append(data.data.length);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
                     console.log(type);
                 }
             });

@@ -218,7 +218,7 @@
 
             <div class="mui-input-row" id='showCityPicker3'>
                 <div class="mui-navigate-right">
-                    <label>地区</label>
+                    <label>比赛地区</label>
                     <span id="cityResult3" class="ui-alert">{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                     <input type="hidden" name="province" value="{$matchInfo.province}" class="data" id="province">
                     <input type="hidden" name="city" value="{$matchInfo.city}" class="data" id="city">
@@ -229,7 +229,7 @@
 
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
-                    <label>球场</label>
+                    <label>比赛地点</label>
                     <span class="courtCont domData wd60" name="court">{$matchInfo.court}</span>
                     <input type="hidden" name="court_id" value="{$matchInfo.court_id}" class="data">
                     <input type="hidden" name="court_lng" value="{$matchInfo.court_lng}" class="data">
@@ -299,7 +299,7 @@
 
             <p class="pline"></p>
 
-            <div class="mui-input-row">
+            <!-- <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>是否公开</label>
                     <span class="select-row">
@@ -309,6 +309,14 @@
                         </select>
                     </span>
                 </div>
+            </div> -->
+
+            <div class="mui-input-row">
+                <label class="wd52">是否公开</label>
+                <div class="mui-switch isStatus">
+                    <div class="mui-switch-handle"></div>
+                </div>
+                <input type="hidden" name="status" value="{$matchInfo.status}" class="data">
             </div>
 
             <div class="mui-input-row">
@@ -331,7 +339,7 @@
             <!-- 主队 -->
             <div class="operation-box">
                 <div class="mui-input-row">
-                    <label class="wd">主队参赛人员</label>
+                    <label class="wd">添加主队参赛人员</label>
                 </div>
                 <div class="box" id="inactiveList"></div>
                 <div class="box" id="hideStList" style="display:none"></div>
@@ -953,12 +961,21 @@
             // 设置裁判付费方式
             $('#refereeCostBear option[value="{$matchInfo.record.referee_cost_bear}"]').prop("selected", true);
             // 设置是否公开
+            // if ("{$matchInfo.status}" == "公开") {
+            //     var status = 1
+            // } else {
+            //     var status = -1;
+            // }
+            // $('#selectStatus option[value=' + status + ']').prop("selected", true);
             if ("{$matchInfo.status}" == "公开") {
-                var status = 1
-            } else {
-                var status = -1;
+                $(".isStatus").addClass("mui-active");
             }
-            $('#selectStatus option[value=' + status + ']').prop("selected", true);
+            if ($("input[name='record[home_team_colorstyle]']").val() == '') {
+                $(".home_color_text").text("选填")
+            }
+            if ($("input[name='record[away_team_colorstyle]']").val() == '') {
+                $(".away_color_text").text("选填")
+            }
 
             // 是否完成录入操作
             var is_finished = "{$matchInfo.is_finished}";
@@ -1646,7 +1663,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="'+keyword+'" placeholder="输入对手名称" /><button class="mui-btn addBtn">设为对手</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1689,12 +1706,12 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team.id + '" data-logo="' + data.data.data[i].opponent_team.logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team.name + '</label><span class="wd45">' + data.data.data[i].opponent_team.city + '&nbsp;' + data.data.data[i].opponent_team.area + '</span></li>'
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team_id + '" ><label class="nameHistory">' + data.data.data[i].opponent_team + '</label></li>'
                             }
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="'+keyword+'" placeholder="输入对手名称" /><button class="mui-btn addBtn">设为对手</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1712,9 +1729,10 @@
         //获取主队成员列表
         function toHomeMemberList() {
             var team_id = "{$team_id}";
-            mui.ajax("{:url('api/team/teammemberlist')}", {
+            mui.ajax("{:url('api/team/teammembers')}", {
                 data: {
                     team_id: team_id,
+                    status: 1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -1824,7 +1842,7 @@
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="输入比赛地点" /><button class="mui-btn addNewcourt">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="'+keyword+'" placeholder="输入比赛地点" /><button class="mui-btn addNewcourt">确认</button></div>'
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
