@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 32
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 100126
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50553
+ Source Host           : localhost:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 100126
+ Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 24/05/2018 18:03:59
+ Date: 07/08/2018 18:06:28
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `admin_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 171 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 174 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_menu
@@ -44,7 +44,7 @@ CREATE TABLE `admin_menu`  (
 INSERT INTO `admin_menu` VALUES (27, 23, 'admin', '平台设置', 'fa fa-cog', 0, 'admin/system/index', '_self', 1, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (2, 0, 'admin', '微信管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (3, 0, 'admin', '训练营', 'fa fa-group', 0, '', '_self', 1, 1, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (4, 0, 'admin', '财务管理', 'fa fa-flag', 0, '', '_self', 1, 2, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (4, 0, 'admin', '平台财务统计管理', 'fa fa-flag', 0, '', '_self', 1, 2, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (5, 0, 'admin', '会员管理', 'fa fa-user', 0, '', '_self', 1, 3, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (6, 2, 'admin', '菜单管理', 'fa fa-cog', 0, 'admin/weixin/menu', '_self', 1, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (7, 3, 'admin', '训练营管理', 'fa fa-cog', 0, 'admin/camp/index', '_self', 1, 1, 1, 0, 0);
@@ -175,7 +175,7 @@ INSERT INTO `admin_menu` VALUES (133, 130, 'admin', '联赛审核', 'fa fa-cog',
 INSERT INTO `admin_menu` VALUES (135, 0, 'admin', '训练营财务管理', 'fa fa-cog', 0, '', '_self', 1, 13, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (136, 135, 'admin', '教练工资明细', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalary', '_self', 1, 3, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (137, 135, 'admin', '教练工资月表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campCoachSalaryMth', '_self', 1, 2, 1, 0, 0);
-INSERT INTO `admin_menu` VALUES (138, 135, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campWithdraw', '_self', 1, 7, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (138, 135, 'admin', '提现列表', 'fa fa-cog', 0, 'admin/Withdraw/campWithdrawList', '_self', 1, 7, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (139, 135, 'admin', '订单列表', 'fa fa-cog', 0, 'admin/Statistics_Camp/campBillList', '_self', 1, 5, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (140, 135, 'admin', '赠课记录', 'fa fa-cog', 0, 'admin/Statistics_Camp/campGift', '_self', 1, 6, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (141, 135, 'admin', '课时结算表', 'fa fa-cog', 0, 'admin/Statistics_Camp/lessonSchedule', '_self', 1, 4, 1, 0, 0);
@@ -206,5 +206,8 @@ INSERT INTO `admin_menu` VALUES (167, 2, 'admin', '创建公众号', 'fa fa-cog'
 INSERT INTO `admin_menu` VALUES (168, 2, 'admin', '编辑公众号', 'fa fa-cog', 0, 'admin/platform/updatePlatform', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (169, 2, 'admin', '添加公众号与模板的对接', 'fa fa-cog', 0, 'admin/template/createTemplatePlatformApi', '_self', 0, 0, 1, 0, 0);
 INSERT INTO `admin_menu` VALUES (170, 2, 'admin', '编辑公众号与模板的对接', 'fa fa-cog', 0, 'admin/template/updateTemplatePlatformApi', '_self', 0, 0, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (171, 0, 'admin', '特殊活动报名名单', 'fa fa-cog', 0, 'admin/apps/appsApplyList', '_self', 1, 88, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (172, 5, 'admin', '会员财务', 'fa fa-cog', 0, 'admin/member/Finance', '_self', 0, 1, 1, 0, 0);
+INSERT INTO `admin_menu` VALUES (173, 5, 'admin', '', 'fa fa-cog', 0, 'admin/member/salaryInList', '_self', 0, 0, 1, 0, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

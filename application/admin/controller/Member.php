@@ -198,4 +198,40 @@ class Member extends Backend{
             'interion' => $interion
         ]);
     }
+
+
+    // 个人流水
+    public function finance(){
+    	$member_id = input('param.member_id');
+    	$page = input('param.page');
+    	$tab = input('param.tab');
+    	$memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+    	$MemberFinance = new \app\model\MemberFinance;
+    	$memberFinanceList = $MemberFinance->where(['member_id'=>$member_id])->paginate(30);
+
+
+		$this->assign('memberFinanceList',$memberFinanceList);
+		$this->assign('memberInfo',$memberInfo);
+		$this->assign('page',$page);
+		$this->assign('tab',$tab);
+		return view('member/finance');
+    }
+
+
+    //教练工资
+    public function salaryInList(){
+    	$member_id = input('param.member_id');
+    	$page = input('param.page');
+    	$tab = input('param.tab');
+    	$memberInfo = $this->MemberService->getMemberInfo(['id'=>$member_id]);
+    	$SalaryIn = new \app\model\SalaryIn;
+    	$salaryInList = $SalaryIn->where(['member_id'=>$member_id])->paginate(30);
+
+
+		$this->assign('salaryInList',$salaryInList);
+		$this->assign('memberInfo',$memberInfo);
+		$this->assign('page',$page);
+		$this->assign('tab',$tab);
+		return view('member/salaryInList');
+    }
 }
