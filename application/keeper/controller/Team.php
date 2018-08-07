@@ -353,6 +353,11 @@ class Team extends Base
         return view('Team/album');
     }
 
+     // 向导页面
+     public function guidePage()
+     {
+         return view('Team/guidePage');
+     }
     // 添加活动
     public function createevent()
     {
