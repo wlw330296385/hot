@@ -23,7 +23,7 @@
         }
 
         .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
-            font-size: 2.2em;
+            font-size: 2.2evm;
         }
 
         .colactive {
@@ -240,11 +240,12 @@
                                     newli += `<tr onclick="location.href='${urlRecord}'" >`
                                 }
                                 newli += `<td class="tdpPadding">`
+
+                                newli += `<p class="siteNum">${j + 1}</p>`
                                 if (scheduleArr.match_group != '') {
                                     newli += `<p>${scheduleArr.match_group}</p>`
                                 }
-                                newli += `<p class="siteNum">${j + 1}</p>
-                                            <p>${j + 1}号场</p>
+                                newli += `<p>${scheduleArr.court_no}</p>
                                         </td>
                                         <td class="borderC">
                                             <p class="leagueGroup pGroup border-b">
@@ -258,8 +259,12 @@
                                             </p>
                                         </td>`
                                 if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score == 0) {
-                                    var Ttime = gettimeh(scheduleArr.match_timestamp * 1000);
-                                    newli += ` <td><p>${Ttime}</p></td>`
+                                    if (scheduleArr.match_timestamp === 0) {
+                                        newli += ` <td><p>暂无</p></td>`
+                                    } else {
+                                        var Ttime = gettimeh(scheduleArr.match_timestamp * 1000);
+                                        newli += ` <td><p>${Ttime}</p></td>`
+                                    }
                                 } else {
                                     newli += ` <td>
                                                     <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>

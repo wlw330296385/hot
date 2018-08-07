@@ -414,6 +414,36 @@ class League extends Base
     }
 
     // 联赛球队列表
+    public function leagueteams() {
+        try {
+            $data = input('param.');
+            $page = input('param.page', 1);
+            // 参数league_id -> match_id
+            if (input('?param.league_id')) {
+                unset($data['league_id']);
+                $data['match_id'] = input('param.league_id');
+            }
+
+            if (input('?page')) {
+                unset($data['page']);
+            }
+            // 查询条件组合end
+
+            // 获取参加联赛的球队列表
+            $leagueS = new LeagueService();
+            $result = $leagueS->getMatchTeamsWithTeam($data);
+            if (!$result) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_000')];
+            } else {
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+            }
+            return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    // 联赛球队列表
     public function leagueteamlist()
     {
         try {
