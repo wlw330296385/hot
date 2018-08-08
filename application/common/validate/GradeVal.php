@@ -32,7 +32,7 @@ class GradeVal extends Validate{
         'court.require' => '请选择训练地点',
         // 'coach_id.require' => '请选择主教练',
         // 'coach_salary.require' => '请填写主教底薪',
-        // 'coach_salary.number' => '请在主教底薪填写数字',
+        'coach_salary.number' => '请在主教底薪填写数字',
         'assistant_salary.number' => '请在助教底薪填写数字',
         'salary_base.number' => '请在提成基数填写数字'
     ];

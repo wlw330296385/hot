@@ -160,6 +160,7 @@ class Schedule extends Base
                 $hideDisplay =1;
             }
         }
+
 		// 教练列表
 		$map['camp_id'] = $camp_id;
         $map['camp_member.status'] = 1;
@@ -195,7 +196,7 @@ class Schedule extends Base
 		// 班级学生
 		$studentList = db('grade_member')->where(['grade_id'=>$grade_id,'status'=>1,'type'=>1])->select();
 		$expstudentList = db('grade_member')->where(['grade_id' => $grade_id, 'status' => 1, 'type' => 2])->select();
-//		dump($studentList);
+
 		$countStudentList = count($studentList);
 
 		$this->assign('fanListOfCamp',$fanListOfCamp);

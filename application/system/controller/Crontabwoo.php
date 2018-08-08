@@ -84,7 +84,7 @@ class Crontabwoo extends Base {
                     $pushSalary = $schedule['salary_base'] * $numScheduleStudent;
                     $coachMember = $this->getCoachMember($schedule['coach_id']);
                     $totalCoachSalary = 0;
-
+                    $s_balance = (float)$coachMember['member']['balance'];
                     // 主教练薪资
                     $incomeCoach = [
                         'salary' => $schedule['coach_salary'],
@@ -113,8 +113,8 @@ class Crontabwoo extends Base {
                     $MemberFinanceData1 = [
                                 'member_id' => $coachMember['member']['id'],
                                 'member' => $coachMember['member']['member'],
-                                's_balance'=>(float)$coachMember['member']['balance'],
-                                'e_balance'=>($coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary),
+                                's_balance'=>$s_balance,
+                                'e_balance'=>($s_balance+$schedule['coach_salary']+$pushSalary),
                                 'money' =>$schedule['coach_salary']+$pushSalary,
                                 'type'=>1,
                                 'system_remarks'=>'课时主教练总薪资收入',
@@ -158,7 +158,7 @@ class Crontabwoo extends Base {
                                 'member_id' => $val['member']['id'],
                                 'member' => $val['member']['member'],
                                 's_balance'=>(float)$val['member']['balance'],
-                                'e_balance'=>(float)($val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
+                                'e_balance'=>((float)$val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
                                 'money' =>$schedule['assistant_salary']+$pushSalary,
                                 'type'=>1,
                                 'system_remarks'=>'课时助理教练总薪资收入',
@@ -294,6 +294,7 @@ class Crontabwoo extends Base {
                 // 主教练课时人头工资提成
                 $pushSalary = $schedule['salary_base'] * $totalScheduleStudent;
                 $coachMember = $this->getCoachMember($schedule['coach_id']);
+                $s_balance = (float)$coachMember['member']['balance'];
                 if($coachMember){
                     // 主教练薪资
                     $incomeCoach = [
@@ -321,8 +322,8 @@ class Crontabwoo extends Base {
                     $MemberFinanceData = [
                             'member_id' => $coachMember['member']['id'],
                             'member' => $coachMember['member']['member'],
-                            's_balance'=>(float)$coachMember['member']['balance'],
-                            'e_balance'=>(float)($coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary),
+                            's_balance'=>$s_balance,
+                            'e_balance'=>(float)($s_balance+$schedule['coach_salary']+$pushSalary),
                             'money' =>$schedule['coach_salary']+$pushSalary,
                             'type'=>1,
                             'system_remarks'=>'课时主教练总薪资收入',
@@ -374,7 +375,7 @@ class Crontabwoo extends Base {
                             'member_id' => $val['member']['id'],
                             'member' => $val['member']['member'],
                             's_balance'=>(float)$val['member']['balance'],
-                            'e_balance'=>(float)($val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
+                            'e_balance'=>((float)$val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
                             'money' =>$schedule['assistant_salary']+$pushSalary,
                             'type'=>1,
                             'system_remarks'=>'课时助理教练总薪资收入',
