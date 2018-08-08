@@ -103,9 +103,10 @@ class Financial extends Base {
             $map['camp_id'] = $camp['id'];
             $map['is_pay'] = 1;
             // 如果传入start和end参数则查询数据时间范围/否则查询本月时间
-            if (input('?start') && input('?end')) {
-                $start = input('start');
-                $end = input('end');
+            $start = input('param.start');
+            $end = input('param.end');
+            if (!$start || !$end) {
+               
                 if ( !checkDatetimeIsValid($start) || !checkDatetimeIsValid($end) ) {
                     return json(['code' => 100, 'msg' => '日期格式不合法']);
                 }
