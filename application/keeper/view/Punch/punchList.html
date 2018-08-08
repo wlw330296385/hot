@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>打卡列表</title>
+    <title>{$memberInfo.member}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,7 +31,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left punchListHref"></a>
-        <h1 class="mui-title">打卡列表</h1>
+        <h1 class="mui-title">历史打卡记录</h1>
     </header>
 
     <div class="mui-content">
@@ -54,6 +54,10 @@
         var count = 1;
         $(function () {
             var group_id = wooApi.GetQueryString('group_id');
+            var group_name = wooApi.GetQueryString('group');
+            if(group_name!=""&&group_name!=null&&group_name!="undefine"){
+                $("title").text(group_name)
+            }
             //初始化全局变量
             mui.init({
                 swipeBack: true, //启用右滑关闭功能
@@ -171,9 +175,6 @@
                                     newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金&nbsp;<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏&nbsp;<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
                                     newli += '</div></a></li>'
                                 }
-                                if (newli == '') {
-                                    $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                                }
                             }
                             if (gType == 1) {
                                 //上拉刷新
@@ -184,6 +185,7 @@
                                     $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                                 }
                             } else {
+                                console.log("sss")
                                 //下拉加载 gType==2
                                 $("ul.punchList").append(newli);
                             }

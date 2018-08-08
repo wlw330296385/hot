@@ -62,6 +62,7 @@
         .aboutGroup .mui-navigate-right::after{
             top: 20px;
         }
+        .list .listli .iconfont{ margin-right: 2px !important; }
 
     </style>
 </head>
@@ -127,7 +128,36 @@
             <ul class="mui-table-view whitebg" style="border-bottom: 1px solid #f5f5f5;">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>本期动态 <font class="tipCorner bggray">第{$nowPool.season}期</font>
+                        <span class="icon iconfont icon-activity-opponent colororange"></span>
+                        
+                        {if $nowPool.season==''}
+                        本期奖池
+                        <font class="tipCorner bggray">
+                            未创建
+                        </font>
+                        {else/}
+                        第{$nowPool.season}期奖池
+                        
+                            {if $nowPool.status==-2}
+                            <font class="tipCorner bggray">
+                                已终止
+                            </font>
+                            {elseif $nowPool.status==-1}
+                            <font class="tipCorner bggray">
+                                已结束
+                            </font>
+                            {elseif $nowPool.status==1}
+                            <font class="tipCorner bgblue">
+                                未开启
+                            </font>
+                            {else/}    
+                            <font class="tipCorner bggreen">     
+                                进行中
+                            </font>
+                            {/if}
+                        
+                        {/if}
+                        
                     </label>
                     <span class="wd25 pdr15 mui-navigate-right">
                         <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" style="font-size: 13px;">奖池与规则</a>
@@ -178,10 +208,10 @@
 
             <div class="page-header">
                 <span class="course">
-                    打卡记录
+                    社群打卡
                 </span>
                 <span class="more pdr15">
-                    <a href="{:url('punch/punchList')}/?group_id={$groupInfo.id}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('punch/punchList')}/?group_id={$groupInfo.id}&group={$groupInfo.group}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view mb punchList"></ul>
@@ -311,7 +341,7 @@
                 if(currPoolStatus == 2 || currPoolStatus == 1){
                     window.location.href = "{:url('group/poolInfo')}" + '/group_id/' + "{$groupInfo.id}" + '/pool_id/' + "{$nowPool.id}";
                 }else{
-                    mui.alert("群主还没创建本期奖池与打卡规则哦，去看看历史奖池与规则吧", '温馨提示', '确定', function () {
+                    mui.alert("群主还没创建本期奖池打卡规则，<br />去看看历史奖池与规则吧", '温馨提示', '确定', function () {
                         window.location.href = "{:url('group/poolList',['group_id'=>$groupInfo.id])}";
                      })
                 }

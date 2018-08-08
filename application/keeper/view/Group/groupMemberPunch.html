@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>个人打卡列表</title>
+    <title>{$groupInfo.group}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -13,18 +13,30 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class=whitebg>
-    <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">个人打卡列表</h1>
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="message-list">
+            <div id="segmentedControl" class="mui-segmented-control">
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('group/groupInfo',['group_id'=>$groupInfo.id])}"></a>
+                <a class="mui-control-item mui-active" href="#memberPunch">我的打卡</a>
+                <a class="mui-control-item" href="#groupPunch">群员打卡</a>
+            </div>
+        </div>
     </header>
 
     <div class="mui-content">
 
-        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b groupMemberList">
-                </ul>
+        <div class="tab-pullRefresh">
+            <div id="memberPunch" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b memberPunchList"></ul>
+                </div>
+            </div>
+            <div id="groupPunch" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view detalis-list list border-b groupMemberList"></ul>
+                </div>
             </div>
         </div>
 
@@ -32,69 +44,152 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
-         mui(".mui-content").on("tap", "a", function () {
+         mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
         var group_id = "{$groupInfo.id}"
+        var member_id = "{$memberInfo.id}"
 
         $(function () {
 
             //初始化全局变量
-            var count = 1;
+            var mCount = 1;
+            var gCount = 1;
 
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1;//显示第一页
-                var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
-            }
 
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
-                    }
+            mui('#memberPunch').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: false,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshM
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshM
                 }
             });
+
+            mui('#groupPunch').pullRefresh({
+                down: {
+                    //下拉刷新
+                    height: 50,//可选.默认50.触发下拉刷新拖动距离
+                    auto: true,//可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    callback: pulldownRefreshG
+                },
+                up: {
+                    //上拉加载
+                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    //auto:true,//可选,默认false.自动上拉加载一次
+                    contentrefresh: '正在加载...',
+                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    callback: pullupRefreshG
+                }
+            });
+
             //下拉刷新具体业务实现
-            function pulldownRefresh() {
+            function pulldownRefreshM() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
-                    var page = count;
+                    mCount = 1;//刷新并显示第一页
+                    var page = mCount;
                     var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    toMemberList(page, gType);//具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
-            function pullupRefresh() {
+            function pullupRefreshM() {
                 setTimeout(function () {
-                    count++;//翻下一页
-                    var page = count;
+                    mCount++;//翻下一页
+                    var page = mCount;
                     var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    toMemberList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+
+            //下拉刷新具体业务实现
+            function pulldownRefreshG() {
+                setTimeout(function () {
+                    gCount = 1;//刷新并显示第一页
+                    var page = gCount;
+                    var gType = 1;//代表下拉刷新
+                    toGroupList(page, gType);//具体取数据的方法
+                }, 100);
+            }
+            //上拉加载具体业务实现
+            function pullupRefreshG() {
+                setTimeout(function () {
+                    gCount++;//翻下一页
+                    var page = gCount;
+                    var gType = 2;//代表上拉加载
+                    toGroupList(page, gType);//具体取数据的方法
                 }, 100);
             }
 
             //接口获取数据并追加到页面
-            var toList = function (page, gType) {
+            var toMemberList = function (member_id,page, gType) {
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}" + '/?page=' + page;
+                mui.ajax({
+                    url: url,
+                    data: {
+                        group_id: group_id,
+                        member_id: member_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
+                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
+                                newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
+                                newli += '</div></a></li>'
+                            }
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.memberPunchList").empty().append(newli);
+                            mui('#memberPunch').pullRefresh().endPulldownToRefresh();
+                            mui('#memberPunch').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.memberPunchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.memberPunchList").append(newli);
+                        }
+                        if (newli != '') {
+                            mui('#memberPunch').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#memberPunch').pullRefresh().endPullupToRefresh(true);
+                        }
+
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui('#memberPunch').pullRefresh().endPullupToRefresh(true);
+                    }
+                });
+            };
+
+
+            //接口获取数据并追加到页面
+            var toGroupList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var member_id = "{$memberInfo.id}"
                 var url = "{:url('api/punch/getGroupPunchListByPageApi','','',true)}" + '/?page=' + page;
@@ -123,8 +218,8 @@
                         if (gType == 1) {
                             //上拉刷新
                             $("ul.groupMemberList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            mui('#groupPunch').pullRefresh().endPulldownToRefresh();
+                            mui('#groupPunch').pullRefresh().refresh(true);
                             if (newli == '') {
                                 $("ul.groupMemberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                             }
@@ -133,15 +228,15 @@
                             $("ul.groupMemberList").append(newli);
                         }
                         if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                            mui('#groupPunch').pullRefresh().endPullupToRefresh(false);
                         } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            mui('#groupPunch').pullRefresh().endPullupToRefresh(true);
                         }
 
                     },
                     error: function (xhr, type, errerThrown) {
                         mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        mui('#groupPunch').pullRefresh().endPullupToRefresh(true);
                     }
                 });
             };

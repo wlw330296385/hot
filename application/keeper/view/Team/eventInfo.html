@@ -288,6 +288,7 @@
         <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
         <script src="/static/frontend/js/mui.zoom.js"></script>
         <script src="/static/frontend/js/mui.previewimage.js"></script>
+        <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
         <script>
             mui.previewImage();
             //初始化
@@ -551,6 +552,46 @@
                 });
             };
         </script>
+
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$eventInfo.event}',
+                desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$eventInfo.event}',
+                desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
+    </script>
 </body>
 
 </html>
