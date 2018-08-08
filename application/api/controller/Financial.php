@@ -105,9 +105,9 @@ class Financial extends Base {
             // 如果传入start和end参数则查询数据时间范围/否则查询本月时间
             $start = input('param.start');
             $end = input('param.end');
-            if (!$start || !$end) {
+            if ($start || $end) {
                
-                if ( !checkDatetimeIsValid($start) || !checkDatetimeIsValid($end) ) {
+                if ( !checkDatetimeIsValid($start,'Y-m-d') || !checkDatetimeIsValid($end,'Y-m-d') ) {
                     return json(['code' => 100, 'msg' => '日期格式不合法']);
                 }
                 $start = strtotime($start);
