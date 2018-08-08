@@ -82,9 +82,12 @@ class ScheduleService
         } else {
             $data['assistant_id'] = '';
         }
-        if (!isset($data['status'])) {
-            $data['status'] = -1;
-        }
+     
+        $data['status'] = -1;
+        // 班级信息
+        
+
+
         $model = new Schedule();
         // 验证数据
         $validate = validate('ScheduleVal');

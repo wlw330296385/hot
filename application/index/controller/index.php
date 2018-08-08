@@ -17,10 +17,14 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$a = "100.00";
-        $b = (float)$a;
-        dump($a);
-        dump($b);
+    	$list = db('schedule')->where(['is_settle'=>0,'coach_salary'=>0,'assistant_salary'=>0,'status'=>-1])->select();
+        // dump($list);
+        foreach ($list as $key => $value) {
+            $info = db('grade')->where(['id'=>$value['grade_id']])->find();
+            if($info['coach_salary']<>0 || $info['assistant_salary']<>0){
+                db('schedule')->where(['id'=>$value['id']])->update(['coach_salary'=>$info['coach_salary'],'assistant_salary'=>$info['assistant_salary']]);
+            }
+        }
     }
 
     public function index2(){
