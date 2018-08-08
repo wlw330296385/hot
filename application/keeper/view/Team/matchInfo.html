@@ -249,6 +249,16 @@
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
                     <span class="wd60 refereeCostBear">{$matchInfo.record.referee_cost_bear}</span>
                 </li>
+                <li class="mui-table-view-cell listli refereeCost">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判费用</label>
+                    <span class="wd60">{$matchInfo.record.referee_cost}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>其他费用</label>
+                    <span class="wd60">{$matchInfo.record.other_cost}</span>
+                </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
@@ -371,6 +381,13 @@
             var awayTeam = "{$matchInfo.record.away_score}";
             if (homeTeam == 0 && awayTeam == 0) {
                 $(".score").hide();
+            }
+
+            // 裁判费用判断
+            if ("{$matchInfo.record.referee_cost}" != 0) {
+                $(".refereeCost").show();
+            } else {
+                $(".refereeCost").hide()
             }
 
             // 如果对手为空
