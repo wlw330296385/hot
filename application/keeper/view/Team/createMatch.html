@@ -76,22 +76,6 @@
         .refereeChoise input::placeholder {
             color: #bbb;
         }
-
-        /* #refereeDom .fl {
-            text-align: left;
-            float: left;
-        }
-
-        .cancel-dom {
-            font-size: 16px;
-            float: left;
-            margin: 13px 10px;
-        }
-
-        input[name=event-dom_price] {
-            border-left: 1px dotted #DDD;
-            text-align: center !important;
-        } */
     </style>
 </head>
 
@@ -132,16 +116,12 @@
                     </a>
                 </div>
 
-                <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>是否约战</label>
-                        <span class="select-row">
-                            <select class="data" id="islive" name="islive">
-                                <option value="-1">不约战</option>
-                                <option value="1" class="isyz">约战</option>
-                            </select>
-                        </span>
+                <div class="mui-input-row isLiveDiv">
+                    <label class="wd52">是否约战</label>
+                    <div class="mui-switch isLive">
+                        <div class="mui-switch-handle"></div>
                     </div>
+                    <input type="hidden" name="islive" value="-1" class="data">
                 </div>
 
                 <p class="pline"></p>
@@ -174,11 +154,6 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <label>场地费用</label>
-                    <input type="text" name="court_cost" value="" class="data court_cost" placeholder="请填写场地费用">
-                </div>
-
-                <!-- <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label class="wd45">场地付费方式</label>
                         <span class="select-row">
@@ -190,7 +165,12 @@
                             </select>
                         </span>
                     </div>
-                </div> -->
+                </div>
+
+                <div class="mui-input-row">
+                    <label>场地费用</label>
+                    <input type="text" name="court_cost" value="" class="data court_cost" placeholder="请填写场地费用">
+                </div>
 
                 <div class="mui-input-row">
                     <a href="#homeColor" class="mui-navigate-right">
@@ -201,6 +181,7 @@
                     </a>
                 </div>
 
+                <!-- 裁判模块 -->
                 <div class="page-header bggray2">
                     <span class="f12">选择裁判（请选择裁判价位及数量，系统将随机安排裁判，如须指定裁判请点击搜索查询。）</span>
                 </div>
@@ -229,7 +210,7 @@
                     <div class="mui-navigate-right">
                         <label class="wd45">裁判付费方式</label>
                         <span class="select-row">
-                            <select class="data" name="referee_cost_bear">
+                            <select class="refereeBear data" name="record[referee_cost_bear]">
                                 <option value="">免费</option>
                                 <option value="1">费用AA</option>
                                 <option value="2">主队负责</option>
@@ -238,11 +219,15 @@
                         </span>
                     </div>
                 </div>
+                <div class="mui-input-row costCount hide">
+                    <label>裁判费用</label>
+                    <span class="referee_cost domData" name="record[referee_cost]"></span>
+                </div>
 
-                <!-- <div class="mui-input-row">
+                <div class="mui-input-row">
                     <label>其它费用</label>
-                    <input type="text" name="other_cost" value="" class="data other_cost" placeholder="请填写其它费用">
-                </div> -->
+                    <input type="text" name="record[other_cost]" value="" class="data" placeholder="请填写其它费用">
+                </div>
 
                 <p class="pline"></p>
 
@@ -250,18 +235,6 @@
                     <label>温馨提示</label>
                     <textarea name="remarks" class="data remarks" placeholder="请填写提示"></textarea>
                 </div>
-
-                <!-- <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>是否公开</label>
-                        <span class="select-row">
-                            <select class="data" name="status">
-                                <option value="1">公开</option>
-                                <option value="-1">不公开</option>
-                            </select>
-                        </span>
-                    </div>
-                </div> -->
 
                 <div class="mui-input-row">
                     <label class="wd52">是否公开</label>
@@ -288,7 +261,6 @@
             </ul>
         </div>
     </div>
-
 
     <!--选择对手-->
     <div id="awayTeam" class="mui-popover" style="margin: 0">
@@ -478,7 +450,6 @@
         </div>
     </div>
 
-
     <!--裁判列表1-->
     <div id="referee1" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -512,6 +483,7 @@
             </div>
         </div>
     </div>
+
     <!--裁判列表2-->
     <div id="referee2" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
@@ -545,7 +517,8 @@
             </div>
         </div>
     </div>
-    <!--裁判列表1-->
+
+    <!--裁判列表3-->
     <div id="referee3" class="mui-popover tipClass" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
@@ -669,7 +642,6 @@
             });
         })(mui, document);
 
-
         // 主场客场颜色显示
         function colorShow() {
             $(".black").css("background", "black");
@@ -690,7 +662,6 @@
         var referee3 = [];
         $(function () {
 
-            //获取训练营粉丝列表
             var teamKeyword = '';
             var teamHistoryKeyword = '';
             var courtKeyword = '';
@@ -713,11 +684,12 @@
             // toTeamList(wTeams, teamKeyword, 1);
             toTeamListHistory(wTeamsHistory, teamHistoryKeyword, 1);
             toCourtList(wCourt, courtKeyword, 1);
-            colorShow(); // 调用主场客场颜色显示
-            toRefereeList1(wReferee1, "referee1", 1);
-            toRefereeList2(wReferee2, "referee2", 1);
-            toRefereeList3(wReferee3, "referee3", 1);
+            colorShow(); // 主场客场颜色显示
+            toRefereeList1(wReferee1, "referee1", 1); //获取裁判1列表
+            toRefereeList2(wReferee2, "referee2", 1); //获取裁判2列表
+            toRefereeList3(wReferee3, "referee3", 1); //获取裁判3列表
 
+            // 根据路径传参判断赋值比赛类型
             var typeVal = wooApi.GetQueryString('val');
             $("input[name=type]").val(typeVal);
             if (typeVal == 2) {
@@ -725,7 +697,6 @@
             } else if (typeVal == 4) {
                 $(".matchType").text("公开赛");
             }
-
 
             ///////////////裁判1//////////////////////////////////
             //搜索裁判
@@ -736,6 +707,21 @@
             })
             //清除裁判
             $("#refereeDel1").on('tap', '', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var r3Cost = $("input[name='record[referee3_cost]']").val();
+                var r2Cost = $("input[name='record[referee2_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(r3Cost) + Number(r2Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(r3Cost) + Number(r2Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 $(".refereeName1").val('');
                 $(".refereeId1").val('');
                 $(".refereeCost1").val('');
@@ -763,9 +749,24 @@
             })
             // 选择裁判1
             $(".refereeList1").on('tap', 'li', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var refereeCost = $(this).attr("data-referee_cost");
+                var r2Cost = $("input[name='record[referee2_cost]']").val();
+                var r3Cost = $("input[name='record[referee3_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(refereeCost) + Number(r2Cost) + Number(r3Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(refereeCost) + Number(r2Cost) + Number(r3Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
-                var refereeCost = $(this).attr("data-referee_cost");
                 var refereeId2 = $(".refereeId2").val();
                 var refereeId3 = $(".refereeId3").val();
                 if (refereeId == refereeId2 || refereeId == refereeId3) {
@@ -788,6 +789,21 @@
             })
             //清除裁判
             $("#refereeDel2").on('tap', '', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var r1Cost = $("input[name='record[referee1_cost]']").val();
+                var r3Cost = $("input[name='record[referee3_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(r1Cost) + Number(r3Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(r1Cost) + Number(r3Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 $(".refereeName2").val('');
                 $(".refereeId2").val('');
                 $(".refereeCost2").val('');
@@ -815,9 +831,24 @@
             })
             // 选择裁判
             $(".refereeList2").on('tap', 'li', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var refereeCost = $(this).attr("data-referee_cost");
+                var r1Cost = $("input[name='record[referee1_cost]']").val();
+                var r3Cost = $("input[name='record[referee3_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(refereeCost) + Number(r1Cost) + Number(r3Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(refereeCost) + Number(r1Cost) + Number(r3Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
-                var refereeCost = $(this).attr("data-referee_cost");
                 var refereeId1 = $(".refereeId1").val();
                 var refereeId3 = $(".refereeId3").val();
                 if (refereeId == refereeId1 || refereeId == refereeId3) {
@@ -840,6 +871,21 @@
             })
             //清除裁判
             $("#refereeDel3").on('tap', '', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var r1Cost = $("input[name='record[referee1_cost]']").val();
+                var r2Cost = $("input[name='record[referee2_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(r1Cost) + Number(r2Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(r1Cost) + Number(r2Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 $(".refereeName3").val('');
                 $(".refereeId3").val('');
                 $(".refereeCost3").val('');
@@ -867,9 +913,24 @@
             })
             // 选择裁判
             $(".refereeList3").on('tap', 'li', function () {
+                // 计算裁判费用
+                var selectVal = $(".refereeBear").find("option:selected").val();
+                var costText = $(".referee_cost").text();
+                var refereeCost = $(this).attr("data-referee_cost");
+                var r1Cost = $("input[name='record[referee1_cost]']").val();
+                var r2Cost = $("input[name='record[referee2_cost]']").val();
+                if (costText != '') {
+                    if (selectVal == 1) {
+                        var rAACost = (Number(refereeCost) + Number(r1Cost) + Number(r2Cost)) / 2;
+                        $(".referee_cost").text(rAACost)
+                    } else if (selectVal == 2 || selectVal == 3) {
+                        var rAACost = (Number(refereeCost) + Number(r1Cost) + Number(r2Cost));
+                        $(".referee_cost").text(rAACost)
+                    }
+                }
+                // 计算裁判费用end
                 var refereeName = $(this).attr("data-referee");
                 var refereeId = $(this).attr("data-referee_id");
-                var refereeCost = $(this).attr("data-referee_cost");
                 var refereeId1 = $(".refereeId1").val();
                 var refereeId2 = $(".refereeId2").val();
                 if (refereeId == refereeId1 || refereeId == refereeId2) {
@@ -882,6 +943,28 @@
                 mui("#referee3").popover("toggle");
             });
             ///////////////裁判3//////////////////////////////////
+
+            // 计算裁判费用
+            $(document).on('change', 'select.refereeBear', function () {
+                var r1Cost = $("input[name='record[referee1_cost]']").val();
+                var r2Cost = $("input[name='record[referee2_cost]']").val();
+                var r3Cost = $("input[name='record[referee3_cost]']").val();
+                var bearVal = $(this).children("option:selected").val();
+                if (bearVal != '') {
+                    $(".costCount").show();
+                    $(".referee_cost").text(' ')
+                } else {
+                    $(".costCount").hide();
+                    $(".referee_cost").text(' ')
+                }
+                if (bearVal == 1) {
+                    var rAACost = (Number(r1Cost) + Number(r2Cost) + Number(r3Cost)) / 2;
+                    $(".referee_cost").text(rAACost)
+                } else if (bearVal == 2 || bearVal == 3) {
+                    var rAllCost = Number(r1Cost) + Number(r2Cost) + Number(r3Cost);
+                    $(".referee_cost").text(rAllCost)
+                }
+            });
 
             // 主场球服
             $(".homeColorList").on('tap', 'li', function () {
@@ -907,6 +990,11 @@
             // 添加新对手
             $(document).on("tap", ".addBtn", function () {
                 var addAway_team = $(".addInput").val();
+                if (addAway_team == '') {
+                    $(".isLiveDiv").hide()
+                } else {
+                    $(".isLiveDiv").show()
+                }
                 $(".away_team_Cont").text(addAway_team);
                 $("input[name=away_team_id]").val("-1");
                 mui("#awayTeam").popover("toggle");
@@ -930,6 +1018,11 @@
             $(".teamList").on('tap', 'li', function () {
                 var away_team_Cont = $(this).children(".name").text();
                 $(".away_team_Cont").text(away_team_Cont);
+                if (away_team_Cont == '') {
+                    $(".isLiveDiv").show()
+                } else {
+                    $(".isLiveDiv").hide()
+                }
                 var id = $(this).attr('data-id');
                 $("input[name=away_team_id]").val(id);
                 var away_team_logo = $(this).attr('data-logo');
@@ -939,6 +1032,7 @@
             })
             //清除球队
             $("#awayTeamDel").on('tap', '', function () {
+                $(".isLiveDiv").hide()
                 $(".away_team_Cont").text("");
                 $("input[name=away_team_id]").val("");
                 $("input[name=away_team_logo]").val("");
@@ -1086,6 +1180,15 @@
             })
             //////////////////////常驻球场///////////////////////////////////
 
+            // 是否约战
+            $(".isLive").on("tap", '', function () {
+                var live_m = $("input[name=islive]");
+                if (live_m.val() == "-1") {
+                    live_m.val("1");
+                } else {
+                    live_m.val("-1");
+                }
+            });
             // 是否公开
             $(".isStatus").on("tap", '', function () {
                 var status_m = $("input[name=status]");
@@ -1104,7 +1207,6 @@
                     send_m.val("-1");
                 }
             });
-
 
         })
 
@@ -1142,10 +1244,6 @@
                 return false;
             }
 
-            //referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
-            //referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
-            //referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
-
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -1155,9 +1253,6 @@
             objData.remarks = remarks;
             var description = $('textarea.description').val();
             objData.description = description;
-            // objData.referee1 = JSON.stringify(referee1);
-            // objData.referee2 = JSON.stringify(referee2);
-            // objData.referee3 = JSON.stringify(referee3);
             console.log(objData);
             var url = "{:url('api/match/creatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -1256,7 +1351,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="' + keyword + '" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
