@@ -77,7 +77,7 @@
             color: #bbb;
         }
 
-        #refereeDom .fl {
+        /* #refereeDom .fl {
             text-align: left;
             float: left;
         }
@@ -91,13 +91,13 @@
         input[name=event-dom_price] {
             border-left: 1px dotted #DDD;
             text-align: center !important;
-        }
+        } */
     </style>
 </head>
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
@@ -109,19 +109,13 @@
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
             <input type="hidden" name="team_id" value="{$team_id}" class="data">
             <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
-            <form action="" class="mui-input-group mt55">
+
+            <form action="" class="mui-input-group mb44">
 
                 <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>类型</label>
-                        <span class="select-row">
-                            <select class="data" name="type">
-                                <option value="">请选择</option>
-                                <option value="2">友谊赛</option>
-                                <option value="4">公开赛</option>
-                            </select>
-                        </span>
-                    </div>
+                    <label>比赛类型</label>
+                    <span class="matchType"></span>
+                    <input type="hidden" name="type" class="data" value="">
                 </div>
 
                 <div class="mui-input-row awayT">
@@ -154,14 +148,14 @@
 
                 <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2011,"endYear":2050}'>
                     <div class="mui-navigate-right">
-                        <label>时间</label>
+                        <label>比赛时间</label>
                         <span id="result" class="ui-alert domData" name="match_time"></span>
                     </div>
                 </div>
 
                 <div class="mui-input-row" id='showCityPicker3'>
                     <div class="mui-navigate-right">
-                        <label>地区</label>
+                        <label>比赛地区</label>
                         <span id="cityResult3" class="ui-alert"></span>
                         <input type="hidden" name="province" value="" class="data" id="province">
                         <input type="hidden" name="city" value="" class="data" id="city">
@@ -171,7 +165,7 @@
 
                 <div class="mui-input-row">
                     <a href="#court" class="mui-navigate-right">
-                        <label>球场</label>
+                        <label>比赛地点</label>
                         <span class="courtCont domData wd60" name="court"></span>
                         <input type="hidden" name="court_id" value="" class="data">
                         <input type="hidden" name="court_lng" value="" class="data">
@@ -184,7 +178,7 @@
                     <input type="text" name="court_cost" value="" class="data court_cost" placeholder="请填写场地费用">
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label class="wd45">场地付费方式</label>
                         <span class="select-row">
@@ -196,7 +190,7 @@
                             </select>
                         </span>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="mui-input-row">
                     <a href="#homeColor" class="mui-navigate-right">
@@ -245,6 +239,11 @@
                     </div>
                 </div>
 
+                <!-- <div class="mui-input-row">
+                    <label>其它费用</label>
+                    <input type="text" name="other_cost" value="" class="data other_cost" placeholder="请填写其它费用">
+                </div> -->
+
                 <p class="pline"></p>
 
                 <div class="mui-input-row h-auto">
@@ -252,7 +251,7 @@
                     <textarea name="remarks" class="data remarks" placeholder="请填写提示"></textarea>
                 </div>
 
-                <div class="mui-input-row">
+                <!-- <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>是否公开</label>
                         <span class="select-row">
@@ -262,6 +261,14 @@
                             </select>
                         </span>
                     </div>
+                </div> -->
+
+                <div class="mui-input-row">
+                    <label class="wd52">是否公开</label>
+                    <div class="mui-switch isStatus">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+                    <input type="hidden" name="status" value="-1" class="data">
                 </div>
 
                 <div class="mui-input-row">
@@ -271,7 +278,6 @@
                     </div>
                     <input type="hidden" name="send_message" value="-1" class="data">
                 </div>
-
 
             </form>
 
@@ -712,6 +718,15 @@
             toRefereeList2(wReferee2, "referee2", 1);
             toRefereeList3(wReferee3, "referee3", 1);
 
+            var typeVal = wooApi.GetQueryString('val');
+            $("input[name=type]").val(typeVal);
+            if (typeVal == 2) {
+                $(".matchType").text("友谊赛");
+            } else if (typeVal == 4) {
+                $(".matchType").text("公开赛");
+            }
+
+
             ///////////////裁判1//////////////////////////////////
             //搜索裁判
             $("#search1").on("tap", function () {
@@ -1071,6 +1086,15 @@
             })
             //////////////////////常驻球场///////////////////////////////////
 
+            // 是否公开
+            $(".isStatus").on("tap", '', function () {
+                var status_m = $("input[name=status]");
+                if (status_m.val() == "-1") {
+                    status_m.val("1");
+                } else {
+                    status_m.val("-1");
+                }
+            });
             // 是否发布通知
             $(".isRelease").on("tap", '', function () {
                 var send_m = $("input[name=send_message]");
@@ -1080,6 +1104,7 @@
                     send_m.val("-1");
                 }
             });
+
 
         })
 
@@ -1183,7 +1208,7 @@
                         }
                         $(wTeamList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对手名称" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="' + keyword + '" placeholder="输入对手名称" /><button class="mui-btn addBtn">设为对手</button></div>'
                         }
                         $(wTeamList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1226,7 +1251,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team.id + '" data-logo="' + data.data.data[i].opponent_team.logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team.name + '</label><span class="wd45">' + data.data.data[i].opponent_team.city + '&nbsp;' + data.data.data[i].opponent_team.area + '</span></li>'
+                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team.id + '" data-logo="' + data.data.data[i].opponent_team.logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team + '</label></li>'
                             }
                         }
                         $(wTeamList).empty();
@@ -1275,7 +1300,7 @@
                             newli = newli + '<li class="mui-table-view-cell listli detalisli" data-lng="' + data.data.data[i].lng + '"  data-lat="' + data.data.data[i].lat + '"  data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
                         }
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="" placeholder="输入比赛地点" /><button class="mui-btn addNewcourt">确认</button></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addCourtInput wd66" value="' + keyword + '" placeholder="输入比赛地点" /><button class="mui-btn addNewcourt">确认</button></div>'
                         }
                         $(wCourtList).empty().append(newli);
                         $(currPage).text(data.data.current_page);

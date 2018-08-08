@@ -69,22 +69,6 @@
 
             <form action="" class="mui-input-group  mt55">
 
-                <div class="mui-input-row h-auto">
-                    <a href="#txpopover" class="mui-navigate-right">
-                        <label>活动封面</label>
-                        <div class="viewStyle view" {eq name="directentry" value="1" } {else/} style="background-image: url('{$eventInfo.cover}')"
-                            {/eq}></div>
-                        <input type="hidden" name="cover" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.cover}" {/eq} class="data">
-                    </a>
-                </div>
-
-                <div class="mui-input-row">
-                    <label>活动主题</label>
-                    <input type="text" name="event" class="data" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.event}"
-                        {/eq} placeholder="请输入活动主题">
-                    <input type="hidden" name="id" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.id}" {/eq} class="data">
-                </div>
-
                 <div class="mui-input-row">
                     <div class="mui-navigate-right">
                         <label>活动类型</label>
@@ -92,10 +76,26 @@
                             <select id="eventType" class="data" name="event_type">
                                 <option value="1">对内训练</option>
                                 <option value="2">团队建设</option>
-                                <option value="3">日常活动</option>
+                                <option value="3">其它活动</option>
                             </select>
                         </span>
                     </div>
+                </div>
+
+                <div class="mui-input-row">
+                    <label>活动标题</label>
+                    <input type="text" name="event" class="data" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.event}"
+                        {/eq} placeholder="请输入活动标题">
+                    <input type="hidden" name="id" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.id}" {/eq} class="data">
+                </div>
+
+                <div class="mui-input-row h-auto">
+                    <a href="#txpopover" class="mui-navigate-right">
+                        <label>活动封面</label>
+                        <div class="viewStyle view" {eq name="directentry" value="1" } {else/} style="background-image: url('{$eventInfo.cover}')"
+                            {/eq}></div>
+                        <input type="hidden" name="cover" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.cover}" {/eq} class="data">
+                    </a>
                 </div>
 
                 <div class="mui-input-row picker btnStart" id="demo3" data-options='{"beginYear":2017,"endYear":2050}'>
@@ -131,7 +131,7 @@
                         placeholder="请输入活动地点">
                 </div>
 
-                <div class="mui-input-row h-auto">
+                <!-- <div class="mui-input-row h-auto">
                     <label class="wd36">最少参与人数</label>
                     <div class="mui-numbox">
                         <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
@@ -148,7 +148,7 @@
                             {/eq}>
                         <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="mui-input-row">
                     <label class="wd52">发布通知并通知队员</label>
@@ -175,7 +175,7 @@
 
                 <div class="operation-box mb">
                     <div class="mui-input-row">
-                        <label>活动人员</label>
+                        <label>添加活动人员</label>
                     </div>
                     <div class="box" id="inactiveList"></div>
                     <div class="box" id="hideStList" style="display: none"></div>
@@ -213,7 +213,7 @@
 
 
                 <div class="page-header bggray2">
-                    <span class="course">活动详情</span>
+                    <span class="course">活动说明</span>
                 </div>
                 <textarea name="event_des" class="data event_des" style="display: none"></textarea>
                 <div id="articleEditor" class="tuwenIntro">{eq name="directentry" value="1" }{else/}{$eventInfo.event_des}{/eq}</div>
@@ -226,7 +226,7 @@
         </div>
     </div>
 
-    
+
     <!--球员名单-->
     <div id="addTeamMember" class="mui-popover">
         <div class="mui-popover-arrow"></div>
@@ -624,7 +624,7 @@
         //获取成员列表
         function toTeamMemberList() {
             var team_id = "{$teamInfo.id}";
-            mui.ajax("{:url('api/team/teammemberlist')}", {
+            mui.ajax("{:url('api/team/teammembers')}", {
                 data: {
                     team_id: team_id,
                     status: 1

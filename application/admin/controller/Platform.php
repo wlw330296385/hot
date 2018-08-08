@@ -47,8 +47,8 @@ class Platform extends Backend {
     public function createPlatform(){
         if(request()->isPost()){
             $data = input('post.');
-            $data['member_id']=$this->admin['id'];
-            $data['member'] = $this->admin['username'];
+            $data['admin_id']=$this->admin['id'];
+            $data['admin'] = $this->admin['username'];
             $result = $this->PlatformService->createPlatform($data);
             if($result['code'] == 200){
                 $this->success($result['msg'],'/admin/Platform/platformList');

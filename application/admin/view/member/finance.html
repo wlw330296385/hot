@@ -1,0 +1,172 @@
+{extend name="layout/common"/}
+
+{block name="css"}
+<style>
+.btn-banner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+</style>
+<link rel="stylesheet" href="/static/backend/plugins/webuploader/webuploader.css">
+{/block}
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+            <em>{$memberInfo.member}</em>
+        </div>
+        <ul class="nav nav-tabs">
+            <li data-tab = "1" class="tabwoo"><a href="#memberInfo" data-toggle="tab">会员信息</a></li>
+            <li data-tab = "2" class="tabwoo active"><a href="#memberFinanceList" data-toggle="tab" >会员财务</a></li>
+            <li data-tab = "3" class="tabwoo"><a href="{:url('admin/member/salaryInList',['member_id'=>$memberInfo['id']])}">课时工资收入</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="tab-content">
+            <!--#memberInfo-->
+            <div class="tab-pane fade in" id="memberInfo">
+                <div class="col-md-12 col-sm-12">
+                    <div class="box no-border">
+                        <div class="col-sm-6 col-md-6">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">{$memberInfo.member}</h3>
+                            </div>
+                            <form class="form-horizontal memberInfo-form" method="post" action="{:url('memberInfo/edit')}">
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">注册日期</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$memberInfo.create_time}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">真实姓名</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$memberInfo.realname}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-md-4 control-label">电话</div>
+                                    <div class="col-sm-6 col-md-6">
+                                        {$memberInfo.telephone}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--end #memberInfo-->
+
+
+            <!--#memberFinanceList-->
+            <div class="tab-pane fade in active" id="memberFinanceList">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Info boxes -->
+                    <div class="row pab10">
+
+                        <table id="scheduleList" class="table table-bordered table-striped dataTable" role="grid"
+                               aria-describedby="example1_info">
+                            <thead>
+                            <tr role="row">
+                                <th class="sorting_asc">序号</th>
+                                <th>外键</th>
+                                <th>流水</th>
+                                <th>类型</th>
+                                <th>时间</th>
+                                <th>前余额</th>
+                                <th>后余额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="memberFinanceList" id="vol"}
+                            <tr role="row" class="odd">
+                                <td class="sKeci">{$key+1}</td>
+                                <td class="sKeci">{$vol.f_id}</td>
+                                <td class="sRenci">{$vol.money}</td>
+                                <td class="sShouru">{$vol.type}</td>
+                                <td class="sXuefei">{$vol.create_time}</td>
+                                <td class="sorting_1">{$vol.e_balance}</td>
+                                <td>{$vol.s_balance}</td>
+                                <td><a href="#" class="btn btn-xs btn-info" ><i class="fa fa-inbox"></i> 查看详情</a></td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                            
+                               
+                        </table>
+                            {$memberFinanceList->render()}
+                            
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+            <!--end #memberFinanceList-->
+
+            <!--#salaryInList-->
+            <div class="tab-pane fade " id="salaryInList">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Info boxes -->
+                    <div class="row pab10">
+
+                        <table id="scheduleList" class="table table-bordered table-striped dataTable" role="grid"
+                               aria-describedby="example1_info">
+                            <thead>
+                            <tr role="row">
+                                <th class="sorting_asc">序号</th>
+                                <th>外键</th>
+                                <th>流水</th>
+                                <th>类型</th>
+                                <th>时间</th>
+                                <th>前余额</th>
+                                <th>后余额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="memberFinanceList" id="vol"}
+                            <tr role="row" class="odd">
+                                <td class="sKeci">{$key+1}</td>
+                                <td class="sKeci">{$vol.f_id}</td>
+                                <td class="sRenci">{$vol.money}</td>
+                                <td class="sShouru">"Javascript:(getTypeAttr({$vol.type}));"   sakjdhsakjbjskfhsdkjfbhdjkbjfkdsfjskj</td>
+                                <td class="sXuefei">{$vol.create_time}</td>
+                                <td class="sorting_1">{$vol.e_balance}</td>
+                                <td>{$vol.s_balance}</td>
+                                <td><a href="#" class="btn btn-xs btn-info" ><i class="fa fa-inbox"></i> 查看详情</a></td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                            
+                               
+                        </table>
+                            {$memberFinanceList->render()}
+                            
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+            <!--end #salaryInList-->
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    $(function(){
+        var getTypeAttr = function(value){
+            let l = {'-2':'余额转热币','-1':'提现支出',1:'工资收入(包括人头提成)',2:'充值'};
+            console.log(l)
+            return l[value];
+        }
+
+    })
+</script>
+
+{/block}

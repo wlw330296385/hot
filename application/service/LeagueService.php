@@ -453,6 +453,15 @@ class LeagueService
         return $res->toArray();
     }
 
+    public function getMatchTeamsWithTeam($map=[], $order='id desc') {
+        $model = new MatchTeam();
+        $res = $model->with('team,match')->where($map)->order($order)->select();
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 获取联赛球队列表
     public function getMatchTeamWithTeamList($map, $page = 1, $order = ['id' => 'desc'], $limit = 10)
     {

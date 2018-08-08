@@ -49,8 +49,8 @@ class Template extends Backend {
     public function createTemplate(){
         if(request()->isPost()){
             $data = input('post.');
-            $data['member_id']=$this->admin['id'];
-            $data['member'] = $this->admin['username'];
+            $data['admin_id']=$this->admin['id'];
+            $data['admin'] = $this->admin['username'];
             $result = $this->TemplateService->createTemplate($data);
             if($result['code'] == 200){
                 $this->success($result['msg'],'/admin/Template/templateList');

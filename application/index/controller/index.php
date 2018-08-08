@@ -17,22 +17,19 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$l = [1,2,3,4,5,6,7,8,9];
-        $l1 = array_slice($l, 0,2);
-        $l2 = array_slice($l,2,3);
-        $l3 = array_slice($l,2+3,4);
-        dump($l1);
-        dump($l2);
-        dump($l3);
+    	$a = "100.00";
+        $b = (float)$a;
+        dump($a);
+        dump($b);
     }
 
     public function index2(){
-        $list = db('item_coupon_member')->field('item_coupon_member.id,member.telephone,member.avatar')->join('member','member.id=item_coupon_member.member_id')->select();
-        foreach ($list as $key => $value) {
-            db('item_coupon_member')->where(['id'=>$value['id']])->update(['telephone'=>$value['telephone'],'avatar'=>$value['avatar']]);
-        }
-        // return view();
         
+        $list = db('salary_in')->field('salary_in.id,schedule.lesson_time')->join('schedule','schedule.id = salary_in.schedule_id')->select();
+        foreach ($list as $key => $value) {
+            db('salary_in')->where(['id'=>$value['id']])->update(['schedule_time'=>$value['lesson_time']]);
+        }
+
     }
 
 

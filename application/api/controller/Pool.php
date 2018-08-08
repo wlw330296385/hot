@@ -161,7 +161,25 @@ class Pool extends Base{
             $result = $this->PoolService->createPool($data);
             return json($result);   
         }catch (Exception $e){
-             return json(['code'=>100,'msg'=>$e->getMessage()]);
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    //获取奖金池下的打卡数据
+    public function getPoolPunchsApi(){
+        try {   
+            $pool_id = input('param.pool_id');
+            $result = db('group_punch')
+                ->field('count(group_punch.id) as c_id,group_punch.member,group_punch.avatar')
+                ->where(['group_punch.pool_id'=>$pool_id])
+                ->group('group_punch.member_id')
+                ->order('group_punch.id desc')
+                ->select();
+            return json(['code'=>200,'data'=>$result,'msg'=>'收到']);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
 
@@ -183,6 +201,23 @@ class Pool extends Base{
         }
     }
    
+
+   // 获取擂台擂主列表
+    public function getPoolWinnerListsApi(){
+        try{
+            $map = input('post.');
+            $page = input('param.page',1);
+            $PoolWinners = new \app\model\PoolWinners;
+            $result = $PoolWinners->where($map)->page($page)->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败,请检查参数','data'=>$result]);
+            } 
+        }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 
     // 获取擂台擂主列表带page

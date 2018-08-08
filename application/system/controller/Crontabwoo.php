@@ -54,9 +54,10 @@ class Crontabwoo extends Base {
             // 上级会员收入提成(90%*5%,90%*3%)
             $map['status'] = 1;
             $map['is_settle'] = 0;
-            // 当前时间日期
+            // // 当前时间日期
             $nowDate = date('Ymd', time());
             $map['camp_id'] = $campInfo['id'];
+
             $map['can_settle_date'] = $nowDate;
             $map['questions'] = 0;
             $map['is_school'] = -1;
@@ -112,8 +113,8 @@ class Crontabwoo extends Base {
                     $MemberFinanceData1 = [
                                 'member_id' => $coachMember['member']['id'],
                                 'member' => $coachMember['member']['member'],
-                                's_balance'=>$coachMember['member']['balance'],
-                                'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                                's_balance'=>(float)$coachMember['member']['balance'],
+                                'e_balance'=>($coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary),
                                 'money' =>$schedule['coach_salary']+$pushSalary,
                                 'type'=>1,
                                 'system_remarks'=>'课时主教练总薪资收入',
@@ -151,13 +152,13 @@ class Crontabwoo extends Base {
                                 'students'=>$schedule['students'],
                                 'rebate_type' => $campInfo['rebate_type'],
                                 'status' => 1,
-                                'type' => 1,
+                                'type' => 2,
                             ];
                             $MemberFinanceData2[$k] = [
                                 'member_id' => $val['member']['id'],
                                 'member' => $val['member']['member'],
-                                's_balance'=>$val['member']['balance'],
-                                'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                                's_balance'=>(float)$val['member']['balance'],
+                                'e_balance'=>(float)($val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
                                 'money' =>$schedule['assistant_salary']+$pushSalary,
                                 'type'=>1,
                                 'system_remarks'=>'课时助理教练总薪资收入',
@@ -185,8 +186,8 @@ class Crontabwoo extends Base {
                         'students'=>$schedule['students'],
                         'f_id'=> $schedule['id'],
                         'schedule_income'=>$incomeSchedule,
-                        'e_balance' => $campInfo['balance']+$incomeSchedule,
-                        's_balance'=>$campInfo['balance'],
+                        'e_balance' => (float)$campInfo['balance']+$incomeSchedule,
+                        's_balance'=>(float)$campInfo['balance'],
                         'rebate_type' => $campInfo['rebate_type'],
                         'schedule_rebate' => $campInfo['rebate_type'],
                         'status' => 1,
@@ -205,8 +206,8 @@ class Crontabwoo extends Base {
                         'member'    =>'system',
                         'member_id' =>0,
                         'type'      =>3,
-                        's_balance' =>$campInfo['balance'],
-                        'e_balance' =>$campInfo['balance'],
+                        's_balance' =>(float)$campInfo['balance'],
+                        'e_balance' =>(float)$campInfo['balance'],
                         'system_remarks'=>'营业额结算',
                         'status'    =>1,
                         'remarks'   =>'课时教练总薪资支出',
@@ -223,8 +224,8 @@ class Crontabwoo extends Base {
                         'member'    =>'system',
                         'member_id' =>0,
                         'type'      =>4,
-                        's_balance' =>$campInfo['balance'],
-                        'e_balance' =>$campInfo['balance'],
+                        's_balance' =>(float)$campInfo['balance'],
+                        'e_balance' =>(float)$campInfo['balance'],
                         'system_remarks'=>'课时结算',
                         'schedule_time'=>$schedule['lesson_time'],
                         'rebate_type' => $campInfo['rebate_type'],
@@ -241,8 +242,8 @@ class Crontabwoo extends Base {
                         'camp' => $schedule['camp'],
                         'money'=>$incomeSchedule,
                         'type' => 3,
-                        'e_balance' => $campInfo['balance']+$incomeSchedule,
-                        's_balance'=>$campInfo['balance'],
+                        'e_balance' => (float)($campInfo['balance']+$incomeSchedule),
+                        's_balance'=>(float)$campInfo['balance'],
                         'rebate_type' => $campInfo['rebate_type'],
                         'schedule_rebate' => $campInfo['rebate_type'],
                         'f_id' => $schedule['id'],
@@ -320,8 +321,8 @@ class Crontabwoo extends Base {
                     $MemberFinanceData = [
                             'member_id' => $coachMember['member']['id'],
                             'member' => $coachMember['member']['member'],
-                            's_balance'=>$coachMember['member']['balance'],
-                            'e_balance'=>$coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary,
+                            's_balance'=>(float)$coachMember['member']['balance'],
+                            'e_balance'=>(float)($coachMember['member']['balance']+$schedule['coach_salary']+$pushSalary),
                             'money' =>$schedule['coach_salary']+$pushSalary,
                             'type'=>1,
                             'system_remarks'=>'课时主教练总薪资收入',
@@ -366,14 +367,14 @@ class Crontabwoo extends Base {
                             'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
                             'rebate_type'=>$campInfo['rebate_type'],
                             'status' => 1,
-                            'type' => 1,
+                            'type' => 2,
                             'f_id'=>$schedule['id'],
                         ];
                         $MemberFinanceData[$k] = [
                             'member_id' => $val['member']['id'],
                             'member' => $val['member']['member'],
-                            's_balance'=>$val['member']['balance'],
-                            'e_balance'=>$val['member']['balance']+$schedule['assistant_salary']+$pushSalary,
+                            's_balance'=>(float)$val['member']['balance'],
+                            'e_balance'=>(float)($val['member']['balance']+$schedule['assistant_salary']+$pushSalary),
                             'money' =>$schedule['assistant_salary']+$pushSalary,
                             'type'=>1,
                             'system_remarks'=>'课时助理教练总薪资收入',
