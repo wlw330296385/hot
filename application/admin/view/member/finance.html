@@ -86,12 +86,12 @@
                             <tbody>
                             {volist name="memberFinanceList" id="vol"}
                             <tr role="row" class="odd">
-                                <td class="sKeci">{$key+1}</td>
-                                <td class="sKeci">{$vol.f_id}</td>
-                                <td class="sRenci">{$vol.money}</td>
-                                <td class="sShouru">{$vol.type}</td>
-                                <td class="sXuefei">{$vol.create_time}</td>
-                                <td class="sorting_1">{$vol.e_balance}</td>
+                                <td>{$key+1}</td>
+                                <td>{$vol.f_id}</td>
+                                <td>{$vol.money}</td>
+                                <td class="fType" data-type="{$vol.type}"></td>
+                                <td>{$vol.create_time}</td>
+                                <td>{$vol.e_balance}</td>
                                 <td>{$vol.s_balance}</td>
                                 <td><a href="#" class="btn btn-xs btn-info" ><i class="fa fa-inbox"></i> 查看详情</a></td>
                             </tr>
@@ -108,49 +108,6 @@
             </div>
             <!--end #memberFinanceList-->
 
-            <!--#salaryInList-->
-            <div class="tab-pane fade " id="salaryInList">
-                <div class="col-md-12 col-sm-12">
-                    <!-- Info boxes -->
-                    <div class="row pab10">
-
-                        <table id="scheduleList" class="table table-bordered table-striped dataTable" role="grid"
-                               aria-describedby="example1_info">
-                            <thead>
-                            <tr role="row">
-                                <th class="sorting_asc">序号</th>
-                                <th>外键</th>
-                                <th>流水</th>
-                                <th>类型</th>
-                                <th>时间</th>
-                                <th>前余额</th>
-                                <th>后余额</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {volist name="memberFinanceList" id="vol"}
-                            <tr role="row" class="odd">
-                                <td class="sKeci">{$key+1}</td>
-                                <td class="sKeci">{$vol.f_id}</td>
-                                <td class="sRenci">{$vol.money}</td>
-                                <td class="sShouru">"Javascript:(getTypeAttr({$vol.type}));"   sakjdhsakjbjskfhsdkjfbhdjkbjfkdsfjskj</td>
-                                <td class="sXuefei">{$vol.create_time}</td>
-                                <td class="sorting_1">{$vol.e_balance}</td>
-                                <td>{$vol.s_balance}</td>
-                                <td><a href="#" class="btn btn-xs btn-info" ><i class="fa fa-inbox"></i> 查看详情</a></td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                            
-                               
-                        </table>
-                            {$memberFinanceList->render()}
-                            
-                    </div>
-                    <!-- /.row -->
-                </div>
-            </div>
-            <!--end #salaryInList-->
         </div>
     </div>
 </div>
@@ -160,13 +117,19 @@
 {block name="js"}
 <script type="text/javascript">
     $(function(){
-        var getTypeAttr = function(value){
-            let l = {'-2':'余额转热币','-1':'提现支出',1:'工资收入(包括人头提成)',2:'充值'};
-            console.log(l)
-            return l[value];
-        }
+
+            $(".fType").each(function () {
+                   var getTypeID = $(this).attr("data-type");
+                   $(this).text(getTypeAttr(getTypeID))
+            })
+
 
     })
+        var getTypeAttr = function(v){
+            let l = {'-2':'余额转热币','-1':'提现支出',1:'工资收入(包括人头提成)',2:'充值'};
+            console.log(l)
+            return l[v];
+        }
 </script>
 
 {/block}
