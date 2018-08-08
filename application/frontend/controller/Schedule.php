@@ -87,7 +87,7 @@ class Schedule extends Base
 	public function scheduleInfo(){
 		$schedule_id = input('param.schedule_id');
 		$scheduleInfo = $this->ScheduleService->getScheduleInfo(['id'=>$schedule_id]);
-//		$studentList = $this->ScheduleService->getStudentList($schedule_id);
+
         // 正式学员名单
         $studentList = [];
         if ($scheduleInfo['student_str']) {
@@ -104,22 +104,20 @@ class Schedule extends Base
 				$commentList[$key]['member'] = '匿名用户';
 			}
 		}
-		$updateSchedule = 0;
 
         // 兼职教练 不可见内容标识
         $hideDisplay = 0;
+        $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
 		// 已结算课时不能编辑
         if ($scheduleInfo['is_settle'] != 1) {
             // 判断权限
-            $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
+            
             if($isPower>=2){
-                $updateSchedule = 1;
             } else if ($isPower == 2) {
                 // 兼职教练 不可见编辑入口
                 $level = getCampMemberLevel($scheduleInfo['camp_id'],$this->memberInfo['id']);
                 if ($level == 1) {
                     $hideDisplay =1;
-                    $updateSchedule = 1;
                 }
             }
         }
@@ -133,7 +131,7 @@ class Schedule extends Base
 		}
 
         
-		$this->assign('updateSchedule',$updateSchedule);
+		$this->assign('isPower',$isPower);
 		$this->assign('studentList',$studentList);
         $this->assign('expstudentList',$expstudentList);
 		$this->assign('scheduleInfo',$scheduleInfo);
@@ -157,7 +155,7 @@ class Schedule extends Base
         if ($is_power == 2) {
 		    $level = getCampMemberLevel($camp_id,$this->memberInfo['id']);
             if ($level == 1) {
-                $hideDisplay =1;
+                $hideDisplay = 1;
             }
         }
 
