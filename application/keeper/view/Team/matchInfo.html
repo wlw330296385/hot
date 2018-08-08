@@ -165,12 +165,6 @@
                 opacity: 0;
             }
         }
-
-        /* 底部按钮点击去除背景颜色 */
-
-        .operation .opli a.mui-active {
-            background-color: inherit
-        }
     </style>
 </head>
 
@@ -360,15 +354,16 @@
             var count = 1;
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
+            toHomeMemberList(); //球队成员列表
             toSignUpList(); // 报名/参赛人员
-            toHomeMemberList()
+
             // 去逗号
             var refereeList = $(".refereeList").text()
             $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
-            
+
             // 如果客队为手动填写的球队，则输出默认图片
             if ("{$matchInfo.record.away_team_id}" == -1) {
-                $(".awayLogo").attr("src","/static/frontend/images/basketball.png")
+                $(".awayLogo").attr("src", "/static/frontend/images/basketball.png")
             }
 
             // 没有对手比分不显示
@@ -464,7 +459,6 @@
 
             //报名功能
             $(".signupBtn").on('tap', function () {
-                //判断是否登陆会员
                 var match_id = "{$matchInfo.record.id}";
                 mui.ajax("{:url('api/match/joinmatch')}", {
                     data: {
@@ -558,7 +552,6 @@
                 });
             });
 
-
         });
 
         // 点赞状态
@@ -642,7 +635,7 @@
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.comment-list").append(newli);
+                        $("ul.comment-list").empty().append(newli);
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -670,18 +663,18 @@
                     console.log(data)
                     if (data.code == 200) {
                         var inactiveDiv = '';
-                        $(".imgShow").empty();
+                        var allTeamMember = $(".allTeamMember").text();
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             $(".signup_num").text(data.data.length);
                             // 出勤率
-                            var rateNum = data.data.length / "{$countTeamMember}" * 100;
+                            var rateNum = data.data.length / allTeamMember * 100;
                             $(".rate").text(parseInt(rateNum) + "%");
                             inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
                         };
-                        $(".imgShow").append(inactiveDiv);
+                        $(".imgShow").empty().append(inactiveDiv);
                     }
                     if (data.code == 100) {
-                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                        $(".imgShow").empty().append('<p class="mui-text-center">还没有参赛人员哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -704,7 +697,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 success: function (data) {
                     console.log(data)
-                    var div = '';
                     if (data.code == 200) {
                         $(".allTeamMember").empty().append(data.data.length);
                     }
