@@ -964,7 +964,19 @@
             // $('#selectStatus option[value=' + status + ']').prop("selected", true);
             if ("{$matchInfo.status}" == "公开") {
                 $(".isStatus").addClass("mui-active");
+                $("input[name=status]").val(1)
+            } else {
+                $("input[name=status]").val(-1)
             }
+
+            $(".isStatus").on("tap", '', function () {
+                var st_m = $("input[name=status]");
+                if (st_m.val() == "-1") {
+                    st_m.val("1");
+                } else {
+                    st_m.val("-1");
+                }
+            });
             if ($("input[name='record[home_team_colorstyle]']").val() == '') {
                 $(".home_color_text").text("选填")
             }
