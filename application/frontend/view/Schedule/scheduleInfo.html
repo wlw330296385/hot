@@ -43,7 +43,7 @@
             <div class="img4x3" style="background-image:url('{$scheduleInfo.cover}')"></div>
             <ul class="mui-table-view list mb">
                 <li class="mui-table-view-cell mui-media listli">
-                    {eq name="updateSchedule" value="1"}
+                    {if $isPower>1 && $scheduleInfo.is_settle==0}
                     <a  class="mui-navigate-right scheduleEditorBtn">
                         <div class="mui-media-body wd">
                             <strong>{$scheduleInfo.grade}</strong>
@@ -64,7 +64,7 @@
                     <div class="price-frame">
                         <p class="nump">{$scheduleInfo.students}/队员</p>
                     </div>
-                    {/eq}
+                    {/if}
                 </li>
             </ul>
 
@@ -102,14 +102,16 @@
                 <li class="mui-table-view-cell listli">班主任
                     <span>{$scheduleInfo.teacher}</span>
                 </li>
-                {neq name="hideDisplay" value="1"}
-                <li class="mui-table-view-cell listli">主教底薪
-                    <span>{$scheduleInfo.coach_salary}</span>
-                </li>
-                <li class="mui-table-view-cell listli">助教底薪
-                    <span>{$scheduleInfo.assistant_salary}</span>
-                </li>
-                {/neq}
+                {if $isPower>2 || $isPower==2 && $hideDisplay==0}
+                    
+                    <li class="mui-table-view-cell listli">主教底薪
+                        <span>{$scheduleInfo.coach_salary}</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">助教底薪
+                        <span>{$scheduleInfo.assistant_salary}</span>
+                    </li>
+                   
+                {/if}
                 <li class="mui-table-view-cell listli">备注
                     <span>{$scheduleInfo.remarks}</span>
                 </li>
@@ -169,7 +171,7 @@
                 <a href="#">查看更多评论</a>
             </p>
 
-            {eq name="updateSchedule" value="0"}
+            {eq name="$scheduleInfo.status" value="1"}
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-media mui-col-xs-6 opli">
                     <span class="mui-icon mui-icon-phone"></span>电话咨询
