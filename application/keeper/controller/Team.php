@@ -651,6 +651,12 @@ class Team extends Base
         ]);
     }
 
+    // 创建比赛信息
+    public function createLeagueMatch()
+    {
+        return view('Team/createLeagueMatch');
+    }
+
     // 发布约战
     public function createAboutMatch()
     {
