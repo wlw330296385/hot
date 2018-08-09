@@ -373,10 +373,15 @@ abstract class Connection
             if ($procedure) {
                 $this->bindParam($bind);
             } else {
+     
                 $this->bindValue($bind);
             }
+
+            
+
             // 执行查询
             $this->PDOStatement->execute();
+
             // 调试结束
             $this->debug(false);
             // 返回结果集
@@ -505,7 +510,9 @@ abstract class Connection
                 }
                 $result = $this->PDOStatement->bindValue($param, $val[0], $val[1]);
             } else {
+              
                 $result = $this->PDOStatement->bindValue($param, $val);
+                
             }
             if (!$result) {
                 throw new BindParamException(

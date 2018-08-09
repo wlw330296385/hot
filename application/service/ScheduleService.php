@@ -62,7 +62,7 @@ class ScheduleService
     // 发布课时
     public function createSchedule($data)
     {
-        //dump($data);die;
+   
         // 查询权限
         $is_power = $this->isPower($data['camp_id'], $data['member_id']);
         if ($is_power < 2) {
@@ -85,6 +85,7 @@ class ScheduleService
      
         $data['status'] = -1;
         // 班级信息
+        $gradeInfo = db('grade')->where(['id'=>$data['grade_id']])->find();
         
 
 

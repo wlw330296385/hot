@@ -171,12 +171,31 @@ class Pool extends Base{
     public function getPoolPunchsApi(){
         try {   
             $pool_id = input('param.pool_id');
-            $result = db('group_punch')
-                ->field('count(group_punch.id) as c_id,group_punch.member,group_punch.avatar')
-                ->where(['group_punch.pool_id'=>$pool_id])
-                ->group('group_punch.member_id')
-                ->order('group_punch.id desc')
-                ->select();
+            $group_id = input('param.group_id');
+            // $result = db('group_punch')
+            //     ->field('count(id) as c_id,member,avatar')
+            //     ->where(['pool_id'=>$pool_id])
+            //     ->group('member_id')
+            //     ->order('c_id desc')
+            //     ->select();
+
+            $Db = new \think\Db;
+            $sql = "SELECT a.`group_id`, a.`member_id`, b.`c_id`,`a`.`member`,`a`.`avatar`  FROM
+            (
+                SELECT `member_id`, `group_id`,`member`,`avatar` 
+                FROM `group_member` 
+                WHERE `group_id` = :group_id1 ) AS `a`
+             LEFT JOIN
+            (
+                SELECT COUNT(id) as `c_id`,`member_id` ,`group_id`
+                FROM `group_punch`
+                WHERE `pool_id` = :pool_id AND `group_id` = :group_id2 GROUP BY `member_id` 
+                ORDER BY `c_id` desc
+            ) AS `b`
+            ON `a`.`group_id` = `b`.`group_id` AND `a`.`member_id` = `b`.`member_id`
+            ORDER BY `c_id` DESC";
+            $result = $Db::query($sql,['group_id1'=>$group_id,'pool_id'=>$pool_id,'group_id2'=>$group_id]);
+
             return json(['code'=>200,'data'=>$result,'msg'=>'收到']);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);

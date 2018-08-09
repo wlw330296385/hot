@@ -17,8 +17,8 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$list = db('schedule')->where(['is_settle'=>0,'coach_salary'=>0,'assistant_salary'=>0,'status'=>-1])->select();
-        // dump($list);
+    	$list = db('schedule')->where(['is_settle'=>0,'coach_salary'=>0,'assistant_salary'=>0,'status'=>1])->select();
+        dump($list);
         foreach ($list as $key => $value) {
             $info = db('grade')->where(['id'=>$value['grade_id']])->find();
             if($info['coach_salary']<>0 || $info['assistant_salary']<>0){
