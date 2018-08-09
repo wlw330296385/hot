@@ -154,22 +154,8 @@
                 </div>
 
                 <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label class="wd45">场地付费方式</label>
-                        <span class="select-row">
-                            <select class="data" id="courtCostBear" name="court_cost_bear">
-                                <option value="0">免费</option>
-                                <option value="1" class="costHide">费用AA</option>
-                                <option value="2" class="costHide">主队负责</option>
-                                <option value="3" class="costHide">客队负责</option>
-                            </select>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mui-input-row">
                     <label>场地费用</label>
-                    <input type="text" name="court_cost" value="" class="data court_cost" placeholder="请填写场地费用">
+                    <input type="number" name="court_cost" value="" class="data court_cost" placeholder="请填写场地费用">
                 </div>
 
                 <div class="mui-input-row">
@@ -226,7 +212,7 @@
 
                 <div class="mui-input-row">
                     <label>其它费用</label>
-                    <input type="text" name="record[other_cost]" value="" class="data" placeholder="请填写其它费用">
+                    <input type="number" name="record[other_cost]" value="" class="data" placeholder="请填写其它费用">
                 </div>
 
                 <p class="pline"></p>
@@ -1212,18 +1198,6 @@
 
         // 获取数据并进行提交
         function submitAction() {
-
-            // 场地费用与付费方式判断
-            var court_cost_bear = $("#courtCostBear").children("option:selected").val()
-            var court_cost = $("input[name=court_cost]").val();
-            if (!(/^[0-9]*$/).test(court_cost)) {
-                mui.toast("场地费用请填写数字");
-                return false;
-            }
-            if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
-                mui.toast("填写场地费用与付费方式不对应");
-                return false;
-            }
 
             // 裁判员1
             var referee1 = $(".refereeName1").val();

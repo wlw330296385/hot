@@ -193,16 +193,12 @@
             </div>
             <!--编辑情况 客队信息为空 显示约战选择-->
             {empty name="matchInfo.record.away_team_id"}
-            <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>是否约战</label>
-                    <span class="select-row">
-                        <select class="data" id="islive" name="islive">
-                            <option value="-1">不约战</option>
-                            <option value="1" class="isyz">约战</option>
-                        </select>
-                    </span>
+            <div class="mui-input-row isLiveDiv">
+                <label class="wd52">是否约战</label>
+                <div class="mui-switch isLive">
+                    <div class="mui-switch-handle"></div>
                 </div>
+                <input type="hidden" name="islive" value="-1" class="data">
             </div>
             {/empty}
             <!-- 客队信息  end-->
@@ -239,18 +235,17 @@
 
             <div class="mui-input-row">
                 <label>场地费用</label>
-                <input type="text" name="court_cost" value="{$matchInfo.court_cost}" class="data" placeholder="请输入场地费用">
+                <input type="number" name="court_cost" value="{$matchInfo.court_cost}" class="data" placeholder="请输入场地费用">
             </div>
-
-            <div class="mui-input-row">
+            <div class="mui-input-row courtCostBearDiv">
                 <div class="mui-navigate-right">
-                    <label>场地付费方式</label>
+                    <label class="wd45">场地付费方式</label>
                     <span class="select-row">
                         <select class="data" id="courtCostBear" name="court_cost_bear">
                             <option value="0">免费</option>
-                            <option value="1">费用AA</option>
-                            <option value="2">主队负责</option>
-                            <option value="3">客队负责</option>
+                            <option value="1" class="costHide">费用AA</option>
+                            <option value="2" class="costHide">主队负责</option>
+                            <option value="3" class="costHide">客队负责</option>
                         </select>
                     </span>
                 </div>
@@ -302,7 +297,7 @@
 
             <div class="mui-input-row">
                 <label>其它费用</label>
-                <input type="text" name="record[other_cost]" value="{$matchInfo.record.other_cost}" class="data" placeholder="请填写其它费用">
+                <input type="number" name="record[other_cost]" value="{$matchInfo.record.other_cost}" class="data" placeholder="请填写其它费用">
             </div>
 
             <p class="pline"></p>
@@ -915,7 +910,8 @@
         album = [];
         var totalNum = '';//序号总和的变量
         var directentry = $("input[name=directentry]").val();
-
+        var court_cost_bear_pd = "{$matchInfo.court_cost_bear}";
+        console.log(court_cost_bear_pd)
         $(function () {
 
             var teamKeyword = '';
@@ -951,10 +947,24 @@
             $('#matchType option[value="{$matchInfo.type_num}"]').prop("selected", true);
             // 设置是场地付费方式默认值
             $('#courtCostBear option[value="{$matchInfo.court_cost_bear}"]').prop("selected", true);
-            // 设置是否约战默认值
-            $('#islive option[value="{$matchInfo.islive}"]').prop("selected", true);
             // 设置裁判付费方式
             $('#refereeCostBear option[value="{$matchInfo.record.referee_cost_bear}"]').prop("selected", true);
+            // 设置是否约战默认值
+            if ("{$matchInfo.islive}" == 1) {
+                $(".isLive").addClass("mui-active");
+                $("input[name=islive]").val(1)
+            } else {
+                $("input[name=islive]").val(-1)
+            }
+            $(".isLive").on("tap", '', function () {
+                var live_m = $("input[name=islive]");
+                if (live_m.val() == "-1") {
+                    live_m.val("1");
+                } else {
+                    live_m.val("-1");
+                }
+            });
+
             // 设置是否公开
             if ("{$matchInfo.status}" == "公开") {
                 $(".isStatus").addClass("mui-active");
@@ -970,12 +980,6 @@
                     st_m.val("-1");
                 }
             });
-            if ($("input[name='record[home_team_colorstyle]']").val() == '') {
-                $(".home_color_text").text("选填")
-            }
-            if ($("input[name='record[away_team_colorstyle]']").val() == '') {
-                $(".away_color_text").text("选填")
-            }
 
             // 是否完成录入操作
             var is_finished = "{$matchInfo.is_finished}";
@@ -998,6 +1002,13 @@
                 if (is_finished == "已完成") {
                     $(".isRelease").addClass("mui-active");
                 }
+            }
+
+            if ($("input[name='record[home_team_colorstyle]']").val() == '') {
+                $(".home_color_text").text("选填")
+            }
+            if ($("input[name='record[away_team_colorstyle]']").val() == '') {
+                $(".away_color_text").text("选填")
             }
 
             var defBearVal = $("#refereeCostBear").find("option:selected").val();
@@ -1032,6 +1043,12 @@
             }
             if ($(".away_color_text input[name=color]").val() == '') {
                 $(".away_color_text input[name=color]").parent(".color").hide();
+            }
+
+            if (court_cost_bear_pd != 0) {
+                $(".courtCostBearDiv").show();
+            } else {
+                $(".courtCostBearDiv").hide();
             }
 
             ////////////////////////////////////////////////////////////
@@ -1606,17 +1623,20 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            // 场地费用与付费方式判断
-            var court_cost_bear = $("#courtCostBear").children("option:selected").val()
-            var court_cost = $("input[name=court_cost]").val();
-            if (!(/^[0-9]*$/).test(court_cost)) {
-                mui.toast("场地费用请填写数字");
-                return false;
+            if (court_cost_bear_pd != 0) {
+                // 场地费用与付费方式判断
+                var court_cost_bear = $("#courtCostBear").children("option:selected").val()
+                var court_cost = $("input[name=court_cost]").val();
+                if (!(/^[0-9]*$/).test(court_cost)) {
+                    mui.toast("场地费用请填写数字");
+                    return false;
+                }
+                if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
+                    mui.toast("填写场地费用与付费方式不对应");
+                    return false;
+                }
             }
-            if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
-                mui.toast("填写场地费用与付费方式不对应");
-                return false;
-            }
+
 
             var away_team = $(".away_team_Cont").text();
             var isFinished = $("#isFinished").children("option:selected").val();
@@ -1686,11 +1706,6 @@
                 return false;
             }
 
-            // referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
-            // referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
-            // referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
-
-
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -1704,9 +1719,6 @@
             var description = $('textarea.description').val();
             objData.description = description;
 
-            // objData.referee1 = JSON.stringify(referee1);
-            // objData.referee2 = JSON.stringify(referee2);
-            // objData.referee3 = JSON.stringify(referee3);
             var url = "{:url('api/match/updateteammatch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
