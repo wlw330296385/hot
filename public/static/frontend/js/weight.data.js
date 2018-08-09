@@ -269,6 +269,36 @@ var weightData =[{
         value: "80",
         text: "80"
     }, {
+        value: "81",
+        text: "81"
+    }, {
+        value: "82",
+        text: "82"
+    }, {
+        value: "83",
+        text: "83"
+    }, {
+        value: "84",
+        text: "84"
+    }, {
+        value: "85",
+        text: "85"
+    }, {
+        value: "86",
+        text: "86"
+    }, {
+        value: "87",
+        text: "87"
+    }, {
+        value: "88",
+        text: "88"
+    }, {
+        value: "89",
+        text: "89"
+    }, {
+        value: "90",
+        text: "90"
+    }, {
         value: "91",
         text: "91"
     }, {
