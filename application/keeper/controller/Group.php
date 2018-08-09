@@ -208,8 +208,12 @@ class Group extends Base{
     // 社群个人打卡列表
     public function groupMemberPunch() {
         $group_id = input('param.group_id');
+        $pool_id = input('param.pool_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
+
         $this->assign('groupInfo',$groupInfo);
+        $this->assign('poolInfo',$poolInfo);
         return view('Group/groupMemberPunch');
     }
 

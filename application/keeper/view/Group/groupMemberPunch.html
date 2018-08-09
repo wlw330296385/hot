@@ -11,16 +11,26 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .for-tab{ background-color: #efeff4;}
+        .sheader{ padding: 8px 15px !important;}
+        .sheader span{ line-height: 24px; }
+    </style>
 </head>
 
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav for-tab">
-        <div class="message-list">
+        <ul class="mui-table-view detalis-list">
+            <li class="listli sheader mui-clearfix">
+                <a class="mui-pull-left mui-icon mui-icon-left-nav" href="{:url('group/groupInfo',['group_id'=>$groupInfo.id])}"></a>
+                <span class="mui-pull-right title-name">第 {$poolInfo.season} 期 - {$poolInfo.pool}</span>
+            </li>
+        </ul>
+        <div class="camp-lesson-list mb mt">
             <div id="segmentedControl" class="mui-segmented-control">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('group/groupInfo',['group_id'=>$groupInfo.id])}"></a>
-                <a class="mui-control-item mui-active" href="#memberPunch">我的打卡</a>
-                <a class="mui-control-item" href="#groupPunch">群员打卡</a>
+                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch">个人打卡</a>
+                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">群员打卡</a>
             </div>
         </div>
     </header>
@@ -28,12 +38,12 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh">
-            <div id="memberPunch" class="mui-scroll-wrapper mui-control-content mui-active">
+            <div id="memberPunch" class="mui-scroll-wrapper mui-control-content mui-active" style="top:88px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b memberPunchList"></ul>
                 </div>
             </div>
-            <div id="groupPunch" class="mui-scroll-wrapper mui-control-content">
+            <div id="groupPunch" class="mui-scroll-wrapper mui-control-content" style="top:88px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view detalis-list list border-b groupMemberList"></ul>
                 </div>
@@ -43,12 +53,23 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
          mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
         var group_id = "{$groupInfo.id}"
         var member_id = "{$memberInfo.id}"
+        var pool_id = "{$poolInfo.id}"
+
+
+        var getTab = wooApi.GetQueryString('tab');
+        if(getTab=="groupPunch"){
+            $(".mui-control-item").removeClass("mui-active");
+            $("#tGroupPunch").addClass("mui-active");
+            $(".mui-control-content").removeClass("mui-active");
+            $("#groupPunch").addClass("mui-active");
+        }
 
         $(function () {
 
@@ -143,6 +164,7 @@
                     url: url,
                     data: {
                         group_id: group_id,
+                        pool_id:pool_id,
                         member_id: member_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -206,11 +228,11 @@
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].id + '/?punch=info';
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=info';
                                 newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].punch.image_url + '"><div class="mui-media-body wd f16"><text style="font-weight: bold;">' + data.data.data[i].punch.name + '</text>';
-                                newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
+                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].avatar + '"><div class="mui-media-body wd"><text style="font-weight: bold;">' + data.data[i].member + '</text>';
+                                newli += '<p class="mui-pull-right"><text class="colororange">' + data.data[i].c_id + '</text></p>';
                                 newli += '</div></a></li>'
                             }
                         }

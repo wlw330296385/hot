@@ -726,6 +726,48 @@
         };
     </script>
 
+
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "{$matchInfo.record.home_team}比赛详情",
+                desc: '对手：{$matchInfo.record.away_team}\n地点：{$matchInfo.court}\n时间：{$matchInfo.match_time}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$matchInfo.record.home_team_logo}",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: "{$matchInfo.record.home_team}比赛详情",
+                desc: '对手：{$matchInfo.record.away_team}\n地点：{$matchInfo.court}\n时间：{$matchInfo.match_time}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$matchInfo.record.home_team_logo}",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
+    </script>
+
+
 </body>
 
 </html>

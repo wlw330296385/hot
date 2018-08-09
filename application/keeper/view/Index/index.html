@@ -356,6 +356,7 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/common.js?v={:time()}"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
@@ -1118,6 +1119,46 @@
 
     <!-- 平台礼包结束 -->
 
+
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: "篮球管家",
+                desc: '开启你的篮球生涯',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "https://m.hot-basketball.com/static/frontend/images/logo.png",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: "篮球管家",
+                desc: '开启你的篮球生涯',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "https://m.hot-basketball.com/static/frontend/images/logo.png",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
+    </script>
 
 </body>
 

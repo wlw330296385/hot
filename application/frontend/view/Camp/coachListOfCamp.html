@@ -94,6 +94,7 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('camp/coachInfoOfCamp')}" + '/coach_id/' + data.data[i].id + '/camp_id/' + campID;
                             var star = data.data[i].star;
+                            var level = '';
                             newli += '<li class="mui-table-view-cell mui-media listli list-wide"><div class="mui-slider-right mui-disabled">';
                             if (data.data[i].type==2) {
                                 if (data.data[i].level == 2) {
@@ -102,13 +103,19 @@
                                     newli += '<span class="mui-btn mui-btn-grey" data-level="' + data.data[i].level + '" data-id="' + data.data[i].campmemberid + '" data-action="level">设为高级教练</span>';
                                 }
                             }
-                            newli += '<span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '" data-action="del">删除</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd36">' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i><p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p>';
                             if (data.data[i].level == 2) {
-                                newli += '<p>高级教练</p>';
+                                level = '<font class="tipCorner bgorange">高级教练</font>';
                             } else if (data.data[i].level == 1) {
-                                newli += '<p>普通教练</p>';
+                                level = '<font class="tipCorner bggray">普通教练</font>';
+                            } else {
+                                if (data.data[i].type==4) {
+                                    level = '<font class="tipCorner bggreen">营主</font>';
+                                }else{
+                                    level = '<font class="tipCorner bggreen">管理员</font>';
+                                }
                             }
+                            newli += '<span class="mui-btn mui-btn-red" data-id="' + data.data[i].campmemberid + '" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data[i].portraits + '"><div class="mui-media-body wd60"> ' + data.data[i].coach + '<i class="icon iconfont icon-sex' + data.data[i].sex + '"></i> '+level+'<p class="mui-ellipsis">教龄:' + data.data[i].coach_year + '&nbsp;&nbsp;等级:' + data.data[i].coach_level + '</p>';
                             newli += '</div><div class="price-frame">'
                             if (star == 0) {
                                 newli += '<div class="icons mui-inline"><i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';

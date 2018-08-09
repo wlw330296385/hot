@@ -109,18 +109,15 @@ class Schedule extends Base
         $hideDisplay = 0;
         $isPower = $this->ScheduleService->isPower($scheduleInfo['camp_id'],$this->memberInfo['id']);
 		// 已结算课时不能编辑
-        if ($scheduleInfo['is_settle'] != 1) {
             // 判断权限
-            
-            if($isPower>=2){
-            } else if ($isPower == 2) {
+            if($isPower == 2) {
                 // 兼职教练 不可见编辑入口
                 $level = getCampMemberLevel($scheduleInfo['camp_id'],$this->memberInfo['id']);
                 if ($level == 1) {
                     $hideDisplay =1;
                 }
             }
-        }
+        
 
 
         //课时指定的训练项目
