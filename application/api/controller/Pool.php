@@ -178,7 +178,9 @@ class Pool extends Base{
             //     ->group('member_id')
             //     ->order('c_id desc')
             //     ->select();
-
+            $page = input('param.page',1);
+            $s = ($page - 1)*10;
+            $e = $page *10;
             $Db = new \think\Db;
             $sql = "SELECT a.`group_id`, a.`member_id`, b.`c_id`,`a`.`member`,`a`.`avatar`  FROM
             (
@@ -193,8 +195,8 @@ class Pool extends Base{
                 ORDER BY `c_id` desc
             ) AS `b`
             ON `a`.`group_id` = `b`.`group_id` AND `a`.`member_id` = `b`.`member_id`
-            ORDER BY `c_id` DESC";
-            $result = $Db::query($sql,['group_id1'=>$group_id,'pool_id'=>$pool_id,'group_id2'=>$group_id]);
+            ORDER BY `c_id` DESC limit :s ,:e ";
+            $result = $Db::query($sql,['group_id1'=>$group_id,'pool_id'=>$pool_id,'group_id2'=>$group_id,'s'=>$s,'e'=>$e]);
 
             return json(['code'=>200,'data'=>$result,'msg'=>'收到']);
         } catch (Exception $e) {
