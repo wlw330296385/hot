@@ -35,8 +35,8 @@
         </ul>
         <div class="camp-lesson-list mb mt">
             <div id="segmentedControl" class="mui-segmented-control">
-                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch">个人 <text class="memberBadge">0 </text>卡</a>
-                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">群员 <text class="groupBadge">0</text> 卡</a>
+                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">全员 <text class="groupBadge">{$poolInfo.members}</text> 卡</a>
+                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch"><text class="memberName">{$memberInfo.member}</text> <text class="memberBadge">0</text> 卡</a>
             </div>
         </div>
     </header>
@@ -65,6 +65,7 @@
             window.top.location.href = this.href;
         });
         var group_id = "{$groupInfo.id}"
+        var member = "{$memberInfo.member}"
         var member_id = "{$memberInfo.id}"
         var pool_id = "{$poolInfo.id}"
 
@@ -188,6 +189,7 @@
                                 newli += '<p class="lineHeight20"><i class="icon iconfont icon-activity-Startingtim colororange f14"></i>' + data.data.data[i].punch.punch + ' &nbsp;打卡金<text class="colororange">' + data.data.data[i].punch.stakes + '</text> &nbsp;打赏<text class="colororange">' + data.data.data[i].punch.rewards_money + '</text></p>';
                                 newli += '</div></a></li>'
                             }
+                            $(".memberBadge").text(data.data.total)
                         }
                         if (gType == 1) {
                             //上拉刷新
@@ -195,7 +197,7 @@
                             mui('#memberPunch').pullRefresh().endPulldownToRefresh();
                             mui('#memberPunch').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.memberPunchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.memberPunchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>'+member+'本期还没打卡哦</p></li>');
                             }
                         } else {
                             //下拉加载 gType==2
@@ -238,8 +240,8 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=info';
-                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                                newli += '<img class="mui-media-object mui-pull-left img45" src="' + data.data[i].avatar + '"><div class="mui-media-body wd"><text style="font-weight: bold;">' + data.data[i].member + '</text>';
+                                newli += ' <li class="mui-table-view-cell mui-media listli"><a href="javascript:;" class="mui-navigate-right" data-memberName=' + data.data[i].member + ' data-mid=' + data.data[i].member_id + '>';
+                                newli += '<img class="mui-media-object mui-pull-left img45" src="' + data.data[i].avatar + '"><div class="mui-media-body wd"><strong>' + data.data[i].member + '</strong>';
                                 if(data.data[i].c_id==null){
                                     pCount = 0
                                 }else{
@@ -274,6 +276,21 @@
                     }
                 });
             };
+
+
+
+            //点击群员链接替换个人卡tab内容
+            $(".groupMemberList").on("tap", "a", function () {
+                member_id = $(this).attr("data-mid");
+                member = $(this).attr("data-memberName");
+                $(".memberName").text(member)
+                mCount = 1;//刷新并显示第一页
+                toMemberList(member_id, mCount, 1);//具体取数据的方法
+                $(".mui-control-item").removeClass("mui-active");
+                $("#tMemberPunch").addClass("mui-active");
+                $(".mui-control-content").removeClass("mui-active");
+                $("#memberPunch").addClass("mui-active");
+            });
 
         });
 
