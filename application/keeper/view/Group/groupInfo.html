@@ -357,30 +357,47 @@
 
             // 加入社群
             $(".joinGroup").on("tap", '', function () {
-                mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
-                    data: {
-                        member: member,
-                        member_id: member_id,
-                        avatar: avatar,
-                        group_id: group_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("申请加入成功，待管理员审核...");
-                        } else {
-                            mui.toast(data.msg);
+
+                //页面打开时判断是否登陆会员，不是则屏蔽页面并提示注册
+                if ("{$memberInfo.id}" == 0) {
+                    mui.confirm('请完善您的信息，再申请加入，谢谢！', '提示', ['打卡首页', '前往完善'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{$fasturl}";
+                        }else{
+                            window.location.href = "{:url('/keeper/punch/index')}";
                         }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
+                    });
+                    return false;
+                }else{
+
+                    mui.ajax("{:url('api/group_apply/createGroupApplyApi')}", {
+                        data: {
+                            member: member,
+                            member_id: member_id,
+                            avatar: avatar,
+                            group_id: group_id
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast("申请加入成功，待管理员审核...");
+                                $(".joinGroup").text("申请中")
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+
+                }
+
             });
 
             //退出社群

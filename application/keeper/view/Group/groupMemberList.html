@@ -117,7 +117,8 @@
                                 if (data.data[i].member_id == "{$memberInfo.id}") {
                                     newli += '<div class="price-frame"></div></li>'
                                 } else {
-                                    newli += '<div class="price-frame"><button type="button" class="btn bgred follow" data-member_id="' + data.data[i].member_id + '">'
+                                    newli += '<div class="price-frame">'
+                                    var curMID = data.data[i].member_id;
                                     mui.ajax("{:url('api/follow/getfollow')}", {
                                         data: {
                                             type: 1,
@@ -132,16 +133,16 @@
                                             console.log(data)
                                             if (data.code == 200) {
                                                 if (data.data == 1) {
-                                                    newli += '取消关注'
+                                                    newli += '<button type="button" class="btn bggray follow" data-member_id="' + curMID + '">取关</button>'
                                                 } else {
-                                                    newli += '关注'
+                                                    newli += '<button type="button" class="btn bgred follow" data-member_id="' + curMID + '">关注</button>'
                                                 }
                                             }else{
-                                                newli += '关注'
+                                                newli += '<button type="button" class="btn bgred follow" data-member_id="' + curMID + '">关注</button>'
                                             }
                                         }
                                     })
-                                    newli += '</button></div></li>';
+                                    newli += '</div></li>';
                                 }
                             }
                         }

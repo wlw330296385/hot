@@ -15,6 +15,12 @@
         .for-tab{ background-color: #efeff4;}
         .sheader{ padding: 8px 15px !important;}
         .sheader span{ line-height: 24px; }
+        #groupPunch img { width: 45px !important; height: 45px !important; }
+        #groupPunch .list .listli .mui-media-body { line-height: 42px; }
+        #groupPunch .colororange { font-size: 16px; }
+        .mui-badge { margin-left: 10px; }
+        .mui-segmented-control .fr { margin-right: 15px; color: #999; }
+
     </style>
 </head>
 
@@ -29,8 +35,8 @@
         </ul>
         <div class="camp-lesson-list mb mt">
             <div id="segmentedControl" class="mui-segmented-control">
-                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch">个人打卡</a>
-                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">群员打卡</a>
+                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch">个人 <text class="memberBadge">0 </text>卡</a>
+                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">群员 <text class="groupBadge">0</text> 卡</a>
             </div>
         </div>
     </header>
@@ -214,10 +220,11 @@
             var toGroupList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var member_id = "{$memberInfo.id}"
-                var url = "{:url('api/pool/getPoolPunchsapi','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/pool/getPoolPunchsApi','','',true)}" + '/?page=' + page;
                 mui.ajax({
                     url: url,
                     data: {
+                        group_id: group_id,
                         pool_id: pool_id
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -227,12 +234,18 @@
                     success: function (data) {
                         console.log(data)
                         var newli = '';
+                        var pCount = 0;
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=info';
                                 newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                                newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].avatar + '"><div class="mui-media-body wd"><text style="font-weight: bold;">' + data.data[i].member + '</text>';
-                                newli += '<p class="mui-pull-right"><text class="colororange">' + data.data[i].c_id + '</text></p>';
+                                newli += '<img class="mui-media-object mui-pull-left img45" src="' + data.data[i].avatar + '"><div class="mui-media-body wd"><text style="font-weight: bold;">' + data.data[i].member + '</text>';
+                                if(data.data[i].c_id==null){
+                                    pCount = 0
+                                }else{
+                                    pCount = data.data[i].c_id
+                                }
+                                newli += '<p class="mui-pull-right"><text class="colororange">' + pCount + '</text></p>';
                                 newli += '</div></a></li>'
                             }
                         }
