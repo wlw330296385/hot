@@ -507,7 +507,7 @@ class Schedule extends Base
             }
             $totalCost = $request['quantity'] * $lessonInfo['cost'];
             $campInfo = db('camp')->where(['id'=>$camp_id])->find();
-            if($campInfo['balance_true']<$totalCost){
+            if($campInfo['balance']<$totalCost){
                 return json(['code' => 100, 'msg' =>'训练营余额不足']);
             }
             $request['member_id'] = $this->memberInfo['id'];
