@@ -21,6 +21,71 @@
             width: 100%;
         }
 
+
+        /* 定位 */
+
+        #container {
+            width: 100%;
+            height: 250px;
+            margin-top: 30px;
+        }
+
+        #mapFrame {
+            height: 250px;
+            padding-bottom: 0px;
+        }
+
+        #map {
+            background-color: #EEE;
+        }
+
+        #map input[type=button] {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 20%;
+            height: 40px !important;
+            text-align: center;
+            color: #FFF;
+        }
+
+        #map .mui-icon-location {
+            width: 10%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 40px !important;
+            line-height: 35px;
+            background-color: #EEE;
+            font-size: 20px;
+            padding-right: 0px !important;
+            text-align: center;
+        }
+
+        #tip {
+            color: #333;
+            position: absolute;
+            top: 0px;
+            left: 10%;
+            overflow: hidden;
+            width: 90%;
+        }
+
+        #tip input[type="text"] {
+            background-color: #EEE;
+            border: 0;
+            padding-left: 0px;
+            width: 100%;
+            height: 40px !important;
+            outline: none;
+            text-align: left;
+        }
+
+        span.getFromMap {
+            width: 60%;
+            line-height: 18px !important;
+        }
+
         /* 花絮 */
 
         .albumImg {
@@ -124,11 +189,36 @@
                             id="area">
                     </div>
                 </div>
-
+                <!-- <div class="mui-input-row">
+                    <label>场地定位</label>
+                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}class="data"
+                        placeholder="请输入场地定位">
+                </div>
                 <div class="mui-input-row">
                     <label>活动地点</label>
-                    <input type="text" name="location" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.location}" {/eq}class="data location"
+                    <input type="text" name="court" {eq name="directentry" value="1" } value="" {else/} value="{$eventInfo.court}" {/eq}class="data"
                         placeholder="请输入活动地点">
+                </div> -->
+
+                <div class="mui-input-row h-auto">
+                    <label>场地定位</label>
+                    <span class="getFromMap" style="margin-top:9px;">{$eventInfo.location}</span>
+                    <input type="hidden" name="location" value="" class="location getFromMap data">
+                    <input type="hidden" name="lng" value="{$eventInfo.lng}" class="data">
+                    <input type="hidden" name="lat" value="{$eventInfo.lat}" class="data">
+                </div>
+                <div class="mui-input-row h-auto" id="mapFrame">
+                    <div id="map">
+                        <div id="container"></div>
+                        <span class="mui-icon mui-icon-location"></span>
+                        <div id="tip">
+                            <input type="text" id="keyword" name="keyword" value="" onfocus='this.value=""' placeholder="请输入地址后从下拉菜单中选择（或直接点击地图）" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <label>活动地点</label>
+                    <input type="text" name="court" value="{$eventInfo.court}" class="data" placeholder="请输入活动地点">
                 </div>
 
                 <!-- <div class="mui-input-row h-auto">
@@ -276,6 +366,79 @@
     <script src="/static/plugins/cropper/PhotoClip.js"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!--获取地址-->
+    <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+    <script>
+        var lng = '';
+        var lat = '';
+        // map(选择具体地址)
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            zoom: 13,
+            // center:[];
+        });
+
+        //点击获取地址
+        AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+            var geocoder = new AMap.Geocoder({
+
+            });
+            var marker = new AMap.Marker({
+                map: map,
+                bubble: true
+            })
+
+            map.on('click', function (e) {
+                marker.setPosition(e.lnglat);
+                geocoder.getAddress(e.lnglat, function (status, result) {
+                    if (status == 'complete') {
+                        var glocation = result.regeocode.formattedAddress;
+                        console.log(e.lnglat)
+                        // alert(result.regeocode.formattedAddress)
+                        if (window.confirm('你确定定位到【' + glocation + '】吗？')) {
+                            $(".getFromMap").val(glocation);
+                            $(".getFromMap").text(glocation);
+                            lng = e.lnglat.lng;
+                            lat = e.lnglat.lat;
+                            $("input[name=lat]").val(lat);
+                            $("input[name=lng]").val(lng);
+                        } else {
+                            return false;
+                        }
+                    }
+                })
+            })
+
+            var autoOptions = {
+                city: "深圳市", //城市，默认全国
+                input: "keyword"//使用联想输入的input的id
+            };
+            autocomplete = new AMap.Autocomplete(autoOptions);
+            var placeSearch = new AMap.PlaceSearch({
+                city: '',
+                map: map
+            })
+            AMap.event.addListener(autocomplete, "select", function (e) {
+                //TODO 针对选中的poi实现自己的功能
+                placeSearch.setCity(e.poi.adcode);
+                placeSearch.search(e.poi.name);
+                console.log(e.poi)
+                console.log(e.poi.location.lng)
+                console.log(e.poi.location.lat)
+                if (e.poi.location.lng == undefined || e.poi.location.lat == undefined || e.poi.location.lng === '' || e.poi.location.lat === '') {
+                    mui.alert('没有获取到此地址的地图定位，请直接点击地图获取定位！');
+                } else {
+                    lng = e.poi.location.lng;
+                    lat = e.poi.location.lat;
+                    $(".getFromMap").val(e.poi.name);
+                    $(".getFromMap").text(e.poi.name);
+                    $("input[name=lat]").val(lat);
+                    $("input[name=lng]").val(lng);
+                }
+            });
+        });
+
+    </script>
     <script>
         var Edr = new Eleditor({
             el: '#articleEditor', //容器

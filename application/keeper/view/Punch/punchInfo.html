@@ -354,9 +354,15 @@
             }
 
             $(document).on('tap', ".goCharge", function () {
-                mui('#reward').popover('toggle');
-                mask.show();
-                $('.mui-iframe-wrapper').show();
+
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    mui('#reward').popover('toggle');
+                    mask.show();
+                    $('.mui-iframe-wrapper').show();
+                }
+
             });
 
             // 选择打赏币
@@ -370,96 +376,105 @@
 
             //打赏
             $(".confirmDS").on('tap', function () {
-                var hot_coin = Number("{$memberInfo.hot_coin}");
-                var choise_hot_coin = Number($(".classActive").attr("data-h"));
-                var arrBtn = ["取消", "充值热币"];
-                var arrBtnConfirm = ["取消", "确认"];
-                if (hot_coin < choise_hot_coin) {
-                    mui.confirm("热币不足", "提示", arrBtn, function (e) {
-                        if (e.index == 1) {
-                            mui('#reward').popover('toggle');
-                            mask.show();
-                            $('.mui-iframe-wrapper').show();
-                        }
-                    });
-                    mui('#reward').popover('toggle');
-                } else {
-                    mui.confirm("是否确认打赏", "提示", arrBtnConfirm, function (e) {
-                        if (e.index == 1) {
-                            var punch_id = "{$punchInfo.id}";
-                            var reward = $(".classActive").attr("data-h");
-                            mui.ajax("{:url('api/punch/rewardApi')}", {
-                                data: {
-                                    punch_id: punch_id,
-                                    reward: reward,
-                                },
-                                dataType: 'json',//服务器返回json格式数据
-                                type: 'post',//HTTP请求类型
-                                timeout: 10000,//超时时间设置为10秒；
-                                headers: { 'Content-Type': 'application/json' },
-                                success: function (data) {
-                                    console.log(data);
-                                    if (data.code == 200) {
-                                        var realReward = Number($(".rewardNum").text()) + Number(reward)
-                                        var realReward1 = Number($(".rewardNum1").text()) + Number(reward)
-                                        $(".rewardNum").text(realReward)
-                                        $(".rewardNum1").text(realReward1)
-                                        mui.toast(data.msg);
-                                        mui('#reward').popover('toggle');
-                                    } else {
-                                        mui.toast(data.msg);
-                                    }
-                                },
-                                error: function (xhr, type, errorThrown) {
-                                    //异常处理；
-                                    console.log(type);
-                                }
-                            });
-                        }
-                    });
-                }
 
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    var hot_coin = Number("{$memberInfo.hot_coin}");
+                    var choise_hot_coin = Number($(".classActive").attr("data-h"));
+                    var arrBtn = ["取消", "充值热币"];
+                    var arrBtnConfirm = ["取消", "确认"];
+                    if (hot_coin < choise_hot_coin) {
+                        mui.confirm("热币不足", "提示", arrBtn, function (e) {
+                            if (e.index == 1) {
+                                mui('#reward').popover('toggle');
+                                mask.show();
+                                $('.mui-iframe-wrapper').show();
+                            }
+                        });
+                        mui('#reward').popover('toggle');
+                    } else {
+                        mui.confirm("是否确认打赏", "提示", arrBtnConfirm, function (e) {
+                            if (e.index == 1) {
+                                var punch_id = "{$punchInfo.id}";
+                                var reward = $(".classActive").attr("data-h");
+                                mui.ajax("{:url('api/punch/rewardApi')}", {
+                                    data: {
+                                        punch_id: punch_id,
+                                        reward: reward,
+                                    },
+                                    dataType: 'json',//服务器返回json格式数据
+                                    type: 'post',//HTTP请求类型
+                                    timeout: 10000,//超时时间设置为10秒；
+                                    headers: { 'Content-Type': 'application/json' },
+                                    success: function (data) {
+                                        console.log(data);
+                                        if (data.code == 200) {
+                                            var realReward = Number($(".rewardNum").text()) + Number(reward)
+                                            var realReward1 = Number($(".rewardNum1").text()) + Number(reward)
+                                            $(".rewardNum").text(realReward)
+                                            $(".rewardNum1").text(realReward1)
+                                            mui.toast(data.msg);
+                                            mui('#reward').popover('toggle');
+                                        } else {
+                                            mui.toast(data.msg);
+                                        }
+                                    },
+                                    error: function (xhr, type, errorThrown) {
+                                        //异常处理；
+                                        console.log(type);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
             });
 
             //评论功能
             $(".commentBtn").on('tap', function () {
-                var punch = "{$punchInfo.punch}"
-                var punch_id = "{$punchInfo.id}";
-                var comment = $(".comment").val();
-                if (comment == '') {
-                    mui.toast("评价内容不能为空");
-                    return false;
-                }
-                mui.ajax("{:url('api/punch/commentApi')}", {
-                    data: {
-                        punch: punch,
-                        punch_id: punch_id,
-                        to_member_id: "-1",
-                        punch_member_id: "{$punchInfo.member_id}",
-                        comment: comment,
-                        status: 1
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast('评价成功，感谢你的评价！');
-                            $(".comment-list").empty();
-                            toCommentList();
-                            mui('#fbcomment').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#fbcomment').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    var punch = "{$punchInfo.punch}"
+                    var punch_id = "{$punchInfo.id}";
+                    var comment = $(".comment").val();
+                    if (comment == '') {
+                        mui.toast("评价内容不能为空");
+                        return false;
                     }
-                });
+                    mui.ajax("{:url('api/punch/commentApi')}", {
+                        data: {
+                            punch: punch,
+                            punch_id: punch_id,
+                            to_member_id: "-1",
+                            punch_member_id: "{$punchInfo.member_id}",
+                            comment: comment,
+                            status: 1
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast('评价成功，感谢你的评价！');
+                                $(".comment-list").empty();
+                                toCommentList();
+                                mui('#fbcomment').popover('toggle');
+                            } else {
+                                mui.toast(data.msg);
+                                mui('#fbcomment').popover('toggle');
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
             });
 
             $(".comment-list").on('tap', "a", function () {
@@ -475,46 +490,51 @@
 
             //回复评论功能
             $(".replyCommentBtn").on('tap', function () {
-                var punch = "{$punchInfo.punch}"
-                var punch_id = "{$punchInfo.id}";
-                var comment = $(".replyComment").val();
-                var to_member = $("#hfcomment input[name=to_member]").val();
-                var to_member_id = $("#hfcomment input[name=to_member_id]").val();
-                var to_avatar = $("#hfcomment input[name=to_member_avatar]").val();
-                if (comment == '') {
-                    mui.toast("回复内容不能为空");
-                    return false;
-                }
-                mui.ajax("{:url('api/punch/commentApi')}", {
-                    data: {
-                        punch: punch,
-                        punch_id: punch_id,
-                        comment: comment,
-                        to_member: to_member,
-                        to_member_id: to_member_id,
-                        to_member_avatar: to_avatar,
-                        status: 1
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast('回复成功，感谢你的回复！');
-                            $(".comment-list").empty();
-                            toCommentList();
-                            mui('#hfcomment').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    var punch = "{$punchInfo.punch}"
+                    var punch_id = "{$punchInfo.id}";
+                    var comment = $(".replyComment").val();
+                    var to_member = $("#hfcomment input[name=to_member]").val();
+                    var to_member_id = $("#hfcomment input[name=to_member_id]").val();
+                    var to_avatar = $("#hfcomment input[name=to_member_avatar]").val();
+                    if (comment == '') {
+                        mui.toast("回复内容不能为空");
+                        return false;
                     }
-                });
+                    mui.ajax("{:url('api/punch/commentApi')}", {
+                        data: {
+                            punch: punch,
+                            punch_id: punch_id,
+                            comment: comment,
+                            to_member: to_member,
+                            to_member_id: to_member_id,
+                            to_member_avatar: to_avatar,
+                            status: 1
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                mui.toast('回复成功，感谢你的回复！');
+                                $(".comment-list").empty();
+                                toCommentList();
+                                mui('#hfcomment').popover('toggle');
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                }
             });
 
             pulldownRefresh(); //页面打开时获取一次最新评论信息
@@ -522,42 +542,60 @@
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var currLikes = parseInt($(".thumbup_count").text());
-                var punch = "{$punchInfo.punch}";
-                var punch_id = "{$punchInfo.id}";
-                mui.ajax("{:url('api/punch/likesApi')}", {
-                    data: {
-                        punch: punch,
-                        punch_id: punch_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            if($(".thumbsup").hasClass("highlight")){
-                                $(".thumbsup").removeClass("highlight");
-                                $(".thumbup_count").text(currLikes-1);
-                            }else{
-                                $(".thumbsup").addClass("highlight");
-                                $(".thumbup_count").text(currLikes+1);
+
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    var currLikes = parseInt($(".thumbup_count").text());
+                    var punch = "{$punchInfo.punch}";
+                    var punch_id = "{$punchInfo.id}";
+                    mui.ajax("{:url('api/punch/likesApi')}", {
+                        data: {
+                            punch: punch,
+                            punch_id: punch_id
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == 200) {
+                                if($(".thumbsup").hasClass("highlight")){
+                                    $(".thumbsup").removeClass("highlight");
+                                    $(".thumbup_count").text(currLikes-1);
+                                }else{
+                                    $(".thumbsup").addClass("highlight");
+                                    $(".thumbup_count").text(currLikes+1);
+                                }
+                            } else {
+                                mui.toast(data.msg);
                             }
-                        } else {
-                            mui.toast(data.msg);
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            //异常处理；
+                            console.log(type);
                         }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
+                    });
+                    isthumbsup("{$is_like}") //点赞状态
+                }
+
             });
 
-            isthumbsup("{$is_like}") //点赞状态
 
         });
+
+        function checkMember(){
+
+            mui.confirm('请完善您的信息，再操作，谢谢！', '提示', ['打卡首页', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
+                }else{
+                    window.location.href = "{:url('/keeper/punch/index')}";
+                }
+            });
+
+        }
 
         // 点赞状态
         function isthumbsup(islikes) {

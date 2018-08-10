@@ -139,6 +139,51 @@
                 opacity: 0;
             }
         }
+
+        #container {
+            width: 100%;
+            height: 250px;
+        }
+
+        #mapFrame {
+            height: 250px;
+        }
+
+        #map button {
+            top: 11px;
+            position: absolute;
+            right: 3px;
+            padding: 5px 8px;
+        }
+
+        #tip {
+            background-color: #ddf;
+            color: #333;
+            border: 1px solid silver;
+            box-shadow: 3px 4px 3px 0px silver;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 55px;
+            border-radius: 5px;
+            overflow: hidden;
+            line-height: 20px;
+            width: 96%;
+        }
+
+        #tip input[type="text"] {
+            height: 25px;
+            border: 0;
+            padding-left: 5px;
+            width: 100%;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0;
+        }
+
+        #mapConfirm {
+            display: none
+        }
     </style>
 </head>
 
@@ -182,8 +227,17 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地定位</label>
+                    <span>
+                        <a href="#mapFrame" class="location" style="display: block">
+                            <i class="mui-icon mui-icon-location"></i>{$eventInfo.location}
+                        </a>
+                    </span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>活动地点</label>
-                    <span>{$eventInfo.location}</span>
+                    <span>{$eventInfo.court}</span>
                 </li>
             </ul>
 
@@ -283,12 +337,71 @@
             </div>
         </div>
 
+         <!-- map -->
+         <div id="mapFrame" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            <div id="map">
+                <div>{:token()}</div>
+                <div id="container"></div>
+                <div id="tip">
+                    <input type="text" id="keyword" name="keyword" value="{$eventInfo.location}" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
+                    />
+                </div>
+                <button class="mui-btn-blue" id="mapConfirm">确认</button>
+            </div>
+        </div>
+
         <script src="/static/frontend/js/mui.min.js"></script>
         <script src="/static/frontend/js/wooApi.js"></script>
         <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
         <script src="/static/frontend/js/mui.zoom.js"></script>
         <script src="/static/frontend/js/mui.previewimage.js"></script>
         <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+        <!--获取地址-->
+        <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+        <script>
+            var lng = '{$eventInfo.lng}';
+            var lat = '{$eventInfo.lat}';
+            // map(选择具体地址)
+            {if $eventInfo.lng == '' || $eventInfo.lat == ''}
+            var map = new AMap.Map('container', {
+                resizeEnable: true,
+                zoom: 13
+            });
+            {else}
+            var map = new AMap.Map('container', {
+                resizeEnable: true,
+                zoom: 13,
+                center:[lng,lat]
+            });
+            {/if}
+            AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+                var geocoder = new AMap.Geocoder({
+    
+                });
+                var marker = new AMap.Marker({
+                    map: map,
+                    bubble: true
+                })
+                geolocation = new AMap.Geolocation({
+                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                    timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                    maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                    showButton: true,        //显示定位按钮，默认：true
+                    buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
+                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                    panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                    zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                });
+    
+                geolocation.getCurrentPosition(function (status, result) {
+                    console.log(result);
+                });
+            });
+    
+        </script>
         <script>
             mui.previewImage();
             //初始化
@@ -571,45 +684,45 @@
             }
         </script>
 
-    <script>
-        wx.config({
-            //debug: true,
-            appId: "{$jsapi['appId']}",
-            timestamp: "{$jsapi['timestamp']}",
-            nonceStr: "{$jsapi['nonceStr']}",
-            signature: "{$jsapi['signature']}",
-            jsApiList: [
-                // 所有要调用的 API 都要加到这个列表中
-                'checkJsApi',
-                'onMenuShareTimeline',
-                'onMenuShareAppMessage',
-                'onMenuShareQQ'
-            ]
-        });
-        wx.ready(function () {
-            // 分享到朋友圈
-            wx.onMenuShareTimeline({
-                title: '{$eventInfo.event}',
-                desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
-                link: "{$shareurl}/pid/{$mid}",
-                imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
-                success: function () { },
-                cancel: function () { }
+        <script>
+            wx.config({
+                //debug: true,
+                appId: "{$jsapi['appId']}",
+                timestamp: "{$jsapi['timestamp']}",
+                nonceStr: "{$jsapi['nonceStr']}",
+                signature: "{$jsapi['signature']}",
+                jsApiList: [
+                    // 所有要调用的 API 都要加到这个列表中
+                    'checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ'
+                ]
             });
-            // 分享给朋友
-            wx.onMenuShareAppMessage({
-                title: '{$eventInfo.event}',
-                desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
-                link: "{$shareurl}/pid/{$mid}",
-                imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
-                type: "",
-                dataUrl: '',
-                success: function () { },
-                cancel: function () { }
-            });
+            wx.ready(function () {
+                // 分享到朋友圈
+                wx.onMenuShareTimeline({
+                    title: '{$eventInfo.event}',
+                    desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
+                    link: "{$shareurl}/pid/{$mid}",
+                    imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
+                    success: function () { },
+                    cancel: function () { }
+                });
+                // 分享给朋友
+                wx.onMenuShareAppMessage({
+                    title: '{$eventInfo.event}',
+                    desc: '{$eventInfo.team} {$eventInfo.event_type}，活动地点：{$eventInfo.location}',
+                    link: "{$shareurl}/pid/{$mid}",
+                    imgUrl: "{:request()->root(true)}{$eventInfo.cover}",
+                    type: "",
+                    dataUrl: '',
+                    success: function () { },
+                    cancel: function () { }
+                });
 
-        });
-    </script>
+            });
+        </script>
 </body>
 
 </html>
