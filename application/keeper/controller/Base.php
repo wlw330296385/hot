@@ -52,7 +52,7 @@ class Base extends Frontend {
 			],
 			[
 				'name'=>'打卡',
-				'icon'=>'icon iconfont icon-nav-news',
+				'icon'=>'icon iconfont icon-nav-Clock',
 				'action'=>'index',
 				'controller'=>'Punch',
                 'module' => $module

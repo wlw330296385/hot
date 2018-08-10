@@ -187,9 +187,9 @@ class Group extends Base{
      public function groupTenet() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
-        if($groupInfo['member_id']<>$this->memberInfo['id']){
-            $this->error('权限不足');
-        }
+        // if($groupInfo['member_id']<>$this->memberInfo['id']){
+        //     $this->error('权限不足');
+        // }
         $poolInfo = db('pool')->where(['group_id'=>$group_id])->find();//本期
          // 是否已加入社群
          $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
