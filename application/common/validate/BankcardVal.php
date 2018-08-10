@@ -8,10 +8,11 @@ class BankcardVal extends Validate{
         'bank_card'        =>  'require|unique:bankcard,bank_card',
         'bank' => 'require',
         'bank_type'         => 'require',
-        'member_id'=>'require'
+        'member_id'=>'require|egt:1'
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'bank_card'        =>  '账户为空',
         'bank_card.require'    => '账户号码必须',
         'member_id.unique'       =>'查询不到用户信息',

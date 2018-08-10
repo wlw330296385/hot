@@ -14,11 +14,12 @@ class billVal extends Validate{
         'camp'              =>'require',
         'student_id'                  =>'require',
         'student'                  =>'require',
-        'member_id'                 =>'require',
+        'member_id'                 =>'require|egt:1',
         'score_pay'     =>'require'
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'bill_order.require'        =>  '订单号生成失败',
         'bill_order.unique'        =>  '订单号重复,请刷新页面',
         // 'bill.token'        =>'重复提交订单,请刷新页面',

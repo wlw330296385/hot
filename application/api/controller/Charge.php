@@ -13,9 +13,10 @@ class Charge extends Frontend{
 	        $member_id = $this->memberInfo['id'];
 	        $avatar = $this->memberInfo['avatar'];
 	        $charge = input('param.charge');
+	        $pay_type = input('param.pay_type','wxpay');
 	        $charge_order = input('param.charge_order');
 	        $type = input('param.type',1);
-	        if($charge >=0){//测试的时候改为0,平时是1;
+	        if($charge >= 1){//测试的时候改为0,平时是1;
 	        	if($member_id<1){
 	        		return json(['code'=>100,'msg'=>'未注册平台会员,购买未到账,请联系平台客服']);
 	        	}
@@ -33,7 +34,8 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
-			        		'status'		=>1
+			        		'status'		=>1,
+			        		'pay_type'		=>$pay_type
 			        	]);
 
         				db('member')->where(['id'=>$member_id])->inc('balance',$charge)->update();
@@ -64,7 +66,8 @@ class Charge extends Frontend{
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
 			        		'status'		=>1,
-			        		'type'			=>2
+			        		'type'			=>2,
+			        		'pay_type'		=>$pay_type
 			        	]);
         				db('member')->where(['id'=>$member_id])->inc('hot_coin',$charge)->update();
         				$Hotcoin = new \app\model\Hotcoin;
@@ -90,7 +93,8 @@ class Charge extends Frontend{
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
 			        		'status'		=>1,
-			        		'type'			=>3
+			        		'type'			=>3,
+			        		'pay_type'		=>$pay_type
 			        	]);
         				db('camp')->where(['id'=>$camp_id])->inc('balance',$charge)->update();
         				

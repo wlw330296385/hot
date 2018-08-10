@@ -17,12 +17,12 @@ class MemberFinance extends Backend{
 		$keyword = input('param.keyword');
 		$member_id = input('param.member_id');
 		if($keyword == 'woo'){
-			cookie('amfk',null);
+			cookie('mflk',null);
 		}elseif (!$keyword) {
-			$keyword = cookie('amfk');
+			$keyword = cookie('mflk');
 			$map['member'] = ['like',"%{$keyword}%"];
 		}else{
-			cookie('amfk',$keyword);
+			cookie('mflk',$keyword);
 			$map['member'] = ['like',"%{$keyword}%"];
 		}
 		if($member_id){
@@ -36,6 +36,8 @@ class MemberFinance extends Backend{
 		$this->assign('memberFinanceList', $memberFinanceList);
 		return view('MemberFinance/MemberFinanceList');
 	}
+
+
 
 
 }

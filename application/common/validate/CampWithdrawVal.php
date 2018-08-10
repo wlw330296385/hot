@@ -7,11 +7,12 @@ class CampWithdrawVal extends Validate{
    protected $rule = [
         'withdraw'        =>  'require',
         'bank_id' => 'require',
-        'member_id'=>'require',
+        'member_id'=>'require|egt:1',
         'camp_id'=>'require'
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'withdraw'        =>  '银行必须',
         'bank_id.require'    => '账户号码必须',
         'member_id.unique'       =>'查询不到用户信息',

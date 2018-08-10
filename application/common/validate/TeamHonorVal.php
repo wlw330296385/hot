@@ -21,6 +21,7 @@ class TeamHonorVal extends Validate
 
     // 验证信息
     protected $message = [
+        'member_id.gt'    => '请先注册',
         'name.require' => '请输入奖项名称',
         'name.max' => '奖项名称不能超过50个字',
         'name.token' => '请不要重复提交',

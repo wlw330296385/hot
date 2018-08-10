@@ -4,7 +4,7 @@ use think\Validate;
 class GradeVal extends Validate{
 	protected $rule = [
         'grade'  =>  'require|max:60|token',
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'lesson_id' => 'require',
 //        'students' => 'require',
         'gradecate_id' => 'require',
@@ -20,6 +20,7 @@ class GradeVal extends Validate{
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'grade.token'   =>'请不要重复提交',
         'grade.require'  =>  '请填写班级名称',
         'member_id.require'	=> '会员信息过期,请重新登录平台',

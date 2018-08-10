@@ -17,6 +17,7 @@ class PunchVal extends Validate{
     
     protected $message = [
 		'member_id'		=>'请先登录',
+        'member_id.egt'    => '请先注册',
 		'punch_time'		=>'打卡时间必填',
 		'punch'		=>'打卡名称必填',
 		'punch_category'		=>'打卡类型必填',

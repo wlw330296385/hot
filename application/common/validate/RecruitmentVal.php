@@ -4,7 +4,7 @@ use think\Validate;
 class RecruitmentVal extends Validate{
 	protected $rule = [
         'recruitment'  =>  'require|max:60|token',
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'province' => 'require',
         'telephone'=> 'require',
         'organization_id' =>'require',
@@ -14,6 +14,7 @@ class RecruitmentVal extends Validate{
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'recruitment.token'   =>'请不要重复提交',
         'recruitment.require'  =>  '请填写招募名称',
         'member_id.require'	=> '会员信息过期,请重新登录平台',

@@ -17,6 +17,7 @@ class GroupVal extends Validate{
     protected $message = [
     	'group'		=>'群名必须',
     	'member_id'		=>'请先登录',
+        'member_id.egt'    => '请先注册',
     	'logo'		=>'logo必须',
     	'group'		=>'群名必须',
     	// 'tenet'		=>'宗旨必须',

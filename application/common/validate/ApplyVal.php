@@ -4,7 +4,7 @@ use think\Validate;
 class ApplyVal extends Validate{
 	protected $rule = [
         'member'  =>  'require|max:60|token',
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'organization' => 'require',
         'organization_id' =>'require',
         'organization_type'=>'require',
@@ -12,6 +12,7 @@ class ApplyVal extends Validate{
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'member.token'   =>'请不要重复提交',
         'member_id.require'	=> '缺少申请|被邀请人',
         'organization_id.require' =>'organization_id.require',

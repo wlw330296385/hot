@@ -6,7 +6,7 @@ class CampVal extends Validate{
 
 	protected $rule = [
         'camp'  =>  'require|max:60|unique:camp,camp',
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'realname' =>  'require',
         'province' => 'require',
         'city' => 'require',
@@ -14,6 +14,7 @@ class CampVal extends Validate{
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'camp.require'  =>  '请输入训练营名称',
         'camp.unique'   =>'训练营名称被占用',
         'member_id.require'	=> '请先注册会员',

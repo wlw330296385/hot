@@ -5,11 +5,12 @@ class CampCommentVal extends Validate{
 
 
 	protected $rule = [
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'camp_id' =>  'require',
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'camp_id.require'  =>  '请输入训练营名称',
         'member_id.require'	=> '查不到会员信息',
     ];

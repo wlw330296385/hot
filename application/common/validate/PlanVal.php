@@ -7,7 +7,7 @@ class PlanVal extends Validate{
 	protected $rule = [
         'camp_id'  =>  'gt:0',
         'member'	=> 'require',
-        'member_id'    => 'require',
+        'member_id'    => 'require|egt:1',
         'camp' =>  'require',
         'outline' => 'require',
         // 'exercise'=>'require',
@@ -16,6 +16,7 @@ class PlanVal extends Validate{
     protected $message = [
         'camp_id'  =>  'camp_id 必须大于0',
         'member_id'    => 'require',
+        'member_id.egt'    => '请先注册',
         'member'  => 'require',
         'camp' =>  '请填写训练营',
         'outline' => '请填写大纲名称',

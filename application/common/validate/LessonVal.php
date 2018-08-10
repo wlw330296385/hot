@@ -15,6 +15,7 @@ class LessonVal extends Validate{
         'city'                  =>'require',
         'area'                  =>'require',
         'court'                 =>'require',
+        'member_id'             =>'egt:1'
     ];
     
     protected $message = [
@@ -29,6 +30,7 @@ class LessonVal extends Validate{
         'city'                  =>'请选择地区',
         'area'                  =>'请选择地区',
         'court'                 =>'请选择训练场地',
+        'member_id.egt'    => '请先注册',
     ];
     
     protected $scene = [

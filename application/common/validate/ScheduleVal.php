@@ -17,9 +17,11 @@ class ScheduleVal extends Validate{
         // 'plan_id'           =>'require',
 //        'lesson_date'       =>'require',
         'lesson_time'       =>'require',
+        'member_id'         =>'require|egt:1'
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'camp_id'           =>'没有指定训练营编号',
         //'camp'              =>'require|max:60',
         'lesson'            =>'没有指定课程',

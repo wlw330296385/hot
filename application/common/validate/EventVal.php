@@ -13,9 +13,11 @@ class EventVal extends Validate{
         'city'                  =>'require',
         'area'                  =>'require',
         'location'                 =>'require',
+        'member_id'                =>'require|egt:1'
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'event.require'        =>  '请填写活动主题',
         'event_type.require'	=> '请填写活动类型',
         'start'           =>'活动时间必须大于当前时间',

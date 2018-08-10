@@ -17,14 +17,7 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$list = db('schedule')->where(['is_settle'=>0,'coach_salary'=>0,'assistant_salary'=>0,'status'=>1])->select();
-        dump($list);
-        foreach ($list as $key => $value) {
-            $info = db('grade')->where(['id'=>$value['grade_id']])->find();
-            if($info['coach_salary']<>0 || $info['assistant_salary']<>0){
-                db('schedule')->where(['id'=>$value['id']])->update(['coach_salary'=>$info['coach_salary'],'assistant_salary'=>$info['assistant_salary']]);
-            }
-        }
+    	db('admin_menu')->insert(['pid'=>4,'url_value'=>'admin/Charge/chargeList','title'=>'充值记录']);
     }
 
     public function index2(){

@@ -5,7 +5,7 @@ class SalaryOutVal extends Validate{
 
 
 	protected $rule = [
-        'member_id'           =>'require',
+        'member_id'           =>'require|egt:1',
         'salary'             =>'require',
         'bank_card'          =>'require',
         'bank'              =>'require',
@@ -14,7 +14,8 @@ class SalaryOutVal extends Validate{
     ];
     
     protected $message = [
-        'member_id'           =>'查不到用户信息',
+        'member_id.require'           =>'查不到用户信息',
+        'member_id.egt'    => '请先注册',
         'salary'             =>'金额必须',
         'bank_card'          =>'账号必须',
         'bank'              =>'账号平台必须',

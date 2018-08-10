@@ -6,7 +6,7 @@ class CourtVal extends Validate{
 
 	protected $rule = [
         'court'  =>  'require|max:60|token',
-        'member_id'	=> 'require',
+        'member_id'	=> 'require|egt:1',
         'province' =>  'require',
         'city' =>  'require',
         'area' =>  'require',
@@ -18,6 +18,7 @@ class CourtVal extends Validate{
     ];
     
     protected $message = [
+        'member_id.egt'    => '请先注册',
         'court.require'  =>  '请填写场地名称',
         'member_id.require'	=> '请登录平台',
         'province.require' =>  '请选择所属地区',
