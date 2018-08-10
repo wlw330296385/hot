@@ -121,7 +121,7 @@
              </div> 
             <ul class="mui-table-view winnerListBtn">
                 <li>
-                    <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right">往届</a>
+                    <a href="{:url('group/poolWinnerList',['group_id'=>$groupInfo.id])}" class="mui-navigate-right" onclick="return checkGroupMember()">往届</a>
                 </li>
             </ul>
 
@@ -160,7 +160,7 @@
                         
                     </label>
                     <span class="wd25 pdr15 mui-navigate-right">
-                        <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" style="font-size: 13px;">奖池与规则</a>
+                        <a href="{:url('group/poolList',['group_id'=>$groupInfo.id])}" style="font-size: 13px;" onclick="return checkGroupMember()">奖池与规则</a>
                     </span>
                 </li>
             </ul>
@@ -168,7 +168,7 @@
             <div class="nav-list">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('group/groupMemberList',['group_id'=>$groupInfo.id])}">
+                        <a href="{:url('group/groupMemberList',['group_id'=>$groupInfo.id])}" onclick="return checkGroupMember()">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-masses"></use>
                             </svg>
@@ -177,7 +177,7 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id,'pool_id'=>$nowPool.id])}">
+                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id,'pool_id'=>$nowPool.id])}" onclick="return checkGroupMember()">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-punch-Personal"></use>
                             </svg>
@@ -186,11 +186,11 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm3">
-                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id,'pool_id'=>$nowPool.id])}?tab=groupPunch">
+                        <a href="{:url('group/groupMemberPunch',['group_id'=>$groupInfo.id,'pool_id'=>$nowPool.id])}?tab=groupPunch" onclick="return checkGroupMember()">
                             <svg class="coloricon" aria-hidden="true">
-                                <use xlink:href="#icon-p-workout"></use>
+                                <use xlink:href="#icon-punch-Full"></use>
                             </svg>
-                            <span class="" style="display: block;">全员卡</span>
+                            <span class="" style="display: block;">成员卡</span>
                             <div class="mui-media-body f18 colororange" style="margin-top: 2px;">{$membersPunch}</div>
                         </a>
                     </li>
@@ -221,7 +221,19 @@
             </p>
 
             <!--底部操作-->
-            <ul class="mui-table-view operation  initialBottom">
+             {if $status_val <> 1 }
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="{$homeurl}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli ">
+                    <a href="#shareGuide">分享</a>
+                </li>
+            </ul>
+            {else /}        
+            <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                     <a href="{$homeurl}">
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
@@ -234,17 +246,7 @@
                     <a href="{:url('punch/createPunch')}/?group_id={$groupInfo.id}" class="createPunch">打卡</a>
                 </li>
             </ul>
-            <ul class="mui-table-view operation otherBottom hide">
-                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                    <a href="{$homeurl}">
-                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli ">
-                    <a href="#shareGuide">分享</a>
-                </li>
-            </ul>
-
+            {/if}
         </div>
     </div>
     <!--分享-->
@@ -337,24 +339,21 @@
 
             // 判断是否可以创建奖金池
             $(".createPool").on("tap", function () {
-                var currPoolStatus = "{$nowPool.status}";
-                if(currPoolStatus == 2 || currPoolStatus == 1){
-                    window.location.href = "{:url('group/poolInfo')}" + '/group_id/' + "{$groupInfo.id}" + '/pool_id/' + "{$nowPool.id}";
+                var isGroupMember = "{$status_val}";
+                if(isGroupMember!=1){
+                    mui.toast("抱歉，只有群员可以查看奖池");
                 }else{
-                    mui.alert("群主还没创建本期奖池打卡规则，<br />去看看历史奖池与规则吧", '温馨提示', '确定', function () {
-                        window.location.href = "{:url('group/poolList',['group_id'=>$groupInfo.id])}";
-                     })
+                    var currPoolStatus = "{$nowPool.status}";
+                    if(currPoolStatus == 2 || currPoolStatus == 1){
+                        window.location.href = "{:url('group/poolInfo')}" + '/group_id/' + "{$groupInfo.id}" + '/pool_id/' + "{$nowPool.id}";
+                    }else{
+                        mui.alert("群主还没创建本期奖池打卡规则，<br />去看看历史奖池与规则吧", '温馨提示', '确定', function () {
+                            window.location.href = "{:url('group/poolList',['group_id'=>$groupInfo.id])}";
+                         })
+                    }
                 }
             });
-            
-
-            var groupIndex = wooApi.GetQueryString('groupIndex');
-            if (groupIndex == "otherGroup") {
-                $(".initialBottom").hide();
-                $(".otherBottom").show();
-            }
-
-
+       
             // 加入社群
             $(".joinGroup").on("tap", '', function () {
 
@@ -437,6 +436,17 @@
 
             toPunchList(); //获取我的打卡记录列表
         })
+
+        //判断是否社群群员
+        function checkGroupMember() {
+            var isGroupMember = "{$status_val}";
+            if(isGroupMember!=1){
+                mui.toast("抱歉，只有群员可以查看");
+                return false;
+            }else{
+                return true;
+            }
+        }
 
         //下拉刷新具体业务实现
         function pulldownRefresh() {

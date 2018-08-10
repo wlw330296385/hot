@@ -370,6 +370,7 @@
                     {switch name="delbtnDisplay"} {case value="2"}
                     <button type="button" class="mui-btn mui-btn-danger f16 signOut">移除此队员</button>
                     <button type="button" class="mui-btn mui-btn-danger f16 applyIn hide">邀请</button>
+                    <button type="button" class="mui-btn mui-btn-danger f16 deleteMember hide">删除</button>
                     {/case} {case value="1"}
                     <button type="button" class="mui-btn mui-btn-danger f16 applyOut">申请退出球队</button>
                     {/case} {/switch}
@@ -629,8 +630,10 @@
             var teamStatus = "{$teamMemberInfo.status}";
             if (teamStatus == "离队") {
                 $(".applyIn").show();
+                // $(".deleteMember").show();
                 $(".signOut").hide();
             }
+            // 重新发送邀请给离队队员
             $(".applyIn").on("tap", '', function () {
                 mui.ajax("{:url('api/team/returnteamember')}", {
                     data: {
@@ -656,6 +659,32 @@
                     }
                 });
             });
+            // 直接删除离队队员
+            // $(".deleteMember").on("tap", '', function () {
+            //     mui.ajax("{:url('api/team/returnteamember')}", {
+            //         data: {
+            //             team_id: team_id,
+            //             id: id
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.toast("操作成功");
+            //                 window.setTimeout("history.go(-1)", 2000);
+            //             } else {
+            //                 mui.toast(data.msg);
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
 
             // 发表印象标签
             $(".commentBtn").on("tap", '', function () {

@@ -13,14 +13,14 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         .for-tab{ background-color: #efeff4;}
-        .sheader{ padding: 8px 15px !important;}
+        .sheader{ padding: 8px 12px 8px 20px !important;}
         .sheader span{ line-height: 24px; }
         #groupPunch img { width: 45px !important; height: 45px !important; }
         #groupPunch .list .listli .mui-media-body { line-height: 42px; }
         #groupPunch .colororange { font-size: 16px; }
         .mui-badge { margin-left: 10px; }
         .mui-segmented-control .fr { margin-right: 15px; color: #999; }
-
+        .mui-icon-bars { margin:0px 0px 0px 5px !important; font-size: 16px !important; }
     </style>
 </head>
 
@@ -28,15 +28,16 @@
 
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <ul class="mui-table-view detalis-list">
-            <li class="listli sheader mui-clearfix">
+            <li class="listli sheader mui-clearfix mui-text-center">
                 <a class="mui-pull-left mui-icon mui-icon-left-nav" href="{:url('group/groupInfo',['group_id'=>$groupInfo.id])}"></a>
-                <span class="mui-pull-right title-name">第 {$poolInfo.season} 期 - {$poolInfo.pool}</span>
+                <span class="title-name">第 {$poolInfo.season} 期 - {$poolInfo.pool}</span>
+                <a href="#poolList" class="mui-pull-right">往期<span class="mui-icon mui-icon-bars" style=""></span></a>
             </li>
         </ul>
         <div class="camp-lesson-list mb mt">
             <div id="segmentedControl" class="mui-segmented-control">
-                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">全员 <text class="groupBadge">{$poolInfo.members}</text> 卡</a>
-                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch"><text class="memberName">{$memberInfo.member}</text> <text class="memberBadge">0</text> 卡</a>
+                <a class="mui-control-item" href="#groupPunch" id="tGroupPunch">全员 <text class="groupBadge colororange">{$poolInfo.members}</text> 卡</a>
+                <a class="mui-control-item mui-active" href="#memberPunch" id="tMemberPunch"><text class="memberName">{$memberInfo.member}</text> <text class="memberBadge colororange">0</text> 卡</a>
             </div>
         </div>
     </header>
@@ -57,10 +58,52 @@
         </div>
 
     </div>
+
+        <!--往期弹出菜单-->
+        <div id="poolList" class="mui-popover">
+            <div class="mui-popover-arrow"></div>
+            <div class="page-header border-b">
+                <span class="course wd36">
+                    <strong>选择往期奖池</strong>
+                </span>
+            </div>
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <ul class="mui-table-view list poolList">
+                    </ul>
+                    <ul class="mui-pager">
+                        <li>
+                            <a href="#" class="prev_page">上一页</a>
+                        </li>
+                        <li>
+                            <span class="currPage">0</span>/
+                            <span class="totalPage">0</span>
+                        </li>
+                        <li>
+                            <a href="#" class="next_page">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
+
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
          mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
@@ -84,6 +127,32 @@
             var mCount = 1;
             var gCount = 1;
 
+            /////////////////////////////////////////////////////////////////往期奖池列表
+            var pagePool = 1;
+            //页面加载上运行一次获取列表
+            toPoolList(1)
+
+            //领队粉丝弹出框页码控制
+            $("ul.poolList").on('tap', '.next_page', function () {
+                var getTotalPage = $("ul.poolList .totalPage").text();
+                pagePool++;
+                if (pagePool > getTotalPage) {
+                    mui.toast("已经最后一页了");
+                    pagePool = getTotalPage;
+                } else {
+                    toPoolList(pagePool);
+                }
+            })
+            $("ul.poolList").on('tap', '.prev_page', function () {
+                pagePool--;
+                if (pagePool < 1) {
+                    mui.toast("已经是第一页了");
+                    pagePool = 1;
+                } else {
+                    toPoolList(pagePool);
+                }
+            })
+            ///////////////////////////////////////////////////////////////
 
             mui('#memberPunch').pullRefresh({
                 down: {
@@ -278,21 +347,73 @@
             };
 
 
-
             //点击群员链接替换个人卡tab内容
             $(".groupMemberList").on("tap", "a", function () {
                 member_id = $(this).attr("data-mid");
                 member = $(this).attr("data-memberName");
-                $(".memberName").text(member)
                 mCount = 1;//刷新并显示第一页
                 toMemberList(member_id, mCount, 1);//具体取数据的方法
-                $(".mui-control-item").removeClass("mui-active");
-                $("#tMemberPunch").addClass("mui-active");
-                $(".mui-control-content").removeClass("mui-active");
-                $("#memberPunch").addClass("mui-active");
+                //setTimeout(function(){
+                    $(".memberName").text(member)
+                    $(".mui-control-item").removeClass("mui-active");
+                    $("#tMemberPunch").addClass("mui-active");
+                    $(".mui-control-content").removeClass("mui-active");
+                    $("#memberPunch").addClass("mui-active");
+                //},1000);
             });
 
         });
+
+            //接口获取数据并追加到页面
+            var toPoolList = function (page) {
+
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/pool/getPoolListApi','','',true)}" + '/?page=' + page;
+                var group_id = "{$groupInfo.id}"
+                mui.ajax({
+                    url: url,
+                    data: {
+                        group_id: group_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+
+                        if (data.code == 200) {
+                            var newli = '';
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                               var urls = "{:url('group/groupMemberPunch')}" + '/group_id/' + data.data[i].group_id + '/pool_id/' + data.data[i].id;
+                                newli += '<li class="mui-table-view-cell mui-media listli">';
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><label>第'+data.data[i].season+ '期 - ' + data.data[i].pool + '</label>';
+                                if (data.data[i].status == 1) {
+                                    newli += '<font class="tipCorner bgorange">未开启</font>';
+                                } else if (data.data[i].status == 2) {
+                                    newli += '<font class="tipCorner bgred">进行中</font>';
+                                } else if (data.data[i].status == -1) {
+                                    newli += '<font class="tipCorner bggray">已结束</font>';
+                                } else if (data.data[i].status == -2) {
+                                    newli += '<font class="tipCorner bggray">已终止</font>';
+                                }
+                                newli += '</li>';
+                            }
+                            $("ul.poolList").empty();
+                            if (newli == '') {
+                                newli = '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                            }
+                            $("ul.poolList").append(newli);
+                            $("ul.poolList .currPage").text(data.data.current_page);
+                            $("ul.poolList .totalPage").text(data.data.last_page);
+                        } else {
+                            mui.toast('数据获取失败,请稍候再试');
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            };
 
     </script>
 </body>

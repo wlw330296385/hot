@@ -33,7 +33,7 @@
 <body>
 
     <header class="mui-bar mui-bar-nav subheader">
-        <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}" class=" mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <a href="{:url('team/teammanage',['team_id'=>$teamInfo['id']])}" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">队员列表</h1>
     </header>
 
@@ -96,8 +96,8 @@
                     </div>
                 </div>
 
-                <div class="depositTmDiv"></div>
-                <div class="depositLsDiv"></div>
+                <div class="depositTmDiv hide"></div>
+                <div class="depositLsDiv hide"></div>
             </div>
 
             <ul class="mui-table-view operation pdmember">
@@ -186,10 +186,6 @@
             });
         });
 
-
-
-
-
         toListIn()//在队球员列表
     })
 
@@ -210,79 +206,36 @@
                 console.log(data)
                 var newlils = '';
                 var newlitm = '';
+                var newlilsAfter = '';
+                var newlitmAfter = '';
+                var newlitmNull = ''
+                var newlilsNull = ''
                 if (data.code == 200) {
                     teamMemberList = []
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/id/' + data.data[i].id;
+
                         if (data.data[i].role_arr != 0) {
-                            newlils += `<p data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" data-name="${data.data[i].name}"
-                                         data-position="${data.data[i].position}" data-age="${data.data[i].age}" data-height="${data.data[i].height}" 
-                                         data-weight="${data.data[i].weight}">`
+                            newlils += `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
+                                           data-name="${data.data[i].name}" data-position="${data.data[i].position}" data-age="${data.data[i].age}" 
+                                           data-height="${data.data[i].height}" data-weight="${data.data[i].weight}">`
                             for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
                                 newlils += `<span>${data.data[i].role_arr[j]}</span>`;
                             }
                             newlils += `</p>`
-                            // newli1 += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                            // if (data.data[i].number == null) {
-                            //     newli1 += '<div class="mbNumber">&nbsp;</div>';
-                            // } else {
-                            //     newli1 += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
-                            // }
-                            // newli1 += '<img class="img45 mui-pull-left" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;">';
-                            // newli1 += '<div class="mui-media-body wd60">' + data.data[i].name;
-                            // newli1 += '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-                            // for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
-                            //     newli1 += '<font class="tipCorner bgred">' + data.data[i].role_arr[j] + '</font>';
-                            // }
-                            // newli1 += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
-
                         } else {
-                            newlitm += `<p data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" data-name="${data.data[i].name}"
-                                         data-position="${data.data[i].position}" data-age="${data.data[i].age}" data-height="${data.data[i].height}" 
-                                         data-weight="${data.data[i].weight}"></p>`
+                            newlitm += `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
+                                           data-name="${data.data[i].name}" data-position="${data.data[i].position}" data-age="${data.data[i].age}" 
+                                           data-height="${data.data[i].height}" data-weight="${data.data[i].weight}"></p>`
                         }
                     }
                 }
 
                 // 理事排序整体操作
-                // $(".depositLsDiv").empty().append(newlils)
-                // teamMemberList = []
-                // $(".depositLsDiv p").each(function () {
-                //     var number = $(this).attr("data-number");
-                //     var avatar = $(this).attr("data-avatar");
-                //     var name = $(this).attr("data-name");
-                //     var position = $(this).attr("data-position");
-                //     var role_arr = $(this).find("sapn").text();
-                //     var age = $(this).attr("data-age");
-                //     var height = $(this).attr("data-height");
-                //     var weight = $(this).attr("data-weight");
-                //     teamMemberList.push({ number, avatar, name, position, age, height, weight })
-                //     teamMemberList.sort(compare("number")).reverse();  // 排序
-                // })
-                // console.log(teamMemberList)
-                // for (var i = 0; i <= teamMemberList.length - 1; i++) {
-                //     newlils += `<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">`
-                //     if (teamMemberList[i].number == null) {
-                //         newlils += `<div class="mbNumber">&nbsp;</div>`;
-                //     } else {
-                //         newlils += `div class="mbNumber colorred">${teamMemberList[i].number}</div>`;
-                //     }
-                //     newlils += `<img class="img45 mui-pull-left" src="${teamMemberList[i].avatar}" style="margin-top:4px;">
-                //                 <div class="mui-media-body wd60">${teamMemberList[i].name}&nbsp;&nbsp;
-                //                     <font class="colororange f12">${teamMemberList[i].position}</font>
-                //                     <p>年龄:${teamMemberList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberList[i].height}cm&nbsp;&nbsp;&nbsp;
-                //                         体重:${teamMemberList[i].weight}kg
-                //                     </p>
-                //                 </div>
-                //             </li>`
-                // }
-                // $(".matchAdmin").empty().append(newlils);
-                // 理事排序整体操作end
-                // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // 队员排序整体操作
-                $(".depositTmDiv").empty().append(newlitm)
-                teamMemberList = []
-                $(".depositDiv p").each(function () {
+                $(".depositLsDiv").empty().append(newlils)
+                teamMemberLsList = []
+                teamMemberLsNullList = []
+                $(".depositLsDiv p").each(function () {
+                    var id = $(this).attr("data-id");
                     var number = $(this).attr("data-number");
                     var avatar = $(this).attr("data-avatar");
                     var name = $(this).attr("data-name");
@@ -290,18 +243,92 @@
                     var age = $(this).attr("data-age");
                     var height = $(this).attr("data-height");
                     var weight = $(this).attr("data-weight");
-                    teamMemberList.push({ number, avatar, name, position, age, height, weight })
-                    teamMemberList.sort(compare("number")).reverse();  // 排序
-                })
-                console.log(teamMemberList)
-                for (var i = 0; i <= teamMemberList.length - 1; i++) {
-                    newlitm += `<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">`
-                    if (teamMemberList[i].number == null) {
-                        newlitm += `<div class="mbNumber">&nbsp;</div>`;
+                    var role_arr = ''
+                    teamMemberLsListChild = []
+                    $(this).find("span").each(function () {
+                        role_arr = $(this).text();
+                        teamMemberLsListChild.push({ role_arr })
+                    })
+                    if (number == 'null') {
+                        teamMemberLsNullList.push({ id, number, avatar, name, position, age, height, weight, teamMemberLsListChild })
                     } else {
-                        newlitm += `div class="mbNumber colorred">${teamMemberList[i].number}</div>`;
+                        teamMemberLsList.push({ id, number, avatar, name, position, age, height, weight, teamMemberLsListChild })
+                        teamMemberLsList.sort(compare("number")).reverse();  // 排序
                     }
-                    newlitm += `<img class="img45 mui-pull-left" src="${teamMemberList[i].avatar}" style="margin-top:4px;">
+                })
+                for (var i = 0; i <= teamMemberLsList.length - 1; i++) {
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsList[i].id;
+                    newlilsAfter += `<li class="mui-table-view-cell mui-media listli"><a href="${urls}" class="mui-navigate-right">`
+                    if (teamMemberLsList[i].number == null) {
+                        newlilsAfter += `<div class="mbNumber">&nbsp;</div>`;
+                    } else {
+                        newlilsAfter += `<div class="mbNumber colorred">${teamMemberLsList[i].number}</div>`;
+                    }
+                    newlilsAfter += `<img class="img45 mui-pull-left" src="${teamMemberLsList[i].avatar}" style="margin-top:4px;">
+                                <div class="mui-media-body wd60">${teamMemberLsList[i].name}&nbsp;&nbsp;
+                                    <font class="colororange f12">${teamMemberLsList[i].position}</font>`
+                    for (var j = 0; j <= teamMemberLsList[i].teamMemberLsListChild.length - 1; j++) {
+                        newlilsAfter += `<font class="tipCorner bgred">${teamMemberLsList[i].teamMemberLsListChild[j].role_arr}</font>`;
+                    }
+                    newlilsAfter += `<p>年龄:${teamMemberLsList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsList[i].height}cm&nbsp;&nbsp;&nbsp;
+                                        体重:${teamMemberLsList[i].weight}kg
+                                    </p>
+                                </div>
+                            </li>`
+                }
+                for (var i = 0; i <= teamMemberLsNullList.length - 1; i++) {
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsNullList[i].id;
+                    newlilsNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    newlilsNull += `<div class="mbNumber">&nbsp;</div>`;
+                    newlilsNull += `<img class="img45 mui-pull-left" src="${teamMemberLsNullList[i].avatar}" style="margin-top:4px;">
+                                <div class="mui-media-body wd60">${teamMemberLsNullList[i].name}&nbsp;&nbsp;
+                                    <font class="colororange f12">${teamMemberLsNullList[i].position}</font>`
+                    for (var j = 0; j <= teamMemberLsNullList[i].teamMemberLsListChild.length - 1; j++) {
+                        newlilsNull += `<font class="tipCorner bgred">${teamMemberLsNullList[i].teamMemberLsListChild[j].role_arr}</font>`;
+                    }
+                    newlilsNull += `<p>年龄:${teamMemberLsNullList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsNullList[i].height}cm&nbsp;&nbsp;&nbsp;
+                                        体重:${teamMemberLsNullList[i].weight}kg
+                                    </p>
+                                </div>
+                            </li>`
+                }
+                $(".matchAdmin").empty().append(newlilsAfter);
+                $(".matchAdmin li:last-child").after(newlilsNull);
+                // 理事排序整体操作end
+
+
+                // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                // 队员排序整体操作
+                $(".depositTmDiv").empty().append(newlitm)
+                teamMemberList = []
+                teamMemberNullList = []
+                $(".depositTmDiv p").each(function () {
+                    var id = $(this).attr("data-id");
+                    var number = $(this).attr("data-number");
+                    var avatar = $(this).attr("data-avatar");
+                    var name = $(this).attr("data-name");
+                    var position = $(this).attr("data-position");
+                    var age = $(this).attr("data-age");
+                    var height = $(this).attr("data-height");
+                    var weight = $(this).attr("data-weight");
+                    if (number == 'null') {
+                        teamMemberNullList.push({ id, number, avatar, name, position, age, height, weight })
+                    } else {
+                        teamMemberList.push({ id, number, avatar, name, position, age, height, weight })
+                        teamMemberList.sort(compare("number")).reverse();  // 排序
+                    }
+                })
+                for (var i = 0; i <= teamMemberList.length - 1; i++) {
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberList[i].id;
+                    newlitmAfter += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    if (teamMemberList[i].number == 'null') {
+                        newlitmAfter += `<div class="mbNumber">&nbsp;</div>`;
+                    } else {
+                        newlitmAfter += `<div class="mbNumber colorred">${teamMemberList[i].number}</div>`;
+                    }
+                    newlitmAfter += `<img class="img45 mui-pull-left" src="${teamMemberList[i].avatar}" style="margin-top:4px;">
                                 <div class="mui-media-body wd60">${teamMemberList[i].name}&nbsp;&nbsp;
                                     <font class="colororange f12">${teamMemberList[i].position}</font>
                                     <p>年龄:${teamMemberList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberList[i].height}cm&nbsp;&nbsp;&nbsp;
@@ -310,7 +337,25 @@
                                 </div>
                             </li>`
                 }
-                $(".matchCommon").empty().append(newlitm);
+                for (var i = 0; i <= teamMemberNullList.length - 1; i++) {
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberNullList[i].id;
+                    newlitmNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    if (teamMemberNullList[i].number == 'null') {
+                        newlitmNull += `<div class="mbNumber">&nbsp;</div>`;
+                    } else {
+                        newlitmNull += `<div class="mbNumber colorred">${teamMemberNullList[i].number}</div>`;
+                    }
+                    newlitmNull += `<img class="img45 mui-pull-left" src="${teamMemberNullList[i].avatar}" style="margin-top:4px;">
+                                <div class="mui-media-body wd60">${teamMemberNullList[i].name}&nbsp;&nbsp;
+                                    <font class="colororange f12">${teamMemberNullList[i].position}</font>
+                                    <p>年龄:${teamMemberNullList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberNullList[i].height}cm&nbsp;&nbsp;&nbsp;
+                                        体重:${teamMemberNullList[i].weight}kg
+                                    </p>
+                                </div>
+                            </li>`
+                }
+                $(".matchCommon").empty().append(newlitmAfter);
+                $(".matchCommon li:last-child").after(newlitmNull);
                 // 队员排序整体操作end
 
                 if (newlils == '') {
@@ -334,7 +379,6 @@
             return value2 - value1;
         }
     }
-
 
 </script>
 
