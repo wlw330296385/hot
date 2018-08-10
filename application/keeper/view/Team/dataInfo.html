@@ -120,20 +120,31 @@
                     <text class="colororange home_score">{$matchInfo.record.home_score}</text>分，对方
                     <text class="colororange away_score">{$matchInfo.record.away_score}</text>分</span>
             </div>
+            <div class="mui-input-row">
+                <label>球员数据</label>
+                <span class="totalScore"></span>
+            </div>
 
             <!--球员数据-->
             <div class="page-header bggray2">
-                <span class="course">球员数据</span>
+                <div class="mui-row f14">
+                    <div class="mui-col-xs-2 mui-text-center">球号</div>
+                    <div class="mui-col-xs-7">姓名</div>
+                    <div class="mui-col-xs-3 mui-text-center">得分</div>
+                </div>
             </div>
+
             <ul class="mui-table-view list border-b dataList">
 
                 {volist name="matchStatcList" id="vol"}
                 <li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                                <div class="mui-col-xs-4 colororange">{$vol.number}</div>
-                            <div class="mui-col-xs-4">{$vol.name}</div>
-                            <div class="mui-col-xs-4 colororange isLineup">{$vol.lineup}</div>
+                            <div class="mui-col-xs-2 mui-text-center colororange">{$vol.number}</div>
+                            <div class="mui-col-xs-7">{$vol.name}
+                                <font class="tipCorner bgred lineup">{$vol.lineup}</font>
+                            </div>
+                            <div class="mui-col-xs-3 mui-text-center personScore">{$vol.pts}</div>
                         </div>
                     </a>
                     <div class="mui-collapse-content dataCollapse">
@@ -202,15 +213,6 @@
                                 <input type="text" value="{$vol.foul}" placeholder="0" disabled>
                             </div>
                         </div>
-                        <!-- <div class="mui-row ">
-                            <div class="mui-col-xs-2 sfText">首发</div>
-                            <div class="mui-col-xs-4 sfButton">
-                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini mui-disabled" style="opacity: 1">
-                                    <div class="mui-switch-handle"></div>
-                                </div>
-                                <input type="hidden" name="lineup" class="lineup" value="{$vol.lineup}">
-                            </div>
-                        </div> -->
                     </div>
                 </li>
                 {/volist}
@@ -240,14 +242,22 @@
         });
 
         $(function () {
-            // 首发按钮
-            $(".dataList .isLineup").each(function () {
+            // 首发标签判断
+            $(".dataList .lineup").each(function () {
                 if ($(this).text() == 1) {
                     $(this).text("首发");
                 } else {
-                    $(this).text(" ");
+                    $(this).remove();
                 }
-            })
+            });
+
+            // 计算总得分
+            var totalSum = 0
+            $(".dataList").find(".personScore").each(function () {
+                var totalPerson = $(this).text();
+                totalSum += parseInt(totalPerson)
+                $(".totalScore").text(totalSum);
+            });
         })
     </script>
 </body>

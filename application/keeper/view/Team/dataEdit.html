@@ -133,12 +133,19 @@
             </div>
 
             <!--球员数据-->
-            <div class="page-header bggray2">
+            <div class="page-header ">
                 <span class="course">球员数据</span>
                 <a href="#member" class="addOperation">
                     <text>添加</text>
                     <i class="mui-icon mui-icon-plusempty"></i>
                 </a>
+            </div>
+            <div class="page-header bggray2">
+                <div class="mui-row f14">
+                    <div class="mui-col-xs-2 mui-text-center">球号</div>
+                    <div class="mui-col-xs-5">姓名</div>
+                    <div class="mui-col-xs-2 mui-text-center">得分</div>
+                </div>
             </div>
             <ul class="mui-table-view list border-b dataList">
                 {volist name="matchStatcList" id="vol"}
@@ -146,13 +153,16 @@
                     data-id="{$vol.id}" data-match_record_member_id="{$vol.match_record_member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4 colororange">
-                                <input type="text" name="number" class="addInput" value="{$vol.number}" placeholder="球员号码" disabled>
+                            <div class="mui-col-xs-2  colororange">
+                                <input type="text" name="number" class="addInput mui-text-center" value="{$vol.number}" placeholder="球号" disabled>
                             </div>
-                            <div class="mui-col-xs-4">
-                                    <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}" placeholder="球员姓名" disabled>
-                                </div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                            <div class="mui-col-xs-5">
+                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}" placeholder="姓名" disabled>
+                            </div>
+                            <div class="mui-col-xs-2">
+                                <input type="text" name="personScore" class="addInput mui-text-center" value="{$vol.pts}" placeholder="得分" disabled>
+                            </div>
+                            <div class="mui-col-xs-2 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
                                 </text>
@@ -246,9 +256,9 @@
                 {/volist}
                 <div class="hideDataList">
                     {volist name="matchStatcList" id="vol"}
-                    <input type="hidden" data-id="{$vol.id}" data-member_id="{$vol.member_id}"> {/volist}
+                    <input type="hidden" data-id="{$vol.id}" data-member_id="{$vol.member_id}" data-fg="{$vol.fg}" data-threepfg="{$vol.threepfg}"
+                        data-ft="{$vol.ft}"> {/volist}
                 </div>
-
             </ul>
 
         </form>
@@ -499,9 +509,10 @@
                 var tmFormal = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                                <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="${addtmNumber}" ${checkdisabled}  placeholder="球员号码" ></div>
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="球员姓名" disabled =${checkdisabled}></div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                            <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput mui-text-center" value="${addtmNumber}" ${checkdisabled}  placeholder="球号" ></div>
+                            <div class="mui-col-xs-5"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="姓名" disabled =${checkdisabled}></div>
+                            <div class="mui-col-xs-2"><input type="text" name="personScore" class="addInput mui-text-center" value="$" placeholder="得分" disabled></div>
+                            <div class="mui-col-xs-2 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
                                 </text>
@@ -533,9 +544,10 @@
                 var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-member_id="${member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="" placeholder="球员号码"></div>
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${member}" data-member="${member}"   placeholder="球员姓名" disabled></div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                            <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
+                            <div class="mui-col-xs-5"><input type="text" name="name" class="addInput" value="${member}" data-member="${member}"   placeholder="姓名" disabled></div>
+                            <div class="mui-col-xs-2"><input type="text" name="personScore" class="addInput mui-text-center" value="" placeholder="得分" disabled></div>
+                            <div class="mui-col-xs-2 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
                                 </text>
@@ -553,9 +565,10 @@
                 var tmTemporary = `<li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput" value="" placeholder="球员号码"></div>
-                            <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="" data-id="" placeholder="球员姓名"></div>
-                            <div class="mui-col-xs-4 mui-text-center dataIcon">
+                            <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
+                            <div class="mui-col-xs-5"><input type="text" name="name" class="addInput" value="" data-id="" placeholder="姓名"></div>
+                            <div class="mui-col-xs-2"><input type="text" name="personScore" class="addInput mui-text-center" value="" placeholder="得分" disabled></div>
+                            <div class="mui-col-xs-2 mui-text-center dataIcon">
                                 <text class="bgcolor">
                                     <i class="mui-icon mui-icon-checkmarkempty"></i>
                                 </text>
@@ -635,9 +648,10 @@
                     var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
-                                    <div class="mui-col-xs-4 colororange"><input type="text" name="number" class="addInput checkNum" value="${tmNumber}" placeholder="球员号码" ${checkdisabled}></div>
-                                    <div class="mui-col-xs-4"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="球员姓名" disabled =${checkdisabled}></div>
-                                    <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                    <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center"  value="${tmNumber}" placeholder="球号" ${checkdisabled}></div>
+                                    <div class="mui-col-xs-5"><input type="text" name="name" class="addInput" value="${tmName}" data-member="${tmMember}" placeholder="姓名" disabled =${checkdisabled}></div>
+                                    <div class="mui-col-xs-2"><input type="text" name="personScore" class="addInput mui-text-center" value=""  placeholder="得分" disabled></div>
+                                    <div class="mui-col-xs-2 mui-text-center dataIcon">
                                         <text class="bgcolor">
                                             <i class="mui-icon mui-icon-checkmarkempty"></i>
                                         </text>
@@ -739,6 +753,13 @@
                 if (confirmText == "确认") {
                     $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#59b200");
                     $(this).text("取消");
+                    $(this).parents(".mui-collapse").removeClass("mui-active");
+                    //点击确认操作计算得分
+                    var fgNum = $(this).parents(".dataCollapse").find("input[name=fg]").val();
+                    var threepfgNum = $(this).parents(".dataCollapse").find("input[name=threepfg]").val();
+                    var ftNum = $(this).parents(".dataCollapse").find("input[name=ft]").val();
+                    var totalNum = Number(fgNum) * 2 + Number(threepfgNum) * 3 + Number(ftNum);
+                    $(this).parents(".mui-collapse").find("input[name=personScore]").val(totalNum);
                 } else {
                     $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#ddd");
                     $(this).text("确认");
@@ -778,8 +799,6 @@
 
             $(document).on("blur", "input[name=fg]", function () {
                 var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
-                console.log($(this).val())
-                console.log(fga)
                 if (parseInt($(this).val()) > parseInt(fga)) {
                     mui.toast("二分命中次数不能大于出手次数");
                     $(this).val('').focus();
