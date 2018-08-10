@@ -137,6 +137,10 @@ class Group extends Base{
     // 奖金池列表
     public function poolList() {
         $group_id = input('param.group_id');
+        $isPower = $this->GroupService->isPower($group_id,$this->memberInfo['id']);
+        if($isPower<>1){
+            $this->error('权限不足',url('keeper/group/groupInfo',['group_id'=>$group_id]));
+        }
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
 
