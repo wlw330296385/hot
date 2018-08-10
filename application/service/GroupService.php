@@ -218,7 +218,14 @@ class GroupService {
     }
 
 
-
+    public function isPower($group_id,$member_id){
+        $result = $this->GroupMemberModel->where(['group_id'=>$group_id,'member_id'=>$member_id])->find();
+        if($result){
+            return $result['status'];
+        }else{
+            return -1;
+        }
+    }
 
 }
 

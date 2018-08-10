@@ -102,9 +102,15 @@ class Group extends Base{
     public function poolInfo() {
 
         $group_id = input('param.group_id');
+        $isPower = $this->GroupService->isPower($group_id,$this->memberInfo['id']);
+        if($isPower<>1){
+            $this->error('权限不足',url('keeper/group/groupInfo',['group_id'=>$group_id]));
+        }
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
         $pool_id = input('param.pool_id');
         $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
+        
+
 
         $this->assign('groupInfo',$groupInfo);
         $this->assign('poolInfo',$poolInfo);
@@ -143,6 +149,10 @@ class Group extends Base{
        // 奖金池擂主列表
        public function poolWinnerList() {
         $group_id = input('param.group_id');
+        $isPower = $this->GroupService->isPower($group_id,$this->memberInfo['id']);
+        if($isPower<>1){
+            $this->error('权限不足',url('keeper/group/groupInfo',['group_id'=>$group_id]));
+        }
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
         $this->assign('groupInfo',$groupInfo);
         return view('Group/poolWinnerList');
@@ -173,6 +183,9 @@ class Group extends Base{
      public function groupTenet() {
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
+        if($groupInfo['member_id']<>$this->memberInfo['id']){
+            $this->error('权限不足');
+        }
         $poolInfo = db('pool')->where(['group_id'=>$group_id])->find();//本期
          // 是否已加入社群
          $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
@@ -208,6 +221,10 @@ class Group extends Base{
     // 社群个人打卡列表
     public function groupMemberPunch() {
         $group_id = input('param.group_id');
+        $isPower = $this->GroupService->isPower($group_id,$this->memberInfo['id']);
+        if($isPower<>1){
+            $this->error('权限不足',url('keeper/group/groupInfo',['group_id'=>$group_id]));
+        }
         $pool_id = input('param.pool_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
         $poolInfo = $this->GroupService->getPoolInfo(['id'=>$pool_id]);
@@ -220,6 +237,10 @@ class Group extends Base{
     // 社群成员列表
     public function groupMemberList() {
         $group_id = input('param.group_id');
+        $isPower = $this->GroupService->isPower($group_id,$this->memberInfo['id']);
+        if($isPower<>1){
+            $this->error('权限不足',url('keeper/group/groupInfo',['group_id'=>$group_id]));
+        }
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
             
