@@ -140,7 +140,7 @@ class TeamService
         }
     }
 
-    // 球队列表带分页-Ken 
+    // 球队列表带分页
     public function getTeamListByPage(){
 
         // 粉丝数 队员数
