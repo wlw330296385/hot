@@ -662,10 +662,12 @@
 
             // 删除离队队员
             $(".deleteMember").on("tap", '', function () {
-                mui.ajax("{:url('api/team/')}", {
+                var manager_id = "{$memberInfo.id}"
+                mui.ajax("{:url('api/Team/setTeamMemberQuitAndHide')}", {
                     data: {
                         team_id: team_id,
-                        id: id
+                        team_member_id: id,
+                        manager_id: manager_id
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
