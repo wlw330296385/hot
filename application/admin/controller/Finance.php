@@ -469,19 +469,12 @@ class Finance extends Backend {
         if ($member) {
             $map['member'] = ['like', '%'. $member .'%'];
         }
-        // $SalaryOut = new \app\model\SalaryOut;
-        // $list = $SalaryOut->with('member')->where($map)->paginate(1);
-        // foreach ($list as $key => &$value) {
-        //    $value['member'] = (array)$value;
-        //     dump($value);
-        //    dump($value['member']);
-        // }
         $list = Db::view('salary_out')
                 ->view('member','balance,id mid','member.id = salary_out.member_id')
                 // ->where('salary_out.delete_time',null)
                 ->order('salary_out.create_time desc')
-                ->paginate(10);
-        // dump($list->toArray());die;
+                ->paginate(20);
+        
         $this->assign('list', $list);
         return view('finance/salaryOutList');
     }

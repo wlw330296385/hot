@@ -144,6 +144,23 @@ class Group extends Base{
     }
 
 
+    // 获取用户社群未处理信息
+    public function getGroupMemberListWithPoolAndApplyApi(){
+        try{
+            $member_id = $this->memberInfo['id'];
+            
+            
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'无数据']);
+            }  
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
     // 编辑社群
     public function updateGroupApi(){
          try{
@@ -325,14 +342,6 @@ class Group extends Base{
             }else{
                 return json(['code'=>100,'msg'=>'请选择时间']);
             }
-            // $groupList = db('group_member')
-            //     ->field('group_member.*,pool.stake,pool.pool,max(pool.status) as p_status,max(pool.id) as p_id,pool.times')
-            //     ->join('pool','pool.group_id = group_member.group_id','left')
-            //     ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
-            //     // ->where(['pool.status'=>2])
-            //     ->group('pool.group_id')
-            //     ->order('pool.id desc')
-            //     ->select();
             $groupList = db('pool')
                 ->field('group_member.*,pool.stake,pool.pool,(pool.status) as p_status,(pool.id) as p_id,pool.times,pool.create_time')
                 ->join('group_member','pool.group_id = group_member.group_id','left')
@@ -365,6 +374,45 @@ class Group extends Base{
             return json(['code'=>200,'msg'=>'获取成功','data'=>$groupList]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+
+    // 获取带总打卡数并且是否关注的群员
+    public function getGroupMemberWithFollowApi(){
+        try {
+            $group_id = input('param.group_id');
+            $member_id = $this->memberInfo['id'];
+            $page = input('param.page',1);
+            
+            $sql = "SELECT
+                    `group_member`.*
+                    , gp.c_punch
+                    ,follow.STATUS AS f_status 
+                FROM
+                    `group_member`
+                    LEFT JOIN (
+                    SELECT count(id) as c_punch,member_id FROM group_punch where group_id = {$group_id} GROUP BY member_id
+                    ) as gp 
+                    on gp.member_id = group_member.member_id
+                    LEFT JOIN `follow` `follow` ON `follow`.`follow_id` = group_member.member_id 
+                    AND follow.member_id = {$member_id} 
+                WHERE
+                    `group_member`.`group_id` = {$group_id}
+                    AND group_member.delete_time is null
+                ORDER BY
+                    `gp`.c_punch desc
+                    LIMIT
+                    :s,
+                    :e"
+                    ;
+        $Db = new \think\Db;
+        $result = $Db::query($sql,['s'=>($page-1)*20,'e'=>$page*20]);
+        return json(['msg'=>'获取成功','code'=>200,'data'=>$result]);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);   
         }
     }
 }

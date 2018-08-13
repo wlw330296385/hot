@@ -88,7 +88,7 @@ class ScheduleService
         $gradeInfo = db('grade')->where(['id'=>$data['grade_id']])->find();
         $data['camp_id'] = $gradeInfo['camp_id'];
         $data['lesson_id'] = $gradeInfo['lesson_id'];
-        $data['cost'] = $gradeInfo['cost'];
+        // $data['cost'] = $gradeInfo['cost'];
         $data['coach_id'] = $gradeInfo['coach_id'];
         $data['coach_salary'] = $gradeInfo['coach_salary'];
         $data['assistant_salary'] = $gradeInfo['assistant_salary'];
