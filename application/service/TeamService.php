@@ -1323,4 +1323,26 @@ class TeamService
         $result = $res->toArray();
         return $result;
     }
+
+    // 获取球员权限
+    public function getTeamMemberRole($map=[]) {
+        $model = new TeamMemberRole();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 仅获取球队球员
+    public function getTeamMember($map=[]) {
+        $model = new TeamMember();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
 }
