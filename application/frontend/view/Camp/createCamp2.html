@@ -157,6 +157,13 @@
             // 注册 step2
             $('.camp-step2').click(function () {
 
+                //去除提示文字的标签 
+                $("#articleEditor").children(".Eleditor-placeholder").remove();
+                //获取最终含简单html标签的图文内容
+                var introHtml = $("#articleEditor").html();
+                //防止提交失败时需要
+                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑自我介绍</p>");
+
                 var campid = $('input[name=campid]').val();
                 var logo = $('input[name=logo]').val();
                 var banner = $('input[name=banner]').val();
@@ -171,14 +178,13 @@
                 } else if (!(/(^([0-9]{3,4}-)?[0-9]{7,8}$)|(^((\(\d{3}\))|(\d{3}\-))?(1[34578]\d{9})$)/).test(camp_telephone)) {
                     mui.toast("请输入正确的手机格式或固话格式");
                     return false;
-                } else if (introHtml == "" || camp_description == "") {
-                    mui.toast("请填写训练营宣言和简介");
+                } else if (camp_description == "") {
+                    mui.toast("请填写训练营宣言");
+                    return false;
+                } else if (introHtml == "") {
+                    mui.toast("请完善训练营图文介绍");
                     return false;
                 };
-                //去除提示文字的标签 
-                $("#articleEditor").children(".Eleditor-placeholder").remove();
-                //获取最终含简单html标签的图文内容
-                var introHtml = $("#articleEditor").html();
                 mui.ajax("{:url('api/camp/updatecamp')}", {
                     data: {
                         camp_id: campid,
