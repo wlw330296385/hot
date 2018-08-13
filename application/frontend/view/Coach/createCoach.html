@@ -269,11 +269,14 @@
 
             $(".registerbtn2").on("click", function () {
 
+
                 //去除提示文字的标签 
                 $("#articleEditor").children(".Eleditor-placeholder").remove();
                 //获取最终含简单html标签的图文内容
                 var introHtml = $("#articleEditor").html();
                 $(".introduction").val(introHtml);
+                //防止提交失败时需要
+                $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑自我介绍</p>");
 
                 var coachid = $('input[name=coachid]').val();
                 var member = $('input[name=member]').val();
@@ -304,13 +307,17 @@
                 } else if (!(/^\+?[1-9]\d*$/).test(coach_year)) {
                     mui.toast("请输入正确的教龄");
                     return false;
-                } else if (experience == "" || introHtml == "" || description == '') {
-                    mui.toast("请完善教练经验、自我简介、教练宣言信息");
+                } else if (experience == "" || description == '') {
+                    mui.toast("请完善教练经验、教练宣言信息");
+                    return false;
+                } else if (introHtml == "" || introHtml == "<p class='Eleditor-placeholder'>点击编辑自我介绍</p>") {
+                    mui.toast("请完善自我介绍");
                     return false;
                 } else if (!$('input[name=iagree]').is(':checked')) {
                     mui.toast("请阅读并同意篮球管家用户协议，谢谢");
                     return false;
                 };
+
 
                 mui.confirm('确认提交填写信息吗?', '', ['取消', '确认'], function (e) {
                     if (e.index == 1) {
@@ -342,7 +349,7 @@
                                     setTimeout("window.location.href = '{:url('coach/registersuccess')}'", 2000);
                                 } else {
                                     mui.alert(ajaxResult.msg, '创建失败', function () {
-                                        $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑自我介绍</p>");
+                                        //$("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑自我介绍</p>");
                                     });
                                     mui.toast(data.msg);
                                 }

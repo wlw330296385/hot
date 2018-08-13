@@ -27,6 +27,10 @@
         }
 
         .table p { font-size: 12px; }
+        .coach .table i{
+            font-size: 2.4em !important;
+            margin-top:-5px;
+        }
     </style>
 </head>
 
@@ -397,12 +401,18 @@
                         if(data.data.data[i].assistant_str!=''&&data.data.data[i].assistant_str!=null){
                             coach = data.data.data[i].coach+data.data.data[i].assistant_str;
                         }
+                        var scheduleSettle = '';
+                        if(data.data.data[i].is_settle==1){
+                            scheduleSettle = '<font class="tipCorner bggreen">已结算</font>';
+                        }else{
+                            scheduleSettle = '<font class="tipCorner bggray">未结算</font>';
+                        }
                         newli += '<li class="mui-table-view-cell mui-media">';
                         if (status == -1) {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为已审</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-2 mui-col-sm-2"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i></li><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].grade + '<p>' + data.data.data[i].lesson_time + '</p><p>' + data.data.data[i].lesson + '</p><p>' + coach + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-2 mui-col-sm-2"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i></li><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].grade + scheduleSettle + '<p>' + data.data.data[i].lesson_time + '</p><p>' + data.data.data[i].lesson + '</p><p>' + coach + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></div>';
                         } else {
-                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-2 mui-col-sm-2"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i></li><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].grade + '<p>' + data.data.data[i].lesson_time + '</p><p>' + data.data.data[i].lesson + '</p><p>' + coach + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
+                            newli += '<a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-2 mui-col-sm-2"><i class="mui-icon mui-icon-checkmarkempty ' + sheng + '"></i></li><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].grade + scheduleSettle + '<p>' + data.data.data[i].lesson_time + '</p><p>' + data.data.data[i].lesson + '</p><p>' + coach + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a>';
                         }
                         newli += '</li>';
                     }
