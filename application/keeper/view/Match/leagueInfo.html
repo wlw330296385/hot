@@ -224,12 +224,12 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
                     <a href="">
                         咨询
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
                     <a href="#fbcomment">评价 </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggray hide waitBtn">等待报名</li>
@@ -308,6 +308,8 @@
             var count = 1;
             // 判断是否登陆
             if ("{$memberInfo.id}" <= 0) {
+                $(".col5Class").removeClass("mui-col-xs-3").addClass("mui-col-xs-5");
+                $(".col5Class").removeClass("mui-col-sm-3").addClass("mui-col-sm-5");
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                     if (e.index === 1) {
                         window.location.href = "{$fasturl}";
@@ -326,7 +328,6 @@
             }
 
             var cansignup = "{$cansignup}"
-            console.log(cansignup)
             if (cansignup == -1) {
                 $(".waitBtn").show();
             } else if (cansignup == 1) {
@@ -654,19 +655,6 @@
             });
         };
 
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettime() {
-            var _time = new Date();
-            var year = _time.getFullYear();
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(year) + "-" + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
-        }
     </script>
 </body>
 
