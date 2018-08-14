@@ -321,7 +321,7 @@
                     </div>
                     <div class="mui-col-xs-6 mui-col-sm-6">
                         <a href="{:url('team/createteam')}">
-                            <button type="button" class="mui-btn f16" style="padding:6px 30px">创建球队</button>
+                            <button type="button" class="mui-btn f16 createTeam" style="padding:6px 30px">创建球队</button>
                         </a>
                     </div>
                 </div>
@@ -341,11 +341,23 @@
 
         $(function () {
 
+            //游客提示框
+            $(".createTeam").on("tap", function () {
+                if ("{$memberInfo.id}" == 0) {
+                    $(this).parent().attr("href", "javascript:void(0)");
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{$fasturl}";
+                        }
+                    });
+                }
+            })
+
             //未开发提示
             $(".goConfirm").click(function () {
                 mui.toast('暂未开放，敬请期待');
             });
-
+            var member_id = "{$memberInfo.id}";
             var htmlT = $.trim($(".myteam").html());
             var htmlO = $.trim($(".myOrganization").html());
             if (htmlT == '') {
@@ -355,7 +367,8 @@
                 $(".organizationTitle").hide();
             }
 
-            var member_id = "{$memberInfo.id}";
+
+
             mui.ajax("{:url('api/member/getmembersportindex')}", {
                 data: {
                     member_id: member_id

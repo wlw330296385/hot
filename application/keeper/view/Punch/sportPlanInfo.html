@@ -16,7 +16,6 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <!--自定义多色图标icon.js-->
     <!-- <script src="/static/frontend/iconfont/iconfont.js"></script> -->
-    <link rel="stylesheet" href="/static/frontend/css/calendar.css">
 
     <style type="text/css">
 
@@ -145,7 +144,7 @@
 
                 <div class="price-frame" style="margin-top: 15px;">
                     <p class="f12">计划运动<br />
-                        <text class="colororange f14">{$sportPlanInfo.period}</text> 天 &nbsp;
+                        <text class="colororange f14">{$sportPlanInfo.period}</text> 次 &nbsp;
                     </p>
                 </div>
             </li>
@@ -170,7 +169,7 @@
 
         <div id="refreshContainer" class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b planSchedule"></ul>
+                <ul class="mui-table-view detalis-list list planSchedule"></ul>
             </div>
         </div>
 
@@ -390,6 +389,7 @@
 
    
 
+
     var count = 1
     mui.init({
         swipeBack: true, //启用右滑关闭功能
@@ -436,7 +436,7 @@
     }
     //获取我的打卡记录列表
     function toPlanList(page, gType) {
-        var url = "{:url('api/sport_plan/getSportPlanScheduleListApi','','',true)}";
+        var url = "{:url('api/sport_plan/getSportPlanScheduleListApi','','',true)}?page="+page;
         var sport_plan_id = "{$sportPlanInfo.id}"
         mui.ajax({
             url: url,
@@ -454,16 +454,18 @@
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                        
                         var urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
-
-                        newli += '<li><a href="' + urls + '" class="mui-navigate-right">'
-                        newli += '<div class="mui-input-row bggray2"><label><strong>运动计划 # <text class="colororange">1</text></strong></label><span class="f12">编辑</span></div>'
-                        newli += '<div class="mui-input-row" data-tnum="1"><label>运动日期</label><span class=""></span></div>'
-                        newli += '<div class="mui-input-row"><label>运动内容</label><span></span></div>'
-                        newli += '<div class="mui-input-row"><label>运动项目</label><span></span></div>'
-                        newli += '<div class="mui-input-row"><label>运动时长</label><span>分钟</span></div>'
-                        newli += '<div class="mui-input-row"><label>运动里程</label><span>公里</span></div>'
-                        newli += '<div class="mui-input-row"><label>运动数量</label><span>个/次</span></div>'
-                        newli += '</a></li>'
+                        newli += '<li><ul class="mui-table-view">'
+                        newli += '<li class="mui-table-view-cell listli bggray2"><label><strong>运动计划 # <text class="colororange">'+i+'</text></strong></label><span class="f12">编辑</span></div>'
+                        newli += '<li class="mui-table-view-cell listli"><label>运动日期</label><span>'+ data.data.data[i].sport_time +'</span></li>'
+                        newli += '<li class="mui-table-view-cell listli"><label>运动项目</label><span>'+ data.data.data[i].sport_project +'</span></li>'
+                        newli += '<li class="mui-table-view-cell listli"><label>运动时长</label><span>'+ data.data.data[i].duration +'分钟</span></li>'
+                        if(data.data.data[i].extent!=""){
+                            newli += '<li class="mui-table-view-cell listli"><label>运动里程</label><span>'+ data.data.data[i].extent +'公里</span></li>'
+                        }
+                        if(data.data.data[i].extent!=""){
+                            newli += '<li class="mui-table-view-cell listli"><label>运动数量</label><span>'+ data.data.data[i].amount +'个/次</span></li>'
+                        }
+                        newli += '</ul></li>'
 
                     }
                 }
@@ -493,7 +495,12 @@
         });
     };
 
+
+
     $(function () {
+
+
+
 
 
         //同页面多弹框时遮罩问题，使同一时刻只有一个弹框
@@ -615,7 +622,7 @@
             var getNewNumber = 1;
             var plNumber = $(".punchList:first-child").find(".pNumber").text();
             if(plNumber==""){
-                var pLi = $(".planSchedule li:not('.planTips')").length;
+                var pLi = $(".planSchedule>li:not('.planTips')").length;
                 if(pLi>0){
                     getNewNumber = parseInt(pLi)+1;
                 }
@@ -689,7 +696,7 @@
                     objData = JSON.stringify(sportPlanScheduleData);
 
                     var url = "{:url('api/sport_plan/createSportPlanScheduleListApi')}";
-                    var ajaxResult = wooApi.asyncF(url, objData);
+                    var ajaxResult = wooApi.asyncF(url, {sportPlanScheduleData:objData});
                     if (ajaxResult.code == 200) {
                         var goUrl = "{:url('punch/sportPlanInfo')}/" + 'sport_plan_id/' + sport_plan_id; ;
                         window.top.location.href = goUrl;

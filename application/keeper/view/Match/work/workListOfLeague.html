@@ -74,6 +74,35 @@
             window.top.location.href = this.href;
         });
 
+        // 关注联赛
+        $(".follow").on("tap", '', function () {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
         // 联赛工作人员列表
         var url = "{:url('api/league/getmatchmembers','','',true)}";
         var match_id = "{$leagueInfo.id}";
@@ -108,6 +137,36 @@
                 mui.toast('网络异常,请稍候再试');
             }
         });
+
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         //拖拽后显示操作图标，点击操作图标删除元素；
         $('.OA_task').on('tap', '.mui-btn', function () {
