@@ -88,9 +88,16 @@
             geolocation.getCurrentPosition(function (status, result) {
                 console.log("getCurrentPosition");
                 console.log(result);
-                current_lat = result.position.lat;
-                current_lng = result.position.lng;
+                //alert(result.info)
+                if(result.info=='SUCCESS'){
+                    current_lat = result.position.lat;
+                    current_lng = result.position.lng;
+                }
+                //获取场地列表
+                pulldownRefresh()
 
+            });
+        });
 
 
                 //初始化全局变量
@@ -147,7 +154,7 @@
                         down: {
                             //下拉刷新
                             height: 50,
-                            auto: true,
+                            auto: false,
                             contentdown: "下拉可以刷新",
                             contentover: "释放立即刷新",
                             contentrefresh: "正在刷新...",
@@ -240,9 +247,6 @@
                         }
                     });
                 };
-
-            });
-        });
 
     </script>
 </body>

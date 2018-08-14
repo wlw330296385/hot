@@ -167,7 +167,7 @@
             </li>
         </ul>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="padding-bottom: 44px">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list planSchedule"></ul>
             </div>
@@ -451,7 +451,11 @@
                 console.log(data)
                 var newli = "";
                 if (data.code == 200) {
+                    $(".totalData").text(data.data.total);
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
+
+                        //推算获取期数
+                        let PoolNumber = data.total - (data.current_page-1)*data.per_page - i;
                        
                         var urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
                         newli += '<li><ul class="mui-table-view">'
