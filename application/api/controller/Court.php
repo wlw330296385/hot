@@ -120,9 +120,9 @@ class Court extends Base{
             if($camp_id){
                 $map['camp_id'] = $camp_id;
             }
-            $outdoor = input('param.outdoor');
-            if($outdoor){
-                $map['outdoor'] = $outdoor;
+            $outdoors = input('param.outdoors');
+            if($outdoors){
+                $map['outdoors'] = [['=',$outdoors],['=',3],'or'];
             }
             // dump(input());die;
             // $result = Db::query('select *,round(6378.138)*2*asin (sqrt(pow(sin((? *pi()/180 - lat*pi()/180)/2), 2)+cos(? *pi()/180)*cos(lat*pi()/180)*pow(sin((? *pi()/180 - lng*pi()/180)/2),2))) as distance from court where status=1 order by ? limit ?,?',
