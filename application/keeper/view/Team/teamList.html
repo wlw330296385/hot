@@ -70,7 +70,7 @@
 
         <ul class="mui-table-view operation">
             <a href="{:url('team/createTeam')}">
-                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue">
+                <li class="mui-col-xs-12 mui-col-sm-12 opli bgblue createTeam">
                     创建球队
                 </li>
             </a>
@@ -88,6 +88,19 @@
         });
 
         $(function () {
+
+            //游客提示框
+            $(".createTeam").on("tap", function () {
+                if ("{$memberInfo.id}" == 0) {
+                    $(this).parent().attr("href","javascript:void(0)");
+                    mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                        if (e.index === 1) {
+                            window.location.href = "{$fasturl}";
+                        }
+                    });
+                }
+            })
+
             //初始化全局变量
             var count = 1;
             var sTeamType = '';
