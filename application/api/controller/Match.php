@@ -2401,5 +2401,54 @@ class Match extends Base
         }
     }
 
+    /**
+    * @method 将比赛设为完成（用于手动更新状态，一般在录完分后使用）
+    * @param  team_id           [必填] 队伍id
+    * @param  match_id          [必填] 比赛id
+    * @return success           {"code":200,"msg":"操作成功"}
+    * @return failed            {"code":100,"msg":"操作失败"}
+    * @author ken               2018-08-14
+    */
+    public function setMatchFinished()
+    {
+        // 输入处理
+        if (empty(input('?param.team_id')) || empty(input('?param.match_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $map['member_id'] = $this->memberInfo['id'];
+        $map['team_id'] = intval(input('param.team_id'));
+
+        // 验证是否执行者是否为球队管理员 > 0
+        $teamS = new TeamService();
+        $result = $teamS->getTeamMemberRole($map);
+        if (empty($result) || $result["type"] <= 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        unset($map);
+
+        // 保证对战双方 主队或者客队id是该队
+        $matchS = new MatchService();
+        $map["home_team_id|away_team_id"] = intval(input('param.team_id'));
+        $map["match_id"] = intval(input('param.match_id'));
+        $match = $matchS -> getMatchRecord($map);
+        if (empty($match)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        unset($map);
+
+        // 比赛更新为完成
+        $map["is_finished"] = 1;
+        $map["finished_time"] = strtotime("now");
+        $map["id"] = intval(input('param.match_id'));
+        $sqlResponse = $matchS->saveMatch($map);
+
+        if ($sqlResponse['code'] == 100) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
 }
 

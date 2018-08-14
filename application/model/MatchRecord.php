@@ -25,4 +25,7 @@ class MatchRecord extends Model {
     public function getReferee3Attr($value) {
         return is_null(json_decode($value)) ? $value : json_decode($value, true);
     }
+    public function getMatchTimeAttr($value) {
+        return date('Y-m-d H:i', $value);
+    }
 }

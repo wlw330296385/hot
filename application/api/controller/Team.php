@@ -2962,41 +2962,43 @@ class Team extends Base
         }
     }
 
-    // 设置队员状态为离队但不显示状态
+    /**
+    * @method 将一位 已离队队员(-1) 设置为 离队但不显示于列表(-3) 状态
+    * @param  team_id           [必填] 队伍id
+    * @param  team_member_id    [必填] 被修改人 在team_member表id，备注：因member_id有些为-1，所以没用member_id参数
+    * @return success           {"code":200,"msg":"操作成功"}
+    * @return failed            {"code":100,"msg":"操作失败"}
+    * @author ken               2018-08-13
+    */
     public function setTeamMemberQuitAndHide() {
 
         // 输入处理
-        if (empty(input('?param.team_id')) || empty(input('?param.team_member_id')) || empty(input('?param.manager_id')) ) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        if (empty(input('?param.team_id')) || empty(input('?param.team_member_id'))){
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
-        $map = [];
-        $map['member_id'] = input('param.manager_id');
+        $map['member_id'] = $this->memberInfo['id'];
+        $map['team_id'] = intval(input('param.team_id'));
 
         // 验证是否执行者是否为球队管理员
         $teamS = new TeamService();
         $result = $teamS->getTeamMemberRole($map);
-        if (empty($result)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        }
-        // 验证是否具有权限
-        if ($result["type"] <= 0) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        if (empty($result) || $result["type"] <= 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         unset($map);
 
         // 检查要修改的人是否已经为离队状态
-        $map['team_id'] = input('param.team_id');
-        $map['id'] = input('param.team_member_id');
+        $map['team_id'] = intval(input('param.team_id'));
+        $map['id'] = intval(input('param.team_member_id'));
         $map['status'] = -1;
         $teamMember = $teamS->getTeamMember($map);
         if (empty($teamMember)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         }
 
         // 更新为离队但不显示状态 
         $sqlResponse = $teamS->saveTeamMember(['status' => -3], $map);
-
         if ($sqlResponse['code'] == 100) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         } else {
