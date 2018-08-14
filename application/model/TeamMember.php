@@ -19,7 +19,7 @@ class TeamMember extends Model {
 
     // status字段获取器
     public function getStatusAttr($value) {
-        $status = [1 => '在队', -1=>'离队', 0 => '加入申请未通过', '-2' => ''];
+        $status = [1 => '在队', -1=>'离队', 0 => '加入申请未通过', '-2' => '', '-3' => '离队不显示'];
         return $status[$value];
     }
 

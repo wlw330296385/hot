@@ -140,6 +140,32 @@ class TeamService
         }
     }
 
+    // 球队列表带分页
+    public function getTeamListByPage(){
+
+        // 粉丝数 队员数
+        $result = Db::query("SELECT *
+            FROM `team` AS t,
+            (
+                SELECT `follow_id`, count(`id`) AS `follow_num`
+                FROM `follow`
+                WHERE `type` = 4
+                GROUP BY `follow_id`
+            ) AS a,
+            (
+                SELECT `team_id`, count(`id`) AS `team_member_num`
+                FROM `team_member`
+                WHERE `status` = 1
+                GROUP BY `team_id`
+            ) AS b
+            WHERE t.id = team_id AND follow_id = team_id
+            ORDER BY `id` DESC
+        ");
+
+        return $result;
+    }
+
+
     // 球队列表带分页页码
     public function getTeamListPaginator($map = [], $order = 'id desc', $paginate = 10)
     {
@@ -1317,6 +1343,28 @@ class TeamService
     public function getTeamHonorMemberAll($map=[], $order=['id' => 'desc']) {
         $model = new TeamHonorMember();
         $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 获取球员权限
+    public function getTeamMemberRole($map=[]) {
+        $model = new TeamMemberRole();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    // 仅获取球队球员
+    public function getTeamMember($map=[]) {
+        $model = new TeamMember();
+        $res = $model->where($map)->find();
         if (!$res) {
             return $res;
         }

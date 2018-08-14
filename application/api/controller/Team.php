@@ -2961,4 +2961,47 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
+
+    // 设置队员状态为离队但不显示状态
+    public function setTeamMemberQuitAndHide() {
+
+        // 输入处理
+        if (empty(input('?param.team_id')) || empty(input('?param.team_member_id')) || empty(input('?param.manager_id')) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+
+        $map = [];
+        $map['member_id'] = input('param.manager_id');
+
+        // 验证是否执行者是否为球队管理员
+        $teamS = new TeamService();
+        $result = $teamS->getTeamMemberRole($map);
+        if (empty($result)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        // 验证是否具有权限
+        if ($result["type"] <= 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+        unset($map);
+
+        // 检查要修改的人是否已经为离队状态
+        $map['team_id'] = input('param.team_id');
+        $map['id'] = input('param.team_member_id');
+        $map['status'] = -1;
+        $teamMember = $teamS->getTeamMember($map);
+        if (empty($teamMember)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+
+        // 更新为离队但不显示状态 
+        $sqlResponse = $teamS->saveTeamMember(['status' => -3], $map);
+
+        if ($sqlResponse['code'] == 100) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+
+    }
 }
