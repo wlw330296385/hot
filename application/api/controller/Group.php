@@ -148,8 +148,16 @@ class Group extends Base{
     public function getGroupMemberListWithPoolAndApplyApi(){
         try{
             $member_id = $this->memberInfo['id'];
-            
-            
+            $result = db('group_member')
+                ->field('pool.stake,group_member.group,pool.bonus,group.member_id as g_id,group.members')
+                ->join('pool','group_member.group_id = pool.group_id')
+                ->join('group','group_member.group_id = group.id')
+                // ->join('group_apply','group_apply.group_id = group_member.group_id')
+                ->where(['group_member.member_id'=>$member_id])
+                ->group('pool.group_id')
+                ->order('group_member.create_time desc')
+                ->select();
+            // dump(db('group_member')->getlastsql());die;
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
