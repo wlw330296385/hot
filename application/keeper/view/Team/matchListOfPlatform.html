@@ -99,6 +99,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <script src="/static/frontend/js/common.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
@@ -237,7 +238,7 @@
                     url: url,
                     data: {
                         // type:sMatchType,
-                        status:1,
+                        status: 1,
                         year: sYear,
                     },
                     dataType: 'json',//服务器返回json格式数据
@@ -250,8 +251,8 @@
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
-                                var matchTimeY = gettimeY(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeM = getTimeMDCn(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeY = getTimeYearCn(data.data.data[i].match_timestamp * 1000);
                                 var urls = "{:url('team/matchInfo')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + data.data.data[i].team_id;
                                 newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
                                 newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
@@ -298,22 +299,6 @@
 
         })
 
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        // 将时间戳转成日期格式
-        function gettimeM(M) {
-            var _time = new Date(M);
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            return p(month) + "月" + p(day) + "日"
-        }
-        function gettimeY(Y) {
-            var _time = new Date(Y);
-            var year = _time.getFullYear();
-            return p(year) + "年";
-        }
     </script>
 </body>
 

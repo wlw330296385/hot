@@ -44,7 +44,6 @@
                 margin-top: 303px
             }
         }
-        
     </style>
 </head>
 
@@ -163,6 +162,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -289,8 +289,8 @@
 
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = gettimeM(data.data.data[i].match_timestamp * 1000);
-                                var matchTimeY = gettimeY(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeM = getTimeMDCn(data.data.data[i].match_timestamp * 1000);
+                                var matchTimeY = getTimeYearCn(data.data.data[i].match_timestamp * 1000);
                                 var urls = "{:url('team/teamData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
 
                                 newli += `<li class="mui-table-view-cell">
@@ -378,23 +378,6 @@
                 });
             };
         });
-
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        // 将时间戳转成日期格式
-        function gettimeM(M) {
-            var _time = new Date(M);
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            return p(month) + "月" + p(day) + "日"
-        }
-        function gettimeY(Y) {
-            var _time = new Date(Y);
-            var year = _time.getFullYear();
-            return p(year) + "年";
-        }
     </script>
 </body>
 
