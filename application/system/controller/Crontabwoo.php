@@ -432,10 +432,38 @@ class Crontabwoo extends Base {
     }
 
     // 结算上一个月收入 会员分成
+    // public function salaryinrebate(){
+    //     try {
+    //         $Time = new \think\helper\Time;
+    //         list($start, $end) = $Time ::lastMonth();
+    //         $map['status'] = 1;
+    //         $map['has_rebate'] = 0;
+    //         $map['create_time'] = ['between', [$start, $end]];
+    //         $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->group('member_id')->where('delete_time', null)->select();
+    //         $datemonth = date('Ym', $end);
+    //         foreach ($salaryins as $salaryin) {
+    //             //dump($salaryin);
+    //             if ($salaryin['month_salary'] >0 ){
+    //                 $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $datemonth);
+    //                 if (!$res) { continue; }
+    //             }
+    //         }
+    //         DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
+    //     }catch (Exception $e) {
+    //         // 记录日志：错误信息
+    //         throw new Exception("Error Processing Request", 1);
+    //         trace($e->getMessage(), 'error');
+    //     }
+    // }
+
+
+
+
+    // 结算上一个月收入 会员分成
     public function salaryinrebate(){
         try {
             $Time = new \think\helper\Time;
-            list($start, $end) = $Time ::lastMonth();
+            list($start, $end) = $Time ::today();
             $map['status'] = 1;
             $map['has_rebate'] = 0;
             $map['create_time'] = ['between', [$start, $end]];
@@ -450,16 +478,19 @@ class Crontabwoo extends Base {
             }
             DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
 
-            $data = ['crontab'=>'每月会员分成'];
+            $data = ['crontab'=>'每日会员推荐分成'];
             $this->record($data); 
         }catch (Exception $e) {
             // 记录日志：错误信息
-            $data = ['crontab'=>'每月会员分成','status'=>0,'callback_str'=>$e->getMessage()];
+            $data = ['crontab'=>'每日会员推荐分成','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data); 
             throw new Exception("Error Processing Request", 1);
             trace($e->getMessage(), 'error');
         }
     }
+
+
+
      // 保存课时收入记录
     private function insertIncome($data, $saveAll=0,$is_balance = 1) {
         $model = new \app\model\Income();
