@@ -91,12 +91,18 @@ class SportPlan extends Base{
 
     // 添加运动日程(批量)
     public function createSportPlanScheduleListApi(){
+
         try {
             $sportPlanScheduleData = input('post.sportPlanScheduleData');
+
             $data = json_decode($sportPlanScheduleData,true);
-            //$data["sport_time"] = strtotime($data["sport_time"]);
+            $finalArray = array();
+            foreach ($data as $row) {
+                $row["sport_time"] = strtotime($row["sport_time"]);
+                array_push($finalArray, $row);
+            }
             $SportPlanSchedule = new \app\model\SportPlanSchedule;
-            $result = $SportPlanSchedule->saveAll($data);
+            $result = $SportPlanSchedule->saveAll($finalArray);
             if($result){
                 return json(['code'=>200,'msg'=>'提交成功','data'=>$result]);
             }else{

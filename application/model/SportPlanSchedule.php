@@ -12,5 +12,8 @@ class SportPlanSchedule extends Model {
     //                         'type',
     //                         ];
 
+	public function getSportTimeAttr($timeStr){
+        return date('Y-m-d', $timeStr);
+    }
 
 }
