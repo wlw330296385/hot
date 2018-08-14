@@ -87,7 +87,7 @@
                 toList();
             }
             function toList() {
-                var url = "{:url('api/group/getGroupMemberListByPageApi','','',true)}";
+                var url = "{:url('api/group/getGroupMemberListWithPoolAndApplyApi','','',true)}";
                 var member_id = "{$memberInfo.id}"
                 mui.ajax({
                     url: url,
@@ -102,24 +102,24 @@
                     timeout: 10000,//超时时间设置为10秒；
                     headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
-                        console.log(data)
+                        let listData = data.data;
                         var newli = '';
                         var myGroupTips = '';
                         if (data.code == 200) {
-                            $(".myGroupNum").text(data.data.data.length)
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
-                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + data.data.data[i].group_id;
+                            $(".myGroupNum").text(listData.length)
+                            for (var i = 0; i <= listData.length - 1; i++) {
+                                var urls = "{:url('group/groupInfo')}" + '/group_id/' + listData[i].id;
                                 myGroupTips = '';
-                                if (data.data.data[i].group.member_id == member_id) {
+                                if (listData[i].g_m_id == member_id) {
                                      myGroupTips = '<font class="tipCorner bgred">群主</font>';
                                 }
                                 newli += '<li class="mui-table-view-cell mui-media listli">'
-                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].group.logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
-                                newli += '<div class="mui-media-body wd60"><h5>' + data.data.data[i].group.group + myGroupTips+ '</h5><p>成员：<text class="colororange">' + data.data.data[i].group.members + '</text>&nbsp;&nbsp;单卡消耗：<text class="colororange">' + data.data.data[i].group.stake + ' HT</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + data.data.data[i].group.bonus + '</text></p></div>'
-                                if (data.data.data[i].group.member == "{$memberInfo.member}" && data.data.data[i].group.id != '') {
+                                newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="mui-media-object mui-pull-left" src="' + listData[i].logo + '" style="width:45px !important;height:45px !important; border-radius: 50%;">'
+                                newli += '<div class="mui-media-body wd60"><h5>' + listData[i].group + myGroupTips+ '</h5><p>成员：<text class="colororange">' + listData[i].members + '</text>&nbsp;&nbsp;单卡消耗：<text class="colororange">' + listData[i].stake + ' HT</text>&nbsp;&nbsp;奖金池：<text class="colororange">' + listData[i].bonus + '</text></p></div>'
+                                if (listData[i].g_m_id == "{$memberInfo.id}" && listData[i].group.id != '') {
                                     mui.ajax("{:url('api/group_apply/getGroupApplyListByPageApi')}", {
                                         data: {
-                                            group_id: data.data.data[i].group_id,
+                                            group_id: listData[i].id,
                                             status: 1
                                         },
                                         dataType: 'json',//服务器返回json格式数据
@@ -212,7 +212,7 @@
                     url: url,
                     data: {
                         keyword: keyword,
-                        status: 1,
+
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型

@@ -104,7 +104,7 @@ class Group extends Base{
                 unset($map['keyword']);
             }
 
-            $ids = db('group_member')->where(['member_id'=>$this->memberInfo['id']])->column('group_id');
+            $ids = db('group_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->column('group_id');
             $map['id'] = ['not in',$ids];
             $result = $this->GroupService->getGroupList($map,$page);  
             if($result){
@@ -149,11 +149,11 @@ class Group extends Base{
         try{
             $member_id = $this->memberInfo['id'];
             $result = db('group_member')
-                ->field('pool.stake,group_member.group,pool.bonus,group.member_id as g_id,group.members')
+                ->field('pool.stake,group_member.group,pool.bonus,group.member_id as g_m_id,group.members,group.id,group.logo')
                 ->join('pool','group_member.group_id = pool.group_id')
                 ->join('group','group_member.group_id = group.id')
-                // ->join('group_apply','group_apply.group_id = group_member.group_id')
-                ->where(['group_member.member_id'=>$member_id])
+       
+                ->where(['group_member.member_id'=>$member_id,'group_member.status'=>1])
                 ->group('pool.group_id')
                 ->order('group_member.create_time desc')
                 ->select();
