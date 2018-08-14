@@ -227,7 +227,7 @@
                         var urls = "{:url('team/matchinfoofteam')}" + '/match_id/' + data.data.data[i].id + '/team_id/' + "{$team_id}";
                         newli += '<li class="mui-table-view-cell listli">';
                         if (data.data.data[i].is_finished == "未完成") {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn bgblue" data-action="">设为完成</span><span class="mui-btn mui-btn-grey" data-action="">通知队员</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn bgblue setFinished" data-id="' + data.data.data[i].id + '">设为完成</span><span class="mui-btn mui-btn-grey operationBtn" data-action="">通知队员</span><span class="mui-btn mui-btn-red operationBtn" data-action="del">删除</span></div>';
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-grey" data-action="">通知队员</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
                         }
@@ -338,7 +338,7 @@
     };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
-    $('.OA_task_match').on('tap', '.mui-btn', function (match) {
+    $('.OA_task_match').on('tap', '.operationBtn', function (match) {
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
@@ -375,6 +375,45 @@
             }
         });
     });
+
+    // 将比赛设置为完成
+    $(document).on('tap', '.setFinished', function () {
+        var match_id = $(this).attr("data-id");
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        var btnArray = ['确认', '取消'];
+        mui.confirm('确认将该比赛设置为完成?', '提示', btnArray, function (e) {
+            if (e.index == 0) {
+                var team_id = "{$team_id}"
+                var apiurl = "{:url('api/Match/setMatchFinished')}";
+                mui.ajax(apiurl, {
+                    data: {
+                        match_id: match_id,
+                        team_id: team_id
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            li.parentNode.removeChild(li);
+                            location.reload();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errotThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                        mui.swipeoutClose(li);
+                    }
+                });
+            } else {
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    })
 
 </script>
 
