@@ -94,6 +94,7 @@ class SportPlan extends Base{
         try {
             $sportPlanScheduleData = input('post.sportPlanScheduleData');
             $data = json_decode($sportPlanScheduleData,true);
+            //$data["sport_time"] = strtotime($data["sport_time"]);
             $SportPlanSchedule = new \app\model\SportPlanSchedule;
             $result = $SportPlanSchedule->saveAll($data);
             if($result){
