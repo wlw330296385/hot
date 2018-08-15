@@ -1,11 +1,7 @@
 <?php
 namespace app\system\controller;
 use app\model\Coach;
-use app\model\Rebate;
-use app\service\CoachService;
 use app\service\ScheduleService;
-use app\service\SystemService;
-use app\service\MemberService;
 use app\model\SalaryIn;
 use app\model\Output;
 use app\model\CampFinance;
@@ -431,65 +427,6 @@ class Crontabwoo extends Base {
         });
     }
 
-    // 结算上一个月收入 会员分成
-    // public function salaryinrebate(){
-    //     try {
-    //         $Time = new \think\helper\Time;
-    //         list($start, $end) = $Time ::lastMonth();
-    //         $map['status'] = 1;
-    //         $map['has_rebate'] = 0;
-    //         $map['create_time'] = ['between', [$start, $end]];
-    //         $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->group('member_id')->where('delete_time', null)->select();
-    //         $datemonth = date('Ym', $end);
-    //         foreach ($salaryins as $salaryin) {
-    //             //dump($salaryin);
-    //             if ($salaryin['month_salary'] >0 ){
-    //                 $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $datemonth);
-    //                 if (!$res) { continue; }
-    //             }
-    //         }
-    //         DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
-    //     }catch (Exception $e) {
-    //         // 记录日志：错误信息
-    //         throw new Exception("Error Processing Request", 1);
-    //         trace($e->getMessage(), 'error');
-    //     }
-    // }
-
-
-
-
-    // 结算上一个月收入 会员分成
-    public function salaryinrebate(){
-        try {
-            $Time = new \think\helper\Time;
-            list($start, $end) = $Time ::today();
-            $map['status'] = 1;
-            $map['has_rebate'] = 0;
-            $map['create_time'] = ['between', [$start, $end]];
-            $salaryins = DB::name('salary_in')->field(['member_id', 'sum(salary)+sum(push_salary)'=>'month_salary'])->where($map)->group('member_id')->where('delete_time', null)->select();
-            $datemonth = date('Ym', $end);
-            foreach ($salaryins as $salaryin) {
-                //dump($salaryin);
-                if ($salaryin['month_salary'] >0 ){
-                    $res = $this->insertRebate($salaryin['member_id'], $salaryin['month_salary'], $datemonth);
-                    if (!$res) { continue; }
-                }
-            }
-            DB::name('salary_in')->where($map)->update(['has_rebate' => 1]);
-
-            $data = ['crontab'=>'每日会员推荐分成'];
-            $this->record($data); 
-        }catch (Exception $e) {
-            // 记录日志：错误信息
-            $data = ['crontab'=>'每日会员推荐分成','status'=>0,'callback_str'=>$e->getMessage()];
-            $this->record($data); 
-            throw new Exception("Error Processing Request", 1);
-            trace($e->getMessage(), 'error');
-        }
-    }
-
-
 
      // 保存课时收入记录
     private function insertIncome($data, $saveAll=0,$is_balance = 1) {
@@ -532,15 +469,6 @@ class Crontabwoo extends Base {
         }
     }
 
-    // 获取营主会员
-    private function getCampMember($camp_id) {
-        $member = Db::view('member')
-            ->view('camp', '*','camp.member_id=member.id')
-            ->where(['camp.id' => $camp_id])
-            ->order('camp.id desc')
-            ->find();
-        return $member;
-    }
 
     // 获取助教会员
     private function getAssistantMember($assistant_id) {
@@ -597,35 +525,7 @@ class Crontabwoo extends Base {
         }
     }
 
-    // 保存会员分成记录
-    private function insertRebate($member_id, $salary, $datemonth) {
-        $memberS = new MemberService();
-        $model = new Rebate();
-        $memberPiers = $memberS->getMemberPier($member_id);
-        if (!empty($memberPiers)) {
-            foreach ($memberPiers as $k => $memberPier) {
-                if ($memberPier['tier']==1) {
-                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate'];
-                } elseif ($memberPier['tier']==2){
-                    $memberPiers[$k]['salary'] = $salary*$this->setting['rebate2'];
-                }
-                $memberPiers[$k]['datemonth'] = $datemonth;
-            }
-            //dump($memberPiers);
-            $execute = $model->allowField(true)->saveAll($memberPiers);
-            if ($execute) {
-                $memberDb = db('member');
-                foreach ($memberPiers as $member) {
-                    $memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
-                }
-                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
-                return true;
-            } else {
-                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
-                return false;
-            }
-        }
-    }
+    
 
     // 保存训练营财务记录
     private function insertcampfinance($data, $saveAll=0,$is_balance = 1) {
@@ -647,43 +547,5 @@ class Crontabwoo extends Base {
         }
     }
 
-    // 统计更新教练流量数字段
-    public function coachflowcounter() {
-        try {
-            // 遍历coach数据
-            $coachs = db('coach')->select();
-            // 教练service
-            $coachService = new CoachService();
-            //dump($coachs);
-            $dataSaveAll = [];
-            foreach ($coachs as $key => $coach) {
-                // 课程流量
-                $lessonFlow = $coachService->lessoncount($coach['id']);
-                // 班级流量
-                $gradeList = $coachService->ingradelist($coach['id']);
-                //dump($gradeList);
-                $gradeFlow = count($gradeList);
-                // 学员流量
-                $studentFlow = $coachService->teachstudents($coach['id']);
-                // 课时流量
-                $scheduleFlow = $coachService->schedulecount($coach['id']);
-                $dataSaveAll[$key]['id'] = $coach['id'];
-                $dataSaveAll[$key]['lesson_flow'] = $lessonFlow;
-                $dataSaveAll[$key]['grade_flow'] = $gradeFlow;
-                $dataSaveAll[$key]['student_flow'] = $studentFlow+$coach['student_flow_init'];
-                $dataSaveAll[$key]['schedule_flow'] = $scheduleFlow+$coach['schedule_flow_init'];
 
-                // 顺手整理introduction值为图文内容格式
-                $newIntroduction = '<div class="operationDiv"><p>'. $coach['introduction'] .'</p></div>';
-                //$dataSaveAll[$key]['introduction'] = $newIntroduction;
-            }
-            //dump($dataSaveAll);
-            // 批量更新
-            $modelCoach = new Coach();
-            $res = $modelCoach->saveAll($dataSaveAll);
-            return json($res);
-        } catch (Exception $e) {
-            dump($e->getMessage());
-        }
-    }
 }

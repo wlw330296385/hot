@@ -16,15 +16,8 @@ class MemberService{
 	}
 	// 获取会员
 	public function getMemberInfo($map){
-		$res = $this->memberModel->where($map)->find();
-		if (!$res) {
-		    return $res;
-        }
-        $result = $res->toArray();
-		// 年龄换算
-        $result['age'] = getAgeByBirthday($result['birthday']);
-        // 粉丝数
-        $result['fans'] = getfansnum($result['id'], 1);
+		$result = $this->memberModel->where($map)->find();
+		
         return $result;
 	}
 
@@ -225,7 +218,7 @@ class MemberService{
     }
 
     // 获取会员下线层级
-    public function getMemberPier($member_id) {
+    public function getMemberTier($member_id) {
         $tree = [];
         $model = new Member();
         $field = ['id' => 'member_id','member','pid'];

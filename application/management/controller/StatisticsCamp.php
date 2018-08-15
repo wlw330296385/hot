@@ -715,14 +715,13 @@ class StatisticsCamp extends Camp{
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         $list = db('salary_in')
+            ->field('salary_in.push_salary,salary_in.salary,schedule.*,salary_in.member,salary_in.type,salary_in.schedule_time,salary_in.create_time as s_create_time')
             ->join('schedule','schedule.id=salary_in.schedule_id')
-            ->where(['salary_in.camp_id'=>$camp_id,'type'=>1,'member_id'=>$member_id])
+            ->where(['salary_in.camp_id'=>$this->camp_member['camp_id'],'salary_in.type'=>1,'salary_in.member_id'=>$member_id])
             ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
             ->where('salary_in.delete_time',null)
             ->order('salary_in.id desc')
             ->select();
-        // echo db('salary_in')->getlastsql();
-        // dump($list);
         $this->assign('list',$list);
 
         //查询条件：camp_id，member_id，monthstart，monthend

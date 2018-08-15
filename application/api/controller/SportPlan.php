@@ -129,4 +129,54 @@ class SportPlan extends Base{
         }
     }
 
+
+    // 编辑运动计划
+    public function updateSportPlanApi(){
+        try {
+            $sport_plan_id = input('param.sport_plan_id');
+            $sportPlanInfo = $this->SportPlan->where(['id'=>$sport_plan_id])->find();
+            if(!$sportPlanInfo){
+                return json(['code'=>100,'msg'=>'传参错误']);
+            }
+            if($sportPlanInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足,请重新登陆']);
+            }
+            
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+    // 编辑运动计划日程
+    public function updateSportPlanScheduleApi(){
+        try {
+            $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
+            $SportPlanSchedule = new \app\model\SportPlanSchedule;
+            $sportPlanScheduleInfo = $SportPlanSchedule->where(['id'=>$sport_plan_schedule_id])->find();
+            if(!$sportPlanScheduleInfo){
+                return json(['code'=>100,'msg'=>'传参错误']);
+            }
+            if($sportPlanScheduleInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足,请重新登陆']);
+            }
+            if($sportPlanScheduleInfo['punch_id']){
+                return json(['code'=>100,'msg'=>'已有打卡,不可操作']);
+            }
+            $data = input('post.');
+            $result = $SportPlanSchedule->save($data,['id'=>$sport_plan_schedule_id]);
+            if($result){
+                return json(['code'=>200,'msg'=>'操作成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+
+
 }

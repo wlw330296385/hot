@@ -34,6 +34,7 @@ class Guider extends Base
 				cache("menuList_".$this->memberInfo['id'],$menuList);
 				// 训练营信息
 				session('camp_member',$camp);
+				header("Location:".url('Index/index'));
 			}elseif($camp['type'] == '3'){
 				//权限和菜单
 				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>1,'power'=>['elt',3],'module'=>'management'])->order(['sort asc','id asc'])->select();
@@ -43,6 +44,7 @@ class Guider extends Base
 				cache("power_{$this->memberInfo['id']}",3);
 				// 训练营信息
 				session('camp_member',$camp);
+				header("Location:".url('Index/index'));
 			}elseif($camp['type'] == '2'){
 				//权限和菜单
 				$powerList = db('member_menu')->where(['status'=>1,'power_type'=>2,'power'=>['elt',2],'module'=>'management'])->order(['sort asc','id asc'])->select();
@@ -52,8 +54,9 @@ class Guider extends Base
 				cache("power_{$this->memberInfo['id']}",2);
 				// 训练营信息
 				session('camp_member',$camp);
+				header("Location:".url('Index/indexofcoach'));
 			}
-			header("Location:".url('Index/index'));
+			
 		}
 		
 		$this->assign('campList',$campList);

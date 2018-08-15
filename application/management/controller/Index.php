@@ -207,5 +207,7 @@ class Index extends Backend
 		return view('Index/index');
 	}
 
-	
+	public function indexOfCoach(){
+		return view('Index/indexOfCoach');
+	}
 }

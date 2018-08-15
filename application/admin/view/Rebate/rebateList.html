@@ -1,0 +1,85 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <div class="panel-lead">
+
+            <form action="" class="form-inline" method="post">
+                <fieldset>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" id="field">会员名</button>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="keyword" >
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 text-center">
+                            <button type="submit" class="btn btn-info btn-flat">搜索</button>
+                            <button type="reset" class="btn btn-default btn-flat">重置</button>
+                        </div>
+                    </div>
+                    <div style="float:right">
+                        <a href="/admin/platform/createPlatform" class="btn btn-success">创建公众号</a>
+                    </div>
+
+                </fieldset>
+
+            </form>
+        </div>
+        <!-- //tab标签 -->
+        <ul class="nav nav-tabs">
+            <li data-tab = "1" class="tabwoo active"><a href="#memberInfo" data-toggle="tab">推荐奖金</a></li>
+            <li data-tab = "2" class="tabwoo"><a href="#memberFinanceList" data-toggle="tab" >会员财务</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="box no-border">
+            <div class="box-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>会员名</th>
+                        <th>分成奖金</th>
+                        <th>分成积分</th>
+                        <th>ta推荐的人</th>
+                        <th>奖励层级</th>
+                        <th>ta推荐的人的收入</th>
+                        <th>时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="rebateList" id="vol"}
+                    <tr>
+                        <td>{$key}</td>
+                        <td>{$vol.member}</td>
+                        <td>{$vol.salary}</td>
+                        <td>{$vol.score}</td>
+                        <td>{$vol.s_member}</td>
+                        <td>{$vol.tier}</td>
+                        <td>{$vol.total_salary}</td>
+                        <td>{$vol.create_time}</td>
+                       
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div class="box-footer clearfix">
+                {$rebateList->render()}
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name='js'}
+<script type="text/javascript">
+	$(function(){
+
+	})
+
+</script>
+{/block}
