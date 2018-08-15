@@ -4428,7 +4428,7 @@ class League extends Base
             $_result = $result = [];
             // 根据比赛时间（年月日）对数据分片
             foreach ($list as $key => $value) {
-                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+                $date = ($value['match_time']) ? date('Y-m-d', strtotime($value['match_time'])) : 0;
                 $_result[$value['match_stage'] . '|' . $date . '|' . $value['match_stage_type']][] = $value;
             }
             foreach ($_result as $key => $value) {

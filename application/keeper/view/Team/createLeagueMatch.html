@@ -51,6 +51,10 @@
                     <span class="select-row">
                         <select class="selectLeague" name="">
                             <option value="" class="selectLeagueAfter">请选择联赛</option>
+                            {volist name="matchList" id="vo"}
+                                <option value="{$vo.id}">{$vo.name}</option>
+                            {/volist}
+                            
                         </select>
                     </span>
                 </div>
@@ -261,7 +265,7 @@
                 var courtKeyword = '';
                 var wCourt = '';
                 toCourtList(wCourt, courtKeyword, 1);
-                toLeagueList();
+                // toLeagueList();
 
                 $(document).on('change', '.selectLeague', function () {
                     var league_id = $(this).children("option:selected").val();
@@ -389,46 +393,46 @@
 
             })
 
-            //联赛列表
-            var toLeagueList = function () {
-                var url = "{:url('api/match/matchlistall','','',true)}";
-                mui.ajax({
-                    url: url,
-                    data: {
-                        member_id: "{$memberInfo.id}",
-                        team_id: 0
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        console.log(data)
-                        if (data.code == 200) {
-                            var newli = ''
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                newli += `<option value="${data.data[i].id}">${data.data[i].name}</option>`
-                            }
-                            $(".selectLeagueAfter").after(newli)
-                        } else {
-                            $(".submit").hide();
-                            $(".skipCreate").show();
-                        }
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                    }
-                });
-            };
+            // //联赛列表
+            // var toLeagueList = function () {
+            //     var url = "{:url('api/match/matchlistall','','',true)}";
+            //     mui.ajax({
+            //         url: url,
+            //         data: {
+            //             member_id: "{$memberInfo.id}",
+            //             team_id: 0
+            //         },
+            //         dataType: 'json',//服务器返回json格式数据
+            //         type: 'post',//HTTP请求类型
+            //         timeout: 10000,//超时时间设置为10秒；
+            //         headers: { 'Content-Type': 'application/json' },
+            //         success: function (data) {
+            //             console.log(data)
+            //             if (data.code == 200) {
+            //                 var newli = ''
+            //                 for (var i = 0; i <= data.data.length - 1; i++) {
+            //                     newli += `<option value="${data.data[i].id}">${data.data[i].name}</option>`
+            //                 }
+            //                 $(".selectLeagueAfter").after(newli)
+            //             } else {
+            //                 $(".submit").hide();
+            //                 $(".skipCreate").show();
+            //             }
+            //         },
+            //         error: function (xhr, type, errerThrown) {
+            //             mui.toast('网络异常,请稍候再试');
+            //         }
+            //     });
+            // };
 
             // 联赛下的比赛列表
             var toMatchList = function (league_id) {
-                var url = "{:url('api/match/matchrecordlistall','','',true)}";
+                var url = "{:url('api/match/matchScheduleList','','',true)}";
                 mui.ajax({
                     url: url,
                     data: {
                         match_id: league_id,
-                        home_team_id: 11
+                        team_id: 11
                     },
                     dataType: 'json',//服务器返回json格式数据
                     type: 'post',//HTTP请求类型
