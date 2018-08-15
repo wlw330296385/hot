@@ -954,4 +954,24 @@ class MatchService {
         return $result;
     }
 
+    public function getMatchOnly($map) {
+        $model = new Match();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    public function getMatchRecordOnly($map) {
+        $model = new MatchRecord();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
 }

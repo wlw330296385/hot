@@ -68,7 +68,7 @@
             color: #c3c3c3;
         }
 
-        #sportType {
+        .sportTypeTab {
             display: none;
         }
         .sportProject{
@@ -81,8 +81,9 @@
         }
 
         .secondUl li {
-            padding-left: 11px !important;
-            padding-right: 0 !important;
+            padding-left: 12px !important;
+            padding-right: 6px !important;
+            font-size: 14px !important;
         }
 
         .secondUl li:after {
@@ -109,7 +110,7 @@
         .secondUl li .hideDiv input::placeholder {
             font-size: 12px;
         }
-        #backList {
+        .backList {
             display: none;
         }
         .punchList input[name="duration"],.punchList input[name="extent"],.punchList input[name="amount"]{
@@ -175,7 +176,7 @@
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bgblue">
-                <a href="#addSchedule">添加计划日程</a>
+                <a href="#addSchedule" id="addScheduleBtn">添加计划日程</a>
             </li>
         </ul>
 
@@ -193,7 +194,7 @@
             <span class="fr">
                  <button class="mui-btn" id="addList">新增</button> 
                  <button class="mui-btn-blue" id="saveSchedule">保存</button> 
-                 <button class="mui-btn" id="backList">返回</button>
+                 <button class="mui-btn backList">返回</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -203,11 +204,17 @@
                     
                 </form>
 
-
-                <div id="sportType">
+                <div class="sportTypeTab">
                     <ul class="mui-table-view list secondUl">
                         <li class="mui-table-view-cell listli">
                             <text>健身</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>篮球</text>
                             <div class="hideDiv">
                                 <input type="number" name="duration" value="" placeholder="时长/min">
                                 <button class="fr bgred confirmBtn">确认</button>
@@ -237,13 +244,6 @@
                         </li>
                         <li class="mui-table-view-cell listli">
                             <text>爬山</text>
-                            <div class="hideDiv">
-                                <input type="number" name="duration" value="" placeholder="时长/min">
-                                <button class="fr bgred confirmBtn">确认</button>
-                            </div>
-                        </li>
-                        <li class="mui-table-view-cell listli">
-                            <text>篮球</text>
                             <div class="hideDiv">
                                 <input type="number" name="duration" value="" placeholder="时长/min">
                                 <button class="fr bgred confirmBtn">确认</button>
@@ -343,6 +343,160 @@
 
 
 
+
+    <!--计划编辑-->
+    <div id="scheduleEdit" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>编辑计划日程</strong>
+            </span>
+            <span class="fr">
+                 <button class="mui-btn-blue" id="saveScheduleEdit">保存</button> 
+                 <button class="mui-btn backList">返回</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+
+                <form class="mui-input-group" id="scheduleEditForm">
+                    <div>
+                        <div class="mui-input-row bggray2">
+                            <label><strong>运动计划 # <text class="colororange pNumber"></text></strong></label>
+                            <span class="mui-icon mui-icon-closeempty"></span>
+                            <span class="copyPunch f12">删除</span>
+                        </div>
+                        <div class="mui-input-row btnDate" data-tnum="1">
+                            <label>运动日期</label>
+                            <span class="mui-navigate-right btnDateTxt"></span>
+                        </div>
+                        <div class="mui-input-row sportType">
+                                <label class="wd45">运动内容</label>
+                                <span class="wd45 punch_category mui-navigate-right"></span>
+                                <input type="hidden" name="punch_category" value="1" class="data">
+                        </div>
+                        <div class="mui-input-row sportProject">
+                            <label class="wd45">运动项目</label>
+                            <input type="text" class="data wd52" name="name" value="" placeholder="运动项目" />
+                        </div>
+
+                        <div class="mui-input-row sportProject">
+                            <label class="wd45">运动时长</label>
+                            <span>分钟</span>
+                            <input type="number" class="data" name="duration" value="" placeholder="选填" />
+                        </div>
+
+                        <div class="mui-input-row sportProject">
+                            <label class="wd45">运动里程</label>
+                            <span>公里</span>
+                            <input type="number" class="data" name="extent" value="" placeholder="选填" />
+                        </div>
+
+                        <div class="mui-input-row sportProject">
+                            <label class="wd45">运动数量</label>
+                            <span>个/次</span>
+                            <input type="number" class="data" name="amount" value="" placeholder="选填" />
+                        </div>
+                    </div>
+                </form>
+
+
+                <div class="sportTypeTab">
+                    <ul class="mui-table-view list secondUl">
+                        <li class="mui-table-view-cell listli">
+                            <text>健身</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>篮球</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>游泳</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>跑步</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <input type="number" name="extent" value="" placeholder="里程/km">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>瑜伽</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>爬山</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>足球</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>羽毛球</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>网球</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>骑车</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>俯卧撑</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <input type="number" name="amount" value="" placeholder="数量/total">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli">
+                            <text>仰卧起坐</text>
+                            <div class="hideDiv">
+                                <input type="number" name="duration" value="" placeholder="时长/min">
+                                <input type="number" name="amount" value="" placeholder="数量/total">
+                                <button class="fr bgred confirmBtn">确认</button>
+                            </div>
+                        </li>
+                        <li class="mui-table-view-cell listli otherChoise"><text>自填</text></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -452,14 +606,15 @@
                 var newli = "";
                 if (data.code == 200) {
                     $(".totalData").text(data.data.total);
+                    var sNumber = 0;
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
                         //推算获取期数
-                        let PoolNumber = data.total - (data.current_page-1)*data.per_page - i;
+                        sNumber = (data.data.current_page-1)*10 + i+1;
                        
-                        var urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
+                        //var urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
                         newli += '<li><ul class="mui-table-view">'
-                        newli += '<li class="mui-table-view-cell listli bggray2"><label><strong>运动计划 # <text class="colororange">'+i+'</text></strong></label><span class="f12">编辑</span></div>'
+                        newli += '<li class="mui-table-view-cell listli bggray2"><a href="#scheduleEdit"><label><strong>运动计划 # <text class="colororange">'+sNumber+'</text></strong></label><span class="f12">编辑</span></li>'
                         newli += '<li class="mui-table-view-cell listli"><label>运动日期</label><span>'+ data.data.data[i].sport_time +'</span></li>'
                         newli += '<li class="mui-table-view-cell listli"><label>运动项目</label><span>'+ data.data.data[i].sport_project +'</span></li>'
                         newli += '<li class="mui-table-view-cell listli"><label>运动时长</label><span>'+ data.data.data[i].duration +'分钟</span></li>'
@@ -504,9 +659,6 @@
     $(function () {
 
 
-
-
-
         //同页面多弹框时遮罩问题，使同一时刻只有一个弹框
         $(document).on("tap", ".btnDate", function () {
              $(".mui-backdrop").not($(".mui-active")).css("z-index","999");
@@ -514,80 +666,81 @@
 
         //选择训练内容
         $(document).on('tap', '.sportType', function () {
-            $(".punchList").removeClass("hot-active");
+            var $whichPop = $(this).parentsUntil(".mui-popover").parent();
+            $whichPop.find(".punchList").removeClass("hot-active");
             $(this).parent().addClass("hot-active");
-
-            $(".addScheduleList").hide();
-            $("#saveSchedule").hide();
-            $("#addList").hide();
-            $("#backList").show();
-            $("#sportType").show();
+            $whichPop.find("form").hide();
+            $whichPop.find(".page-header button").hide();
+            $whichPop.find(".page-header .backList").show();
+            $whichPop.find(".sportTypeTab").show();
         });
+
         //返回到添加日程窗口
-        $(document).on('tap', '#backList', function () {
-            $(".addScheduleList").show();
-            $("#saveSchedule").show();
-            $("#addList").show();
-            $("#backList").hide();
-            $("#sportType").hide();
+        $(document).on('tap', '.backList', function () {
+            var $whichPop = $(this).parentsUntil(".mui-popover").parent();
+            $whichPop.find("form").show();
+            $whichPop.find(".page-header button").show();
+            $whichPop.find(".page-header .backList").hide();
+            $whichPop.find(".sportTypeTab").hide();
         });
 
         //选中训练项目
         $(".secondUl").on('tap', '.listli', function () {
-            $(".secondUl .hideDiv").hide();
+            var $whichPop = $(this).parentsUntil(".mui-popover").parent();
+            $whichPop.find(".secondUl .hideDiv").hide();
             $(this).find(".hideDiv").show();
         });
         //确定选中项目
         $(".secondUl").on('tap', '.confirmBtn', function () {
+            var $whichPop = $(this).parentsUntil(".mui-popover").parent();
             var duration = $(this).siblings("input[name=duration]").val();
             var extent = $(this).siblings("input[name=extent]").val();
             var amount = $(this).siblings("input[name=amount]").val();
             var punch_category = "训练";
             var name = $(this).parent().siblings("text").text();
             //根据获取值赋值训练类型
-            $(".hot-active .punch_category").text(punch_category);
+            $whichPop.find(".hot-active .punch_category").text(punch_category);
 
             //先隐藏和清空
-            $(".hot-active .sportProject").hide();
-            $(".hot-active .sportProject input[name=duration]").val(0);
-            $(".hot-active .sportProject input[name=extent]").val(0);
-            $(".hot-active .sportProject input[name=amount]").val(0);
+            $whichPop.find(".hot-active .sportProject").hide();
+            $whichPop.find(".hot-active .sportProject input[name=duration]").val(0);
+            $whichPop.find(".hot-active .sportProject input[name=extent]").val(0);
+            $whichPop.find(".hot-active .sportProject input[name=amount]").val(0);
 
             //后根据是否有值赋值并显示
-            $(".hot-active .sportProject input[name=name]").val(name);
-            $(".hot-active .sportProject input[name=name]").parent().show();
+            $whichPop.find(".hot-active .sportProject input[name=name]").val(name);
+            $whichPop.find(".hot-active .sportProject input[name=name]").parent().show();
             if(duration!="undefined"&&duration!=null){
-                $(".hot-active .sportProject input[name=duration]").val(duration);
-                $(".hot-active .sportProject input[name=duration]").parent().show();
+                $whichPop.find(".hot-active .sportProject input[name=duration]").val(duration);
+                $whichPop.find(".hot-active .sportProject input[name=duration]").parent().show();
             }
             if(extent!="undefined"&&extent!=null){
-                $(".hot-active .sportProject input[name=extent]").val(extent);
-                $(".hot-active .sportProject input[name=extent]").parent().show();
+                $whichPop.find(".hot-active .sportProject input[name=extent]").val(extent);
+                $whichPop.find(".hot-active .sportProject input[name=extent]").parent().show();
             }
             if(amount!="undefined"&&amount!=null){
-                $(".hot-active .sportProject input[name=amount]").val(amount);
-                $(".hot-active .sportProject input[name=amount]").parent().show();
+                $whichPop.find(".hot-active .sportProject input[name=amount]").val(amount);
+                $whichPop.find(".hot-active .sportProject input[name=amount]").parent().show();
             }
-            $(".addScheduleList").show();
-            $("#saveSchedule").show();
-            $("#addList").show();
-            $("#backList").hide();
-            $("#sportType").hide();
+            $whichPop.find("form").show();
+            $whichPop.find(".page-header button").show();
+            $whichPop.find(".page-header .backList").hide();
+            $whichPop.find(".sportTypeTab").hide();
         });
 
         //自填
         $(".otherChoise").on("tap", "", function () {
-            $(".hot-active .punch_category").text("训练");
-            $(".hot-active .sportProject input[name=name]").val('');
-            $(".hot-active .sportProject input[name=duration]").val('');
-            $(".hot-active .sportProject input[name=extent]").val('');
-            $(".hot-active .sportProject input[name=amount]").val('');
-            $(".hot-active .sportProject").show();
-            $(".addScheduleList").show();
-            $("#saveSchedule").show();
-            $("#addList").show();
-            $("#backList").hide();
-            $("#sportType").hide();
+            var $whichPop = $(this).parentsUntil(".mui-popover").parent();
+            $whichPop.find(".hot-active .punch_category").text("训练");
+            $whichPop.find(".hot-active .sportProject input[name=name]").val('');
+            $whichPop.find(".hot-active .sportProject input[name=duration]").val('');
+            $whichPop.find(".hot-active .sportProject input[name=extent]").val('');
+            $whichPop.find(".hot-active .sportProject input[name=amount]").val('');
+            $whichPop.find(".hot-active .sportProject").show();
+            $whichPop.find("form").show();
+            $whichPop.find(".page-header button").show();
+            $whichPop.find(".page-header .backList").hide();
+            $whichPop.find(".sportTypeTab").hide();
         })
 
 
@@ -622,22 +775,12 @@
         $(document).on('tap', '#addList', function () {
 
             $(".punchList").removeClass("hot-active");
-            var getCurrPunch = '<div class="punchList hot-active">'+ $("#punchListForAdd").html()+'</div>';
-            var getNewNumber = 1;
-            var plNumber = $(".punchList:first-child").find(".pNumber").text();
-            if(plNumber==""){
-                var pLi = $(".planSchedule>li:not('.planTips')").length;
-                if(pLi>0){
-                    getNewNumber = parseInt(pLi)+1;
-                }
-            }else{
-                getNewNumber = parseInt(plNumber)+1;
-            }
-            $("#scheduleForm").prepend(getCurrPunch);
-
-            $(".hot-active").find(".pNumber").text(getNewNumber);
-            $(".hot-active").find(".btnDate").attr("data-tnum",getNewNumber);
-
+            $("#scheduleForm").prepend('<div class="punchList hot-active">'+ $("#punchListForAdd").html()+'</div>');
+            //重新排号
+            listReorder();
+            //滚动到顶部
+            mui("#addSchedule .mui-scroll-wrapper").scroll().scrollTo(0,0,0);
+           
         });
 
 
@@ -646,21 +789,21 @@
 
             $(this).parent().parent().remove();
             //重新排号
-            var pLi = $(".planSchedule li:not('.planTips')").length;
-            var sLi = $("#scheduleForm .punchList").length;
-            var psLength = parseInt(pLi)+parseInt(sLi);
-
-            $("#scheduleForm .punchList").each(function () {
-                $(this).find(".pNumber").text(psLength);
-                $(this).find(".btnDate").attr("data-tnum",psLength);
-                psLength=psLength-1;
-            });
+            listReorder()
 
         });
 
 
-        
+        //打开添加日程窗口
+        $(document).on('tap', '#addScheduleBtn', function () {
+            var sLi = $("#scheduleForm .punchList").length;
+            if(sLi==0){
+                $("#scheduleForm").prepend('<div class="punchList hot-active">'+ $("#punchListForAdd").html()+'</div>');
+            }
+            //重新排号
+            listReorder()
 
+        });
 
         //删除当前日程
         $(document).on('tap', '#saveSchedule', function () {
@@ -718,8 +861,24 @@
 
         });
 
-
     })
+
+    //重新排号
+    function listReorder() {
+        var pLi = $(".planSchedule>li:not('.planTips')").length;
+        var sLi = $("#scheduleForm .punchList").length;
+        var psLength = parseInt(pLi)+parseInt(sLi);
+
+        $("#scheduleForm .punchList").each(function () {
+            $(this).find(".pNumber").text(psLength);
+            $(this).find(".btnDate").attr("data-tnum",psLength);
+            psLength=psLength-1;
+        });
+    }
+
+
+
+
 </script>
 
 </html>

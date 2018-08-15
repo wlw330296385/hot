@@ -235,8 +235,6 @@
     var members = [];
     $(function () {
 
-        $(".match_time").text(gettime())
-
         // 确认是否出席
         $(document).on("tap", ".attend button", function () {
             var isAttend = $(this).hasClass("bggreen");
@@ -339,11 +337,11 @@
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
                                         </div>
+                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -479,11 +477,11 @@
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 colororange">
+                                            <div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
                                         </div>
+                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -618,9 +616,7 @@
                         newli += `
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>`
+                                    <div class="mui-row">`
                         if (data.data[i].number == null) {
                             newli += `<div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="0" disabled>
@@ -630,7 +626,9 @@
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
                                         </div>`
                         }
-                        newli += ` <div class="mui-col-xs-4 mui-text-center dataIcon">
+                        newli += `<div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
+                                    <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
                                             </text>
@@ -782,11 +780,11 @@
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 colororange">
+                                            <div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
                                         </div>
+                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
@@ -998,19 +996,6 @@
         });
     })
 
-    //创建补0函数
-    function p(s) {
-        return s < 10 ? '0' + s : s;
-    }
-    function gettime() {
-        var _time = new Date();
-        var year = _time.getFullYear();
-        var month = _time.getMonth() + 1;
-        var day = _time.getDate();
-        var hours = _time.getHours();
-        var minutes = _time.getMinutes();
-        return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
-    }
 </script>
 
 </html>

@@ -30,6 +30,10 @@
             width: 25%;
         }
 
+        .nav-list .nav-list-frame a {
+            padding: 10px 0 !important;
+        }
+
         .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
             font-size: 2.2em;
         }
@@ -51,6 +55,7 @@
                 width: 78% !important;
             }
         }
+
 
         .coloricon {
             width: 2.3em;
@@ -113,22 +118,22 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>报名开始时间</label>
+                        <span class="icon iconfont icon-activity-Application colororange"></span>报名开始时间</label>
                     <span class="wd60">{$leagueInfo.reg_start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-EndTime colororange"></span>报名结束时间</label>
+                        <span class="icon iconfont icon-activity-Application1 colororange"></span>报名结束时间</label>
                     <span class="wd60">{$leagueInfo.reg_end_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>联赛开始时间</label>
+                        <span class="icon iconfont icon-activity-League colororange"></span>联赛开始时间</label>
                     <span class="wd60">{$leagueInfo.start_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-EndTime colororange"></span>联赛结束时间</label>
+                        <span class="icon iconfont icon-activity-League1 colororange"></span>联赛结束时间</label>
                     <span class="wd60">{$leagueInfo.end_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
@@ -138,19 +143,19 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>参赛队伍</label>
+                        <span class="icon iconfont icon-activity-Team colororange"></span>参赛队伍</label>
                     <span>
                         <font class="colororange">{$leagueInfo.teams_count}</font>/{$leagueInfo.teams_max} 支</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>参赛费用</label>
+                        <span class="icon iconfont icon-activity-Cost colororange"></span>参赛费用</label>
                     <span>
                         <font class="colororange">{$leagueInfo.entry_fees}</font>元/队</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>保证金</label>
+                        <span class="icon iconfont icon-activity-Deposit colororange"></span>保证金</label>
                     <span>
                         <font class="colororange">{$leagueInfo.deposit}</font>元/队</span>
                 </li>
@@ -161,26 +166,26 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
-                            <span class="mui-icon mui-icon-home"></span>
+                            <span class="icon iconfont icon-th-Regulations"></span>
                             <span class="f14" style="display: block;">章程</span>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
-                            <span class="mui-icon mui-icon-email"></span>
+                            <span class="icon iconfont icon-th-Schedule"></span>
                             <span class="f14" style="display: block;">赛程</span>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
 
-                            <span class="mui-icon mui-icon-contact"></span>
+                            <span class="icon iconfont icon-th-Record"></span>
                             <span class="f14" style="display: block;">战绩</span>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
-                            <span class="mui-icon mui-icon-gear"></span>
+                            <span class="icon iconfont icon-th-data"></span>
                             <span class="f14" style="display: block;">数据</span>
                         </a>
                     </li>
@@ -224,12 +229,12 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
                     <a href="">
                         咨询
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
                     <a href="#fbcomment">评价 </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggray hide waitBtn">等待报名</li>
@@ -308,6 +313,8 @@
             var count = 1;
             // 判断是否登陆
             if ("{$memberInfo.id}" <= 0) {
+                $(".col5Class").removeClass("mui-col-xs-3").addClass("mui-col-xs-5");
+                $(".col5Class").removeClass("mui-col-sm-3").addClass("mui-col-sm-5");
                 mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                     if (e.index === 1) {
                         window.location.href = "{$fasturl}";
@@ -326,7 +333,6 @@
             }
 
             var cansignup = "{$cansignup}"
-            console.log(cansignup)
             if (cansignup == -1) {
                 $(".waitBtn").show();
             } else if (cansignup == 1) {
@@ -654,19 +660,6 @@
             });
         };
 
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettime() {
-            var _time = new Date();
-            var year = _time.getFullYear();
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(year) + "-" + p(month) + '-' + p(day) + " " + p(hours) + ":" + p(minutes);
-        }
     </script>
 </body>
 
