@@ -17,12 +17,7 @@ class Index extends Controller
     }
 
     public function index1(){
-    	$list = db('grade')->where(['students'=>0])->select();
-        $ids = [];
-        foreach ($list as $key => $value) {
-            $ids[] = $value['id'];
-        }
-        db('grade_member')->where(['grade_id'=>['in',$ids]])->delete();
+    	
     }
 
     public function index2(){

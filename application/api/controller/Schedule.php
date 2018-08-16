@@ -525,6 +525,8 @@ class Schedule extends Base
                     db('output')->insert([
                         'camp'=>$campInfo['camp'],
                         'camp_id'=>$campInfo['id'],
+                        'member_id'=>$this->memberInfo['id'],
+                        'member'=>$this->memberInfo['member'],
                         'f_id'=>$res['insid'],
                         'type'=>1,
                         'create_time'=>time(),
@@ -534,6 +536,7 @@ class Schedule extends Base
                         'schedule_rebate'=>$campInfo['schedule_rebate'],
                         'output'=>$totalCost,
                         'date_str'=>date('Ymd',time()),
+                        'system_remarks'=>'赠课操作'
                     ]);
                     db('camp_finance')->insert([
                         'camp'=>$campInfo['camp'],
@@ -547,6 +550,7 @@ class Schedule extends Base
                         'schedule_rebate'=>$campInfo['schedule_rebate'],
                         'money'=>-$totalCost,
                         'date_str'=>date('Ymd',time()),
+                        'system_remarks'=>'赠课操作'
                     ]);
                 }
                 

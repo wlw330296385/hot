@@ -431,23 +431,50 @@ class StatisticsCamp extends Backend{
         return view('StatisticsCamp/campTurnover');
     }
 
-    // 赠课统计
+    // 赠课购买列表
     public function campGift(){
         $camp_id = $this->campInfo['id'];
         $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
         $monthEnd = input('param.monthend',date('Ymd'));
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
-        $list = db('schedule_gift_student')
-        ->field("*,from_unixtime(create_time,'%Y%m%d') as days")
-        ->where(['camp_id'=>$camp_id])
-        ->where(['create_time'=>['between',[$month_start,$month_end]]])
-        ->where('delete_time',null)
+        
+
+        $list = db('schedule_giftbuy')
+        ->field('schedule_giftbuy.*,lesson.cost')
+        ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
+        ->where(['schedule_giftbuy.camp_id'=>$camp_id])
+        ->where(['schedule_giftbuy.create_time'=>['between',[$month_start,$month_end]]])
+        ->where('schedule_giftbuy.delete_time',null)
         ->select();
         // dump($list);
         $this->assign('list',$list);
         return view('StatisticsCamp/campGift');
     }
+
+    // 赠课详情
+    public function campGiftInfo(){
+        $camp_id = $this->campInfo['id'];
+        $lesson_id= input('param.lesson_id');
+        $ScheduleGiftrecord = new \app\model\ScheduleGiftrecord;
+        if($lesson_id){
+            $map = ['schedule_giftrecord.lesson_id'=>$lesson_id];
+        }
+       
+        $list = db('schedule_giftrecord')
+        ->field('schedule_giftrecord.*,lesson.cost')
+        ->join('lesson','lesson.id = schedule_giftrecord.lesson_id')
+        ->where($map)
+        ->where('schedule_giftrecord.delete_time',null)
+        ->order('schedule_giftrecord.id asc')
+        ->select();
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id])->select();
+        $this->assign('list',$list);
+        $this->assign('lessonList',$lessonList);
+        $this->assign('lesson_id',$lesson_id);
+        return view('StatisticsCamp/campGiftInfo');
+    }
+
 
     // 附加支出
     public function campOutput(){
@@ -559,7 +586,7 @@ class StatisticsCamp extends Backend{
             ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students')
             ->where($map)
             ->join('schedule','schedule.id = salary_in.schedule_id')
-            ->where(['salary_in.schedule_time'=>['between',[$month_start,$month_end]]])
+            ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
             ->select();
         }else{
             $scheduleList = [];

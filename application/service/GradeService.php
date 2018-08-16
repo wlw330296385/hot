@@ -215,7 +215,6 @@ class GradeService{
         $model = new GradeMember();
         $res = $model->saveAll($data);
         if ($res) {
-           
             return ['code' => 200, 'msg' => '操作成功'];
         } else {
             return ['code' => 100, 'msg' => '班级学生操作失败'];
