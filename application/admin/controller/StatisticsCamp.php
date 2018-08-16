@@ -434,6 +434,7 @@ class StatisticsCamp extends Backend{
     // 赠课购买列表
     public function campGift(){
         $camp_id = $this->campInfo['id'];
+        $lesson_id = input('param.lesson_id');
         $list = db('schedule_giftbuy')
         ->field('schedule_giftbuy.*,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,lesson.unbalanced_giftschedule')
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
