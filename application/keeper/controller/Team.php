@@ -11,6 +11,7 @@ use app\service\MatchService;
 use app\service\MemberService;
 use app\service\RefereeService;
 use app\service\TeamService;
+use app\service\OrganizationService;
 use think\Cookie;
 
 class Team extends Base
@@ -143,9 +144,11 @@ class Team extends Base
         $refereeInfo = $refereeS->getRefereeInfo(['member_id' => $this->memberInfo['id']]);
 
         // 获取会员所在联赛组织（联赛组织人员）
-        $leagueS = new LeagueService();
-        $myMatchOrgs = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
+        $OrganizationS = new OrganizationService();
+        $myOrganization = $OrganizationS->getOrganizationByMemberId($this->memberInfo['id']);
+
         // 获取会员所在联赛（联赛工作人员）
+        $leagueS = new LeagueService();
         $myWorkMatchs = $leagueS->getMatchMembers([
             'member_id' => $this->memberInfo['id'],
             'status' => 1
@@ -154,7 +157,7 @@ class Team extends Base
         //dump($myWorkMatchs);
         $this->assign('myTeamList', $myTeamList);
         $this->assign('refereeInfo', $refereeInfo);
-        $this->assign('myMatchOrgList', $myMatchOrgs);
+        $this->assign('myMatchOrgList', $myOrganization);
         $this->assign('myWorkMatchList', $myWorkMatchs);
         return view('Team/myteam');
     }

@@ -2405,9 +2405,6 @@ class Match extends Base
     * @method 将比赛设为完成（用于手动更新状态，一般在录完分后使用）
     * @param  team_id           [必填] 队伍id
     * @param  match_id          [必填] 比赛id
-    * @return success           {"code":200,"msg":"操作成功"}
-    * @return failed            {"code":100,"msg":"操作失败"}
-    * @author ken               2018-08-14
     */
     public function setMatchFinished()
     {
@@ -2451,7 +2448,7 @@ class Match extends Base
     }
 
     /**
-    * @method 获取比赛赛程纪录
+    * @method 获取比赛赛程纪录和场地详情
     * @param  team_id           [必填] 队伍id
     * @param  match_id          [必填] 比赛id
     */
