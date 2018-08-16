@@ -14,7 +14,7 @@ class SportPlan extends Model {
 
 	public function getEndAttr($value){
 		if($value>99999){
-			return date('Y-m-d',time());
+			return date('Y-m-d',$value);
 		}else{
 			return '无期限';
 		}
@@ -23,7 +23,7 @@ class SportPlan extends Model {
 
 	public function getStartAttr($value){
 		if($value>99999){
-			return date('Y-m-d',time());
+			return date('Y-m-d',$value);
 		}else{
 			return '无期限';
 		}

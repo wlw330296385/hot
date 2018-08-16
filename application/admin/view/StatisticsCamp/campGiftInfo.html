@@ -1,6 +1,5 @@
 {extend name="layout/common"/}
 {block name="css"}
-<link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">
 {/block}
 {block name="page-content"}
 
@@ -23,7 +22,12 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">课时月份</label>
-                                <input class="form-control layui-input" type="text" name="schedule_date"  value="{:date('Y-m')}">
+								<div class="input-group">
+									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+								</div>
                             </div>
 							<div class="form-group">
 								<!-- /.input group -->
@@ -94,7 +98,7 @@
 
 
 <!-- Modal : Camp -->
-<div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+<!-- <div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -129,7 +133,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 
 
 {/block}
@@ -137,14 +141,35 @@
 
 {block name='js'}
 
-<script src="/static/backend/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/static/backend/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
-
+    var currDateYM = localStorage.getItem('currDateYM');
 
     $(function () {
+
+        //=========================== 初始化数据 ==============================//
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+        if(currDateYM==''||currDateYM==null) {
+            var currDate = new Date();
+            var currYear = currDate.getFullYear();
+            var currMonth = currDate.getMonth();
+            if(currMonth==0){
+                currDateYM = parseInt(currYear)-1+'-12';
+            }else{
+                currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+                currDateYM = currYear+'-'+ currMonth ;
+            }
+            localStorage.setItem('currDateYM',currDateYM);
+        }
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=dateYM]").val(currDateYM);
+
+
+        //=========================== 初始化数据 ==============================//
+
 
         //遍历需要统计的数据列，并赋值到对应位置
         var gNum=0;
@@ -174,6 +199,24 @@
             todayBtn: true
         });
 
+ 		//查询统计
+        $("#goSearch").on("click", function () {
+            var lesson_id = $("select[name=lesson_id] option:selected").val();
+            var getYM = $("input[name=dateYM]").val();
+            if(lesson_id==""){
+                alert("请指定课程！");
+                return false;
+            }
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.location.href="{:url('/admin/Statistics_Camp/campGiftInfo/')}"+"lesson_id/"+lesson_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+        })
 
 
         //判断是否有年月的本地存储，没则获取当前月的上一个月
