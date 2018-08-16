@@ -981,8 +981,9 @@ class MatchService {
     public function listMatchScheduleAndCourt($map) {
         
         $result = DB::query("
-            SELECT ms.`id`, `home_team_id`, `home_team`, `away_team_id`, `away_team`, FROM_UNIXTIME(`match_time`,'%Y-%m-%d %H:%i') as `match_time`, 
-                   ms.`court_id`, m.`province`, m.`city`, m.`area`, m.`court`
+            SELECT ms.`id`, ms.`match_id`, CONCAT_WS(' vs ',`home_team`,`away_team`) as `match_name`, ms.`match_stage_id`, ms.`match_stage`, 
+            `home_team_id`, `home_team`, `away_team_id`, `away_team`, FROM_UNIXTIME(`match_time`,'%Y-%m-%d %H:%i') as `match_time`,
+            ms.`court_id`, m.`province`, m.`city`, m.`area`, m.`court`, m.`lng` as `court_lng`,m.`lat` as `court_lat`
             FROM `match_schedule` AS ms, `court` AS m
             WHERE ms.`court_id` = m.`id`
             AND `match_id` = :match_id

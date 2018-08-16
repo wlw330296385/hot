@@ -2479,7 +2479,7 @@ class Match extends Base
         $result = $matchS->listMatchScheduleAndCourt($map);
 
 
-        if (!empty($result)) {
+        if (empty($result)) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         } else {
             return json(['code' => 200, 'msg' => 'ok', 'data' => $result]);
