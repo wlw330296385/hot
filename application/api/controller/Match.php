@@ -2450,5 +2450,40 @@ class Match extends Base
         }
     }
 
+    /**
+    * @method 获取比赛赛程纪录
+    * @param  team_id           [必填] 队伍id
+    * @param  match_id          [必填] 比赛id
+    */
+    public function matchScheduleList() 
+    {
+        if (empty(input('?param.team_id')) || empty(input('?param.match_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $map['member_id'] = $this->memberInfo['id'];
+        $map['team_id'] = intval(input('param.team_id'));
+
+        // 验证是否执行者是否为球队管理员 > 0
+        $teamS = new TeamService();
+        $result = $teamS->getTeamMemberRole($map);
+        if (empty($result) || $result["type"] <= 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+        unset($map);
+
+        // 保证对战双方 主队或者客队id是该队
+        $matchS = new MatchService();
+        $map["team_id"] = intval(input('param.team_id'));
+        $map["match_id"] = intval(input('param.match_id'));
+        $result = $matchS->listMatchScheduleAndCourt($map);
+
+
+        if (empty($result)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        } else {
+            return json(['code' => 200, 'msg' => 'ok', 'data' => $result]);
+        }
+    }
 }
 

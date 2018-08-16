@@ -654,6 +654,11 @@ class Team extends Base
     // 创建比赛信息
     public function createLeagueMatch()
     {
+        $matchS = new MatchService();
+        $map["member_id"] = $this->memberInfo["id"];
+        $map["team_id"] = 0;
+        $result = $matchS->matchListAll($map);
+        $this->assign('matchList', $result);
         return view('Team/createLeagueMatch');
     }
 

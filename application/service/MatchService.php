@@ -10,6 +10,7 @@ use app\model\MatchRefereeApply;
 use app\model\MatchStatistics;
 use app\model\MatchTeam;
 use app\model\MatchHistoryTeam;
+use app\model\MatchSchedule;
 use think\Db;
 
 class MatchService {
@@ -954,6 +955,7 @@ class MatchService {
         return $result;
     }
 
+    // 仅获取一条比赛
     public function getMatchOnly($map) {
         $model = new Match();
         $res = $model->where($map)->find();
@@ -964,6 +966,7 @@ class MatchService {
         return $result;
     }
 
+    // 仅获取一条比赛记录
     public function getMatchRecordOnly($map) {
         $model = new MatchRecord();
         $res = $model->where($map)->find();
@@ -972,6 +975,27 @@ class MatchService {
         }
         $result = $res->toArray();
         return $result;
+    }
+
+    // 获取比赛赛程列表
+    public function listMatchScheduleAndCourt($map) {
+        
+        $result = DB::query("
+            SELECT ms.`id`, ms.`match_id`, CONCAT_WS(' vs ',`home_team`,`away_team`) as `match_name`, ms.`match_stage_id`, ms.`match_stage`, 
+            `home_team_id`, `home_team`, `away_team_id`, `away_team`, FROM_UNIXTIME(`match_time`,'%Y-%m-%d %H:%i') as `match_time`,
+            ms.`court_id`, m.`province`, m.`city`, m.`area`, m.`court`, m.`lng` as `court_lng`,m.`lat` as `court_lat`
+            FROM `match_schedule` AS ms, `court` AS m
+            WHERE ms.`court_id` = m.`id`
+            AND `match_id` = :match_id
+            AND (`home_team_id` = :home_team_id OR `away_team_id` = :away_team_id)
+        ",['match_id'=>$map["match_id"], 'home_team_id'=>$map["team_id"], 'away_team_id'=>$map["team_id"]]);
+        
+        if (!$result) {
+            return $result;
+        }
+        // $result = $res->toArray();
+        return $result;
+    
     }
 
 }
