@@ -242,7 +242,6 @@ class LessonMember extends Base{
             }    
             $lessonMemberList = $lessonMemberList->toArray();        
             $data1 = [];
-            $data2 = [];
             $msg = '';
             
             // $TransferLesson = new \app\model\TransferLesson;

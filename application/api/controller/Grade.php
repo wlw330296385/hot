@@ -199,8 +199,8 @@ class Grade extends Base{
                         'salary_base' => $data['salary_base']
                     ]);
             }
-
-            if ( !empty($data['studentData']) && $data['studentData'] != '[]' ) {
+            db('grade_member')->where(['grade_id'=>$grade_id])->delete();
+            if ( !empty($data['studentData'])) {
                 $studentData = json_decode($data['studentData'], true);
                 $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
                 if ($resSaveGradeMember['code'] == 100) {

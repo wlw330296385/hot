@@ -213,8 +213,6 @@ class GradeService{
     // 批量更新班级-学生grade_member数据
     public function saveAllGradeMember($data,$grade_id) {
         $model = new GradeMember();
-        db('grade_member')->where(['grade_id'=>$grade_id])->delete();
- 
         $res = $model->saveAll($data);
         if ($res) {
            
