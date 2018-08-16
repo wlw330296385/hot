@@ -160,9 +160,9 @@ class GradeService{
         }
         $result = $this->GradeModel->allowField(true)->save($data,['id'=>$id]);
          if (!$result) {
-            return [ 'msg' => __lang('MSG_400'), 'code' =>100 ];
+            return [ 'msg' =>'班级信息更新失败', 'code' =>100 ];
         }else{
-             return [ 'msg' => __lang('MSG_200'), 'code' => 200, 'data' => $result];
+             return [ 'msg' => '操作成功', 'code' => 200, 'data' => $result];
         }
     }
    
@@ -216,9 +216,9 @@ class GradeService{
         $res = $model->saveAll($data);
         if ($res) {
            
-            return ['code' => 200, 'msg' => __lang('MSG_200')];
+            return ['code' => 200, 'msg' => '操作成功'];
         } else {
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
+            return ['code' => 100, 'msg' => '班级学生操作失败'];
         }
     }
 

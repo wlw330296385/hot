@@ -179,6 +179,7 @@ class Grade extends Base{
                 }             
             }
             $GradeService = new GradeService;
+            $studentData = json_decode($data['studentData'], true);
             // 获取班级数据
             $gradeInfo = $GradeService->getGradeInfo(['id' => $grade_id]);
             // 教练底薪，提成基数数值改变，更新班级现有的未审课时相关数据
@@ -200,14 +201,12 @@ class Grade extends Base{
                     ]);
             }
             db('grade_member')->where(['grade_id'=>$grade_id])->delete();
-            if ( !empty($data['studentData'])) {
-                $studentData = json_decode($data['studentData'], true);
+            if ( !empty($studentData)) {
                 $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
                 if ($resSaveGradeMember['code'] == 100) {
                     return json($resSaveGradeMember);
                 }
             }
-
             $result = $GradeService->updateGrade($data, $data['grade_id']);
             return json($result);
         }catch (Exception $e){
