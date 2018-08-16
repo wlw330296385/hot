@@ -39,15 +39,7 @@
                 <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
             </div>
 
-            <div class="mui-input-row h-auto">
-                <div class="mui-navigate-right" onclick="upload(1,this)">
-                    <label>营业执照</label>
-                    <div class="viewStyle"></div>
-                    <input type="hidden" name="cert" value="" class="data">
-                </div>
-            </div>
-
-            <div class="mui-input-row h-auto">
+            <!-- <div class="mui-input-row h-auto">
                 <div class="mui-navigate-right" onclick="upload(2,this)">
                     <label>法人身份证</label>
                     <div class="viewStyle"></div>
@@ -58,14 +50,14 @@
             <div class="mui-input-row">
                 <label class="wd45">法人身份证号</label>
                 <input type="text" class="data wd52" name="fr_idno" placeholder="请输入身份证号码">
-            </div>
+            </div> -->
 
             <div class="mui-input-row h-auto">
-                <div class="mui-navigate-right" onclick="upload(3,this)">
+                <a href="#txpopover" class="mui-navigate-right">
                     <label>创建者身份证</label>
-                    <div class="viewStyle"></div>
+                    <div class="viewStyle view"></div>
                     <input type="hidden" name="cjz_idcard" value="" class="data">
-                </div>
+                </a>
             </div>
             <div class="mui-input-row">
                 <label class="wd45">创建者身份证号</label>
@@ -73,29 +65,43 @@
             </div>
 
             <div class="mui-input-row h-auto">
+                <div class="mui-navigate-right" onclick="upload(1,this)">
+                    <label class="wd58">营业执照（个人组织免填）</label>
+                    <div class="viewStyleSquare"></div>
+                    <input type="hidden" name="cert" value="" class="data">
+                </div>
+            </div>
+
+            <div class="mui-input-row h-auto">
                 <div class="mui-navigate-right" onclick="upload(4,this)">
                     <label>其他证明</label>
-                    <div class="viewStyle"></div>
+                    <div class="viewStyleSquare"></div>
                     <input type="hidden" name="other_cert" value="" class="data">
                 </div>
             </div>
 
+            <div class="page-header border-b bggray2">
+                <span class="f14">选填项目（不使用报名交费功能免填）
+                </span>
+            </div>
+
             <div class="mui-input-row">
-                <label>银行</label>
-                <input type="text" class="data" name="bank" placeholder="请输入银行">
+                <label>开户银行</label>
+                <input type="text" class="data" name="bank" placeholder="请填写开户银行">
             </div>
             <div class="mui-input-row">
-                <label>银行卡号</label>
-                <input type="text" class="data" name="bankcard_no" placeholder="请输入银行卡号">
+                <label>账户名</label>
+                <input type="text" class="data" name="bankcard_name" placeholder="请填写账户名">
             </div>
             <div class="mui-input-row">
-                <label>持卡人</label>
-                <input type="text" class="data" name="bankcard_name" placeholder="请输入持卡人">
+                <label>开户账号/卡号</label>
+                <input type="number" class="data" name="bankcard_no" placeholder="请填写开户账号/卡号">
             </div>
-            <div class="mui-input-row border-b">
+
+            <!-- <div class="mui-input-row border-b">
                 <label class="wd45">持卡人联系电话</label>
                 <input type="text" class="data wd52" name="bankcard_telephone" placeholder="请输入持卡人联系电话">
-            </div>
+            </div> -->
         </form>
 
         <div class="tjbtn mt25">
@@ -106,6 +112,14 @@
             [ 跳过，稍后完善 ]
         </p>
 
+    </div>
+    <!-- 封面 -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -154,30 +168,34 @@
             var bankcard_name = $('input[name=bankcard_name]').val();
             var bankcard_telephone = $('input[name=bankcard_telephone]').val();
 
-            if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
+            if (cert == "" || cjz_idcard == "") {
                 mui.toast("请上传证件照");
                 return false;
             };
-            if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
-                mui.toast("请输入正确的身份证号码");
+            // if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+            //     mui.toast("请输入正确的身份证号码");
+            //     return false;
+            // };
+            if (!(idno).test(cjz_idno)) {
+                mui.toast("请输入正确的创建者身份证号码");
                 return false;
             };
             if (bank == '') {
-                mui.toast("请输入银行名称");
-                return false;
-            };
-            if (bankcard_no == '') {
-                mui.toast("请输入银行卡号");
+                mui.toast("请输入开户银行");
                 return false;
             };
             if (bankcard_name == '') {
-                mui.toast("请输入持卡人姓名");
+                mui.toast("请输入账户名");
                 return false;
             };
-            if (bankcard_telephone == '') {
-                mui.toast("请输入持卡人电话");
+            if (bankcard_no == '') {
+                mui.toast("请输入开户账号/卡号");
                 return false;
             };
+            // if (bankcard_telephone == '') {
+            //     mui.toast("请输入持卡人电话");
+            //     return false;
+            // };
 
             // 提交数据
             var data = wooApi.getInputData('input', 'data');
@@ -204,9 +222,38 @@
         }
     </script>
     <script>
-        // 长方形图片
+        // 长方形
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    $("input[name=cjz_idcard]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
         function upload(i, thisDiv) {
-            str = `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            str =
+                `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                     <div class="clipAreaStyle clipArea${i}"></div>
                     <div class="fileFrame">选择图片
                         <input type="file" class="fileStyle file${i}">
@@ -216,11 +263,10 @@
             $(".mui-content").find("#txpopover" + i).remove();
             $(".mui-content").append(str);
             mui("#txpopover" + i).popover("toggle");
-            $(thisDiv).find(".viewStyle").addClass("view" + i)
+            $(thisDiv).find(".viewStyleSquare").addClass("view" + i)
             var pc = new PhotoClip('.clipArea' + i, {
                 size: 260,
                 outputSize: 640,
-                adaptive: ['80%', '60%'],
                 file: '.file' + i,
                 view: '.view' + i,
                 ok: '.clipBtn' + i,

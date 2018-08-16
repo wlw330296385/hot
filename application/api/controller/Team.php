@@ -2966,9 +2966,6 @@ class Team extends Base
     * @method 将一位 已离队队员(-1) 设置为 离队但不显示于列表(-3) 状态
     * @param  team_id           [必填] 队伍id
     * @param  team_member_id    [必填] 被修改人 在team_member表id，备注：因member_id有些为-1，所以没用member_id参数
-    * @return success           {"code":200,"msg":"操作成功"}
-    * @return failed            {"code":100,"msg":"操作失败"}
-    * @author ken               2018-08-13
     */
     public function setTeamMemberQuitAndHide() {
 
