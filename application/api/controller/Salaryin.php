@@ -123,10 +123,10 @@ class Salaryin extends Base {
                 //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
                 //$map['schedule_time'] = ['between time', [$start, $end]];
                 $when = getStartAndEndUnixTimestamp($year, $month);
-                $map['schedule_time'] = ['between', [$when['start'], $when['end']]];
+                $map['create_time'] = ['between', [$when['start'], $when['end']]];
             } else {
                 list($start, $end) = Time::month();
-                $map['schedule_time'] = ['between', [$start, $end]];
+                $map['create_time'] = ['between', [$start, $end]];
             }
             $map['camp_id'] = $camp_id;
             $map['member_type'] = ['lt', 5];
@@ -186,16 +186,16 @@ class Salaryin extends Base {
                 //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
                 //$map['schedule_time'] = ['between time', [$start, $end]];
                 $when = getStartAndEndUnixTimestamp($year, $month);
-                $map['schedule_time'] = ['between', [$when['start'], $when['end']]];
+                $map['create_time'] = ['between', [$when['start'], $when['end']]];
             } else {
                 list($start, $end) = Time::month();
-                $map['schedule_time'] = ['between', [$start, $end]];
+                $map['create_time'] = ['between', [$start, $end]];
             }
 
             $map['type'] = 1;
 //            dump($map);
             // 获取工资数据
-            $salaryList = $this->SalaryInService->getSalaryInList($map, 'schedule_time desc');
+            $salaryList = $this->SalaryInService->getSalaryInList($map, 'create_time desc');
             $salarySum = $this->SalaryInService->countSalaryin($map);
             //dump($salaryList);
             if (!$salaryList) {
