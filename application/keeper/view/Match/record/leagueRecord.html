@@ -47,6 +47,7 @@
         .colactive {
             color: #dd524d !important
         }
+     
     </style>
 </head>
 
@@ -162,7 +163,7 @@
 
         followStatus(); //判断当前的关注状态
         rankList(); //淘汰赛列表
-        groupList();//小组循环赛列表
+        groupList(); //小组循环赛列表
 
         // 关注联赛
         $(".follow").on("tap", '', function () {
@@ -172,10 +173,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
@@ -201,10 +204,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -232,17 +237,20 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].match_stage_type == 1) {
-                                newli += `
+                                newli +=
+                                    `
                                     <li class="mui-table-view-cell bggray2">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].match_group}排名</li>
@@ -252,7 +260,8 @@
                                         </ul>
                                     </li>`
                                 for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                                    newli += `<li class="mui-table-view-cell">
+                                    newli +=
+                                        `<li class="mui-table-view-cell">
                                             <ul class="mui-table-view mui-row">
                                                 <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32 siteNum">${j + 1}</li>
                                                 <li class="mui-col-sm-4 mui-col-xs-4 leagueGroup">
@@ -269,7 +278,9 @@
                         }
                         $(".groupsList").empty().append(newli)
                     } else {
-                        $(".groupsList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".groupsList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -288,10 +299,12 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
@@ -299,47 +312,63 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].stage.type != 1) {
                                 numarr = []
-                                newli += `  
+                                newli +=
+                                    `  
                                 <div class="page-header border-b">
                                     <span class="course"> ${data.data[i].stage.name}</span>
                                     <span class="more">${data.data[i].stage.records.length * 2}强</span>
                                 </div>`
                                 for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                     var recordsArr = data.data[i].stage.records[j]
-                                    newli += `
-                                            <table class="leagueTable">
+                                    newli +=
+                                        `<table class="leagueTable">
                                                 <tbody>
                                             <tr>
                                             <td class="borderC">
-                                                <p class="leagueGroup pGroup border-b">
-                                                    <span class="siteNum codeNum">${j + 1}</span>
-                                                    <img src="${recordsArr.home_team_logo}" class="circleIcon" />
+                                                <p class="leagueGroup pGroup border-b">`
+                                    if (data.data[i].stage.records.length == 1) {
+                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T1</span>`
+                                    } else {
+                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T${j + 1}</span>`
+                                    }
+
+                                    newli +=
+                                        `<img src="${recordsArr.home_team_logo}" class="circleIcon" />
                                                     <span class="spanText">${recordsArr.home_team}</span>
                                                 </p>
                                                 <p></p>
-                                                <p class="leagueGroup pGroup">
-                                                    <span class="siteNum codeNum">${j + 1}</span>
-                                                    <img src="${recordsArr.away_team_logo}" class="circleIcon" />
+                                                <p class="leagueGroup pGroup">`
+                                    if (data.data[i].stage.records.length == 1) {
+                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T2</span>`
+                                    } else {
+                                        newli +=`<span class="siteNum codeNum" style="font-size:16px;">T${data.data[i].stage.records.length - j}</span>`
+                                    }
+                                    
+                                    newli +=
+                                        `<img src="${recordsArr.away_team_logo}" class="circleIcon" />
                                                     <span class="spanText">${recordsArr.away_team}</span>
                                                 </p>
                                             </td>
                                             <td>
                                         <p>${recordsArr.home_score} ：${recordsArr.away_score}</p>`
                                     if (recordsArr.home_score > recordsArr.away_score) {
-                                        newli += `
+                                        newli +=
+                                            `
                                         <p class="leagueGroup">
                                             <img src="${recordsArr.home_team_logo}" class="circleIcon" />
                                             <span class="spanText colorred">${recordsArr.home_team}</span>
                                         </p> `
                                     } else {
-                                        newli += `
+                                        newli +=
+                                            `
                                         <p class="leagueGroup">
                                             <img src="${recordsArr.away_team_logo}" class="circleIcon" />
                                             <span class="spanText colorred">${recordsArr.away_team}</span>
                                         </p>`
                                     }
 
-                                    newli += `<p>（晋级）</p>
+                                    newli +=
+                                        `<p>（晋级）</p>
                                     </td></tr>
                                 <tr class="pline"></tr>`
                                 }
@@ -348,10 +377,14 @@
                         }
                         $(".rankList").empty().append(newli);
                         if (newli == '') {
-                            $(".rankList").append('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $(".rankList").append(
+                                '<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                            );
                         }
                     } else {
-                        $(".rankList").append('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".rankList").append(
+                            '<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
 
                 },
@@ -360,7 +393,6 @@
                 }
             });
         }
-
     </script>
 
 </body>
