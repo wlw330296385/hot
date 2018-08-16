@@ -35,8 +35,8 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>本月购买课量：</small><strong class="text-yellow monthGift"></strong></span>
-								<span><small>本月购买次数：</small><strong class="text-yellow allGift">{:count($list)}</strong></span>
+								<span><small>累计购买课量：</small><strong class="text-yellow monthGift"></strong></span>
+								<span><small>累计购买次数：</small><strong class="text-yellow allGift">{:count($list)}</strong></span>
 							</h3>
 						</div>
 					</div>
@@ -53,7 +53,10 @@
                         <th>课程单价</th>
 						<th>操作人</th>
 						<th>购买数量</th>
-						<th>详情</th>
+                        <th>课程历史赠送数</th>
+                        <th>剩余赠送课时数</th>
+                        <th>未结算赠送课时数</th>
+						<th>赠送详情</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -64,7 +67,13 @@
                         <td>{$vol.cost}</td>
 						<td>{$vol.member}</td>
 						<td class="gNum">{$vol.quantity}</td>
-						<td><a href="{:url('campGiftInfo',['lesson_id'=>$vol['lesson_id']])}" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i> 详情</a></td>
+                        <th>{$vol.total_giftschedule}</th>
+                        <th>{$vol.total_giftschedule}</th>
+                        <th>{$vol.unbalanced_giftschedule}</th>
+
+						<td>
+                            <a href="{:url('campGiftInfo',['lesson_id'=>$vol['lesson_id']])}" class="btn btn-xs btn-default"><i class="fa fa-inbox"></i>赠送详情</a>
+                        </td>
 					</tr>
 					{/volist}
 					</tbody>

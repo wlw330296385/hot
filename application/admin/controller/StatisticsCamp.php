@@ -434,17 +434,10 @@ class StatisticsCamp extends Backend{
     // 赠课购买列表
     public function campGift(){
         $camp_id = $this->campInfo['id'];
-        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
-        $monthEnd = input('param.monthend',date('Ymd'));
-        $month_start = strtotime($monthStart);
-        $month_end = strtotime($monthEnd)+86399;
-        
-
         $list = db('schedule_giftbuy')
-        ->field('schedule_giftbuy.*,lesson.cost')
+        ->field('schedule_giftbuy.*,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,lesson.unbalanced_giftschedule')
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
         ->where(['schedule_giftbuy.camp_id'=>$camp_id])
-        ->where(['schedule_giftbuy.create_time'=>['between',[$month_start,$month_end]]])
         ->where('schedule_giftbuy.delete_time',null)
         ->select();
         // dump($list);
@@ -460,7 +453,7 @@ class StatisticsCamp extends Backend{
         if($lesson_id){
             $map = ['schedule_giftrecord.lesson_id'=>$lesson_id];
         }
-       
+        
         $list = db('schedule_giftrecord')
         ->field('schedule_giftrecord.*,lesson.cost')
         ->join('lesson','lesson.id = schedule_giftrecord.lesson_id')
