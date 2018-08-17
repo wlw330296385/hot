@@ -644,7 +644,7 @@ class Schedule extends Base
                     $updateLesson = $lessonDb->where('id', $request['lesson_id'])
                         ->inc('total_giftschedule', $numChangegiftschedule)
                         ->dec('resi_giftschedule', $numChangegiftschedule)
-                        ->inc('unbalanced_giftschedule', $numChangegiftschedule)
+                        // ->inc('unbalanced_giftschedule', $numChangegiftschedule)
                         ->update();
                     if (!$updateLesson) {
                         return json(['code' => 100, 'msg' => '更新课时信息' . __lang('MSG_400')]);

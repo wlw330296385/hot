@@ -440,6 +440,7 @@ class StatisticsCamp extends Backend{
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
         ->where(['schedule_giftbuy.camp_id'=>$camp_id])
         ->where('schedule_giftbuy.delete_time',null)
+        ->group('schedule_giftbuy.')
         ->select();
         // dump($list);
         $this->assign('list',$list);
