@@ -3,6 +3,7 @@
 namespace app\service;
 use app\model\Match;
 use app\model\MatchRecord;
+use app\service\TeamMemberService;
 use think\Db;
 
 class MatchRecordService {
@@ -31,7 +32,7 @@ class MatchRecordService {
     }
 
     // 获取比赛记录和序号
-    public function getAllMatchRecordWithSN($map, $order='match_time asc', $page=1, $limit=10) {
+    public function getAllMatchRecordWithSN($map, $page=1, $limit=10) {
 
         $model = new MatchRecord();
         $count = $model->where($map)->count();
