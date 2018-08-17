@@ -12,8 +12,8 @@ class MatchRecordService {
         return null;
     }
 
-    // 获取一条比赛记录
-    public function getAllMatchRecord($map, $order='id desc', $paginate=10) {
+    // 获取所有比赛记录
+    public function getAllMatchRecord($map, $order='match_time desc', $paginate=10) {
 
         $model = new Match();
         $result = $model
@@ -21,7 +21,33 @@ class MatchRecordService {
         ->join('match_record','match.id = match_record.match_id')
         ->where($map)
         ->order('match_record.match_id desc')
-        ->paginate($paginate);;
+        ->paginate($paginate);
+
+        if (!$result) {
+            return $result;
+        } else {
+            return $result;
+        }
+    }
+
+    // 获取比赛记录和序号
+    public function getAllMatchRecordWithSN($map, $order='match_time asc', $page=1, $limit=10) {
+
+        $model = new MatchRecord();
+        $count = $model->where($map)->count();
+
+        $model = new Match();
+        $result = $model
+        ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
+        ->join('match_record','match.id = match_record.match_id')
+        ->where($map)
+        ->order('match_record.match_time desc')->page(sprintf('%s,%s',$page,$limit))->select();
+
+        $result = $result->toArray();
+
+        foreach ($result as $k => $value) {
+            $result[$k]["s_num"] = $count - $k - ($page-1)*$limit;
+        }
 
         if (!$result) {
             return $result;
