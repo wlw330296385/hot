@@ -45,6 +45,7 @@
 					<thead>
 					<tr role="row">
 						<th class="sorting_asc">赠送日期</th>
+						<th>课程序号</th>
 						<th>关联课程</th>
 						<th>操作人</th>
 						<th width="300">赠送学生</th>
@@ -59,6 +60,7 @@
 					{volist name="list" id="vol"}
 					<tr role="row">
 						<td class="sorting_1">{$vol.create_time|date='Y-m-d H:i',###}</td>
+						<td>{$vol.lesson_id}</td>
 						<td>{$vol.lesson}</td>
 						<td>{$vol.member}</td>
                         <td><?php  $l = json_decode($vol['student_str'],true);
@@ -171,8 +173,10 @@
             mCount += parseInt($(this).text());
         });
         var sCount=0;
+        var smCount=0;
         $(".sCount").each(function () {
-            sCount += parseInt($(this).text());
+            smCount = parseInt($(this).parent().find(".mCount").text());
+            sCount += parseInt($(this).text())*smCount;
         });
 
         $(".monthMember").text(mCount);
