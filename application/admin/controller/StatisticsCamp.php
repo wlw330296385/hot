@@ -436,13 +436,13 @@ class StatisticsCamp extends Backend{
         $camp_id = $this->campInfo['id'];
         $lesson_id = input('param.lesson_id');
         $list = db('schedule_giftbuy')
-        ->field('schedule_giftbuy.*,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,lesson.unbalanced_giftschedule')
+        ->field('sum(schedule_giftbuy.quantity) as s_q,schedule_giftbuy.create_time,schedule_giftbuy.lesson_id,schedule_giftbuy.member,lesson.lesson,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,schedule_giftbuy.camp_id')
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
         ->where(['schedule_giftbuy.camp_id'=>$camp_id])
         ->where('schedule_giftbuy.delete_time',null)
-        ->group('schedule_giftbuy.')
+        ->group('schedule_giftbuy.lesson_id')
+        ->order('schedule_giftbuy.id asc')
         ->select();
-        // dump($list);
         $this->assign('list',$list);
         return view('StatisticsCamp/campGift');
     }

@@ -1,0 +1,32 @@
+
+
+
+1. 2018-8-17
+
+	sql:
+		update lesson set total_giftschedule = total_giftschedule -2,resi_giftschedule = resi_giftschedule+2 where id = 43;
+		
+		update lesson set total_giftschedule = total_giftschedule + 17,resi_giftschedule = resi_giftschedule-17 where id = 39;
+
+		insert into schedule_giftbuy 
+		(camp_id,camp,lesson_id,lesson,member_id,member,quantity,s_sys,status,remarks,create_time,update_time) 
+		value (13,'AKcross训练营',39,'南外文华快艇队',-999,'初音快乐',-1,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()))
+		,(13,'AKcross训练营',43,'塘朗追梦队',-999,'初音快乐',-3,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()))
+		,(13,'AKcross训练营',38,'AKcross课程',-999,'初音快乐',-2,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()))
+		,(13,'AKcross训练营',41,'塘朗低年级基础班',-999,'初音快乐',-10,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()))
+		,(13,'AKcross训练营',42,'塘朗高年级综合班',-999,'初音快乐',-10,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()));
+
+
+		update lesson set resi_giftschedule = resi_giftschedule-1 where id = 39;
+		update lesson set resi_giftschedule = resi_giftschedule-3 where id = 43;
+		update lesson set resi_giftschedule = resi_giftschedule-2 where id = 38;
+		update lesson set resi_giftschedule = resi_giftschedule-10 where id = 41;
+		update lesson set resi_giftschedule = resi_giftschedule-10 where id = 42;
+
+		insert into schedule_giftbuy 
+		(camp_id,camp,lesson_id,lesson,member_id,member,quantity,s_sys,status,remarks,create_time,update_time) 
+		value 
+		(13,'AKcross训练营',42,'塘朗高年级综合班',-999,'初音快乐',-2,-1,1,'系统添加',unix_timestamp(now()),unix_timestamp(now()));
+		update lesson set resi_giftschedule = resi_giftschedule-2 where id = 42;
+
+	目的:由于赠课购买和赠送等原始数据被刘伟霖手动修改,吴丽文与张雅路讨论之后,以最小损失,最小改动方式将刘伟霖修改的数据为准,修改lesson表记录;

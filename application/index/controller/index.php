@@ -17,14 +17,12 @@ class Index extends Controller
     }
 
     public function index1(){
+        
     }
 
     public function index2(){
         
-        $list = db('salary_in')->field('salary_in.id,schedule.lesson_time')->join('schedule','schedule.id = salary_in.schedule_id')->select();
-        foreach ($list as $key => $value) {
-            db('salary_in')->where(['id'=>$value['id']])->update(['schedule_time'=>$value['lesson_time']]);
-        }
+       
 
     }
 
