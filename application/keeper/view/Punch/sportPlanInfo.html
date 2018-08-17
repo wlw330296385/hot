@@ -113,7 +113,7 @@
         .backList {
             display: none;
         }
-        .punchList input[name="duration"],.punchList input[name="extent"],.punchList input[name="amount"]{
+        form input[name="duration"],form input[name="extent"],form input[name="amount"]{
             width: 34% !important;height: 42px;padding-right: 5px;
         }
         .bggray2 .mui-icon-closeempty{
@@ -122,6 +122,13 @@
         }
         .mui-popup-in {
             box-shadow:2px 1px 12px #666;
+        }
+        .mui-popover form button{
+            line-height: 1.42;
+        }
+        .list .listli span button{
+            border-radius: 3px;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -304,7 +311,7 @@
 
     <div id="punchListForAdd" style="display: none;">
         <div class="mui-input-row bggray2">
-            <label><strong>运动计划 # <text class="colororange pNumber">1</text></strong></label>
+            <label><strong>运动计划 <text class="colororange"># <b class="pNumber"></b></text></strong></label>
             <span class="mui-icon mui-icon-closeempty"></span>
             <span class="copyPunch f12">复制</span>
         </div>
@@ -352,7 +359,7 @@
                 <strong>编辑计划日程</strong>
             </span>
             <span class="fr">
-                 <button class="mui-btn-blue" id="saveScheduleEdit">保存</button> 
+                 <button class="mui-btn" id="closeEdit">关闭</button> 
                  <button class="mui-btn backList">返回</button>
             </span>
         </div>
@@ -361,18 +368,17 @@
 
                 <form class="mui-input-group" id="scheduleEditForm">
                     <div>
+                        <input type="hidden" class="data" name="plan_schedule_id" value="" />
                         <div class="mui-input-row bggray2">
-                            <label><strong>运动计划 # <text class="colororange pNumber"></text></strong></label>
-                            <span class="mui-icon mui-icon-closeempty"></span>
-                            <span class="copyPunch f12">删除</span>
+                            <label><strong>运动计划 <text class="colororange"># <b class="pNumber"></b></text></strong></label>
                         </div>
-                        <div class="mui-input-row btnDate" data-tnum="1">
+                        <div class="mui-input-row btnDate">
                             <label>运动日期</label>
                             <span class="mui-navigate-right btnDateTxt"></span>
                         </div>
                         <div class="mui-input-row sportType">
                                 <label class="wd45">运动内容</label>
-                                <span class="wd45 punch_category mui-navigate-right"></span>
+                                <span class="wd45 punch_category mui-navigate-right">训练</span>
                                 <input type="hidden" name="punch_category" value="1" class="data">
                         </div>
                         <div class="mui-input-row sportProject">
@@ -398,6 +404,7 @@
                             <input type="number" class="data" name="amount" value="" placeholder="选填" />
                         </div>
                     </div>
+                    <div class="mui-text-center" style="margin-top:35px;"><button class="mui-btn" id="deleteSchedule">删除日程</button> &nbsp; <button class="mui-btn mui-btn-blue" id="saveScheduleEdit">保存修改</button> </div>
                 </form>
 
 
@@ -513,7 +520,6 @@
             swipeBack: true, //启用右滑关闭功能
         });
 
-
         //选择器
         (function ($, doc) {
 
@@ -606,24 +612,35 @@
                 var newli = "";
                 if (data.code == 200) {
                     $(".totalData").text(data.data.total);
+                    var planPeriod = "{$sportPlanInfo.period}";
+                    if(data.data.total>=planPeriod){
+                        $(".operation").hide();
+                    }
                     var sNumber = 0;
+                    var urls = '';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
 
                         //推算获取期数
                         sNumber = (data.data.current_page-1)*10 + i+1;
                        
-                        //var urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
                         newli += '<li><ul class="mui-table-view">'
-                        newli += '<li class="mui-table-view-cell listli bggray2"><a href="#scheduleEdit"><label><strong>运动计划 # <text class="colororange">'+sNumber+'</text></strong></label><span class="f12">编辑</span></li>'
-                        newli += '<li class="mui-table-view-cell listli"><label>运动日期</label><span>'+ data.data.data[i].sport_time +'</span></li>'
-                        newli += '<li class="mui-table-view-cell listli"><label>运动项目</label><span>'+ data.data.data[i].sport_project +'</span></li>'
-                        newli += '<li class="mui-table-view-cell listli"><label>运动时长</label><span>'+ data.data.data[i].duration +'分钟</span></li>'
-                        if(data.data.data[i].extent!=""){
-                            newli += '<li class="mui-table-view-cell listli"><label>运动里程</label><span>'+ data.data.data[i].extent +'公里</span></li>'
+                        newli += '<li class="mui-table-view-cell listli bggray2"><a href="#scheduleEdit" class="mui-navigate-right editSchedule" data-id="'+data.data.data[i].id+'" data-punch_id="'+data.data.data[i].punch_id+'" data-sport_project="'+data.data.data[i].sport_project +'" data-sport_time="'+data.data.data[i].sport_time+'" data-duration="'+data.data.data[i].duration+'" data-extent="'+data.data.data[i].extent+'" data-amount="'+data.data.data[i].amount+'"><label><strong><text class="colororange"># <b class="pNumber">'+sNumber+'</b></text>&nbsp; '+ data.data.data[i].sport_project +'</strong></label><span class="f12"></span></a></li>'
+                        newli += '<li class="mui-table-view-cell listli"><label>计划日期</label><span>'+ data.data.data[i].sport_time +'</span></li>'
+                        newli += '<li class="mui-table-view-cell listli"><label>计划时长</label><span>'+ data.data.data[i].duration +' <text class="f12">分钟</text></span></li>'
+                        if(data.data.data[i].extent>0){
+                            newli += '<li class="mui-table-view-cell listli"><label>计划里程</label><span>'+ data.data.data[i].extent +' <text class="f12">公里</text></span></li>'
                         }
-                        if(data.data.data[i].extent!=""){
-                            newli += '<li class="mui-table-view-cell listli"><label>运动数量</label><span>'+ data.data.data[i].amount +'个/次</span></li>'
+                        if(data.data.data[i].amount>0){
+                            newli += '<li class="mui-table-view-cell listli"><label>计划数量</label><span>'+ data.data.data[i].amount +' <text class="f12">个/次</text></span></li>'
                         }
+                        if(data.data.data[i].punch_id>0){
+                            urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].punch_id + '/?punch=sportPlanInfo';
+                            newli += '<li class="mui-table-view-cell listli"><a href="'+urls+'"><label>已完成</label><span><button>运动详情</button></span></a></li>'
+                        }else{
+                            urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
+                            newli += '<li class="mui-table-view-cell listli"><a href="'+urls+'"><label>未完成</label><span><button>立即打卡</button></span></a></li>'
+                        }
+                        
                         newli += '</ul></li>'
 
                     }
@@ -747,6 +764,15 @@
         //复制当前日程
         $(document).on('tap', '.copyPunch', function () {
 
+             //判断添加的日程是否超出计划的数量
+            var pLi = parseInt($(".planSchedule>li:not('.planTips')").length);
+            var sLi = parseInt($("#scheduleForm .punchList").length);
+            var planPeriod = "{$sportPlanInfo.period}";
+            if((pLi+sLi)>=parseInt(planPeriod)){
+                mui.alert("您的计划是运动{$sportPlanInfo.period}次，不能超出哦！");
+                return false;
+            }
+
             //暂存表单值
             var cName = $(this).parent().parent().find("input[name=name]").val();
             var cDuration = $(this).parent().parent().find("input[name=duration]").val();
@@ -754,19 +780,19 @@
             var cAmount = $(this).parent().parent().find("input[name=amount]").val();
 
             $(".punchList").removeClass("hot-active");
-            var getNewNumber = parseInt($(".punchList:first-child").find(".pNumber").text())+1;
-            var getCurrPunch = '';
-            getCurrPunch += '<div class="punchList hot-active">'+$(this).parent().parent().html()+'</div>';
-            //console.log(getCurrPunch)
-            $(".punchList:first-child").before(getCurrPunch);
-            $(".hot-active").find(".pNumber").text(getNewNumber);
-            $(".hot-active").find(".btnDate").attr("data-tnum",getNewNumber);
-
+            $("#scheduleForm").append('<div class="punchList hot-active">'+$(this).parent().parent().html()+'</div>');
 
             $(".hot-active .sportProject input[name=name]").val(cName);
             $(".hot-active .sportProject input[name=duration]").val(cDuration);
             $(".hot-active .sportProject input[name=extent]").val(cExtent);
             $(".hot-active .sportProject input[name=amount]").val(cAmount);
+
+            //重新排号
+            listReorder()
+
+            //滚动到低部
+            mui('#addSchedule .mui-scroll-wrapper').scroll().refresh();
+            mui("#addSchedule .mui-scroll-wrapper").scroll().scrollToBottom(100);
 
         });
 
@@ -774,12 +800,22 @@
         //新增日程
         $(document).on('tap', '#addList', function () {
 
+            //判断添加的日程是否超出计划的数量
+            var pLi = parseInt($(".planSchedule>li:not('.planTips')").length);
+            var sLi = parseInt($("#scheduleForm .punchList").length);
+            var planPeriod = "{$sportPlanInfo.period}";
+            if((pLi+sLi)>=parseInt(planPeriod)){
+                mui.alert("您的计划是运动{$sportPlanInfo.period}次，不能超出哦！");
+                return false;
+            }
+
             $(".punchList").removeClass("hot-active");
-            $("#scheduleForm").prepend('<div class="punchList hot-active">'+ $("#punchListForAdd").html()+'</div>');
+            $("#scheduleForm").append('<div class="punchList hot-active">'+ $("#punchListForAdd").html()+'</div>');
             //重新排号
             listReorder();
-            //滚动到顶部
-            mui("#addSchedule .mui-scroll-wrapper").scroll().scrollTo(0,0,0);
+            //滚动到低部
+            mui('#addSchedule .mui-scroll-wrapper').scroll().refresh();
+            mui("#addSchedule .mui-scroll-wrapper").scroll().scrollToBottom(100);
            
         });
 
@@ -802,6 +838,50 @@
             }
             //重新排号
             listReorder()
+
+        });
+
+        //手动关闭修改日程窗口
+        $(document).on('tap', '#closeEdit', function () {
+            mui("#scheduleEdit").popover("toggle");
+        });
+
+
+        //打开日程编辑窗口
+        $(document).on('tap', '.editSchedule', function () {
+            
+            var slNumber = $(this).find(".pNumber").text();
+            var slDate = $(this).attr("data-sport_time");
+            var slProject = $(this).attr("data-sport_project");
+            var slDuration = $(this).attr("data-duration");
+            var slExtent = $(this).attr("data-extent");
+            var slAmount = $(this).attr("data-amount");
+            var sID = $(this).attr("data-id");
+
+            var pID = $(this).attr("data-punch_id");
+            if(pID>0){
+                $("#saveScheduleEdit").hide();
+                $("#saveScheduleEdit").hide();
+            }
+
+            $("#scheduleEditForm input[name=plan_schedule_id]").val(sID);
+            $("#scheduleEditForm input[name=sport_time]").val(slDate);
+            $("#scheduleEditForm input[name=name]").val(slProject);
+            $("#scheduleEditForm .pNumber").text(slNumber);
+            $("#scheduleEditForm .btnDateTxt").text(slDate);
+            $("#scheduleEditForm .punch_category").text("训练");
+            $("#scheduleEditForm .sportProject").hide();
+            $("#scheduleEditForm input[name=duration]").val(slDuration);
+            $("#scheduleEditForm input[name=name]").parent().show();
+            $("#scheduleEditForm input[name=duration]").parent().show();
+            if(slExtent!=""&&slExtent!=0){
+                $("#scheduleEditForm input[name=extent]").val(slExtent);
+                $("#scheduleEditForm input[name=extent]").parent().show();
+            }
+            if(slAmount!=""&&slAmount!=0){
+                $("#scheduleEditForm input[name=amount]").val(slAmount);
+                $("#scheduleEditForm input[name=amount]").parent().show();
+            }
 
         });
 
@@ -866,13 +946,12 @@
     //重新排号
     function listReorder() {
         var pLi = $(".planSchedule>li:not('.planTips')").length;
-        var sLi = $("#scheduleForm .punchList").length;
-        var psLength = parseInt(pLi)+parseInt(sLi);
+        var sLi = parseInt(pLi)+1;
 
         $("#scheduleForm .punchList").each(function () {
-            $(this).find(".pNumber").text(psLength);
-            $(this).find(".btnDate").attr("data-tnum",psLength);
-            psLength=psLength-1;
+            $(this).find(".pNumber").text(sLi);
+            $(this).find(".btnDate").attr("data-tnum",sLi);
+            sLi+=1;
         });
     }
 

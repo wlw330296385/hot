@@ -42,16 +42,28 @@
                 <span>{$matchOrgInfo.name}</span>
                 <input type="hidden" name="id" value="{$matchOrgInfo.id}" class="data">
             </div>
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover" class="mui-navigate-right">
+                    <label>创建者身份证</label>
+                    <div class="viewStyle view" {notempty name='$idCard.photo_positive' } style="background-image:url('{$idCard.photo_positive}')"
+                        {/notempty}></div>
+                    <input type="hidden" name="cjz_idcard" value="{$idCard.photo_positive}" class="data">
+                </a>
+            </div>
 
+            <div class="mui-input-row">
+                <label class="wd45">创建者身份证号</label>
+                <input type="text" class="input data cjzidno" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%" value="{$idCard.cert_no}">
+            </div>
             <div class="mui-input-row h-auto">
                 <div class="mui-navigate-right" onclick="upload(1,this)">
                     <label>营业执照</label>
-                    <div class="viewStyle" {notempty name='$orgCert.cert' }style="background-image:url('{$orgCert.cert}')" {/notempty}></div>
+                    <div class="viewStyleSquare" {notempty name='$orgCert.cert' }style="background-image:url('{$orgCert.cert}')" {/notempty}></div>
                     <input type="hidden" name="cert" value="{$orgCert.cert}" class="data">
                 </div>
             </div>
 
-            <div class="mui-input-row h-auto">
+            <!-- <div class="mui-input-row h-auto">
                 <div class="mui-navigate-right" onclick="upload(2,this)">
                     <label>法人身份证</label>
                     <div class="viewStyle" {notempty name='$orgCert.fr.photo_positive' }style="background-image:url('{$orgCert.fr.photo_positive}')"
@@ -63,46 +75,33 @@
             <div class="mui-input-row">
                 <label class="wd45">法人身份证号</label>
                 <input type="text" class="input fridno wd52 data" name="fr_idno" placeholder="请输入身份证号码" value="{$orgCert.fr.cert_no}">
-            </div>
+            </div> -->
 
-            <div class="mui-input-row h-auto">
-                <div class="mui-navigate-right" onclick="upload(3,this)">
-                    <label>创建者身份证</label>
-                    <div class="viewStyle" {notempty name='$idCard.photo_positive' } style="background-image:url('{$idCard.photo_positive}')"
-                        {/notempty}></div>
-                    <input type="hidden" name="cjz_idcard" value="{$idCard.photo_positive}" class="data">
-                </div>
-            </div>
-
-            <div class="mui-input-row">
-                <label class="wd45">创建者身份证号</label>
-                <input type="text" class="input data cjzidno" name="cjz_idno" placeholder="请输入创建者身份证号码" style="width: 55%" value="{$idCard.cert_no}">
-            </div>
 
             <div class="mui-input-row h-auto">
                 <div class="mui-navigate-right" onclick="upload(3,this)">
                     <label>其他证明</label>
-                    <div class="viewStyle" {notempty name='$orgCert.other' } style="background-image:url('{$orgCert.other}')" {/notempty}></div>
+                    <div class="viewStyleSquare" {notempty name='$orgCert.other' } style="background-image:url('{$orgCert.other}')" {/notempty}></div>
                     <input type="hidden" name="other_cert" value="$idCard.photo_positive" class="data">
                 </div>
             </div>
 
             <div class="mui-input-row">
-                <label class="wd45">银行</label>
-                <input type="text" class="input wd52 data" name="bank" placeholder="请输入银行" value="{$matchOrgInfo.bank}">
+                <label class="wd45">开户银行</label>
+                <input type="text" class="input wd52 data" name="bank" placeholder="请输入开户银行" value="{$matchOrgInfo.bank}">
             </div>
             <div class="mui-input-row">
-                <label class="wd45">银行卡号</label>
-                <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入银行卡号" value="{$matchOrgInfo.bankcard_no}">
+                <label class="wd45">账户名</label>
+                <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入账户名" value="{$matchOrgInfo.bankcard_name}">
             </div>
             <div class="mui-input-row">
-                <label class="wd45">持卡人</label>
-                <input type="text" class="input wd52 data" name="bankcard_name" placeholder="请输入持卡人" value="{$matchOrgInfo.bankcard_name}">
+                <label class="wd45">开户账号/卡号</label>
+                <input type="text" class="input wd52 data" name="bankcard_no" placeholder="请输入开户账号/卡号" value="{$matchOrgInfo.bankcard_no}">
             </div>
-            <div class="mui-input-row  border-b">
+            <!-- <div class="mui-input-row  border-b">
                 <label class="wd45">银行卡联系电话</label>
                 <input type="text" class="input wd52 data" name="bankcard_telephone" placeholder="请输入银行卡联系电话" value="{$matchOrgInfo.bankcard_telephone}">
-            </div>
+            </div> -->
 
         </form>
 
@@ -114,6 +113,14 @@
             <button type="button" class="mui-btn btn" onclick="submitAction();">提交修改</button>
         </div>
 
+    </div>
+
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -145,17 +152,21 @@
             var org_id = "{$matchOrgInfo.id}";
             // 证件提交验证
             var cert = $('input[name=cert]').val();
-            var fr_idcard = $('input[name=fr_idcard]').val();
-            var fr_idno = $('.fridno').val();
+            // var fr_idcard = $('input[name=fr_idcard]').val();
+            // var fr_idno = $('.fridno').val();
             var cjz_idcard = $('input[name=cjz_idcard]').val();
             var cjz_idno = $('.cjzidno').val();
             var other_cert = $('input[name=other_cert]').val();
             var idno = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
-            if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+            if (!(idno).test(cjz_idno)) {
                 mui.toast("请输入正确身份证号码");
                 return false;
             }
-            if (cert == "" || fr_idcard == "" || cjz_idcard == "") {
+            // if (!(idno).test(fr_idno) || !(idno).test(cjz_idno)) {
+            //     mui.toast("请输入正确身份证号码");
+            //     return false;
+            // }
+            if (cert == "" || cjz_idcard == "") {
                 mui.toast("请上传证件照");
                 return false;
             }
@@ -187,12 +198,40 @@
                 }
             });
         }
-
     </script>
     <script>
-        // 长方形图片
+        // 长方形
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    $("input[name=cjz_idcard]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+
         function upload(i, thisDiv) {
-            str = `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+            str =
+                `<div id="txpopover${i}" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
                         <div class="clipAreaStyle clipArea${i}"></div>
                         <div class="fileFrame">选择图片
                             <input type="file" class="fileStyle file${i}">
@@ -202,11 +241,10 @@
             $(".mui-content").find("#txpopover" + i).remove();
             $(".mui-content").append(str);
             mui("#txpopover" + i).popover("toggle");
-            $(thisDiv).find(".viewStyle").addClass("view" + i)
+            $(thisDiv).find(".viewStyleSquare").addClass("view" + i)
             var pc = new PhotoClip('.clipArea' + i, {
                 size: 260,
                 outputSize: 640,
-                adaptive: ['80%', '60%'],
                 file: '.file' + i,
                 view: '.view' + i,
                 ok: '.clipBtn' + i,

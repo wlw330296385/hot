@@ -113,7 +113,6 @@ class Punch extends Base{
         $sport_plan_id = input('param.sport_plan_id');
         $SportPlan = new \app\model\SportPlan;
         $sportPlanInfo = $SportPlan->where(['id'=>$sport_plan_id])->find();
-        
 
         
         $this->assign('sportPlanInfo',$sportPlanInfo);
