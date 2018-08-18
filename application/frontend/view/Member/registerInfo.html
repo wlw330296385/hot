@@ -100,7 +100,9 @@
                     <label>
                         <i class="iconfont icon-nav-mine colororange"></i>
                     </label>
-                    <input type="text" class="data" name="member" value="" placeholder="姓名">
+                    {if $memberInfo.id>0}
+                    <input type="text" class="data" name="name" value="{$memberInfo.member}" placeholder="姓名">{else/}
+                    <input type="text" class="data" name="name" value="" placeholder="姓名">{/if}
                 </div>
                 <div class="inputHalf fr">
                     <label>
@@ -161,8 +163,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/common.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
-    {if $memberInfo.id>0}{else/}
+    <script src="/static/frontend/js/wooApi.js"></script> {if $memberInfo.id>0}{else/}
     <script src="/static/frontend/js/smsCode.js"></script>{/if}
 
     <script>
@@ -173,10 +174,7 @@
         //定义全局变量
 
         $(function () {
-            // var flagPhone = false;
-            // var flagSMS = false;
             var flagMember = false;
-            // var flagCreate = false;
             var mID = "{$memberInfo.id}";
 
             //获取定位省市区
@@ -195,10 +193,10 @@
             }
 
             // 验证姓名是否符合要求
-            $("input[name='member']").on("blur", function () {
+            $("input[name='name']").on("blur", function () {
                 var member = $.trim($(this).val());
                 $(this).val(member);
-
+                console.log(member)
                 //判断会员名格式
                 if (((/\s/).test(member)) === true) {
                     flagMember = false;
@@ -210,7 +208,13 @@
                     return false;
                 }
 
+            });
+
+            // 非会员判断的操作
+            if (mID == 0) {
+
                 //判断用户名是否存在
+                var member = $("input[name=name]").val();
                 mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
                     data: {
                         'field': 'member',
@@ -236,10 +240,6 @@
                         console.log(type);
                     }
                 });
-            });
-
-            // 非会员判断的操作
-            if (mID == 0) {
 
                 //验证是否注册的手机号
                 $('input[name=telephone]').on("blur", function () {
@@ -289,10 +289,12 @@
                         var telephone = $("input[name=telephone]").val();
                         var result = smsCode.validateSmsCodeApi(telephone, code,
                             "{:url('api/sms/validateSmsCodeApi','','',true)}");
+                            console.log(result)
                         if (result.code == 200) {
                             mui.toast(result.msg);
                         } else {
                             mui.toast(result.msg);
+                            return false;
                         }
                     }
                 });
@@ -303,14 +305,13 @@
             //点击提交事件
             $(".submitAction").on("tap", function () {
 
-                var member = $("input[name=member]").val();
+                var name = $("input[name=name]").val();
                 var age = $("input[name=age]").val();
                 var school = $("input[name=school]").val();
                 var address = $("input[name=address]").val();
-                var telephone = $("input[name=telephone]").val();
                 var token = $('input[name=__token__]').val();
 
-                if (member == '') {
+                if (name == '') {
                     mui.toast("请填写姓名");
                     return false;
                 }
@@ -327,14 +328,18 @@
                     return false;
                 }
 
-
                 if (mID == 0) {
+                    var telephone = $("input[name=telephone]").val();
 
                     if (flagMember == false) {
                         mui.toast("提交失败，姓名填写有误，请重新填写！");
                         return false;
                     };
 
+                    if (telephone == '') {
+                        mui.toast("请输入手机号码");
+                        return false;
+                    }
                     if (!(/^1[34578]\d{9}$/).test(telephone)) {
                         mui.toast("请填写正确的手机格式");
                         return false;
@@ -367,24 +372,27 @@
                     });
 
                     // 验证码
+                    var isOk = true  //用变量记住状态
                     var code = document.getElementById('code').value;
-                    if (!(/^\d{6,6}$/).test(code)) {
+                    var codeReg = /^\d{6,6}$/;
+                    if (!codeReg.test(code)) {
                         mui.toast('请填写正确的验证码');
-                        return false;
                     } else {
-                        var result = smsCode.validateSmsCodeApi(telephone, code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                        var telephone = $("input[name=telephone]").val();
+                        var result = smsCode.validateSmsCodeApi(telephone, code,
+                            "{:url('api/sms/validateSmsCodeApi','','',true)}");
                         if (result.code == 200) {
                             mui.toast(result.msg);
                         } else {
-                            mui.toast("提交失败，验证码填写有误");
-                            return false;
+                            mui.toast(result.msg);
+                            return isOk = false;
                         }
                     }
 
                     //如已经通过以上验证则创建会员账号
                     mui.ajax("{:url('api/login/registerApi')}", {
                         data: {
-                            member: member,
+                            member: name,
                             telephone: telephone,
                             province: gProvince,
                             city: gCity,
@@ -401,19 +409,13 @@
                         success: function (data) {
                             //服务器返回响应，根据响应结果，分析是否登录成功；
                             console.log(data);
-                            if (data.code == 100) {
-                                mui.alert(data.msg, '提交失败', '确定', function () {
-                                    mui.get("{:url('api/frontend/reloadtoken')}",
-                                        function (data) {
-                                            if (data.code === 200) {
-                                                $('input[name=__token__]').val(
-                                                    data.data);
-                                            }
-                                        }, 'json');
-                                })
-                            } else {
+                            if (data.code == 200) {
                                 $("input[name='member_id']").val(data.id)
-                                console.log(data.id)
+                                gxToken();
+                            } else {
+                                mui.alert(data.msg, '提交失败', '确定', function () {
+                                    gxToken();
+                                })
                             }
                         },
                         error: function (xhr, type, errorThrown) {
@@ -422,37 +424,46 @@
                         }
                     });
 
-                    submit()
-                } else {
-                    submit()
                 }
-
+                mui.toast("通过")
+                // var data = wooApi.getInputData('input', 'data');
+                // datas = wooApi.getInputData('select', 'data', data);
+                // // 获取其他标签值
+                // arrData = wooApi.getDomData('domData', datas);
+                // var objData = wooApi.arrTOobj(arrData);
+                // objData.remarks = $(".remarks").val();
+                // var url = "{:url('api/member/createstudyinterion')}";
+                // var ajaxResult = wooApi.asyncF(url, objData);
+                // if (ajaxResult.code == 200) {
+                //     mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
+                //         window.location.href = "{:url('index/index')}"
+                //     })
+                // } else {
+                //     mui.alert(ajaxResult.msg, '提交失败m', function () { });
+                //     gxToken()
+                // }
             })
 
         });
 
-        // 提交
-        function submit() {
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.remarks = $(".remarks").val();
-            var url = "{:url('api/member/createstudyinterion')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                    window.location.href = "{:url('index/index')}"
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '提交失败', function () {});
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
+        // 更新token
+        function gxToken() {
+            mui.ajax("{:url('api/frontend/reloadtoken')}", {
+                data: {},
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                async: false,
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
                         $('input[name=__token__]').val(data.data);
                     }
-                }, 'json');
-            }
+                }
+            })
         }
 
         // 发送短信验证码
