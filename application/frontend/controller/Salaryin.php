@@ -50,6 +50,7 @@ class Salaryin extends Base{
         $this->assign('camp_id', $camp_id);
         $this->assign('year', $year);
         $this->assign('month', $month);
+        $this->assign('member_id', $member_id);
         $this->assign('coachInfo', $coachInfo);
     	return view('Salaryin/salaryInfo'); 
     }
