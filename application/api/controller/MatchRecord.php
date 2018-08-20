@@ -1,6 +1,7 @@
 <?php
 // 比赛记录api
 namespace app\api\controller;
+use app\service\TeamService;
 use app\service\TeamMemberService;
 use app\service\MatchRecordService;
 use think\Db;
@@ -9,6 +10,17 @@ class MatchRecord extends Base
 { 
     public function getAllTypeMatch()
     {
+        // 确保该球员是球队一员，并为在队状态
+        $map["member_id"] = $this->memberInfo['id'];
+        $map["status"] = 1;
+        $map['team_id'] = intval(input('param.team_id'));
+        $teamS = new TeamService();
+        $teamMember = $teamS->getTeamMember($map);
+        if (empty($teamMember)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+        unset($map);
+
         $map["match_record.home_team_id|match_record.away_team_id"] = intval(input('param.team_id'));
         $map["is_finished"] = intval(input('param.is_finished'));
         $map["islive"] = intval(input('param.islive'));
@@ -38,6 +50,7 @@ class MatchRecord extends Base
         $teamMemberS = new TeamMemberService();
         $res = $teamMemberS->myTeamList($map);
 
+        // 所在球队数组
         $myTeamIdArray  = array();
         foreach($res as $k => $row) {
             array_push($myTeamIdArray, $row["team_id"]);
