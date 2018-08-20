@@ -57,10 +57,8 @@
         </ul>
         <div class="camp-lesson-list">
             <div id="segmentedControl" class="mui-segmented-control mb">
-                <a class="mui-control-item mui-active" href="#cFile" id="tFile">档案</a>
-                <a class="mui-control-item" href="#cClass" id="tClass">班级</a>
+                <a class="mui-control-item" href="#cClass" id="tClass">按</a>
                 <a class="mui-control-item" href="#cSchedule" id="tSchedule">课量</a>
-                <a class="mui-control-item" href="#cBill" id="tBill">订单</a>
             </div>
         </div>
     </header>
@@ -68,35 +66,6 @@
     <div class="mui-content">
 
         <div class="tab-pullRefresh list coach">
-
-            <!--档案-->
-            <div id="cFile" class="mui-control-content mui-active">
-                <ul class="mui-table-view list detalis-list mt55">
-                    <li class="mui-table-view-cell listli">学员姓名<span>{$studentInfo['student']}</span></li>
-                    <li class="mui-table-view-cell listli">性别<span>{switch name="studentInfo.student_sex" }
-                                                            {case value="0" }女{/case}
-                                                            {case value="1"}男{/case}
-                                                            {default /}未知
-                                                        {/switch}</span></li>
-                    <li class="mui-table-view-cell listli">出生日期<span>{$studentInfo['student_birthday']}</span></li>
-                    <li class="mui-table-view-cell listli">身高<span>{$studentInfo['student_height']}cm</span></li>
-                    <li class="mui-table-view-cell listli">体重<span>{$studentInfo['student_weight']}KG</span></li>
-                    <li class="mui-table-view-cell listli">鞋码<span>{$studentInfo['student_shoe_code']}cm</span></li>
-                    <li class="mui-table-view-cell listli">所属地区<span>{$studentInfo['student_province']} {$studentInfo['student_city']} {$studentInfo['student_area']}</span></li>
-                    <li class="mui-table-view-cell listli">所读学校<span>{$studentInfo['school']}</span></li>
-                    <li class="mui-table-view-cell listli">注册日期<span>{$studentInfo['create_time']}</span></li>
-                    <li class="mui-table-view-cell listli">性格特征<span>{$studentInfo['student_charater']}</span></li>
-                    <li class="mui-table-view-cell listli">家长姓名<span>{$studentInfo['parent']}</span></li>
-                    <li class="mui-table-view-cell listli">手机号码<span>{$studentInfo['mobile']}</span></li>
-                    <li class="mui-table-view-cell listli">紧急电话<span>{$studentInfo['emergency_telephone']}</span></li>
-                    <li class="mui-table-view-cell listli border-b">个人备注<span>{$studentInfo['remarks']}</span></li>
-                </ul>
-                {if  $studentInfo['member_id'] == $memberInfo['id']}
-                <a class="mui-btn mui-btn-success  mui-btn-block" href="{:url('frontend/student/updateStudent',['student_id'=>$studentInfo['id']])}" >编辑资料</a>
-                {/if}
-                {eq name="studentcando" value="1"}
-                <button class="mui-btn mui-btn-block" type="button" id="leaveapply">申请离营</button> {/eq}
-            </div>
 
             <!--班级-->
             <div id="cClass" class="mui-scroll-wrapper mui-control-content">
@@ -162,51 +131,6 @@
                     </div>
 
                     <ul class="mui-table-view detalis-list list mui-text-center schedule" style="padding-left: 10px;"></ul>
-                </div>
-            </div>
-
-            <!--订单-->
-            <div id="cBill" class="mui-scroll-wrapper mui-control-content">
-                <div class="mui-scroll">
-                    <div class="nav-list">
-                        <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
-                                    <span>总订单</span>
-                                    <div class="mui-media-body">{$totalBill+$notPayBill+$repayBill}</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
-                                    <span>已付款</span>
-                                    <div class="mui-media-body">{$payBill}</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
-                                    <span>未付款</span>
-                                    <div class="mui-media-body">{$notPayBill}</div>
-                                </a>
-                            </li>
-                            <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                                <a href="#">
-                                    <span>退款</span>
-                                    <div class="mui-media-body">{$repayBill}</div>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="mui-table-view mui-text-center">
-                            <li class="mui-table-view-cell border-b">
-                                <ul class="mui-row table">
-                                    <li class="mui-col-sm-5 mui-col-xs-5">订单名称(课程)</li>
-                                    <li class="mui-col-sm-3 mui-col-xs-3">金额(元)</li>
-                                    <li class="mui-col-sm-4 mui-col-xs-4">提交日期</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <ul class="mui-table-view detalis-list list bill mui-text-center"></ul>
                 </div>
             </div>
         </div>

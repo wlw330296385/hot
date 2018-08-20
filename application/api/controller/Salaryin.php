@@ -152,7 +152,7 @@ class Salaryin extends Base {
 
 
     // 教练工资列表总表
-    public function coachSalaryList(){
+    public function getCoachSalaryListApi(){
         try {
             
         } catch (Exception $e) {
@@ -270,6 +270,53 @@ class Salaryin extends Base {
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $salaryList, 'sum' => $salarySum];
             }
             return json($response);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
+    public function scheduleSalaryListApi(){
+        try {
+            // 传入参数
+            $request = input('param.');
+            // 组合查询条件
+            $map = [];
+            // 传入教练的会员id查询该教练会员工资 否则默认查询当前会员
+            $map['schedule_member.member_id'] = isset($request['member_id']) ? $request['member_id'] : $this->memberInfo['id'];
+            // 有参数camp_id 则查教练在该训练营的工资列表 否则查教练个人的工资列表
+            if (isset($request['camp_id'])) {
+                // 判断当前会员在训练营有无教练或以上身份，没有就抛出提示
+                $campPower = getCampPower($request['camp_id'], $this->memberInfo['id']);
+                if (!$campPower || $campPower < 2) {
+                    return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
+                }
+                $map['schedule_member.camp_id'] = $request['camp_id'];
+            }
+            $between = input('param.orderby','schedule_time');
+            // 要查询的时间段（年、月），默认当前年月
+            if (input('?param.y') || input('?param.m')) {
+                // 判断年、月参数是否为数字格式
+                $year = input('y');
+                $month = input('m');
+                if (!is_numeric($year) || !is_numeric($month) ) {
+                    return json(['code' => 100, 'msg' => '时间格式错误']);
+                }
+                $when = getStartAndEndUnixTimestamp($year, $month);
+                $map["schedule_member.$between"] = ['between', [ $when['start'], $when['end'] ]];
+            } else {
+                list($start, $end) = Time::month();
+                $map["schedule_member.$between"] = ['between', [$start, $end]];
+            }
+
+            $map['type'] = 2;
+            $result = db('schedule_member')
+                    ->join('schedule','schedule.id = schedule_member.schedule_id')
+                    ->where($map)
+                    ->order("schedule_member.$between desc")
+                    ->select();
+                    echo db('schedule_member')->getlastsql();
+                    dump($result);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
