@@ -44,6 +44,11 @@ class MatchRecord extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
 
+        // 1.用户的所有球队比赛 2.用户其中一只球队的比赛
+        if (!empty(input('param.team_id'))) {
+            $map["team_id"] = intval(input('param.team_id'));
+        }
+
         // 确保该球员是 在队 的状态
         $map["member_id"] = $this->memberInfo['id'];
         $map["status"] = 1;
@@ -59,7 +64,6 @@ class MatchRecord extends Base
 
         $map["match_record.home_team_id|match_record.away_team_id"] = array('in',implode(',',$myTeamIdArray));
         $page = empty(input('param.page')) ? 1 : input('param.page');
-
         $matchRecordS = new MatchRecordService();
         $result = $matchRecordS -> getAllMatchRecordWithSN($map, $page);
 

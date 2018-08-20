@@ -36,10 +36,14 @@ class MatchRecordService {
     // 获取最近比赛记录和序号
     public function getAllMatchRecordWithSN($map, $page=1, $limit=10) {
 
-        $model = new MatchRecord();
-        $count = $model->where($map)->count();
-
         $model = new Match();
+        $count = $model
+        ->join('match_record','match.id = match_record.match_id')
+        ->where($map)
+        ->where('`match_org_id` = 0 OR `is_record` = 1')
+        ->order('match_record.match_time desc')
+        ->count();
+
         $result = $model
         ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
         ->join('match_record','match.id = match_record.match_id')
