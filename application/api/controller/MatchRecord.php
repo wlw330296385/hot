@@ -23,7 +23,9 @@ class MatchRecord extends Base
 
         $map["match_record.home_team_id|match_record.away_team_id"] = intval(input('param.team_id'));
         $map["is_finished"] = intval(input('param.is_finished'));
-        $map["islive"] = intval(input('param.islive'));
+        if(!empty(input('param.islive'))) {
+            $map["islive"] = intval(input('param.islive'));
+        }
 
         $matchRecordS = new MatchRecordService();
         $result = $matchRecordS -> getAllMatchRecord($map);
@@ -37,7 +39,7 @@ class MatchRecord extends Base
         return json($response);
     }
 
-    //根据member_id 列出自己所在各队的所有比赛
+    //根据member_id 列出自己所在各队的所有比赛带序号
     public function getAllTypeMatchWithSN()
     {
         if (empty($this->memberInfo['id'])) {
