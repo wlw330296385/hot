@@ -16,7 +16,7 @@ class MatchRecordService {
     // 获取所有比赛记录
     public function getAllMatchRecord($map, $order='match_time desc', $paginate=10) {
 
-        $ext_sql = $map["is_finished"] == 1 ? "`match_org_id` = 0 OR (`match_org_id` != 0 AND `is_finished` = 1)" : "";
+        $ext_sql = $map["is_finished"] == 1 ? "`match_org_id` = 0 OR `is_record` = 1" : "`match_org_id` = 0";
         $model = new Match();
         $result = $model
         ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
@@ -44,7 +44,7 @@ class MatchRecordService {
         ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
         ->join('match_record','match.id = match_record.match_id')
         ->where($map)
-        ->where('`match_org_id` = 0 OR (`match_org_id` != 0 AND `is_finished` = 1)')
+        ->where('`match_org_id` = 0 OR `is_record` = 1')
         ->order('match_record.match_time desc')->page(sprintf('%s,%s',$page,$limit))->select();
 
         $result = $result->toArray();
