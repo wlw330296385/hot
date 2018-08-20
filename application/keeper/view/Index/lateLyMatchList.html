@@ -149,8 +149,13 @@
                                 var urls = "{:url('team/matchinfo')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + data.data[i].home_team_id;
                                 newli += '<li class="mui-table-view-cell mui-media listli coach">'
                                 newli += '<div class="fl orderNum" style="padding:8px 5px 8px 0;">' + data.data[i].s_num + '</div>'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd66">' + data.data[i].match + '';
-                                newli += '<font class="tipCorner bgorange">' + data.data[i].is_finished + '</font>';
+                                newli += '<div class="mui-slider-handle"><a href="' + urls + '">';
+                                if(data.data[i].match_org_id!=0){
+                                    // 联赛比赛记录
+                                    newli += '<div class="mui-media-body wd66">' + data.data[i].home_team + ' vs ' + data.data[i].away_team + '<font class="tipCorner bgorange">完成</font>';
+                                }else{
+                                newli += '<div class="mui-media-body wd66">' + data.data[i].match + '<font class="tipCorner bgorange">' + data.data[i].is_finished + '</font>';
+                                }
                                 if (data.data[i].match_time == 0) {
                                     newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                                 } else {

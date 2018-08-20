@@ -176,6 +176,7 @@
 
         $(function () {
             var flagMember = false;
+            var flagPhone = false;
             var flagSMS = false;
             var mID = "{$memberInfo.id}";
 
@@ -252,7 +253,7 @@
                         if (!(/^1[34578]\d{9}$/).test(telephone)) {
                             //判断手机号码格式是否正确
                             mui.toast("请填写正确的手机格式");
-                            return false;
+                            flagPhone = false;
                         } else {
                             //判断是否已经注册的会员手机号
                             mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
@@ -272,7 +273,9 @@
                                     //判断该手机号码是否已经是注册会员
                                     if (data.msg == 1) {
                                         mui.alert("该手机号码已被注册！");
-                                        return false;
+                                        flagPhone = false;
+                                    }else{
+                                        flagPhone = true;
                                     }
                                 },
                                 error: function (xhr, type, errorThrown) {
@@ -285,6 +288,7 @@
 
                 //验证短信验证码
                 $('#code').on("blur", function () {
+                    console.log(1111)
                     var code = document.getElementById('code').value;
                     var codeReg = /^\d{6,6}$/;
                     if (!codeReg.test(code)) {
@@ -296,7 +300,7 @@
                             "{:url('api/sms/validateSmsCodeApi','','',true)}");
                         if (result.code == 200) {
                             flagSMS = true;
-                            mui.toast(result.msg);
+                            // mui.toast(result.msg);
                         } else {
                             flagSMS = false;
                             mui.toast(result.msg);
@@ -309,137 +313,114 @@
 
             //点击提交事件
             $(".submitAction").on("tap", function () {
+                setTimeout(function () {
 
-                var name = $("input[name=name]").val();
-                var age = $("input[name=age]").val();
-                var school = $("input[name=school]").val();
-                var address = $("input[name=address]").val();
-                var remarks = $(".remarks").val();
-                var token = $('input[name=__token__]').val();
+                    console.log(1111)
+                    var name = $("input[name=name]").val();
+                    var age = $("input[name=age]").val();
+                    var school = $("input[name=school]").val();
+                    var address = $("input[name=address]").val();
+                    var remarks = $(".remarks").val();
+                    var token = $('input[name=__token__]').val();
 
-                if (name == '') {
-                    mui.toast("请填写姓名");
-                    return false;
-                }
-                if (age == '') {
-                    mui.toast("请填写年龄");
-                    return false;
-                }
-                if (school == '') {
-                    mui.toast("请填写在读学校");
-                    return false;
-                }
-                if (address == '') {
-                    mui.toast("请填写所在居住地");
-                    return false;
-                }
-
-                // 非平台会员提交操作
-                if (mID == 0) {
-                    var telephone = $("input[name=telephone]").val();
-                    if (flagMember == false) {
-                        mui.toast("提交失败，姓名填写有误，请重新填写！");
-                        return false;
-                    };
-
-                    if (telephone == '') {
-                        mui.toast("请输入手机号码");
+                    if (name == '') {
+                        mui.toast("请填写姓名");
                         return false;
                     }
-                    if (!(/^1[34578]\d{9}$/).test(telephone)) {
-                        mui.toast("请填写正确的手机格式");
+                    if (age == '') {
+                        mui.toast("请填写年龄");
+                        return false;
+                    }
+                    if (school == '') {
+                        mui.toast("请填写在读学校");
+                        return false;
+                    }
+                    if (address == '') {
+                        mui.toast("请填写所在居住地");
                         return false;
                     }
 
-                    //判断是否已经注册的会员手机号
-                    mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
-                        data: {
-                            'field': 'telephone',
-                            'value': telephone
-                        },
-                        dataType: 'json', //服务器返回json格式数据
-                        type: 'post', //HTTP请求类型
-                        async: false,
-                        timeout: 10000, //超时时间设置为10秒；
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        success: function (data) {
-                            console.log(data);
-                            //判断该手机号码是否已经是注册会员
-                            if (data.msg == 1) {
-                                mui.alert("该手机号码已被注册！");
-                                return false;
-                            }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            console.log(type);
+                    // 非平台会员提交操作
+                    if (mID == 0) {
+                        var telephone = $("input[name=telephone]").val();
+                        if (flagMember == false) {
+                            mui.toast("提交失败，姓名填写有误，请重新填写！");
+                            return false;
+                        };
+
+                        if (telephone == '') {
+                            mui.toast("请输入手机号码");
+                            return false;
                         }
-                    });
+                        if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                            mui.toast("请填写正确的手机格式");
+                            return false;
+                        }
 
-                    if (flagSMS == false) {
-                        mui.toast("提交失败，验证码填写有误");
-                        return false;
-                    };
+                        if (flagPhone == false) {
+                            mui.toast("提交失败，姓名填写有误，请重新填写！");
+                            return false;
+                        };
 
-                    if (remarks == '') {
-                        mui.toast("请填写您的备注信息");
-                        return false;
-                    }
+                        if (flagSMS == false) {
+                            mui.toast("提交失败，验证码填写有误");
+                            return false;
+                        };
 
-                    //如已经通过以上验证则创建会员账号
-                    mui.ajax("{:url('api/login/registerApi')}", {
-                        data: {
-                            member: name,
-                            telephone: telephone,
-                            province: gProvince,
-                            city: gCity,
-                            area: gArea,
-                            __token__: token,
-                        },
-                        dataType: 'json', //服务器返回json格式数据
-                        type: 'post', //HTTP请求类型
-                        async: false,
-                        timeout: 10000, //超时时间设置为10秒；
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        success: function (data) {
-                            //服务器返回响应，根据响应结果，分析是否登录成功；
-                            console.log(data);
-                            if (data.code == 200) {
-                                $("input[name='member_id']").val(data.id)
-                                gxToken();
-                            } else {
-                                mui.alert(data.msg, '提交失败', '确定', function () {
+                        //如已经通过以上验证则创建会员账号
+                        mui.ajax("{:url('api/login/registerApi')}", {
+                            data: {
+                                member: name,
+                                telephone: telephone,
+                                province: gProvince,
+                                city: gCity,
+                                area: gArea,
+                                __token__: token,
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            async: false,
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                //服务器返回响应，根据响应结果，分析是否登录成功；
+                                console.log(data);
+                                if (data.code == 200) {
+                                    $("input[name='member_id']").val(data.id)
                                     gxToken();
-                                })
+                                } else {
+                                    mui.alert(data.msg, '提交失败', '确定', function () {
+                                        gxToken();
+                                    })
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
                             }
-                        },
-                        error: function (xhr, type, errorThrown) {
-                            //异常处理；
-                            console.log(type);
-                        }
-                    });
+                        });
 
-                }
+                    }
 
-                var data = wooApi.getInputData('input', 'data');
-                datas = wooApi.getInputData('select', 'data', data);
-                // 获取其他标签值
-                arrData = wooApi.getDomData('domData', datas);
-                var objData = wooApi.arrTOobj(arrData);
-                objData.remarks = $(".remarks").val();
-                var url = "{:url('api/member/createstudyinterion')}";
-                var ajaxResult = wooApi.asyncF(url, objData);
-                if (ajaxResult.code == 200) {
-                    mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                        window.location.href = "{:url('index/index')}"
-                    })
-                } else {
-                    mui.alert(ajaxResult.msg, '提交失败', function () {});
-                    gxToken()
-                }
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    objData.remarks = $(".remarks").val();
+                    var url = "{:url('api/member/createstudyinterion')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
+                            window.location.href = "{:url('index/index')}"
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '提交失败', function () {});
+                        gxToken()
+                    }
+                })
             })
 
         });
@@ -475,7 +456,7 @@
                 var result = smsCode.getMobileCodeApi(obj, telephone,
                     "{:url('api/sms/getMobileCodeApi','','',true)}");
                 if (result.code == 200) {
-                    mui.toast(result.msg);
+                    // mui.toast(result.msg);
                 } else {
                     mui.toast(result.msg);
                 }
