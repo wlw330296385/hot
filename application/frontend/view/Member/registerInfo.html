@@ -84,6 +84,7 @@
     </header>
 
     <div class="mui-content mt55" style="background: none !important">
+
         <div class="tipContent">
             <span class="iconfont icon-logo-Big"></span>
             <div class="tipContentText">
@@ -143,7 +144,7 @@
             </div>
 
             <div class="mui-input-row" style="height: auto !important;">
-                <textarea name="remarks" class="mui-text-left remarks" rows="4" value="" placeholder="备注:"></textarea>
+                <textarea name="remarks" class="mui-text-left remarks" rows="4" value="" placeholder="备注:请填写您的备注信息"></textarea>
             </div>
         </form>
         <div class="tipBottom">
@@ -175,6 +176,7 @@
 
         $(function () {
             var flagMember = false;
+            var flagSMS = false;
             var mID = "{$memberInfo.id}";
 
             //获取定位省市区
@@ -214,32 +216,34 @@
             if (mID == 0) {
 
                 //判断用户名是否存在
-                var member = $("input[name=name]").val();
-                mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
-                    data: {
-                        'field': 'member',
-                        'value': member
-                    },
-                    dataType: 'json', //服务器返回json格式数据
-                    type: 'post', //HTTP请求类型
-                    timeout: 10000, //超时时间设置为10秒；
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.msg == 1) {
-                            flagMember = false;
-                            mui.alert("该会员名称已经存在，请使用其他名称！");
-                            return false;
-                        } else {
-                            flagMember = true;
+                $("input[name='name']").on("blur", function () {
+                    var member = $.trim($("input[name=name]").val());
+                    mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
+                        data: {
+                            'field': 'member',
+                            'value': member
+                        },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.msg == 1) {
+                                flagMember = false;
+                                mui.alert("该会员名称已经存在，请使用其他名称！");
+                                return false;
+                            } else {
+                                flagMember = true;
+                            }
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(type);
                         }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        console.log(type);
-                    }
-                });
+                    });
+                })
 
                 //验证是否注册的手机号
                 $('input[name=telephone]').on("blur", function () {
@@ -285,16 +289,17 @@
                     var codeReg = /^\d{6,6}$/;
                     if (!codeReg.test(code)) {
                         mui.toast('请填写正确的验证码');
+                        flagSMS = false;
                     } else {
                         var telephone = $("input[name=telephone]").val();
                         var result = smsCode.validateSmsCodeApi(telephone, code,
                             "{:url('api/sms/validateSmsCodeApi','','',true)}");
-                            console.log(result)
                         if (result.code == 200) {
+                            flagSMS = true;
                             mui.toast(result.msg);
                         } else {
+                            flagSMS = false;
                             mui.toast(result.msg);
-                            return false;
                         }
                     }
                 });
@@ -309,6 +314,7 @@
                 var age = $("input[name=age]").val();
                 var school = $("input[name=school]").val();
                 var address = $("input[name=address]").val();
+                var remarks = $(".remarks").val();
                 var token = $('input[name=__token__]').val();
 
                 if (name == '') {
@@ -328,9 +334,9 @@
                     return false;
                 }
 
+                // 非平台会员提交操作
                 if (mID == 0) {
                     var telephone = $("input[name=telephone]").val();
-
                     if (flagMember == false) {
                         mui.toast("提交失败，姓名填写有误，请重新填写！");
                         return false;
@@ -371,22 +377,14 @@
                         }
                     });
 
-                    // 验证码
-                    var isOk = true  //用变量记住状态
-                    var code = document.getElementById('code').value;
-                    var codeReg = /^\d{6,6}$/;
-                    if (!codeReg.test(code)) {
-                        mui.toast('请填写正确的验证码');
-                    } else {
-                        var telephone = $("input[name=telephone]").val();
-                        var result = smsCode.validateSmsCodeApi(telephone, code,
-                            "{:url('api/sms/validateSmsCodeApi','','',true)}");
-                        if (result.code == 200) {
-                            mui.toast(result.msg);
-                        } else {
-                            mui.toast(result.msg);
-                            return isOk = false;
-                        }
+                    if (flagSMS == false) {
+                        mui.toast("提交失败，验证码填写有误");
+                        return false;
+                    };
+
+                    if (remarks == '') {
+                        mui.toast("请填写您的备注信息");
+                        return false;
                     }
 
                     //如已经通过以上验证则创建会员账号
@@ -425,26 +423,27 @@
                     });
 
                 }
-                mui.toast("通过")
-                // var data = wooApi.getInputData('input', 'data');
-                // datas = wooApi.getInputData('select', 'data', data);
-                // // 获取其他标签值
-                // arrData = wooApi.getDomData('domData', datas);
-                // var objData = wooApi.arrTOobj(arrData);
-                // objData.remarks = $(".remarks").val();
-                // var url = "{:url('api/member/createstudyinterion')}";
-                // var ajaxResult = wooApi.asyncF(url, objData);
-                // if (ajaxResult.code == 200) {
-                //     mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
-                //         window.location.href = "{:url('index/index')}"
-                //     })
-                // } else {
-                //     mui.alert(ajaxResult.msg, '提交失败m', function () { });
-                //     gxToken()
-                // }
+
+                var data = wooApi.getInputData('input', 'data');
+                datas = wooApi.getInputData('select', 'data', data);
+                // 获取其他标签值
+                arrData = wooApi.getDomData('domData', datas);
+                var objData = wooApi.arrTOobj(arrData);
+                objData.remarks = $(".remarks").val();
+                var url = "{:url('api/member/createstudyinterion')}";
+                var ajaxResult = wooApi.asyncF(url, objData);
+                if (ajaxResult.code == 200) {
+                    mui.alert('登记成功，工作人员将会尽快与您联系', "", '确定', function () {
+                        window.location.href = "{:url('index/index')}"
+                    })
+                } else {
+                    mui.alert(ajaxResult.msg, '提交失败', function () {});
+                    gxToken()
+                }
             })
 
         });
+
 
         // 更新token
         function gxToken() {
@@ -479,7 +478,6 @@
                     mui.toast(result.msg);
                 } else {
                     mui.toast(result.msg);
-
                 }
             }
         }
