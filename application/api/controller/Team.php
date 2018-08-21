@@ -1773,6 +1773,7 @@ class Team extends Base
 
         // 默认查询上架活动(status=1)
         $map['status'] = input('param.staus', 1);
+        $map["team_id"] = array('in',implode(',',$myTeamIdArray));
         // 活动结束时间小于当前时间: 当过期
         // $map['end_time'] = ['<', time()];
         // 查询条件组合end
