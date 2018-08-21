@@ -1733,10 +1733,10 @@ class Team extends Base
             if (!$lastEvent) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
-            // foreach ($lastEvent as $k => $val) {
-            //     // 球队活动成员名单
-            //     $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id'], 'status' => ['>', 0]]);
-            // }
+            foreach ($lastEvent as $k => $val) {
+                // 球队活动成员名单
+                $lastEvent[$k]['memberlist'] = $teamS->teamEventMembers(['event_id' => $val['id'], 'status' => ['>', 0]]);
+            }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $lastEvent]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
