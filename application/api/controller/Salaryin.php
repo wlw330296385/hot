@@ -154,7 +154,17 @@ class Salaryin extends Base {
     // 教练工资列表总表
     public function getCoachSalaryListApi(){
         try {
-            
+            $camp_id = input('param.camp_id');
+            $is_power = getCampPower($request['camp_id'], $this->memberInfo['id']);
+            $map['camp_id'] = $camp_id;
+            $model = db('schedule');
+            if($is_power<1){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            if($is_power == 2){
+                $map['camp_id'] = $camp_id;
+                $model = db('schedule_member');
+            }
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
@@ -193,11 +203,6 @@ class Salaryin extends Base {
                     return json(['code' => 100, 'msg' => '时间格式错误']);
                 }
                 // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
-                //$when = $year.'-'.$month;
-                //$start = date('Y-m-01', strtotime($when));
-                //$end = date('Y-m-d', strtotime("$start +1 month -1 day"));
-                //$map['schedule_time'] = ['between time', [$start, $end]];
-                $when = getStartAndEndUnixTimestamp($year, $month);
 
                 $map['create_time'] = ['between', [$when['start'], $when['end']]];
             } else {
@@ -276,7 +281,8 @@ class Salaryin extends Base {
     }
 
 
-    public function scheduleSalaryListApi(){
+    // 获取教练课时工资明细列表
+    public function getScheduleSalaryListApi(){
         try {
             // 传入参数
             $request = input('param.');
@@ -294,21 +300,15 @@ class Salaryin extends Base {
                 $map['schedule_member.camp_id'] = $request['camp_id'];
             }
             $between = input('param.orderby','schedule_time');
-            // 要查询的时间段（年、月），默认当前年月
-            if (input('?param.y') || input('?param.m')) {
-                // 判断年、月参数是否为数字格式
-                $year = input('y');
-                $month = input('m');
-                if (!is_numeric($year) || !is_numeric($month) ) {
-                    $year = date('Y');
-                    $month = date('m');
-                }
-                $when = getStartAndEndUnixTimestamp($year, $month);
-                $map["schedule_member.$between"] = ['between', [ $when['start'], $when['end'] ]];
-            } else {
-                list($start, $end) = Time::month();
-                $map["schedule_member.$between"] = ['between', [$start, $end]];
+            // 判断年、月参数是否为数字格式
+            $year = input('param.y');
+            $month = input('param.m');
+            if (!is_numeric($year) || !is_numeric($month) ) {
+                $year = date('Y');
+                $month = date('m');
             }
+            $when = getStartAndEndUnixTimestamp($year, $month);
+            $map["schedule_member.$between"] = ['between', [ $when['start'], $when['end'] ]];
 
             $map['type'] = 2;
             $result = db('schedule_member')

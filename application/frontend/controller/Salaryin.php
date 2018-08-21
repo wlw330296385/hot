@@ -4,7 +4,6 @@ use app\frontend\controller\Base;
 use app\service\CampService;
 use app\service\CoachService;
 use app\service\SalaryInService;
-use think\helper\Time;
 
 class Salaryin extends Base{
 	private $SalaryInService;
@@ -19,16 +18,30 @@ class Salaryin extends Base{
         // 获取当前年/月，用于输出时间筛选
         $y = date('Y',time());
         $m = date('m',time());
-        // 教练总数
-        $campS = new CampService();
-        $coachList = $campS->getCoachList($camp_id);
+        // 教练总数和教练列表
+        $coachList = db('camp_member')->where(['type'=>['in',[2,4]],'status'=>1,'camp_id'=>$camp_id])->select();
         $coachCount = count($coachList);
+
+        $coachIDs = [];
+        foreach ($coachList as $key => $value) {
+            $coachIDs[] = $value['member_id'];
+        }
         // 工资总额
-        // $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['BETWEEN',[$startInt,$endInt]]]);
-        $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1, 'member_type' => 4]);
-        // 工资列表 api读取数据
-        
-        $this->assign('countSalaryin',$countSalaryin);
+        $countSalaryin = $this->SalaryInService->countSalaryin(['camp_id'=>$camp_id,'type'=>1]);
+        // 工资列表,由于根据结算时间和上课时间得出的结果不同,因此不可联表查
+        $between = getStartAndEndUnixTimestamp($y, $m);
+
+        // 获取结算时间
+        $salaryList = db('salary_in')
+                    ->field('realname,sum(push_salary+salary) as s_salary,member_id')
+                    ->where(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['between',[$between['start'],$between['end']]],'member_id'=>['in',$coachIDs]])
+                    ->group('member_id')
+                    ->select();
+
+        // dump($salaryList);
+
+        // 获取课时工资
+
         $this->assign('y',$y); 
         $this->assign('m',$m);
         $this->assign('coachCount',$coachCount);
@@ -46,12 +59,13 @@ class Salaryin extends Base{
         // 获取教练信息
         $coachS = new CoachService();
         $coachInfo = $coachS->getCoachInfo(['member_id' => $member_id]);
-
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         $this->assign('camp_id', $camp_id);
         $this->assign('year', $year);
         $this->assign('month', $month);
         $this->assign('member_id', $member_id);
         $this->assign('coachInfo', $coachInfo);
+        $this->assign('campInfo', $campInfo);
     	return view('Salaryin/salaryInfo'); 
     }
 
