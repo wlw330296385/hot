@@ -56,6 +56,9 @@ class MatchRecord extends Base
         $map["status"] = 1;
         $teamMemberS = new TeamMemberService();
         $res = $teamMemberS->myTeamList($map);
+        if (empty($res)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
 
         // 所在球队数组
         $myTeamIdArray  = array();
