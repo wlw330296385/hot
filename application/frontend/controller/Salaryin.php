@@ -79,7 +79,7 @@ class Salaryin extends Base{
                 }
             }  
         }   
-        
+        // dump($coachList);
         $this->assign('y',$y); 
         $this->assign('m',$m);
         $this->assign('coachCount',$coachCount);

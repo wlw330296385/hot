@@ -56,7 +56,13 @@
                     <input id="month" type="hidden" name="month" value="{$m}">
                 </ul>
 
-                <ul class="mui-table-view" id="salary-ul"></ul>
+                <ul class="mui-table-view" id="salary-ul">
+                    {volist name="coachList" id="vol"}
+                        <li>
+                            <p>教练:{$vol.coach}        课时工资:{$vol.s}    结算工资:{$vol.ss}</p>
+                        </li>
+                    {/volist}
+                </ul>
             </div>
         </div>
 
@@ -105,70 +111,7 @@
         });
     })(mui, document);
 
-    $(function () {
-        // 初始化读取
-        getSalaryInList();
 
-        // 月份选择改变
-        $('.month-select').change(function () {
-            var month_txt = $(this).val();
-            month_txt = month_txt.substring(0, month_txt.length - 1);
-            $('input[name=month]').val(month_txt);
-            getSalaryInList();
-        });
-
-        // 月份选择改变
-        $('.year-select').change(function () {
-            var year_txt = $(this).val();
-            year_txt = year_txt.substring(0, year_txt.length - 1);
-            $('input[name=year]').val(year_txt);
-            getSalaryInList();
-        });
-
-    });
-
-    // 请求训练营工资列表
-    function getSalaryInList() {
-        var year = $('input[name=year]').val();
-        var month = $('input[name=month]').val();
-        mui.ajax("{:url('api/salaryin/campsalarylist')}", {
-            data: {
-                camp_id: "{$camp_id}",
-                year: year,
-                month: month
-            },
-            dataType: 'json',
-            type: 'post',
-            timeout: 10000,
-            headers: { 'Content-Type': 'application/json' },
-            success: function (data) {
-                //console.log(data);
-                var newli = '';
-                if (data.code === 200) {
-                    // 返回为空 显示无数据
-                    if (data.data.length != 0) {
-                        newli += ' <li class="mui-table-view-cell listli first-li" style="color:#000">教练名称<span>工资</span></li>';
-                        for (var i = 0; i < data.data.length; i++) {
-                            var urls = "{:url('salaryin/salaryinfo')}/camp_id/" + "{$camp_id}" + "/member_id/" + data.data[i].member_id + "/month/" + month + "/year/" + year;
-                            newli += '<li class="mui-table-view-cell listli">';
-                            newli += '<a class="mui-navigate-right" style="color:#000" href="' + urls + '">';
-                            newli += data.data[i].member + '<span class="wd45">' + (data.data[i].month_salary) + '</span>';
-                            newli += '</a></li>';
-                        }
-                        $('#salarysum').text(data.sum);
-                    } else {
-                        newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>';
-                        $('#salarysum').text(0);
-                    }
-                    //console.log(newli);
-                    $('#salary-ul').html(newli);
-                }
-            },
-            error: function (xhr, type, errorThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        })
-    }
 </script>
 
 </html>
