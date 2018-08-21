@@ -257,7 +257,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/match/matchrecordlistpage','','',true)}" + '/?page=' + page;
+                var url = "{:url('api/MatchRecord/getAllTypeMatchWithSN','','',true)}" + '/?page=' + page;
                 var team_id = "{$team_id}"
                 if (statics == '' || statics == null) {
                     var data = {
@@ -287,45 +287,45 @@
                         var newli = '';
                         if (data.code == 200) {
 
-                            for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = getTimeMDCn(data.data.data[i].match_timestamp * 1000);
-                                var matchTimeY = getTimeYearCn(data.data.data[i].match_timestamp * 1000);
-                                var urls = "{:url('team/teamData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}";
+                                var matchTimeM = getTimeMDCn(data.data[i].match_time);
+                                var matchTimeY = getTimeYearCn(data.data[i].match_time);
+                                var urls = "{:url('team/teamData')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + "{$team_id}";
 
                                 newli += `<li class="mui-table-view-cell">
                                             <a href="${urls}">
                                                 <ul class="mui-row" style="padding:0">`;
-                                if (data.data.data[i].home_score > data.data.data[i].away_score) {
+                                if (data.data[i].home_score > data.data[i].away_score) {
                                     newli += `<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                                    <p class="colororange">${(data.data.data.slice(0, i).length + 1)}</p>
+                                                    <p class="colororange">${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p class="colororange">${matchTimeY}</p>
                                                     <p class="colororange">${matchTimeM}</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
-                                                    <p class="colororange">${data.data.data[i].away_team}</p>
+                                                    <p class="colororange">${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;">
-                                                    <p class="colororange">${data.data.data[i].home_score}:${data.data.data[i].away_score}</p>
+                                                    <p class="colororange">${data.data[i].home_score}:${data.data[i].away_score}</p>
                                                 </li>
                                                 <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p class="colororange">胜</p>
                                                 </li>`
-                                } else if (data.data.data[i].home_score < data.data.data[i].away_score) {
+                                } else if (data.data[i].home_score < data.data[i].away_score) {
                                     newli += `<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                                    <p>${(data.data.data.slice(0, i).length + 1)}</p>
+                                                    <p>${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
                                                     <p>${matchTimeM}</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
-                                                    <p>${data.data.data[i].away_team}</p>
+                                                    <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;">
-                                                    <p>${data.data.data[i].home_score}:${data.data.data[i].away_score}</p> 
+                                                    <p>${data.data[i].home_score}:${data.data[i].away_score}</p> 
                                                 </li>
                                                 <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p>负</p>
@@ -333,17 +333,17 @@
                                 }
                                 else {
                                     newli += `<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                                    <p>${(data.data.data.slice(0, i).length + 1)}</p>
+                                                    <p>${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
                                                     <p>${matchTimeM}</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
-                                                    <p>${data.data.data[i].away_team}</p>
+                                                    <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;">
-                                                    <p>${data.data.data[i].home_score}:${data.data.data[i].away_score}</p> 
+                                                    <p>${data.data[i].home_score}:${data.data[i].away_score}</p> 
                                                 </li>
                                                 <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p>--</p>

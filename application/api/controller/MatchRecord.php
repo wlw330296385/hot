@@ -67,6 +67,19 @@ class MatchRecord extends Base
         }
         unset($map);
 
+        //有无传入年份
+        if (!empty(input('param.year'))) {
+            $year = input('param.year');
+            $tInterval = getStartAndEndUnixTimestamp($year);
+            $map['match_record.match_time'] = ['between', [$tInterval['start'], $tInterval['end']]];
+            unset($map['year']);
+        }
+
+        // 默认输出最近全部，若有传入 已完成，则输出最近已完成
+        if (!empty(input('param.is_finished'))) {
+            $map['is_finished'] = intval(input('param.is_finished'));
+        }
+
         $map["match_record.home_team_id|match_record.away_team_id"] = array('in',implode(',',$myTeamIdArray));
         $page = empty(input('param.page')) ? 1 : input('param.page');
         $matchRecordS = new MatchRecordService();
@@ -80,4 +93,5 @@ class MatchRecord extends Base
 
         return json($response);
     }
+
 }
