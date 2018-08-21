@@ -15,6 +15,7 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+    <link href="/static/frontend/css/quill.snow.css" rel="stylesheet">
     <style>
         .mui-input-row a {
             display: table;
@@ -70,6 +71,17 @@
         .mui-popover {
             height: 370px;
             background: #fff !important;
+        }
+
+        .mui-input-group img {
+            width: inherit;
+            height: inherit;
+            float: inherit;
+            margin-right: inherit;
+        }
+
+        #editor-container * {
+            -webkit-user-select: text !important;
         }
     </style>
 </head>
@@ -230,13 +242,37 @@
                     <label>球队宣言</label>
                     <textarea rows="3" name="descri" class="data descri" placeholder="请填写球队宣言"></textarea>
                 </div>
+                <p class="pline"></p>
 
                 <div class="page-header" style="background: #efeff4;">
                     <span class="course">球队简介</span>
                 </div>
-                <textarea name="introduce" class="data introduce" style="display: none"></textarea>
-                <div id="articleEditor" class="tuwenIntro">{$teamInfo.introduce}</div>
-
+                <textarea name="introduce" class=" introduce" style="display: none"></textarea>
+                <!-- <div id="articleEditor" class="tuwenIntro">{$teamInfo.introduce}</div>  旧的编辑器-->
+                <!-- 新的编辑器 -->
+                <div id="standalone-container">
+                    <div id="toolbar-container">
+                        <select class="ql-size"></select>
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                        <button class="ql-header" value="1"></button>
+                        <button class="ql-header" value="2"></button>
+                        <button class="ql-blockquote"></button>
+                        <button class="ql-code-block"></button>
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                        <button class="ql-indent" value="-1"></button>
+                        <button class="ql-indent" value="+1"></button>
+                        <button class="ql-direction" value="rtl"></button>
+                        <select class="ql-align"></select>
+                        <button class="ql-link"></button>
+                        <button class="ql-image"></button>
+                    </div>
+                    <div id="editor-container">{$teamInfo.introduce}</div>
+                </div>
             </form>
 
             <ul class="mui-table-view operation">
@@ -520,13 +556,13 @@
     </script>
     <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
     <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
-    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!-- <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script> -->
     <!--上传截图头像-->
     <script src="/static/plugins/cropper/hammer.min.js"></script>
     <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
     <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
     <script src="/static/plugins/cropper/PhotoClip.js"></script>
-    <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+    <!-- <script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
     <script>
         var Edr = new Eleditor({
             el: '#articleEditor', //容器
@@ -536,8 +572,21 @@
             },
             placeHolder: '点击编辑球队介绍',
         });
+    </script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+    <script src="/static/frontend/js/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor-container', {
+            modules: {
+                formula: true,
+                syntax: true,
+                toolbar: '#toolbar-container'
+            },
+            placeholder: '请填写球队简介',
+            theme: 'snow'
+        });
     </script>
-
     <script>
         //初始化
         mui.init({
@@ -581,7 +630,8 @@
                 var cityResult3 = doc.getElementById('cityResult3');
                 showCityPickerButton.addEventListener('tap', function (event) {
                     cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " +
+                            _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
                         //return false;
                         getProvince = _getParam(items[0], 'text');
@@ -681,9 +731,13 @@
                     var color_style = $(this).val();
                     var color_text = $.trim($(this).siblings().html());
                     colorFrame_text += color_text + ','
-                    $(".colorCont").html(colorFrame_text.substring(0, colorFrame_text.length - 1));
+                    $(".colorCont").html(colorFrame_text.substring(0, colorFrame_text.length -
+                        1));
                     // 数组
-                    colors.push({ color: color, color_style: color_style });
+                    colors.push({
+                        color: color,
+                        color_style: color_style
+                    });
                 });
                 console.log(colors)
                 mui("#colors").popover("toggle");
@@ -801,7 +855,8 @@
                 var charaterCont = "";
                 $(".charaterList input[name='checkbox-charater']:checked").each(function () {
                     var charater = $(this).siblings().val();
-                    var input = '<input type="hidden" value="' + $(this).siblings().val() + '">';
+                    var input = '<input type="hidden" value="' + $(this).siblings().val() +
+                        '">';
                     $(".hideCheckCh").append(input);
                     charaterCont += charater + ','
                     $(".charater").text(charaterCont.substring(0, charaterCont.length - 1));
@@ -826,7 +881,9 @@
 
             // 新加的球队特点
             $(".addCharater").on('tap', '', function () {
-                $(".charaterList .mui-input-row").eq(0).before('<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater wd83"/><i class="cancel-dom mui-icon mui-icon-close fr"></i><input name="checkbox-charater" type="checkbox"></div>');
+                $(".charaterList .mui-input-row").eq(0).before(
+                    '<div class="mui-input-row mui-checkbox mui-left"><input type="text" value="" placeholder="请输入添加的特点名称" class="mui-text-left newCharater wd83"/><i class="cancel-dom mui-icon mui-icon-close fr"></i><input name="checkbox-charater" type="checkbox"></div>'
+                );
             })
 
             // 删除新加的球队特点
@@ -856,11 +913,41 @@
                 return false;
             }
 
+            var introHtml = ''
+            $("#editor-container .ql-editor").find("img").each(function () {
+                var $this = $(this)
+                var dataURL = $(this).attr("src");
+                var url = "{:url('api/upload/imgcropupload')}";
+                mui.ajax({
+                    url: url,
+                    data: {
+                        dataurl: dataURL,
+                        path: 'cert'
+                    },
+                    dataType: 'json', //服务器返回json格式数据
+                    async: false,
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        $this.attr("src", data.path)
+                        introHtml = $("#editor-container .ql-editor").html();
+                        $(".introduce").val(introHtml);
+                        console.log(introHtml)
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            })
+
             //去除提示文字的标签 
-            $("#articleEditor").children(".Eleditor-placeholder").remove();
+            // $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
-            var introHtml = $("#articleEditor").html();
-            $(".introduce").val(introHtml);
+
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -915,16 +1002,21 @@
                     member_id: "{$memberInfo.id}",
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-camp_id="' + data.data.data[i].camp_id + '"><font class="camp">' + data.data.data[i].camp + '</font></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli detalisli" data-camp_id="' +
+                                data.data.data[i].camp_id + '"><font class="camp">' + data.data.data[i]
+                                .camp + '</font></li>'
                         }
                         $(wCampList).empty();
                         if (newli == '') {
@@ -961,20 +1053,26 @@
                     page: page,
                     keyword: keyword
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data
+                                .data[i].id + '"><font class="court">' + data.data.data[i].court +
+                                '</font></li>'
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addBtn">确认</button></div>'
+                            newli =
+                                '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="请输入你要添加的场地" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -1046,7 +1144,7 @@
             }
         });
     </script>
-    
+
 </body>
 
 </html>

@@ -66,5 +66,9 @@ class Apps extends Base
         return view('apps/buyCouponForm');
     }
 
+    public function text(){
+        return view('apps/text');
+    }
+
 
 }
