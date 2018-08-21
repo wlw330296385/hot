@@ -1,0 +1,413 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>agdagd</title>
+</head>
+<body>
+	
+	<input type="" name="1"  >
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+	<input type="" name="1">
+
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>图文编辑测试</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+	<!--自定义style.css-->
+	<link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+	<!--选择器样式-->
+	<link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+	<link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+	<link href="/static/frontend/css/webuploader.css" rel="stylesheet">
+	<!-- <link rel="stylesheet" type="text/css" href="/static/frontend/css/bootstrap-grid.min.css"> -->
+	<!-- <link rel="stylesheet" type="text/css" href="/static/frontend/css/htmleaf-demo.css"> -->
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css" /> -->
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/monokai-sublime.min.css" /> -->
+	<link href="/static/frontend/css/quill.snow.css" rel="stylesheet">
+
+	<style>
+		.mui-input-row a {
+			display: table;
+			width: 100%;
+		}
+
+		#tip {
+			color: #333;
+			position: absolute;
+			top: 0px;
+			left: 10%;
+			overflow: hidden;
+			width: 90%;
+		}
+
+		#tip input[type="text"] {
+			background-color: #EEE;
+			border: 0;
+			padding-left: 0px;
+			width: 100%;
+			height: 40px !important;
+			outline: none;
+			text-align: left;
+		}
+
+		.mui-input-group img {
+			width: inherit;
+			height: inherit;
+			float: inherit;
+			margin-right: inherit;
+		}
+
+		#editor-container * {
+			-webkit-user-select: text !important;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header class="mui-bar mui-bar-nav subheader">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+	</header>
+
+	<div class="mui-content pt">
+
+		<div class="camp-list camp-lesson-list">
+
+			<form action="" class="mui-input-group mt55">
+				<!-- 
+				<div class="mui-input-row">
+					<label>活动标题</label>
+					<input type="text" name="event" class="data" value="" placeholder="请输入活动标题">
+				</div>
+
+				<div class="mui-input-row h-auto">
+					<a href="#txpopover" class="mui-navigate-right">
+						<label>活动封面</label>
+						<div class="viewStyle view"></div>
+						<input type="hidden" name="cover" value="" class="data">
+					</a>
+				</div>
+
+				<div class="mui-input-row picker btnStart" data-options='{"beginYear":2017,"endYear":2050}'>
+					<div class="mui-navigate-right">
+						<label>时间</label>
+						<span id="resultStart" class="ui-alert domData" name="start_time"></span>
+					</div>
+				</div>
+
+				<div class="mui-input-row" id='showCityPicker3'>
+					<div class="mui-navigate-right">
+						<label>所属地区</label>
+						<span id="cityResult3" class="ui-alert"></span>
+						<input type="hidden" name="province" value="" class="data" id="province">
+						<input type="hidden" name="city" value="" class="data" id="city">
+						<input type="hidden" name="area" value="" class="data" id="area">
+					</div>
+				</div>
+
+				<textarea name="event_des" class="data event_des" style="display: none"></textarea>
+
+				<div id="articleEditor" class="tuwenIntro"></div> -->
+
+				<!-- <p class="pline"></p> -->
+				<div class="col-md-12 mt50">
+					<div id="standalone-container">
+						<div id="toolbar-container">
+							<!-- <span class="ql-formats">
+								<select class="ql-font"></select> -->
+							<select class="ql-size"></select>
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<button class="ql-bold"></button>
+							<button class="ql-italic"></button>
+							<button class="ql-underline"></button>
+							<!-- <button class="ql-strike"></button> -->
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<select class="ql-color"></select>
+							<select class="ql-background"></select>
+							<!-- </span> -->
+							<!-- <span class="ql-formats">
+								<button class="ql-script" value="sub"></button>
+								<button class="ql-script" value="super"></button>
+							</span> -->
+							<!-- <span class="ql-formats"> -->
+							<button class="ql-header" value="1"></button>
+							<button class="ql-header" value="2"></button>
+							<button class="ql-blockquote"></button>
+							<button class="ql-code-block"></button>
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<button class="ql-list" value="ordered"></button>
+							<button class="ql-list" value="bullet"></button>
+							<button class="ql-indent" value="-1"></button>
+							<button class="ql-indent" value="+1"></button>
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<button class="ql-direction" value="rtl"></button>
+							<select class="ql-align"></select>
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<button class="ql-link"></button>
+							<button class="ql-image"></button>
+							<!-- <button class="ql-video"></button> -->
+							<!-- <button class="ql-formula"></button> -->
+							<!-- </span> -->
+							<!-- <span class="ql-formats"> -->
+							<!-- <button class="ql-clean"></button> -->
+							<!-- </span> -->
+						</div>
+						<div id="editor-container"></div>
+					</div>
+				</div>
+			</form>
+
+			<!-- <ul class="mui-table-view operation">
+				<li class="mui-table-view-cell mui-media mui-col-xs-12 opli bggreen" onclick="submitAction()">
+					提交
+				</li>
+			</ul> -->
+
+		</div>
+	</div>
+
+	<div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+		<div class="clipAreaStyle clipArea"></div>
+		<div class="fileFrame">选择图片
+			<input type="file" class="fileStyle file">
+		</div>
+		<button class="clipBtnStyle clipBtn">截取</button>
+	</div>
+
+	<script src="/static/frontend/js/mui.min.js"></script>
+	<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+	<!-- 选择器 -->
+	<script src="/static/frontend/js/mui.picker.min.js"></script>
+	<script src="/static/frontend/js/mui.poppicker.js"></script>
+	<script src="/static/frontend/js/city.data-3.js"></script>
+	<script src="/static/frontend/js/common.js"></script>
+	<script src="/static/frontend/js/wooApi.js"></script>
+	<script src="/static/frontend/libs/webuploader.min.js"></script>
+	<script>
+		var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'eventOfTeam'])}";
+	</script>
+	<script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+	<script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+	<script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+	<!--上传截图头像-->
+	<script src="/static/plugins/cropper/hammer.min.js"></script>
+	<script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+	<script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+	<script src="/static/plugins/cropper/PhotoClip.js"></script>
+	<script src="/static/frontend/js/eleditor.js?v=<?php echo time();?>"></script>
+	<!--获取地址-->
+	<script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+	<script src="/static/frontend/js/quill.js"></script>
+	<!-- Initialize Quill editor -->
+	<script>
+		var quill = new Quill('#editor-container', {
+			modules: {
+				formula: true,
+				syntax: true,
+				toolbar: '#toolbar-container'
+			},
+			placeholder: '请编辑图文介绍',
+			theme: 'snow'
+		});
+	</script>
+	<script>
+		var Edr = new Eleditor({
+			el: '#articleEditor', //容器
+			upload: {
+				server: uploadApiUrl, //填写你的后端上传路径
+				fileSizeLimit: 2 //限制图片上传大小，单位M
+			},
+			placeHolder: '点击编辑活动图文介绍',
+		});
+	</script>
+	<script>
+		//初始化
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+
+		mui(".direct").on("tap", "a", function () {
+			window.top.location.href = this.href;
+		});
+
+		//弹出框滚动必须写在mui专用的初始化
+		(function ($) {
+			$(".mui-scroll-wrapper").scroll({
+				//bounce: false,//滚动条是否有弹力默认是true
+				indicators: true //是否显示滚动条,默认是true
+			});
+			// 关闭弹出菜单
+			$("body").on('tap', '.mui-backdrop', function () {
+				mui(".mui-popover.mui-active").popover("toggle");
+			})
+		})(mui);
+
+		//选择器
+		// var getProvince = '';
+		// var getCity = '';
+		// var getArea = '';
+		// (function ($, doc) {
+		// 	$.ready(function () {
+		// 		var _getParam = function (obj, param) {
+		// 			return obj[param] || '';
+		// 		};
+
+		// 		///级联示例
+		// 		var cityPicker3 = new $.PopPicker({
+		// 			layer: 3
+		// 		});
+
+		// 		// 设置默认值
+		// 		cityPicker3.pickers[0].setSelectedIndex(18);
+		// 		cityPicker3.pickers[1].setSelectedIndex(2);
+		// 		cityPicker3.pickers[2].setSelectedIndex(2);
+
+		// 		cityPicker3.setData(cityData3);
+		// 		var showCityPickerButton = doc.getElementById('showCityPicker3');
+		// 		var cityResult3 = doc.getElementById('cityResult3');
+		// 		showCityPickerButton.addEventListener('tap', function (event) {
+		// 			cityPicker3.show(function (items) {
+		// 				cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(
+		// 					items[2], 'text');
+		// 				//返回 false 可以阻止选择框的关闭
+		// 				getProvince = _getParam(items[0], 'text');
+		// 				getCity = _getParam(items[1], 'text');
+		// 				getArea = _getParam(items[2], 'text');
+		// 				document.getElementById('province').value = getProvince;
+		// 				document.getElementById('city').value = getCity;
+		// 				document.getElementById('area').value = getArea;
+		// 			});
+		// 		}, false);
+
+		// 		//开始时间
+		// 		var resultStart = $('#resultStart')[0];
+		// 		var btnStart = $('.btnStart');
+		// 		btnStart.each(function (i, btn) {
+		// 			btn.addEventListener('tap', function () {
+		// 				var optionsJson = this.getAttribute('data-options') || '{}';
+		// 				var options = JSON.parse(optionsJson);
+		// 				var id = this.getAttribute('id');
+		// 				var picker = new $.DtPicker(options);
+
+		// 				picker.show(function (rs) {
+		// 					resultStart.innerText = rs.text;
+		// 					picker.dispose();
+		// 				});
+		// 			}, false);
+		// 		});
+
+		// 		//结束时间
+		// 		var resultEnd = $('#resultEnd')[0];
+		// 		var btnEnd = $('.btnEnd');
+		// 		btnEnd.each(function (i, btn) {
+		// 			btn.addEventListener('tap', function () {
+		// 				var optionsJson = this.getAttribute('data-options') || '{}';
+		// 				var options = JSON.parse(optionsJson);
+		// 				var id = this.getAttribute('id');
+		// 				var picker = new $.DtPicker(options);
+
+		// 				picker.show(function (rs) {
+		// 					resultEnd.innerText = rs.text;
+		// 					picker.dispose();
+		// 				});
+		// 			}, false);
+		// 		});
+
+		// 	});
+		// })(mui, document);
+
+
+		// 获取数据并进行提交
+		function submitAction() {
+
+
+			//去除提示文字的标签 
+			$("#articleEditor").children(".Eleditor-placeholder").remove();
+			//获取最终含简单html标签的图文内容
+			var introHtml = $("#articleEditor").html();
+			$(".event_des").val(introHtml);
+
+			var data = wooApi.getInputData('input', 'data');
+			datas = wooApi.getInputData('select', 'data', data);
+			// 获取其他标签值
+			arrData = wooApi.getDomData('domData', datas);
+			var objData = wooApi.arrTOobj(arrData);
+			var event_des = $('textarea.event_des').val();
+			objData.event_des = event_des;
+			var url = "{:url('api/team/createteamevent')}";
+			var ajaxResult = wooApi.asyncF(url, objData);
+			if (ajaxResult.code == 200) {
+				mui.alert(ajaxResult.msg, '活动创建成功', '确定', function () {
+					var goUrl = "{:url('team/eventlistOfTeam')}" + '/event_id/' + ajaxResult.data + '/team_id/' + "{team_id}";
+					window.top.location.href = goUrl;
+				})
+			} else {
+				mui.alert(ajaxResult.msg, '创建失败', function () {
+					$("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑活动图文介绍</p>");
+				});
+				mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+					if (data.code === 200) {
+						$('input[name=__token__]').val(data.data);
+					}
+				}, 'json');
+			}
+		};
+	</script>
+
+	<script>
+		var pc = new PhotoClip('.clipArea', {
+			size: 260,
+			outputSize: 640,
+			adaptive: ['80%', '60%'],
+			file: '.file',
+			view: '.view',
+			ok: '.clipBtn',
+			loadStart: function () {
+				console.log('开始读取照片');
+			},
+			loadComplete: function () {
+				console.log('照片读取完成');
+			},
+			done: function (dataURL) {
+				console.log(dataURL);
+				mui.post("{:url('api/upload/imgcropupload')}", {
+					dataurl: dataURL,
+					path: 'cert'
+				}, function (res) {
+					console.log(res);
+					$("input[name=cover]").val(res.path)
+					mui("#txpopover").popover("toggle");
+				}, 'json');
+			},
+			fail: function (msg) {
+				alert(msg);
+			}
+		});
+	</script>
+</body>
+
+</html>
