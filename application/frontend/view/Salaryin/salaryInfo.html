@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练工资详情</title>
+    <title>{$campInfo.camp}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -20,12 +20,15 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .btnTime { padding-right: 15px; }
+    </style>
 </head>
 
 <body class=whitebg>
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('frontend/salaryin/salaryofcamp/')}/camp_id/{$camp_id}"></a>
-    <h1 class="mui-title">工资详情</h1>
+    <h1 class="mui-title">教练工资详情</h1>
 </header>
 <div class="mui-content">
 
@@ -45,7 +48,8 @@
                                     <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
                                     <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
                                     <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                </div>
+                                </div><br />
+                                <label class="starScore"></label>&nbsp;
                             </li>
                         </ul>
                     </div>
@@ -55,52 +59,61 @@
 
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6"><a href="#">
-                    <span>本月工资总额</span>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                    <span>本月课时收入</span>
+                    <div class="mui-media-body" id="salarysum"></div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                    <span>本月结算工资</span>
+                    <div class="mui-media-body" id="salarysum"></div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4" style="border-right: none;"><a href="#">
+                    <span>结算工资总额</span>
                     <div class="mui-media-body" id="salarysum"></div>
                 </a></li>
             </ul>
         </div>
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli">
-                <p class="mui-navigate-right">
-                    上课工资单<span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>{$year}年 {$month}月</span>
-                </p>
-            </li>
+        <div class="location-frame">
+            
+            <span class="btnTime location-choise" id="mStatisticsTime" data-options='{"type":"month"}' style="float: left">{$year}年 {$month}月</span>
             <input id="year" type="hidden" name="year" value="{$year}">
             <input id="month" type="hidden" name="month" value="{$month}">
-        </ul>
+            <span class="location-choise">
+                 <select id="sexSelect">
+                        <option value="1">结算工资</option>
+                        <option value="2">课时收入</option>
+                </select>
+            </span>
+        </div>
 
-        <ul class="mui-table-view" id="salary-ul">
+        <ul class="mui-table-view">
             <li class="mui-table-view-cell">
                 <ul class="mui-row table">
-                    <li class="mui-col-xs-4">日期</li>
-                    <li class="mui-col-xs-4">班级</li>
-                    <li class="mui-col-xs-4">工资</li>
+                    <li class="mui-col-xs-5">日期</li>
+                    <li class="mui-col-xs-5">班级</li>
+                    <li class="mui-col-xs-2 mui-text-center">工资</li>
                 </ul>
             </li>
-            <li class="mui-table-view-cell">
-                <a class="">
-                    <ul class="mui-row table">
-                        <li class="mui-col-xs-4">8月</li>
-                        <li class="mui-col-xs-4">2345</li>
-                        <li class="mui-col-xs-4">8900</li>
-                    </ul>
-                </a>
-            </li>
+        </ul>
+        <ul class="mui-table-view" id="salary-ul">
         </ul>
 
     </div>
 </div>
+</div>
 
+<div class="hide2">
+    <ul class="mui-table-view" id="sourceList"></ul>
 </div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
 <!--等级星星样式-->
+<script src="/static/frontend/js/starshow.js"></script>
 <script src="/static/frontend/js/feedback.js"></script>
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script>
     //初始化
     mui.init({
@@ -136,17 +149,36 @@
     })(mui, document);
 
     $(function() {
+
+
+        // 星星显示
+        var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
+        starShow(star);
+        if (isNaN(star)) { star = 3 }
+        $(".starScore").prepend('评分 ' + star + '.0');
+
         salaryinList();
     });
 
     function salaryinList() {
         var year = $('input[name=year]').val();
         var month = $('input[name=month]').val();
-        mui.ajax("{:url('api/salaryin/coachSalaryinList')}", {
+
+        //获取当前月份第一天和最后一天时间戳
+        var firstdate = new Date(year + '-' + month + '-01 00:00:00');
+        var day = new Date(year,month,0); 
+        var lastdate =  new Date(year + '-' + month + '-' + day.getDate() +' 23:59:59');
+        var firstTimestamp = Date.parse(firstdate)/1000;
+        var endTimestamp = Date.parse(lastdate)/1000;
+
+        console.log(firstTimestamp)
+        console.log(endTimestamp)
+
+        mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
             data: {
                 camp_id: "{$camp_id}",
-                year: year,
-                month: month,
+                y: year,
+                m: month,
                 member_id:{$member_id}
             },
             dataType:'json',
@@ -156,20 +188,24 @@
             success:function(data){
                 //console.log(data);
                 var newli = '';
+                var aClass = '';
                 if (data.code === 200) {
                     // 返回为空 显示无数据
                     if (data.data.length != 0) {
-                        newli += '<li class="mui-table-view-cell"><ul class="mui-row table"><li class="mui-col-xs-4">日期</li><li class="mui-col-xs-4">班级</li><li class="mui-col-xs-4">工资</li></ul></li>';
+                        var lessonTime = '';
                         for (var i=0; i<data.data.length;i++) {
-                            //var urls = "{:url('salaryin/salaryinfo')}/camp_id/"+"{$camp_id}"+"/member_id/"+data.data[i].member_id+"/month/"+month+"/year/"+year;
-//                            newli += '<li class="mui-table-view-cell listli">';
-//                            newli += '<a class="mui-navigate-right" style="color:#000" href="'+ urls +'">';
-//                            newli += data.data[i].member + '<span class="wd45">'+ (data.data[i].month_salary) +'</span>';
-//                            newli += '</a></li>';
-                            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
-                            newli += '<li class="mui-col-xs-4">'+ data.data[i].schedule_time +'</li>';
-                            newli += '<li class="mui-col-xs-4">'+ data.data[i].grade +'</li>';
-                            newli += '<li class="mui-col-xs-4">'+ (data.data[i].salary+data.data[i].push_salary) +'</li>';
+                            
+                            if(data.data[i].is_settle>0){
+                                aClass += " settle1"
+                            }
+                            if(data.data[i].lesson_time>0){
+                                aClass += " settle1"
+                            }
+                            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time)
+                            newli += '<li class="mui-table-view-cell'+aClass+'"><a class=""><ul class="mui-row table">';
+                            newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
+                            newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
+                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ data.data[i].s_coach_salary +'</li>';
                             newli += '</ul></a></li>';
                         }
                         $('#salarysum').text(data.sum);
@@ -178,10 +214,10 @@
                         $('#salarysum').text(0);
                     }
                     //console.log(newli);
-                    $('#salary-ul').html(newli);
+                    $('#sourceList').html(newli);
                 } else {
                     newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
-                    $('#salary-ul').html(newli);
+                    $('#sourceList').html(newli);
                     $('#salarysum').text(0);
                 }
             },
@@ -189,6 +225,18 @@
                 mui.toast('网络异常,请稍候再试');
             }
         })
+    }
+
+
+    function getFinalList(){
+        for (var i=0; i<data.data.length;i++) {
+            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time)
+            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
+            newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
+            newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
+            newli += '<li class="mui-col-xs-2 mui-text-center">'+ data.data[i].s_coach_salary +'</li>';
+            newli += '</ul></a></li>';
+        }
     }
 
 </script>
