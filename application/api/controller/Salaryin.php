@@ -318,7 +318,11 @@ class Salaryin extends Base {
                         ,schedule.coach_salary
                         ,schedule.assistant_salary
                         ,schedule.coach_id
-                        ,schedule.students
+                        ,schedule.grade
+                        ,schedule.is_settle
+                        ,schedule.status
+                        ,schedule.lesson_time
+                        ,schedule.can_settle_date
                         ,schedule_member.member_id')
                     ->join('schedule','schedule.id = schedule_member.schedule_id')
                     ->where($map)
