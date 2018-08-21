@@ -33,6 +33,7 @@
             height: 370px;
             background: #fff !important;
         }
+
         /* #articleEditor{
             overflow: hidden;
         }
@@ -88,7 +89,9 @@
             </div>
 
             <div class="mui-input-row">
-                <label>联系电话</label>
+                <label>联系电话
+                    <i class="tip">*</i>
+                </label>
                 <input type="text" class="input data" name="contact_tel" placeholder="请输入联系电话">
             </div>
 
@@ -253,7 +256,8 @@
                 var cityResult3 = doc.getElementById('cityResult3');
                 showCityPickerButton.addEventListener('tap', function (event) {
                     cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " +
+                            _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
                         //return false;
                         getProvince = _getParam(items[0], 'text');
@@ -273,10 +277,12 @@
             //获取用户协议内容，放置弹出框中
             mui.ajax("{:url('frontend/member/userAgreement')}", {
                 data: {},
-                dataType: 'html',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'html', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     // console.log(data);
                     $("#userAgreement .mui-scroll").append(data);
@@ -327,7 +333,8 @@
             console.log(ajaxResult);
             if (ajaxResult.code == 200) {
                 mui.alert('联赛组织创建成功', '确定', function () {
-                    window.location.href = "{:url('keeper/match/createorganization', ['step' => 2])}/org_id/" + ajaxResult.data;
+                    window.location.href = "{:url('keeper/match/createorganization', ['step' => 2])}/org_id/" +
+                        ajaxResult.data;
                 })
             } else {
                 mui.alert(ajaxResult.msg, '注册失败');
