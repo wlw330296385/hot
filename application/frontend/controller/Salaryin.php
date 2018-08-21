@@ -41,7 +41,14 @@ class Salaryin extends Base{
         // dump($salaryList);
 
         // 获取课时工资
-
+        $sacheduleSalaryList = db('schedule')
+                ->field('coach_salary,assistant_salary,salary_base,students,coach_id,assistant_id')
+                ->where(['status'=>1,'lesson_time'=>['between',[$between['start'],$between['end']]],'camp_id'=>$camp_id]) 
+                ->select();
+                // dump($sacheduleSalaryList);die;
+        foreach ($sacheduleSalaryList as $key => $value) {
+                
+             }     
         $this->assign('y',$y); 
         $this->assign('m',$m);
         $this->assign('coachCount',$coachCount);

@@ -312,6 +312,14 @@ class Salaryin extends Base {
 
             $map['type'] = 2;
             $result = db('schedule_member')
+                    ->field('schedule.s_coach_salary
+                        ,schedule.s_assistant_salary
+                        ,schedule_member.user
+                        ,schedule.coach_salary
+                        ,schedule.assistant_salary
+                        ,schedule.coach_id
+                        ,schedule.students
+                        ,schedule_member.member_id')
                     ->join('schedule','schedule.id = schedule_member.schedule_id')
                     ->where($map)
                     ->order("schedule_member.$between desc")
