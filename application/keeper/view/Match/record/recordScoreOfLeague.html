@@ -158,8 +158,20 @@
                 </div>
                 <input type="hidden" class="data" name="scorers" value="">
 
-
             </div>
+
+            {if $matchScheduleInfo.custom_role==''}
+           {else} <p class="pline"></p>
+            <div class="mui-input-row">
+                <label class="wd45" name="custom_role">{$matchScheduleInfo.custom_role}</label>
+                {volist name="matchScheduleInfo.custom_member_list" id="vol"}
+                <span class="">{$vol.workMember}</span>
+                {/volist}
+            </div>
+            <div class="mui-input-row">
+                <label>联系方式</label>
+                <span name="telephone">134646465456</span>
+            </div>{/if}
 
         </form>
 
@@ -298,7 +310,7 @@
             var pageCR = 1;
             toCourtList(wCourt, courtKeyword, 1);
             toRefereelist(); //裁判列表
-            toScorelist();  //记分员列表
+            toScorelist(); //记分员列表
             toScorersInital(); // 记分员赋值
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
@@ -356,7 +368,8 @@
                 let referee_id = $(this).attr("data-referee_id");
                 let liNum = $(this).attr("data-num");
                 var referee1_id = $(this).attr("data-referee_id");
-                if (referee1_id == page_referee1_id || referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
+                if (referee1_id == page_referee1_id || referee1_id == page_referee2_id || referee1_id ==
+                    page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
                 }
@@ -371,7 +384,8 @@
             });
             //清除
             $("#RefereeDel").on('tap', '', function () {
-                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr("data-num");
+                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr(
+                    "data-num");
                 $(".refereeTap").each(function () {
                     let datanum = $(this).find("label").attr("data-num");
                     if (liNum == datanum) {
@@ -397,7 +411,8 @@
                 changeIndex();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
                                     <input name="member" class="stdList" value="${$(this).val()}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
@@ -426,7 +441,8 @@
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".scoreList input[type=checkbox]:checked").each(function () {
-                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
                                     <input name="member" class="stdList" value="${$(this).attr("data-member_id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
@@ -435,7 +451,7 @@
                     $("#hideStList").append(str);
                 });
 
-                changeIndex();//调用-更新序号
+                changeIndex(); //调用-更新序号
                 mui("#score").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
@@ -446,16 +462,19 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<option value="' + data.data[i].type + '">' + data.data[i].name + '</option>'
+                            newli += '<option value="' + data.data[i].type + '">' + data.data[i].name +
+                                '</option>'
                         }
                         if (newli == '') {
                             newli = '<option>请先创建比赛阶段</option>'
@@ -469,7 +488,7 @@
                     mui.toast('网络异常,请稍候再试');
                 }
             });
-            
+
             // 修改了比赛时间原赛程时间给提示
             $(document).on("tap", ".mui-dtpicker-header .mui-btn-blue", function () {
                 var defaultMatchTime = '{$matchScheduleInfo.match_time}'
@@ -484,7 +503,7 @@
         function changeIndex() {
             var i = 1;
             $(".checkboxCont").each(function () { //循环checkboxCont
-                $(this).find("label").text(i++);//更新序号
+                $(this).find("label").text(i++); //更新序号
             });
         }
 
@@ -512,20 +531,25 @@
                     page: page,
                     keyword: keyword
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' +
+                                data.data.data[i].id + '"><font class="court">' + data.data.data[i].court +
+                                '</font></li>'
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>';
+                            newli =
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>';
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -548,20 +572,25 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[i].referee.id + '>' + data.data[i].realname + '</li>'
+                            newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[
+                                i].referee.id + '>' + data.data[i].realname + '</li>'
                         }
                         $(".refereeList").empty().append(newli);
                     } else {
-                        $(".refereeList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>');
+                        $(".refereeList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -580,22 +609,29 @@
                     league_id: league_id,
                     type: 8
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].realname + '</label>';
-                            newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                                i].realname + '</label>';
+                            newli +=
+                                '<input name="checkbox-score" class="score" type="checkbox" data-realname=' +
+                                data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
                         }
                         $(".scoreList").empty().append(newli);
                     } else {
-                        $(".scoreList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>');
+                        $(".scoreList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -636,16 +672,21 @@
             $("#inactiveList .stdList").each(function () {
                 realname = $(this).attr("data-realname");
                 member_id = $(this).val();
-                scorersList.push({ realname, member_id })
+                scorersList.push({
+                    realname,
+                    member_id
+                })
             })
             let scorers = JSON.stringify(scorersList);
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
             var btnArray = ['保存', '发布'];
-            mui.confirm(`1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！
+            mui.confirm(
+                `1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！
                             <div style="margin-top:7px;"><input type="checkbox" name="sendmessage" value="0" class="data" style="vertical-align: text-bottom;margin-right: 5px;">保存并发送消息</div>`,
-                '提示', btnArray, function (e) {
+                '提示', btnArray,
+                function (e) {
                     if (e.index == 1) {
                         $("input[name=is_record]").val(1);
                         var data = wooApi.getInputData('input', 'data');
@@ -659,7 +700,9 @@
                         var ajaxResult = wooApi.asyncF(url, objData);
                         if (ajaxResult.code == 200) {
                             mui.toast("提交成功")
-                            window.setTimeout("window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'", 1500);
+                            window.setTimeout(
+                                "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
+                                1500);
                         } else {
                             mui.alert(ajaxResult.msg, '录入失败');
                             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -687,7 +730,9 @@
                         console.log(ajaxResult)
                         if (ajaxResult.code == 200) {
                             mui.toast("提交成功")
-                            window.setTimeout("window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'", 1500);
+                            window.setTimeout(
+                                "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
+                                1500);
                         } else {
                             mui.alert(ajaxResult.msg, '录入失败');
                             mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -701,7 +746,6 @@
 
 
         };
-
     </script>
 </body>
 
