@@ -321,6 +321,7 @@ class Salaryin extends Base {
                         ,schedule.grade
                         ,schedule.is_settle
                         ,schedule.status
+                        ,schedule.is_school
                         ,schedule.lesson_time
                         ,schedule.can_settle_date
                         ,schedule_member.member_id
