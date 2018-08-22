@@ -89,8 +89,12 @@ class Member extends Base{
                 }
                 // 更新member数据成功 同步更新会员所在球队的球员信息
                 $memberS = new TeamService();
+                $age = date('Y') - (int)$result['data']['birthday'];
+                if($age<0 || $age>100){
+                    $age = 0;
+                }
                 $memberS->saveTeamMember([
-                    'age' => $result['data']['age'],
+                    'age' => $age,
                     'birthday' => $result['data']['birthday'],
                     'height' => $result['data']['height'],
                     'weight' => $result['data']['weight'],
