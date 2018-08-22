@@ -17,7 +17,7 @@ class Index extends Controller
     }
 
     public function index1(){
-        
+        $list = db('salary_in')->where(['create_time'=>['between',[1533610564,1534906564]])->select();
     }
 
     public function index2(){
