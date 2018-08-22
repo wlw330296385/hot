@@ -30,3 +30,14 @@
 		update lesson set resi_giftschedule = resi_giftschedule-2 where id = 42;
 
 	目的:由于赠课购买和赠送等原始数据被刘伟霖手动修改,吴丽文与张雅路讨论之后,以最小损失,最小改动方式将刘伟霖修改的数据为准,修改lesson表记录;
+
+
+
+2. 2018-8-22
+
+	sql:
+		update schedule_member set user_id = 14,member_id = 27,member = 'coachj' where schedule_id in(1167,1151,1150,1127);
+		update schedule set coach_id = 14 where id in(1167,1151,1150,1127);
+
+	目的: 
+		由于2018年8月8日-2018年8月20日在录课api做了调整,一切跟班级相关的数据,比如教练工资等,都从班级数据出来,所以录课的时候,用户对教练的更换不生效,只记录了教练的coach,然而coach_id还是以班级表的教练为准导致数据与实际情况不相符;

@@ -323,7 +323,11 @@ class Salaryin extends Base {
                         ,schedule.status
                         ,schedule.lesson_time
                         ,schedule.can_settle_date
-                        ,schedule_member.member_id')
+                        ,schedule_member.member_id
+                        ,schedule_member.schedule_id
+                        ,schedule.salary_base
+                        ,schedule.students
+                        ')
                     ->join('schedule','schedule.id = schedule_member.schedule_id')
                     ->where($map)
                     ->order("schedule_member.$between desc")

@@ -116,6 +116,8 @@ class Pooltask extends Base{
         $this->lottery1($poolList_1);
 
         $this->Pool->save(['status'=>-1],['end_str'=>$date_str,'status'=>2]);
+        $data = ['crontab'=>'每日擂台开奖'];
+        $this->record($data);
     }
 
     /**
@@ -127,7 +129,6 @@ class Pooltask extends Base{
             $model = new \app\model\PoolWinner;
             // dump($poolList);
             foreach ($poolList as $key => $value) {
-                
                 $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
                     continue;
@@ -336,6 +337,8 @@ class Pooltask extends Base{
             $WechatService->sendTemplate($messageData);
         }
         db('pool_winner')->where(['is_message'=>-1])->update(['is_message'=>1]);
+        $data = ['crontab'=>'每日发送擂台台主模板消息'];
+        $this->record($data);
     }
 
     /**
@@ -361,6 +364,8 @@ class Pooltask extends Base{
         ];
         $WechatService->sendTemplate($messageData);
         db('pool_winner')->where(['is_message'=>-1])->update(['is_message'=>1]);
+        $data = ['crontab'=>'每日发送擂台获奖者模板消息'];
+        $this->record($data);
     }
 
 }

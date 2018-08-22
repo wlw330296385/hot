@@ -31,7 +31,7 @@ class Wxpay extends Base{
             'return_code'=>'SUCCESS',
             'return_msg'=>'OK'
             ];
-       
+        $bill_order = $data['out_trade_no'];
         // 订单号的类型:1:课程|2:活动|3:充值
         if($bill_order<3000000000000000000){
             $billInfo = db('bill')->where(['bill_order'=>$data['out_trade_no']])->find();
