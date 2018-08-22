@@ -172,7 +172,16 @@
                     </li>
                 </ul>
             </div>
-
+            {eq name="$btnApplyWorkerShow" value="1"}
+            <ul class="mui-table-view">
+                <!-- 申请联赛工作人员 -->
+                <li class="mui-table-view-cell mui-media listli">
+                    <a href="#typePopover" class="colororange mui-text-center">
+                        <strong>申请成为联赛工作人员</strong>
+                    </a>
+                </li>
+            </ul>
+            {/eq}
             <!--联赛章程-->
             <div class="page-header border-b">
                 <span class="course">联赛章程
@@ -205,6 +214,25 @@
         </div>
     </div>
 
+    <!-- 工作人员角色popover -->
+    <div class="mui-popover" id="typePopover" style="margin: 0;" data-matchid="{$leagueInfo.id}" data-memberid="{$memberInfo.id}">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">申请成为联赛工作人员</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list typeList">
+                    {volist name="types" id="vo"}
+                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}">
+                        <font class="type">{$vo}</font>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
@@ -221,7 +249,8 @@
 
         // 联赛简介默认的提示
         if ($(".regulation").html() == '') {
-            $(".regulation").html('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+            $(".regulation").html(
+                '<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
         }
 
         // 关注联赛
@@ -232,10 +261,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
@@ -253,6 +284,53 @@
             });
         });
 
+        // 工作人员角色popover点击绑定
+        $('.typeList').on('tap', 'li', function () {
+            // 需要会员实名
+            var realname = "{$memberInfo.realname}";
+            if (realname.length == 0 || realname == "") {
+                mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function (e) {
+                    if (e.index === 1) {
+                        window.location.href = "{:url('member/memberInfo')}";
+                    }
+                });
+                mui("#typePopover").popover("toggle");
+                return;
+            }
+            var type = $(this).attr('data-type');
+            var match_id = $('#typePopover').attr('data-matchid');
+            var member_id = $('#typePopover').attr('data-memberid');
+            mui.ajax("{:url('api/league/applyleagueworker')}", {
+                data: {
+                    match_id: match_id,
+                    member_id: member_id,
+                    type: type
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经发送申请，请耐心等待回复");
+                        //location.reload();
+                        mui("#typePopover").popover("toggle");
+                    } else {
+                        mui.toast(data.msg);
+                        mui("#typePopover").popover("toggle");
+                        //location.reload();
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
         // 判断当前的关注状态
         function followStatus() {
             var league_id = "{$league_id}";
@@ -261,10 +339,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -291,23 +371,27 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `
+                            newli +=
+                                `
                                     <div class="page-header border-b">
                                         <span class="course">参赛队分组表</span>
                                         <span class="more">${data.data.data[i].name}</span>
                                     </div>
                                     <ul class="mui-table-view mui-text-center leagueTypeSet">`
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell lineHeight32">
+                                newli +=
+                                    `<li class="mui-table-view-cell lineHeight32">
                                             <ul class="mui-table-view mui-row">
                                                 <li class="mui-col-sm-2 mui-col-xs-2">
                                                     <strong class="f18">${j + 1}</strong>
@@ -333,7 +417,6 @@
                 }
             });
         }
-
     </script>
 
 </body>
