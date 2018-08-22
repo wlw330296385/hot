@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教练工资列表</title>
+    <title>{$campInfo.camp}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -14,6 +14,11 @@
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style type="text/css">
+        .coach .table{
+            font-size: 14px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,18 +27,17 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">每月工资列表</h1>
+        <h1 class="mui-title">教练员工资月表</h1>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content list">
 
         <div class="list camp-list camp-lesson-list detalis-list coach">
-            <div class="mui-control-content mui-active mt55">
                 <div class="nav-list mb">
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
                             <a href="#">
-                                <span>教练人数(包括营主)</span>
+                                <span>教练人数</span>
                                 <div class="mui-media-body">{$coachCount}</div>
                             </a>
                         </li>
@@ -45,22 +49,37 @@
                         </li>
                     </ul>
                 </div>
-                <ul class="mui-table-view mb">
-                    <li class="mui-table-view-cell listli">
-                        <p class="mui-navigate-right">
-                            选择时间
-                            <span class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
-                        </p>
-                    </li>
-                    <input id="year" type="hidden" name="year" value="{$y}">
-                    <input id="month" type="hidden" name="month" value="{$m}">
-                </ul>
+                <div class="location-frame">
+                    <label>当前年月</label>
+                    <span class="btnTime location-choise" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                </div>
 
-                <ul class="mui-table-view" id="salary-ul">
+                <ul class="mui-table-view detalis-list list">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-xs-4">教练员</li>
+                            <li class="mui-col-xs-4 mui-text-center">课时收入</li>
+                            <li class="mui-col-xs-4 mui-text-center">结算工资</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+        </div>
+
+
+         <div class="mui-scroll-wrapper coach" style="margin-top:218px; ">
+            <div class="mui-scroll">
+                <ul class="mui-table-view">
                     {volist name="coachList" id="vol"}
-                        <li>
-                            <p>教练:{$vol.coach}        课时工资:{$vol.s}    结算工资:{$vol.ss}</p>
-                        </li>
+                     <li class="mui-table-view-cell">
+                        <a class="mui-navigate-right" href="{:url('salaryin/salaryinfo')}/camp_id/{$camp_id}/member_id/{$vol.member_id}/month/{$m}/year/{$y}">
+                            <ul class="mui-row table">
+                                <li class="mui-col-xs-4">{$vol.coach}</li>
+                                <li class="mui-col-xs-4 mui-text-center">{$vol.s}</li>
+                                <li class="mui-col-xs-4 mui-text-center">{$vol.ss}</li>
+                            </ul>
+                        </a>
+                    </li>
                     {/volist}
                 </ul>
             </div>
@@ -82,7 +101,14 @@
         window.top.location.href = this.href;
     });
 
+
     (function ($, doc) {
+
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+
         $.ready(function () {
             var _getParam = function (obj, param) {
                 return obj[param] || '';
@@ -99,11 +125,9 @@
 
                     picker.show(function (rs) {
                         //wTime.innerText = rs.text;
-                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';
-                        document.getElementById('month').value = rs.m.text;
-                        document.getElementById('year').value = rs.y.text;
-                        getSalaryInList();
+                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';                       
                         picker.dispose();
+                        window.location.href = "{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}/year/"+rs.y.text+"/month/"+rs.m.text;
                     });
                 }, false);
             });

@@ -14,10 +14,6 @@
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
-        .page-header .more {
-            padding-right: 0px;
-        }
-
         .nav-list .nav-list-frame .navli {
             width: 25%;
         }
@@ -44,7 +40,7 @@
 
     <div class="mui-content">
 
-        <div class="list mt55 coach">
+        <div class="list mb44 coach">
 
             <div class="img16x9" style="background-image:url('{$leagueInfo.cover}')"></div>
             <ul class="mui-table-view mb" style="margin-top: -4px">
@@ -129,6 +125,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -154,10 +151,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
@@ -183,10 +182,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -214,10 +215,12 @@
                     league_id: league_id,
                     sort: sort
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
@@ -225,65 +228,78 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `<div class="page-header border-b">`
                             if (data.data[i].date == '') {
-                                newli += `<span class="course">比赛日
+                                newli +=`<span class="course">比赛日
                                             <font class="colorred">待定</font> | 时间日期待定
                                         </span>`
                             } else {
-                                newli += `<span class="course">比赛日
+                                newli +=`<span class="course">比赛日
                                             <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
                                         </span>`
                             }
-                            newli += `<span class="more">${data.data[i].stage.name}</span></div><table class="leagueTable"><tbody>`
+                            newli += `<span class="fr f12">${data.data[i].stage.name}</span></div>`
+                            newli += `<ul class="mui-table-view">`
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var scheduleArr = data.data[i].stage.schedules[j];
-                                urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' + scheduleArr.match_id + '/id/' + scheduleArr.id;
-                                urlRecord = "{:url('match/recordInfo')}" + '/league_id/' + league_id + '/id/' + scheduleArr.match_record_id;
+                                urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' +scheduleArr.match_id + '/id/' + scheduleArr.id;
+                                urlRecord = "{:url('match/recordInfo')}" + '/league_id/' + league_id +'/id/' + scheduleArr.match_record_id;
                                 if (scheduleArr.status == 1) {
-                                    newli += `<tr onclick="location.href='${urlSchedule}'" >`
+                                    newli += `<a href="${urlSchedule}">`;
                                 } else {
-                                    newli += `<tr onclick="location.href='${urlRecord}'" >`
+                                    newli += `<a href="${urlRecord}">`;
                                 }
-                                newli += `<td class="tdpPadding">`
-
-                                newli += `<p class="siteNum">${j + 1}</p>`
-                                if (scheduleArr.match_group != '') {
-                                    newli += `<p>${scheduleArr.match_group}</p>`
+                                newli +=`<li class="mui-table-view-cell" style="padding:0">`
+                                newli +=`<div class="mui-row leagueRow">
+                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
+                                            
+                                if(scheduleArr.court_no=='' && scheduleArr.match_group==''){
+                                    newli +=`<p class="siteNum lineHeight80">${j + 1}</p>`
+                                }else if(scheduleArr.court_no=='' && scheduleArr.match_group != ''){
+                                    newli +=`<p class="siteNum" style="line-height:40px">${j + 1}</p>`
+                                    newli +=`<p style="line-height:40px">${scheduleArr.match_group}</p>`;
+                                }else{
+                                    newli +=`<p class="siteNum lineHeight29">${j + 1}</p>`
+                                    if (scheduleArr.match_group != '') {
+                                        newli += `<p class="lineHeight29">${scheduleArr.match_group}</p>`;
+                                    }
+                                    newli +=`<p class="lineHeight29">${scheduleArr.court_no}</p>`
                                 }
-                                newli += `<p>${scheduleArr.court_no}</p>
-                                        </td>
-                                        <td class="borderC">
-                                            <p class="leagueGroup pGroup border-b">
-                                                <img src="${scheduleArr.home_team_logo}" class="circleIcon" />
-                                                <span class="spanText">${scheduleArr.home_team}</span>
-                                            </p>
-                                            <p></p>
-                                            <p class="leagueGroup pGroup">
-                                                <img src="${scheduleArr.away_team_logo}" class="circleIcon" />
-                                                <span class="spanText">${scheduleArr.away_team}</span>
-                                            </p>
-                                        </td>`
+                               
+                                newli +=`</div>
+                                            <div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
+                                                <p class="mui-ellipsis pContent border-b">
+                                                    <span>
+                                                        <img src="${scheduleArr.home_team_logo}" class="img32">
+                                                    </span>
+                                                    <span>${scheduleArr.home_team}</span>
+                                                </p>
+                                                <p class="mui-ellipsis pContent border-b">
+                                                    <span>
+                                                        <img src="${scheduleArr.away_team_logo}" class="img32">
+                                                    </span>
+                                                    <span>${scheduleArr.away_team}</span>
+                                                </p>
+                                            </div>
+                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColRightStyle">`;
                                 if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score == 0) {
                                     if (scheduleArr.match_timestamp === 0) {
-                                        newli += ` <td><p>暂无</p></td>`
+                                        newli += `<p style="line-height:86px;border-bottom:0">暂无</p>`;
                                     } else {
-                                        var Ttime = gettimeh(scheduleArr.match_timestamp * 1000);
-                                        newli += ` <td><p>${Ttime}</p></td>`
+                                        var Ttime = getTimeHM(scheduleArr.match_timestamp * 1000);
+                                        newli +=` <p style="line-height:86px;border-bottom:0">${Ttime}</p>`;
                                     }
                                 } else {
-                                    newli += ` <td>
-                                                    <p class="tdpPadding border-b colorred">${scheduleArr.home_team_score}</p>
-                                                    <p></p>
-                                                    <p class="tdpPadding colorred">${scheduleArr.away_team_score}</p>
-                                                </td>`
+                                    newli +=`<p class="colorred pContent border-b">${scheduleArr.home_team_score}</p>
+                                             <p class="colorred pContent border-b">${scheduleArr.away_team_score}</p>`
                                 }
-                                newli += `</tr>
-                                    <tr class="pline"></tr>`
+                                newli += `</div></div></li></a><p class="pline"></p>`
                             }
-                            newli += `</tbody></table>`
+                            newli += `</ul>`
                         }
                         $(".scheduleList").empty().append(newli);
                     } else {
-                        $(".scheduleList").html('<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".scheduleList").html(
+                            '<li class="nodata whitebg"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
 
                 },
@@ -292,16 +308,7 @@
                 }
             });
         }
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettimeh(h) {
-            var _time = new Date(h);
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(hours) + ":" + p(minutes);
-        }
+        
     </script>
 
 </body>

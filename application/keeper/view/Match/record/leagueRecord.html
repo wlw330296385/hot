@@ -14,8 +14,6 @@
     <!--自定义多色图标icon.js-->
     <script src="/static/frontend/iconfont/iconfont.js"></script>
     <style>
-        .page-header .more {}
-
         .nav-list .nav-list-frame .navli {
             width: 25%;
         }
@@ -28,26 +26,9 @@
             padding: 10px 0 !important;
         }
 
-        .leagueLine {
-            line-height: 32px !important;
-            color: #dd524d !important;
-        }
-
-        .leagueTypeSet {
-            color: #737373;
-            font-size: 14px;
-        }
-
-        .leaguePadding {
-            padding: 11px 15px !important;
-            border-right: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-
         .colactive {
             color: #dd524d !important
         }
-     
     </style>
 </head>
 
@@ -59,7 +40,7 @@
 
     <div class="mui-content">
 
-        <div class="list mt55 coach">
+        <div class="list mb44">
 
             <div class="img16x9" style="background-image:url('{$leagueInfo.cover}')"></div>
             <ul class="mui-table-view mb" style="margin-top: -4px">
@@ -249,16 +230,14 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].match_stage_type == 1) {
-                                newli +=
-                                    `
-                                    <li class="mui-table-view-cell bggray2">
-                                        <ul class="mui-table-view mui-row">
-                                            <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].match_group}排名</li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2">胜</li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2">负</li>
-                                            <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
-                                        </ul>
-                                    </li>`
+                                newli +=`<li class="mui-table-view-cell bggray2">
+                                            <ul class="mui-table-view mui-row">
+                                                <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].match_group}排名</li>
+                                                <li class="mui-col-sm-2 mui-col-xs-2">胜</li>
+                                                <li class="mui-col-sm-2 mui-col-xs-2">负</li>
+                                                <li class="mui-col-sm-2 mui-col-xs-2">积分</li>
+                                            </ul>
+                                        </li>`
                                 for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
                                     newli +=
                                         `<li class="mui-table-view-cell">
@@ -309,72 +288,66 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
+
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].stage.type != 1) {
                                 numarr = []
-                                newli +=
-                                    `  
-                                <div class="page-header border-b">
-                                    <span class="course"> ${data.data[i].stage.name}</span>
-                                    <span class="more">${data.data[i].stage.records.length * 2}强</span>
-                                </div>`
+                                newli +=`<div class="page-header border-b">
+                                            <span class="course"> ${data.data[i].stage.name}</span>
+                                            <span class="more">${data.data[i].stage.records.length * 2}强</span>
+                                        </div>
+                                        <ul class="mui-table-view">`
                                 for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                     var recordsArr = data.data[i].stage.records[j]
-                                    newli +=
-                                        `<table class="leagueTable">
-                                                <tbody>
-                                            <tr>
-                                            <td class="borderC">
-                                                <p class="leagueGroup pGroup border-b">`
+                                    newli +=`<li class="mui-table-view-cell" style="padding: 0">
+                                                <div class="mui-row leagueRecordRow">
+                                                    <div class="mui-col-sm-7 mui-col-xs-7 leagueColRecordLeft">
+                                                        <p class="border-b pRecordContent">`;
                                     if (data.data[i].stage.records.length == 1) {
-                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T1</span>`
+                                        newli += `<span class="siteNum codeNum f16">T1</span>`;
                                     } else {
-                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T${j + 1}</span>`
+                                        newli += `<span class="siteNum codeNum f16">T${j + 1}</span>`;
                                     }
-
-                                    newli +=
-                                        `<img src="${recordsArr.home_team_logo}" class="circleIcon" />
-                                                    <span class="spanText">${recordsArr.home_team}</span>
-                                                </p>
-                                                <p></p>
-                                                <p class="leagueGroup pGroup">`
+                                    newli +=`<span>
+                                                <img src="${recordsArr.home_team_logo}" class="img32">
+                                             </span>
+                                            <span class="spanText">${recordsArr.home_team}</span>
+                                            </p>
+                                            <p class="pRecordContent">`;
                                     if (data.data[i].stage.records.length == 1) {
-                                        newli += `<span class="siteNum codeNum" style="font-size:16px;">T2</span>`
+                                        newli += `<span class="siteNum codeNum f16">T2</span>`;
                                     } else {
-                                        newli +=`<span class="siteNum codeNum" style="font-size:16px;">T${data.data[i].stage.records.length - j}</span>`
+                                        newli +=`<span class="siteNum codeNum f16"">T${data.data[i].stage.records.length - j}</span>`
                                     }
-                                    
-                                    newli +=
-                                        `<img src="${recordsArr.away_team_logo}" class="circleIcon" />
-                                                    <span class="spanText">${recordsArr.away_team}</span>
-                                                </p>
-                                            </td>
-                                            <td>
-                                        <p>${recordsArr.home_score} ：${recordsArr.away_score}</p>`
+                                    newli +=`<span>
+                                                <img src="${recordsArr.away_team_logo}" class="img32">
+                                            </span>
+                                            <span class="spanText">${recordsArr.away_team}</span>
+                                        </p>
+                                    </div>
+                                    <div class="mui-col-sm-5 mui-col-xs-5 mui-text-center leagueColRecordRight">
+                                        <p>${recordsArr.home_score} ：${recordsArr.away_score}</p>`;
                                     if (recordsArr.home_score > recordsArr.away_score) {
-                                        newli +=
-                                            `
-                                        <p class="leagueGroup">
-                                            <img src="${recordsArr.home_team_logo}" class="circleIcon" />
-                                            <span class="spanText colorred">${recordsArr.home_team}</span>
-                                        </p> `
+                                        newli +=`<p>
+                                                <span>
+                                                    <img src="${recordsArr.home_team_logo}" class="img32">
+                                                </span>
+                                                <span class="spanText colorred">${recordsArr.home_team}</span>
+                                            </p>`;
                                     } else {
-                                        newli +=
-                                            `
-                                        <p class="leagueGroup">
-                                            <img src="${recordsArr.away_team_logo}" class="circleIcon" />
-                                            <span class="spanText colorred">${recordsArr.away_team}</span>
-                                        </p>`
+                                        newli +=`<p>
+                                                    <span>
+                                                        <img src="${recordsArr.away_team_logo}" class="img32">
+                                                    </span>
+                                                    <span class="spanText colorred">${recordsArr.away_team}</span>
+                                                </p>`;
                                     }
-
-                                    newli +=
-                                        `<p>（晋级）</p>
-                                    </td></tr>
-                                <tr class="pline"></tr>`
+                                    newli +=`<p>（晋级）</p></div></div></li><p class="pline"></p>`;
                                 }
-                                newli += `</tbody></table>`
+                                newli += `</ul>`
                             }
                         }
+
                         $(".rankList").empty().append(newli);
                         if (newli == '') {
                             $(".rankList").append(

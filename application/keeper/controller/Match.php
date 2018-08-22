@@ -207,6 +207,31 @@ class Match extends Base {
         $matchOrgList = $leagueS->getMemberInMatchOrgs($this->memberInfo['id']);
         // 会员有无联赛组织标识
         $hasMatchOrg = ($matchOrgList) ? 1 : 0;
+
+        // 以下是wayen加的内容，用于输出cansignup变量，供前端判断。明辉有空整理一下这个代码///start//////////////
+        // 联赛可报名状态标识：
+        // 1 当前时间在报名开始时间与报名结束时间
+        // 2 联赛报名状态字段apply_status：1可报名|2结束报名
+        // 3 联赛无赛程记录
+        $cansignup = 0;
+        $nowtime = time();
+        $leagueScheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
+        if (
+            $nowtime > $this->leagueInfo['reg_start_timestamp'] && $nowtime < $this->leagueInfo['reg_end_timestamp']
+            && $this->leagueInfo['apply_status_num'] == 1 && !$leagueScheduleCount
+        ) {
+            // 可报名
+            $cansignup = 1;
+        } else if ( $nowtime < $this->leagueInfo['reg_start_timestamp'] ) {
+            // 等待报名（未到联赛报名时间）
+            $cansignup = -1;
+        } else {
+            // 其他情况 当结束报名
+            $cansignup = 0;
+        }
+        $this->assign('cansignup', $cansignup);
+        ////////////////////end////////////////////////////
+
         return view('Match/leagueList', [
             'hasMatchOrg' => $hasMatchOrg
         ]);
@@ -309,6 +334,22 @@ class Match extends Base {
 
     // 联赛章程
     public function leagueregulation() {
+
+         // 以下是wayen加的内容，用于输出btnApplyWorkerShow变量，供前端页面显示。明辉有空整理一下这个代码///start//////////////
+         // 工作人员类型
+         $leagueS = new LeagueService();
+         $types = $leagueS->getMatchMemberTypes();
+         // 申请联赛工作人员按钮显示：查询联赛工作人员无数据就显示
+         $btnApplyWorkerShow = 0;
+         $matchmember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id']]);
+         if (!$matchmember || $matchmember['status'] != 1) {
+             $btnApplyWorkerShow = 1;
+         }
+         
+         $this->assign('types', $types);
+         $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
+         //////////////////////////end//////////////////////////
+
         return view('Match/regulation/leagueRegulation');
     }
      // 联赛章程编辑
