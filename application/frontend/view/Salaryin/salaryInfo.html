@@ -80,8 +80,8 @@
             <input id="month" type="hidden" name="month" value="{$month}">
             <span class="location-choise">
                  <select name="salaryType" id="salaryType">
-                        <option value="settle">结算工资</option>
-                        <option value="thismonth">课时收入</option>
+                        <option value="settleSalaryList" class="settleListCount">结算工资（0）</option>
+                        <option value="scheduleSalaryList" class="scheduleListCount">课时收入（0）</option>
                 </select>
             </span>
         </div>
@@ -100,7 +100,9 @@
 
     <div class="mui-scroll-wrapper coach" style="margin-top:290px; ">
         <div class="mui-scroll">
-            <ul class="mui-table-view" id="currSalaryList">
+            <ul class="mui-table-view sList" id="settleSalaryList">
+            </ul>
+            <ul class="mui-table-view sList hide" id="scheduleSalaryList">
             </ul>
         </div>
     </div>
@@ -168,38 +170,35 @@
         if (isNaN(star)) { star = 3 }
         $(".starScore").prepend('评分 ' + star + '.0');
 
-        salaryinList();
+        //获取列表
+        scheduleSalaryinList();
+        settleSalaryinList();
 
         $("#salaryType").on('change', '', function () {
-           var salaryType = $('#salaryType option:selected').val();
-           getSelectList(salaryType);
+           var salaryType = '#'+$('#salaryType option:selected').val();
+           $(".sList").hide();
+           $(salaryType).show();
+
+            //滚动到低部
+            mui('.mui-scroll-wrapper').scroll().refresh();
+            mui(".mui-scroll-wrapper").scroll().scrollToTop(100);
         })
     });
 
-    function salaryinList() {
+    function settleSalaryinList() {
         var year = $('input[name=year]').val();
         var month = $('input[name=month]').val();
-        var salaryType = $('#salaryType option:selected').val();
+        var coachID = "{$coachInfo.id}";
 
         var mText = month.replace(/\b(0+)/gi,"");
-        console.log(mText)
 
-
-        //获取当前月份第一天和最后一天时间戳
-        var firstdate = new Date(year + '-' + month + '-01 00:00:00');
-        var day = new Date(year,month,0); 
-        var lastdate =  new Date(year + '-' + month + '-' + day.getDate() +' 23:59:59');
-        var firstTimestamp = Date.parse(firstdate)/1000;
-        var endTimestamp = Date.parse(lastdate)/1000;
-
-        console.log(firstTimestamp)
-        console.log(endTimestamp)
 
         mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
             data: {
                 camp_id: "{$camp_id}",
                 y: year,
                 m: month,
+                orderby:'create_time',
                 member_id:{$member_id}
             },
             dataType:'json',
@@ -209,49 +208,42 @@
             success:function(data){
                 //console.log(data);
                 var newli = '';
-                var aClass = '';
                 if (data.code === 200) {
                     // 返回为空 显示无数据
                     if (data.data.length != 0) {
                         var lessonTime = '';
-                        var scSalary = 0;
-                        var seSalary = 0;
+                        var salaryCount = 0;
+                        var salaryNum = 0;
                         for (var i=0; i<data.data.length;i++) {
-                            aClass = '';
-                            if(data.data[i].is_settle>0){
-                                aClass += " settle";
-                                scSalary += parseInt(data.data[i].s_coach_salary);
+                            salaryCount += parseInt(data.data[i].s_coach_salary);
+                            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
+
+                            if(coachID==data.data[i].coach_id){
+                                salaryNum = data.data[i].s_coach_salary
+                            }else{
+                                salaryNum = data.data[i].s_assistant_salary
                             }
-                            if(data.data[i].lesson_time>=firstTimestamp&&data.data[i].lesson_time<=endTimestamp){
-                                aClass += " thismonth";
-                                seSalary += parseInt(data.data[i].s_coach_salary);
-                            }
-                            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time)
-                            newli += '<li class="mui-table-view-cell'+aClass+'"><a class=""><ul class="mui-row table">';
+
+                            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
                             newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
                             newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
-                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ data.data[i].s_coach_salary +'</li>';
+                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ salaryNum +'</li>';
                             newli += '</ul></a></li>';
                         }
                         
-                        $('#scheduleSalary').text(scSalary);
-                        $('#settleSalary').text(seSalary);
-
+                        $('#settleSalary').text(salaryCount);
+                        $('.settleListCount').text('结算工资（'+data.data.length+'）');
                     } else {
-                        newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
-                        $('#scheduleSalary').text(0);
+                        newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                         $('#settleSalary').text(0);
                     }
                     //console.log(newli);
-                    $('#sourceList').html(newli);
+                    $('#settleSalaryList').html(newli);
                 } else {
                     newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
-                    $('#sourceList').html(newli);
-                    $('#scheduleSalary').text(0);
+                    $('#settleSalaryList').html(newli);
                     $('#settleSalary').text(0);
                 }
-                //首次获取将结算数据显示出来
-                getSelectList(salaryType);
                 $(".mtext").text(mText);
             },
             error:function(xhr,type,errorThrown){
@@ -261,16 +253,70 @@
     }
 
 
-    function getSelectList(wSelect){
-        
-        var getLi = '';
+    function scheduleSalaryinList() {
+        var year = $('input[name=year]').val();
+        var month = $('input[name=month]').val();
+        var coachID = "{$coachInfo.id}";
 
-        $("#sourceList ."+wSelect).each(function () {
-            getLi += '<li class="mui-table-view-cell">'+$(this).html()+'</li>';
-        });
+        mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
+            data: {
+                camp_id: "{$camp_id}",
+                y: year,
+                m: month,
+                orderby: 'schedule_time',
+                member_id:{$member_id}
+            },
+            dataType:'json',
+            type:'post',
+            timeout:10000,
+            headers:{'Content-Type':'application/json'},
+            success:function(data){
+                //console.log(data);
+                var newli = '';
+                if (data.code === 200) {
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+                        var lessonTime = '';
+                        var salaryCount = 0;
+                        var salaryNum = 0;
+                        for (var i=0; i<data.data.length;i++) {
+                            salaryCount += parseInt(data.data[i].s_coach_salary);
+                            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
 
-        $("#currSalaryList").empty().html(getLi)
+                            if(coachID==data.data[i].coach_id){
+                                salaryNum = data.data[i].coach_salary+data.data[i].salary_base*data.data[i].students
+                            }else{
+                                salaryNum = data.data[i].assistant_salary+data.data[i].salary_base*data.data[i].students
+                            }
+
+                            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
+                            newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
+                            newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
+                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ salaryNum +'</li>';
+                            newli += '</ul></a></li>';
+                        }
+                        
+                        $('#scheduleSalary').text(salaryCount);
+                        $('.scheduleListCount').text('课时收入（'+data.data.length+'）');
+
+                    } else {
+                        newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                        $('#scheduleSalary').text(0);
+                    }
+                    //console.log(newli);
+                    $('#scheduleSalaryList').html(newli);
+                } else {
+                    newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
+                    $('#scheduleSalaryList').html(newli);
+                    $('#scheduleSalary').text(0);
+                }
+            },
+            error:function(xhr,type,errorThrown){
+                mui.toast('网络异常,请稍候再试');
+            }
+        })
     }
+
 
 </script>
 </html>

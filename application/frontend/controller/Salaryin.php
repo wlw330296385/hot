@@ -16,8 +16,8 @@ class Salaryin extends Base{
     public function salaryOfCamp(){
         $camp_id = input('param.camp_id');
         // 获取当前年/月，用于输出时间筛选
-        $y = input('param.year')?input('param.year'):date('Y',time());
-        $m = input('param.month')?input('param.month'):date('m',time());
+        $y = input('param.year',date('Y',time()));
+        $m = input('param.month',date('m',time()));
         // $y = date('Y',time());
         // $m = date('m',time());
         // 教练总数和教练列表
