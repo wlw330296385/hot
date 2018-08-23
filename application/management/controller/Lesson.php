@@ -32,7 +32,7 @@ class Lesson extends Backend{
 	//课程列表
 	public function lessonList(){
 		$LessonService = new \app\service\LessonService;
-		$lessonList = $LessonService->getLessonListByPage(['camp_id'=>$campInfo['id']]);
+		$lessonList = $LessonService->getLessonListByPage(['camp_id'=>$this->campInfo['id']]);
 
 
         $this->assign('lessonList',$lessonList);

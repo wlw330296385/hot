@@ -26,27 +26,18 @@ class LessonService {
     public function getLessonList($map=[],$page = 1,$order='id desc',$paginate = 10,$field = '') {
         $result = Lesson::field($field)->where($map)->order($order)->page($page,$paginate)->select();
 
-        if($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     // 分页获取课程
     public function getLessonListByPage($map=[], $order='id desc',$paginate=10,$field = ''){
         $res = Lesson::field($field)->where($map)->order($order)->paginate($paginate);
-        return $res
+        return $res;
     }
 
     public function getLessonListNoPage($map=[], $order='id desc',$paginate=10,$field = ''){
         $res = Lesson::field($field)->where($map)->order($order)->select();
-        if($res){
-            return $res->toArray();
-        }else{
-            return $res;
-        }
+        return $res;
     }
 
     // 软删除
