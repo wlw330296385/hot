@@ -25,6 +25,13 @@ class Lesson extends Backend{
             $result = $LessonService->createLesson($data);
             $this->success($result);
         }else{
+
+            // 课程分类
+            $GradeCategoryService = new \app\service\GradeCategoryService;
+            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+
+            
+            $this->assign('gradeCategoryList',$gradeCategoryList);
             return view('Lesson/createLesson');
         }  
     }
@@ -40,10 +47,15 @@ class Lesson extends Backend{
 	}
 
 
-//课程列表
-public function lessonInfo(){
-    $LessonService = new \app\service\LessonService;
-    return view('Lesson/lessonInfo');
+    //课程列表
+    public function lessonInfo(){
+        $lesson_id = input('param.lesson_id');
+        $LessonService = new \app\service\LessonService;
+        $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+
+
+        $this->assign('lessonInfo',$lessonInfo);
+        return view('Lesson/lessonInfo');
 }
 
 	public function updateLesson(){
