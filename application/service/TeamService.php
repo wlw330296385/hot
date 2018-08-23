@@ -1371,4 +1371,53 @@ class TeamService
         $result = $res->toArray();
         return $result;
     }
+
+    // 获取统计
+    public function getTeamStats($map) {
+        
+        if (!empty($map['year'])) {
+            $tInterval = getStartAndEndUnixTimestamp($map['year']);
+        }
+
+        if (!empty($map["team_member"])) {
+            $ext_sql["team_member"] = "(SELECT 'team_member_count' AS stats_row, count(id) AS `count` FROM `team_member` WHERE `team_id` = %s AND `status` = 1 GROUP BY `team_id`)";
+        }
+        if (!empty($map["team_event"])) {
+            $ext_sql["team_event"] = "(SELECT 'team_event_count' AS stats_row, count(id) AS `count` FROM `team_event` WHERE `team_id` = %s AND `status` = 1 %ext GROUP BY `team_id`)";
+            $ext_sql_time = !empty($map['year']) ? "AND start_time BETWEEN ". $tInterval['start'] . " AND " . $tInterval['end'] : "";
+            $ext_sql["team_event"] = str_replace("%ext", $ext_sql_time, $ext_sql["team_event"]);
+        }
+        if (!empty($map["team_honor"])) {
+            $ext_sql["team_honor"] = "(SELECT 'team_honor_count' AS stats_row, count(id) AS `count` FROM `team_honor` WHERE `author_team_id` = %s AND `status` = 1 %ext GROUP BY `author_team_id`)";
+            $ext_sql_time = !empty($map['year']) ? "AND honor_time BETWEEN ". $tInterval['start'] . " AND " . $tInterval['end'] : "";
+            $ext_sql["team_honor"] = str_replace("%ext", $ext_sql_time, $ext_sql["team_honor"]);         
+        }
+        if (!empty($map["team_follow"])) {
+            $ext_sql["team_follow"] = "(SELECT 'team_follow_count' AS stats_row, count(id) AS `count` FROM `follow` WHERE `type` = 4 AND `follow_id` = %s GROUP BY `follow_id`)";
+        }
+        if (!empty($map["team_match"])) {
+            $ext_sql["team_match"] = "(SELECT 'team_match_count' AS stats_row, count(`match_record`.`id`) AS `count` FROM `match_record`, `match` WHERE `match`.id = `match_record`.`match_id` AND (home_team_id = %s OR away_team_id = %s) %ext AND (is_finished = 1 OR is_record = 1) AND `match`.`delete_time` IS NULL)";
+            $ext_sql_time = !empty($map['year']) ? "AND `match_record`.`match_time` BETWEEN ". $tInterval['start'] . " AND " . $tInterval['end'] : "";
+            $ext_sql["team_match"] = str_replace("%ext", $ext_sql_time, $ext_sql["team_match"]);  
+        }
+
+        $ext_sql_temp = implode(" UNION ALL ", $ext_sql);
+        $ext_sql_final = str_replace("%s", intval($map["team_id"]), $ext_sql_temp);
+        $result = Db::query($ext_sql_final);
+
+        $final_arr  = array(
+            'team_member_count' => 0,
+            'team_event_count' => 0,
+            'team_honor_count' => 0,
+            'team_follow_count' => 0,
+            'team_match_count' => 0
+        );
+
+        foreach ($result as $row) {
+            $final_arr[$row["stats_row"]] = $row["count"];
+        }
+
+        return $final_arr;
+
+    }
 }

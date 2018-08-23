@@ -80,4 +80,40 @@ class MatchRecordService {
         }
     }
 
+    // 根据 teamId 获取比赛统计，算出总场数、胜场、负场、胜率
+    public function getMatchStats($map) {
+
+        $Db = new Db();
+        $sql = "
+        SELECT
+            count(*) AS `total`,
+            count(CASE WHEN (home_team_id = %s AND home_score > away_score) OR (away_team_id = %s AND away_score > home_score) THEN 1 ELSE NULL END) AS 'win',
+            count(CASE WHEN (home_team_id = %s AND home_score < away_score) OR (away_team_id = %s AND away_score < home_score) THEN 1 ELSE NULL END) AS 'lose'
+        FROM (
+            SELECT home_team_id, home_score, away_team_id, away_score
+            FROM `match_record`, `match`
+            WHERE `match`.id = `match_record`.`match_id` 
+            AND (home_team_id = %s OR away_team_id = %s)
+            %ext
+            AND (is_finished = 1 OR is_record = 1)
+            AND `match`.`delete_time` IS NULL
+        ) AS a
+        ";
+
+        if (!empty($map['year'])) {
+            $tInterval = getStartAndEndUnixTimestamp($map['year']);
+        }
+        $ext_sql_time = !empty($map['year']) ? "AND `match_record`.`match_time` BETWEEN ". $tInterval['start'] . " AND " . $tInterval['end'] : "";
+        $final_sql_temp = str_replace('%ext', $ext_sql_time, $sql);
+        $final_sql = str_replace('%s', intval($map["team_id"]), $final_sql_temp);
+        $result = $Db::query($final_sql);
+
+        $final['total'] = $result[0]["total"];
+        $final['win'] = $result[0]["win"];
+        $final['lose'] = $result[0]["lose"];
+        $final['finished'] = $final['win'] + $final['lose'];
+        $final['win_rate'] = $final['finished'] == 0 ? "0%" : intval($final['win'] * 100 / $final['finished']) . "%";
+
+        return $final;
+    }
 }

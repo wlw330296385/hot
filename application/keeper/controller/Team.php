@@ -8,9 +8,11 @@ use app\model\MatchStatistics;
 use app\service\LeagueService;
 use app\service\MatchDataService;
 use app\service\MatchService;
+use app\service\MatchRecordService;
 use app\service\MemberService;
 use app\service\RefereeService;
 use app\service\TeamService;
+use app\service\TeamMemberService;
 use app\service\OrganizationService;
 use think\Cookie;
 
@@ -127,6 +129,29 @@ class Team extends Base
             'status' => 1
         ]);
         $isMemberInTeam = ($teamMemberInfo) ? 1 : 0;
+
+        // 做一个球队统计
+        $map["team_id"] = intval(input('team_id'));
+        $map["team_member"] = 1;
+        $map["team_follow"] = 1;
+        $map["team_event"] = 1;
+        $map["team_honor"] = 1;
+        $map["team_match"] = 1;
+        $map["year"] = date('Y');
+        $teamS = new TeamService();
+        $teamStats = $teamS->getTeamStats($map);
+        unset($map);
+
+        $map["team_id"] = intval(input('team_id'));
+        $matchRecordS = new MatchRecordService();
+        $teamMatchStats = $matchRecordS->getMatchStats($map);
+
+        $teamMemberS = new TeamMemberService();
+        $teamMemberStats = $teamMemberS ->getTeamMemberAverage($map);
+
+        $this->assign('teamStats', $teamStats);
+        $this->assign('teamMatchStats', $teamMatchStats);
+        $this->assign('teamMemberStats', $teamMemberStats);
 
         $this->assign('isMemberInTeam', $isMemberInTeam);
         return view('Team/teamInfo');
@@ -490,6 +515,20 @@ class Team extends Base
     // 赛事列表（平台展示）
     public function matchlist()
     {
+        // 做一个球队统计
+        $map["team_id"] = intval(input('team_id'));
+        $map["team_member"] = 1;
+        $map["team_follow"] = 1;
+        $teamS = new TeamService();
+        $teamStats = $teamS->getTeamStats($map);
+        unset($map["team_member"]);
+        unset($map["team_follow"]);
+
+        $matchRecordS = new MatchRecordService();
+        $teamMatchStats = $matchRecordS->getMatchStats($map);
+
+        $this->assign('teamStats', $teamStats);
+        $this->assign('teamMatchStats', $teamMatchStats);
         return view('Team/matchList');
     }
 

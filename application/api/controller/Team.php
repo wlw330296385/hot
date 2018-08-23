@@ -5,6 +5,7 @@ namespace app\api\controller;
 
 use app\service\FollowService;
 use app\service\MatchService;
+use app\service\MatchRecordService;
 use app\service\MemberService;
 use app\service\MessageService;
 use app\service\StudentService;
@@ -3052,5 +3053,67 @@ class Team extends Base
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
 
+    }
+
+    public function getTeamStats() {
+
+        if (empty(input('?param.temd_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $map['member_id'] = $this->memberInfo['id'];
+        $map["team_id"] = intval(input('param.team_id'));
+
+        // 确保该球员是 在队 的状态
+        $map["status"] = 1;
+        $teamMemberS = new TeamMemberService();
+        $res = $teamMemberS->myTeamList($map);
+        if (empty($res)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+
+        if (!empty(input('param.year'))) {
+            $map["year"] = intval(input('param.year'));
+        }
+
+        $teamS = new TeamService();
+        $teamStats = $teamS->getTeamStats($map);
+
+        if ($sqlResponse['code'] == 100) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $teamStats]);
+        }
+    }
+
+    public function getMatchStats() {
+
+        if (empty(input('param.team_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $map['member_id'] = $this->memberInfo['id'];
+        $map["team_id"] = intval(input('param.team_id'));
+
+        // 确保该球员是 在队 的状态
+        $map["status"] = 1;
+        $teamMemberS = new TeamMemberService();
+        $res = $teamMemberS->myTeamList($map);
+        if (empty($res)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        }
+
+        if (!empty(input('param.year'))) {
+            $map["year"] = intval(input('param.year'));
+        }
+
+        $matchRecordS = new MatchRecordService();
+        $matchStats = $matchRecordS->getMatchStats($map);
+
+        if (empty($matchStats)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $matchStats]);
+        }
     }
 }
