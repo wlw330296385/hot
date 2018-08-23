@@ -10,7 +10,7 @@ class Index extends Backend {
     public function index() {
 
     	// 平台注册量
-    	$site = $this->site;
+
     	$memberCount = db('member')->where('delete_time',null)->count();
     	$campCount = db('camp')->where('delete_time',null)->count();
     	$coachCount1 = db('coach')->where(['status'=>1])->where('delete_time',null)->count();
