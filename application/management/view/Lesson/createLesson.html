@@ -11,21 +11,26 @@
             <form role="form" action="" method="post" enctype="multipart/form-data">
                 {:token()}
                 <div class="box-body">
+                    <input type="hidden" placeholder="请输入课程名称" name="camp_id" value="{$campInfo.id}">
+                    <input type="hidden" placeholder="请输入课程名称" name="member_id" value="{$memberInfo.id}">
                     <div class="form-group">
                         <label for="">课程名称</label>
                         <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
                     </div>
                     <div class="form-group">
                         <label for="">课程类型</label>
-                        <select class="form-control" name="category">
-                            <option value="1">平台使用指南</option>
-                            <option value="2">单独页面</option>
-                            <option value="3">新闻</option>
+                        <select name="gradecate_id" class="form-control">
+                            {volist name="gradeCategoryList" id="vol"}
+                            <optgroup label="{$vol.name}">
+                                {volist name="$vol.daughter" id="v"}
+                                <option value="{$v.id}" selected="true">{$v.name}{/volist}</option>
+                            </optgroup>
+                            {/volist}
                         </select>
-                        <input type="hidden" name="gradecate" class="gradecate data" value="">
-                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
-                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="">
-                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="">
+                        <input type="hidden" name="gradecate" class="gradecate " value="">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id " value="">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion " value="">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id " value="">
                     </div>
                     <div class="form-group">
                         <label for="">课程单价</label>
@@ -50,18 +55,18 @@
                     </div>
                     <div class="form-group">
                         <label for="">训练时间</label>
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time">
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker">
                     </div>
                     <div class="form-group">
                         <label for="">所属地区</label>
                         <input type="text" class="form-control" placeholder="请输入所属地区" name="address">
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#courtList">
-                            请选择训练地点
-                        </button>
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="court">
-                        <input type="hidden" name="court_id" class="court_id data" value="">
+                        <label for="">请选择训练地点</label>
+                        <div data-toggle="modal" data-target="#courtModal">
+                            <input type="text" class="form-control" placeholder="请选择训练地点" name="court">
+                            <input type="hidden" name="court_id" class="court_id " value="">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="">具体地址</label>
@@ -76,32 +81,32 @@
                         <input type="text" class="form-control" placeholder="请输入最多开课人数" name="max">
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
-                            请选择主教练
-                        </button>
-                        <input type="text" class="form-control" placeholder="请输入主教练" name="coach">
-                        <input type="hidden" name="coach_id" class="coach_id data" value="">
+                        <label for="">请选择主教练</label>
+                        <div data-toggle="modal" data-target="#coachModal">
+                            <input type="text" class="form-control" placeholder="请选择主教练" name="coach">
+                            <input type="hidden" name="coach_id" class="coach_id " value="">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
-                            请选择助理教练
-                        </button>
-                        <input type="text" class="form-control" placeholder="请输入助理教练" name="assistants">
-                        <input type="hidden" name="assistants_id" class="assistants_id data" value="">
+                        <label for="">请选择助理教练</label>
+                        <div data-toggle="modal" data-target="#assistantsModal">
+                            <input type="text" class="form-control" placeholder="请选择助理教练" name="assistants">
+                            <input type="hidden" name="assistants_id" class="assistants_id" value="">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
-                            请选择领队
-                        </button>
-                        <input type="text" class="form-control" placeholder="请输入领队" name="leader">
-                        <input type="hidden" name="leader_id" class="leader_id data" value="">
+                        <label for="">请选择领队</label>
+                        <div data-toggle="modal" data-target="#leaderModal">
+                            <input type="text" class="form-control" placeholder="请选择领队" name="leader">
+                            <input type="hidden" name="leader_id" class="leader_id" value="">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                            请选择班主任
-                        </button>
-                        <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
-                        <input type="hidden" name="teacher_id" class="teacher_id data" value="">
+                        <label for="">请选择班主任</label>
+                        <div data-toggle="modal" data-target="#teacherModal">
+                            <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
+                            <input type="hidden" name="teacher_id" class="teacher_id" value="">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="">课程封面</label>
@@ -150,116 +155,236 @@
 </div>
 
 <!-- 训练地点 -->
-<div class="modal fade" id="courtList">
+<div class="modal fade" id="courtModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">场地列表</h4>
+                <h4 class="modal-title">请选择训练场地</h4>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">场地</li>
-                    <li class="list-group-item">场地</li>
-                    <li class="list-group-item">场地</li>
-                    <li class="list-group-item">场地</li>
-                    <li class="list-group-item">场地</li>
-                </ul>
+                <div class="tableScroll">
+                    <table id="courtList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>场地名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr role="row" class="nodata">
+                                    <td colspan="4">暂无教练员数据</td>
+                                </tr> -->
+                            <tr role="row" class="odd">
+                                <td>北头篮球场</td>
+                                <td>深圳市</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearCourt">清除所选场地</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
 </div>
 
+
 <!-- 教练列表  -->
-<div class="modal fade" id="coachList">
+<div class="modal fade" id="coachModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">教练列表</h4>
+                <h4 class="modal-title">请选择教练</h4>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">教练1</li>
-                    <li class="list-group-item">教练2</li>
-                    <li class="list-group-item">教练3</li>
-                    <li class="list-group-item">教练4</li>
-                    <li class="list-group-item">教练5</li>
-                </ul>
+                <div class="tableScroll">
+                    <table id="coachList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>教练员名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr role="row" class="nodata">
+                                <td colspan="4">暂无教练员数据</td>
+                            </tr> -->
+                            <tr role="row" class="odd">
+                                <td>张伟荣</td>
+                                <td>深圳市</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-coach="张伟荣" data-coach_id="7">确定</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearCoach">清除所选教练</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- 助教练 -->
-<div class="modal fade" id="assistantsList">
+<div class="modal fade" id="assistantsModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">教练列表</h4>
+                <h4 class="modal-title">请选择助理教练</h4>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">助教练1</li>
-                    <li class="list-group-item">助教练</li>
-                    <li class="list-group-item">助教练</li>
-                    <li class="list-group-item">助教练</li>
-                    <li class="list-group-item">助教练</li>
-                </ul>
+                <div class="tableScroll">
+                    <table id="assistantsList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>教练员名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr role="row" class="nodata">
+                                    <td colspan="4">暂无教练员数据</td>
+                                </tr> -->
+                            <tr role="row" class="odd">
+                                <td>张伟荣</td>
+                                <td>深圳市</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-assistants="张伟荣" data-assistants_id="7">确定</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearAssiatants">清除所选教练</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- 领队 -->
-<div class="modal fade" id="leaderList">
+<div class="modal fade" id="leaderModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">领队列表</h4>
+                <h4 class="modal-title">请选择领队</h4>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">领队</li>
-                    <li class="list-group-item">领队</li>
-                    <li class="list-group-item">领队</li>
-                    <li class="list-group-item">领队</li>
-                    <li class="list-group-item">领队</li>
-                </ul>
+                <div class="tableScroll">
+                    <table id="leaderList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>领队名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr role="row" class="nodata">
+                                    <td colspan="4">暂无教练员数据</td>
+                                </tr> -->
+                            <tr role="row" class="odd">
+                                <td>张伟荣</td>
+                                <td>深圳市</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-leader="张伟荣" data-leader_id="7">确定</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearLeader">清除所选领队</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- 班主任 -->
-<div class="modal fade" id="teachList">
+<div class="modal fade" id="teacherModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">班主任列表</h4>
+                <h4 class="modal-title">请选择班主任</h4>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">班主任</li>
-                    <li class="list-group-item">班主任</li>
-                    <li class="list-group-item">班主任</li>
-                    <li class="list-group-item">班主任</li>
-                    <li class="list-group-item">班主任</li>
-                </ul>
+                <div class="tableScroll">
+                    <table id="teacherList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>教练员名称</th>
+                                <th>所属地区</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr role="row" class="nodata">
+                                        <td colspan="4">暂无教练员数据</td>
+                                    </tr> -->
+                            <tr role="row" class="odd">
+                                <td>张伟荣</td>
+                                <td>深圳市</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-teacher="张伟荣" data-teacher_id="7">确定</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearTeacher">清除所选教练</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -274,8 +399,134 @@
 <script src="/static/backend/adminlte/js/upload/banner.js"></script>
 <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.all.js"></script>
-
+<script type="text/javascript" src="/static/backend/adminlte/js/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+<link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-datetimepicker.min.css">
 <script type="text/javascript">
     var ue_info = UE.getEditor("content");
+
+
+    $('#datetimepicker').datetimepicker({
+        format: 'hh:ii',
+        startView: 1,
+        autoclose: true,
+    });
+
+    //训练场地 
+    $("#courtList tbody").on("click", ".btn", function () {
+        var court_id = $(this).attr("data-court_id");
+        var court = $(this).attr("data-court");
+        $("input[name=court_id]").val(court_id);
+        $("input[name=court]").val(court);
+        $('#courtModal').modal('hide');
+    });
+    $("#clearCourt").on("click", function () {
+        $("input[name=court_id]").val('');
+        $("input[name=court]").val('');
+        $('#courtModal').modal('hide');
+    });
+
+
+    //主教练 
+    $("#coachList tbody").on("click", ".btn", function () {
+        var coach_id = $(this).attr("data-coach_id");
+        var coach = $(this).attr("data-coach");
+        $("input[name=coach_id]").val(coach_id);
+        $("input[name=coach]").val(coach);
+        $('#coachModal').modal('hide');
+    });
+    $("#clearCoach").on("click", function () {
+        $("input[name=coach_id]").val('');
+        $("input[name=coach]").val('');
+        $('#coachModal').modal('hide');
+    });
+
+
+    //助理教练
+    $("#assistantsList tbody").on("click", ".btn", function () {
+        var assistants_id = $(this).attr("data-assistants_id");
+        var assistants = $(this).attr("data-assistants");
+        $("input[name=assistants_id]").val(assistants_id);
+        $("input[name=assistants]").val(assistants);
+        $('#assistantsModal').modal('hide');
+    });
+    $("#clearAssistants").on("click", function () {
+        $("input[name=assistants_id]").val('');
+        $("input[name=assistants]").val('');
+        $('#assistantsModal').modal('hide');
+    });
+
+    //领队
+    $("#leaderList tbody").on("click", ".btn", function () {
+        var leader_id = $(this).attr("data-leader_id");
+        var leader = $(this).attr("data-leader");
+        $("input[name=leader_id]").val(leader_id);
+        $("input[name=leader]").val(leader);
+        $('#leaderModal').modal('hide');
+    });
+    $("#clearLeader").on("click", function () {
+        $("input[name=leader_id]").val('');
+        $("input[name=leader]").val('');
+        $('#leaderModal').modal('hide');
+    });
+
+    //班主任
+    $("#teacherList tbody").on("click", ".btn", function () {
+        var teacher_id = $(this).attr("data-teacher_id");
+        var teacher = $(this).attr("data-teacher");
+        $("input[name=teacher_id]").val(teacher_id);
+        $("input[name=teacher]").val(teacher);
+        $('#teacherModal').modal('hide');
+    });
+    $("#clearTeacher").on("click", function () {
+        $("input[name=teacher_id]").val('');
+        $("input[name=teacher]").val('');
+        $('#teacherModal').modal('hide');
+    });
+
+
+
+    toCampCoachList('{$camp_member.camp_id}');
+    //接口获取数据并追加到页面：训练营教练员
+    var toCampCoachList = function (camp_id) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url = "{:url('api/camp_member/getCoachListApi','','',true)}";
+        $.ajax({
+            url: url,
+            data: {
+                camp_id: camp_id
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            //processData:false,
+            success: function (data) {
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('coach/coachInfo')}" + '/coach_id/' + data.data[i].id;
+                        newli += '<tr role="row" class="odd"><td>' + data.data[i].coach + '</td><td>' +
+                            data.data[i].city + '</td><td><a href="' + urls +
+                            '">查看详情</a></td><td><span class="btn btn-xs btn-info" data-coach="' + data.data[
+                                i].coach + '" data-member_id="' + data.data[i].member_id +
+                            '">确定</span></td></tr>';
+                    }
+                }
+                if (newli == '') {
+                    $("#coachList tbody").html(
+                        '<tr role="row" class="nodata"><td colspan="4">没有搜索到相关数据哦</td></tr>');
+                } else {
+                    $("#coachList tbody").empty().append(newli);
+                }
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                alert('网络异常,请稍候再试');
+            }
+        });
+    };
 </script>
 {/block}
