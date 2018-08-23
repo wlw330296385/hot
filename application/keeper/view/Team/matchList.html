@@ -323,8 +323,10 @@
 
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = getTimeMDCn(data.data[i].match_time);
-                                var matchTimeY = getTimeYearCn(data.data[i].match_time);
+                                var time = data.data[i].match_time;
+                                var matchTimeY = time.substr(0,4);
+                                var matchTimeM = time.substr(5,2);
+                                var matchTimeD = time.substr(8,2);
                                 var urls = "{:url('team/teamData')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + "{$team_id}";
 
                                 newli += `<li class="mui-table-view-cell">
@@ -336,8 +338,8 @@
                                                     <p class="colororange">${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
-                                                    <p class="colororange">${matchTimeY}</p>
-                                                    <p class="colororange">${matchTimeM}</p>
+                                                    <p class="colororange">${matchTimeY}年</p>
+                                                    <p class="colororange">${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p class="colororange">${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
@@ -355,7 +357,7 @@
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
-                                                    <p>${matchTimeM}</p>
+                                                    <p>${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
@@ -373,7 +375,7 @@
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
-                                                    <p>${matchTimeM}</p>
+                                                    <p>${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>

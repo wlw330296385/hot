@@ -1751,7 +1751,7 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
 
-        // 1.用户的所有球队比赛 2.用户其中一只球队的比赛
+        // 1.用户的所有球队 2.用户其中一只球队
         if (!empty(input('param.team_id'))) {
             $map["team_id"] = intval(input('param.team_id'));
         }
@@ -3061,16 +3061,16 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
-        $map['member_id'] = $this->memberInfo['id'];
+        // $map['member_id'] = $this->memberInfo['id'];
         $map["team_id"] = intval(input('param.team_id'));
 
         // 确保该球员是 在队 的状态
-        $map["status"] = 1;
-        $teamMemberS = new TeamMemberService();
-        $res = $teamMemberS->myTeamList($map);
-        if (empty($res)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-        }
+        // $map["status"] = 1;
+        // $teamMemberS = new TeamMemberService();
+        // $res = $teamMemberS->myTeamList($map);
+        // if (empty($res)) {
+        //     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        // }
 
         if (!empty(input('param.year'))) {
             $map["year"] = intval(input('param.year'));
@@ -3092,16 +3092,16 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
-        $map['member_id'] = $this->memberInfo['id'];
+        // $map['member_id'] = $this->memberInfo['id'];
         $map["team_id"] = intval(input('param.team_id'));
 
         // 确保该球员是 在队 的状态
-        $map["status"] = 1;
-        $teamMemberS = new TeamMemberService();
-        $res = $teamMemberS->myTeamList($map);
-        if (empty($res)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-        }
+        // $map["status"] = 1;
+        // $teamMemberS = new TeamMemberService();
+        // $res = $teamMemberS->myTeamList($map);
+        // if (empty($res)) {
+        //     return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+        // }
 
         if (!empty(input('param.year'))) {
             $map["year"] = intval(input('param.year'));
