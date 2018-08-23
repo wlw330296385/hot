@@ -17,7 +17,17 @@ class Lesson extends Backend{
 		
 	}
 
+    public function createteLesson(){
 
+        if(request()->isPost()){
+            $data = input('post.');
+            $LessonService = new \app\service\LessonService;
+            $result = $LessonService->createLesson($data);
+            $this->success($result);
+        }else{
+            return view('Lesson/createteLesson');
+        }  
+    }
 
 	//课程列表
 	public function lessonList(){
@@ -35,9 +45,8 @@ class Lesson extends Backend{
         $LessonService = new \app\service\LessonService;
         if(request()->isPost()){
             $data = input('post.');
-            $Lesson = new \app\model\Lesson;
-            $result =$Lesson->save($data,['id'=>$lesson_id]);
-            if ($result) {
+            $result = $LessonService->updateLesson($data,$lesson_id);
+            if ($result['code'] == 200) {
                 // $this->success('成功','lesson/index');
                 echo "<script>alert('操作成功');window.location.href='".url('lesson/index')."';</script>";
             }else{
