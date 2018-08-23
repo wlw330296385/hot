@@ -4,18 +4,117 @@
 
 
 <div class="col-md-12 col-sm-12">
+
+    添加主菜单
+     <form action="{:url('createMenu')}"  method="post">
+                        
+        <label>标题
+            <input type="text" name="title" value="" required="required">
+        </label>
+        <label>
+            icon图标
+            <input type="text" name="icon"  value=""  required="required">
+        </label>
+        <label>访问地址
+            <input type="text" name="url_value"  value=""  placeholder="不填写地址则为折叠菜单,否则为单链接">
+        </label>
+        <label>排序
+              <input type="number" name="sort"  value=""  required="required">
+        </label>
+        <label>是否隐藏
+            <select name='online_hide'  required="required">
+                <option value="1">
+                    显示
+                </option>
+                <option value="0">
+                    隐藏
+                </option>
+            </select>
+        </label>
+        <input type="hidden" name="pid" value="0">
+        <input type="submit" value="确认添加">
+
+    </form>
+
     <!-- Info boxes -->
     <div class="row">
         {volist name="menuList" id="vol"}
             <ul>
-                <label>{$vol.title} </label>   <button>添加子菜单</button>
-                {volist name="vol.daughter" id="v"}
-                    <li>----  
+                <form action="{:url('updateMenu',['id'=>$vol['id']])}"  method="post">
+                    <label>标题
+                        <input type="text" name="title" value="{$vol.title}" placeholder="填写地址则为单链接" required="required">
+                    </label>
+                    <label>访问地址
+                        <input type="text" name="url_value"  placeholder="不填写地址则为折叠菜单,否则为单链接" value="{$vol.url_value}">
+                    </label>
+                    <label>排序
+                          <input type="number" name="sort"  value="{$vol.sort}" >
+                    </label>
+                    <label>
+                        icon图标<i class="fa {$vol.icon}"></i>
+                        <input type="text" name="icon"  value=""  required="required">
+                    </label>
+
+                    <label>是否隐藏(主菜单隐藏则其子菜单全隐藏)
+                        <select name='online_hide'>
+                            <option value="1">
+                                显示
+                            </option>
+                            <option value="0">
+                                隐藏
+                            </option>
+                        </select>
+                    </label>
+                    <input type="submit" value="确认修改">
+                </form>
+
+                <button class="addMenu" data="{$vol.id}">添加子菜单</button>
+
+                <li class="addMenu{$vol.id}" style="display: none">
+                    <form action="{:url('createMenu')}"  method="post">
+                        
                         <label>标题
-                        <input type="text" name="title" value="{$v.title}">
+                            <input type="text" name="title" value="" required="required">
                         </label>
-                        <label>地址
-                        <input type="text" name="url_value"  value="{$v.url_value}">
+                        <label>
+                            icon图标
+                            <input type="text" name="icon"  value=""  required="required">
+                        </label>
+                        <label>访问地址
+                            <input type="text" name="url_value"  value=""  required="required">
+                        </label>
+                        <label>排序
+                              <input type="number" name="sort"  value=""  required="required">
+                        </label>
+
+                        <label>是否隐藏
+                            <select name='online_hide'  required="required">
+                                <option value="1">
+                                    显示
+                                </option>
+                                <option value="0">
+                                    隐藏
+                                </option>
+                            </select>
+                        </label>
+                        <input type="hidden" name="pid" value="{$vol.id}">
+                        <input type="submit" value="确认添加">
+
+                    </form>
+                </li>
+                {volist name="vol.daughter" id="v"}
+                    <form action="{:url('updateMenu',['id'=>$v['id']])}"  method="post">
+                        <li>----  
+
+                        <label>标题
+                            <input type="text" name="title" value="{$v.title}">
+                        </label>
+                        <label>
+                            icon图标<i class="fa {$v.icon}"></i>
+                            <input type="text" name="icon"  value="{$v.icon}"  required="required">
+                        </label>
+                        <label>访问地址
+                            <input type="text" name="url_value"  value="{$v.url_value}">
                         </label>
                         <label>排序
                               <input type="number" name="sort"  value="{$v.sort}" >
@@ -31,9 +130,20 @@
                                 </option>
                             </select>
                         </label>
-                        <input type="hidden" name="id" value="{$v.id}">
+                        <label>
+                            是否删除
+                            <select name='status'  required="required">
+                                <option value="1">
+                                    不删除
+                                </option>
+                                <option value="0">
+                                    删除
+                                </option>
+                            </select>
+                        </label>
                         <input type="submit" value="确认修改">
                     </li>
+                </form>
                 {/volist}
 
                 
@@ -50,15 +160,14 @@
 {/block}
 
 {block name='js'}
-<script type="text/javascript" src="/static/frontend/js/wooApi.js" ></script>
 
 <script type="text/javascript">
     $(function(){
 
-        // var result = wooApi.asyncT("{:url('api/wx/getGroups')}",'',function(msg){
-        //     var jsonMsg = JSON.parse(msg);
-        //     $('#wxGroups').text(jsonMsg.groups[0].count)
-        // });
+        $('.addMenu').on('click',function(){
+            let domID = $(this).attr('data');
+            $('.addMenu'+domID+'').show();
+        })
 
     })
 </script>
