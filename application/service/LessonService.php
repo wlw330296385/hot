@@ -37,11 +37,7 @@ class LessonService {
     // 分页获取课程
     public function getLessonListByPage($map=[], $order='id desc',$paginate=10,$field = ''){
         $res = Lesson::field($field)->where($map)->order($order)->paginate($paginate);
-        if($res){
-            return $res->toArray();
-        }else{
-            return $res;
-        }
+        return $res
     }
 
     public function getLessonListNoPage($map=[], $order='id desc',$paginate=10,$field = ''){

@@ -16,4 +16,45 @@ class Lesson extends Backend{
 	public function index(){
 		
 	}
+
+
+
+	//课程列表
+	public function lessonList(){
+		$LessonService = new \app\service\LessonService;
+		$lessonList = $LessonService->getLessonListByPage(['camp_id'=>$campInfo['id']]);
+
+
+        $this->assign('lessonList',$lessonList);
+        return view('Lesson/lessonList');
+	}
+
+
+	public function updateLesson(){
+		$lesson_id = input('param.lesson_id');
+        $LessonService = new \app\service\LessonService;
+        if(request()->isPost()){
+            $data = input('post.');
+            $Lesson = new \app\model\Lesson;
+            $result =$Lesson->save($data,['id'=>$lesson_id]);
+            if ($result) {
+                // $this->success('成功','lesson/index');
+                echo "<script>alert('操作成功');window.location.href='".url('lesson/index')."';</script>";
+            }else{
+                // $this->error('失败');
+                echo "<script>alert('操作失败')</script>";
+            }
+        }else{
+
+            $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+
+            // 课程分类
+            $GradeCategoryService = new \app\service\GradeCategoryService;
+            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+
+            $this->assign('lessonInfo',$lessonInfo);
+            $this->assign('gradeCategoryList',$gradeCategoryList);
+            return view('Lesson/updateLesson');
+        }
+	}
 }
