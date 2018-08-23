@@ -22,6 +22,9 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
         .btnTime { padding-right: 15px; }
+        .mui-col-xs-7 { padding-left: 8px; }
+        .mui-scroll-wrapper .mui-col-xs-3 { font-weight: bold; }
+        .camp-num { margin: 5px; text-align: right; }
     </style>
 </head>
 
@@ -39,17 +42,15 @@
                     <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
                     <div class="mui-media-body">
                         {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                        <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank} {$coachInfo.area}</p>
+                        <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
                     </div>
-                    <div class="camp-num mui-text-right">
+                    <div class="camp-num">
                         <ul>
                             <li>
-                                <div class="icons mui-inline">
-                                    <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
-                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
-                                </div><br />
-                                <label class="starScore"></label>&nbsp;
+                                总结算工资：￥1000000
+                            </li>
+                            <li>
+                                总课时收入：￥1000000
                             </li>
                         </ul>
                     </div>
@@ -61,21 +62,21 @@
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                     <span><text class="mtext">本</text>月课时收入</span>
-                    <div class="mui-media-body" id="scheduleSalary"></div>
+                    <div class="mui-media-body colororange" id="scheduleSalary"></div>
+                </a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                    <span><text class="mtext">本</text>月公益课收入</span>
+                    <div class="mui-media-body colororange" id="schoolSalary"></div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                     <span><text class="mtext">本</text>月结算工资</span>
-                    <div class="mui-media-body" id="settleSalary"></div>
-                </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4" style="border-right: none;"><a href="#">
-                    <span>结算工资总额</span>
-                    <div class="mui-media-body" id="settleTotal"></div>
+                    <div class="mui-media-body colororange" id="settleSalary"></div>
                 </a></li>
             </ul>
         </div>
         <div class="location-frame">
             
-            <span class="btnTime location-choise" id="mStatisticsTime" data-options='{"type":"month"}' style="float: left">{$year}年 {$month}月</span>
+            <span class="btnTime location-choise" id="mStatisticsTime" data-options='{"type":"month"}' style="float: left">{$year} - {$month} </span>
             <input id="year" type="hidden" name="year" value="{$year}">
             <input id="month" type="hidden" name="month" value="{$month}">
             <span class="location-choise">
@@ -89,9 +90,9 @@
         <ul class="mui-table-view mb">
             <li class="mui-table-view-cell">
                 <ul class="mui-row table">
-                    <li class="mui-col-xs-5">日期</li>
-                    <li class="mui-col-xs-5">班级</li>
-                    <li class="mui-col-xs-2 mui-text-center">工资</li>
+                    <li class="mui-col-xs-2" style="padding-left: 6px;">状态</li>
+                    <li class="mui-col-xs-7">日期 / 班级</li>
+                    <li class="mui-col-xs-3 mui-text-center">工资</li>
                 </ul>
             </li>
         </ul>
@@ -115,8 +116,6 @@
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
-<!--等级星星样式-->
-<script src="/static/frontend/js/starshow.js"></script>
 <script src="/static/frontend/js/feedback.js"></script>
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -149,10 +148,12 @@
                     var picker = new $.DtPicker(options);
                     picker.show(function (rs) {
                         //wTime.innerText = rs.text;
-                        wTime.innerText = rs.y.text+'年 '+rs.m.text+'月';
+                        wTime.innerText = rs.y.text+' - '+rs.m.text;
                         document.getElementById('month').value=rs.m.text;
                         document.getElementById('year').value=rs.y.text;
-                        salaryinList();
+                        
+                        scheduleSalaryinList();
+                        settleSalaryinList();
                         picker.dispose();
                     });
                 }, false);
@@ -163,12 +164,6 @@
 
     $(function() {
 
-
-        // 星星显示
-        var star = Math.round("{$coachInfo.star}" / "{$coachInfo.star_num}");
-        starShow(star);
-        if (isNaN(star)) { star = 3 }
-        $(".starScore").prepend('评分 ' + star + '.0');
 
         //获取列表
         scheduleSalaryinList();
@@ -189,13 +184,14 @@
         var year = $('input[name=year]').val();
         var month = $('input[name=month]').val();
         var coachID = "{$coachInfo.id}";
+        var campID = "{$camp_id}";
 
         var mText = month.replace(/\b(0+)/gi,"");
 
 
         mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
             data: {
-                camp_id: "{$camp_id}",
+                camp_id: campID,
                 y: year,
                 m: month,
                 orderby:'create_time',
@@ -214,25 +210,38 @@
                         var lessonTime = '';
                         var salaryCount = 0;
                         var salaryNum = 0;
+                        var noSettle = 0;
+                        var urls = '#';
                         for (var i=0; i<data.data.length;i++) {
-                            salaryCount += parseInt(data.data[i].s_coach_salary);
-                            lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
 
-                            if(coachID==data.data[i].coach_id){
-                                salaryNum = data.data[i].s_coach_salary
+                            //刷选已结算的，并统计未结算的记录数用于下拉菜单上的统计扣除
+                            if(data.data[i].is_settle==1){
+
+                                salaryCount += parseInt(data.data[i].s_coach_salary);
+                                lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
+
+                                if(coachID==data.data[i].coach_id){
+                                    salaryNum = data.data[i].s_coach_salary
+                                }else{
+                                    salaryNum = data.data[i].s_assistant_salary
+                                }
+
+                                urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data[i].schedule_id + '/camp_id/' + campID;
+
+                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row table">';
+                                newli += '<li class="mui-col-xs-2"><font class="tipCorner bgblue">已结算</font></li><li class="mui-col-xs-7">'+ lessonTime + '<br />'+data.data[i].grade+'</li>';
+                                newli += '<li class="mui-col-xs-3 mui-text-center">'+ salaryNum +'</li>';
+                                newli += '</ul></a></li>';
+
                             }else{
-                                salaryNum = data.data[i].s_assistant_salary
-                            }
 
-                            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
-                            newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
-                            newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
-                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ salaryNum +'</li>';
-                            newli += '</ul></a></li>';
+                                noSettle+=1; 
+
+                            }
                         }
                         
                         $('#settleSalary').text(salaryCount);
-                        $('.settleListCount').text('结算工资（'+data.data.length+'）');
+                        $('.settleListCount').text('结算工资（'+(data.data.length-noSettle)+'）');
                     } else {
                         newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                         $('#settleSalary').text(0);
@@ -257,10 +266,11 @@
         var year = $('input[name=year]').val();
         var month = $('input[name=month]').val();
         var coachID = "{$coachInfo.id}";
+        var campID = "{$camp_id}";
 
         mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
             data: {
-                camp_id: "{$camp_id}",
+                camp_id: campID,
                 y: year,
                 m: month,
                 orderby: 'schedule_time',
@@ -279,24 +289,42 @@
                         var lessonTime = '';
                         var salaryCount = 0;
                         var salaryNum = 0;
+                        var schoolCount = 0;
+                        var scheduleTips = '';
+                        var urls = '#';
+
                         for (var i=0; i<data.data.length;i++) {
-                            salaryCount += parseInt(data.data[i].s_coach_salary);
                             lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
+
+                            if(data.data[i].is_school==1){
+                                scheduleTips = '<font class="tipCorner bggreen">公益课</font>';
+                            }else if(data.data[i].is_settle==1){
+                                scheduleTips = '<font class="tipCorner bgblue">已结算</font>';
+                            }else{
+                                scheduleTips = '<font class="tipCorner bggray">未结算</font>';
+                            }
 
                             if(coachID==data.data[i].coach_id){
                                 salaryNum = data.data[i].coach_salary+data.data[i].salary_base*data.data[i].students
                             }else{
                                 salaryNum = data.data[i].assistant_salary+data.data[i].salary_base*data.data[i].students
                             }
+                            salaryCount += parseInt(salaryNum);
 
-                            newli += '<li class="mui-table-view-cell"><a class=""><ul class="mui-row table">';
-                            newli += '<li class="mui-col-xs-5">'+ lessonTime +'</li>';
-                            newli += '<li class="mui-col-xs-5 mui-ellipsis">'+ data.data[i].grade +'</li>';
-                            newli += '<li class="mui-col-xs-2 mui-text-center">'+ salaryNum +'</li>';
+                            if(data.data[i].is_school==1){
+                                schoolCount+=salaryNum
+                            }
+
+                            urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data[i].schedule_id + '/camp_id/' + campID;
+                           
+                            newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row table">';
+                            newli += '<li class="mui-col-xs-2">'+scheduleTips+ '</li><li class="mui-col-xs-7">'+ lessonTime +'<br />'+data.data[i].grade+'</li>';
+                            newli += '<li class="mui-col-xs-3 mui-text-center">'+ salaryNum +'</li>';
                             newli += '</ul></a></li>';
                         }
                         
                         $('#scheduleSalary').text(salaryCount);
+                        $('#schoolSalary').text(schoolCount);
                         $('.scheduleListCount').text('课时收入（'+data.data.length+'）');
 
                     } else {
