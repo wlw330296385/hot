@@ -17,7 +17,7 @@ class Lesson extends Backend{
 		
 	}
 
-    public function createteLesson(){
+    public function createLesson(){
 
         if(request()->isPost()){
             $data = input('post.');
@@ -25,7 +25,7 @@ class Lesson extends Backend{
             $result = $LessonService->createLesson($data);
             $this->success($result);
         }else{
-            return view('Lesson/createteLesson');
+            return view('Lesson/createLesson');
         }  
     }
 
@@ -39,6 +39,12 @@ class Lesson extends Backend{
         return view('Lesson/lessonList');
 	}
 
+
+//课程列表
+public function lessonInfo(){
+    $LessonService = new \app\service\LessonService;
+    return view('Lesson/lessonInfo');
+}
 
 	public function updateLesson(){
 		$lesson_id = input('param.lesson_id');
