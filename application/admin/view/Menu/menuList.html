@@ -1,0 +1,65 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+
+
+<div class="col-md-12 col-sm-12">
+    <!-- Info boxes -->
+    <div class="row">
+        {volist name="menuList" id="vol"}
+            <ul>
+                <label>{$vol.title} </label>   <button>添加子菜单</button>
+                {volist name="vol.daughter" id="v"}
+                    <li>----  
+                        <label>标题
+                        <input type="text" name="title" value="{$v.title}">
+                        </label>
+                        <label>地址
+                        <input type="text" name="url_value"  value="{$v.url_value}">
+                        </label>
+                        <label>排序
+                              <input type="number" name="sort"  value="{$v.sort}" >
+                        </label>
+
+                        <label>是否隐藏
+                            <select name='online_hide'>
+                                <option value="1">
+                                    显示
+                                </option>
+                                <option value="0">
+                                    隐藏
+                                </option>
+                            </select>
+                        </label>
+                        <input type="hidden" name="id" value="{$v.id}">
+                        <input type="submit" value="确认修改">
+                    </li>
+                {/volist}
+
+                
+            </ul>
+        {/volist}
+    </div>
+    <!-- /.row -->
+    </div>
+</div>
+
+
+
+
+{/block}
+
+{block name='js'}
+<script type="text/javascript" src="/static/frontend/js/wooApi.js" ></script>
+
+<script type="text/javascript">
+    $(function(){
+
+        // var result = wooApi.asyncT("{:url('api/wx/getGroups')}",'',function(msg){
+        //     var jsonMsg = JSON.parse(msg);
+        //     $('#wxGroups').text(jsonMsg.groups[0].count)
+        // });
+
+    })
+</script>
+{/block}
