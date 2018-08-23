@@ -1,0 +1,281 @@
+{extend name="layout/common"/} {block name="css"}
+<style>
+    .img-md {
+        float: none;
+    }
+</style>
+{/block} {block name="page-content"}
+<div class="row">
+    <div class="col-md-7 col-sm-7">
+        <div class="box no-border">
+            <form role="form" action="" method="post" enctype="multipart/form-data">
+                {:token()}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="">课程名称</label>
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
+                    </div>
+                    <div class="form-group">
+                        <label for="">课程类型</label>
+                        <select class="form-control" name="category">
+                            <option value="1">平台使用指南</option>
+                            <option value="2">单独页面</option>
+                            <option value="3">新闻</option>
+                        </select>
+                        <input type="hidden" name="gradecate" class="gradecate data" value="">
+                        <input type="hidden" name="gradecate_id" class="gradecate_id data" value="">
+                        <input type="hidden" name="gradecate_setion" class="gradecate_setion data" value="">
+                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">课程单价</label>
+                        <input type="text" class="form-control" placeholder="请输入课程单价" name="cost">
+                    </div>
+                    <div class="form-group">
+                        <label for="">课程数量</label>
+                        <input type="text" class="form-control" placeholder="请输入课程数量" name="doms">
+                    </div>
+                    <div class="form-group">
+                        <label for="">训练周期</label>
+                        <select class="form-control" name="week">
+                            <option value="不限">不限</option>
+                            <option value="周日">周日</option>
+                            <option value="周一">周一</option>
+                            <option value="周二">周二</option>
+                            <option value="周三">周三</option>
+                            <option value="周四">周四</option>
+                            <option value="周五">周五</option>
+                            <option value="周六">周六</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">训练时间</label>
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time">
+                    </div>
+                    <div class="form-group">
+                        <label for="">所属地区</label>
+                        <input type="text" class="form-control" placeholder="请输入所属地区" name="address">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#courtList">
+                            请选择训练地点
+                        </button>
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="court">
+                        <input type="hidden" name="court_id" class="court_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">具体地址</label>
+                        <input type="text" class="form-control" placeholder="请输入具体地址" name="location">
+                    </div>
+                    <div class="form-group">
+                        <label for="">最少开课人数</label>
+                        <input type="text" class="form-control" placeholder="请输入最少开课人数" name="min">
+                    </div>
+                    <div class="form-group">
+                        <label for="">最多开课人数</label>
+                        <input type="text" class="form-control" placeholder="请输入最多开课人数" name="max">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
+                            请选择主教练
+                        </button>
+                        <input type="text" class="form-control" placeholder="请输入主教练" name="coach">
+                        <input type="hidden" name="coach_id" class="coach_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
+                            请选择助理教练
+                        </button>
+                        <input type="text" class="form-control" placeholder="请输入助理教练" name="assistants">
+                        <input type="hidden" name="assistants_id" class="assistants_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#coachList">
+                            请选择领队
+                        </button>
+                        <input type="text" class="form-control" placeholder="请输入领队" name="leader">
+                        <input type="hidden" name="leader_id" class="leader_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                            请选择班主任
+                        </button>
+                        <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
+                        <input type="hidden" name="teacher_id" class="teacher_id data" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">课程封面</label>
+                        <div class="box-header">
+                            <div class="col-sm-12 col-md-12">
+                                <a class="btn-banner" href="#" title="点击替换图片">
+                                    <img class="img-thumbnail" id="uploader-preview1" src="">
+                                    <div class="row">
+                                        <div id="filePicker1">选择上传</div>
+                                    </div>
+                                    <input id="uploader-input1" type="hidden" name="cover" value="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">咨询电话</label>
+                        <input type="text" class="form-control" placeholder="请输入咨询电话" name="telephone">
+                    </div>
+                    <div class="form-group">
+                        <label for="">是否上架</label>
+                        <select class="form-control" name="status">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">设为私密课程</label>
+                        <select class="form-control" name="isprivate">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">备注</label>
+                        <input type="text" class="form-control" placeholder="请输入备注信息" name="remarks">
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">提 交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 训练地点 -->
+<div class="modal fade" id="courtList">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">场地列表</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">场地</li>
+                    <li class="list-group-item">场地</li>
+                    <li class="list-group-item">场地</li>
+                    <li class="list-group-item">场地</li>
+                    <li class="list-group-item">场地</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 教练列表  -->
+<div class="modal fade" id="coachList">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">教练列表</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">教练1</li>
+                    <li class="list-group-item">教练2</li>
+                    <li class="list-group-item">教练3</li>
+                    <li class="list-group-item">教练4</li>
+                    <li class="list-group-item">教练5</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 助教练 -->
+<div class="modal fade" id="assistantsList">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">教练列表</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">助教练1</li>
+                    <li class="list-group-item">助教练</li>
+                    <li class="list-group-item">助教练</li>
+                    <li class="list-group-item">助教练</li>
+                    <li class="list-group-item">助教练</li>
+                </ul>
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+<!-- 领队 -->
+<div class="modal fade" id="leaderList">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">领队列表</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">领队</li>
+                    <li class="list-group-item">领队</li>
+                    <li class="list-group-item">领队</li>
+                    <li class="list-group-item">领队</li>
+                    <li class="list-group-item">领队</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 班主任 -->
+<div class="modal fade" id="teachList">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">班主任列表</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">班主任</li>
+                    <li class="list-group-item">班主任</li>
+                    <li class="list-group-item">班主任</li>
+                    <li class="list-group-item">班主任</li>
+                    <li class="list-group-item">班主任</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block} {block name='js'}
+
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/uploadImg',['dir'=>'article'])}";
+</script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/UEditor/ueditor.all.js"></script>
+
+<script type="text/javascript">
+    var ue_info = UE.getEditor("content");
+</script>
+{/block}
