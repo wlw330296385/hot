@@ -61,14 +61,14 @@
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
-                    <span><text class="mtext">本</text>月课时收入</span>
+                    <span><text class="mtext">本</text>月课时收益</span>
                     <div class="mui-media-body colororange" id="scheduleSalary"></div>
                 </a></li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
                     <span><text class="mtext">本</text>月公益课收入</span>
                     <div class="mui-media-body colororange" id="schoolSalary"></div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4" style="border-right: none;"><a href="#">
                     <span><text class="mtext">本</text>月结算工资</span>
                     <div class="mui-media-body colororange" id="settleSalary"></div>
                 </a></li>
@@ -82,7 +82,7 @@
             <span class="location-choise">
                  <select name="salaryType" id="salaryType">
                         <option value="settleSalaryList" class="settleListCount">结算工资（0）</option>
-                        <option value="scheduleSalaryList" class="scheduleListCount">课时收入（0）</option>
+                        <option value="scheduleSalaryList" class="scheduleListCount">课时收益（0）</option>
                 </select>
             </span>
         </div>
@@ -110,13 +110,9 @@
 
 </div>
 
-<div class="hide">
-    <ul class="mui-table-view" id="sourceList"></ul>
-</div>
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
-<script src="/static/frontend/js/feedback.js"></script>
 <script src="/static/frontend/js/mui.picker.min.js"></script>
 <script src="/static/frontend/js/mui.poppicker.js"></script>
 <script src="/static/frontend/js/wooApi.js"></script>
@@ -154,6 +150,11 @@
                         
                         scheduleSalaryinList();
                         settleSalaryinList();
+
+                        //滚动到低部
+                        mui('.mui-scroll-wrapper').scroll().refresh();
+                        mui(".mui-scroll-wrapper").scroll().scrollTo(0,0,100);
+
                         picker.dispose();
                     });
                 }, false);
@@ -162,23 +163,6 @@
         });
     })(mui, document);
 
-    $(function() {
-
-
-        //获取列表
-        scheduleSalaryinList();
-        settleSalaryinList();
-
-        $("#salaryType").on('change', '', function () {
-           var salaryType = '#'+$('#salaryType option:selected').val();
-           $(".sList").hide();
-           $(salaryType).show();
-
-            //滚动到低部
-            mui('.mui-scroll-wrapper').scroll().refresh();
-            mui(".mui-scroll-wrapper").scroll().scrollToTop(100);
-        })
-    });
 
     function settleSalaryinList() {
         var year = $('input[name=year]').val();
@@ -254,11 +238,13 @@
                     $('#settleSalary').text(0);
                 }
                 $(".mtext").text(mText);
+
             },
             error:function(xhr,type,errorThrown){
                 mui.toast('网络异常,请稍候再试');
             }
         })
+
     }
 
 
@@ -325,11 +311,12 @@
                         
                         $('#scheduleSalary').text(salaryCount);
                         $('#schoolSalary').text(schoolCount);
-                        $('.scheduleListCount').text('课时收入（'+data.data.length+'）');
+                        $('.scheduleListCount').text('课时收益（'+data.data.length+'）');
 
                     } else {
                         newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                         $('#scheduleSalary').text(0);
+                        $('#schoolSalary').text(0);
                     }
                     //console.log(newli);
                     $('#scheduleSalaryList').html(newli);
@@ -337,6 +324,7 @@
                     newli = '<li class="nodata settle thismonth"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                     $('#scheduleSalaryList').html(newli);
                     $('#scheduleSalary').text(0);
+                    $('#schoolSalary').text(0);
                 }
             },
             error:function(xhr,type,errorThrown){
@@ -345,6 +333,25 @@
         })
     }
 
+
+    $(function() {
+
+
+        //获取列表
+        scheduleSalaryinList();
+        settleSalaryinList();
+
+        $(document).on('change', '#salaryType', function () {
+           var salaryType = '#'+$('#salaryType option:selected').val();
+           $(".sList").hide();
+           $(salaryType).show();
+
+            //滚动到低部
+            mui('.mui-scroll-wrapper').scroll().refresh();
+            mui(".mui-scroll-wrapper").scroll().scrollTo(0,0,100);
+
+        })
+    });
 
 </script>
 </html>
