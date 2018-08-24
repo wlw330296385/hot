@@ -18,6 +18,7 @@
         .coach .table{
             font-size: 14px !important;
         }
+        .btnTime { text-align: center; font-size: 14px; }
     </style>
 </head>
 
@@ -27,21 +28,19 @@
         <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">教练员工资列表</h1>
+        <h1 class="mui-title"><text class="colororange" id="yearMonth">{$y}年 {$m}月</text> 工资列表</h1>
     </header>
 
     <div class="mui-content list">
 
+
         <div class="list camp-list camp-lesson-list detalis-list coach">
-                <div class="location-frame">
-                    <label>当前教练员：<text class="colororange">{$coachCount}</text> 人</label>
-                    <span class="btnTime location-choise colororange" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
-                </div>
+               
 
                 <ul class="mui-table-view detalis-list list">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-3">教练员</li>
+                            <li class="mui-col-xs-3"> 教练员 <span class="mui-badge mui-badge-primary">{$coachCount}</span></li>
                             <li class="mui-col-xs-3 mui-text-center">课时收益</li>
                             <li class="mui-col-xs-3 mui-text-center">公益课时</li>
                             <li class="mui-col-xs-3 mui-text-center">结算工资</li>
@@ -52,7 +51,7 @@
         </div>
 
 
-         <div class="mui-scroll-wrapper coach" style="margin-top:142px; ">
+         <div class="mui-scroll-wrapper coach" style="margin-top:91px;margin-bottom:45px; ">
             <div class="mui-scroll">
                 <ul class="mui-table-view">
                     {volist name="coachList" id="vol"}
@@ -61,7 +60,7 @@
                             <ul class="mui-row table">
                                 <li class="mui-col-xs-3">{$vol.coach}</li>
                                 <li class="mui-col-xs-3 mui-text-center">{$vol.s}</li>
-                                <li class="mui-col-xs-3 mui-text-center">{$vol.s}</li>
+                                <li class="mui-col-xs-3 mui-text-center">{$vol.sss}</li>
                                 <li class="mui-col-xs-3 mui-text-center">{$vol.ss}</li>
                             </ul>
                         </a>
@@ -72,6 +71,13 @@
         </div>
 
     </div>
+
+    <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 btnTime" data-options='{"type":"month"}'>
+                <span id="selectYM">{$y}年 {$m}月</span>
+                <span class="f12 colorgray" style="margin-left:10px">（ 切换月份 )</span>
+            </li>
+        </ul>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
@@ -104,6 +110,7 @@
             btnTimes.each(function (i, btn) {
                 btn.addEventListener('tap', function () {
                     var optionsJson = this.getAttribute('data-options') || '{}';
+                    var selectYM = doc.getElementById('selectYM');
                     var options = JSON.parse(optionsJson);
                     var wTime = this;
                     var id = this.getAttribute('id');
@@ -111,7 +118,7 @@
 
                     picker.show(function (rs) {
                         //wTime.innerText = rs.text;
-                        wTime.innerText = rs.y.text + '年 ' + rs.m.text + '月';                       
+                        selectYM.innerText = rs.y.text + '年 ' + rs.m.text + '月';                       
                         picker.dispose();
                         window.location.href = "{:url('salaryin/salaryOfCamp',['camp_id'=>$campInfo['id']])}/year/"+rs.y.text+"/month/"+rs.m.text;
                     });
