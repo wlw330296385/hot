@@ -24,9 +24,9 @@ class Lesson extends Backend{
             $LessonService = new \app\service\LessonService;
             $result = $LessonService->createLesson($data);
             if ($result['code'] == 200) {
-                $this->success('操作成功');
+                $this->success($result['msg']);
             }else{
-                $this->error('操作失败');
+                $this->error($result['msg']);
             }
         }else{
 
@@ -69,11 +69,9 @@ class Lesson extends Backend{
             $data = input('post.');
             $result = $LessonService->updateLesson($data,$lesson_id);
             if ($result['code'] == 200) {
-                // $this->success('成功','lesson/index');
-                echo "<script>alert('操作成功');window.location.href='".url('lesson/index')."';</script>";
+                $this->success($result['msg']);
             }else{
-                // $this->error('失败');
-                echo "<script>alert('操作失败')</script>";
+                $this->error($result['msg']);
             }
         }else{
 
