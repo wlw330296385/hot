@@ -29,8 +29,9 @@ class Salaryin extends Base{
         foreach ($coachList as $key => $value) {
             $coachIDs[] = $value['id'];
             $memberIDs[] = $value['member_id'];
-            $coachList[$key]['ss'] = 0;
-            $coachList[$key]['s'] = 0;
+            $coachList[$key]['ss'] = 0;//结算工资
+            $coachList[$key]['s'] = 0;//课时工资
+            $coachList[$key]['sss'] = 0;//公益课工资
         }
 
         // 工资总额
@@ -57,7 +58,7 @@ class Salaryin extends Base{
 
         // 获取课时工资
         $sacheduleSalaryList = db('schedule')
-                ->field('coach_salary,assistant_salary,salary_base,students,coach_id,assistant_id')
+                ->field('coach_salary,assistant_salary,salary_base,students,coach_id,assistant_id,is_school')
                 ->where(['status'=>1,'lesson_time'=>['between',[$between['start'],$between['end']]],'camp_id'=>$camp_id]) 
                 ->select();
 
@@ -72,13 +73,25 @@ class Salaryin extends Base{
 
         foreach ($coachList as $k => $val) {
             foreach ($sacheduleSalaryList as $key => $value) {
-                if($val['member_id'] == $value['coach_id']){
-                    $coachList[$k]['s']+=$value['coach_salary']+$value['salary_base']*$value['students'];
-                }   
+                // 这里判断是否公益课
+                if($value['is_school'] == 1){
+                    if($val['member_id'] == $value['coach_id']){
+                        $coachList[$k]['sss']+=$value['coach_salary']+$value['salary_base']*$value['students'];
+                    }   
 
-                if(in_array($val['member_id'],$value['a_ids'])){
-                    $coachList[$k]['s']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
+                    if(in_array($val['member_id'],$value['a_ids'])){
+                        $coachList[$k]['sss']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
+                    }
+                }else{
+                    if($val['member_id'] == $value['coach_id']){
+                        $coachList[$k]['s']+=$value['coach_salary']+$value['salary_base']*$value['students'];
+                    }   
+
+                    if(in_array($val['member_id'],$value['a_ids'])){
+                        $coachList[$k]['s']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
+                    }
                 }
+                
             }  
         }   
 
@@ -133,7 +146,7 @@ class Salaryin extends Base{
                     ->sum('s.coach_salary+s.salary_base*s.students');
         $totalScheduleSalary = $totalScheduleSalary1+$totalScheduleSalary2;
 
-        
+
         $this->assign('camp_id', $camp_id);
         $this->assign('year', $year);
         $this->assign('month', $month);
