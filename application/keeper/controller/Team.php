@@ -605,19 +605,21 @@ class Team extends Base
     public function matchinfoofteam()
     {
         $match_id = input('match_id', 0);
+
         $matchS = new MatchService();
         $teamS = new TeamService();
         $refereeS = new RefereeService();
-        // 比赛详情
-        $matchInfo = $matchS->getMatch(['id' => $match_id]);
-
-        // 输出比赛战绩数据
-        $map['match_id'] = $matchInfo['id'];
-        if ($this->team_id) {
-            $map['team_id'] = $this->team_id;
+        
+        if (empty($this->memberInfo['id'])) {
+            $this->error('您没有权限');
         }
+
+        $map['id'] = $match_id;
         $matchRecordInfo = $matchS->getMatchRecord($map);
-        if ($matchRecordInfo) {
+
+        if (!empty($matchRecordInfo)) {
+            $matchInfo = $matchS->getMatch(['id' => $matchRecordInfo["match_id"]]);
+            
             if (!empty($matchRecordInfo['album'])) {
                 $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
             }
