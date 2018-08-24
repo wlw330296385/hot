@@ -1001,4 +1001,15 @@ class MatchService {
     
     }
 
+    // 比赛列表
+    public function getMatchList($map, $page=1, $order='id desc', $limit=10) {
+        $model = new Match();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
 }

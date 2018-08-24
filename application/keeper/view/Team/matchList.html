@@ -64,12 +64,12 @@
                         <strong class="f16">{$teamInfo.name}</strong>
                         <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
                         <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
-                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                            <strong class="colororange">{$teamStats.team_follow_count}</strong>
                         </p>
                     </div>
                     <div class="price-frame">
                         <p class="f12" style="margin-top:37px">球队成员：
-                            <b class="colororange f18">{$teamInfo.member_num}</b>人</p>
+                            <b class="colororange f18">{$teamStats.team_member_count}</b>人</p>
                     </div>
                 </li>
             </ul>
@@ -90,25 +90,25 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>场次</span>
-                            <div class="mui-media-body colorred">{$teamInfo.match_num}</div>
+                            <div class="mui-media-body colorred match_total">{$teamMatchStats.total}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜</span>
-                            <div class="mui-media-body colorred">{$teamInfo.match_win}</div>
+                            <div class="mui-media-body colorred match_win">{$teamMatchStats.win}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>负</span>
-                            <div class="mui-media-body colorred">{$teamInfo.match_lose}</div>
+                            <div class="mui-media-body colorred match_lose">{$teamMatchStats.lose}</div>
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="#">
                             <span>胜率</span>
-                            <div class="mui-media-body colorred">{$teamInfo.win_rate}</div>
+                            <div class="mui-media-body colorred match_win_rate">{$teamMatchStats.win_rate}</div>
                         </a>
                     </li>
                 </ul>
@@ -200,6 +200,7 @@
             //选择年份
             $(document).on('tap', '.mui-dtpicker-header .mui-btn', function () {
                 sYear = $(".year").text();
+                updateMatchStats();
                 searchToList();
             });
 
@@ -255,6 +256,39 @@
             }
 
             //接口获取数据并追加到页面
+            var updateMatchStats = function () {
+                //搜索关键字不能完全为空，否则查询为空
+                var url = "{:url('api/Team/getMatchStats')}";
+                var team_id = "{$team_id}"
+                var data = {
+                    team_id: "{$team_id}",
+                    year: sYear,
+                }
+                mui.ajax({
+                    url: url,
+                    data: data,
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            console.log(data.data.total);
+                            $(".match_total").html(data.data.total);
+                            $(".match_win").html(data.data.win);
+                            $(".match_lose").html(data.data.lose);
+                            $(".match_win_rate").html(data.data.win_rate);
+                        }
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+            };
+
+            //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/MatchRecord/getAllTypeMatchWithSN','','',true)}" + '/?page=' + page;
@@ -289,20 +323,23 @@
 
                             for (var i = 0; i <= data.data.length - 1; i++) {
                                 // 将时间戳转成日期格式
-                                var matchTimeM = getTimeMDCn(data.data[i].match_time);
-                                var matchTimeY = getTimeYearCn(data.data[i].match_time);
+                                var time = data.data[i].match_time;
+                                var matchTimeY = time.substr(0,4);
+                                var matchTimeM = time.substr(5,2);
+                                var matchTimeD = time.substr(8,2);
                                 var urls = "{:url('team/teamData')}" + '/match_id/' + data.data[i].match_id + '/team_id/' + "{$team_id}";
 
                                 newli += `<li class="mui-table-view-cell">
                                             <a href="${urls}">
                                                 <ul class="mui-row" style="padding:0">`;
-                                if (data.data[i].home_score > data.data[i].away_score) {
+                                if ((data.data[i].home_team_id == team_id && data.data[i].home_score > data.data[i].away_score) || 
+                                    (data.data[i].away_team_id == team_id && data.data[i].away_score > data.data[i].home_score)) {
                                     newli += `<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p class="colororange">${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
-                                                    <p class="colororange">${matchTimeY}</p>
-                                                    <p class="colororange">${matchTimeM}</p>
+                                                    <p class="colororange">${matchTimeY}年</p>
+                                                    <p class="colororange">${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p class="colororange">${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
@@ -313,13 +350,14 @@
                                                 <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p class="colororange">胜</p>
                                                 </li>`
-                                } else if (data.data[i].home_score < data.data[i].away_score) {
+                                } else if ((data.data[i].home_team_id == team_id && data.data[i].home_score < data.data[i].away_score) || 
+                                    (data.data[i].away_team_id == team_id && data.data[i].away_score < data.data[i].home_score)) {
                                     newli += `<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                                     <p>${data.data[i].s_num}</p>
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
-                                                    <p>${matchTimeM}</p>
+                                                    <p>${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>
@@ -337,7 +375,7 @@
                                                 </li>
                                                 <li class="mui-col-xs-3 mui-col-sm-3">
                                                     <p>${matchTimeY}</p>
-                                                    <p>${matchTimeM}</p>
+                                                    <p>${matchTimeM}月${matchTimeD}日</p>
                                                 </li>
                                                 <li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">
                                                     <p>${data.data[i].away_team_id == team_id ? data.data[i].home_team : data.data[i].away_team}</p>

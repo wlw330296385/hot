@@ -46,26 +46,29 @@ class MatchRecord extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
 
-        // 1.用户的所有球队比赛 2.用户其中一只球队的比赛
-        if (!empty(input('param.team_id'))) {
-            $map["team_id"] = intval(input('param.team_id'));
-        }
-
-        // 确保该球员是 在队 的状态
-        $map["member_id"] = $this->memberInfo['id'];
-        $map["status"] = 1;
-        $teamMemberS = new TeamMemberService();
-        $res = $teamMemberS->myTeamList($map);
-        if (empty($res)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-        }
-
         // 所在球队数组
         $myTeamIdArray  = array();
-        foreach($res as $k => $row) {
-            array_push($myTeamIdArray, $row["team_id"]);
+
+        // 1.用户的所有球队比赛 2.一只球队的比赛
+        if (!empty(input('param.team_id'))) {
+            array_push($myTeamIdArray, intval(input('param.team_id')));
+        } else {
+            // 确保该球员是 在队 的状态
+            $map["member_id"] = $this->memberInfo['id'];
+            $map["status"] = 1;
+            $teamMemberS = new TeamMemberService();
+            $res = $teamMemberS->myTeamList($map);
+            if (empty($res)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            }
+
+            // 所在球队数组
+            $myTeamIdArray  = array();
+            foreach($res as $k => $row) {
+                array_push($myTeamIdArray, $row["team_id"]);
+            }
+            unset($map);
         }
-        unset($map);
 
         //有无传入年份
         if (!empty(input('param.year'))) {

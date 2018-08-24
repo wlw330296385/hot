@@ -24,42 +24,27 @@
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title">教练员工资月表</h1>
+        <h1 class="mui-title">教练员工资列表</h1>
     </header>
 
     <div class="mui-content list">
 
         <div class="list camp-list camp-lesson-list detalis-list coach">
-                <div class="nav-list mb">
-                    <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                            <a href="#">
-                                <span>教练人数</span>
-                                <div class="mui-media-body">{$coachCount}</div>
-                            </a>
-                        </li>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
-                            <a href="#">
-                                <span>工资总额</span>
-                                <div class="mui-media-body" id="salarysum"></div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="location-frame">
-                    <label>当前年月</label>
-                    <span class="btnTime location-choise" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
+                    <label>当前教练员：<text class="colororange">{$coachCount}</text> 人</label>
+                    <span class="btnTime location-choise colororange" id="mStatisticsTime" data-options='{"type":"month"}'>{$y}年 {$m}月</span>
                 </div>
 
                 <ul class="mui-table-view detalis-list list">
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
-                            <li class="mui-col-xs-4">教练员</li>
-                            <li class="mui-col-xs-4 mui-text-center">课时收入</li>
-                            <li class="mui-col-xs-4 mui-text-center">结算工资</li>
+                            <li class="mui-col-xs-3">教练员</li>
+                            <li class="mui-col-xs-3 mui-text-center">课时收益</li>
+                            <li class="mui-col-xs-3 mui-text-center">公益课时</li>
+                            <li class="mui-col-xs-3 mui-text-center">结算工资</li>
                         </ul>
                     </li>
                 </ul>
@@ -67,16 +52,17 @@
         </div>
 
 
-         <div class="mui-scroll-wrapper coach" style="margin-top:218px; ">
+         <div class="mui-scroll-wrapper coach" style="margin-top:142px; ">
             <div class="mui-scroll">
                 <ul class="mui-table-view">
                     {volist name="coachList" id="vol"}
                      <li class="mui-table-view-cell">
                         <a class="mui-navigate-right" href="{:url('salaryin/salaryinfo')}/camp_id/{$camp_id}/member_id/{$vol.member_id}/month/{$m}/year/{$y}">
                             <ul class="mui-row table">
-                                <li class="mui-col-xs-4">{$vol.coach}</li>
-                                <li class="mui-col-xs-4 mui-text-center">{$vol.s}</li>
-                                <li class="mui-col-xs-4 mui-text-center">{$vol.ss}</li>
+                                <li class="mui-col-xs-3">{$vol.coach}</li>
+                                <li class="mui-col-xs-3 mui-text-center">{$vol.s}</li>
+                                <li class="mui-col-xs-3 mui-text-center">{$vol.s}</li>
+                                <li class="mui-col-xs-3 mui-text-center">{$vol.ss}</li>
                             </ul>
                         </a>
                     </li>
