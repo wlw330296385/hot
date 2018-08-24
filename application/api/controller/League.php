@@ -352,12 +352,26 @@ class League extends Base
             // 查询条件组合end
             // 获取联赛列表
             $matchS = new MatchService();
-            $leagueS = new LeagueService();
-            $result = $matchS->matchList($data, $page);
-            if (!$result) {
+            // $leagueS = new LeagueService();
+            $res = $matchS->getMatchList($data, $page, 'start_time desc');
+
+            $now = date("Y-m-d H:i:s");
+            foreach ($res as $k => $row) {
+                if ($now < $res[$k]['reg_start_time']) {
+                    $res[$k]["cansignup"] = -1;  // 未开始报名
+                } else if ($now >= $res[$k]['reg_start_time'] && $now < $res[$k]['reg_end_time']){
+                    $res[$k]["cansignup"] = 0;  // 可报名
+                } else if ($now > $res[$k]['reg_end_time'] && $now <= $res[$k]['end_time']) {
+                    $res[$k]["cansignup"] = 1;  // 进行中
+                } else if ($now > $res[$k]['end_time'] ) {
+                    $res[$k]["cansignup"] = 2;  // 已结束
+                }
+            }
+
+            if (!$res) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             } else {
-                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
+                $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res];
             }
             return json($response);
         } catch (Exception $e) {

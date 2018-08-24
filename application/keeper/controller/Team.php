@@ -642,19 +642,19 @@ class Team extends Base
         ])->select();
 
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
-        $teamMemberInfo = $teamS->getTeamMemberInfo([
-            'team_id' => $this->team_id,
-            'member_id' => $this->memberInfo['id'],
-            'status' => 1
-        ]);
-        if ($teamMemberInfo) {
-            $teamrole = $teamS->checkMemberTeamRole($matchInfo['team_id'], $this->memberInfo['id']);
-        } else {
+        // $teamMemberInfo = $teamS->getTeamMemberInfo([
+        //     'team_id' => $this->team_id,
+        //     'member_id' => $this->memberInfo['id'],
+        //     'status' => 1
+        // ]);
+
+        $teamrole = $teamS->checkMemberTeamRole($this->team_id, $this->memberInfo['id']);
+        if (empty($teamrole)) {
             $teamrole = -1;
         }
 
         // 当前球队成员总数
-        $countTeamMember = $teamS->getTeamMemberCount(['team_id' => $matchInfo['team_id']]);
+        $countTeamMember = $teamS->getTeamMemberCount(['team_id' => $this->team_id]);
 
 
         // 获取会员的已审核裁判员信息
