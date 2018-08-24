@@ -73,6 +73,9 @@
                         <div class="form-group" style="position: relative;">
                             <label for="">所属地区</label>
                             <input type="text" id="city-picker3" class="form-control" placeholder="请选择所属地区" name="address" data-toggle="city-picker">
+                            <input type="hidden" name="province" value="">
+                            <input type="hidden" name="city" value="">
+                            <input type="hidden" name="area" value="">
                         </div>
                     </div>
                     <div class="form-group">
@@ -568,10 +571,20 @@
             autoclose: true,
         });
 
-        $(".lessonType").on("change",function () {
+        $(document).on("click", ".province a", function () {
+            $("input[name=province]").val($(this).text());
+        })
+        $(document).on("click", ".city a", function () {
+            $("input[name=city]").val($(this).text());
+        })
+        $(document).on("click", ".district a", function () {
+            $("input[name=area]").val($(this).text());
+        })
+
+        $(".lessonType").on("change", function () {
             var gradecate_setion = $(this).children().attr("label");
             var gradecate_setion_id = $(this).children().attr("data-gradecate_setion_id");
-            var gradecate =$(this).children().children('option:selected').text();
+            var gradecate = $(this).children().children('option:selected').text();
             var gradecate_id = $(this).children().children('option:selected').val();
             $("input[name='gradecate_setion']").val(gradecate_setion);
             $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
