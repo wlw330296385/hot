@@ -82,6 +82,8 @@ class Salaryin extends Base{
             }  
         }   
 
+
+
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         // dump($coachList);
         $this->assign('y',$y); 
@@ -97,13 +99,25 @@ class Salaryin extends Base{
     public function salaryInfo(){
     	// 接收参数 member_id（会员id） year、month（筛选日期和初始日期）
         $camp_id = input('camp_id');
-        $member_id = input('member_id');
+        $member_id = input('member_id',$this->memberInfo['id']);
         $year = input('year', date('y'));
         $month = input('month', date('m'));
         // 获取教练信息
         $coachS = new CoachService();
         $coachInfo = $coachS->getCoachInfo(['member_id' => $member_id]);
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+
+        $scheduleList = db('schedule_member as s')
+                    ->field('s.*')
+                    ->join('schedule ss','ss.id = s.schedule_id')
+                    ->where(['s.member_id'=>$member_id])
+                    ->where(['s.type'=>['<>',1]])
+                    ->order('s.id desc')
+                    ->select();
+
+        dump($scheduleList);die;
+
+
         $this->assign('camp_id', $camp_id);
         $this->assign('year', $year);
         $this->assign('month', $month);

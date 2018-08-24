@@ -232,7 +232,7 @@ class ScheduleService
                         'user' => $val['coach'],
                         'member_id' => $val['member_id'],
                         'member' => $val['member'],
-                        'type' => 2,
+                        'type' => 3,
                         'status' => 1,
                         'schedule_time' => $schedule['lesson_time']
                     ];

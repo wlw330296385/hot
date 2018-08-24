@@ -23,7 +23,11 @@ class Lesson extends Backend{
             $data = input('post.');
             $LessonService = new \app\service\LessonService;
             $result = $LessonService->createLesson($data);
-            $this->success($result);
+            if ($result['code'] == 200) {
+                $this->success('操作成功');
+            }else{
+                $this->error('操作失败');
+            }
         }else{
 
             // 课程分类
