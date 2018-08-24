@@ -29,12 +29,23 @@ class Lesson extends Backend{
                 $this->error($result['msg']);
             }
         }else{
-
+            $camp_id = $this->campInfo['id'];
             // 课程分类
             $GradeCategoryService = new \app\service\GradeCategoryService;
             $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+            //粉丝列表
+            $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
+            //教练列表
+            $coachList = db('coach c')
+                ->field('c.coach,c.id,c.member_id,cm.type,c.portraits')
+                ->join('camp_member cm','c.member_id = cm.member_id')
+                ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
+                ->order('cm.id desc')
+                ->select();
 
             
+            $this->assign('fansList',$fansList);
+            $this->assign('coachList',$coachList);  
             $this->assign('gradeCategoryList',$gradeCategoryList);
             return view('Lesson/createLesson');
         }  

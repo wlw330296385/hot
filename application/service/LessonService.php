@@ -131,21 +131,21 @@ class LessonService {
         if($is_power<2){
             return ['code'=>100,'msg'=>__lang('MSG_403')];
         }
-        if($data['doms']){
-                $doms = explode(',', $data['doms']);
-                $seria = serialize($doms);
-                $data['dom'] = $seria;
-            }else{
-                $data['dom'] = '';
-            }
-        if($data['assistants']){
+        if(isset($data['doms'])){
+            $doms = explode(',', $data['doms']);
+            $seria = serialize($doms);
+            $data['dom'] = $seria;
+        }else{
+            $data['dom'] = '';
+        }
+        if(isset($data['assistants'])){
             $doms = explode(',', $data['assistants']);
             $seria = serialize($doms);
             $data['assistant'] = $seria;
         }else{
             $data['assistant'] = '';
         }
-        if($data['assistant_ids']){
+        if(isset($data['assistant_ids'])){
             $doms = explode(',', $data['assistant_ids']);
             $seria = serialize($doms);
             $data['assistant_id'] = $seria;
