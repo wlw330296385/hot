@@ -21,13 +21,13 @@ class Salaryin extends Base{
         // $y = date('Y',time());
         // $m = date('m',time());
         // 教练总数和教练列表
-        $coachList = db('camp_member')->field('camp_member.member,camp_member.member_id,coach.id,coach.coach')->join('coach','coach.member_id = camp_member.member_id')->where(['camp_member.type'=>['in',[2,4]],'camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])->order('camp_member.id desc')->select();
+        $coachList = db('camp_member')->field('camp_member.member,camp_member.member_id,coach.id as coach_id,coach.coach')->join('coach','coach.member_id = camp_member.member_id')->where(['camp_member.type'=>['in',[2,4]],'camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])->order('camp_member.id desc')->select();
         $coachCount = count($coachList);
 
         $coachIDs = [];
         $memberIDs = [];
         foreach ($coachList as $key => $value) {
-            $coachIDs[] = $value['id'];
+            $coachIDs[] = $value['coach_id'];
             $memberIDs[] = $value['member_id'];
             $coachList[$key]['ss'] = 0;//结算工资
             $coachList[$key]['s'] = 0;//课时工资
@@ -73,24 +73,21 @@ class Salaryin extends Base{
 
         foreach ($coachList as $k => $val) {
             foreach ($sacheduleSalaryList as $key => $value) {
-                // 这里判断是否公益课
-                if($value['is_school'] == 1){
-                    if($val['member_id'] == $value['coach_id']){
+                
+                if($val['coach_id'] == $value['coach_id']){
+                    $coachList[$k]['s']+=$value['coach_salary']+$value['salary_base']*$value['students'];
+                    if($value['is_school'] == 1){// 这里判断是否公益课
                         $coachList[$k]['sss']+=$value['coach_salary']+$value['salary_base']*$value['students'];
-                    }   
+                    }
+                }   
 
-                    if(in_array($val['member_id'],$value['a_ids'])){
+                if(in_array($val['coach_id'],$value['a_ids'])){
+                    $coachList[$k]['s']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
+                    if($value['is_school'] == 1){
                         $coachList[$k]['sss']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
                     }
-                }else{
-                    if($val['member_id'] == $value['coach_id']){
-                        $coachList[$k]['s']+=$value['coach_salary']+$value['salary_base']*$value['students'];
-                    }   
-
-                    if(in_array($val['member_id'],$value['a_ids'])){
-                        $coachList[$k]['s']+=$value['assistant_salary']+$value['salary_base']*$value['students'];
-                    }
                 }
+                
                 
             }  
         }   
@@ -129,19 +126,19 @@ class Salaryin extends Base{
 
         
         // 结算总工资:
-        $totalSalary = db('salary_in')->where(['camp_id'=>$camp_id,'type'=>1])->sum('salary+push_salary');
+        $totalSalary = db('salary_in')->where(['camp_id'=>$camp_id,'type'=>1,'member_id'=>$member_id])->sum('salary+push_salary');
 
         // 课时总工资:
         $totalScheduleSalary1 = db('schedule_member s_m')
                     ->field('s.id')
                     ->join('schedule s','s.id = s_m.schedule_id')
-                    ->where(['s_m.camp_id'=>$camp_id,'type'=>3])
+                    ->where(['s_m.camp_id'=>$camp_id,'type'=>3,'member_id'=>$member_id])
                     ->order('s_m.id desc')
                     ->sum('s.assistant_salary+s.salary_base*s.students');
         $totalScheduleSalary2 = db('schedule_member s_m')
                     ->field('s.id')
                     ->join('schedule s','s.id = s_m.schedule_id')
-                    ->where(['s_m.camp_id'=>$camp_id,'type'=>2])
+                    ->where(['s_m.camp_id'=>$camp_id,'type'=>2,'member_id'=>$member_id])
                     ->order('s_m.id desc')
                     ->sum('s.coach_salary+s.salary_base*s.students');
         $totalScheduleSalary = $totalScheduleSalary1+$totalScheduleSalary2;
