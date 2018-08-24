@@ -83,7 +83,6 @@ class Salaryin extends Base{
         }   
 
 
-
         $campInfo = db('camp')->where(['id'=>$camp_id])->find();
         // dump($coachList);
         $this->assign('y',$y); 
@@ -115,14 +114,33 @@ class Salaryin extends Base{
                     ->order('s.id desc')
                     ->select();
 
-        dump($scheduleList);die;
+        
+        // 结算总工资:
+        $totalSalary = db('salary_in')->where(['camp_id'=>$camp_id,'type'=>1])->sum('salary+push_salary');
 
+        // 课时总工资:
+        $totalScheduleSalary1 = db('schedule_member s_m')
+                    ->field('s.id')
+                    ->join('schedule s','s.id = s_m.schedule_id')
+                    ->where(['s_m.camp_id'=>$camp_id,'type'=>3])
+                    ->order('s_m.id desc')
+                    ->sum('s.assistant_salary+s.salary_base*s.students');
+        $totalScheduleSalary2 = db('schedule_member s_m')
+                    ->field('s.id')
+                    ->join('schedule s','s.id = s_m.schedule_id')
+                    ->where(['s_m.camp_id'=>$camp_id,'type'=>2])
+                    ->order('s_m.id desc')
+                    ->sum('s.coach_salary+s.salary_base*s.students');
+        $totalScheduleSalary = $totalScheduleSalary1+$totalScheduleSalary2;
 
+        
         $this->assign('camp_id', $camp_id);
         $this->assign('year', $year);
         $this->assign('month', $month);
         $this->assign('member_id', $member_id);
         $this->assign('coachInfo', $coachInfo);
+        $this->assign('totalSalary', $totalSalary);
+        $this->assign('totalScheduleSalary', $totalScheduleSalary);
         $this->assign('campInfo', $campInfo);
     	return view('Salaryin/salaryInfo'); 
     }
