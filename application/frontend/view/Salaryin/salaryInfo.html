@@ -46,16 +46,23 @@
                     <div class="camp-num">
                         <ul>
                             <li>
-                                总结算工资：￥{$totalScheduleSalary}
+                                总结算工资：￥{$totalSalary}
                             </li>
                             <li>
-                                总课时收入：￥{$totalSalary}
+                                总课时收入：￥{$totalScheduleSalary}
                             </li>
                         </ul>
                     </div>
                 </a>
             </li>
         </ul>
+
+
+
+    </div>
+
+    <div class="mui-scroll-wrapper coach" style="margin-top:120px; bottom: 47px;">
+        <div class="mui-scroll">
 
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
@@ -73,21 +80,15 @@
                 </a></li>
             </ul>
         </div>
-
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell">
-                <ul class="mui-row table">
-                    <li class="mui-col-xs-3" id="salaryTypeTitle" style="padding-left: 6px;">结算工资</li>
-                    <li class="mui-col-xs-6">日期 / 班级</li>
-                    <li class="mui-col-xs-3 mui-text-center">工资</li>
-                </ul>
-            </li>
-        </ul>
-
-    </div>
-
-    <div class="mui-scroll-wrapper coach" style="margin-top:240px; margin-bottom: 47px;">
-        <div class="mui-scroll">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell">
+                    <ul class="mui-row table">
+                        <li class="mui-col-xs-3" id="salaryTypeTitle" style="padding-left: 6px;">结算工资</li>
+                        <li class="mui-col-xs-6">日期 / 班级</li>
+                        <li class="mui-col-xs-3 mui-text-center">工资</li>
+                    </ul>
+                </li>
+            </ul>
             <ul class="mui-table-view sList" id="settleSalaryList">
             </ul>
             <ul class="mui-table-view sList hide" id="scheduleSalaryList">
@@ -125,8 +126,8 @@
     });
 
     var currSalaryType = 'settleSalaryList';
-    var currSettleCount = '';
-    var currScheduleCount = '';
+    var currSettleCount = '结算工资';
+    var currScheduleCount = '课时收益';
 
     $(function() {
 
@@ -233,12 +234,11 @@
         var mText = month.replace(/\b(0+)/gi,"");
 
 
-        mui.ajax("{:url('api/salaryin/getScheduleSalaryListApi')}", {
+        mui.ajax("{:url('api/salaryin/coachSalaryinList')}", {
             data: {
                 camp_id: campID,
                 y: year,
                 m: month,
-                orderby:'create_time',
                 member_id:{$member_id}
             },
             dataType:'json',
@@ -252,39 +252,23 @@
                 if (data.code === 200) {
                     // 返回为空 显示无数据
                     if (data.data.length != 0) {
-                        var lessonTime = '';
                         var salaryNum = 0;
                         var noSettle = 0;
                         var urls = '#';
                         for (var i=0; i<data.data.length;i++) {
 
-                            //刷选已结算的，并统计未结算的记录数用于下拉菜单上的统计扣除
-                            if(data.data[i].is_settle==1){
+                            salaryNum = parseInt(data.data[i].salary) +  parseInt(data.data[i].push_salary);
+                            salaryCount += salaryNum;
 
-                                lessonTime = wooApi.dateIt('Y-m-d H:i',data.data[i].lesson_time);
+                            urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data[i].schedule_id + '/camp_id/' + campID;
 
-                                if(coachID==data.data[i].coach_id){
-                                    salaryNum = data.data[i].s_coach_salary
-                                }else{
-                                    salaryNum = data.data[i].s_assistant_salary
-                                }
-                                salaryCount += parseInt(salaryNum);
-
-                                urls = "/frontend/schedule/scheduleinfo" + '/schedule_id/' + data.data[i].schedule_id + '/camp_id/' + campID;
-
-                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row table">';
-                                newli += '<li class="mui-col-xs-3"><font class="tipCorner bgblue">已结算</font></li><li class="mui-col-xs-6">'+ lessonTime + '<br /><text class="colorgray">'+data.data[i].grade+'</text></li>';
-                                newli += '<li class="mui-col-xs-3 mui-text-center">'+ salaryNum +'</li>';
-                                newli += '</ul></a></li>';
-
-                            }else{
-
-                                noSettle+=1; 
-
-                            }
+                            newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row table">';
+                            newli += '<li class="mui-col-xs-3"><font class="tipCorner bgblue">已结算</font></li><li class="mui-col-xs-6">'+ data.data[i].schedule_time + '<br /><text class="colorgray">'+data.data[i].grade+'</text></li>';
+                            newli += '<li class="mui-col-xs-3 mui-text-center">'+ salaryNum +'</li>';
+                            newli += '</ul></a></li>';
                         }
                         //保存当前结算工资记录数
-                        currSettleCount = '结算工资 <b class="colororange">'+(data.data.length-noSettle)+'</b>';
+                        currSettleCount = '结算工资 <b class="colororange">'+data.data.length+'</b>';
                     } else {
                         newli = '<li class="nodata"><i class="icon iconfont icon-m-TrainingCamp1"></i><p>没有相关数据哦</p></li>';
                     }
