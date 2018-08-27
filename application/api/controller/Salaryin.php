@@ -308,9 +308,9 @@ class Salaryin extends Base {
                 $month = date('m');
             }
             $when = getStartAndEndUnixTimestamp($year, $month);
-            $map["schedule_member.$between"] = ['between', [ $when['start'], $when['end'] ]];
+            
 
-            $map['type'] = 2;
+            $map['type'] = ['>',1];
             $result = db('schedule_member')
                     ->field('schedule.s_coach_salary
                         ,schedule.s_assistant_salary

@@ -45,6 +45,7 @@ class Salaryin extends Base{
                     ->where(['camp_id'=>$camp_id,'type'=>1,'create_time'=>['between',[$between['start'],$between['end']]],'member_id'=>['in',$memberIDs]])
                     ->group('member_id')
                     ->select();
+        // echo db('salary_in')->getlastsql();die;
         foreach ($coachList as $k => $val) {
   
             foreach ($salaryList as $key => $value) {

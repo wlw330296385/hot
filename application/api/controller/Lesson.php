@@ -64,7 +64,8 @@ class Lesson extends Base{
             $map['isprivate'] = input('param.isprivate', 0);
             $result = $this->LessonService->getLessonList($map,$page,$order,10,"*,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(lat*pi()/180)*pow(sin(($lng *pi()/180 - lng*pi()/180)/2),2))) as distance");
             if($result){
-                shuffle($result);
+                $res = $result->toArray();
+                shuffle($res);
                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'ok']);
@@ -376,7 +377,8 @@ class Lesson extends Base{
             $result = $this->LessonService->getLessonList($map,1,['hot'=>'asc','students'=>'asc'],4);
             
             if($result){
-                shuffle($result);
+                $res = $result->toArray();
+                shuffle($res);
                 if( count($result)<4 && !isset($map['camp_id']) ){
                     $res = $this->LessonService->getLessonList(['status'=>1,'isprivate'=>0],1,['hot'=>'asc','students'=>'asc'],(4-count($result)));
                     

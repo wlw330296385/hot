@@ -25,7 +25,6 @@ class LessonService {
     // 获取所有课程
     public function getLessonList($map=[],$page = 1,$order='id desc',$paginate = 10,$field = '') {
         $result = Lesson::field($field)->where($map)->order($order)->page($page,$paginate)->select();
-
         return $result;
     }
 
