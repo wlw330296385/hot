@@ -81,7 +81,7 @@ class Lesson extends Backend{
         if($lessonInfo['isprivate'] == 1){
             $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
         }
-
+        
         $this->assign('lessonInfo',$lessonInfo);
         $this->assign('assignList',$assignList);
         return view('Lesson/lessonInfo');

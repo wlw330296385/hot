@@ -74,9 +74,16 @@ class Punch extends Base{
         }
     }
 
+    // 获取整个月的punch不分页
     public function getMonthPunchListApi(){
         try {
             $month_str = input('param.month_str');
+            $b = new \DateTime($month_str);
+            $s = $b->format('Y-m-d');
+            $b->add(new \DateInterval('P1M'));
+            $e = $b->format('Y-m-d');
+            $result = db('punch')->where(['punch_time'=>['>=',$s],'punch_time'=>['<',$e]])->select();
+            return json(['code'=>200,'msg'=>'查询成功','data'=>$result]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
