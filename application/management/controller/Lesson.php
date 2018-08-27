@@ -28,7 +28,7 @@ class Lesson extends Backend{
                     $dataLessonAssign['lesson_id'] = $result['data'];
                     $dataLessonAssign['lesson'] = $data['lesson'];
                     $dataLessonAssign['memberData'] = $data['memberData'];
-                    $resultSaveLessonAssign = $this->LessonService->saveLessonAssign($dataLessonAssign);
+                    $resultSaveLessonAssign = $LessonService->saveLessonAssign($dataLessonAssign);
                     if (!$resultSaveLessonAssign) {
                         $this->error("私密课程须选择指定会员");
                     }
