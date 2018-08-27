@@ -74,7 +74,13 @@ class Punch extends Base{
         }
     }
 
-
+    public function getMonthPunchListApi(){
+        try {
+            $month_str = input('param.month_str');
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
     // 操作打卡
     public function editPunchApi(){

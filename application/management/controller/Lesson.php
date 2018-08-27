@@ -99,7 +99,7 @@ class Lesson extends Backend{
                 $this->error($result['msg']);
             }
         }else{
-
+            $camp_id = $this->campInfo['id'];
             $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
 
             // 课程分类
