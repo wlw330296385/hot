@@ -1,93 +1,260 @@
 {extend name="layout/common"/}
 
+{block name="css"}
+<style>
+    h3.box-title { color: #333; }
+    .childTitle {background-color:#f7f7f7; padding: 15px 0px; margin-bottom: 15px;}
+    .childTitle p { font-size: 16px; color: #aaa; margin-top: 5px; }
+</style>
+{/block}
+
 {block name="page-content"}
 
 
-<div class="col-md-12 col-sm-12">
+<div class="box box-default collapsed-box">
+    <div class="box-header with-border">
+      <h3 class="box-title btn-box-tool" data-widget="collapse" style="width: 100%">添加主菜单<i class="fa fa-plus pull-right"></i></h3>
 
-        添加主菜单
-     <form action="{:url('createMenu')}"  method="post">                
-        <label>标题
-            <input type="text" name="title" value="" required="required">
-        </label>
-        <label>
-            icon图标
-            <input type="text" name="icon"  value=""  required="required">
-        </label>
-        <label>访问地址
-            <input type="text" name="url_value"  value=""  placeholder="不填写地址则为折叠菜单,否则为单链接">
-        </label>
-        <label>排序
-              <input type="number" name="sort"  value=""  required="required">
-        </label>
-        <label>是否隐藏
-            <select name='online_hide'  required="required">
-                <option value="1">
-                    显示
-                </option>
-                <option value="0">
-                    隐藏
-                </option>
-            </select>
-        </label>
-        <input type="hidden" name="pid" value="0">
-        <input type="submit" value="确认添加">
+      <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
 
-    </form>
-
-        <!-- Info boxes -->
+         <form action="{:url('createMenu')}" method="post" role="form"> 
         <div class="row">
-            {volist name="menuList" id="vol"}
-                <ul>
-                    <form action="{:url('updateMenu',['id'=>$vol['id']])}"  method="post">
-                        <label>标题
-                            <input type="text" name="title" value="{$vol.title}" placeholder="填写地址则为单链接" required="required">
-                        </label>
-                        <label>访问地址
-                            <input type="text" name="url_value"  placeholder="不填写地址则为折叠菜单,否则为单链接" value="{$vol.url_value}">
-                        </label>
-                        <label>排序
-                              <input type="number" name="sort"  value="{$vol.sort}" >
-                        </label>
-                        <label>
-                            icon图标<i class="fa {$vol.icon}"></i>
-                            <input type="text" name="icon"  value=""  required="required">
-                        </label>
+            <div class="col-xs-1">
+              <div class="form-group">
+                  <label>排序</label>
+                   <input type="number" name="sort"  value="" class="form-control" required="required">
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>标题</label>
+                  <input type="text" name="title" value="" class="form-control" required="required">
+                </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="form-group">
+                  <label>访问地址</label>
+                  <input type="text" name="url_value" class="form-control" value=""  placeholder="不填写地址则为折叠菜单,否则为单链接">
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>图标</label>
+                  <input type="text" name="icon" class="form-control" value=""  required="required">
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>是否隐藏</label>
+                  <select name='online_hide' class="form-control" required="required">
+                        <option value="1">
+                            显示
+                        </option>
+                        <option value="0">
+                            隐藏
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-1">
+              <div class="form-group">
+                  <label>&nbsp;</label>
+                    <input type="hidden" name="pid" value="0">
+                  <input type="submit" class="btn btn-warning btn-block" value="确认添加">
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
 
-                        <label>是否隐藏(主菜单隐藏则其子菜单全隐藏)
-                            <select name='online_hide'>
-                                <option value="1">
-                                    显示
-                                </option>
-                                <option value="0">
-                                    隐藏
-                                </option>
-                            </select>
-                        </label>
-                        <input type="submit" value="确认修改">
-                    </form>
 
-                    <button class="addMenu" data="{$vol.id}">添加子菜单</button>
+{volist name="menuList" id="vol"}
 
-                    <li class="addMenu{$vol.id}" style="display: none">
-                        <form action="{:url('createMenu')}"  method="post">
-                            
-                            <label>标题
-                                <input type="text" name="title" value="" required="required">
-                            </label>
-                            <label>
-                                icon图标
-                                <input type="text" name="icon"  value=""  required="required">
-                            </label>
-                            <label>访问地址
-                                <input type="text" name="url_value"  value=""  required="required">
-                            </label>
-                            <label>排序
-                                  <input type="number" name="sort"  value=""  required="required">
-                            </label>
+<div class="box box-default collapsed-box">
+    <div class="box-header with-border">
+      <h3 class="box-title btn-box-tool" data-widget="collapse" style="width: 100%">{$vol.title}<i class="fa fa-plus pull-right"></i></h3>
 
-                            <label>是否隐藏
-                                <select name='online_hide'  required="required">
+      <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+
+        <form action="{:url('updateMenu',['id'=>$vol['id']])}"  method="post" role="form">
+        <div class="row">
+            <div class="col-xs-1">
+              <div class="form-group">
+                  <label>排序</label>
+                   <input type="number" name="sort" class="form-control" value="{$vol.sort}" >
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>标题</label>
+                  <input type="text" name="title" class="form-control" value="{$vol.title}" placeholder="填写地址则为单链接" required="required">
+                </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="form-group">
+                  <label>访问地址</label>
+                  <input type="text" name="url_value" class="form-control" placeholder="不填写地址则为折叠菜单,否则为单链接" value="{$vol.url_value}">
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>图标</label>
+                  <input type="text" name="icon" class="form-control" value="{$vol.icon}"  required="required">
+                </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="form-group">
+                  <label>是否隐藏</label>
+                  <select name='online_hide' class="form-control">
+                        <option value="1">
+                            显示
+                        </option>
+                        <option value="0">
+                            隐藏
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-1">
+              <div class="form-group">
+                  <label>&nbsp;</label>
+                  <input type="submit" class="btn btn-success btn-block" value="确认修改">
+                </div>
+            </div>
+        </div>
+        </form>
+
+        <div class="row childTitle">
+           <div class="col-xs-11">
+                <p><i class="fa fa-fw fa-sitemap"></i> {$vol.title}子菜单</p>
+            </div>
+            <div class="col-xs-1">
+              <button class="addMenu pull-right btn btn-default btn-block" data="{$vol.id}">添加子菜单</button>
+            </div>
+        </div>
+
+        <form action="{:url('createMenu')}" method="post" class="addMenu{$vol.id}" style="display: none">
+                <div class="row">
+                   <div class="col-xs-1">
+                      <div class="form-group">
+                          <label>排序</label>
+                           <input type="number" name="sort"  value="" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                      <div class="form-group">
+                          <label>标题</label>
+                          <input type="text" name="title" value="" class="form-control" required="required">
+                        </div>
+                    </div>
+                   <div class="col-xs-4">
+                      <div class="form-group">
+                          <label>访问地址</label>
+                          <input type="text" name="url_value"  value=""  class="form-control" required="required">
+                        </div>
+                    </div>
+                   <div class="col-xs-2">
+                      <div class="form-group">
+                          <label>图标</label>
+                          <input type="text" name="icon"  value="" class="form-control"  required="required">
+                        </div>
+                    </div>
+                   <div class="col-xs-2">
+                      <div class="form-group">
+                          <label>是否隐藏</label>
+                          <select name='online_hide' class="form-control" required="required">
+                            <option value="1">
+                                显示
+                            </option>
+                            <option value="0">
+                                隐藏
+                            </option>
+                        </select>
+                        </div>
+                    </div>
+                   <div class="col-xs-1">
+                      <div class="form-group">
+                          <label>&nbsp;</label>
+                          <input type="hidden" name="pid" value="{$vol.id}">
+                          <input type="submit" class="btn btn-warning btn-block" value="确认添加">
+                        </div>
+                    </div>
+                  </div>
+          </form>
+
+
+            <div class="row">
+               <div class="col-xs-1">
+                  <div class="form-group">
+                      <label>排序</label>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                  <div class="form-group">
+                      <label>标题</label>
+                    </div>
+                </div>
+               <div class="col-xs-4">
+                  <div class="form-group">
+                      <label>访问地址</label>
+                    </div>
+                </div>
+               <div class="col-xs-2">
+                  <div class="form-group">
+                      <label>图标</label>
+                    </div>
+                </div>
+               <div class="col-xs-1">
+                  <div class="form-group">
+                      <label>是否隐藏</label>
+                    </div>
+                </div>
+               <div class="col-xs-1">
+                  <div class="form-group">
+                      <label>是否删除</label>
+                    </div>
+                </div>
+               <div class="col-xs-1">
+                  <div class="form-group">
+                      <label>&nbsp;</label>
+                    </div>
+                </div>
+              </div>
+
+           
+            {volist name="vol.daughter" id="v"}
+            <form action="{:url('updateMenu',['id'=>$v['id']])}"  method="post">
+                    <div class="row">
+                       <div class="col-xs-1">
+                          <div class="form-group">
+                                <input type="number" name="sort" class="form-control" value="{$v.sort}" >
+                            </div>
+                        </div>
+                        <div class="col-xs-2">
+                          <div class="form-group">
+                              <input type="text" name="title" class="form-control" value="{$v.title}">
+                            </div>
+                        </div>
+                       <div class="col-xs-4">
+                          <div class="form-group">
+                              <input type="text" name="url_value" class="form-control" value="{$v.url_value}">
+                            </div>
+                        </div>
+                       <div class="col-xs-2">
+                          <div class="form-group">
+                              <input type="text" name="icon"  value="{$v.icon}" class="form-control" required="required">
+                            </div>
+                        </div>
+                       <div class="col-xs-1">
+                          <div class="form-group">
+                              <select name='online_hide' class="form-control">
                                     <option value="1">
                                         显示
                                     </option>
@@ -95,43 +262,11 @@
                                         隐藏
                                     </option>
                                 </select>
-                            </label>
-                            <input type="hidden" name="pid" value="{$vol.id}">
-                            <input type="submit" value="确认添加">
-
-                        </form>
-                    </li>
-                    {volist name="vol.daughter" id="v"}
-                        <form action="{:url('updateMenu',['id'=>$v['id']])}"  method="post">
-                            <li>----  
-
-                            <label>标题
-                                <input type="text" name="title" value="{$v.title}">
-                            </label>
-                            <label>
-                                icon图标<i class="fa {$v.icon}"></i>
-                                <input type="text" name="icon"  value="{$v.icon}"  required="required">
-                            </label>
-                            <label>访问地址
-                                <input type="text" name="url_value"  value="{$v.url_value}">
-                            </label>
-                            <label>排序
-                                  <input type="number" name="sort"  value="{$v.sort}" >
-                            </label>
-
-                            <label>是否隐藏
-                                <select name='online_hide'>
-                                    <option value="1">
-                                        显示
-                                    </option>
-                                    <option value="0">
-                                        隐藏
-                                    </option>
-                                </select>
-                            </label>
-                            <label>
-                                是否删除
-                                <select name='status'  required="required">
+                            </div>
+                        </div>
+                       <div class="col-xs-1">
+                          <div class="form-group">
+                              <select name='status'  required="required" class="form-control">
                                     <option value="1">
                                         不删除
                                     </option>
@@ -139,18 +274,21 @@
                                         删除
                                     </option>
                                 </select>
-                            </label>
-                            <input type="submit" value="确认修改">
-                            </li>
-                        </form>
-                    {/volist}
-
-                    
-                </ul>
+                            </div>
+                        </div>
+                       <div class="col-xs-1">
+                          <div class="form-group">
+                              <input type="submit" class="btn btn-success btn-block" value="确认修改">
+                            </div>
+                        </div>
+                      </div>
+              </form>
             {/volist}
-        </div>
-        <!-- /.row -->
-</div>
+    </div>
+    <!-- /.box-body -->
+  </div>
+
+{/volist}
 
 
 

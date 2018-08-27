@@ -404,7 +404,7 @@
                             <input type="number" class="data" name="amount" value="" placeholder="选填" />
                         </div>
                     </div>
-                    <div class="mui-text-center" style="margin-top:35px;"><button class="mui-btn" id="deleteSchedule">删除日程</button> &nbsp; <button class="mui-btn mui-btn-blue" id="saveScheduleEdit">保存修改</button> </div>
+                    <div class="mui-text-center" style="margin-top:35px;"><a href="#" id="goPunchInfo"><button class="mui-btn">该计划已完成，查看详情</button></a><button class="mui-btn" id="deleteSchedule">删除日程</button> &nbsp; <button class="mui-btn mui-btn-blue" id="saveScheduleEdit">保存修改</button> </div>
                 </form>
 
 
@@ -519,9 +519,14 @@
         mui.init({
             swipeBack: true, //启用右滑关闭功能
         });
+       
 
         //选择器
         (function ($, doc) {
+
+            mui(".mui-content").on("tap", "a", function () {
+                window.top.location.href = this.href;
+            });
 
             $(".mui-scroll-wrapper").scroll({
                 //bounce: false,//滚动条是否有弹力默认是true
@@ -858,11 +863,22 @@
             var slAmount = $(this).attr("data-amount");
             var sID = $(this).attr("data-id");
 
+
             var pID = $(this).attr("data-punch_id");
             if(pID>0){
+                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + pID + '/?punch=sportPlanInfo';
+                $("#goPunchInfo").attr("href",urls);
+                $("#goPunchInfo").show();
                 $("#saveScheduleEdit").hide();
-                $("#saveScheduleEdit").hide();
-            }
+                $("#deleteSchedule").hide();
+
+            }else{
+                $("#goPunchInfo").attr("href","#");
+                $("#goPunchInfo").hide();
+                $("#deleteSchedule").show();
+                $("#saveScheduleEdit").show();
+            }  
+
 
             $("#scheduleEditForm input[name=plan_schedule_id]").val(sID);
             $("#scheduleEditForm input[name=sport_time]").val(slDate);
