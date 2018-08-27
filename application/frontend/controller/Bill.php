@@ -49,6 +49,9 @@ class Bill extends Base{
         }
         // 判断权限
         $isPower = $this->BillService->isPower($billInfo['camp_id'],$this->memberInfo['id']);
+        if($isPower < 2){
+            $this->error('权限不足');
+        }
         // 兼职教练不能进入
         if ($isPower==2) {
             $level = getCampMemberLevel($billInfo['camp_id'],$this->memberInfo['id']);

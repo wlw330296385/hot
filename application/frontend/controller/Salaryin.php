@@ -15,6 +15,13 @@ class Salaryin extends Base{
     // 训练营的当月工资单
     public function salaryOfCamp(){
         $camp_id = input('param.camp_id');
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
+
+
         // 获取当前年/月，用于输出时间筛选
         $y = input('param.year',date('Y',time()));
         $m = input('param.month',date('m',time()));
@@ -109,6 +116,11 @@ class Salaryin extends Base{
     public function salaryInfo(){
     	// 接收参数 member_id（会员id） year、month（筛选日期和初始日期）
         $camp_id = input('camp_id');
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
         $member_id = input('member_id',$this->memberInfo['id']);
         $year = input('year', date('y'));
         $month = input('month', date('m'));

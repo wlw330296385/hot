@@ -27,6 +27,8 @@ class Article extends Base{
        
         // 判断权限
         $isPower = $this->ArticleService->isPower($articleInfo['organization_id'],$this->memberInfo['id']);
+        
+
         $this->assign('power',$isPower);
 
         $this->assign('articleInfo',$articleInfo);

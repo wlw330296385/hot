@@ -174,6 +174,12 @@ class Camp extends Base{
     // 申请列表
     public function applyListOfCoach(){
         $camp_id = input('param.camp_id');
+        // 判读权限
+        $CampService = new \app\service\CampService;
+        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
+        if($is_power < 2){
+            $this->error('您没有权限');
+        }  
         $applyListOfCoach = Db::view('camp_member','member_id,remarks')
                             ->view('coach','star,coach,coach_level,lesson_flow,portraits','coach.member_id=camp_member.member_id')
                             ->view('member','sex,birthday','coach.member_id=member.id')

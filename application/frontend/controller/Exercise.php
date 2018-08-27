@@ -42,6 +42,11 @@ class Exercise extends Base{
         $camp_id = input('param.camp_id',0);
         $CampService = new CampService();
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
+        // 判读权限
+        $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
+        if($is_power < 2){
+            $this->error('您没有权限');
+        }  
         // 分类
         $exerciseType = $this->ExerciseService->getExerciseType();
 
@@ -79,7 +84,7 @@ class Exercise extends Base{
         $camp_id = input('param.camp_id',0);
         $CampService = new CampService();
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);
-
+        
     	$myExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>$camp_id]);
         $sysExerciseList = $this->ExerciseService->getExerciseList(['camp_id'=>0]);
         $this->assign('myExerciseList',$myExerciseList);

@@ -37,10 +37,15 @@ class Plan extends Base{
     	$plan_id = input('param.plan_id');
         $planInfo = $this->PlanService->getPlanInfo(['id'=>$plan_id]);
         $camp_id = $planInfo['camp_id'];
+
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
         $planInfo['exercise_strarr'] = json_decode($planInfo['exercise_str'], true);
         // 判读权限
         $CampService = new \app\service\CampService;
-
         $is_power = $CampService->isPower($planInfo['camp_id'],$this->memberInfo['id']);
         if($is_power < 2){
             $this->error('您没有权限');
@@ -68,7 +73,7 @@ class Plan extends Base{
         // 判读权限
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
-        // dump($is_power);die;
+
         if($is_power < 2){
             $this->error('您没有权限');
         }       
@@ -92,12 +97,6 @@ class Plan extends Base{
     // 分页获取数据
     public function planList(){
     	$camp_id = input('param.camp_id');
-        // $planListOfCamp = $this->PlanService->getPlanList(['camp_id'=>$camp_id,'type'=>1]);
-        // $planListOfSys = $this->PlanService->getPlanList(['type'=>0]);
- 
-
-        // $this->assign('planListOfCamp',$planListOfCamp);
-        // $this->assign('planListOfSys',$planListOfSys);
         $CampService = new \app\service\CampService;
         $is_power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         $campInfo = $CampService->getCampInfo(['id'=>$camp_id]);

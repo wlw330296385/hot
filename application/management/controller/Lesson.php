@@ -24,6 +24,15 @@ class Lesson extends Backend{
             $LessonService = new \app\service\LessonService;
             $result = $LessonService->createLesson($data);
             if ($result['code'] == 200) {
+                if ($data['isprivate'] == 1) {
+                    $dataLessonAssign['lesson_id'] = $result['data'];
+                    $dataLessonAssign['lesson'] = $data['lesson'];
+                    $dataLessonAssign['memberData'] = $data['memberData'];
+                    $resultSaveLessonAssign = $this->LessonService->saveLessonAssign($dataLessonAssign);
+                    if (!$resultSaveLessonAssign) {
+                        $this->error("私密课程须选择指定会员");
+                    }
+                }
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);

@@ -150,6 +150,13 @@ class Student extends Base
 	// 获取训练营学生列表
 	public function studentListOfCamp(){
 		$camp_id = input('param.camp_id');
+
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
+
 		$type = input('param.type')?input('param.type'):1;
 					
         $this->assign('camp_id',$camp_id);
@@ -195,6 +202,12 @@ class Student extends Base
 
 	public function tipStudentListOfCamp(){
 		$camp_id = input('param.camp_id');
+		
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
         $this->assign('camp_id',$camp_id);
         // 获取训练营角色、教练权限等级
         $campPower = getCampPower($camp_id, $this->memberInfo['id']);

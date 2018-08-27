@@ -289,6 +289,13 @@ class Schedule extends Base
 
     // 购买赠送课时
     public function giftbuy() {
+        // 获取会员在训练营角色
+        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        if($power <2){
+            $this->error('权限不足');
+        }
+
+
 	    return view("Schedule/giftbuy");
     }
 
@@ -299,7 +306,7 @@ class Schedule extends Base
         }
         $scheduleS = new ScheduleService();
         $giftbuyinfo = $scheduleS->getbuygift(['id' => $id]);
-//	    dump($giftbuyinfo);
+        
         $this->assign('giftbuyInfo', $giftbuyinfo);
         return view("Schedule/giftbuyInfo");
     }
