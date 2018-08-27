@@ -75,7 +75,7 @@ class SportPlan extends Base{
                 $result = $this->SportPlan->save($data);
             }
             if($result){
-                return json(['code'=>200,'msg'=>'提交成功','data'=>$result]);
+                return json(['code'=>200,'msg'=>'提交成功','data'=>$this->SportPlan->id]);
             }else{
                 return json(['code'=>100,'msg'=>'提交失败']);
             }
