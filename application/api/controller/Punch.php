@@ -82,7 +82,8 @@ class Punch extends Base{
             $s = $b->format('Y-m-d');
             $b->add(new \DateInterval('P1M'));
             $e = $b->format('Y-m-d');
-            $result = db('punch')->where(['punch_time'=>['>=',$s],'punch_time'=>['<',$e],'member_id'=>$this->memberInfo['id']])->select();
+            $result = db('punch')->where(['punch_time'=>['>=',$s],'member_id'=>$this->memberInfo['id']])->where(['punch_time'=>['<',$e]])->select();
+
             return json(['code'=>200,'msg'=>'查询成功','data'=>$result]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
