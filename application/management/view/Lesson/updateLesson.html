@@ -93,7 +93,7 @@
                         <label for="">训练时间</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker" value="{$lessonInfo.lesson_time}">
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker" value="">
                     </div>
                 </div>
             </div>
@@ -274,7 +274,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-2 col-sm-2 text-right">
                 </div>
@@ -286,23 +285,20 @@
                             <button type="button" class="btn btn-default choiseCancel">取消</button>
                             <button type="button" class="btn btn-danger choiseDelete">删除</button>
                         </div>
-                        <li class="list-group-item" data-private="张伟荣" data-id="7">
-                            <span class="order" style="margin-right:10px;">1</span>
-                            <span>张伟荣</span>
-                            <input type="checkbox" value="" style="float:right">
-                        </li>
+
                         <ul class="list-group">
-                            {notempty name="assignMemberList"} {foreach name="assignMemberList" item="assignMember"}
-                            <li class="list-group-item" data-private="{$assignMember.member}" data-id="{$assignMember.member_id}">
+                            {volist name='assignList' id="vol"}
+                            <li class="list-group-item" data-private="{$vol.member}" data-id="{$vol.member_id}">
                                 <span class="order" style="margin-right:10px;">{$key+1}</span>
-                                <span>{$assignMember.member}</span>
+                                <span>{$vol.member}</span>
                                 <input type="checkbox" value="" style="float:right">
                             </li>
-                            {/foreach} {/notempty}
+                            {/volist}
                         </ul>
                     </div>
                 </div>
             </div>
+
 
             <div class="form-group">
                 <div class="row">
@@ -809,11 +805,14 @@
 <script type="text/javascript">
     $(function () {
 
-        // $('#datetimepicker').datetimepicker({
-        //     format: 'hh:ii',
-        //     startView: 1,
-        //     autoclose: true,
-        // });
+        // boostrap时间选择器
+        $('#datetimepicker').datetimepicker({
+            format: 'hh:ii',
+            startView: 1,
+            autoclose: true,
+        });
+        
+        $("input[name=lesson_time]").val("{$lessonInfo.lesson_time}");
 
         //省市区
         if ("{$lessonInfo.province}" != '') {
@@ -953,6 +952,12 @@
             $("input[name=teacher]").val('');
             $('#teacherModal').modal('hide');
         });
+
+        if ("{$lessonInfo.isprivate}" != 0) {
+            $(".memberInput-row").show();
+        } else {
+            $(".memberInput-row").hide();
+        }
 
         // 选择是否为私密课程显示隐藏选择会员框
         $("#lessonPrivate").change(function () {
