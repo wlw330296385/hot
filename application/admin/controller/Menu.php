@@ -49,5 +49,37 @@ class Menu extends Backend{
 	}
 
 
-	
+	// 编辑部门列表
+	public function adminGroupList(){
+		$AdminGroup = new \app\admin\model\AdminGroup;
+		if(request()->isPost()){
+			$data = input('post.');
+			$result = $AdminGroup->save($data,['id'=>$data['id']]);
+			if($result){
+			$this->success('操作成功');
+		}else{
+			$this->error('操作失败');
+		}
+		}else{
+			
+			$adminGroupListP = $AdminGroup->select();
+			$list_arr = $adminGroupListP->toArray();
+
+			$list = getTree($list_arr);
+
+
+			$this->assign('list',$list);
+			return view('Menu/adminGroupList');
+		}
+		
+	}
+
+	// 编辑部门权限
+	public function editAdminGroupP(){
+
+	}
+
+
+
+
 }
