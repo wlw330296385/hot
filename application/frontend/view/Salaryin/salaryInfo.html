@@ -15,14 +15,13 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/app.css"/>
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css"/>
-    <!--等级星星样式-->
-    <link rel="stylesheet" type="text/css" href="/static/frontend/css/feedback.css"/>
     <!--选择器样式-->
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
         .btnTime { padding-right: 15px; }
         .mui-col-xs-7 { padding-left: 8px; }
+        .mui-icon-info { margin-left: 3px !important; }
         .camp-num { margin: 5px; text-align: right; }
     </style>
 </head>
@@ -30,51 +29,46 @@
 <body>
 <header id="header" class="mui-bar mui-bar-nav subheader">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href="{:url('frontend/salaryin/salaryofcamp/')}/camp_id/{$camp_id}"></a>
-    <h1 class="mui-title">教练工资详情</h1>
+    <h1 class="mui-title">{$coachInfo.coach} <text class="mtext">本</text>月工资详情 <a href="#showTips"><span class="mui-icon mui-icon-info f18"></span></a></h1>
 </header>
-<div class="mui-content">
-
-    <div class="list course-list camp-list detalis-list coach">
-        <ul class="mui-table-view mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <a href="javascript:;">
-                    <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
-                    <div class="mui-media-body">
-                        {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
-                        <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
-                    </div>
-                    <div class="camp-num">
-                        <ul>
-                            <li>
-                                总结算工资：￥{$totalSalary}
-                            </li>
-                            <li>
-                                总课时收入：￥{$totalScheduleSalary}
-                            </li>
-                        </ul>
-                    </div>
-                </a>
-            </li>
-        </ul>
+<div class="mui-content coach mt55">
 
 
-
-    </div>
-
-    <div class="mui-scroll-wrapper coach" style="margin-top:120px; bottom: 47px;">
-        <div class="mui-scroll">
+        <div class="list course-list camp-list detalis-list">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="mui-media-object mui-pull-left coachicon" src="{$coachInfo.portraits}">
+                        <div class="mui-media-body">
+                            {$coachInfo.coach} <i class="icon iconfont icon-sex{$coachInfo.sex}"></i>
+                            <p class="mui-ellipsis">教龄:{$coachInfo.coach_year} 等级:{$coachInfo.coach_rank}</p>
+                        </div>
+                        <div class="camp-num">
+                            <ul>
+                                <li>
+                                    总结算工资：￥{$totalSalary}
+                                </li>
+                                <li>
+                                    总课时收入：￥{$totalScheduleSalary}
+                                </li>
+                            </ul>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         <div class="nav-list">
             <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#showTips">
                     <span><text class="mtext">本</text>月课时收益</span>
                     <div class="mui-media-body colororange" id="scheduleSalary"></div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4"><a href="#showTips">
                     <span><text class="mtext">本</text>月公益课收入</span>
                     <div class="mui-media-body colororange" id="schoolSalary"></div>
                 </a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4" style="border-right: none;"><a href="#">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4" style="border-right: none;"><a href="#showTips">
                     <span><text class="mtext">本</text>月结算工资</span>
                     <div class="mui-media-body colororange" id="settleSalary"></div>
                 </a></li>
@@ -94,24 +88,37 @@
             <ul class="mui-table-view sList hide" id="scheduleSalaryList">
             </ul>
         </div>
+   
+
+<ul class="mui-table-view operation">
+    <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli">
+        <input id="year" type="hidden" name="year" value="{$year}">
+        <input id="month" type="hidden" name="month" value="{$month}">
+        <span class="mui-icon mui-icon-arrowdown mui-pull-right f16 colorgray" style="margin-right: 15px"></span>
+        <a class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}' style="margin: -11px 0px">{$year} - {$month} </a>
+    </li>
+    <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli">
+        <span class="mui-icon mui-icon-arrowdown mui-pull-right f16 colorgray" style="margin-right: 15px"></span>
+        <a class="" id="showUserPicker" style="margin: -11px 0px"><text id="salaryTypeResult">结算工资（0）</text></a>
+    </li>
+</ul>
+
+
+
+     <!--统计说明弹框-->
+    <div id="showTips" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title border-b">
+            <span class="course wd49">统计说明</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll" style="padding: 15px 25px;">
+                <p><span class="colorred">课时收益</span>：即教练员在当前月份所有已审过课时的收入（包括已结算、未结算以及公益课的课时）。</p>
+                <p><span class="colorred">公益课时</span>：公益课为学校大课间或一些不计算学员人头提成的特殊课程，此类课程一百不会通过平台进行支付购买，所以不进行常规的结算流程，但系统会在当前页面进行统计，方便训练营和教练员核对，进行工资发放。</p>
+                <p><span class="colorred">结算工资</span>：即教练员在当前月份进行结算的所有课时，因课时审核通过后隔天才会进行结算处理，所以一般情况下月底最后两天所审核的课时会在次月才结算，除了月底课时这种不可避免的情况，如教练员录课不及时，就会更多课时在次月才进行结算，所以请按结算形式发放工资的教练员们能及时录课，避免造成工资延迟发放。</p>
+            </div>
+        </div>
     </div>
-
-</div>
-
-
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli">
-                <input id="year" type="hidden" name="year" value="{$year}">
-                <input id="month" type="hidden" name="month" value="{$month}">
-                <span class="mui-icon mui-icon-arrowdown mui-pull-right f16 colorgray" style="margin-right: 15px"></span>
-                <a class="btnTime" id="mStatisticsTime" data-options='{"type":"month"}' style="margin: -11px 0px">{$year} - {$month} </a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli">
-                <span class="mui-icon mui-icon-arrowdown mui-pull-right f16 colorgray" style="margin-right: 15px"></span>
-                <a class="" id="showUserPicker" style="margin: -11px 0px"><text id="salaryTypeResult">结算工资（0）</text></a>
-            </li>
-        </ul>
-
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>

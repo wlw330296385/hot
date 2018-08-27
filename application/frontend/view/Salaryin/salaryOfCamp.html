@@ -15,20 +15,20 @@
     <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style type="text/css">
-        .coach .table{
-            font-size: 14px !important;
-        }
+        .subheader .mui-title{ right: 15px !important; }
+        .coach .table{ font-size: 14px !important; }
         .btnTime { text-align: center; font-size: 14px; }
+        .mui-icon-info { margin-left: 10px !important; }
+        #showTips p{ border-bottom: 1px solid #ddd; padding-bottom: 10px; color: #737373; }
     </style>
 </head>
-
 <body>
 
     <header id="header" class="mui-bar mui-bar-nav subheader">
         <a class="mui-icon mui-icon-left-nav mui-pull-left arrow"href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}">
             <span class="return"></span>
         </a>
-        <h1 class="mui-title"><text class="colororange" id="yearMonth">{$y}年 {$m}月</text> 工资列表</h1>
+        <h1 class="mui-title"><text class="colororange" id="yearMonth">{$y}年 {$m}月</text> 工资列表 <a href="#showTips"><span class="mui-icon mui-icon-info f18"></span></a></h1>
     </header>
 
     <div class="mui-content list">
@@ -41,9 +41,9 @@
                     <li class="mui-table-view-cell">
                         <ul class="mui-row table">
                             <li class="mui-col-xs-3"> 教练员 <span class="mui-badge mui-badge-primary">{$coachCount}</span></li>
-                            <li class="mui-col-xs-3 mui-text-center">课时收益 <span class="mui-icon mui-icon-info f16"></span></li>
-                            <li class="mui-col-xs-3 mui-text-center">公益课时 <span class="mui-icon mui-icon-info f16"></span></li>
-                            <li class="mui-col-xs-3 mui-text-center">结算工资 <span class="mui-icon mui-icon-info f16"></span></li>
+                            <li class="mui-col-xs-3 mui-text-center">课时收益</li>
+                            <li class="mui-col-xs-3 mui-text-center">公益课时</li>
+                            <li class="mui-col-xs-3 mui-text-center">结算工资</li>
                         </ul>
                     </li>
                 </ul>
@@ -73,11 +73,26 @@
     </div>
 
     <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 btnTime" data-options='{"type":"month"}'>
-                <span id="selectYM">{$y}年 {$m}月</span>
-                <span class="f12 colorgray" style="margin-left:10px">（ 切换月份 )</span>
-            </li>
-        </ul>
+        <li class="mui-table-view-cell mui-col-sm-12 mui-col-xs-12 btnTime" data-options='{"type":"month"}'>
+            <span id="selectYM">{$y}年 {$m}月</span>
+            <span class="f12 colorgray" style="margin-left:10px">（ 切换月份 )</span>
+        </li>
+    </ul>
+
+    <!--统计说明弹框-->
+    <div id="showTips" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header explain-title border-b">
+            <span class="course wd49">统计说明</span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll" style="padding: 15px 25px;">
+                <p><span class="colorred">课时收益</span>：即教练员在当前月份所有已审过课时的收入（包括已结算、未结算以及公益课的课时）。</p>
+                <p><span class="colorred">公益课时</span>：公益课为学校大课间或一些不计算学员人头提成的特殊课程，此类课程一百不会通过平台进行支付购买，所以不进行常规的结算流程，但系统会在当前页面进行统计，方便训练营和教练员核对，进行工资发放。</p>
+                <p><span class="colorred">结算工资</span>：即教练员在当前月份进行结算的所有课时，因课时审核通过后隔天才会进行结算处理，所以一般情况下月底最后两天所审核的课时会在次月才结算，除了月底课时这种不可避免的情况，如教练员录课不及时，就会更多课时在次月才进行结算，所以请按结算形式发放工资的教练员们能及时录课，避免造成工资延迟发放。</p>
+            </div>
+        </div>
+    </div>
 
 </body>
 <script src="/static/frontend/js/mui.min.js"></script>
