@@ -104,12 +104,12 @@
                 opacity: 0;
             }
         }
-        .punchList .colorgray{
-            color:#CCC !important;
-            margin-left:5px;
-            margin-right:5px;
+
+        .punchList .colorgray {
+            color: #CCC !important;
+            margin-left: 5px;
+            margin-right: 5px;
         }
-        
     </style>
 </head>
 
@@ -177,7 +177,11 @@
                 </span>
             </div>
 
-            <ul class="mui-table-view mb punchList"></ul>
+            <ul class="mui-table-view mb punchList">
+                <p class="moreRecord mui-text-center bggray2" style="padding-top:15px;">
+                    <a href="{:url('punch/punchList')}">点击查看更多打卡记录</a>
+                </p>
+            </ul>
             <div class="dragClass" id="drag">
                 <a class="punch" href="{:url('Punch/createPunch')}">打卡</a>
                 <div class="waveRaidus"></div>
@@ -194,8 +198,7 @@
 <script src="/static/frontend/js/mobile_date.js"></script>
 <script src="/static/frontend/js/calendar.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
-<script>    
-
+<script>
     var count = 1
 
     $(function () {
@@ -205,24 +208,33 @@
         }
         $(".punch").on("tap", function () {
             checkKogin()
-        })
+        });
         $(".group").on("tap", function () {
             checkKogin()
-        })
+        });
         $(".goConfirm").click(function () {
             mui.toast('暂未开放，敬请期待');
-        })
-        toPunchList(); //获取我的打卡记录列表
+        });
+
+        toPunchList(); //获取我的打卡记录列表 
+        toMonthPunchList(); //输出月份的打卡记录列表
 
         $(document).on("tap", ".arrow-prev", function () {
-            $(".punchList").empty();
-            toPunchList();
-        })
+            setTimeout(function () {
+                var month_str = $("#calendar .title").text();
+                toMonthPunchList();
+            }, 100)
+
+
+        });
         $(document).on("tap", ".arrow-next", function () {
-            $(".punchList").empty();
-            toPunchList();
-        })
+            setTimeout(function () {
+                var month_str = $("#calendar .title").text();
+                toMonthPunchList();
+            }, 100)
+        });
     })
+
     function checkKogin() {
         if ("{$memberInfo.id}" == 0) {
             mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
@@ -233,45 +245,29 @@
             return false;
         }
     }
-    //下拉刷新具体业务实现
-    function pulldownRefresh() {
-        setTimeout(function () {
-            count = 1;//刷新并显示第一页
-            var page = count;
-            var gType = 1;//代表下拉刷新
-            toPunchList(page, gType);//具体取数据的方法
-        }, 100);
-    }
-    //上拉加载具体业务实现
-    function pullupRefresh() {
-        setTimeout(function () {
-            count++;//翻下一页
-            var page = count;
-            var gType = 2;//代表上拉加载
-            toPunchList(page, gType);//具体取数据的方法
-        }, 100);
-    }
-    //获取我的打卡记录列表
-    function toPunchList(page, gType) {
-        var url = "{:url('api/punch/getPunchListApi','','',true)}";
-        var member_id = "{$memberInfo.id}"
+
+
+    //输出月份的打卡记录列表
+    function toMonthPunchList() {
+        var url = "{:url('api/punch/getMonthPunchListApi','','',true)}";
+        var month_str = $("#calendar .title").text();
         mui.ajax({
             url: url,
             data: {
-                member_id: member_id,
-                page: page,
+                month_str: month_str,
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = "";
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var punch_time = data.data[i].punch_time
-                        // $(".punchTimeList").append('<input value="' + punch_time + '">')
                         $(".calendar-date .item").each(function () {
                             var time = $(this).attr("data");
                             var year = time.substring(0, 4);
@@ -285,24 +281,59 @@
                                 $(this).addClass("endDK");
                             }
                         });
-                        var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=index';
-                        newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
-                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url + '"><div class="mui-media-body wd f16">' + data.data[i].member + ' <i class="colorgray">|</i> <strong>' + data.data[i].name + '</strong>';
-                        newli += '<p class="lineHeight20">' + data.data[i].punch_time + ' &nbsp;<i class="icon iconfont icon-punch-bonuspool colororange f16"></i> 打卡金 <text class="colororange">' + data.data[i].stakes + '</text> &nbsp;打赏 <text class="colororange">' + data.data[i].rewards_money + '</text> &nbsp; <i class="mui-icon-extra mui-icon-extra-like f14"></i> <text class="colororange">' + data.data[i].likes + '</text></p>';
+                    }
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+
+    //获取我的打卡记录列表
+    function toPunchList() {
+        var url = "{:url('api/punch/getPunchListApi','','',true)}";
+        var member_id = "{$memberInfo.id}"
+        mui.ajax({
+            url: url,
+            data: {
+                member_id: member_id,
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                console.log(data)
+                var newli = "";
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id +
+                            '/?punch=index';
+                        newli += ' <li class="mui-table-view-cell mui-media listli"><a href="' + urls +
+                            '" class="mui-navigate-right">';
+                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url +
+                            '"><div class="mui-media-body wd f16">' + data.data[i].member +
+                            ' <i class="colorgray">|</i> <strong>' + data.data[i].name + '</strong>';
+                        newli += '<p class="lineHeight20">' + data.data[i].punch_time +
+                            ' &nbsp;<i class="icon iconfont icon-punch-bonuspool colororange f16"></i> 打卡金 <text class="colororange">' +
+                            data.data[i].stakes + '</text> &nbsp;打赏 <text class="colororange">' + data.data[
+                                i].rewards_money +
+                            '</text> &nbsp; <i class="mui-icon-extra mui-icon-extra-like f14"></i> <text class="colororange">' +
+                            data.data[i].likes + '</text></p>';
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {
-                        $("ul.punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".punchList .moreRecord").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
                 }
+                $(".punchList .moreRecord").before(newli);
 
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.punchList").empty().append(newli);
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.punchList").append(newli);
-                }
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
@@ -318,7 +349,7 @@
         var disX, moveX, L, T, starX, starY, starXEnd, starYEnd;
         oDiv.addEventListener('touchstart', function (e) {
             flag = 0;
-            e.preventDefault();//阻止触摸时页面的滚动，缩放
+            e.preventDefault(); //阻止触摸时页面的滚动，缩放
             disX = e.touches[0].clientX - this.offsetLeft;
             disY = e.touches[0].clientY - this.offsetTop;
             //手指按下时的坐标
@@ -361,7 +392,6 @@
         //     }
         // });
     }
-
 </script>
 
 <script>
@@ -386,8 +416,8 @@
             desc: '{$memberInfo.member}邀你来PK！',
             link: "{$shareurl}/pid/{$mid}",
             imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
-            success: function () { },
-            cancel: function () { }
+            success: function () {},
+            cancel: function () {}
         });
         // 分享给朋友
         wx.onMenuShareAppMessage({
@@ -397,8 +427,8 @@
             imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
             type: "",
             dataUrl: '',
-            success: function () { },
-            cancel: function () { }
+            success: function () {},
+            cancel: function () {}
         });
 
     });
