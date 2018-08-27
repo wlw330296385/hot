@@ -53,6 +53,7 @@ class Lesson extends Backend{
                 ->select();
 
             
+            
             $this->assign('fansList',$fansList);
             $this->assign('coachList',$coachList);  
             $this->assign('gradeCategoryList',$gradeCategoryList);
@@ -64,7 +65,7 @@ class Lesson extends Backend{
 	public function lessonList(){
 		$LessonService = new \app\service\LessonService;
 		$lessonList = $LessonService->getLessonListByPage(['camp_id'=>$this->campInfo['id']]);
-
+ 
 
         $this->assign('lessonList',$lessonList);
         return view('Lesson/lessonList');
@@ -76,9 +77,13 @@ class Lesson extends Backend{
         $lesson_id = input('param.lesson_id');
         $LessonService = new \app\service\LessonService;
         $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
-
+        $assignList = [];
+        if($lessonInfo['isprivate'] == 1){
+            $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
+        }
 
         $this->assign('lessonInfo',$lessonInfo);
+        $this->assign('assignList',$assignList);
         return view('Lesson/lessonInfo');
 }
 
@@ -100,9 +105,25 @@ class Lesson extends Backend{
             // 课程分类
             $GradeCategoryService = new \app\service\GradeCategoryService;
             $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
+            //粉丝列表
+            $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
+            //教练列表
+            $coachList = db('coach c')
+                ->field('c.coach,c.id,c.member_id,cm.type,c.portraits')
+                ->join('camp_member cm','c.member_id = cm.member_id')
+                ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
+                ->order('cm.id desc')
+                ->select();
+            $assignList = [];
+            if($lessonInfo['isprivate'] == 1){
+                $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
+            }
+            
+            
 
             $this->assign('lessonInfo',$lessonInfo);
             $this->assign('gradeCategoryList',$gradeCategoryList);
+            $this->assign('assignList',$assignList);
             return view('Lesson/updateLesson');
         }
 	}
