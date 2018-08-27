@@ -3,49 +3,82 @@
     .img-md {
         float: none;
     }
+
+    label {
+        line-height: 34px;
+        margin-bottom: 0;
+    }
 </style>
 {/block} {block name="page-content"}
-<div class="row">
-    <div class="col-md-7 col-sm-7">
-        <div class="box no-border">
-            <form role="form" action="" method="post" enctype="multipart/form-data">
-                {:token()}
-                <div class="box-body">
-                    <input type="hidden" name="camp" value="{$campInfo.camp}">
-                    <input type="hidden" name="camp_id" value="{$campInfo.id}">
-                    <input type="hidden" name="member" value="{$memberInfo.member}">
-                    <input type="hidden" name="member_id" value="{$memberInfo.id}">
-                    <div class="form-group">
+<div class="box no-border">
+    <form role="form" action="" method="post" enctype="multipart/form-data">
+        {:token()}
+        <div class="box-body">
+            <input type="hidden" name="camp" value="{$campInfo.camp}">
+            <input type="hidden" name="camp_id" value="{$campInfo.id}">
+            <input type="hidden" name="member" value="{$memberInfo.member}">
+            <input type="hidden" name="member_id" value="{$memberInfo.id}">
+            <input type="hidden" name="memberData" value="">
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">课程名称</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">课程类型</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <select name="gradecate_id" class="form-control lessonType">
                             {volist name="gradeCategoryList" id="vol"}
-                            <optgroup label="{$vol.name}" data-gradecate_setion_id="{$vol.id}">
+                            <optgroup label="{$vol.name}" data-gradecate_setion="{$vol.name}" data-gradecate_setion_id="{$vol.id}">
                                 {volist name="$vol.daughter" id="v"}
                                 <option value="{$v.id}" selected="true">{$v.name}{/volist}</option>
                             </optgroup>
                             {/volist}
                         </select>
-                        <input type="hidden" name="gradecate" class="gradecate " value="">
-                        <input type="hidden" name="gradecate_id" class="gradecate_id " value="">
-                        <input type="hidden" name="gradecate_setion" class="gradecate_setion " value="">
-                        <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id " value="">
                     </div>
-                    <div class="form-group">
+                </div>
+                <input type="hidden" name="gradecate" class="gradecate " value="">
+                <input type="hidden" name="gradecate_id" class="gradecate_id " value="">
+                <input type="hidden" name="gradecate_setion" class="gradecate_setion " value="">
+                <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id " value="">
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">课程单价</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入课程单价" name="cost">
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">课程数量</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#domModal">
                             <input type="text" class="form-control" placeholder="请输入课程数量" name="doms" value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">训练周期</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <select class="form-control" name="week">
                             <option value="不限">不限</option>
                             <option value="周日">周日</option>
@@ -57,73 +90,144 @@
                             <option value="周六">周六</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">训练时间</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker">
                     </div>
-                    <style>
-                        /* 区域选择器页面样式调整 */
+                </div>
+            </div>
+            <style>
+                /* 区域选择器页面样式调整 */
 
-                        .city-picker-span {
-                            border: 1px solid #ddd;
-                            padding-left: 15px;
-                        }
-                    </style>
-                    <div id="distpicker">
-                        <div class="form-group" style="position: relative;">
+                .city-picker-span {
+                    border: 1px solid #ddd;
+                    padding-left: 15px;
+                }
+            </style>
+            <div id="distpicker">
+                <div class="form-group" style="position: relative;">
+                    <div class="row">
+                        <div class="col-md-2 clo-sm-2 text-right">
                             <label for="">所属地区</label>
+                        </div>
+                        <div class="col-md-5 clo-sm-5">
                             <input type="text" id="city-picker3" class="form-control" placeholder="请选择所属地区" name="address" data-toggle="city-picker">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <input type="hidden" name="province" value="">
+                    <input type="hidden" name="city" value="">
+                    <input type="hidden" name="area" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">请选择训练地点</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#courtModal">
                             <input type="text" class="form-control" placeholder="请选择训练地点" name="court">
                             <input type="hidden" name="court_id" class="court_id " value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">具体地址</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入具体地址" name="location">
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">最少开课人数</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入最少开课人数" name="min">
                     </div>
-                    <div class="form-group">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">最多开课人数</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入最多开课人数" name="max">
                     </div>
-                    <div class="form-group">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">请选择主教练</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#coachModal">
                             <input type="text" class="form-control" placeholder="请选择主教练" name="coach">
                             <input type="hidden" name="coach_id" class="coach_id " value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">请选择助理教练</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#assistantModal">
                             <input type="text" class="form-control" placeholder="请选择助理教练" name="assistants" value="">
                             <input type="hidden" name="assistant_ids" class="assistant_ids" value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">请选择领队</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#leaderModal">
                             <input type="text" class="form-control" placeholder="请选择领队" name="leader">
                             <input type="hidden" name="leader_id" class="leader_id" value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">请选择班主任</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div data-toggle="modal" data-target="#teacherModal">
                             <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
                             <input type="hidden" name="teacher_id" class="teacher_id" value="">
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">课程封面</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <div class="box-header">
                             <div class="col-sm-12 col-md-12">
                                 <a class="btn-banner" href="#" title="点击替换图片">
@@ -136,36 +240,84 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">咨询电话</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入咨询电话" name="telephone">
                     </div>
-                    <div class="form-group">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">是否上架</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <select class="form-control" name="status">
                             <option value="0">否</option>
                             <option value="1">是</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">设为私密课程</label>
-                        <select class="form-control" name="isprivate">
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
+                        <select id="lessonPrivate" class="form-control" name="isprivate">
                             <option value="0">否</option>
                             <option value="1">是</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 clo-sm-2 text-right">
+                </div>
+                <div class="col-md-5 clo-sm-5">
+                    <div class="memberInput-row" style="display: none">
+                        <div style="margin-bottom:10px;">
+                            <button type="button" class="btn btn-primary choisePrivate" data-toggle="modal" data-target="#privateModal">选择私密会员</button>
+                            <button type="button" class="btn btn-default choiseAll">全选</button>
+                            <button type="button" class="btn btn-default choiseCancel">取消</button>
+                            <button type="button" class="btn btn-danger choiseDelete">删除</button>
+                        </div>
+                        <ul class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
                         <label for="">备注</label>
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <input type="text" class="form-control" placeholder="请输入备注信息" name="remarks">
                     </div>
+                </div>
+            </div>
 
-                    <div class="box-footer">
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-md-2 clo-sm-2 text-right">
+                    </div>
+                    <div class="col-md-5 clo-sm-5">
                         <button type="submit" class="btn btn-success">提 交</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <!-- 课量选择 -->
@@ -348,7 +500,7 @@
                         </thead>
                         <tbody>
                             <tr role="row" class="odd">
-                                <td>张伟荣</td>
+                                <td>HoChen</td>
                                 <td>深圳市</td>
                                 <td>
                                     <a href="">查看详情</a>
@@ -358,7 +510,7 @@
                                 </td>
                             </tr>
                             <tr role="row" class="odd">
-                                <td>HoChen</td>
+                                <td>张伟荣</td>
                                 <td>深圳市</td>
                                 <td>
                                     <a href="">查看详情</a>
@@ -543,6 +695,88 @@
     </div>
 </div>
 
+<!-- 私密会员 -->
+<div class="modal fade" id="privateModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">请选择你要添加的私密会员</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#fansTab2" data-toggle="tab"> 粉丝列表</a>
+                    </li>
+                    <li>
+                        <a href="#studentTab2" data-toggle="tab">学生列表</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="fansTab2">
+                        <div class="tableScroll">
+                            <table class="table table-bordered table-striped dataTable privateList">
+                                <thead>
+                                    <tr role="row">
+                                        <th>粉丝名称</th>
+                                        <th>所属地区</th>
+                                        <th>详情</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr role="row" class="odd">
+                                        <td>HoChen</td>
+                                        <td>深圳市</td>
+                                        <td>
+                                            <a href="">查看详情</a>
+                                        </td>
+                                        <td>
+                                            <span class="btn btn-xs btn-info choiseAdd" data-private="张伟荣" data-private_id="7">添加</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="studentTab2">
+                        <div class="tableScroll">
+                            <table class="table table-bordered table-striped dataTable privateList">
+                                <thead>
+                                    <tr role="row">
+                                        <th>学员名称</th>
+                                        <th>所属地区</th>
+                                        <th>详情</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="active">
+                                    <tr role="row" class="odd">
+                                        <td>张伟荣</td>
+                                        <td>深圳市</td>
+                                        <td>
+                                            <a href="">查看详情</a>
+                                        </td>
+                                        <td>
+                                            <span class="btn btn-xs btn-info choiseAdd" data-private="Hochen" data-private_id="1">添加</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left clearPrivate">清除所选会员</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {/block} {block name='js'}
 
 <script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
@@ -562,16 +796,29 @@
 
     $(function () {
 
+        // boostrap时间选择器
         $('#datetimepicker').datetimepicker({
             format: 'hh:ii',
             startView: 1,
             autoclose: true,
         });
 
-        $(".lessonType").on("change",function () {
-            var gradecate_setion = $(this).children().attr("label");
+        // 获取省市区
+        $(document).on("click", ".province a", function () {
+            $("input[name=province]").val($(this).text());
+        })
+        $(document).on("click", ".city a", function () {
+            $("input[name=city]").val($(this).text());
+        })
+        $(document).on("click", ".district a", function () {
+            $("input[name=area]").val($(this).text());
+        })
+
+        // 课程类型选择复赋值
+        $(".lessonType").on("change", function () {
+            var gradecate_setion = $(this).children().attr("data-gradecate_setion");
             var gradecate_setion_id = $(this).children().attr("data-gradecate_setion_id");
-            var gradecate =$(this).children().children('option:selected').text();
+            var gradecate = $(this).children().children('option:selected').text();
             var gradecate_id = $(this).children().children('option:selected').val();
             $("input[name='gradecate_setion']").val(gradecate_setion);
             $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
@@ -606,9 +853,23 @@
         $("#coachList tbody").on("click", ".btn", function () {
             var coach_id = $(this).attr("data-coach_id");
             var coach = $(this).attr("data-coach");
-            $("input[name=coach_id]").val(coach_id);
-            $("input[name=coach]").val(coach);
-            $('#coachModal').modal('hide');
+            var asID = '';
+            var isStop = 'No'
+            /// 判断所选主教是否存在助教栏
+            $("#assistantList .checkbox-assistant:checked").each(function () {
+                asID = $(this).attr('data-id');
+                if (asID == coach_id) {
+                    alert(coach + "已是助教，请不要重复选择！");
+                    $(this).find(".checkbox-assistant").prop("checked", false);
+                    isStop = 'Yes';
+                    return false;
+                }
+            });
+            if (isStop == 'No') {
+                $("input[name=coach_id]").val(coach_id);
+                $("input[name=coach]").val(coach);
+                $('#coachModal').modal('hide');
+            }
         });
         $("#clearCoach").on("click", function () {
             $("input[name=coach_id]").val('');
@@ -627,6 +888,17 @@
                     return $(this).attr('data-id');
                 }).get().join(","));
             $('#assistantModal').modal('hide');
+        });
+        // 判断所选助教是否存在主教栏
+        $("#assistantList .checkbox-assistant").on('click', function () {
+            var mainID = $(".coach_id").val();
+            var asID = $(this).attr('data-id');
+            var asName = $(this).val();
+            if (asID == mainID) {
+                alert(asName + "已是主教练，请不要重复选择！");
+                $(this).prop("checked", false);
+                return false;
+            }
         })
 
         //领队
@@ -657,6 +929,68 @@
             $('#teacherModal').modal('hide');
         });
 
+        // 选择是否为私密课程显示隐藏选择会员框
+        $("#lessonPrivate").change(function () {
+            if ($(this).children('option:selected').text() == '是') {
+                $(".memberInput-row").show();
+            } else {
+                $(".memberInput-row").hide();
+            }
+        });
+
+        $(".choiseAdd").on("click", function () {
+            var thisVal = $(this).attr("data-private");
+            var thisId = $(this).attr("data-private_id");
+            var pirvateList = `<li class="list-group-item" data-private="${thisVal}" data-id="${thisId}"><span class="order" style="margin-right:10px;">1</span><span>${thisVal}</span><input type="checkbox" value="" style="float:right"></li>`
+            var isExist = true;
+            $(".list-group .list-group-item").each(function () {
+                var list_id = $(this).attr("data-id");
+                if (list_id == thisId) {
+                    isExist = false;
+                    alert("该会员已在列表中");
+                    return false;
+                }
+            });
+            if (isExist == true) {
+                $(".memberInput-row .list-group").append(pirvateList);
+            }
+            changeIndex();
+            var totalNum = $(".list-group-item").length;
+            $(".mui-badge").text(totalNum);
+        });
+
+        var isPrivate = $("#lessonPrivate").val();
+        if (isPrivate == 1) {
+            var memberList = [];
+            $(".list-group-item").each(function (i) {
+                memberList[i] = { member: $(this).attr("data-private"), id: $(this).attr("data-id") };
+            });
+        }
+        $("input[name=memberData]").val(JSON.stringify(memberList))
+
+        //全选
+        $(".choiseAll").click(function () {
+            $(".list-group-item").find('input').prop('checked', true)
+        })
+
+        //取消全选
+        $(".choiseCancel").click(function () {
+            $(".list-group-item").find('input').prop('checked', false)
+        })
+
+        //删除
+        $(".choiseDelete").click(function () {
+            $(".list-group-item").find("input:checked").parents(".list-group-item").remove();
+            $(".order").text($(".list-group-item").length);
+            changeIndex();
+        });
+
     })
-</script>
-{/block}
+    //更新序号函数
+    function changeIndex() {
+        var i = 1;
+        $(".list-group-item").each(function () { //循环checkboxCont
+            $(this).find(".order").text(i++);//更新序号
+        });
+    }
+</script> {/block}
