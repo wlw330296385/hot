@@ -1,68 +1,124 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>添加课程|班级类型父类</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/backend/plugins/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/backend/plugins/ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="/static/backend/adminlte/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="/static/backend/adminlte/css/master.css">
+{extend name="layout/common"/}
 
-
-
-</head>
-<body>
-<div class="wrapper">
+{block name="page-content"}
     <div class="row">
     <div class="col-md-12 col-sm-12">
         <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">添加课程|班级类型父类</h3>
-            </div>
-            <form action="" class="form-horizontal" method="post" enctype="multipart/form-data" >
-                {:token()}
-                <div class="box-body">
+            <form action="" class="form-horizontal" method="post" enctype='application/json'>
+                
+                <div class="box-body">  
+
                     <div class="form-group">
-                        <label class="col-sm-2 col-md-2 control-label">课程|班级类型名称</label>
+                        <label class="col-sm-2 col-md-2 control-label">部门名称</label>
                         <div class="col-sm-8 col-md-8">
-                            <input type="text" name="name" class="form-control" value="">
+                            <input type="text" name="name" class="form-control" value="" required="required">
                         </div>
                         <div class="col-sm-2 col-md-2"></div>
                     </div>
-                    <input type="hidden" name="pid" value="0">
-                    
 
-                    <div class="form-group">
-                        <label class="col-sm-2 col-md-2 control-label">图片</label>
+                    <div class="form-group ">
+                        <label class="col-sm-2 col-md-2 control-label">权限</label>
                         <div class="col-sm-8 col-md-8">
-                        <a class="btn-banner" href="#" title="点击替换图片">
-                                <img class="img-thumbnail" id="uploader-preview1" src="">
-                                <div class="row">
-                                    <div id="filePicker1">选择上传</div>
-                                </div>
-                                <input id="uploader-input1" type="hidden" name="url" value="">
-                        </a>
-                    </div>
+                            <input type="hidden" name="pid" value="0">
+                            <input type="text" name="menu_auth" class="form-control" value="" required="required">
+                        </div>
                         <div class="col-sm-2 col-md-2"></div>
                     </div>
-                </div>
-                <div class="box-footer">
-                    <div class="col-sm-12 col-sm-8 col-sm-offset-2">
-                        <button type="submit" class="btn btn-success btn-flat">提 交</button>
+                    <div class="form-group ">
+                        <div class="box-header">
+                            <button type="submit" class="btn btn-info btn-flat powerSubmit ">确认添加权限</button>
+                        </div>
+                        <div class="fixed-table-container no-border">
+                            <div class="row">
+                                {volist name="menuList" id="vo"}
+                                <div class="col-sm-6 col-md-3 col-xs-12">
+                                    <ul class="list-group">
+                                        <li class="list-group-item bg-gray" data-id="{$vo.id}">
+                                            <label>
+                                                <input type="checkbox" class="power powerP"  value="{$vo.id}"  >
+                                                <span class="" data-id="{$vo.id}"  >{$vo.title}
+                                            </label>
+                                        </li>
+                                        {if condition="$vo['daughter']"}
+                                        {volist name="vo['daughter']" id="vo2"}
+                                            <li class="list-group-item clearfix">
+                                                <label>
+                                                    <input type="checkbox" class="power  power{$vo2.pid}" name="" value="{$vo2.id}" data="{$vo2.pid}"  >
+                                                    <span class="small" data-id="{$vo.id}"  >{$vo2.title}</span>
+                                                </label>
+                                            </li>
+                                        {/volist}
+                                        {/if}
+                                    </ul>
+                                </div>
+                                {/volist}
+                                
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="box-footer">
+                            <div class="col-md-3 col-md-3 col-md-offset-7">
+                                <button type="submit" class="btn btn-success btn-flat ">提 交</button>
+                            </div>
+                        </div>
+                    </div>    
                 </div>
+                
             </form>
+
+            <div class="box-body">
+                
+
+                <div class="col-sm-2 col-md-2"></div>
+            </div>
+
         </div>
     </div>
 </div>
-</div>
-</body>
-</html>
-<script src="/static/backend/plugins/jQuery/jquery-2.2.3.min.js"></script>
+{/block}
 
-<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
-<script>
-var serverUrl = "{:url('Upload/uploadImg',['dir'=>'gradecate'])}";
+{block name="js"}
+<script type="text/javascript">
+    $(function(){
+        // 提交权限
+        $('.powerSubmit').on('click',function(){
+            let power = [];
+            $('.power:checked').each(function(k,i){
+                power.push($(i).val());
+            });
+            // let power_str = power.join(',');
+            let power_str = JSON.stringify(power);
+            $('input[name=menu_auth]').val(power_str);
+        })
+
+
+        // 替父级选中
+        $('.power').on('change',function(){
+
+            let isc = $(this).prop("checked");
+   
+            if(isc){
+                let pid = $(this).attr('data');
+                $('.power[value='+pid+']').prop('checked',true);
+            }
+        })
+
+        //全选和反选
+        $('.powerP').on('change',function(){
+
+            let isc = $(this).prop("checked");
+            let pid = $(this).val();
+            if(isc){
+                $('.power'+pid).prop('checked',true);
+            }else{
+                $('.power'+pid).prop('checked',false);
+            }
+        })
+
+    })
+
 </script>
-<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+    
+{/block}

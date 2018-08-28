@@ -77,9 +77,26 @@ class Menu extends Backend{
 	// 编辑/添加部门权限
 	public function editAdminGroupP(){
 		$AdminGroup = new \app\admin\model\AdminGroup;
+		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
 			$data = input('post.');
-			$result = $AdminGroup->save($data,['id'=>$data['id']]);
+			if($ag_id){
+				//判断职位权限是否与当前权限有差集;
+				$info = db('admin_group')->where(['id'=>$ag_id])->find();
+				$powerP = json_decode($info['menu_auth']);
+				$power = json_decode($data['menu_auth']);//当前的权限;
+
+				$array_diff = array_diff($powerP,$power);
+				foreach ($array_diff as $key => $value) {
+					# code...
+				}
+
+				$result = $AdminGroup->save($data,['id'=>$ag_id]);
+
+			}else{
+				$result = $AdminGroup->save($data);
+			}
+
 			if($result){
 				$this->success('操作成功');
 			}else{
@@ -97,8 +114,11 @@ class Menu extends Backend{
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 
 				$power = json_decode($info['menu_auth']);
+				$powerP = db('admin_menu')->column('id');
+
 				$this->assign('info',$info);
 				$this->assign('power',$power);
+				$this->assign('powerP',$powerP);
 				return view('Menu/editAdminGroupP');
 			}else{
 
@@ -118,8 +138,9 @@ class Menu extends Backend{
 		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
 			$data = input('post.');
-			$data['menu_auth'] = stripslashes($data['menu_auth']);
-		
+
+			// $data['menu_auth'] = str_replace('"','',$data['menu_auth']);
+			dump($data);die;
 			if($ag_id){
 				$result = $AdminGroup->save($data,['id'=>$ag_id]);
 			}else{
@@ -138,6 +159,7 @@ class Menu extends Backend{
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 				$infoP = db('admin_group')->where(['id'=>$info['pid']])->find();
 				$power = json_decode($info['menu_auth']);
+
 				$powerP = json_decode($infoP['menu_auth']);
 				$menu = db('admin_menu')->where(['id'=>['in',$powerP]])->select();
 				$menuList = getTree($menu);
@@ -150,8 +172,16 @@ class Menu extends Backend{
 				$this->assign('menuList',$menuList);
 				return view('Menu/editAdminGroup');
 			}else{
+				$ag_pid = input('param.ag_pid');
+				$infoP = db('admin_group')->where(['id'=>$ag_pid])->find();
 
-				$this->assign('power',$power);
+				$powerP = json_decode($infoP['menu_auth']);
+				$menu = db('admin_menu')->where(['id'=>['in',$powerP]])->select();
+				$menuList = getTree($menu);
+
+				$this->assign('infoP',$infoP);
+				$this->assign('powerP',$powerP);
+				$this->assign('menuList',$menuList);
 				return view('Menu/addAdminGroup');
 			}
 		}
