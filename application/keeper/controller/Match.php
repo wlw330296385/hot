@@ -1120,5 +1120,10 @@ class Match extends Base {
     public function teamData() {
         return view('Match/data/teamData');
     }
+
+    // 联赛-创建球队
+    public function createTeamOfLeague() {
+        return view('Match/team/createTeamOfLeague');
+    }
    
 }

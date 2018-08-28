@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>创建球队</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+
+        .mui-popover {
+            height: 370px;
+            background: #fff !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
+            <span class="return">返回</span>
+        </a>
+    </header>
+
+    <div class="mui-content pt">
+
+        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+        <input type="hidden" name="member_id" class="data" value="-1" />
+        <input type="hidden" name="type" class="data" value="3" />
+
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>球队名称</label>
+                <input type="text" name="name" value="" class="data" placeholder="请填写球队名称">
+            </div>
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover" class="mui-navigate-right">
+                    <label>球队徽标</label>
+                    <div class="viewStyleSquare view "></div>
+                    <input type="hidden" name="logo" value="" class="data">
+                </a>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a href="#txpopover1" class="mui-navigate-right">
+                    <label>球队封面</label>
+                    <div class="viewStyle view1"></div>
+                    <input type="hidden" name="cover" value="" class="data">
+                </a>
+            </div>
+
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
+                提交
+            </li>
+        </ul>
+    </div>
+
+    <!-- logo -->
+    <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file">
+        </div>
+        <button class="clipBtnStyle clipBtn">截取</button>
+    </div>
+    <!-- 封面 -->
+    <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="clipAreaStyle clipArea1"></div>
+        <div class="fileFrame">选择图片
+            <input type="file" class="fileStyle file1">
+        </div>
+        <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'team'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <!--上传截图头像-->
+    <script src="/static/plugins/cropper/hammer.min.js"></script>
+    <script src="/static/plugins/cropper/iscroll-zoom-min.js"></script>
+    <script src="/static/plugins/cropper/lrz.all.bundle.js"></script>
+    <script src="/static/plugins/cropper/PhotoClip.js"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // 获取数据并进行提交
+        function submitAction() {
+
+            var name = $("input[name=name]").val();
+            var logo = $("input[name=logo]").val();
+            var cover = $("input[name=cover]").val();
+            if (name == '') {
+                mui.toast("请填写球队名称");
+                return false;
+            }
+            if (logo == '') {
+                $("input[name=logo]").val('/static/frontend/images/basketball.jpg');
+            }
+            if (cover == '') {
+                $("input[name=cover]").val('/static/frontend/images/membercenter-bg.jpg');
+            }
+
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/team/createteam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
+                    if (league == 1) {
+                        window.history.go(-1);
+                    } else {
+                        var goUrl = "{:url('team/teammanage')}" + '/team_id/' + ajaxResult.insid;
+                        window.top.location.href = goUrl;
+                    }
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑球队介绍</p>");
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
+        };
+    </script>
+    <script>
+        var pc = new PhotoClip('.clipArea', {
+            size: 260,
+            outputSize: 640,
+            file: '.file',
+            view: '.view',
+            ok: '.clipBtn',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=logo]").val(res.path)
+                    mui("#txpopover").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+        var pc = new PhotoClip('.clipArea1', {
+            size: 260,
+            outputSize: 640,
+            adaptive: ['80%', '60%'],
+            file: '.file1',
+            view: '.view1',
+            ok: '.clipBtn1',
+            loadStart: function () {
+                console.log('开始读取照片');
+            },
+            loadComplete: function () {
+                console.log('照片读取完成');
+            },
+            done: function (dataURL) {
+                console.log(dataURL);
+                mui.post("{:url('api/upload/imgcropupload')}", {
+                    dataurl: dataURL,
+                    path: 'cert'
+                }, function (res) {
+                    console.log(res);
+                    $("input[name=cover]").val(res.path)
+                    mui("#txpopover1").popover("toggle");
+                }, 'json');
+            },
+            fail: function (msg) {
+                alert(msg);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
