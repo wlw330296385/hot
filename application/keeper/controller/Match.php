@@ -633,6 +633,7 @@ class Match extends Base {
             'organization_type' => 4,
             'apply_type' => 1
         ]);
+
         if (!$applyInfo) {
             $this->error(__lang('MSG_404'));
         }
@@ -658,8 +659,10 @@ class Match extends Base {
             'match_id' => $applyInfo['organization_id'],
             'member_id' => $applyInfo['member_id']
         ]);
+
         $memberS = new MemberService();
-        $applyInfo['member'] = $memberS->getMemberInfo(['id' => $matchMemberInfo['member_id']]);
+        $applyInfo['member'] = $memberS->getMemberInfo(['id' => $applyInfo['member_id']]);
+        $applyInfo['member']['fans'] = getfansnum($applyInfo['member_id'], 1);
         // 若是裁判员读取裁判员数据
         $refereeS = new RefereeService();
         if ($applyInfo['type'] == 6) {
@@ -685,7 +688,9 @@ class Match extends Base {
             trace('error:'.$e->getMessage(), 'error');
             $this->error($e->getMessage());
         }
-
+// dump($applyInfo);exit;
+// dump($leagueInfo);
+// dump($matchMemberInfo);exit;
         $this->assign('applyInfo', $applyInfo);
         $this->assign('leagueInfo', $leagueInfo);
         $this->assign('matchMemberInfo', $matchMemberInfo);

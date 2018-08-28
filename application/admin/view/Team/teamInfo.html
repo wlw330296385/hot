@@ -2,77 +2,116 @@
 {block name="css"}
 <style>
         .img-md {float:none;}
+        .ellipsis-text{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
 </style>
 {/block}
 {block name="page-content"}
-        <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-3">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">基础信息</h3>
                 </div>
 
-                <div class="box-body">
-                    <form role="form">
-                        <div class="form-group">
-                            <label>球队名</label>
-                            <input type="text" class="form-control" placeholder="输入 ..." name="name" value="{$teamInfo.name}">
-                        </div>
+                <div class="box-body box-profile">
+                    <img class="profile-user-img img-responsive " src="{$teamInfo.logo}" style="width: 50%;" onerror="this.src='/static/frontend/images/basketball.jpg'" alt="球队 logo">
+                    <br>
+                    <h3 class="profile-username text-center">{$teamInfo.name}</h3>
+                    <p class="text-muted text-center">{$type[$teamInfo.type]}</p>
+                    <br>
+                    <strong><i class="fa fa-bookmark margin-r-5"></i> 简介</strong>
+                    <p>{$teamInfo.descri}</p>
+                    <hr>
+                      <strong><i class="fa fa-tags margin-r-5"></i>球队特点</strong>
+                    <p style="margin-bottom: 5px;">
+                        {if condition="count($teamInfo.charater_arr) > 0"}
+                            {volist name="$teamInfo.charater_arr" id="vo"}
 
-                        <div class="form-group">
-                            <label>球队类型</label>
-                            <select id="teamType" class="form-control" name="type">
-                                <option value="1">训练营</option>
-                                <option value="2">企事业单位</option>
-                                <option value="3">业余组织</option>
-                                <option value="4">大学生</option>
-                                <option value="5">高中生</option>
-                                <option value="6">初中生</option>
-                                <option value="7">小学生</option>
-                            </select>
-                        </div>
+                                <span style="line-height: 2;" class="label 
+                                {switch name='$key%5'}
+                                    {case value='0'}label-danger{/case}
+                                    {case value='1'}label-success{/case}
+                                    {case value='2'}label-info{/case}
+                                    {case value='3'}label-warning{/case}
+                                    {case value='4'}label-primary{/case}
+                                {/switch}
 
-                        <div class="form-group">
-                            <label>队徽</label>
-                            <a class="thumbnail" style="width:100px;">
-                                <img src="{$teamInfo.logo}" alt="">
-                            </a>
-                        </div>
+                                ">{$vo}</span>
 
-                        <div class="form-group">
-                            <label>封面</label>
-                            <a class="thumbnail">
-                                <img src="{$teamInfo.cover}" alt="">
-                            </a>
-                        </div>
-
-                    </form>
+                            {/volist}
+                        {/if}
+                    </p>
+                    
+                      <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item">
+                            <b><i class="fa fa-heart"></i> 粉丝数</b> <a class="pull-right">{$teamStats.team_follow_count}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b><i class="fa fa-trophy"></i> 历史荣誉</b> <a class="pull-right">{$teamStats.team_honor_count}</a>
+                        </li>
+                      </ul>
+                      <strong>封面</strong>
+                    <p style="margin-bottom:10px;padding: 5px;border: 3px solid #d2d6de;">
+                        <img class="img-responsive" src="{$teamInfo.cover}" onerror="this.src='/static/frontend/images/myteamBg.png'" alt="">
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="box box-default">
+        
+        <div class="col-md-3">
+            <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">管理者信息</h3>
+                    <h3 class="box-title">队员信息</h3>
                 </div>
                 <div class="box-body box-profile">
-                    <div class="form-group">
-                        <label>创建者</label>
-                        <p class=""><a href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['member_id']])}">{$teamInfo.member}</a></p>
-                    </div>
-                    <div class="form-group">
-                        <label>领队</label>
-                        <p class=""><a href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['leader_id']])}">{$teamInfo.leader}</a></p>
-                    </div>
-                    <div class="form-group">
-                        <label>管理员</label>
-                        <p class=""><a href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['leader_id']])}">{$teamInfo.leader}</a></p>
-                    </div>
-                    <div class="form-group">
-                        <label>队长</label>
-                        <p class=""><a href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['leader_id']])}">{$teamInfo.leader}</a></p>
+
+                    <ul class="list-group list-group-unbordered">
+                        
+                        <li class="list-group-item">
+                            <b>创建者</b> <a class="pull-right" href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['member_id']])}">{$teamInfo.member|default="暂无"}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>领队</b> <a class="pull-right" href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['leader_id']])}">{$teamInfo.leader|default="暂无"}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>管理员</b> <a class="pull-right" 
+                            {if condition="$teamInfo['manager_id'] != 0"}
+                            href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['manager_id']])}"
+                            {/if} >
+                            {$teamInfo.manager|default="暂无"}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>队长</b> <a class="pull-right" href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['captain_id']])}">{$teamInfo.captain|default="暂无"}</a>
+                        </li>
+                         <li class="list-group-item">
+                            <b>副队长</b> <a class="pull-right" href="{:url('admin/member/memberinfo',['member_id'=>$teamInfo['vice_captain_id']])}">{$teamInfo.vice_captai|default="暂无"}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>队员数</b> <a class="pull-right">{$teamStats.team_member_count}</a>
+                        </li>
+                    </ul>
+
+                    <div class="row">
+                        {volist name="$teamMemberList" id="vx"}
+                            
+                            {if condition="$key%4 == 0"}
+                                <div class="clearfix"></div>
+                            {/if}
+                            <div class="col-md-3 col-xs-3" style="margin-bottom: 10px;">
+                              <img class="img-responsive img-circle" src="{$vx.avatar}" alt="User Image" onerror="this.src='/static/default/avatar.png'">
+                              <a class="users-list-name text-center" href="{:url('admin/member/memberinfo',['member_id'=>$vx.member_id])}">{$vx.name}</a>
+                              <span class="users-list-date text-center ellipsis-text" style="">{$vx.position}</span>
+                            </div>
+
+                             
+                        {/volist}
                     </div>
                 </div>
             </div>
-        </dov>
-        
+        </div>
+    </div>
 {/block}
