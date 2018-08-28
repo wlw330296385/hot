@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <style>
         .nav-list .mui-grid-view.mui-grid-9 .mui-table-view-cell {
             border: none;
@@ -66,6 +68,12 @@
                     </a>
                 </li>
                 {/eq}
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="#operationGuide">
+                        <span class="icon iconfont icon-o-home"></span>
+                        <div class="mui-media-body">操作引导</div>
+                    </a>
+                </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/leagueInfo',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-o-home"></span>
@@ -157,20 +165,90 @@
         </div>
 
     </div>
-</body>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-    $(function () {
-        //未开发提示
-        $(".goConfirm").on("tap", function () {
-            mui.toast('暂未开放，敬请期待');
+
+    <!--操作引导-->
+    <div id="operationGuide" class="mui-popover">
+        <div class="page-header border-b">
+            <span class="course wd36">
+                <strong>操作引导/步骤</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list">
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/teamListOfLeague',['league_id' => $leagueInfo.id])}" class="colororange">1、审核球队</a>
+                        </label>
+                        <span class="colororange">已操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/matchstageListofleague',['league_id' => $leagueInfo.id])}">2、创建比赛阶段</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/groupsListOfLeague',['league_id' => $leagueInfo.id])}">3、创建分组</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/scheduleListOfLeague',['league_id' => $leagueInfo.id])}">4、编辑赛程</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/matchListOfLeague',['league_id' => $leagueInfo.id])}">5、录入比赛结果</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/integralTableList',['league_id' => $leagueInfo.id])}">6、生成对阵排名</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/scheduleListOfLeague',['league_id' => $leagueInfo.id])}">7、创建下一赛程</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <a href="{:url('match/matchListOfLeague',['league_id' => $leagueInfo.id])}">8、技术统计</a>
+                        </label>
+                        <span>未操作</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                indicators: true //是否显示滚动条,默认是true
+            });
+        })(mui);
+        $(function () {
+            //未开发提示
+            $(".goConfirm").on("tap", function () {
+                mui.toast('暂未开放，敬请期待');
+            })
         })
-    })
-</script>
+    </script>
+</body>
 
 </html>

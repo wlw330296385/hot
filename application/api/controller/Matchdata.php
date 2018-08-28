@@ -9,6 +9,7 @@ use app\service\MatchDataService;
 use app\service\MatchService;
 use app\service\MemberService;
 use app\service\TeamService;
+use app\service\MatchOrgMemberService;
 use think\Exception;
 
 class Matchdata extends Base
@@ -741,5 +742,161 @@ class Matchdata extends Base
         }
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
     }
+
+    // 录入比赛
+
+    public function saveMatchStatistics() {
+
+        $data = input('post.');
+        // 验证数据字段
+        if ( !array_key_exists('match_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛id']);
+        }
+        if ( !array_key_exists('match_record_id', $data) ) {
+            return json(['code' => 100, 'msg' => '请输入比赛战绩id']);
+        }
+        if (empty($this->memberInfo['id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatchOnly(['id' => $data['match_id']]);
+        $matchOrgMemberS = new MatchOrgMemberService();
+        $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ($matchOrgMmeberInfo['type_num'] < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        $data['match_time'] = checkDatetimeIsValid($data['match_time']) ? strtotime($data['match_time']) : $data['match_time'];
+        
+        $model = new MatchStatistics();
+        $teamS = new TeamService();
+        $memberS = new MemberService();
+
+        //根据 home_team_id 和 away_team_id 查出队伍信息
+        $data['home_team_id'];
+        $data['away_team_id'];
+
+        // 球员名单技术统计数据
+        if ( array_key_exists('members', $data) && !empty($data['members']) && $data['members'] != "[]" ) {
+            $recordMembers = json_decode($data['members'], true);
+            foreach ($recordMembers as $k => $val) {
+                // 球衣号码可为空
+                if (empty($val['number'])) {
+                    $recordMembers[$k]['number'] = null;
+                }
+                // 提交了无参赛信息的球员（会员）数据 需要保存出赛会员(match_record_member)信息
+                if (!$val['match_record_member_id']) {
+                    $matchRecordMemberData = [];
+                    $matchRecordMemberData['match_id'] = $data['match_id'];
+                    $matchRecordMemberData['match'] = $data['match'];
+                    $matchRecordMemberData['match_record_id'] = $data['match_record_id'];
+                    $matchRecordMemberData['match_time'] = $data['match_time'];
+                    $matchRecordMemberData['is_apply'] = -1;
+                    $matchRecordMemberData['is_attend'] = 1;
+                    $matchRecordMemberData['is_checkin'] = 1;
+                    $matchRecordMemberData['status'] = 1;
+
+                    // 获取球员(team_member)数据
+                    $teamMemberInfo = $teamS->getTeamMemberInfo(['id' => $val['team_member_id']]);
+                    if (!$teamMemberInfo) {
+                        return json(['code' => 100, 'msg' => __lang('MSG_404').'球队里没有'.$val['name'].'这个人喔']);
+                    }
+                    $matchRecordMemberData['team_id'] = $teamMemberInfo['team_id'];
+                    $matchRecordMemberData['team'] = $teamMemberInfo['team'];
+                    $matchRecordMemberData['team_member_id'] = $teamMemberInfo['id'];
+                    $matchRecordMemberData['member'] = $teamMemberInfo['member'];
+                    $matchRecordMemberData['member_id'] = $teamMemberInfo['member_id'];
+                    $matchRecordMemberData['name'] = $teamMemberInfo['name'];
+                    $matchRecordMemberData['number'] = empty($val['number']) ? null : $val['number'];
+                    $matchRecordMemberData['avatar'] = $teamMemberInfo['avatar'];
+                    $matchRecordMemberData['contact_tel'] = $teamMemberInfo['telephone'];
+                    
+
+                    // 有无比赛战绩原数据
+                    $hasMatchRecordMember = $matchS->getMatchRecordMember([
+                        'match_id' => $data['match_id'],
+                        'match_record_id' => $data['match_record_id'],
+                        'team_member_id' => $val['team_member_id'],
+                        'name' => $val['name']
+                    ]);
+                    if ($hasMatchRecordMember) {
+                        $matchRecordMemberData['id'] = $hasMatchRecordMember['id'];
+                    }
+                    // 保存比赛出赛球员关系数据
+                    try {
+                        $resMatchRecordMember = $matchS->saveMatchRecordMember($matchRecordMemberData);
+                    } catch (Exception $e) {
+                        return json(['code' => 100, 'msg' => '保存该球员出赛信息出错']);
+                    }
+
+                    if ($hasMatchRecordMember) {
+                        $recordMembers[$k]['match_record_member_id'] = $hasMatchRecordMember['id'];
+                        $val['match_record_member_id'] = $hasMatchRecordMember['id'];
+                    } else {
+                        $recordMembers[$k]['match_record_member_id'] = $resMatchRecordMember['data'];
+                        $val['match_record_member_id'] = $resMatchRecordMember['data'];
+                    }
+                }
+
+                // 更新球员参赛信息球衣号码
+                if ($val['match_record_member_id'] && !empty($val['number'])) {
+                    $matchS->saveMatchRecordMember([
+                        'id' => $val['match_record_member_id'],
+                        'number' => $val['number']
+                    ]);
+                }
+
+                // 组合补充保存数据字段
+                $recordMembers[$k]['match_id'] = $data['match_id'];
+                $recordMembers[$k]['match'] = $data['match'];
+                $recordMembers[$k]['match_record_id'] = $data['match_record_id'];
+                $recordMembers[$k]['match_time'] = $data['match_time'];
+                $recordMembers[$k]['status'] = 1;
+                // 球员得分和
+                $fg = ($val['fg']) ? $val['fg'] : 0;
+                $threepfg = ($val['threepfg']) ? $val['threepfg'] : 0;
+                $ft = ($val['ft']) ? $val['ft'] : 0;
+                $recordMembers[$k]['pts'] = 2*$fg+3*$threepfg+1*$ft;
+
+                // 查询有无已有数据记录
+                $memberMatchStatisticsInfo = $model->where([
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $data['match_record_id'],
+                    'match_record_member_id' => $val['match_record_member_id'],
+                    'team_member_id' => $val['team_member_id'],
+                ])->find();
+
+                if ($memberMatchStatisticsInfo) {
+                    $memberMatchStatisticsInfo = $memberMatchStatisticsInfo->toArray();
+                    $recordMembers[$k]['id'] = $memberMatchStatisticsInfo['id'];
+                }
+            }
+
+            // 保存球员比赛技术数据入库
+            try {
+                $res = $model->allowField(true)->saveAll($recordMembers);
+            } catch (Exception $e) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            }
+            if (!$res) {
+                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            }
+            // 更新比赛战绩 已录入技术统计标识
+            $matchS->saveMatchRecord([
+                'id' => $data['match_record_id'],
+                'has_statics' => 1,
+                'statics_time' => time()
+            ]);
+            // 球队录入比赛统计数据次数+1
+            db('team')->where('id', $data['home_team_id'])->setInc('statics_num', 1);
+            db('team')->where('id', $data['away_team_id'])->setInc('statics_num', 1);
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+
+    }
+    
 
 }
