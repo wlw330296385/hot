@@ -11,7 +11,7 @@ class Menu extends Backend{
 
 
 	public function menuList(){
-		$list = db('admin_menu')->select();
+		$list = db('admin_menu')->order('sort asc')->select();
 		$menuList = getTree($list);
 		
 		$this->assign('menuList', $menuList);
@@ -56,10 +56,10 @@ class Menu extends Backend{
 			$data = input('post.');
 			$result = $AdminGroup->save($data,['id'=>$data['id']]);
 			if($result){
-			$this->success('操作成功');
-		}else{
-			$this->error('操作失败');
-		}
+				$this->success('操作成功');
+			}else{
+				$this->error('操作失败');
+			}
 		}else{
 			
 			$adminGroupListP = $AdminGroup->select();
@@ -74,12 +74,69 @@ class Menu extends Backend{
 		
 	}
 
-	// 编辑部门权限
+	// 编辑/添加部门权限
 	public function editAdminGroupP(){
+		$AdminGroup = new \app\admin\model\AdminGroup;
+		if(request()->isPost()){
+			$data = input('post.');
+			$result = $AdminGroup->save($data,['id'=>$data['id']]);
+			if($result){
+				$this->success('操作成功');
+			}else{
+				$this->error('操作失败');
+			}
+		}else{
+			$ag_id = input('param.ag_id');
+			// 权限菜单
+			$list = db('admin_menu')->select();
+			$menuList = getTree($list);
+			$this->assign('menuList', $menuList);
+			// 已有权限
+			$power = [];
+			if($ag_id){
+				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 
+				$power = json_decode($info['menu_auth']);
+				$this->assign('info',$info);
+				$this->assign('power',$power);
+				return view('Menu/editAdminGroupP');
+			}else{
+
+				$this->assign('power',$power);
+				return view('Menu/addAdminGroupP');
+			}
+			
+			
+		}
 	}
 
 
 
+	// 编辑职位权限
+	public function editAdminGroup(){
+		$AdminGroup = new \app\admin\model\AdminGroup;
+		if(request()->isPost()){
 
+		}else{
+			if($ag_id){
+				$info = db('admin_group')->where(['id'=>$ag_id])->find();
+				$infoP = db('admin_group')->where(['id'=>$info['pid']])->find();
+				$power = json_decode($info['menu_auth']);
+				$powerP = json_decode($infoP['menu_auth']);
+				$menu = db('admin_menu')->where(['id'=>['in',$powerP]])->select();
+				$menuList = getTree($menu);
+				$this->assign('info',$info);
+				$this->assign('power',$power);
+				$this->assign('infoP',$infoP);
+				$this->assign('powerP',$powerP);
+				$this->assign('menuList',$menuList);
+				return view('Menu/editAdminGroup');
+			}else{
+
+				$this->assign('power',$power);
+				return view('Menu/addAdminGroup');
+			}
+		}
+		
+	}
 }
