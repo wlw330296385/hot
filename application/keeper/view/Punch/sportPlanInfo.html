@@ -376,7 +376,6 @@
                         <div class="mui-input-row btnDate">
                             <label>运动日期</label>
                             <span class="mui-navigate-right btnDateTxt"></span>
-                            <input type="hidden" name="sport_time" value="" class="data">
                         </div>
                         <div class="mui-input-row sportType">
                                 <label class="wd45">运动内容</label>
@@ -406,7 +405,11 @@
                             <input type="number" class="data" name="amount" value="" placeholder="选填" />
                         </div>
                     </div>
-                    <div class="mui-text-center" style="margin-top:35px;"><a href="#" id="goPunchInfo"><button class="mui-btn">该计划已完成，查看详情</button></a><button class="mui-btn" id="deleteSchedule">删除日程</button> &nbsp; <button class="mui-btn mui-btn-blue" id="saveScheduleEdit">保存修改</button> </div>
+                    <div class="mui-text-center" style="margin-top:35px;">
+                        <a href="#" id="goPunchInfo" class="mui-btn">该计划已完成，查看详情</a>
+                        <button type="button" class="mui-btn" id="deleteSchedule">删除日程</button> &nbsp; 
+                        <button type="button" class="mui-btn mui-btn-blue" id="saveScheduleEdit">保存修改</button>
+                    </div>
                 </form>
 
 
@@ -645,7 +648,7 @@
                             urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data.data[i].punch_id + '/?punch=sportPlanInfo';
                             newli += '<li class="mui-table-view-cell listli"><a href="'+urls+'"><label>已完成</label><span><button>运动详情</button></span></a></li>'
                         }else{
-                            urls = "{:url('punch/createPunch')}?plan_schedule_id=" + data.data.data[i].id;
+                            urls = "{:url('punch/createPunch')}?sport_plan_schedule_id=" + data.data.data[i].id;
                             newli += '<li class="mui-table-view-cell listli"><a href="'+urls+'"><label>未完成</label><span><button>立即打卡</button></span></a></li>'
                         }
                         
@@ -682,7 +685,6 @@
 
 
     $(function () {
-
 
         // 返回上一层判断
         var plan = wooApi.GetQueryString('plan');
@@ -898,7 +900,6 @@
 
 
             $("#scheduleEditForm input[name=plan_schedule_id]").val(sID);
-            $("#scheduleEditForm input[name=sport_time]").val(slDate);
             $("#scheduleEditForm input[name=name]").val(slProject);
             $("#scheduleEditForm .pNumber").text(slNumber);
             $("#scheduleEditForm .btnDateTxt").text(slDate);
@@ -920,9 +921,12 @@
 
 
         //修改计划日程
-        $(document).on('tap', '#deleteSchedule', function () {
+        $(document).on('click', '#saveScheduleEdit', function () {
             
-            var slDate = $("#scheduleEditForm input[name=sport_time]").val();
+            var slDate = $("#scheduleEditForm .btnDateTxt").text();
+            var YMDate = new Date(slDate+" 00:00:00");
+            var sport_time = Date.parse(YMDate)/1000;
+
             var slProject = $("#scheduleEditForm input[name=name]").val();
             var punchCategory = $("#scheduleEditForm input[name=punch_category]").val();
             var slDuration = $("#scheduleEditForm input[name=duration]").val();
@@ -930,6 +934,38 @@
             var slAmount = $("#scheduleEditForm input[name=amount]").val();
             var sID = $("#scheduleEditForm input[name=plan_schedule_id]").val();
 
+            mui.confirm("确认修改该计划日程吗", "提示", function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/sport_plan/updateSportPlanScheduleApi')}", {
+                            data: {
+                                sport_plan_schedule_id: sID,
+                                sport_time: sport_time,
+                                sport_project: slProject,
+                                punch_category: punchCategory,
+                                duration: slDuration,
+                                extent: slExtent,
+                                amount: slAmount
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                    window.location.reload();
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    }
+            });
 
 
         });
@@ -938,14 +974,40 @@
         //删除计划日程
         $(document).on('tap', '#deleteSchedule', function () {
             
-            var slDate = $("#scheduleEditForm input[name=sport_time]").val();
-            var slProject = $("#scheduleEditForm input[name=name]").val();
-            var punchCategory = $("#scheduleEditForm input[name=punch_category]").val();
-            var slDuration = $("#scheduleEditForm input[name=duration]").val();
-            var slExtent = $("#scheduleEditForm input[name=extent]").val();
-            var slAmount = $("#scheduleEditForm input[name=amount]").val();
+           
+            var slDate = $("#scheduleEditForm .btnDateTxt").text();
+            var YMDate = new Date();
+            var deletetime = Date.parse(YMDate)/1000;
+
             var sID = $("#scheduleEditForm input[name=plan_schedule_id]").val();
 
+            mui.confirm("确认要删除该计划日程吗", "提示", function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/sport_plan/updateSportPlanScheduleApi')}", {
+                            data: {
+                                sport_plan_schedule_id: sID,
+                                delete_time: deletetime
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                    window.location.reload();
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    }
+            });
 
 
         });

@@ -142,6 +142,9 @@
             background-position: center center;
             background-size: contain;
         }
+        .sportPlanName{
+            color:#BBB !important;
+        }
     </style>
 </head>
 
@@ -171,7 +174,19 @@
                 </li>
             </ul>
 
+            <div class="mui-input-group mb">
+                 <div class="mui-input-row">
+                    <a href="#sportPlan" class="mui-navigate-right">
+                        <label class="wd45"><i class="icon iconfont icon-punch-plan colororange"></i>选择运动计划</label>
+                        <span class="wd45 sportPlanName">(可不选)</span>
+                    </a>
+                    <input type="hidden" name="sport_plan_schedule_id" value="0" class="data">
+                </div>
+            </div>
+
             <form action="" class="mui-input-group">
+                <input type="hidden" name="sport_plan_schedule_id" value="0" class="data">
+
                 <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label class="wd45">
@@ -182,7 +197,7 @@
                 <div class="mui-input-row">
                     <a href="#sportType" class="mui-navigate-right">
                         <label class="wd45">
-                            <i class="icon iconfont icon-th-data colororange"></i>选择运动项目</label>
+                            <i class="icon iconfont icon-home-Signin colororange"></i>选择运动项目</label>
                         <span class="wd45 punch_category"></span>
                         <input type="hidden" name="punch_category" value="" class="data">
                     </a>
@@ -475,6 +490,7 @@
 
         var backTotal = wooApi.GetQueryString('backTotal');
         var paySuccess = wooApi.GetQueryString('paySuccess');
+        var sport_plan_schedule_id = wooApi.GetQueryString('sport_plan_schedule_id');
             //初始化
         mui.init({
             swipeBack: false,
@@ -603,6 +619,11 @@
             var time = year + '-' + ('0'+month).slice(-2) + '-' + ('0'+day).slice(-2)
             $(".punch_time").text(time)
             groupListAboutMember(time);
+
+            //如果有接收到运动计划日程id
+            if(sport_plan_schedule_id>0){
+                getSportPlanSchedule(sport_plan_schedule_id);
+            }
 
             ///////////////////////////////////////////////////////////////////////////////// 判断是否从指定社群进入把社群选上
             var stake = 0;
@@ -878,6 +899,56 @@
                         $(".matchList").empty().append(newli);
                     } else {
                         $(".matchList").append('<p class="mui-text-center">暂无数据</p>')
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+        //自定义运动计划日程信息
+        function getSportPlanSchedule(sps_id) {
+            var url = "{:url('api/sport_plan/getSportPlanScheduleInfoApi','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    sport_plan_schedule_id: sps_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        $(".punch_time").text(data.data.sport_time);
+                        $("input[name=sport_plan_schedule_id]").val(sps_id);
+                        $("input[name=name]").val(data.data.sport_project);
+                        $("input[name=punch_category]").val(data.data.punch_category);
+                        $(".sportProject input[name=duration]").val(data.data.duration);
+                        $(".sportProject input[name=extent]").val(data.data.extent);
+                        $(".sportProject input[name=amount]").val(data.data.amount);
+
+                        if(data.data.punch_category=="1"){
+                            $(".punch_category").text("训练");
+                        }else{
+                            $(".punch_category").text("比赛");
+                        }
+                        $(".sportProject input[name=name]").parent().show();
+                        if(data.data.duration>0){
+                            $(".sportProject input[name=duration]").parent().show();
+                        }
+                        if(data.data.extent>0){
+                            $(".sportProject input[name=extent]").parent().show();
+                        }
+                        if(data.data.amount>0){
+                            $(".sportProject input[name=amount]").parent().show();
+                        }
+
+                    } else {
+                        mui.toast("运动计划"+data.msg);
                     }
                 },
                 error: function (xhr, type, errerThrown) {
