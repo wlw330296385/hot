@@ -76,7 +76,7 @@ class Student extends Base
                 'type' => $type,
             ])->field("sum(rest_schedule) as s_rest_schedule, sum(total_schedule) as s_total_scheulde")->find();
         //未结算课量
-        $unsettle = db('schedule_member')->where(['user_id'=>$student_id,'type'=>1,'status'=>-1,'camp_id'=>$camp_id])->count();
+        $unsettle = db('schedule_member')->where(['user_id'=>$student_id,'type'=>1,'status'=>-1,'camp_id'=>$camp_id,'is_school'=>-1])->count();
 
         if (!$schedulenum) {
             $restSchedule = 0;
