@@ -1,13 +1,13 @@
 {extend name="layout/common" /} {block name="page-content"}
 <style>
-    .form-horizontal .control-label{
+    .form-horizontal .control-label {
         padding-top: 0;
     }
 </style>
 <div class="row">
     <div class="col-sm-12 col-md-12">
         <div class="box box-info">
-           
+
             <form class="form-horizontal lesson-form" method="post" action="">
                 <input type="hidden" id="lesson-id" name="id" value="{$lessonInfo.id}">
                 <div class="box-body">
@@ -144,6 +144,24 @@
                         </div>
                         <div class="col-sm-5"></div>
                     </div>
+
+                    {if $lessonInfo.isprivate==1}
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">私密课程名单</div>
+                        <div class="col-sm-4">
+                            <ul class="list-group">
+                                {volist name='assignList' id="vol"}
+                                <li class="list-group-item" data-private="{$vol.member}" data-id="{$vol.member_id}">
+                                    <span class="order" style="margin-right:10px;">{$key+1}</span>
+                                    <span>{$vol.member}</span>
+                                </li>
+                                {/volist}
+                            </ul>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    {/if}
+
                     <div class="form-group">
                         <div class="col-sm-2 control-label">所属训练营</div>
                         <div class="col-sm-5">

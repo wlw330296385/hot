@@ -11,13 +11,30 @@ class TeamMemberService
     public function myTeamList($map)
     {
         $model = new TeamMember();
-        $res = $model->where($map)->select();
+        $res = $model->where($map)->order('id asc')->select();
         if (!$res) {
             return $res;
         } else {
         	return $res->toArray();
         }
     }
+
+    // public function getTeamMemberList($map) {
+    //     $teamMemberModel = new TeamMember();
+    //     $result = $teamMemberModel
+    //     ->field('member.member, member.nickname, member.avatar, member.realname')
+    //     ->join('member','member.id = team_member.member_id')
+    //     ->where('team_member.status = 1')
+    //     ->where($map)
+    //     ->order('team_member.id desc')
+    //     ->select();
+
+    //     if (!$result) {
+    //         return $result;
+    //     } else {
+    //         return $result->toArray();
+    //     }
+    // }
 
     public function getTeamMemberAverage($map)
     {

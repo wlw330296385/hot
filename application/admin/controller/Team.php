@@ -3,15 +3,13 @@ namespace app\admin\controller;
 
 use app\admin\controller\base\Backend;
 use app\service\TeamService;
+use app\service\TeamMemberService;
+
 class Team extends Backend {
     private $TeamListService; 
     public function _initialize(){
         parent::_initialize();
         $this->TeamService = new TeamService();
-    }
-    public function index() {
-
-        $teamList = $this->TeamService->getTeamListByPage();
         $type = [
             1 => '训练营',
             2 => '企事业单位',
@@ -21,11 +19,13 @@ class Team extends Backend {
             6 => '初中生',
             7 => '小学生',
         ];
-        $this->assign('teamList',$teamList);
         $this->assign('type',$type);
+    }
+    public function index() {
+
+        $teamList = $this->TeamService->getTeamListByPage();
+        $this->assign('teamList',$teamList);
         return view('Team/index');
-        // dump($teamList);
-        
     }
 
     public function teamInfo(){
@@ -33,7 +33,24 @@ class Team extends Backend {
         $map['id'] = $team_id;
         $teamInfo = $this->TeamService->getTeam($map);
 
+        unset($map);
+        $map = array(
+            'team_id' => $team_id,
+            'team_member' => 1,
+            'team_event' => 1,
+            'team_honor' => 1,
+            'team_follow' => 1,
+            'team_match' => 1,
+        );
+        $teamStats = $this->TeamService->getTeamStats($map);
+
+        $teamMemberS = new TeamMemberService();
+        unset($map);
+        $map['team_id'] = $team_id;
+        $teamMemberList = $teamMemberS->myTeamList($map); 
         $this->assign('teamInfo',$teamInfo);
+        $this->assign('teamStats',$teamStats);
+        $this->assign('teamMemberList',$teamMemberList);
         return  view('team/teamInfo');
     }
 
