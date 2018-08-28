@@ -74,9 +74,10 @@ class Student extends Base
                 'camp_id' => $camp_id,
                 'student_id' => $student_id,
                 'type' => $type,
-                //'status' => 1
             ])->field("sum(rest_schedule) as s_rest_schedule, sum(total_schedule) as s_total_scheulde")->find();
-        //dump($schedulenum);
+        //未结算课量
+        $unsettle = db('schedule_member')->where(['user_id'=>$student_id,'type'=>1,'status'=>-1,'camp_id'=>$camp_id])->count();
+
         if (!$schedulenum) {
             $restSchedule = 0;
             $totalSchedule = 0;
@@ -84,19 +85,7 @@ class Student extends Base
             $restSchedule = $schedulenum['s_rest_schedule'];
             $totalSchedule = $schedulenum['s_total_scheulde'];
         }
-
-		// 学生课量
-		// $studentScheduleList = Db::view('schedule_member','*')
-		// 						->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
-		// 						->where([
-		// 						    'schedule.status' => 1,
-		// 							'schedule_member.user_id'=>$student_id,
-		// 							'schedule_member.status'=>1,
-		// 						])
-  //                               ->whereNull('schedule.delete_time')
-  //                               ->whereNull('schedule_member.delete_time')
-		// 						->order('schedule_member.id desc')
-		// 						->select();	
+        $restSchedule = $restSchedule - $unsettle;
 		// 非校园课课时总数
 		$finishedSchedule = db('schedule_member')
 							->where([
