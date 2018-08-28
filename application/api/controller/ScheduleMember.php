@@ -38,9 +38,8 @@ class ScheduleMember extends Base{
             $map = input('post.');
             $y = input('param.y');
             $m = input('param.m');
-            $d = input('param.d',1);
             if($y&&$m){
-                $betweenTime = getStartAndEndUnixTimestamp($y,$m,$d);
+                $betweenTime = getStartAndEndUnixTimestamp($y,$m);
                 $map['schedule_time'] = ['BETWEEN',[$betweenTime['start'],$betweenTime['end']]];
             }
             
@@ -54,6 +53,7 @@ class ScheduleMember extends Base{
             }
             
             $result = $this->ScheduleMemberService->getScheduleMemberListByPage($map);    
+            
             if($result){
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{

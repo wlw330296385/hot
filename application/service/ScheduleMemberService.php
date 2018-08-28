@@ -30,9 +30,7 @@ class ScheduleMemberService{
 
  	public function getScheduleMemberListByPage($map,$paginate = 10,$order = 'schedule_time desc'){
         $result = $this->scheduleMemberModel->where($map)->order($order)->paginate($paginate);
-        if($result){
-            return $result->toArray();
-        }
+        echo $this->scheduleMemberModel->getlastsql();die;
         return $result;
     }
 

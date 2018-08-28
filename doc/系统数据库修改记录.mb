@@ -45,3 +45,32 @@
 		1. 由于2018年8月8日-2018年8月20日在录课api做了调整,一切跟班级相关的数据,比如教练工资等,都从班级数据出来,所以录课的时候,用户对教练的更换不生效,只记录了教练的coach,然而coach_id还是以班级表的教练为准导致数据与实际情况不相符;
 
 		2. 由于定时任务少了一个双引号,导致shell脚本没有执行,因此将未结算的课时记录;
+
+
+
+
+3. 2018-8-28
+
+	sql: 
+		UPDATE schedule_member  ss 
+		INNER JOIN
+		(
+			 SELECT
+			 sm.id as sm_id,
+				sm.schedule_id,
+				s.student,
+				s.id,
+				s.member_id,
+				s.member 
+				FROM
+					`schedule_member` AS sm
+					INNER JOIN student AS s ON s.student = sm.`user` 
+				WHERE
+					sm.`schedule_id` IN ( 1167, 1151, 1150, 1127 ) and sm.type = 1
+			) as r ON r.sm_id = ss.id
+		SET ss.user_id = r.id, ss.member_id = r.member_id ,ss.member = r.member;
+
+	目的: 
+		1. 由于 第2条 2018-8-22 第一条sql的where条件少了type=2, 导致学生的数据也一并被修改,因此将学生数据修改回来;
+
+		

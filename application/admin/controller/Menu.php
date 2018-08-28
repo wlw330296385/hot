@@ -115,10 +115,25 @@ class Menu extends Backend{
 	// 编辑职位权限
 	public function editAdminGroup(){
 		$AdminGroup = new \app\admin\model\AdminGroup;
+		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
+			$data = input('post.');
+			$data['menu_auth'] = json_encode(json_decode($data['menu_auth'],true),true);
+			dump($data);die;
+			if($ag_id){
+				$result = $AdminGroup->save($data,['id'=>$ag_id]);
+			}else{
+				$result = $AdminGroup->save($data);
+			}
+
+			if($result){
+				$this->success('操作成功');
+			}else{
+				$this->error('操作失败');
+			}
+
 
 		}else{
-			$ag_id = input('param.ag_id');
 			if($ag_id){
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 				$infoP = db('admin_group')->where(['id'=>$info['pid']])->find();
@@ -126,6 +141,8 @@ class Menu extends Backend{
 				$powerP = json_decode($infoP['menu_auth']);
 				$menu = db('admin_menu')->where(['id'=>['in',$powerP]])->select();
 				$menuList = getTree($menu);
+
+				// dump($power);dump($powerP);die;
 				$this->assign('info',$info);
 				$this->assign('power',$power);
 				$this->assign('infoP',$infoP);
