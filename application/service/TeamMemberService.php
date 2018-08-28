@@ -1,9 +1,7 @@
 <?php
 namespace app\service;
 
-use app\model\Team;
 use app\model\TeamMember;
-use app\model\TeamMemberRole;
 use think\Db;
 
 class TeamMemberService
