@@ -18,7 +18,7 @@
     <!-- <script src="/static/frontend/iconfont/iconfont.js"></script> -->
 
     <style type="text/css">
-
+/*
         @media screen and (min-width: 320px) {
             #refreshContainer {
                 margin-top: 292px !important;
@@ -53,7 +53,7 @@
             #refreshContainer {
                 margin-top: 442px !important;
             }
-        }
+        }*/
         .mui-popover {
             height: 60%;
             background: #fff !important;
@@ -136,47 +136,48 @@
 <body>
 
     <header class="mui-bar mui-bar-transparent">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backHref"></a>
     </header>
 
     <div class="mui-content list">
-        <div class="img4x3" style="background-image:url('/static/frontend/images/sport_plan.jpg');padding-bottom: 31%"></div>
-        <ul class="mui-table-view borderStyle" style="margin-top: 3px;">
-            <li class="mui-table-view-cell listli" id="logoframe">
-                <div class="mui-media-body wd66">
-                    <strong class="f16 tmName">{$sportPlanInfo.plansport}</strong>
-                    <img class="mui-media-object mui-pull-left logostyle" src="{$sportPlanInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <p class="mui-ellipsis lineHeight20">开始时间：{$sportPlanInfo.start}</p>
-                    <p class="mui-ellipsis lineHeight20">结束时间：{$sportPlanInfo.end}</p>
-                </div>
-
-                <div class="price-frame" style="margin-top: 15px;">
-                    <p class="f12">计划运动<br />
-                        <text class="colororange f14">{$sportPlanInfo.period}</text> 次 &nbsp;
-                    </p>
-                </div>
-            </li>
-        </ul>
-
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli">
-                <label>计划目标</label>
-                <span>{$sportPlanInfo.aim}</span>
-            </li>
-        </ul>
-
-
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell listli">
-                <label>
-                    <span class="icon iconfont icon-p-workout colororange"></span>运动计划日程
-                </label>
-                <text class="fr f14">共 <text class="colororange totalData">0</text> 次</text>
-            </li>
-        </ul>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="padding-bottom: 44px">
             <div class="mui-scroll">
+                <div class="img4x3" style="background-image:url('/static/frontend/images/sport_plan.jpg');padding-bottom: 31%"></div>
+                <ul class="mui-table-view borderStyle" style="margin-top: 3px;">
+                    <li class="mui-table-view-cell listli" id="logoframe">
+                        <div class="mui-media-body wd66">
+                            <strong class="f16 tmName">{$sportPlanInfo.plansport}</strong>
+                            <img class="mui-media-object mui-pull-left logostyle" src="{$sportPlanInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
+                            <p class="mui-ellipsis lineHeight20">开始时间：{$sportPlanInfo.start}</p>
+                            <p class="mui-ellipsis lineHeight20">结束时间：{$sportPlanInfo.end}</p>
+                        </div>
+
+                        <div class="price-frame" style="margin-top: 15px;">
+                            <p class="f12">计划运动<br />
+                                <text class="colororange f14">{$sportPlanInfo.period}</text> 次 &nbsp;
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli">
+                        <label>计划目标</label>
+                        <span>{$sportPlanInfo.aim}</span>
+                    </li>
+                </ul>
+
+
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell listli">
+                        <label>
+                            <span class="icon iconfont icon-p-workout colororange"></span>运动计划日程
+                        </label>
+                        <text class="fr f14">共 <text class="colororange totalData">0</text> 次</text>
+                    </li>
+                </ul>
+
                 <ul class="mui-table-view detalis-list list planSchedule"></ul>
             </div>
         </div>
@@ -375,6 +376,7 @@
                         <div class="mui-input-row btnDate">
                             <label>运动日期</label>
                             <span class="mui-navigate-right btnDateTxt"></span>
+                            <input type="hidden" name="sport_time" value="" class="data">
                         </div>
                         <div class="mui-input-row sportType">
                                 <label class="wd45">运动内容</label>
@@ -521,12 +523,13 @@
         });
        
 
+       mui("header").on("tap", "a.backHref", function () {
+            window.top.location.href = this.href;
+        });
+
         //选择器
         (function ($, doc) {
 
-            mui(".mui-content").on("tap", "a", function () {
-                window.top.location.href = this.href;
-            });
 
             $(".mui-scroll-wrapper").scroll({
                 //bounce: false,//滚动条是否有弹力默认是true
@@ -680,6 +683,15 @@
 
     $(function () {
 
+
+        // 返回上一层判断
+        var plan = wooApi.GetQueryString('plan');
+        if (plan == "create") {
+            $("header a").attr("href", "{:url('punch/sportPlanList')}");
+        } else {
+            $("header a").removeClass("backHref")
+            $("header a").addClass("mui-action-back")
+        }
 
         //同页面多弹框时遮罩问题，使同一时刻只有一个弹框
         $(document).on("tap", ".btnDate", function () {
@@ -851,6 +863,11 @@
             mui("#scheduleEdit").popover("toggle");
         });
 
+        //跳转到
+        $(document).on('tap', '#goPunchInfo', function () {
+            //console.log($(this).attr("href"))
+            window.top.location.href = $(this).attr("href");
+        })
 
         //打开日程编辑窗口
         $(document).on('tap', '.editSchedule', function () {
@@ -898,6 +915,38 @@
                 $("#scheduleEditForm input[name=amount]").val(slAmount);
                 $("#scheduleEditForm input[name=amount]").parent().show();
             }
+
+        });
+
+
+        //修改计划日程
+        $(document).on('tap', '#deleteSchedule', function () {
+            
+            var slDate = $("#scheduleEditForm input[name=sport_time]").val();
+            var slProject = $("#scheduleEditForm input[name=name]").val();
+            var punchCategory = $("#scheduleEditForm input[name=punch_category]").val();
+            var slDuration = $("#scheduleEditForm input[name=duration]").val();
+            var slExtent = $("#scheduleEditForm input[name=extent]").val();
+            var slAmount = $("#scheduleEditForm input[name=amount]").val();
+            var sID = $("#scheduleEditForm input[name=plan_schedule_id]").val();
+
+
+
+        });
+
+
+        //删除计划日程
+        $(document).on('tap', '#deleteSchedule', function () {
+            
+            var slDate = $("#scheduleEditForm input[name=sport_time]").val();
+            var slProject = $("#scheduleEditForm input[name=name]").val();
+            var punchCategory = $("#scheduleEditForm input[name=punch_category]").val();
+            var slDuration = $("#scheduleEditForm input[name=duration]").val();
+            var slExtent = $("#scheduleEditForm input[name=extent]").val();
+            var slAmount = $("#scheduleEditForm input[name=amount]").val();
+            var sID = $("#scheduleEditForm input[name=plan_schedule_id]").val();
+
+
 
         });
 

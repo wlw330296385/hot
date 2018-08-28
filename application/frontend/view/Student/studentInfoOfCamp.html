@@ -522,7 +522,7 @@
             }
         });
     };
-    var weiJieSuan = 0;
+    //var weiJieSuan = 0;
     //获取课量列表数据并追加到页面
     var toScheduleList = function (wList, page, gType) {
         //搜索关键字不能完全为空，否则查询为空
@@ -562,9 +562,9 @@
                         newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].schedule_time + '<br />' + data.data.data[i].schedule +'</li><li class="mui-col-xs-4 mui-col-sm-4">'+scheduleStatus+' </li></ul></li></a>';
                         //判断第一页是否有未结算的课时
 
-                        if(data.data.data[i].status=="未结算" && data.data.data[i].is_school == -1){
-                            weiJieSuan++;
-                        }
+                        // if(data.data.data[i].status=="未结算" && data.data.data[i].is_school == -1){
+                        //     weiJieSuan++;
+                        // }
                     }
                     
 
@@ -574,11 +574,11 @@
                         $("ul.schedule").empty().append(newli);
                         //判断是否有未结算课时，有则在顶部数据中扣除
                
-                        if(weiJieSuan>0){
+                        // if(weiJieSuan>0){
 
-                            var restCount = parseInt($("#restSchedule").attr("data-org"))-weiJieSuan;
-                            $("#restSchedule").text(restCount);
-                        }
+                        //     var restCount = parseInt($("#restSchedule").attr("data-org"))-weiJieSuan;
+                        //     $("#restSchedule").text(restCount);
+                        // }
                         //前端计算剩余课时数量（总课时减去总已上课时）用于比对后端输出的剩余课时数
                         var getRestFrontend = parseInt($("#totalSchedule").text())-parseInt(data.data.total);
                         var getRestBackend = parseInt($("#restSchedule").text());
