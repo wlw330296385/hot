@@ -152,9 +152,10 @@ class Student extends Base
 		$camp_id = input('param.camp_id');
 
         // 获取会员在训练营角色
-        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
-        if($power <2){
-            $this->error('权限不足');
+        $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
+        // 如果是教练身份,并且排除学生自己
+        if($power<2){
+        	$this->error('您没有权限查看学生的列表');
         }
 
 		$type = input('param.type')?input('param.type'):1;

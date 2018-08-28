@@ -118,6 +118,7 @@ class Menu extends Backend{
 		if(request()->isPost()){
 
 		}else{
+			$ag_id = input('param.ag_id');
 			if($ag_id){
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 				$infoP = db('admin_group')->where(['id'=>$info['pid']])->find();
