@@ -118,7 +118,7 @@ class Menu extends Backend{
 		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
 			$data = input('post.');
-			$data['menu_auth'] = json_encode(json_decode($data['menu_auth'],true),true);
+			$data['menu_auth'] = stripslashes($data['menu_auth']);
 		
 			if($ag_id){
 				$result = $AdminGroup->save($data,['id'=>$ag_id]);

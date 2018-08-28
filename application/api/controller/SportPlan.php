@@ -176,7 +176,21 @@ class SportPlan extends Base{
         }
     }
 
-
+    //获取单个日程
+    public function getSportPlanScheduleInfoApi(){
+        try {
+            $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
+            $SportPlanSchedule = new \app\model\SportPlanSchedule;
+            $result = $SportPlanSchedule->where(['id'=>$sport_plan_schedule_id])->find();
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 
 
 }
