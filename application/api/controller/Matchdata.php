@@ -774,10 +774,6 @@ class Matchdata extends Base
         $teamS = new TeamService();
         $memberS = new MemberService();
 
-        //根据 home_team_id 和 away_team_id 查出队伍信息
-        $data['home_team_id'];
-        $data['away_team_id'];
-
         // 球员名单技术统计数据
         if ( array_key_exists('members', $data) && !empty($data['members']) && $data['members'] != "[]" ) {
             $recordMembers = json_decode($data['members'], true);

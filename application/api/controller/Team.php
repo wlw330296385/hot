@@ -12,6 +12,7 @@ use app\service\StudentService;
 use app\service\TeamService;
 use app\service\TeamMemberService;
 use app\service\TeamEventService;
+use app\service\LeagueService;
 use think\Exception;
 
 class Team extends Base
@@ -3115,5 +3116,53 @@ class Team extends Base
         } else {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $matchStats]);
         }
+    }
+
+    // 创建球队
+    public function createVirtualTeam()
+    {
+        if (empty(input('param.name')) || empty(input('param.match_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        // 处理请求参数
+        $data = input('param.');
+
+        $match_id = $data['match_id'];
+        unset($data['match_id']);
+
+        $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
+        $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
+        $data['member_id'] = -1;
+        $data['member'] = "";
+        $data['leader_id'] = -1;
+        $data['leader'] = "";
+        $data['captain_id'] = -1;
+        $data['captain'] = "";
+        $data['member_num'] = -1;
+
+        $teamS = new TeamService();
+        $res = $teamS->createVirtualTeam($data);
+
+        if (empty($res["insid"])){
+            return json($res);
+        }
+
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
+        if (empty($res["insid"])){
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $map["match_id"] = $matchInfo["id"];
+        $map["match"] = $matchInfo["name"];
+        $map["team_id"] = $res["insid"];
+        $map["team"] = $data["name"];
+        $map["team_logo"] = $data['logo'];
+        $map["status"] = 1;
+        $leagueS = new LeagueService();
+        $result = $leagueS->saveMatchTeam($map);
+
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }

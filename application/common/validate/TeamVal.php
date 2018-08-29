@@ -54,6 +54,7 @@ class TeamVal extends Validate {
         'add' => [
             'name' => 'require|length:2,16|chsDash|unique:team|token',
             'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri'],
-        'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri']
+        'edit' => ['name', 'member_id', 'type', 'camp_id','province', 'city', 'leader_id', 'avg_age', 'avg_height', 'avg_weight', 'logo', 'cover', 'descri'],
+        'add_virtual' => ['name' => 'require|length:2,16|chsDash|token']
     ];
 }

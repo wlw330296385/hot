@@ -92,6 +92,25 @@ class TeamService
         }
     }
 
+    // 创建球队
+    public function createVirtualTeam($data)
+    {
+        $model = new Team();
+
+        $validate = validate('TeamVal');
+        if (!$validate->scene('add_virtual')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+        // 保存数据，成功返回自增id，失败记录错误信息
+        $res = $model->data($data)->allowField(true)->save();
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
     // 获取球队详情
     public function getTeam($map)
     {
