@@ -82,15 +82,12 @@ class Menu extends Backend{
 			$data = input('post.');
 			if($ag_id){
 				//判断职位权限是否与当前权限有差集;
-				$info = db('admin_group')->where(['id'=>$ag_id])->find();
-				$powerP = json_decode($info['menu_auth']);
+				$sebsetList = db('admin_group')->where(['pid'=>$ag_id])->select();
 				$power = json_decode($data['menu_auth']);//当前的权限;
-
-				$array_diff = array_diff($powerP,$power);
-				foreach ($array_diff as $key => $value) {
-					# code...
+				foreach ($sebsetList as $key => $value) {
+					$array_diff = array_intersect($power,json_decode($value['menu_auth']));
+					$AdminGroup->save(['menu_auth'=>$array_diff,'id'=>$value['id']]);
 				}
-
 				$result = $AdminGroup->save($data,['id'=>$ag_id]);
 
 			}else{
@@ -138,11 +135,11 @@ class Menu extends Backend{
 		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
 			$data = input('post.');
+			dump($data);
 
-			// $data['menu_auth'] = str_replace('"','',$data['menu_auth']);
-			dump($data);die;
 			if($ag_id){
 				$result = $AdminGroup->save($data,['id'=>$ag_id]);
+				echo $AdminGroup->getlastsql();die;
 			}else{
 				$result = $AdminGroup->save($data);
 			}
