@@ -99,6 +99,7 @@
 </head>
 
 <body>
+   
 
     <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
@@ -231,7 +232,17 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
-    var teams = [];
+    //弹出框滚动必须写在mui专用的初始化
+    (function ($) {
+        $(".mui-scroll-wrapper").scroll({
+            //bounce: false,//滚动条是否有弹力默认是true
+            indicators: true //是否显示滚动条,默认是true
+        });
+        // 关闭弹出菜单
+        $("body").on('tap', '.mui-backdrop', function () {
+            mui(".mui-popover.mui-active").popover("toggle");
+        })
+    })(mui);
     var members = [];
     $(function () {
 
@@ -240,7 +251,7 @@
             var isAttend = $(this).hasClass("bggreen");
             if (isAttend == true) {
                 $(this).removeClass("bggreen");
-                $(this).siblings("input[name=is_attend]").val(0)
+                $(this).siblings("input[name=is_attend]").val(-1)
             } else {
                 $(this).addClass("bggreen");
                 $(this).siblings("input[name=is_attend]").val(1)
@@ -251,7 +262,8 @@
         $(document).on("tap", ".confirmBtn button", function () {
             var confirmText = $(this).text();
             if (confirmText == "确认") {
-                $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#59b200");
+                $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
+                    "#59b200");
                 $(this).text("取消");
             } else {
                 $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#ddd");
@@ -282,7 +294,7 @@
             }
         });
         $(document).on("blur", "input[name=threepfg]", function () {
-            var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val();//三分出手数
+            var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val(); //三分出手数
             if (parseInt($(this).val()) > parseInt(threepfga)) {
                 mui.toast("三分命中次数不能大于出手次数");
                 $(this).val('').focus();
@@ -311,285 +323,6 @@
         toAwayMembersList();
     });
 
-    // 主队球员数据
-    function homeTeam() {
-        var url = "{:url('api/league/getmatchteammembers','','',true)}";
-        var match_id = "{$matchRecordInfo.match_id}";
-        var team_id = "{$matchRecordInfo.home_team_id}";
-        mui.ajax({
-            url: url,
-            data: {
-                team_id: team_id,
-                match_id: match_id,
-                status: 1
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
-            success: function (data) {
-                console.log(data)
-                var newli = '';
-                if (data.code == 200) {
-                    var newli = '';
-                    for (var i = 0; i < data.data.length; i++) {
-                        newli += `
-                        <li class="mui-table-view-cell mui-collapse listli">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
-                                        </div>
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 mui-text-center dataIcon">
-                                            <text class="bgcolor">
-                                                <i class="mui-icon mui-icon-checkmarkempty"></i>
-                                            </text>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div class="mui-collapse-content dataCollapse">
-                                    <div class="mui-row dataTitle">
-                                        <div class="mui-col-xs-6">出手次数</div>
-                                        <div class="mui-col-xs-6">命中次数</div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fga" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">二分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fg" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfga" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">三分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfg" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fta" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">罚中</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="ft" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <p class="pline"></p>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="reb" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">助攻</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="ast" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="stl" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">封盖</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="blk" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="turnover" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">犯规</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="foul" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 sfText">首发</div>
-                                        <div class="mui-col-xs-2 sfButton">
-                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
-                                                <div class="mui-switch-handle"></div>
-                                            </div>
-                                            <input type="hidden" name="lineup" value="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 sfButton attend">
-                                            <button type="button" class="mui-btn">出席</button>
-                                            <input type="hidden" name="is_attend" value="-1">
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right clearBtn">
-                                            <button type="button" class="mui-btn">清空</button>
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
-                                            <button type="button" class="mui-btn bggreen">确认</button>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="personalScoreCont" value="">
-                                </div>
-                            </li>`
-                    }
-                    $(".homeMembersList").empty().append(newli);
-                    mui('.mui-switch').switch();
-                } else {
-                    $(".homeMembersList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    }
-
-
-    // 客队球员数据
-    function awayTeam() {
-        var url = "{:url('api/league/getmatchteammembers','','',true)}";
-        var match_id = "{$matchRecordInfo.match_id}";
-        var team_id = "{$matchRecordInfo.away_team_id}";
-        mui.ajax({
-            url: url,
-            data: {
-                team_id: team_id,
-                match_id: match_id,
-                status: 1
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
-            success: function (data) {
-                console.log(data)
-                var newli = '';
-                if (data.code == 200) {
-                    var newli = '';
-                    for (var i = 0; i < data.data.length; i++) {
-                        newli += `
-                        <li class="mui-table-view-cell mui-collapse listli">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                            <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
-                                        </div>
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 mui-text-center dataIcon">
-                                            <text class="bgcolor">
-                                                <i class="mui-icon mui-icon-checkmarkempty"></i>
-                                            </text>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div class="mui-collapse-content dataCollapse">
-                                    <div class="mui-row dataTitle">
-                                        <div class="mui-col-xs-6">出手次数</div>
-                                        <div class="mui-col-xs-6">命中次数</div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">二分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fga" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">二分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fg" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">三分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfga" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">三分</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="threepfg" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">罚球</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="fta" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">罚中</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="ft" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <p class="pline"></p>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">篮板</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="reb" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">助攻</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="ast" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">抢断</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="stl" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">封盖</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="blk" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 dataText dataTextLeft">失误</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="turnover" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 dataText">犯规</div>
-                                        <div class="mui-col-xs-4">
-                                            <input type="text" name="foul" class="checkNum" value="" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 sfText">首发</div>
-                                        <div class="mui-col-xs-2 sfButton">
-                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
-                                                <div class="mui-switch-handle"></div>
-                                            </div>
-                                            <input type="hidden" name="lineup" value="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 sfButton attend">
-                                            <button type="button" class="mui-btn">出席</button>
-                                            <input type="hidden" name="is_attend" value="-1">
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right clearBtn">
-                                            <button type="button" class="mui-btn">清空</button>
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
-                                            <button type="button" class="mui-btn bggreen">确认</button>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="personalScoreCont" value="">
-                                </div>
-                            </li>`
-                    }
-                    $(".awayMembersList").empty().append(newli);
-                    mui('.mui-switch').switch();
-                } else {
-                    $(".awayMembersList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
-    }
-
     // 主队球员名单
     function toHomeMembersList() {
         var url = "{:url('api/matchdata/getleaguerecordstaticsbyteam','','',true)}";
@@ -603,30 +336,36 @@
                 match_id: match_id,
                 match_record_id: match_record_id
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli += `
+                        newli +=
+                            `
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">`
                         if (data.data[i].number == null) {
-                            newli += `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="0" disabled>
+                            newli +=
+                                `<div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="暂无" disabled>
                                         </div>`
                         } else {
-                            newli += `<div class="mui-col-xs-4 colororange">
+                            newli +=
+                                `<div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
                                         </div>`
                         }
-                        newli += `<div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                        newli +=
+                            `<div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                         data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -704,14 +443,16 @@
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 sfText">首发</div>`
                         if (data.data[i].lineup == 1) {
-                            newli += `<div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                `<div class="mui-col-xs-2 sfButton">
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini mui-active">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
                                             <input type="hidden" name="lineup" value="${data.data[i].lineup}">
                                         </div>`
                         } else {
-                            newli += `<div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                `<div class="mui-col-xs-2 sfButton">
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
@@ -719,18 +460,21 @@
                                         </div>`
                         }
                         if (data.data[i].is_attend == 1) {
-                            newli += ` <div class="mui-col-xs-2 sfButton attend">
+                            newli +=
+                                ` <div class="mui-col-xs-2 sfButton attend">
                                             <button type="button" class="mui-btn bggreen">出席</button>
                                             <input type="hidden" name="is_attend" value="${data.data[i].is_attend}">
                                         </div>`
                         } else {
-                            newli += ` <div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                ` <div class="mui-col-xs-2 sfButton">
                                             <button type="button" class="mui-btn">出席</button>
                                             <input type="hidden" name="is_attend" value="${data.data[i].is_attend}">
                                         </div>`
                         }
 
-                        newli += ` <div class="mui-col-xs-3 mui-text-right clearBtn">
+                        newli +=
+                            ` <div class="mui-col-xs-3 mui-text-right clearBtn">
                                             <button type="button" class="mui-btn">清空</button>
                                         </div>
                                         <div class="mui-col-xs-3 mui-text-right confirmBtn">
@@ -743,8 +487,6 @@
                     }
                     $(".homeMembersList").empty().append(newli);
                     mui('.mui-switch').switch();
-                } else {
-                    homeTeam();
                 }
             },
             error: function (xhr, type, errerThrown) {
@@ -766,24 +508,36 @@
                 match_id: match_id,
                 match_record_id: match_record_id
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli += `
+                        newli +=
+                            `
                         <li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                            <div class="mui-col-xs-4 colororange">
+                                    <div class="mui-row">`
+                        if (data.data[i].number == null) {
+                            newli +=
+                                `<div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="暂无" disabled>
+                                        </div>`
+                        } else {
+                            newli +=
+                                `<div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
-                                        </div>
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        </div>`
+                        }
+                        newli +=
+                            ` <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                         data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -861,14 +615,16 @@
                                     <div class="mui-row">
                                         <div class="mui-col-xs-2 sfText">首发</div>`
                         if (data.data[i].lineup == 1) {
-                            newli += `<div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                `<div class="mui-col-xs-2 sfButton">
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini mui-active">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
                                             <input type="hidden" name="lineup" value="${data.data[i].lineup}">
                                         </div>`
                         } else {
-                            newli += `<div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                `<div class="mui-col-xs-2 sfButton">
                                             <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
                                                 <div class="mui-switch-handle"></div>
                                             </div>
@@ -876,18 +632,21 @@
                                         </div>`
                         }
                         if (data.data[i].is_attend == 1) {
-                            newli += ` <div class="mui-col-xs-2 sfButton attend">
+                            newli +=
+                                ` <div class="mui-col-xs-2 sfButton attend">
                                             <button type="button" class="mui-btn bggreen">出席</button>
                                             <input type="hidden" name="is_attend" value="${data.data[i].is_attend}">
                                         </div>`
                         } else {
-                            newli += ` <div class="mui-col-xs-2 sfButton">
+                            newli +=
+                                ` <div class="mui-col-xs-2 sfButton">
                                             <button type="button" class="mui-btn">出席</button>
                                             <input type="hidden" name="is_attend" value="${data.data[i].is_attend}">
                                         </div>`
                         }
 
-                        newli += ` <div class="mui-col-xs-3 mui-text-right clearBtn">
+                        newli +=
+                            ` <div class="mui-col-xs-3 mui-text-right clearBtn">
                                             <button type="button" class="mui-btn">清空</button>
                                         </div>
                                         <div class="mui-col-xs-3 mui-text-right confirmBtn">
@@ -902,7 +661,6 @@
                     mui('.mui-switch').switch();
                 } else {
                     $(".awayMembersList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
-                    awayTeam()
                 }
             },
             error: function (xhr, type, errerThrown) {
@@ -943,7 +701,28 @@
             personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
             $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
             personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
-            members.push({ member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul, match_record_member_id, is_attend });
+            members.push({
+                member,
+                member_id,
+                name,
+                team_member_id,
+                number,
+                lineup,
+                fga,
+                fg,
+                threepfga,
+                threepfg,
+                fta,
+                ft,
+                reb,
+                ast,
+                stl,
+                blk,
+                turnover,
+                foul,
+                match_record_member_id,
+                is_attend
+            });
         });
         console.log(members)
         // 遍历求和球员总得分
@@ -976,15 +755,18 @@
                 match_time: match_time,
                 members: memberList
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data);
                 if (data.code == 200) {
                     mui.alert('提交成功', '确定', function () {
-                        var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' + "{$league_id}";
+                        var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' +
+                            "{$league_id}";
                         window.top.location.href = goUrl;
                     })
                 } else {
@@ -996,7 +778,6 @@
             }
         });
     })
-
 </script>
 
 </html>
