@@ -5,7 +5,7 @@ class PunchVal extends Validate{
 
 
 	protected $rule = [
-		'member_id'		=>'require|egt:1',
+		'member_id'		=>'require|egt:1|token',
 		'punch_time'		=>'require',
 		'punch'		=>'require',
 		'punch_category'		=>'require',
@@ -16,7 +16,8 @@ class PunchVal extends Validate{
     ];
     
     protected $message = [
-		'member_id'		=>'请先登录',
+		'member_id.require'		=>'请先登录',
+        'member_id.token'    => '重复提交',
         'member_id.egt'    => '请先注册',
 		'punch_time'		=>'打卡时间必填',
 		'punch'		=>'打卡名称必填',

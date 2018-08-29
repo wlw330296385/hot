@@ -138,7 +138,10 @@ class Punch extends Base{
                 $GroupPunch = new \app\model\GroupPunch;
                 $GroupPunch->saveAll($groupList);
             }
-            db('sport_plan_schedule')->where(['id'=>$data['sport_plan_schedule_id']])->update(['punch_id'=>$result['data']]);
+            if($data['sport_plan_schedule_id']>0){
+                db('sport_plan_schedule')->where(['id'=>$data['sport_plan_schedule_id']])->update(['punch_id'=>$result['data']]);
+            }
+            
             Db::commit();   
             return json($result);   
          }catch (Exception $e){

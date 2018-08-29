@@ -47,9 +47,7 @@ class PunchService {
             session('memberInfo.hot_coin',($hot_coin-$stakes));
         }
         
-        
-
-        $result = $this->Punch->save($data);
+        $result = $this->Punch->validate('PunchVal')->save($data);
         if($result){
             if($stakes>0){
                 db('hotcoin_finance')->insert(
@@ -67,7 +65,7 @@ class PunchService {
             }
             return ['code'=>200,'msg'=>'创建成功','data'=>$this->Punch->id];
         }else{
-            return ['code'=>100,'msg'=>'创建失败'];
+            return ['code'=>100,'msg'=>$this->Punch->getError()];
         }
 
     }
