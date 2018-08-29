@@ -38,8 +38,8 @@
         <input type="hidden" name="member_id" class="data" value="-1" />
         <input type="hidden" name="type" class="data" value="3" />
         <input type="hidden" name="match_id" class="data" value="{$league_id}" />
+        <input type="hidden" name="team_id" class="data" value="" />
         <input type="hidden" name="cover" class="data" value="/static/frontend/images/membercenter-bg.jpg" />
-        
 
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
@@ -49,10 +49,11 @@
             <div class="mui-input-row h-auto">
                 <a href="#txpopover" class="mui-navigate-right">
                     <label>球队徽标</label>
-                    <div class="viewStyleSquare view "></div>
-                    <input type="hidden" name="logo" value="" class="data">
+                    <div class="viewStyleSquare view img45" style="background-image: url('{$teamInfo.logo}')"></div>
+                    <input type="hidden" name="logo" value="{$teamInfo.logo}" class="data">
                 </a>
             </div>
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -92,6 +93,8 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        var team_id = wooApi.GetQueryString('team_id');
+        $("input[name=team_id]").val(team_id)
         // 获取数据并进行提交
         function submitAction() {
 
@@ -106,7 +109,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/team/createVirtualTeam')}";
+            var url = "{:url('api/team/saveVirtualTeam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
