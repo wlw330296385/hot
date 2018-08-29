@@ -130,6 +130,22 @@ class SportPlan extends Base{
     }
 
 
+    // 获取运动日程(不分页)
+    public function getSportPlanScheduleListNoPageApi(){
+        try {
+            $map = input('post.');
+            $SportPlanSchedule = new \app\model\SportPlanSchedule;
+            $result = $SportPlanSchedule->where($map)->order('id asc')->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'获取失败']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
     // 编辑运动计划
     public function updateSportPlanApi(){
         try {
@@ -191,6 +207,8 @@ class SportPlan extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
 
 
 }
