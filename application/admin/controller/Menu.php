@@ -84,6 +84,8 @@ class Menu extends Backend{
 				//判断职位权限是否与当前权限有差集;
 				$sebsetList = db('admin_group')->where(['pid'=>$ag_id])->select();
 				$power = json_decode($data['menu_auth']);//当前的权限;
+
+				
 				foreach ($sebsetList as $key => $value) {
 					$array_diff = array_intersect($power,json_decode($value['menu_auth']));
 					$AdminGroup->save(['menu_auth'=>$array_diff,'id'=>$value['id']]);
@@ -111,8 +113,11 @@ class Menu extends Backend{
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 
 				$power = json_decode($info['menu_auth']);
+				$powerP = db('admin_menu')->column('id');
+
 				$this->assign('info',$info);
 				$this->assign('power',$power);
+				$this->assign('powerP',$powerP);
 				return view('Menu/editAdminGroupP');
 			}else{
 
