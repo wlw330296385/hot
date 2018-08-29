@@ -1125,5 +1125,10 @@ class Match extends Base {
     public function createTeamOfLeague() {
         return view('Match/team/createTeamOfLeague');
     }
+
+    // 联赛-编辑球队（未产生赛程之前可以修改）
+    public function updateTeamOfLeague() {
+        return view('Match/team/updateTeamOfLeague');
+    }
    
 }
