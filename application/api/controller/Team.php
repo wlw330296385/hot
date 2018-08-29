@@ -3118,18 +3118,34 @@ class Team extends Base
         }
     }
 
-    // 创建球队
+    // 创建虚拟球队
     public function createVirtualTeam()
     {
         if (empty(input('param.name')) || empty(input('param.match_id'))) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
+        if (empty($this->memerInfo["id"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
         // 处理请求参数
         $data = input('param.');
 
         $match_id = $data['match_id'];
         unset($data['match_id']);
+
+        // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
+        if (empty($matchInfo)){
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $matchOrgMemberS = new MatchOrgMemberService();
+        $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if (empty($matchOrgMmeberInfo) || $matchOrgMmeberInfo['type_num'] < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
 
         $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
         $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
@@ -3165,4 +3181,62 @@ class Team extends Base
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
+
+    // // 更新虚拟球队
+    // public function updateVirtualTeam()
+    // {
+    //     if (empty(input('param.name')) || empty(input('param.match_id'))) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+    //     }
+
+    //     if (empty($this->memerInfo["id"])) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+    //     }
+    //     // 处理请求参数
+    //     $data = input('param.');
+
+    //     $match_id = $data['match_id'];
+    //     unset($data['match_id']);
+
+    //     // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
+    //     $matchS = new MatchService();
+    //     $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
+    //     if (empty($matchInfo)){
+    //         return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+    //     }
+
+    //     $matchOrgMemberS = new MatchOrgMemberService();
+    //     $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+    //     if (empty($matchOrgMmeberInfo) || $matchOrgMmeberInfo['type_num'] < 9) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+    //     }
+
+    //     $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
+    //     $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
+    //     $data['member_id'] = -1;
+    //     $data['member'] = "";
+    //     $data['leader_id'] = -1;
+    //     $data['leader'] = "";
+    //     $data['captain_id'] = -1;
+    //     $data['captain'] = "";
+    //     $data['member_num'] = -1;
+
+    //     $teamS = new TeamService();
+    //     $res = $teamS->createVirtualTeam($data);
+
+    //     if (empty($res["insid"])){
+    //         return json($res);
+    //     }  
+
+    //     $map["match_id"] = $matchInfo["id"];
+    //     $map["match"] = $matchInfo["name"];
+    //     $map["team_id"] = $res["insid"];
+    //     $map["team"] = $data["name"];
+    //     $map["team_logo"] = $data['logo'];
+    //     $map["status"] = 1;
+    //     $leagueS = new LeagueService();
+    //     $result = $leagueS->saveMatchTeam($map);
+
+    //     return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    // }
 }
