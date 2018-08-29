@@ -114,6 +114,37 @@
                 </li>
             </ul>
 
+            <!-- 模块导航 -->
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-Regulations"></span>
+                            <span class="f14" style="display: block;">章程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-Schedule"></span>
+                            <span class="f14" style="display: block;">赛程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
+
+                            <span class="icon iconfont icon-th-Record"></span>
+                            <span class="f14" style="display: block;">战绩</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-data"></span>
+                            <span class="f14" style="display: block;">数据</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <!-- 联赛基本信息 -->
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
@@ -161,36 +192,7 @@
                 </li>
             </ul>
 
-            <!-- 模块导航 -->
-            <div class="nav-list record mb">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
-                            <span class="icon iconfont icon-th-Regulations"></span>
-                            <span class="f14" style="display: block;">章程</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
-                            <span class="icon iconfont icon-th-Schedule"></span>
-                            <span class="f14" style="display: block;">赛程</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
 
-                            <span class="icon iconfont icon-th-Record"></span>
-                            <span class="f14" style="display: block;">战绩</span>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
-                            <span class="icon iconfont icon-th-data"></span>
-                            <span class="f14" style="display: block;">数据</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
 
             <!--比赛动态-->
             <div class="page-header border-b">
@@ -230,12 +232,12 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
-                    <a href="">
-                        咨询
-                    </a>
+                    <a href="#fbcomment">评价 </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli col5Class">
-                    <a href="#fbcomment">评价 </a>
+                    <a href="{:url('match/leagueManage', ['league_id' => $leagueInfo.id])}">
+                        联赛管理
+                    </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggray hide waitBtn">等待报名</li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred hide signUpBtn">
@@ -349,10 +351,12 @@
                         type: 5,
                         league_id: league_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -385,10 +389,12 @@
                         comment_type: 1,
                         comment: comment
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -430,10 +436,12 @@
                         member_id: member_id,
                         type: type
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -529,10 +537,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -553,19 +563,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
@@ -579,20 +589,28 @@
                     match_record_id: 0,
                     comment_type: 1,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' +
+                                data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     } else {
-                        $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        $("ul.comment-list").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                        );
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -619,17 +637,21 @@
                     organization_type: 4,
                     category: 3
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
-                            var urls = "{:url('match/dynamicinfo')}" + '/article_id/' + data.data[i].id + '/league_id/' + data.data[i].organization_id;
-                            newli += `
+                            var urls = "{:url('match/dynamicinfo')}" + '/article_id/' + data.data[i].id +
+                                '/league_id/' + data.data[i].organization_id;
+                            newli +=
+                                `
                                 <li class="mui-table-view-cell mui-media listli">
                                     <a href="${urls}" class="mui-navigate-right">
                                         <img class="mui-pull-left proportion4x3" src="${data.data[i].covers}">
@@ -659,9 +681,8 @@
                 }
             });
         };
-
     </script>
-     <script>
+    <script>
         wx.config({
             //debug: true,
             appId: "{$jsapi['appId']}",
@@ -683,8 +704,8 @@
                 desc: '{$leagueInfo.match_org.name}',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
@@ -694,8 +715,8 @@
                 imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
                 type: "",
                 dataUrl: '',
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
 
         });

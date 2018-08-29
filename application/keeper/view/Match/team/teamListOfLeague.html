@@ -41,14 +41,19 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-6 opli bgblue show1 hide">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{:url('match/leaguemanage',['league_id'=>$leagueInfo.id])}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-5 opli bgblue show1 hide">
                 <a href="{:url('match/createMatchStage',['league_id'=>$leagueInfo.id])}">前往创建比赛阶段</a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-6 opli bggreen show1 hide">
+            <li class="mui-table-view-cell mui-col-xs-5 opli bggreen show1 hide">
                 <a href="{:url('match/createTeamOfLeague',['league_id'=>$leagueInfo.id])}">创建球队</a>
             </li>
 
-            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen show2 hide">
+            <li class="mui-table-view-cell mui-col-xs-10 opli bggreen show2 hide">
                 <a href="{:url('match/createTeamOfLeague',['league_id'=>$leagueInfo.id])}">创建球队</a>
             </li>
         </ul>
@@ -177,19 +182,23 @@
                 if (data.code == 200) {
                     if (data.data.total >= 2) {
                         $(".show1").show();
-                    }else{
+                    } else {
                         $(".show2").show();
                     }
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('match/teamInfoOfLeague')}" + '/league_id/' + data.data.data[i].match_id + '/team_id/' + data.data.data[i].team.id;
-                        var updateurls = "{:url('match/updateTeamOfLeague')}" + '/league_id/' + data.data.data[i].match_id + '/team_id/' + data.data.data[i].team.id;
+                        var urls = "{:url('match/teamInfoOfLeague')}" + '/league_id/' + data.data.data[
+                            i].match_id + '/team_id/' + data.data.data[i].team.id;
+                        var updateurls = "{:url('match/updateTeamOfLeague')}" + '/league_id/' + data.data
+                            .data[i].match_id + '/team_id/' + data.data.data[i].team.id + '?team_id=' +
+                            data.data.data[i].team.id;
                         newli += `<li class="mui-table-view-cell listli">`;
-                        if(data.data.data[i].team.member_id==-1){
+                        if (data.data.data[i].team.member_id == -1) {
                             newli += `<a href="${updateurls}">`
-                        }else{
+                        } else {
                             newli += `<a href="${urls}">`
                         }
-                        newli += `<img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}">
+                        newli +=
+                            `<img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}">
                                     <div class="mui-media-body lineHeight20"><p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
                                     <p>${data.data.data[i].members_num}人参赛</p></div>`
                         newli += `</a></li>`;

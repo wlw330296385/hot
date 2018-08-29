@@ -1128,6 +1128,17 @@ class Match extends Base {
 
     // 联赛-编辑球队（未产生赛程之前可以修改）
     public function updateTeamOfLeague() {
+        $team_id = intval(input('param.team_id'));
+        $league_id = intval(input('param.league_id'));
+
+        if (empty($team_id) || empty($league_id)) {
+            $this->error(__lang('MSG_200'));
+        }
+        $teamS = new TeamService();
+        $teamInfo = $teamS -> getTeamOnly(['id' => $team_id]);
+
+        $this->assign('teamInfo', $teamInfo);
+        $this->assign('league_id', $league_id);
         return view('Match/team/updateTeamOfLeague');
     }
    

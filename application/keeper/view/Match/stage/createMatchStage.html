@@ -37,10 +37,6 @@
 
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
-                <label>阶段别名</label>
-                <input type="text" name="name" class="data" value="" placeholder="请输入比赛阶段别名（如:16强赛）">
-            </div>
-            <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
                     <span class="select-row">
@@ -52,6 +48,10 @@
                         </select>
                     </span>
                 </div>
+            </div>
+            <div class="mui-input-row hide">
+                <label class="wd45">阶段别名（可修改）</label>
+                <input type="text" name="name" class="data wd45" value="" placeholder="（如:8强/16强淘汰赛等）">
             </div>
             <div class="mui-input-row pstage_div hide">
                 <div class="mui-navigate-right">
@@ -69,14 +69,15 @@
             </div>
         </form>
 
-        <div class="publicTip mb44 advance_div">
+        <div class="publicTip  mb44 ">
             <p class="publicTitle">
                 <img src="/static/frontend/images/hot.png" alt="">
-                <strong class="f16">球队出线规则</strong>
+                <strong class="f16">温馨提示</strong>
             </p>
             <div class="publicText">
-                <p>1、出线球队按照积分排名，胜负关系，得失分选出。</p>
-                <p>2、积分不同，按积分高的出线；积分相同，按胜负关系出线；胜负关系相同，按得失分关系出线</p>
+                <p>1、阶段别名可以修改（如:8强/16强淘汰赛等）</p>
+                <p>2、出线球队按照积分排名，胜负关系，得失分选出。</p>
+                <p>3、积分不同，按积分高的出线；积分相同，按胜负关系出线；胜负关系相同，按得失分关系出线</p>
             </div>
         </div>
         <ul class="mui-table-view operation">
@@ -95,6 +96,14 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        $(".stageSelect").on("change", function () {
+            var thisType = $(this).children("option:checked").text();
+            if (thisType != '') {
+                $("input[name=name]").parent().show();
+            }
+            $("input[name=name]").val(thisType);
+        })
+
         // 阶段别名列表
         var url = "{:url('api/league/getmatchstagelist','','',true)}";
         var league_id = "{$league_id}";
@@ -103,16 +112,19 @@
             data: {
                 league_id: league_id
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli += '<option value="' + data.data[i].id + '">' + data.data[i].name + '</option>'
+                        newli += '<option value="' + data.data[i].id + '">' + data.data[i].name +
+                            '</option>'
                     }
                     // 选择比赛阶段显示隐藏球队数量和前一个比赛阶段的内容
                     $(".stageSelect").on("change", '', function () {

@@ -3155,6 +3155,7 @@ class Team extends Base
 
         $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
         $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
+        $data['type'] = !empty($data['type']) ? $data['type'] : 3; // 默认业余组织类型
         $data['member_id'] = -1;
         $data['member'] = "";
         $data['leader_id'] = -1;

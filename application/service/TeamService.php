@@ -1421,6 +1421,17 @@ class TeamService
 
     }
 
+    // 获取球队详情
+    public function getTeamOnly($map) {
+        $model = new Team();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
     // 创建或修改球队
     public function saveVirtualTeam($data)
     {
