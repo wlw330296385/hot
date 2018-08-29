@@ -111,11 +111,8 @@ class Menu extends Backend{
 				$info = db('admin_group')->where(['id'=>$ag_id])->find();
 
 				$power = json_decode($info['menu_auth']);
-				$powerP = db('admin_menu')->column('id');
-
 				$this->assign('info',$info);
 				$this->assign('power',$power);
-				$this->assign('powerP',$powerP);
 				return view('Menu/editAdminGroupP');
 			}else{
 
