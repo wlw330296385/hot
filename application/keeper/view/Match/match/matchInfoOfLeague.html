@@ -182,7 +182,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="teamScore">{$matchRecordInfo.home_score}</span>
+                            <span class="hoemTeamScore">{$matchRecordInfo.home_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -193,7 +193,7 @@
                         </div>
                         <ul class="mui-table-view list border-b dataList membersList homeList"></ul>
 
-                        
+
                         <div class="page-header bggray2">
                             <span class="course wd45">
                                 <strong>{$matchRecordInfo.away_team}信息</strong>
@@ -201,7 +201,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="teamScore">{$matchRecordInfo.away_score}</span>
+                            <span class="awayTeamScore">{$matchRecordInfo.away_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -213,9 +213,9 @@
                         <ul class="mui-table-view list border-b dataList membersList awayList"></ul>
                     </form>
                 </div>
-               
+
                 <ul class="mui-table-view operation">
-                    <li class="mui-table-view-cell mui-col-xs-12 opli bggreen submitAction" >
+                    <li class="mui-table-view-cell mui-col-xs-12 opli bggreen submitAction">
                         提交
                     </li>
                 </ul>
@@ -365,7 +365,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="mui-collapse-content dataCollapse">
+                                <div class="mui-collapse-content dataCollapse" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}">
                                     <div class="mui-row dataTitle">
                                         <div class="mui-col-xs-6">出手次数</div>
                                         <div class="mui-col-xs-6">命中次数</div>
@@ -450,7 +450,7 @@
                                             <button type="button" class="mui-btn bggreen">确认</button>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="personalScoreCont" value="">
+                                    <input type="hidden" name="homeScoreCont" value="">
                                 </div>
                             </li>`
                     }
@@ -507,7 +507,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="mui-collapse-content dataCollapse">
+                                <div class="mui-collapse-content dataCollapse" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}">
                                     <div class="mui-row dataTitle">
                                         <div class="mui-col-xs-6">出手次数</div>
                                         <div class="mui-col-xs-6">命中次数</div>
@@ -592,7 +592,7 @@
                                             <button type="button" class="mui-btn bggreen">确认</button>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="personalScoreCont" value="">
+                                    <input type="hidden" name="awayScoreCont" value="">
                                 </div>
                             </li>`
                     }
@@ -611,8 +611,46 @@
     // 提交数据
     $(".submitAction").on("tap", function () {
         var members = [];
-        var personalScoreAll = 0;
-        $(this).parents().siblings(".mui-scroll").find(".dataCollapse").each(function () {
+        var homeScoreAll = 0;
+        var awayScoreAll = 0;
+        // 主队分数
+        $(".homeList").find(".dataCollapse").each(function () {
+            var fg = $(this).find("input[name=fg]").val(); //二分命中数
+            var threepfg = $(this).find("input[name=threepfg]").val(); //三分命中数
+            var ft = $(this).find("input[name=ft]").val(); //罚球命中数
+            var personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
+            $(this).find("input[name=homeScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+        });
+        // 主队分数
+        $(".awayList").find(".dataCollapse").each(function () {
+            var fg = $(this).find("input[name=fg]").val(); //二分命中数
+            var threepfg = $(this).find("input[name=threepfg]").val(); //三分命中数
+            var ft = $(this).find("input[name=ft]").val(); //罚球命中数
+            var personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
+            $(this).find("input[name=awayScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+        });
+
+        // 遍历求和球员总得分
+        $(this).parents(".teamTap").find("input[name=homeScoreCont]").each(function () {
+            homeScoreAll += parseInt($(this).val());
+        })
+        $(this).parents(".teamTap").find("input[name=awayScoreCont]").each(function () {
+            awayScoreAll += parseInt($(this).val());
+        })
+        var hoemTeamScore = $(this).parents().siblings(".mui-scroll").find(".hoemTeamScore").text();
+        var awayTeamScore = $(this).parents().siblings(".mui-scroll").find(".awayTeamScore").text();
+        if (homeScoreAll > hoemTeamScore) {
+            mui.alert("主队球员总得分不能大于主队总得分");
+            return false;
+        }
+        if (awayScoreAll > awayTeamScore) {
+            mui.alert("客队球员总得分不能大于客队总得分");
+            return false;
+        }
+
+        $(".membersList").find(".dataCollapse").each(function () {
+            var team = $(this).attr("data-team");
+            var team_id = $(this).attr("data-team_id");
             var team_member_id = $(this).siblings().find(".member").attr("data-team_member_id");
             if (team_member_id == undefined) {
                 team_member_id = 0;
@@ -637,9 +675,6 @@
             var foul = $(this).find("input[name=foul]").val(); //犯规
             var is_attend = $(this).find("input[name=is_attend]").val();
 
-            personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
-            $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
-            personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
             members.push({
                 member,
                 member_id,
@@ -660,34 +695,25 @@
                 turnover,
                 foul,
                 match_record_member_id,
-                is_attend
+                is_attend,
+                team,
+                team_id
             });
         });
         console.log(members)
-        // 遍历求和球员总得分
-        $(this).parents(".teamTap").find("input[name=personalScoreCont]").each(function () {
-            personalScoreAll += parseInt($(this).val());
-        })
-        var teamScore = $(this).parents().siblings(".mui-scroll").find(".teamScore").text();
-        console.log(personalScoreAll)
-        console.log(teamScore)
-        if (personalScoreAll > teamScore) {
-            mui.alert("主队球员总得分不能大于主队总得分");
-            return false;
-        }
 
-        var team = $(this).parents(".teamTap").attr("data-team");
-        var team_id = $(this).parents(".teamTap").attr("data-team_id");
+        var home_team_id = "{$matchRecordInfo.home_team_id}";
+        var away_team_id = "{$matchRecordInfo.away_team_id}";
         var match = "{$matchRecordInfo.match}";
         var match_id = "{$matchRecordInfo.match_id}";
         var match_time = $(".match_time").text();
         var match_record_id = "{$matchRecordInfo.id}";
         var memberList = JSON.stringify(members)
-        mui.ajax("{:url('api/matchdata/savematchstatisticsbyleague')}", {
+        mui.ajax("{:url('api/Matchdata/saveMatchStatistics')}", {
             data: {
                 match_record_id: match_record_id,
-                team: team,
-                team_id: team_id,
+                home_team_id: home_team_id,
+                away_team_id: away_team_id,
                 match: match,
                 match_id: match_id,
                 match_time: match_time,
@@ -716,7 +742,6 @@
             }
         });
     })
-
 </script>
 
 </html>
