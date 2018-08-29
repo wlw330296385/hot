@@ -790,7 +790,7 @@ class Matchdata extends Base
                     $matchRecordMemberData['match_record_id'] = $data['match_record_id'];
                     $matchRecordMemberData['match_time'] = $data['match_time'];
                     $matchRecordMemberData['is_apply'] = -1;
-                    $matchRecordMemberData['is_attend'] = 1;
+                    $matchRecordMemberData['is_attend'] = $data['is_attend'];
                     $matchRecordMemberData['is_checkin'] = 1;
                     $matchRecordMemberData['status'] = 1;
 

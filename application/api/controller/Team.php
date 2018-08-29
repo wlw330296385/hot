@@ -13,6 +13,7 @@ use app\service\TeamService;
 use app\service\TeamMemberService;
 use app\service\TeamEventService;
 use app\service\LeagueService;
+use app\service\MatchOrgMemberService;
 use think\Exception;
 
 class Team extends Base
@@ -3118,18 +3119,39 @@ class Team extends Base
         }
     }
 
-    // 创建球队
-    public function createVirtualTeam()
+    // 更新虚拟球队
+    public function saveVirtualTeam()
     {
         if (empty(input('param.name')) || empty(input('param.match_id'))) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
+        if (empty($this->memberInfo['id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
         // 处理请求参数
         $data = input('param.');
 
         $match_id = $data['match_id'];
         unset($data['match_id']);
+
+        if (!empty( $data['team_id'])) {
+            $team_id = $data['team_id'];
+            unset($data['team_id']);
+        }
+
+        // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
+        $matchS = new MatchService();
+        $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
+        if (empty($matchInfo)){
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $matchOrgMemberS = new MatchOrgMemberService();
+        $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if (empty($matchOrgMmeberInfo) || $matchOrgMmeberInfo['type_num'] < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
 
         $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
         $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
@@ -3141,26 +3163,32 @@ class Team extends Base
         $data['captain'] = "";
         $data['member_num'] = -1;
 
+        // 如果有传 Team_id 获取队伍信息 查询是否匹配
+        $leagueS = new LeagueService();
         $teamS = new TeamService();
-        $res = $teamS->createVirtualTeam($data);
 
-        if (empty($res["insid"])){
+        if (!empty($team_id)) {
+            $matchTeamInfo = $leagueS->getMatchTeamInfoSimple(['match_id' => $match_id, 'team_id' => $team_id]);
+            if (empty($matchTeamInfo)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            }
+            $data['id'] = $matchTeamInfo['team_id'];
+        }
+
+        $res = $teamS->saveVirtualTeam($data);
+        if ($res["code"] != 200){
             return json($res);
-        }
-
-        $matchS = new MatchService();
-        $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
-        if (empty($res["insid"])){
-            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
-        }
+        }  
 
         $map["match_id"] = $matchInfo["id"];
         $map["match"] = $matchInfo["name"];
-        $map["team_id"] = $res["insid"];
+        $map["team_id"] = empty($team_id) ? $res["insid"] : $team_id;
         $map["team"] = $data["name"];
         $map["team_logo"] = $data['logo'];
         $map["status"] = 1;
-        $leagueS = new LeagueService();
+        if (!empty($matchTeamInfo)) {
+            $map["id"] = $matchTeamInfo["id"];
+        }
         $result = $leagueS->saveMatchTeam($map);
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);

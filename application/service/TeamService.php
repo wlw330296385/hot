@@ -92,25 +92,6 @@ class TeamService
         }
     }
 
-    // 创建球队
-    public function createVirtualTeam($data)
-    {
-        $model = new Team();
-
-        $validate = validate('TeamVal');
-        if (!$validate->scene('add_virtual')->check($data)) {
-            return ['code' => 100, 'msg' => $validate->getError()];
-        }
-        // 保存数据，成功返回自增id，失败记录错误信息
-        $res = $model->data($data)->allowField(true)->save();
-        if ($res) {
-            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
-        } else {
-            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
-            return ['code' => 100, 'msg' => __lang('MSG_400')];
-        }
-    }
-
     // 获取球队详情
     public function getTeam($map)
     {
@@ -1438,5 +1419,36 @@ class TeamService
 
         return $final_arr;
 
+    }
+
+    // 创建或修改球队
+    public function saveVirtualTeam($data)
+    {
+        $model = new Team();
+
+        $validate = validate('TeamVal');
+        if (!$validate->scene('add_virtual')->check($data)) {
+            return ['code' => 100, 'msg' => $validate->getError()];
+        }
+
+        // 如果有带更新条件记录id就更新数据
+        if (isset($data['id'])) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        } else {
+            // 插入一条加入球队申请数据
+            $res = $model->allowField(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
     }
 }
