@@ -142,7 +142,7 @@ class Punch extends Base{
                 db('sport_plan_schedule')->where(['id'=>$data['sport_plan_schedule_id']])->update(['punch_id'=>$result['data']]);
             }
             if($data['sport_plan_id']>0){
-                db('sport_plan_schedule')->where(['id'=>$data['sport_plan_schedule_id']])->inc('punch_times')->update();
+                db('sport_plan')->where(['id'=>$data['sport_plan_schedule_id']])->inc('punch_times')->update();
             }
             Db::commit();   
             return json($result);   
