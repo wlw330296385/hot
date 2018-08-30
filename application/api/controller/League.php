@@ -170,28 +170,21 @@ class League extends Base
         $data['reg_start_time'] = strtotime($data['reg_start_time']);
         $data['reg_end_time'] = strtotime($data['reg_end_time']);
         // 时间字段严谨性校验
-        $newTime = time();
-        if ($data['start_time'] <= $newTime) {
-            return json(['code' => 100, 'msg' => '联赛开始时间不能大于当前时间']);
-        }
-        if ($data['end_time'] <= $newTime) {
-            return json(['code' => 100, 'msg' => '联赛结束时间不能大于当前时间']);
-        }
-        if ($data['reg_start_time'] <= $newTime) {
-            return json(['code' => 100, 'msg' => '报名开始时间不能大于当前时间']);
-        }
-        if ($data['reg_end_time'] <= $newTime) {
-            return json(['code' => 100, 'msg' => '报名结束时间不能大于当前时间']);
-        }
+        // $newTime = time();
         if ($data['start_time'] >= $data['end_time']) {
-            return json(['code' => 100, 'msg' => '联赛开始时间不能大于联赛结束时间']);
+            return json(['code' => 100, 'msg' => '联赛开始时间不能晚于联赛结束时间']);
         }
+
         if ($data['reg_start_time'] >= $data['reg_end_time']) {
-            return json(['code' => 100, 'msg' => '报名开始时间不能大于报名结束时间']);
+            return json(['code' => 100, 'msg' => '联赛开始报名时间不能晚于联赛截止报名时间']);
         }
-        // 报名时间不能大于比赛开始时间
-        if ($data['reg_start_time'] >= $data['start_time'] || $data['reg_end_time'] >= $data['start_time']) {
-            return json(['code' => 100, 'msg' => '报名时间不能大于联赛开始时间']);
+
+        if ($data['reg_start_time'] >= $data['start_time']) {
+            return json(['code' => 100, 'msg' => '联赛开始报名时间不能晚于联赛正式开始时间']);
+        }
+
+        if ($data['reg_end_time'] >= $data['start_time']) {
+            return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
         }
 
         // 创建联赛 status=0 待审核

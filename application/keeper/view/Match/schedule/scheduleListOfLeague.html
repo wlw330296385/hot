@@ -50,11 +50,8 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <script>
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $(".mui-scroll-wrapper").scroll({
@@ -85,10 +82,12 @@
                             data: {
                                 match_id: league_id,
                             },
-                            dataType: 'json',//服务器返回json格式数据
-                            type: 'post',//HTTP请求类型
-                            timeout: 10000,//超时时间设置为10秒；
-                            headers: { 'Content-Type': 'application/json' },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
                             success: function (data) {
                                 console.log(data)
                                 if (data.code == 200) {
@@ -110,10 +109,12 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
@@ -121,11 +122,14 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `<div class="page-header border-b bggray2">`
                             if (data.data[i].date == 0) {
-                                newli += `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
+                                newli +=
+                                    `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
                             } else {
-                                newli += `<span class="course" style="padding-left:8px;">${data.data[i].date} </span>`
+                                newli +=
+                                    `<span class="course" style="padding-left:8px;">${data.data[i].date} </span>`
                             }
-                            newli += `</div><ul class="mui-table-view list border-b">
+                            newli +=
+                                `</div><ul class="mui-table-view list border-b">
                                       <p style="margin-bottom: 0;padding: 10px 0 0 22px;">${data.data[i].stage.name}</p>`;
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
@@ -133,18 +137,26 @@
                                 if (dataSchedule.match_timestamp == '') {
                                     var Ttime = "待定"
                                 } else {
-                                    var Ttime = gettimeh(dataSchedule.match_timestamp * 1000);
+                                    var Ttime = getTimeHM(dataSchedule.match_timestamp * 1000);
                                 }
-                                var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
-                                var urlToRecordInfo = "{:url('match/leagueScheduleInfo')}" + '/league_id/' + league_id + '/id/' + dataSchedule.id;
-                                newli += `<li class="mui-table-view-cell listli">`
+                                var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' +
+                                    league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
+                                var urlToRecordInfo = "{:url('match/leagueScheduleInfo')}" +
+                                    '/league_id/' + league_id + '/id/' + dataSchedule.id;
                                 // 根据状态判断跳转链接
                                 if (dataSchedule.status == 1) {
                                     newli += `<a href="${urls}">`
                                 } else {
                                     newli += `<a href="${urlToRecordInfo}">`
                                 }
-                                newli += `<div class="mui-media-body wd">
+                                newli += `<li class="mui-table-view-cell listli border-b">`
+
+                                newli +=
+                                    `<div class="mui-slider-right mui-disabled">
+                                            <span class="mui-btn mui-btn-red" data-schedule_id="${dataSchedule.id}">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle">
+                                            <div class="mui-media-body wd">
                                                     <p class="f14" style="margin-bottom: 8px;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" alt="">${dataSchedule.home_team}</p>
                                                     <p class="f14">
@@ -154,9 +166,10 @@
                                 if (dataSchedule.match_group_id == '') {
                                     newli += `<p style="line-height:62px;">${Ttime}</p>`
                                 } else {
-                                    newli += `<p style="line-height:32px;">${dataSchedule.match_group}</p><p style="line-height:32px;">${Ttime}</p>`
+                                    newli +=
+                                        `<p class="lineHeight32">${dataSchedule.match_group}</p><p class="lineHeight32">${Ttime}</p>`
                                 }
-                                newli += `</div></a></li>`
+                                newli += `</div></div></li></a>`
                             }
                             newli += `</ul>`
                         }
@@ -164,23 +177,56 @@
                             $(".schedule").empty().append(newli);
                         }
                     } else {
-                        $(".schedule").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".schedule").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                         $(".clearList").hide();
                     }
                 },
             });
-        });
 
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettimeh(h) {
-            var _time = new Date(h);
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(hours) + ":" + p(minutes);
-        }
+            //删除单个赛程
+            $('.schedule').on('tap', '.mui-btn', function () {
+                var elem = this;
+                var li = elem.parentNode.parentNode;
+                var btnArray = ['确认', '取消'];
+                var txt = elem.innerHTML;
+                var match_id = "{$league_id}"
+                var schedule_id = elem.getAttribute('data-schedule_id');
+                mui.confirm('确认删除赛程?', '提示', btnArray, function (e) {
+                    if (e.index == 0) {
+                        var apiurl = "{:url('api/team/removeevent')}";
+                        mui.ajax(apiurl, {
+                            data: {
+                                match_id: match_id,
+                                schedule_id: schedule_id
+                            },
+                            dataType: 'json',
+                            type: 'post',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                if (data.code == 200) {
+                                    li.parentNode.removeChild(li);
+                                    location.reload();
+                                } else {
+                                    mui.toast(data.msg);
+                                    mui.swipeoutClose(li);
+                                }
+                            },
+                            error: function (xhr, type, errotThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+                    } else {
+                        setTimeout(function () {
+                            mui.swipeoutClose(li);
+                        }, 0);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

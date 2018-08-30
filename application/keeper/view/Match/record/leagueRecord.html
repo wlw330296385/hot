@@ -119,20 +119,30 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli">
                     <a href="">咨询</a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
-                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">联赛主页</a>
                 </li>
             </ul>
 
         </div>
     </div>
-
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -230,7 +240,8 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].match_stage_type == 1) {
-                                newli +=`<li class="mui-table-view-cell bggray2">
+                                newli +=
+                                    `<li class="mui-table-view-cell bggray2">
                                             <ul class="mui-table-view mui-row">
                                                 <li class="mui-col-sm-6 mui-col-xs-6">${data.data[i].match_group}排名</li>
                                                 <li class="mui-col-sm-2 mui-col-xs-2">胜</li>
@@ -292,14 +303,16 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].stage.type != 1) {
                                 numarr = []
-                                newli +=`<div class="page-header border-b">
+                                newli +=
+                                    `<div class="page-header border-b">
                                             <span class="course"> ${data.data[i].stage.name}</span>
                                             <span class="more">${data.data[i].stage.records.length * 2}强</span>
                                         </div>
                                         <ul class="mui-table-view">`
                                 for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                     var recordsArr = data.data[i].stage.records[j]
-                                    newli +=`<li class="mui-table-view-cell" style="padding: 0">
+                                    newli +=
+                                        `<li class="mui-table-view-cell" style="padding: 0">
                                                 <div class="mui-row leagueRecordRow">
                                                     <div class="mui-col-sm-7 mui-col-xs-7 leagueColRecordLeft">
                                                         <p class="border-b pRecordContent">`;
@@ -308,7 +321,8 @@
                                     } else {
                                         newli += `<span class="siteNum codeNum f16">T${j + 1}</span>`;
                                     }
-                                    newli +=`<span>
+                                    newli +=
+                                        `<span>
                                                 <img src="${recordsArr.home_team_logo}" class="img32">
                                              </span>
                                             <span class="spanText">${recordsArr.home_team}</span>
@@ -317,9 +331,11 @@
                                     if (data.data[i].stage.records.length == 1) {
                                         newli += `<span class="siteNum codeNum f16">T2</span>`;
                                     } else {
-                                        newli +=`<span class="siteNum codeNum f16"">T${data.data[i].stage.records.length - j}</span>`
+                                        newli +=
+                                            `<span class="siteNum codeNum f16"">T${data.data[i].stage.records.length - j}</span>`
                                     }
-                                    newli +=`<span>
+                                    newli +=
+                                        `<span>
                                                 <img src="${recordsArr.away_team_logo}" class="img32">
                                             </span>
                                             <span class="spanText">${recordsArr.away_team}</span>
@@ -328,21 +344,23 @@
                                     <div class="mui-col-sm-5 mui-col-xs-5 mui-text-center leagueColRecordRight">
                                         <p>${recordsArr.home_score} ：${recordsArr.away_score}</p>`;
                                     if (recordsArr.home_score > recordsArr.away_score) {
-                                        newli +=`<p>
+                                        newli +=
+                                            `<p>
                                                 <span>
                                                     <img src="${recordsArr.home_team_logo}" class="img32">
                                                 </span>
                                                 <span class="spanText colorred">${recordsArr.home_team}</span>
                                             </p>`;
                                     } else {
-                                        newli +=`<p>
+                                        newli +=
+                                            `<p>
                                                     <span>
                                                         <img src="${recordsArr.away_team_logo}" class="img32">
                                                     </span>
                                                     <span class="spanText colorred">${recordsArr.away_team}</span>
                                                 </p>`;
                                     }
-                                    newli +=`<p>（晋级）</p></div></div></li><p class="pline"></p>`;
+                                    newli += `<p>（晋级）</p></div></div></li><p class="pline"></p>`;
                                 }
                                 newli += `</ul>`
                             }
@@ -367,7 +385,45 @@
             });
         }
     </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                success: function () {},
+                cancel: function () {}
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () {},
+                cancel: function () {}
+            });
 
+        });
+    </script>
 </body>
 
 </html>
