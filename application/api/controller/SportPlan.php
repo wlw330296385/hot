@@ -68,6 +68,8 @@ class SportPlan extends Base{
             if($data['ends']){
                 $data['end'] = strtotime($data['ends'])+86399;
             }
+            $data['period'] = ($data['end']-$data['start'])/86400;
+
             $sport_plan_id = input('param.sport_plan_id');
             if($sport_plan_id){
                 $result = $this->SportPlan->save($data,$sport_plan_id);
