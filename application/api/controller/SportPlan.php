@@ -68,6 +68,8 @@ class SportPlan extends Base{
             if($data['ends']){
                 $data['end'] = strtotime($data['ends'])+86399;
             }
+            $data['period'] = ($data['end']-$data['start'])/86400;
+
             $sport_plan_id = input('param.sport_plan_id');
             if($sport_plan_id){
                 $result = $this->SportPlan->save($data,$sport_plan_id);
@@ -104,8 +106,6 @@ class SportPlan extends Base{
             $SportPlanSchedule = new \app\model\SportPlanSchedule;
             $result = $SportPlanSchedule->saveAll($finalArray);
             if($result){
-                $total = count($finalArray);
-                $this->SportPlan->setInc('sport_times',$total);
                 return json(['code'=>200,'msg'=>'提交成功','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'提交失败']);

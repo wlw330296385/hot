@@ -161,7 +161,8 @@
                     <div class="page-header border-b">
                         <span class="course">场均三分球</span>
                         <span class="more pdr15">
-                            <a href="{:url('match/teamMemberData', ['league_id' => $leagueInfo.id])}?field=threepfg" class="mui-navigate-right">全部</a>
+                            <a href="{:url('match/teamMemberData', ['league_id' => $leagueInfo.id])}?field=threepfg"
+                                class="mui-navigate-right">全部</a>
                         </span>
                     </div>
                     <ul class="mui-table-view mui-text-center leagueTypeSet teamMemberThreepfgList"></ul>
@@ -233,20 +234,32 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli">
                     <a href="">咨询</a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
-                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">联赛主页</a>
                 </li>
             </ul>
 
         </div>
     </div>
+    
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -265,10 +278,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
@@ -298,28 +313,66 @@
                 data: {
                     match_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
-                    var newlipts = ''; var arrpts = [];
-                    var newlireb = ''; var arrreb = [];
-                    var newliast = ''; var arrast = [];
-                    var newliblk = ''; var arrblk = [];
-                    var newlistl = ''; var arrstl = [];
-                    var newlithreepfg = ''; var arrthreepfg = [];
+                    var newlipts = '';
+                    var arrpts = [];
+                    var newlireb = '';
+                    var arrreb = [];
+                    var newliast = '';
+                    var arrast = [];
+                    var newliblk = '';
+                    var arrblk = [];
+                    var newlistl = '';
+                    var arrstl = [];
+                    var newlithreepfg = '';
+                    var arrthreepfg = [];
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var name = data.data[i].name;
                             var avatar = data.data[i].avatar;
-                            var pts = data.data[i].pts; arrpts.push({ pts, name, avatar });
-                            var reb = data.data[i].reb; arrreb.push({ reb, name, avatar });
-                            var ast = data.data[i].ast; arrast.push({ ast, name, avatar });
-                            var blk = data.data[i].blk; arrblk.push({ blk, name, avatar });
-                            var stl = data.data[i].stl; arrstl.push({ stl, name, avatar });
-                            var threepfg = data.data[i].threepfg; arrthreepfg.push({ threepfg, name, avatar });
+                            var pts = data.data[i].pts;
+                            arrpts.push({
+                                pts,
+                                name,
+                                avatar
+                            });
+                            var reb = data.data[i].reb;
+                            arrreb.push({
+                                reb,
+                                name,
+                                avatar
+                            });
+                            var ast = data.data[i].ast;
+                            arrast.push({
+                                ast,
+                                name,
+                                avatar
+                            });
+                            var blk = data.data[i].blk;
+                            arrblk.push({
+                                blk,
+                                name,
+                                avatar
+                            });
+                            var stl = data.data[i].stl;
+                            arrstl.push({
+                                stl,
+                                name,
+                                avatar
+                            });
+                            var threepfg = data.data[i].threepfg;
+                            arrthreepfg.push({
+                                threepfg,
+                                name,
+                                avatar
+                            });
                         }
                         arrpts.sort(compare("pts")).reverse();
                         arrreb.sort(compare("reb")).reverse();
@@ -328,7 +381,8 @@
                         arrstl.sort(compare("stl")).reverse();
                         arrthreepfg.sort(compare("threepfg")).reverse();
                         for (j = 0; j <= arrpts.slice(0, 5).length - 1; j++) {
-                            newlipts += `<li class="mui-table-view-cell">
+                            newlipts +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -340,7 +394,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrreb.slice(0, 5).length - 1; j++) {
-                            newlireb += `<li class="mui-table-view-cell">
+                            newlireb +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -352,7 +407,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrast.slice(0, 5).length - 1; j++) {
-                            newliast += `<li class="mui-table-view-cell">
+                            newliast +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -364,7 +420,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrblk.slice(0, 5).length - 1; j++) {
-                            newliblk += `<li class="mui-table-view-cell">
+                            newliblk +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -376,7 +433,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrstl.slice(0, 5).length - 1; j++) {
-                            newlistl += `<li class="mui-table-view-cell">
+                            newlistl +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -388,7 +446,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrthreepfg.slice(0, 5).length - 1; j++) {
-                            newlithreepfg += `<li class="mui-table-view-cell">
+                            newlithreepfg +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -420,28 +479,66 @@
                 data: {
                     match_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
-                    var newlipts = ''; var arrpts = [];
-                    var newlireb = ''; var arrreb = [];
-                    var newliast = ''; var arrast = [];
-                    var newliblk = ''; var arrblk = [];
-                    var newlistl = ''; var arrstl = [];
-                    var newlithreepfg = ''; var arrthreepfg = [];
+                    var newlipts = '';
+                    var arrpts = [];
+                    var newlireb = '';
+                    var arrreb = [];
+                    var newliast = '';
+                    var arrast = [];
+                    var newliblk = '';
+                    var arrblk = [];
+                    var newlistl = '';
+                    var arrstl = [];
+                    var newlithreepfg = '';
+                    var arrthreepfg = [];
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var team = data.data[i].team;
                             var cover = data.data[i].cover;
-                            var pts = data.data[i].pts; arrpts.push({ pts, team, cover });
-                            var reb = data.data[i].reb; arrreb.push({ reb, team, cover });
-                            var ast = data.data[i].ast; arrast.push({ ast, team, cover });
-                            var blk = data.data[i].blk; arrblk.push({ blk, team, cover });
-                            var stl = data.data[i].stl; arrstl.push({ stl, team, cover });
-                            var threepfg = data.data[i].threepfg; arrthreepfg.push({ threepfg, team, cover });
+                            var pts = data.data[i].pts;
+                            arrpts.push({
+                                pts,
+                                team,
+                                cover
+                            });
+                            var reb = data.data[i].reb;
+                            arrreb.push({
+                                reb,
+                                team,
+                                cover
+                            });
+                            var ast = data.data[i].ast;
+                            arrast.push({
+                                ast,
+                                team,
+                                cover
+                            });
+                            var blk = data.data[i].blk;
+                            arrblk.push({
+                                blk,
+                                team,
+                                cover
+                            });
+                            var stl = data.data[i].stl;
+                            arrstl.push({
+                                stl,
+                                team,
+                                cover
+                            });
+                            var threepfg = data.data[i].threepfg;
+                            arrthreepfg.push({
+                                threepfg,
+                                team,
+                                cover
+                            });
                         }
                         arrpts.sort(compare("pts")).reverse();
                         arrreb.sort(compare("reb")).reverse();
@@ -450,7 +547,8 @@
                         arrstl.sort(compare("stl")).reverse();
                         arrthreepfg.sort(compare("threepfg")).reverse();
                         for (j = 0; j <= arrpts.slice(0, 5).length - 1; j++) {
-                            newlipts += `<li class="mui-table-view-cell">
+                            newlipts +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -462,7 +560,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrreb.slice(0, 5).length - 1; j++) {
-                            newlireb += `<li class="mui-table-view-cell">
+                            newlireb +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -474,7 +573,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrast.slice(0, 5).length - 1; j++) {
-                            newliast += `<li class="mui-table-view-cell">
+                            newliast +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -486,7 +586,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrblk.slice(0, 5).length - 1; j++) {
-                            newliblk += `<li class="mui-table-view-cell">
+                            newliblk +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -498,7 +599,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrstl.slice(0, 5).length - 1; j++) {
-                            newlistl += `<li class="mui-table-view-cell">
+                            newlistl +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -510,7 +612,8 @@
                                     </li>`
                         }
                         for (j = 0; j <= arrthreepfg.slice(0, 5).length - 1; j++) {
-                            newlithreepfg += `<li class="mui-table-view-cell">
+                            newlithreepfg +=
+                                `<li class="mui-table-view-cell">
                                         <ul class="mui-table-view mui-row">
                                             <li class="mui-col-sm-2 mui-col-xs-2 lineHeight32"><strong class="f18">${j + 1}</strong></li>
                                             <li class="mui-col-sm-8 mui-col-xs-8 leagueGroup">
@@ -551,10 +654,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -571,9 +676,46 @@
                 }
             });
         }
-
     </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                success: function () {},
+                cancel: function () {}
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () {},
+                cancel: function () {}
+            });
 
+        });
+    </script>
 </body>
 
 </html>

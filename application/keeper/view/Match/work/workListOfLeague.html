@@ -69,11 +69,6 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
-
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
-
         // 关注联赛
         $(".follow").on("tap", '', function () {
             var league_id = "{$league_id}";
@@ -82,10 +77,12 @@
                     type: 5,
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
@@ -111,21 +108,35 @@
             data: {
                 match_id: match_id
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data[i].member_id;
-                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        newli +=
+                            `<li class="mui-table-view-cell mui-collapse listli">
+                                <a class="mui-navigate-right">
+                                    ${data.data[i].realname}
+                                    <span class="colororange">${data.data[i].type_text}</span>
+                                </a>
+                                <div class="mui-collapse-content dataCollapse">
+                                <div class="fl wd60">
+                                    <p>职能：暂定</p>
+                                    <p>联系电话：13750088654</p>
+                                </div>`
                         if (data.data[i].type != 10) {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli +=
+                                `<button class="btn bgred fr deleteWorker" data-id="${data.data[i].id}" style="margin-top: 6px;padding: 4px 8px;">删除</button>`
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '">' + data.data[i].realname + '<span class="colororange">' + data.data[i].type_text + '</span></a></div></li>'
+                        newli += `</div>
+                            </li>`
                     }
                 }
                 $("ul.worker").empty().append(newli);
@@ -138,45 +149,11 @@
             }
         });
 
-
-        // 判断当前的关注状态
-        function followStatus() {
-            var league_id = "{$league_id}";
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 5,
-                    league_id: league_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("取消关注");
-                        } else {
-                            $(".follow").text("关注");
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
-
-        //拖拽后显示操作图标，点击操作图标删除元素；
-        $('.OA_task').on('tap', '.mui-btn', function () {
-            var elem = this;
-            var li = elem.parentNode.parentNode;
+        // 删除工作人员
+        $(document).on('tap', '.deleteWorker', function () {
             var btnArray = ['确认', '取消'];
-            var txt = elem.innerHTML;
-            var id = elem.parentNode.getAttribute('data-id');
-            var action = elem.getAttribute('data-action');
-            mui.confirm('确认删除该人员吗', '提示', btnArray, function (e) {
+            var id = $(this).attr("data-id");
+            mui.confirm('确认删除该工作人员吗', '提示', btnArray, function (e) {
                 if (e.index == 0) {
                     var apiurl = "{:url('api/league/delmatchmember')}";
                     mui.ajax(apiurl, {
@@ -185,10 +162,12 @@
                         },
                         dataType: 'json',
                         type: 'post',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             if (data.code == 200) {
-                                li.parentNode.removeChild(li);
+                                mui.toast(data.msg);
                                 location.reload();
                             } else {
                                 mui.toast(data.msg);
@@ -198,15 +177,44 @@
                             mui.toast('网络异常,请稍候再试');
                         }
                     });
-                } else {
-                    setTimeout(function () {
-                        mui.swipeoutClose(li);
-                    }, 0);
                 }
             });
         });
-
     </script>
 </body>
+
+
+
+// 判断当前的关注状态
+function followStatus() {
+var league_id = "{$league_id}";
+mui.ajax("{:url('api/follow/getfollow')}", {
+data: {
+type: 5,
+league_id: league_id
+},
+dataType: 'json', //服务器返回json格式数据
+type: 'post', //HTTP请求类型
+timeout: 10000, //超时时间设置为10秒；
+headers: {
+'Content-Type': 'application/json'
+},
+success: function (data) {
+console.log(data);
+if (data.code == 200) {
+if (data.data === 1) {
+$(".follow").text("取消关注");
+} else {
+$(".follow").text("关注");
+}
+}
+},
+error: function (xhr, type, errorThrown) {
+//异常处理；
+console.log(type);
+}
+});
+}
+
 
 </html>

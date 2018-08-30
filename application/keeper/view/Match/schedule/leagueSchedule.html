@@ -111,21 +111,31 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli">
                     <a href="">咨询</a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
-                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">联赛主页</a>
                 </li>
             </ul>
 
         </div>
     </div>
-
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/getDate.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -228,11 +238,13 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `<div class="page-header border-b">`
                             if (data.data[i].date == '') {
-                                newli +=`<span class="course">比赛日
+                                newli +=
+                                    `<span class="course">比赛日
                                             <font class="colorred">待定</font> | 时间日期待定
                                         </span>`
                             } else {
-                                newli +=`<span class="course">比赛日
+                                newli +=
+                                    `<span class="course">比赛日
                                             <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
                                         </span>`
                             }
@@ -240,31 +252,35 @@
                             newli += `<ul class="mui-table-view">`
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var scheduleArr = data.data[i].stage.schedules[j];
-                                urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' +scheduleArr.match_id + '/id/' + scheduleArr.id;
-                                urlRecord = "{:url('match/recordInfo')}" + '/league_id/' + league_id +'/id/' + scheduleArr.match_record_id;
+                                urlSchedule = "{:url('match/leagueScheduleInfo')}" + '/league_id/' +
+                                    scheduleArr.match_id + '/id/' + scheduleArr.id;
+                                urlRecord = "{:url('match/recordInfo')}" + '/league_id/' + league_id +
+                                    '/id/' + scheduleArr.match_record_id;
                                 if (scheduleArr.status == 1) {
                                     newli += `<a href="${urlSchedule}">`;
                                 } else {
                                     newli += `<a href="${urlRecord}">`;
                                 }
-                                newli +=`<li class="mui-table-view-cell" style="padding:0">`
-                                newli +=`<div class="mui-row leagueRow">
+                                newli += `<li class="mui-table-view-cell" style="padding:0">`
+                                newli +=
+                                    `<div class="mui-row leagueRow">
                                             <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
-                                            
-                                if(scheduleArr.court_no=='' && scheduleArr.match_group==''){
-                                    newli +=`<p class="siteNum lineHeight80">${j + 1}</p>`
-                                }else if(scheduleArr.court_no=='' && scheduleArr.match_group != ''){
-                                    newli +=`<p class="siteNum" style="line-height:40px">${j + 1}</p>`
-                                    newli +=`<p style="line-height:40px">${scheduleArr.match_group}</p>`;
-                                }else{
-                                    newli +=`<p class="siteNum lineHeight29">${j + 1}</p>`
+
+                                if (scheduleArr.court_no == '' && scheduleArr.match_group == '') {
+                                    newli += `<p class="siteNum lineHeight80">${j + 1}</p>`
+                                } else if (scheduleArr.court_no == '' && scheduleArr.match_group != '') {
+                                    newli += `<p class="siteNum" style="line-height:40px">${j + 1}</p>`
+                                    newli += `<p style="line-height:40px">${scheduleArr.match_group}</p>`;
+                                } else {
+                                    newli += `<p class="siteNum lineHeight29">${j + 1}</p>`
                                     if (scheduleArr.match_group != '') {
                                         newli += `<p class="lineHeight29">${scheduleArr.match_group}</p>`;
                                     }
-                                    newli +=`<p class="lineHeight29">${scheduleArr.court_no}</p>`
+                                    newli += `<p class="lineHeight29">${scheduleArr.court_no}</p>`
                                 }
-                               
-                                newli +=`</div>
+
+                                newli +=
+                                    `</div>
                                             <div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
                                                 <p class="mui-ellipsis pContent border-b">
                                                     <span>
@@ -285,10 +301,12 @@
                                         newli += `<p style="line-height:86px;border-bottom:0">暂无</p>`;
                                     } else {
                                         var Ttime = getTimeHM(scheduleArr.match_timestamp * 1000);
-                                        newli +=` <p style="line-height:86px;border-bottom:0">${Ttime}</p>`;
+                                        newli +=
+                                            ` <p style="line-height:86px;border-bottom:0">${Ttime}</p>`;
                                     }
                                 } else {
-                                    newli +=`<p class="colorred pContent border-b">${scheduleArr.home_team_score}</p>
+                                    newli +=
+                                        `<p class="colorred pContent border-b">${scheduleArr.home_team_score}</p>
                                              <p class="colorred pContent border-b">${scheduleArr.away_team_score}</p>`
                                 }
                                 newli += `</div></div></li></a><p class="pline"></p>`
@@ -308,9 +326,46 @@
                 }
             });
         }
-        
     </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                success: function () {},
+                cancel: function () {}
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () {},
+                cancel: function () {}
+            });
 
+        });
+    </script>
 </body>
 
 </html>

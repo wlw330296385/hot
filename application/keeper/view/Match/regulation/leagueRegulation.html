@@ -189,7 +189,7 @@
                 </span>
             </div>
             <ul class="mui-table-view">
-                <li class="listli desimg regulation">{$leagueInfo.regulation}</li>
+                <li class="desimg regulation" style="padding: 11px 13px">{$leagueInfo.regulation}</li>
             </ul>
 
             <!-- 分组列表 -->
@@ -202,12 +202,14 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli">
                     <a href="">咨询</a>
                 </li>
-                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli">分享 </li>
                 <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred">
-                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">主页</a>
+                    <a href="{:url('match/leagueInfo',['league_id'=>$league_id])}">联赛主页</a>
                 </li>
             </ul>
 
@@ -232,9 +234,17 @@
             </div>
         </div>
     </div>
-
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         mui.init({
             swipeBack: false
@@ -417,6 +427,45 @@
                 }
             });
         }
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                success: function () {},
+                cancel: function () {}
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () {},
+                cancel: function () {}
+            });
+
+        });
     </script>
 
 </body>

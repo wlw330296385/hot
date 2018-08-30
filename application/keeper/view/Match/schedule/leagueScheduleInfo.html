@@ -20,7 +20,7 @@
         <h1 class="mui-title">赛程详情</h1>
     </header>
 
-    <div class="mui-content list">
+    <div class="mui-content list mb44">
 
         <div class="page-header bggray2">
             <span class="course wd45">
@@ -36,7 +36,7 @@
             <li class="mui-table-view-cell listli">
                 <label>
                     <span class="icon iconfont icon-activity-Jersey colororange"></span>主队球衣颜色</label>
-                <span  class="wd45">{$matchScheduleInfo.home_team_color}</span>
+                <span class="wd45">{$matchScheduleInfo.home_team_color}</span>
             </li>
             <li class="mui-table-view-cell listli">
                 <label>
@@ -101,6 +101,11 @@
             {/volist}
         </div>
 
+        <!--删除赛程-->
+        <div class="success-frame" style="padding-top:30px;">
+            <button type="button" class="mui-btn mui-btn-danger f16 wd45 deleteSchedule">删除</button>
+        </div>
+
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -110,21 +115,33 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        $(".match_time").text(gettime())
-
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettime() {
-            var _time = new Date();
-            var year = _time.getFullYear();
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
-        }
+        //删除赛程
+        $('.deleteSchedule').on('tap', function () {
+            var match_id = "{$league_id}"
+            var schedule_id = "{$matchScheduleInfo.id}";
+            var apiurl = "{:url('api/match/')}";
+            mui.ajax(apiurl, {
+                data: {
+                    match_id: match_id,
+                    schedule_id: schedule_id
+                },
+                dataType: 'json',
+                type: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    if (data.code == 200) {
+                        window.location.go(-1);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errotThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        });
     </script>
 </body>
 
