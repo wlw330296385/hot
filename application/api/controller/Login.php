@@ -141,6 +141,7 @@ class Login extends Base{
     }
 
     public function autoLogin(){
+        
         $id = input('param.id');
         $hot_id = input('param.hot_id');
         if(!$id){

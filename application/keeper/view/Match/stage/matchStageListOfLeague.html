@@ -42,8 +42,11 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgred">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
                 <a href="{:url('Match/createMatchStage',['league_id'=>$leagueInfo.id])}">添加比赛阶段</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+                <a href="{:url('Match/createScheduleOfLeague',['league_id'=>$leagueInfo.id])}">创建赛程</a>
             </li>
         </ul>
 
@@ -65,19 +68,19 @@
             mui('#refreshContainer').pullRefresh({
                 down: {
                     //下拉刷新
-                    height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto: true,//可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    height: 50, //可选.默认50.触发下拉刷新拖动距离
+                    auto: true, //可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                     callback: pulldownRefreshOn
                 },
                 up: {
                     //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    height: 150, //可选.默认50.触发上拉加载拖动距离
                     //auto:true,//可选,默认false.自动上拉加载一次
                     contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                     callback: pullupRefreshOn
                 }
             });
@@ -85,20 +88,20 @@
             //下拉刷新具体业务实现
             function pulldownRefreshOn() {
                 setTimeout(function () {
-                    onCount = 1;//刷新并显示第一页
+                    onCount = 1; //刷新并显示第一页
                     var page = onCount;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
 
             //上拉加载具体业务实现
             function pullupRefreshOn() {
                 setTimeout(function () {
-                    onCount++;//翻下一页
+                    onCount++; //翻下一页
                     var page = onCount;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
 
@@ -114,17 +117,21 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('match/editmatchstage')}" + '/league_id/' + data.data.data[i].match_id + '/id/' + data.data.data[i].id;
-                            newli += `<li class="mui-table-view-cell listli" style="line-height:27px;">
+                            var urls = "{:url('match/editmatchstage')}" + '/league_id/' + data.data.data[
+                                i].match_id + '/id/' + data.data.data[i].id;
+                            newli +=
+                                `<li class="mui-table-view-cell listli" style="line-height:27px;">
                                         <div class="mui-slider-right mui-disabled">
                                             <span class="mui-btn mui-btn-red" data-action="del" data-id="${data.data.data[i].id}">删除</span>
                                         </div>
@@ -148,7 +155,9 @@
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.schedule").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $("ul.schedule").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                            );
                         }
                     } else {
                         //下拉加载 gType==2
@@ -185,7 +194,9 @@
                         },
                         dataType: 'json',
                         type: 'post',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             if (data.code == 200) {
                                 li.parentNode.removeChild(li);
