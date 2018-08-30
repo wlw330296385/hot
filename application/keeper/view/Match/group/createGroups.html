@@ -121,10 +121,12 @@
                     data: {
                         league_id: league_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -134,16 +136,39 @@
                             var fenzuNum = totalNum / groupNum; //取值分组数
                             teams = split_array(data.data, fenzuNum);
                             // console.log(teams)
-                            teams.sort(function () { return Math.random() - 0.5; }); //乱序方法
+                            teams.sort(function () {
+                                return Math.random() - 0.5;
+                            }); //乱序方法
                             for (var i = 0; i < teams.length; i++) {
-                                groupNameLi += '<li class="mui-table-view-cell listli"><text class="thisName">组' + ((teams.slice(0, i).length + 1)) + '</text><input type="hidden" class="checkTeamId" value=""></li>';
-                                newli += '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" focus value="组' + ((teams.slice(0, i).length + 1)) + '" placeholder="请填写组名" /><span class="f14 fr" style="color:#bfbfbfdd">序号：' + ((teams.slice(0, i).length + 1)) + '</span></div>';
+                                groupNameLi +=
+                                    '<li class="mui-table-view-cell listli"><text class="thisName">组' +
+                                    ((teams.slice(0, i).length + 1)) +
+                                    '</text><input type="hidden" class="checkTeamId" value=""></li>';
+                                newli +=
+                                    '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" focus value="组' +
+                                    ((teams.slice(0, i).length + 1)) +
+                                    '" placeholder="请填写组名" style="padding:0;width:20%" /><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：' +
+                                    ((teams.slice(0, i).length + 1)) + '</span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
-                                    newli += '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + teams[i][j].team_logo + '" data-team="' + teams[i][j].team.name + '" data-team_id="' + teams[i][j].team.id + '" data-match="' + teams[i][j].match.name + '" data-match_id="' + teams[i][j].match.id + '" data-members_num="' + teams[i][j].members_num + '">';
-                                    newli += '<img class="mui-media-object mui-pull-left coachicon" src="' + teams[i][j].team_logo + '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20" style="width:41%;"><p class="f14" style="font-weight:bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">' + teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num + '人</p></div>';
-                                    newli += '<div class="fr f12" style="line-height:40px;color: #a9a9a9;">';
-                                    // newli += '<img src="/static/frontend/images/switch.png" class="iconClass">换组'
-                                    newli += `<input type="button" class="seedTeam bggray" value="种子球队" data-is_seedteam="0" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-left:6px;">
+                                    newli +=
+                                        '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' +
+                                        teams[i][j].team_logo + '" data-team="' + teams[i][
+                                            j
+                                        ].team.name + '" data-team_id="' + teams[i][j].team
+                                        .id + '" data-match="' + teams[i][j].match.name +
+                                        '" data-match_id="' + teams[i][j].match.id +
+                                        '" data-members_num="' + teams[i][j].members_num +
+                                        '">';
+                                    newli +=
+                                        '<img class="mui-media-object mui-pull-left coachicon" src="' +
+                                        teams[i][j].team_logo +
+                                        '" style="width: 40px !important;height: 40px !important; float:left !important;"><div class="mui-media-body lineHeight20" style="width:41%;"><p class="f14" style="font-weight:bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">' +
+                                        teams[i][j].team.name + '</p><p>参赛' + teams[i][j].members_num +
+                                        '人</p></div>';
+                                    newli +=
+                                        '<div class="fr f12" style="line-height:40px;color: #a9a9a9;">';
+                                    newli +=
+                                        `<input type="button" class="seedTeam bggray" value="种子球队" data-is_seedteam="0" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-left:6px;">
                                                 <a href="#move"><input type="button" class="deleteTeam bgred" value="换组" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;"></a>`
                                     newli += '</div></li>';
                                 }
@@ -187,7 +212,13 @@
                 var moveli = '';
                 $(".frame ul li").each(function (index) {
                     if (thisTeamId == $(this).attr("data-team_id")) {
-                        moveli = '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' + $(this).attr("data-team_logo") + '" data-team="' + $(this).attr("data-team") + '" data-team_id="' + $(this).attr("data-team_id") + '" data-match="' + $(this).attr("data-match") + '" data-match_id="' + $(this).attr("data-match_id") + '" data-members_num="' + $(this).attr("data-members_num") + '">' + $(this).html() + '';
+                        moveli =
+                            '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' +
+                            $(this).attr("data-team_logo") + '" data-team="' + $(this).attr(
+                                "data-team") + '" data-team_id="' + $(this).attr("data-team_id") +
+                            '" data-match="' + $(this).attr("data-match") + '" data-match_id="' +
+                            $(this).attr("data-match_id") + '" data-members_num="' + $(this).attr(
+                                "data-members_num") + '">' + $(this).html() + '';
                         $(this).remove()
                         $(".frame ul .page-header").each(function () {
                             if (thisName == $(this).children().val()) {
@@ -211,7 +242,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            var isOk = true  //用变量记住状态
+            var isOk = true //用变量记住状态
             $(".groupsTip").each(function () {
                 let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
                 console.log(checkSeed)
@@ -237,11 +268,24 @@
                     var match_id = $(this).attr("data-match_id");
                     var members_num = $(this).attr("data-members_num");
                     var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
-                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num, is_seedTeam })
+                    groupTeam.push({
+                        team,
+                        team_id,
+                        team_logo,
+                        match,
+                        match_id,
+                        members_num,
+                        is_seedTeam
+                    })
                 })
-                groupList.push({ groupName, groupTeam })
+                groupList.push({
+                    groupName,
+                    groupTeam
+                })
             })
-            if (!isOk) { return isOk }
+            if (!isOk) {
+                return isOk
+            }
 
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
@@ -277,7 +321,6 @@
             }
 
         };
-
     </script>
 </body>
 
