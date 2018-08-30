@@ -138,12 +138,17 @@ class Punch extends Base{
                 $GroupPunch = new \app\model\GroupPunch;
                 $GroupPunch->saveAll($groupList);
             }
-            if($data['sport_plan_schedule_id']>0){
-                db('sport_plan_schedule')->where(['id'=>$data['sport_plan_schedule_id']])->update(['punch_id'=>$result['data']]);
+            if($result['code'] == 200){
+                $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
+                if($sport_plan_schedule_id>0){
+                    db('sport_plan_schedule')->where(['id'=>$sport_plan_schedule_id])->update(['punch_id'=>$result['data']]);
+                }
+                $sport_plan_id = input('param.sport_plan_id');
+                if($sport_plan_id>0){
+                    db('sport_plan')->where(['id'=>$sport_plan_id])->inc('punch_times')->update();
+                }
             }
-            if($data['sport_plan_id']>0){
-                db('sport_plan')->where(['id'=>$data['sport_plan_schedule_id']])->inc('punch_times')->update();
-            }
+            
             Db::commit();   
             return json($result);   
          }catch (Exception $e){
