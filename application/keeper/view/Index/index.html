@@ -41,6 +41,7 @@
             .imgShowEvent {
                 width: 70% !important;
             }
+
             #giftpopover {
                 height: 68% !important;
             }
@@ -50,6 +51,7 @@
             .imgShowEvent {
                 width: 73% !important;
             }
+
             #giftpopover {
                 height: 74% !important;
             }
@@ -143,7 +145,9 @@
                         </div>
                         <p class="region">{$memberInfo.city} {$memberInfo.area}</p>
                         <p>年龄
-                            <text class="colororange">{:date('Y',time()) - ((int)$memberInfo.birthday===0000?date('Y',time()):(int)$memberInfo.birthday)}</text> 身高
+                            <text class="colororange">{:date('Y',time()) -
+                                ((int)$memberInfo.birthday===0000?date('Y',time()):(int)$memberInfo.birthday)}</text>
+                            身高
                             <text class="colororange">{$memberInfo.height}</text> 体重
                             <text class="colororange">{$memberInfo.weight}</text>
                         </p>
@@ -169,6 +173,15 @@
             <div class="nav-list borderStyle">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('team/memberpersoninfo')}">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-efficiency"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">球队</span>
+                            <div class="mui-media-body f18 colororange ">0</div>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('index/latelymatchlist')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-p-game"></use>
@@ -177,7 +190,7 @@
                             <div class="mui-media-body f18 colororange match_number">0</div>
                         </a>
                     </li>
-                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <!-- <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('team/memberpersoninfo')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-p-efficiency"></use>
@@ -185,7 +198,7 @@
                             <span class="f14" style="display: block;">效率</span>
                             <div class="mui-media-body f18 colororange efficiency">0</div>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('punch/index')}">
                             <svg class="coloricon" aria-hidden="true">
@@ -986,7 +999,9 @@
     </div>
 
     <script type="text/javascript">
-        var item_coupon_ids = JSON.stringify({ $item_coupon_ids });
+        var item_coupon_ids = JSON.stringify({
+            $item_coupon_ids
+        });
         var isBonus;
 
         isBonus = localStorage.getItem('isBonus');
@@ -998,7 +1013,9 @@
             }, true)
             //打开获取大礼包
             // 如果本地没有存储与大礼包id相同的值,则弹出大礼包;
-            if (isBonus != { $bonusInfo['id'] }) {
+            if (isBonus != {
+                    $bonusInfo['id']
+                }) {
                 mui("#giftpopover").popover('show', document.getElementById("tabbar"));
                 $("#gift-open").animate({
                     width: '+=20px',
@@ -1032,7 +1049,9 @@
                     top: '-400px',
                     opacity: '0'
                 }, "fast");
-                if ({ $memberInfo.id } == 0) {
+                if ({
+                        $memberInfo.id
+                    } == 0) {
                     mui.confirm('请注册成为篮球管家会员领取大礼包，感谢您的支持！', '提示', ['取消', '立即注册'], function (e) {
                         if (e.index === 1) {
                             window.location.href = "{$fasturl}";
@@ -1040,18 +1059,27 @@
 
                     });
                 } else {
-                    if ({ $item_coupon_ids }.length > 0) {
+                    if ({
+                            $item_coupon_ids
+                        }.length > 0) {
                         // 领取礼包
                         $.post(
-                            "{:url('api/bonus/grantBounusApi')}"
-                            , { 'bonus_id': { $bonusInfo.id } }
-                            , function (msg) {
+                            "{:url('api/bonus/grantBounusApi')}", {
+                                'bonus_id': {
+                                    $bonusInfo.id
+                                }
+                            },
+                            function (msg) {
                                 if (msg.code == 200) {
-                                    localStorage.setItem('isBonus', { $bonusInfo.id });
-                                    mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (e) {
+                                    localStorage.setItem('isBonus', {
+                                        $bonusInfo.id
+                                    });
+                                    mui.confirm('领取成功,查看获得的卡券?', '恭喜!', ['不,谢谢', '立即查看'], function (
+                                        e) {
                                         if (e.index === 1) {
 
-                                            window.location.href = "{:url('frontend/coupon/itemcouponlist')}";
+                                            window.location.href =
+                                                "{:url('frontend/coupon/itemcouponlist')}";
                                         }
                                     });
                                 } else {
@@ -1090,8 +1118,8 @@
                 desc: '开启你的篮球生涯',
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "https://m.hot-basketball.com/static/frontend/images/logo.png",
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
@@ -1101,8 +1129,8 @@
                 imgUrl: "https://m.hot-basketball.com/static/frontend/images/logo.png",
                 type: "",
                 dataUrl: '',
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
 
         });
