@@ -104,8 +104,6 @@ class SportPlan extends Base{
             $SportPlanSchedule = new \app\model\SportPlanSchedule;
             $result = $SportPlanSchedule->saveAll($finalArray);
             if($result){
-                $total = count($finalArray);
-                $this->SportPlan->setInc('sport_times',$total);
                 return json(['code'=>200,'msg'=>'提交成功','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'提交失败']);
