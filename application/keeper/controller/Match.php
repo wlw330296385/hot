@@ -208,31 +208,6 @@ class Match extends Base {
         // 会员有无联赛组织标识
         $hasMatchOrg = ($matchOrgList) ? 1 : 0;
 
-        // 以下是wayen加的内容，用于输出cansignup变量，供前端判断。明辉有空整理一下这个代码///start//////////////
-        // 联赛可报名状态标识：
-        // 1 当前时间在报名开始时间与报名结束时间
-        // 2 联赛报名状态字段apply_status：1可报名|2结束报名
-        // 3 联赛无赛程记录
-        // $cansignup = 0;
-        // $nowtime = time();
-
-        // $leagueScheduleCount = $leagueS->getMatchScheduleCount(['match_id' => $this->league_id]);
-        // if (
-        //     $nowtime > $this->leagueInfo['reg_start_timestamp'] && $nowtime < $this->leagueInfo['reg_end_timestamp']
-        //     && $this->leagueInfo['apply_status_num'] == 1 && !$leagueScheduleCount
-        // ) {
-        //     // 可报名
-        //     $cansignup = 1;
-        // } else if ( $nowtime < $this->leagueInfo['reg_start_timestamp'] ) {
-        //     // 等待报名（未到联赛报名时间）
-        //     $cansignup = -1;
-        // } else {
-        //     // 其他情况 当结束报名
-        //     $cansignup = 0;
-        // }
-        // $this->assign('cansignup', $cansignup);
-        ////////////////////end////////////////////////////
-
         return view('Match/leagueList', [
             'hasMatchOrg' => $hasMatchOrg
         ]);
@@ -326,7 +301,7 @@ class Match extends Base {
             // 其他情况 当结束报名
             $cansignup = 0;
         }
-        
+
         $this->assign('types', $types);
         $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
         $this->assign('cansignup', $cansignup);

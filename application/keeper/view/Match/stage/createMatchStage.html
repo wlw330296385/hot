@@ -167,6 +167,10 @@
             let type = $(".stageSelect").children("option:selected").val();
             let pstage_id = $(".pstageSelect").children("option:selected").val();
             let pstageSelect = $(".pstageSelect").css("display", "block");
+            if (type == '') {
+                mui.toast("请选择比赛阶段");
+                return false;
+            }
             if (name == '') {
                 mui.toast("阶段别名不能为空");
                 return false;
@@ -184,10 +188,15 @@
             var url = "{:url('api/league/addmatchstage')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '创建成功', '确定', function () {
-                    var goUrl = "{:url('match/matchStageListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    window.top.location.href = goUrl;
-                })
+                var btnArray = ['不了', '继续'];
+                mui.confirm("是否继续创建比赛阶段？", "创建成功", btnArray, function (e) {
+                    if (e.index == 1) {
+                        window.location.reload();
+                    } else {
+                        var goUrl = "{:url('match/matchStageListOfLeague')}" + '/league_id/' + "{$league_id}";
+                        window.top.location.href = goUrl;
+                    }
+                });
             } else {
                 mui.alert(ajaxResult.msg, '创建失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
