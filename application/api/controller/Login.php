@@ -20,6 +20,7 @@ class Login extends Base{
     public function logoutApi(){
         Session::clear();
         Cache::clear();
+        Cookie::clear();
     }
 
     // 注册会员
@@ -150,6 +151,9 @@ class Login extends Base{
 
     public function autoLogin(){
         
+        if(request()->ip() != '127.0.0.1'){
+            return json(['code'=>886,'msg'=>'禁止访问']);
+        }
         $id = input('param.id');
         $hot_id = input('param.hot_id');
         if(!$id){

@@ -88,6 +88,10 @@ class Weixin extends Controller {
                 'flow'  =>0,
                 'balance'   =>0,
                 'remarks'   =>0,
+                'hot_id'=>0000000,
+                'hot_coin'=>0,
+                'age' => 0,
+                'fans' => 0
 
             ];
             dump($member);
