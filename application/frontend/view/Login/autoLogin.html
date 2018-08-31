@@ -28,21 +28,21 @@
         </div>
         <!--账号密码登录-->
         <div class="loginbox">
-            <form action="" class="login">
+            <form action="" class="login" method="post">
                 <h3>会员账号登录</h3>
                 <div class="mui-input-row">
-                    <input type="text" name="username" class="mui-input-clear inputname reg_user"
-                           placeholder="输入会员HOT_ID"
+                    <input type="text" name="hot_id" class="mui-input-clear inputname reg_user"
+                           placeholder="输入会员账号"
                            data-input-clear="5" style="margin-bottom: 0">
                     <span class="regspan tip user_hint"></span>
                 </div>
                 <div class="mui-input-row">
-                    <input type="password" class="mui-input-clear password reg_password" required placeholder="输入口令"
-                           data-input-clear="5"><span class="forgot-password"></span>
+                    <input type="password" class="mui-input-clear password reg_password" required placeholder="请输入用户密码"
+                           data-input-clear="5" name="password"><span class="forgot-password"></span>
                     <span class="regspan tip password_hint"></span>
                 </div>
                 <div class="tjbtn">
-                    <button type="button" class="mui-btn btn loginbtn">
+                    <button type="submit" class="mui-btn btn">
                         登陆
                     </button>
                 </div>
@@ -52,40 +52,7 @@
 </div>
 </body>
 </html>
-<script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-<script src="/static/frontend/libs/yzvalidate.js"></script>
 <script>
-    //初始化
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
 
-    $(function () {
-        $(".loginbtn").on("click", function () {
-            var member = $(".reg_user").val();
-            var password = $(".reg_password").val();
-            if(password!="{$password}"){
-                alert('口令错误');
-                return false;
-            }
-            mui.ajax("{:url('api/login/autoLogin')}", {
-                data:{
-                    hot_id:member
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    
-                    window.location.href = "{:url('frontend/index/index')}";
-                    
-                },
-                error: function (xhr, type, errorThrown) {
-                    alert(xhr + type + errorThrown);
-                }
-            });
-        });
-    })
+
 </script>

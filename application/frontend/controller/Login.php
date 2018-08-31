@@ -25,9 +25,32 @@ class Login extends Controller{
     }
 
     public function autoLogin(){
-        $password = '7758258';
+        $key = '7758258';
+        if(request()->isPost()){
+            $password = input('param.password');
+            if($password<>$key){
+                $this->error('密码错误');
+            }
+            $hot_id= input('param.hot_id');
+            $map = ['hot_id'=>$hot_id];
+            $member =new \app\service\MemberService;
+            $memberInfo = $member->getMemberInfo($map);
+            unset($memberInfo['password']);
+            $this->memberInfo = $memberInfo;
+            cookie('mid', $memberInfo['id']);
+            if ($memberInfo['openid']) {
+                cookie('openid', $memberInfo['openid']);
+            }
+            cookie('member',md5($memberInfo['id'].$memberInfo['member'].config('salekey')));
+            session('memberInfo',$memberInfo,'think');
 
-        $this->assign('password',$password);
+            if ( session('?memberInfo') ) {
+                $this->redirect('frontend/index/index');
+            }else{
+                $this->error('登录失败');
+            }
+        }
+        $this->assign('key',$key);
         return view('Login/autoLogin');
     }
 
