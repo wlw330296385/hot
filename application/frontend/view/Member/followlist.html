@@ -15,7 +15,7 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav for-tab">
+    <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
@@ -63,19 +63,19 @@
         mui('#tabmyfollow').pullRefresh({
             down: {
                 //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                height: 50, //可选.默认50.触发下拉刷新拖动距离
+                auto: true, //可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                 callback: pulldownRefreshOn
             },
             up: {
                 //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
+                height: 150, //可选.默认50.触发上拉加载拖动距离
                 //auto:true,//可选,默认false.自动上拉加载一次
                 contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshOn
             }
         });
@@ -83,19 +83,19 @@
         mui('#tabmyfans').pullRefresh({
             down: {
                 //下拉刷新
-                height: 50,//可选.默认50.触发下拉刷新拖动距离
-                auto: true,//可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                height: 50, //可选.默认50.触发下拉刷新拖动距离
+                auto: true, //可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                 callback: pulldownRefreshOff
             },
             up: {
                 //上拉加载
-                height: 150,//可选.默认50.触发上拉加载拖动距离
+                height: 150, //可选.默认50.触发上拉加载拖动距离
                 //auto:true,//可选,默认false.自动上拉加载一次
                 contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                 callback: pullupRefreshOff
             }
         });
@@ -103,40 +103,40 @@
         //下拉刷新具体业务实现（我的关注）
         function pulldownRefreshOn() {
             setTimeout(function () {
-                onCount = 1;//刷新并显示第一页
+                onCount = 1; //刷新并显示第一页
                 var page = onCount;
-                var gType = 1;//代表下拉刷新
-                toMyFollow('tabmyfollow', page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toMyFollow('tabmyfollow', page, gType); //具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（我的关注）
         function pullupRefreshOn() {
             setTimeout(function () {
-                onCount++;//翻下一页
+                onCount++; //翻下一页
                 var page = onCount;
-                var gType = 2;//代表上拉加载
-                toMyFollow('tabmyfollow', page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toMyFollow('tabmyfollow', page, gType); //具体取数据的方法
             }, 100);
         }
 
         //下拉刷新具体业务实现（我的粉丝）
         function pulldownRefreshOff() {
             setTimeout(function () {
-                offCount = 1;//刷新并显示第一页
+                offCount = 1; //刷新并显示第一页
                 var page = offCount;
-                var gType = 1;//代表下拉刷新
-                toMyFans('tabmyfans', page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toMyFans('tabmyfans', page, gType); //具体取数据的方法
             }, 100);
         }
 
         //上拉加载具体业务实现（我的粉丝）
         function pullupRefreshOff() {
             setTimeout(function () {
-                offCount++;//翻下一页
+                offCount++; //翻下一页
                 var page = offCount;
-                var gType = 2;//代表上拉加载
-                toMyFans('tabmyfans', page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toMyFans('tabmyfans', page, gType); //具体取数据的方法
             }, 100);
         }
 
@@ -148,23 +148,35 @@
         var url = "{:url('api/follow/myfollow')}" + '/?page=' + page;
         mui.ajax({
             url: url,
-            data: { status: 1 },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            data: {
+                status: 1
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var type = data.data.data[i].type;
-                        var urlsMember = "{:url('/keeper/member/memberInfoOther')}" + '/member_id/' + data.data.data[i].member_id;
-                        var urlsCamp = "{:url('/frontend/camp/campInfo')}" + '/camp_id/' + data.data.data[i].follow_id;
-                        var urlsGrade = "{:url('/frontend/grade/gradeInfo')}" + '/grade_id/' + data.data.data[i].follow_id;
-                        var urlsTeam = "{:url('/keeper/team/teamInfo')}" + '/team_id/' + data.data.data[i].follow_id;
+                        var urlsMember = "{:url('/keeper/member/memberInfoOther')}" + '/member_id/' +
+                            data.data.data[i].member_id;
+                        var urlsCamp = "{:url('/frontend/camp/campInfo')}" + '/camp_id/' + data.data.data[
+                            i].follow_id;
+                        var urlsGrade = "{:url('/frontend/grade/gradeInfo')}" + '/grade_id/' + data.data
+                            .data[i].follow_id;
+                        var urlsTeam = "{:url('/keeper/team/teamInfo')}" + '/team_id/' + data.data.data[
+                            i].follow_id;
                         newli += '<li class="mui-table-view-cell mui-media listli">'
-                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del" data-type="' + data.data.data[i].type + '"  data-follow_id="' + data.data.data[i].follow_id + '" >取消关注</span></div>';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[
+                                i].id +
+                            '"><span class="mui-btn mui-btn-red" data-action="del" data-type="' + data.data
+                            .data[i].type + '"  data-follow_id="' + data.data.data[i].follow_id +
+                            '" >取消关注</span></div>';
                         newli += '<div class="mui-slider-handle">';
                         if (type == 1) {
                             newli += '<a href="' + urlsMember + '">';
@@ -175,7 +187,10 @@
                         } else if (type == 4) {
                             newli += '<a href="' + urlsTeam + '">';
                         }
-                        newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].follow_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].follow_name + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div><div class="price-frame mui-text-center">';
+                        newli += '<img class="img50 mui-pull-left" src="' + data.data.data[i]
+                            .follow_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].follow_name +
+                            '<p class="mui-ellipsis">' + data.data.data[i].create_time +
+                            '</p></div><div class="price-frame mui-text-center">';
                         if (type == 1) {
                             newli += "会员";
                         } else if (type == 2) {
@@ -224,17 +239,23 @@
             data: {
                 type: 1,
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('member/memberInfoOther')}" + '/member_id/' + data.data.data[i].member_id;
-                        newli += '<li class="mui-table-view-cell mui-media listli">'
-                        newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data.data[i].member_avatar + '"><div class="mui-media-body wd60">' + data.data.data[i].member + '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p>';
+                        var urls = "{:url('member/memberInfoOther')}" + '/member_id/' + data.data.data[
+                            i].member_id;
+                        newli += '<li class="mui-table-view-cell listli">'
+                        newli += '<a href="' + urls +
+                            '"><img class="img50 mui-pull-left" src="' + data.data.data[i].member_avatar +
+                            '"><div class="mui-media-body wd60">' + data.data.data[i].member +
+                            '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p>';
                         newli += '</li>';
                     }
                 }
@@ -283,10 +304,12 @@
                         grade_id: grade_id,
                         team_id: team_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         if (data.code == 200) {
@@ -308,7 +331,6 @@
             }
         });
     });
-
 </script>
 
 </html>
