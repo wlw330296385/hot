@@ -122,14 +122,12 @@ class Punch extends Base{
 
     //月打卡照片墙
     public function punchPhotoWall(){
-        $month_str = date('Ym',time());
-        $member_id = $this->memberInfo['id'];
-        $puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->select();
-        //本月打卡总数
-        $monthPunch = count($puchList);
+        $currYear = date('Y',time());
+        $currMonth = date('m',time());
+        $member_id = input('param.member_id');
 
-        $this->assign('puchList',$puchList);
-        $this->assign('monthPunch',$monthPunch);
+        $this->assign('currYear',$currYear);
+        $this->assign('currMonth',$currMonth);
         return view('Punch/punchPhotoWall');
     }
 
