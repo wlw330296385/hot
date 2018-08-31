@@ -39,7 +39,6 @@
         <input type="hidden" name="type" class="data" value="3" />
         <input type="hidden" name="match_id" class="data" value="{$league_id}" />
         <input type="hidden" name="cover" class="data" value="/static/frontend/images/membercenter-bg.jpg" />
-        
 
         <form action="" class="mui-input-group">
             <div class="mui-input-row">
@@ -53,15 +52,18 @@
                     <input type="hidden" name="logo" value="" class="data">
                 </a>
             </div>
-            <!-- <div class="mui-input-row h-auto">
-                <a href="#txpopover1" class="mui-navigate-right">
-                    <label>球队封面</label>
-                    <div class="viewStyle view1"></div>
-                    <input type="hidden" name="cover" value="" class="data">
-                </a>
-            </div> -->
 
         </form>
+
+        <div class="publicTip  mb44 ">
+            <p class="publicTitle">
+                <img src="/static/frontend/images/hot.png" alt="">
+                <strong class="f16">温馨提示</strong>
+            </p>
+            <div class="publicText">
+                <p>1、球队名称必填，球队logo选填</p>
+            </div>
+        </div>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -78,14 +80,6 @@
         </div>
         <button class="clipBtnStyle clipBtn">截取</button>
     </div>
-    <!-- 封面 -->
-    <!-- <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
-        <div class="clipAreaStyle clipArea1"></div>
-        <div class="fileFrame">选择图片
-            <input type="file" class="fileStyle file1">
-        </div>
-        <button class="clipBtnStyle clipBtn1">截取</button>
-    </div> -->
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -113,17 +107,13 @@
 
             var name = $("input[name=name]").val();
             var logo = $("input[name=logo]").val();
-            // var cover = $("input[name=cover]").val();
             if (name == '') {
                 mui.toast("请填写球队名称");
                 return false;
             }
             if (logo == '') {
-                $("input[name=logo]").val('/static/frontend/images/basketball.jpg');
+                $("input[name=logo]").val('/static/frontend/images/teamLogo.png');
             }
-            // if (cover == '') {
-            //     $("input[name=cover]").val('/static/frontend/images/membercenter-bg.jpg');
-            // }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -174,34 +164,6 @@
                 alert(msg);
             }
         });
-        // var pc = new PhotoClip('.clipArea1', {
-        //     size: 260,
-        //     outputSize: 640,
-        //     adaptive: ['80%', '60%'],
-        //     file: '.file1',
-        //     view: '.view1',
-        //     ok: '.clipBtn1',
-        //     loadStart: function () {
-        //         console.log('开始读取照片');
-        //     },
-        //     loadComplete: function () {
-        //         console.log('照片读取完成');
-        //     },
-        //     done: function (dataURL) {
-        //         console.log(dataURL);
-        //         mui.post("{:url('api/upload/imgcropupload')}", {
-        //             dataurl: dataURL,
-        //             path: 'cert'
-        //         }, function (res) {
-        //             console.log(res);
-        //             $("input[name=cover]").val(res.path)
-        //             mui("#txpopover1").popover("toggle");
-        //         }, 'json');
-        //     },
-        //     fail: function (msg) {
-        //         alert(msg);
-        //     }
-        // });
     </script>
 
 </body>

@@ -58,7 +58,7 @@
             </li>
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
                 <a href="{:url('match/workerapplylist',['league_id'=> $league_id])}">
-                    申请
+                    申请（<text class="markNum"></text>）
                 </a>
             </li>
         </ul>
@@ -69,6 +69,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
+        markNum()
         // 关注联赛
         $(".follow").on("tap", '', function () {
             var league_id = "{$league_id}";
@@ -204,6 +205,33 @@
                         } else {
                             $(".follow").text("关注");
                         }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        function markNum() {
+            var organization_id = "{$league_id}";
+            mui.ajax("{:url('api/apply/getApplyListByPageApi','','',true)}", {
+                data: {
+                    organization_id: organization_id,
+                    apply_type: 1,
+                    status: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".markNum").text(data.data.total)
                     }
                 },
                 error: function (xhr, type, errorThrown) {
