@@ -49,8 +49,7 @@
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="id" class="data" value="{$leagueInfo.id}">
-        <form action="" class="mui-input-group mt55">
-
+        <form action="" class="mui-input-group mb44">
 
             <div class="mui-input-row">
                 <label>联赛名称</label>
@@ -78,7 +77,8 @@
             <div class="mui-input-row" id='showCityPicker3'>
                 <div class="mui-navigate-right">
                     <label>联赛地区</label>
-                    <span id="cityResult3" class="ui-alert">{$leagueInfo.province} {$leagueInfo.city} {$leagueInfo.area}</span>
+                    <span id="cityResult3" class="ui-alert">{$leagueInfo.province} {$leagueInfo.city}
+                        {$leagueInfo.area}</span>
                     <input type="hidden" name="province" value="{$leagueInfo.province}" class="data" id="province">
                     <input type="hidden" name="city" value="{$leagueInfo.city}" class="data" id="city">
                     <input type="hidden" name="area" value="{$leagueInfo.area}" class="data" id="area">
@@ -140,31 +140,34 @@
             <div class="mui-input-row">
                 <label class="wd45">球队成员下限数</label>
                 <small class="unit">/人</small>
-                <input type="number" name="min_teammembers" value="{$leagueInfo.min_teammembers}" class="data wd36" placeholder="球员下限数不小于5"
-                    style="padding-right: 2px;">
+                <input type="number" name="min_teammembers" value="{$leagueInfo.min_teammembers}" class="data wd36"
+                    placeholder="球员下限数不小于5" style="padding-right: 2px;">
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队成员上限数</label>
                 <small class="unit">/人</small>
-                <input type="number" name="max_teammembers" value="{$leagueInfo.max_teammembers}" class="data wd36" placeholder="球队成员上限数"
-                    style="padding-right: 2px;">
+                <input type="number" name="max_teammembers" value="{$leagueInfo.max_teammembers}" class="data wd36"
+                    placeholder="球队成员上限数" style="padding-right: 2px;">
             </div>
 
             <div class="mui-input-row">
                 <label class="wd45">参赛队伍上限</label>
                 <small class="unit">/支</small>
-                <input type="number" name="teams_max" value="{$leagueInfo.teams_max}" class="data wd36" placeholder="参赛队伍上限" style="padding-right: 2px;">
+                <input type="number" name="teams_max" value="{$leagueInfo.teams_max}" class="data wd36" placeholder="参赛队伍上限"
+                    style="padding-right: 2px;">
             </div>
 
             <div class="mui-input-row">
                 <label class="wd45">球队参赛费用</label>
                 <small class="unit">/元</small>
-                <input type="number" name="entry_fees" value="{$leagueInfo.entry_fees}" class="data wd36" placeholder="输入参赛费用" style="padding-right: 2px;">
+                <input type="number" name="entry_fees" value="{$leagueInfo.entry_fees}" class="data wd36" placeholder="输入参赛费用"
+                    style="padding-right: 2px;">
             </div>
             <div class="mui-input-row">
                 <label class="wd45">球队参赛保证金</label>
                 <small class="unit">/元</small>
-                <input type="number" name="deposit" value="{$leagueInfo.deposit}" class="data wd36" placeholder="输入球队参赛保证金" style="padding-right: 2px;">
+                <input type="number" name="deposit" value="{$leagueInfo.deposit}" class="data wd36" placeholder="输入球队参赛保证金"
+                    style="padding-right: 2px;">
             </div>
 
             <div class="page-header" style="background: #efeff4;">
@@ -176,7 +179,10 @@
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
+            <li class="mui-table-view-cell mui-col-xs-6 opli bgred deleteLeague">
+                删除联赛
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-6 opli bggreen" onclick="submitAction()">
                 提交
             </li>
         </ul>
@@ -261,7 +267,8 @@
                 var cityResult3 = doc.getElementById('cityResult3');
                 showCityPickerButton.addEventListener('tap', function (event) {
                     cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " +
+                            _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
                         //return false;
                         getProvince = _getParam(items[0], 'text');
@@ -359,6 +366,37 @@
             } else if (format == "1") {
                 $("#format").text("1v1");
             }
+
+            //删除赛程
+            $('.deleteLeague').on('tap', function () {
+                var league_id = "{$league_id}"
+                var btnArray = ['取消', '确认']
+                mui.confirm("确定要删除联赛吗？", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/match/')}", {
+                            data: {
+                                league_id: league_id
+                            },
+                            dataType: 'json',
+                            type: 'post',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                if (data.code == 200) {
+                                    window.location.go(-1);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errotThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+                    }
+                })
+            });
+
         })
 
         // 获取数据并进行提交
@@ -429,7 +467,6 @@
                 }, 'json');
             }
         };
-
     </script>
     <script>
         var pc = new PhotoClip('.clipArea', {
@@ -448,7 +485,7 @@
                 console.log(dataURL);
                 mui.post("{:url('api/upload/imgcropupload')}", {
                     dataurl: dataURL,
-                    path: 'cert'
+                    path: 'league'
                 }, function (res) {
                     $("input[name=logo]").val(res.path)
                     mui("#txpopover").popover("toggle");
@@ -475,7 +512,7 @@
                 console.log(dataURL);
                 mui.post("{:url('api/upload/imgcropupload')}", {
                     dataurl: dataURL,
-                    path: 'cert'
+                    path: 'league'
                 }, function (res) {
                     $("input[name=cover]").val(res.path)
                     mui("#txpopover1").popover("toggle");
