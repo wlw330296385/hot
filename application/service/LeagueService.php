@@ -18,6 +18,7 @@ use app\model\MatchStage;
 use app\model\MatchStageAdvteam;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
+use think\Db;
 
 class LeagueService
 {
@@ -1258,5 +1259,29 @@ class LeagueService
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
         return $model->id;
+    }
+
+    // 列出组织下
+    public function getLeagueListWithTeamsCount($map, $page = 1, $order = "start_time desc", $limit = 10) {
+
+        $model= new Match();
+        $res = $model->alias('m')
+        ->join(
+            "(SELECT `match_id`, count(`id`) AS `join_team_num` 
+            FROM `match_team` WHERE `status` = 1 
+            GROUP BY `match_id`) AS mt"
+            ,'m.id=mt.match_id','LEFT')
+        ->where($map)
+        ->order($order)
+        ->page($page)
+        ->limit($limit)
+        ->select();
+
+        if (!$res) {
+            return $res;
+        } else {
+            return $res->toArray();
+        }
+
     }
 }
