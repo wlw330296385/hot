@@ -145,6 +145,18 @@
         .sportPlanName{
             color:#BBB !important;
         }
+        .sportPlanList ol {
+            margin:0px;
+            padding:0px;
+        }
+        .sportPlanList .mui-table-view-cell.mui-active{
+           background-color: #FFF !important;
+        }
+
+        .mui-popup-in {
+            box-shadow:2px 1px 12px #666;
+        }
+
     </style>
 </head>
 
@@ -180,11 +192,13 @@
                         <label class="wd45"><i class="icon iconfont icon-punch-plan colororange"></i>选择运动计划</label>
                         <span class="wd45 sportPlanName">(可不选)</span>
                     </a>
+                    <input type="hidden" name="sport_plan_id" value="0" class="data">
                     <input type="hidden" name="sport_plan_schedule_id" value="0" class="data">
                 </div>
             </div>
 
             <form action="" class="mui-input-group">
+                <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                 <input type="hidden" name="sport_plan_schedule_id" value="0" class="data">
 
                 <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
@@ -450,6 +464,29 @@
         </div>
 
     </div>
+
+
+    <!--选择运动计划-->
+    <div id="sportPlan" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>请选择运动计划</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="sportPlanDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper" style="top:53px !important;">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list sportPlanList mb44">
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+
     <!-- 头像截图弹框 -->
     <div id="txpopover" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div id="clipArea"></div>
@@ -610,6 +647,7 @@
                 return false;
             }
 
+            mySportPlanList()
             matchList();
 
             // 获取当前时间为打卡时间
@@ -864,6 +902,103 @@
                 $(".mui-badge").text(totalNum);
             });
 
+
+            //运动计划弹框里点选运动计划标题
+            $(document).on('tap', '.plansport', function () {
+                var getScheduleList = $(this).parent().find("ol").html();
+                var getPlanID = $(this).attr("data-plan-id");
+                var getPlanName = $(this).attr("data-plan_name");
+                if(getScheduleList==''){
+
+                    var targetOl = $(this).parent().find("ol");
+                    var url = "{:url('api/sport_plan/getSportPlanScheduleListNoPageApi','','',true)}";
+                    mui.ajax({
+                        url: url,
+                        data: {
+                            sport_plan_id: getPlanID
+                        },
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            console.log(data)
+                            var newli = "";
+                            var punched = "";
+                            if (data.code == 200) {
+                                for (var i = 0; i <= data.data.length - 1; i++) {
+                                    punched = "";
+                                   if(data.data[i].punch_id>0){
+                                        punched = '<font class="tipCorner bggray">已完成</font>';
+                                    }
+
+                                    newli += '<li class="mui-table-view-cell listli"><div class="selectSchedule" data-id="'+data.data[i].id+'" data-sport_plan_id="'+data.data[i].sport_plan_id+'" data-plan_name="'+getPlanName+'" data-punch_category="'+data.data[i].punch_category+'" data-punch_id="'+data.data[i].punch_id+'" data-sport_project="'+data.data[i].sport_project +'" data-sport_time="'+data.data[i].sport_time+'" data-duration="'+data.data[i].duration+'" data-extent="'+data.data[i].extent+'" data-amount="'+data.data[i].amount+'"><label><strong><text class="colororange"># <b class="pNumber">'+(i+1)+'</b></text>&nbsp; '+ data.data[i].sport_project +punched+'</strong></label><text class="fr f12">'+data.data[i].sport_time+'</text></div></li>'
+                                
+                                }
+                            }
+
+                            if (newli != '') {
+                                targetOl.empty().append(newli);
+                            } else {
+                                targetOl.empty().append("<li>暂无运动日程</li>");
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+
+                }
+            });
+
+
+            //运动计划弹框里点选运动计划标题
+            $(document).on('tap', '.selectSchedule', function () {
+                var getPunchID = $(this).attr("data-punch_id");
+                if(getPunchID>0){
+                    mui.alert('当前计划已经完成，请勿重复打卡！');
+                }else{
+
+                    //先隐藏和清空
+                    $(".sportProject").hide();
+                    $(".sportProject input[name=duration]").val(0);
+                    $(".sportProject input[name=extent]").val(0);
+                    $(".sportProject input[name=amount]").val(0);
+
+                    //将点选的日程写人打卡表单
+                    $(".sportPlanName").text($(this).attr("data-plan_name"));
+                    $(".punch_time").text($(this).attr("data-sport_time"));
+                    $("input[name=sport_plan_id]").val($(this).attr("data-sport_plan_id"));
+                    $("input[name=sport_plan_schedule_id]").val($(this).attr("data-id"));
+                    $("input[name=name]").val($(this).attr("data-sport_project"));
+                    $("input[name=punch_category]").val($(this).attr("data-punch_category"));
+                    $(".sportProject input[name=duration]").val($(this).attr("data-duration"));
+                    $(".sportProject input[name=extent]").val($(this).attr("data-extent"));
+                    $(".sportProject input[name=amount]").val($(this).attr("data-amount"));
+
+                    if($(this).attr("data-punch_category")=="1"){
+                        $(".punch_category").text("训练");
+                    }else{
+                        $(".punch_category").text("比赛");
+                    }
+
+
+                    $(".sportProject input[name=name]").parent().show();
+                    if($(this).attr("data-duration")>0){
+                        $(".sportProject input[name=duration]").parent().show();
+                    }
+                    if($(this).attr("data-extent")>0){
+                        $(".sportProject input[name=extent]").parent().show();
+                    }
+                    if($(this).attr("data-amount")>0){
+                        $(".sportProject input[name=amount]").parent().show();
+                    }
+
+                }
+                mui("#sportPlan").popover("toggle");
+            });
+
+
         })
 
 
@@ -923,7 +1058,9 @@
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
+                        $(".sportPlanName").text(data.data.sport_plan);
                         $(".punch_time").text(data.data.sport_time);
+                        $("input[name=sport_plan_id]").val(data.data.sport_plan_id);
                         $("input[name=sport_plan_schedule_id]").val(sps_id);
                         $("input[name=name]").val(data.data.sport_project);
                         $("input[name=punch_category]").val(data.data.punch_category);
@@ -957,6 +1094,47 @@
             });
         };
         
+
+        // 社群列表
+        function mySportPlanList() {
+            var url = "{:url('api/sport_plan/getSportPlanListNoPageApi','','',true)}";
+            var member_id = "{$memberInfo.id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                async:false,
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+ 
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            //去除重复开始
+                            newli += `
+                            <li class="mui-table-view-cell mui-collapse listli detalisli">
+                                <a class="mui-navigate-right f14 plansport" data-plan-id="${data.data[i].id}" data-plan_name="${data.data[i].plansport}">${data.data[i].plansport} <span class="fr f12">${data.data[i].aim}</span></a>
+                                <div class="mui-collapse-content">
+                                    <ol></ol>
+                                </div>
+                            </li>`
+                        }
+                        $(".sportPlanList").empty().append(newli);
+                    } else {
+                        $(".sportPlanList").append('<p class="mui-text-center">暂无数据</p>')
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
         // 社群列表
         function groupListAboutMember(pDate) {
             var url = "{:url('api/group/getGroupListJoinPoolApi','','',true)}";

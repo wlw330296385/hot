@@ -129,7 +129,7 @@
                                 <div class="mui-collapse-content dataCollapse">
                                 <div class="fl wd60">
                                     <p>职能：暂定</p>
-                                    <p>联系电话：13750088654</p>
+                                    <p>联系电话：暂定</p>
                                 </div>`
                         if (data.data[i].type != 10) {
                             newli +=
@@ -180,41 +180,42 @@
                 }
             });
         });
+
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
     </script>
 </body>
 
 
-
-// 判断当前的关注状态
-function followStatus() {
-var league_id = "{$league_id}";
-mui.ajax("{:url('api/follow/getfollow')}", {
-data: {
-type: 5,
-league_id: league_id
-},
-dataType: 'json', //服务器返回json格式数据
-type: 'post', //HTTP请求类型
-timeout: 10000, //超时时间设置为10秒；
-headers: {
-'Content-Type': 'application/json'
-},
-success: function (data) {
-console.log(data);
-if (data.code == 200) {
-if (data.data === 1) {
-$(".follow").text("取消关注");
-} else {
-$(".follow").text("关注");
-}
-}
-},
-error: function (xhr, type, errorThrown) {
-//异常处理；
-console.log(type);
-}
-});
-}
 
 
 </html>

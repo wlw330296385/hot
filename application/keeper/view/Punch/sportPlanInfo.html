@@ -155,7 +155,7 @@
 
                         <div class="price-frame" style="margin-top: 15px;">
                             <p class="f12">计划运动<br />
-                                <text class="colororange f14">{$sportPlanInfo.period}</text> 次 &nbsp;
+                                <text class="colororange f14">{$sportPlanInfo.sport_times}</text> 次 &nbsp;
                             </p>
                         </div>
                     </li>
@@ -605,7 +605,7 @@
             toPlanList(page, gType);//具体取数据的方法
         }, 100);
     }
-    //获取我的打卡记录列表
+    //获取当前运动计划日程列表
     function toPlanList(page, gType) {
         var url = "{:url('api/sport_plan/getSportPlanScheduleListApi','','',true)}?page="+page;
         var sport_plan_id = "{$sportPlanInfo.id}"
@@ -623,8 +623,8 @@
                 var newli = "";
                 if (data.code == 200) {
                     $(".totalData").text(data.data.total);
-                    var planPeriod = "{$sportPlanInfo.period}";
-                    if(data.data.total>=planPeriod){
+                    var sport_times = "{$sportPlanInfo.sport_times}";
+                    if(data.data.total>=sport_times){
                         $(".operation").hide();
                     }
                     var sNumber = 0;
@@ -635,7 +635,7 @@
                         sNumber = (data.data.current_page-1)*10 + i+1;
                        
                         newli += '<li><ul class="mui-table-view">'
-                        newli += '<li class="mui-table-view-cell listli bggray2"><a href="#scheduleEdit" class="mui-navigate-right editSchedule" data-id="'+data.data.data[i].id+'" data-punch_id="'+data.data.data[i].punch_id+'" data-sport_project="'+data.data.data[i].sport_project +'" data-sport_time="'+data.data.data[i].sport_time+'" data-duration="'+data.data.data[i].duration+'" data-extent="'+data.data.data[i].extent+'" data-amount="'+data.data.data[i].amount+'"><label><strong><text class="colororange"># <b class="pNumber">'+sNumber+'</b></text>&nbsp; '+ data.data.data[i].sport_project +'</strong></label><span class="f12"></span></a></li>'
+                        newli += '<li class="mui-table-view-cell listli bggray2"><a href="#scheduleEdit" class="mui-navigate-right editSchedule" data-id="'+data.data.data[i].id+'" data-punch_id="'+data.data.data[i].punch_id+'" data-sport_project="'+data.data.data[i].sport_project +'" data-sport_time="'+data.data.data[i].sport_time+'" data-duration="'+data.data.data[i].duration+'" data-extent="'+data.data.data[i].extent+'" data-amount="'+data.data.data[i].amount+'"><label><strong><text class="colororange"># <b class="pNumber">'+sNumber+'</b></text>&nbsp; '+ data.data.data[i].sport_project +'</strong></label><text class="f12 fr">编辑</text></a></li>'
                         newli += '<li class="mui-table-view-cell listli"><label>计划日期</label><span>'+ data.data.data[i].sport_time +'</span></li>'
                         newli += '<li class="mui-table-view-cell listli"><label>计划时长</label><span>'+ data.data.data[i].duration +' <text class="f12">分钟</text></span></li>'
                         if(data.data.data[i].extent>0){
@@ -663,7 +663,7 @@
                     mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                     mui('#refreshContainer').pullRefresh().refresh(true);
                     if (newli == '') {
-                        $("ul.planSchedule").html('<li class="planTips"><p>Yesterday you said tomorrow</p><p>别总说明天再开始，别等明天了,现在就开始</p></li>');
+                        $("ul.planSchedule").html('<li class="planTips"><p>Yesterday you said tomorrow</p><p>别总说明天再开始</p></li>');
                     }
                 } else {
                     //下拉加载 gType==2
@@ -786,9 +786,9 @@
              //判断添加的日程是否超出计划的数量
             var pLi = parseInt($(".planSchedule>li:not('.planTips')").length);
             var sLi = parseInt($("#scheduleForm .punchList").length);
-            var planPeriod = "{$sportPlanInfo.period}";
-            if((pLi+sLi)>=parseInt(planPeriod)){
-                mui.alert("您的计划是运动{$sportPlanInfo.period}次，不能超出哦！");
+            var planSportTimes = "{$sportPlanInfo.sport_times}";
+            if((pLi+sLi)>=parseInt(planSportTimes)){
+                mui.alert("您的计划是运动{$sportPlanInfo.sport_times}次，不能超出哦！");
                 return false;
             }
 
@@ -822,9 +822,9 @@
             //判断添加的日程是否超出计划的数量
             var pLi = parseInt($(".planSchedule>li:not('.planTips')").length);
             var sLi = parseInt($("#scheduleForm .punchList").length);
-            var planPeriod = "{$sportPlanInfo.period}";
-            if((pLi+sLi)>=parseInt(planPeriod)){
-                mui.alert("您的计划是运动{$sportPlanInfo.period}次，不能超出哦！");
+            var planSportTimes = "{$sportPlanInfo.sport_times}";
+            if((pLi+sLi)>=parseInt(planSportTimes)){
+                mui.alert("您的计划是运动{$sportPlanInfo.sport_times}次，不能超出哦！");
                 return false;
             }
 

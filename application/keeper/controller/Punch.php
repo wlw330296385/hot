@@ -119,4 +119,18 @@ class Punch extends Base{
         return view('Punch/sportPlanInfo');
     }
 
+
+    //月打卡照片墙
+    public function punchPhotoWall(){
+        $month_str = date('Ym',time());
+        $member_id = $this->memberInfo['id'];
+        $puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->select();
+        //本月打卡总数
+        $monthPunch = count($puchList);
+
+        $this->assign('puchList',$puchList);
+        $this->assign('monthPunch',$monthPunch);
+        return view('Punch/punchPhotoWall');
+    }
+
 }

@@ -156,7 +156,8 @@
                 let dataNum = $(this).attr("data-num");
                 let str = '';
                 let check = "";
-                str += `<li class="mui-table-view-cell mui-media listli coach" 
+                str +=
+                    `<li class="mui-table-view-cell mui-media listli coach" 
                             data-team_logo="${$(this).attr("data-team_logo")}" data-team="${$(this).attr("data-team")}" 
                             data-team_id="${$(this).attr("data-team_id")}" data-match="${$(this).attr("data-match")}" data-match_id="${$(this).attr("data-match_id")}" data-members_num="${$(this).attr("data-members_num")}">
                             <img class="mui-media-object mui-pull-left coachicon" src="${$(this).attr("data-team_logo")}" style="width: 40px !important;height: 40px !important; float:left !important;">
@@ -229,7 +230,8 @@
             }
             let str = '';
             for (let i = 0; i <= groupNum - 1; i++) {
-                str += `<ul class="mui-table-view list border-b">
+                str +=
+                    `<ul class="mui-table-view list border-b">
                                 <div class="page-header border-b bggray2 groupsTip">
                                     <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}（可编辑）" style="padding-left:0">
                                     <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
@@ -248,17 +250,20 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i < data.data.length; i++) {
-                            newli += `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" 
+                            newli +=
+                                `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" 
                                         data-team_id="${data.data[i].team_id}" data-match="${data.data[i].match.name}" data-match_id="${data.data[i].match_id}" 
                                         data-members_num="${data.data[i].members_num}">
                                         <label class="wd66">${data.data[i].team.name}</label>
@@ -290,7 +295,7 @@
             });
 
             groupList = []
-            var isOk = true  //用变量记住状态
+            var isOk = true //用变量记住状态
             $(".frame ul").each(function () {
                 let groupName = $(this).find("input[name=groupName]").val();
                 if (!(/^.{0,2}$/).test(groupName)) {
@@ -306,11 +311,24 @@
                     let match_id = $(this).attr("data-match_id");
                     let members_num = $(this).attr("data-members_num");
                     let is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
-                    groupTeam.push({ team, team_id, team_logo, match, match_id, members_num, is_seedTeam })
+                    groupTeam.push({
+                        team,
+                        team_id,
+                        team_logo,
+                        match,
+                        match_id,
+                        members_num,
+                        is_seedTeam
+                    })
                 })
-                groupList.push({ groupName, groupTeam })
+                groupList.push({
+                    groupName,
+                    groupTeam
+                })
             })
-            if (!isOk) { return isOk }
+            if (!isOk) {
+                return isOk
+            }
 
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
@@ -345,7 +363,6 @@
             }
 
         };
-
     </script>
 </body>
 
