@@ -2,7 +2,8 @@
 namespace app\api\controller;
 use SmsApi;
 use think\Cookie;
-
+use think\Cache;
+use think\Session;
 class Login extends Base{
 	
     public function _initialize(){
@@ -12,6 +13,13 @@ class Login extends Base{
     public function index() {
 
        
+    }
+
+
+    // 清除缓存的api
+    public function logoutApi(){
+        Session::clear();
+        Cache::clear();
     }
 
     // 注册会员
