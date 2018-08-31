@@ -71,8 +71,7 @@
         </div>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
-                提交分组
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">提交
             </li>
         </ul>
     </div>
@@ -80,13 +79,17 @@
     <div id="team" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course">
+            <span class="f14">
                 <strong>选择球队</strong>
             </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="teamConfirm">确认</button>
+                <button class="mui-btn-default">关闭</button>
+            </span>
         </div>
-        <div class="mui-scroll-wrapper" style="margin-top: -4px;">
+        <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list teamList"></ul>
+                <form class="mui-input-group teamList"></form>
             </div>
         </div>
     </div>
@@ -141,60 +144,96 @@
                 } else {
                     fenPeiCont()
                 }
-
             });
 
             //获取分组序号并且赋值到球队列表
             $(document).on("tap", ".addTeam", function () {
-                $(".teamList li").attr("data-num", $(this).siblings().text());
+                $(".teamList input[type=checkbox]").attr("data-num", $(this).siblings().text());
             })
-            // 选中球队入组别
-            $(document).on("tap", ".teamList li", function () {
-                let teamName = $(this).find("label").text();
-                let teamLogo = $(this).attr("data-team_logo");
-                let team_id = $(this).attr("data-team_id");
-                let dataNum = $(this).attr("data-num");
-                let str = '';
-                let check = "";
-                str +=
-                    `<li class="mui-table-view-cell mui-media listli coach" 
-                            data-team_logo="${$(this).attr("data-team_logo")}" data-team="${$(this).attr("data-team")}" 
-                            data-team_id="${$(this).attr("data-team_id")}" data-match="${$(this).attr("data-match")}" data-match_id="${$(this).attr("data-match_id")}" data-members_num="${$(this).attr("data-members_num")}">
-                            <img class="mui-media-object mui-pull-left coachicon" src="${$(this).attr("data-team_logo")}" style="width: 40px !important;height: 40px !important; float:left !important;">
+
+            $(document).on("tap", "#teamConfirm", function () {
+                var dataNum = $(this).parents("#team").find("input[type=checkbox]").attr("data-num");
+                var str = '';
+                var team_id = '';
+                var check = "";
+                $(".teamList input[type=checkbox]:checked").each(function () {
+                    team_id = $(this).attr("data-team_id");
+                    var team = $(this).attr("data-team");
+                    var team_logo = $(this).attr("data-team_logo");
+                    var match = $(this).attr("data-match");
+                    var match_id = $(this).attr("data-match_id");
+                    var members_num = $(this).attr("data-match_id");
+
+                    str +=
+                        `<li class="mui-table-view-cell listli" 
+                            data-team_logo="${team_logo}" data-team="${team}" 
+                            data-team_id="${team_id}" data-match="${match}" data-match_id="${match_id}" data-members_num="${members_num}">
+                            <img class="img40 mui-pull-left" src="${team_logo}" style="width:40px !important;height:40px !important;margin-right:12px;float:left !important;">
                             <div class="mui-media-body lineHeight20" style="wdith:41%">
-                                <p class="f14" style="font-weight:bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">${$(this).attr("data-team")}</p>
-                                <p>参赛${$(this).attr("data-members_num")}人</p></div>
+                                <p class="f14" style="font-weight:bold;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">${team}</p>
+                                <p>参赛${members_num}人</p></div>
                             </div>
                             <div class="fr f12">
                                 <input type="button" class="seedTeam bggray" value="种子球队" data-is_seedTeam="0" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;margin-right:5px;">
                                 <input type="button" class="deleteTeam bgred" value="删除" style="color: #fff;border-radius: 3px;padding: 3px 5px;margin-top: 7px;">
                             </div>
                         </li>`;
-
+                });
 
                 $(".frame .groupsTip").each(function () {
                     // 把选中的球队插入到对应的组别中
                     if (dataNum == $(this).find(".groupNum").text()) {
                         if ($(".frame ul li").length == 0) {
-                            $(this).after(str);
+                            $(this).next().append(str);
                             mui("#team").popover("toggle");
                         } else {
                             check = "Yes";
-                            $(".frame ul li").each(function () {
-                                if (team_id == $(this).attr("data-team_id")) {
-                                    check == "No"
-                                    mui.toast("该球队已在列表中");
-                                    return check = "No";
-                                }
-                            });
                             if (check == "Yes") {
-                                $(this).after(str);
+                                $(this).next().empty().append(str);
                                 mui("#team").popover("toggle");
                             }
                         }
                     }
                 });
             });
+
+            //列表复选框赋值
+            $(document).on("tap", ".addTeam", function () {
+                $(".teamList input[type=checkbox]").attr("data-num", $(this).siblings().text());
+                //每次打开先清空所有选择
+                $("input[name='checkbox']").prop("checked", false);
+                //然后遍历出对应所选
+                var dataNum = $(".teamList input[type=checkbox]").attr("data-num");
+                $(this).parents(".groupsTip").next().find("li").each(function () {
+                    if (dataNum == $(this).parents().prev().find(".groupNum").text()) {
+                        var team_id = $(this).attr("data-team_id")
+                        $(".teamList input[name='checkbox']").each(function () {
+                            if ($(this).attr("data-team_id") == team_id) {
+                                $(this).attr("checked", "true");
+                                $(this).attr("disabled", "disabled")
+                            }
+                        })
+                    }
+                })
+            });
+
+            $(document).on("tap", ".addTeam", function () {
+                $(".teamList input[type=checkbox]").attr("data-num", $(this).siblings().text());
+                //每次打开先清空所有选择
+                $("input[name='checkbox']").prop("checked", false);
+                //然后遍历出对应所选
+                var dataNum = $(".teamList input[type=checkbox]").attr("data-num");
+                $(this).parents(".groupsTip").next().find("li").each(function () {
+                    if (dataNum == $(this).parents().prev().find(".groupNum").text()) {
+                        var team_id = $(this).attr("data-team_id")
+                        $(".teamList input[name='checkbox']").filter(function () {
+                            return $(this).attr("data-team_id") == team_id
+                        }).prop("checked", true);
+                    }
+                })
+            });
+
+
 
             // 设置种子球队
             $(document).on("tap", ".seedTeam", function () {
@@ -231,14 +270,15 @@
             let str = '';
             for (let i = 0; i <= groupNum - 1; i++) {
                 str +=
-                    `<ul class="mui-table-view list border-b">
-                                <div class="page-header border-b bggray2 groupsTip">
-                                    <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}（可编辑）" style="padding-left:0">
-                                    <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
-                                        <a href="#team" class="addTeam" style="color:#007aff">添加</a>
-                                    </span>
-                                </div>
-                            </ul>`
+                    `<div class="page-header border-b bggray2 groupsTip">
+                            <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}" style="padding-left:0;width:20%">
+                            <span class="f14">(可编辑)</span>
+                                <span class="f14 fr" style="color:#bfbfbfdd"><text class="groupNum hide">${i + 1}</text>
+                                    <a href="#team" class="addTeam" style="color:#007aff">添加</a>
+                                </span>
+                        </div>
+                            <ul class="mui-table-view list border-b"></ul>
+                    `
             }
             $(".frame").empty().append(str);
         }
@@ -263,12 +303,13 @@
                     if (data.code == 200) {
                         for (var i = 0; i < data.data.length; i++) {
                             newli +=
-                                `<li class="mui-table-view-cell listli" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" 
+                                `<div class="mui-input-row mui-checkbox mui-left">
+                                    <label class="wd66">${data.data[i].team.name}</label>
+                                    <input name="checkbox" type="checkbox" data-team_logo="${data.data[i].team_logo}" data-team="${data.data[i].team.name}" 
                                         data-team_id="${data.data[i].team_id}" data-match="${data.data[i].match.name}" data-match_id="${data.data[i].match_id}" 
                                         data-members_num="${data.data[i].members_num}">
-                                        <label class="wd66">${data.data[i].team.name}</label>
-                                            <span class="wd27">参赛：${data.data[i].members_num}人</span>
-                                      </li>`
+                                    <span class="wd27">参赛：${data.data[i].members_num}人</span>
+                                </div>`
                         }
                         $(".teamList").empty().append(newli)
                     } else {
