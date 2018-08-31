@@ -125,7 +125,7 @@
             <ul class="mui-table-view showInfo">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>{$punchInfo.punch_time}</label>
+                        <span class="icon iconfont icon-activity-Startingtim colororange"></span>{$punchInfo.punch_time}{$is_like}</label>
                     <span class="wd66" style="font-size: 12px;">
                         <text class="f14">{$punchInfo.name}</text>
                     </span>
@@ -534,7 +534,7 @@
             });
 
             pulldownRefresh(); //页面打开时获取一次最新评论信息
-
+            isthumbsup()
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
@@ -556,6 +556,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         success: function (data) {
                             console.log(data);
+                           
                             if (data.code == 200) {
                                 if($(".thumbsup").hasClass("highlight")){
                                     $(".thumbsup").removeClass("highlight");
@@ -573,7 +574,6 @@
                             console.log(type);
                         }
                     });
-                    isthumbsup("{$is_like}") //点赞状态
                 }
 
             });
@@ -594,8 +594,8 @@
         }
 
         // 点赞状态
-        function isthumbsup(islikes) {
-            if (islikes == "1") {
+        function isthumbsup() {
+            if ("{$is_like}" == "1") {
                 $(".thumbsup").addClass("highlight");
             } else {
                 $(".thumbsup").removeClass("highlight");
