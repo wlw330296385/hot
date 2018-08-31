@@ -629,7 +629,7 @@ class Schedule extends Base
                     if (!$saveStudentRestschedule) {
                         return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
                     }
-                    // 保存赠课与学员关系记录
+                    // 保存赠课与学员订单关系记录
                     $billMap['student_id'] = ['in',$studentIDs];
                     $billMap['camp_id'] = $request['camp_id'];
                     $billMap['goods_id'] = $request['lesson_id'];
