@@ -318,4 +318,19 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取拥有订单的LessonMember数据不分页
+    public function getLessonMemberJoinBillListNoPageApi(){
+        try {
+            $lesson_id = input('param.lesson_id');
+            $result = db('lesson_member lm')
+                    ->field('lm.*,b.id,b.total')
+                    ->join('bill b','b.goods_id = lm.lesson_id and b.student_id = lm.student_id')
+                    ->where(['lm.lesson_id'=>$lesson_id])
+                    ->select();
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

@@ -173,7 +173,6 @@ class Crontabwoo extends Base {
                     $incomeCamp = [
                         'income' => $incomeCampSalary,
                         'schedule_id'=>$schedule['id'],
-                        'schedule_id' => $schedule['id'],
                         'lesson_id' => $schedule['lesson_id'],
                         'lesson' => $schedule['lesson'],
                         'camp_id' => $schedule['camp_id'],

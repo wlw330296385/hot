@@ -42,7 +42,6 @@ class Punch extends Base{
             $is_like = -1;
         }
 
-
         $this->assign('is_like',$is_like);
     	$this->assign('totalPunch',$totalPunch);
     	$this->assign('monthPunch',$monthPunch);
