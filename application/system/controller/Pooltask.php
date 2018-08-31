@@ -344,7 +344,7 @@ class Pooltask extends Base{
     /**
      * 发送模板消息//给擂主的
      */
-    public function sendMessage2($pool_id)
+    public function sendMessage2($pool_id){
         $info = db('pool')->field('group.member_id,pool.group_id,pool.group')->join('group','group.id = pool.group_id')->where(['pool.id'=>$pool_id])->order('pool.id desc')->find();
         $openid = db('member')->where(['id'=>$info['member_id']])->value('openid');
         $WechatService = new \app\service\WechatService();
