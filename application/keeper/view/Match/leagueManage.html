@@ -26,15 +26,18 @@
 
 <body class="whitebg">
     <div class="mui-content">
-        <div id="tabbar" class="mui-control-content mui-active coach">
-
+        <div id="tabbar" class="mui-control-content mui-active ">
             <div class="img16x9" style="background-image: url({$leagueInfo.cover})"></div>
             <div class="page-header">
+                {if $matchMemberInfo.type==10}
                 <a href="{:url('match/myLeague',['org_id'=>$leagueInfo.match_org_id])}" class="mui-icon mui-icon-left-nav mui-pull-left arrow"
                     style="color: #737373;font-size: 21px"></a>
+                {else/}
+                <a href="{:url('team/myTeam')}" class="mui-icon mui-icon-left-nav mui-pull-left arrow" style="color: #737373;font-size: 21px"></a>
+                {/if}
                 <span class="more">{$leagueInfo.name}管理</span>
             </div>
-            <div class="nav-list">
+            <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
                         <a href="#">
@@ -58,14 +61,35 @@
             </div>
 
 
-            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:0px">
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/leagueInfo',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-o-home"></span>
                         <div class="mui-media-body">联赛主页</div>
                     </a>
                 </li>
-                {eq name="$matchMemberInfo.type" value="10"}
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('match/regulationofleague', ['league_id' => $leagueInfo.id])}">
+                        <span class="icon iconfont icon-th-Regulations"></span>
+                        <div class="mui-media-body">章程</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="javascript:void(0)">
+                        <span class="icon iconfont icon-team-Join"></span>
+                        <div class="mui-media-body">相册</div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="javascript:void(0)">
+                        <span class="icon iconfont icon-o-home"></span>
+                        <div class="mui-media-body">操作引导</div>
+                    </a>
+                </li>
+            </ul>
+            {gt name="$matchMemberInfo.type" value="9"}
+            <div class="page-header f12">管理员版块</div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
                 <!-- 负责人可见 -->
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/leagueMatchEdit', ['league_id' => $leagueInfo.id])}">
@@ -73,7 +97,16 @@
                         <div class="mui-media-body">联赛编辑</div>
                     </a>
                 </li>
-                {/eq}
+                <!-- 管理员以上可见 -->
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <a href="{:url('match/workListOfLeague',['league_id' => $leagueInfo.id])}">
+                        <text class="mui-badge mui-badge-danger markNum" style="top: 10px;right: 5px;;">0</text>
+                        <span class="icon iconfont icon-o-Staff"></span>
+
+                        <div class="mui-media-body">工作人员</div>
+                    </a>
+                </li>
+
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/teamListOfLeague',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-o-team"></span>
@@ -81,30 +114,15 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="">
-                        <span class="icon iconfont icon-o-home"></span>
-                        <div class="mui-media-body">操作引导</div>
+                    <a href="{:url('match/groupsListOfLeague',['league_id' => $leagueInfo.id])}">
+                        <span class="icon iconfont icon-o-Group"></span>
+                        <div class="mui-media-body">分组</div>
                     </a>
                 </li>
-                {gt name="$matchMemberInfo.type" value="9"}
-                <!-- 管理员以上可见 -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('match/workListOfLeague',['league_id' => $leagueInfo.id])}">
-                        <span class="icon iconfont icon-o-Staff"></span>
-                        <div class="mui-media-body">工作人员</div>
-                    </a>
-                </li>
-                {/gt}
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="{:url('match/matchstageListofleague',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-o-Stage"></span>
                         <div class="mui-media-body">比赛阶段</div>
-                    </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('match/groupsListOfLeague',['league_id' => $leagueInfo.id])}">
-                        <span class="icon iconfont icon-o-Group"></span>
-                        <div class="mui-media-body">分组</div>
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
@@ -143,25 +161,22 @@
                         <div class="mui-media-body">动态</div>
                     </a>
                 </li>
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('match/messageListOfLeague',['league_id' => $leagueInfo.id])}">
-                        <span class="icon iconfont icon-team-Join"></span>
-                        <div class="mui-media-body">消息</div>
-                    </a>
-                </li> -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('match/regulationofleague', ['league_id' => $leagueInfo.id])}">
-                        <span class="icon iconfont icon-th-Regulations"></span>
-                        <div class="mui-media-body">章程</div>
-                    </a>
-                </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                     <a href="">
-                        <span class="icon iconfont icon-team-Join"></span>
-                        <div class="mui-media-body">相册</div>
+                        <span class="icon iconfont icon-o-Data"></span>
+                        <div class="mui-media-body">荣誉</div>
                     </a>
                 </li>
+
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/messageListOfLeague',['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-team-Join"></span>
+                            <div class="mui-media-body">消息</div>
+                        </a>
+                    </li> -->
+
             </ul>
+            {/gt}
         </div>
 
     </div>
@@ -247,6 +262,31 @@
             $(".goConfirm").on("tap", function () {
                 mui.toast('暂未开放，敬请期待');
             })
+
+            var organization_id = "{$league_id}";
+            mui.ajax("{:url('api/apply/getApplyListByPageApi','','',true)}", {
+                data: {
+                    organization_id: organization_id,
+                    apply_type: 1,
+                    status: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".markNum").text(data.data.total)
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
         })
     </script>
 </body>

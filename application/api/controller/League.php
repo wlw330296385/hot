@@ -344,9 +344,8 @@ class League extends Base
             }
             // 查询条件组合end
             // 获取联赛列表
-            $matchS = new MatchService();
-            // $leagueS = new LeagueService();
-            $res = $matchS->getMatchList($data, $page, 'start_time desc');
+            $leagueS = new LeagueService();
+            $res = $leagueS->getLeagueListWithTeamsCount($data, $page, 'start_time desc');
 
             $now = date("Y-m-d H:i:s");
             foreach ($res as $k => $row) {
@@ -407,8 +406,7 @@ class League extends Base
             // 查询条件组合end
             // 获取联赛列表
             $matchS = new MatchService();
-            $leagueS = new LeagueService();
-            $result = $matchS->matchListPaginator($data);
+            $result = $matchS->getLeagueListWithTeamsCount($data);
             if (!$result) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             } else {
@@ -548,11 +546,18 @@ class League extends Base
         }
         // 检查会员所在球队信息
         // 根据team_id获取球队信息
+        $teamS = new TeamService();
+        $teamMemberRoleType = $teamS->checkMemberTeamRole($data['team_id'], $this->memberInfo['id']);
+        if ($teamMemberRoleType >= 1 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
         $teamService = new TeamService();
         $team = $teamService->getTeam(['id' => $data['team_id']]);
         if (!$team) {
             return json(['code' => 100, 'msg' => '球队' . __lang('MSG_404')]);
         }
+
         $teamMember = $teamService->getTeamMemberInfo(['team_id' => $team['id'], 'member_id' => $this->memberInfo['id']]);
         if (!$teamMember || $teamMember['status_num'] != 1) {
             return json(['code' => 100, 'msg' => '您不是该球队的成员']);
@@ -1187,6 +1192,7 @@ class League extends Base
     {
         // 接收请求变量
         $data = input('post.');
+
         // 数据验证
         if (!array_key_exists('league_id', $data)) {
             return json(['code' => 100, 'msg' => __lang('MSG_402') . '传入league_id']);
@@ -1214,11 +1220,12 @@ class League extends Base
         }
         // 检查分组数据有效性
         if (!array_key_exists('groupList', $data)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_402') . 'groupList分组球队名单']);
+            return json(['code' => 100, 'msg' => "请先点击 '分配' 以完成分组"]);
         }
-        if (empty($data['groupList']) && $data['groupList'] == "[]") {
-            return json(['code' => 100, 'msg' => __lang('MSG_402') . 'groupList分组球队名单']);
+        if (empty($data['groupList']) || $data['groupList'] == '[]') {
+            return json(['code' => 100, 'msg' => "请先点击 '分配' 以完成分组"]);
         }
+
         // 事务处理：检查联赛有无球队分组数据 若有数据先物理删除原有数据
         Db::startTrans();
         try {
