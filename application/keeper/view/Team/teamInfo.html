@@ -1172,10 +1172,11 @@
                         eventid = data.data[0].id
                         var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id +
                             '/event_id/' + data.data[0].id;
-                        div +=
-                            ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' +
-                            Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' +
-                            Ttime + '</p></div>';
+                        if (getNowTime() > data.data[0].start_time) {
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        } else {
+                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                        }
                         div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[
                             0].event + '</h5>';
                         div += '<div class="divFrame"><p>发起人：' + data.data[0].member + '</p><p>活动地点：' +
@@ -1297,8 +1298,11 @@
                             div +=
                                 '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
                         } else {
-                            div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' +
-                                Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            if (getNowTime() > data.data[0].match_time) {
+                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            } else {
+                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                            }
                         }
                         div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' +
                             data.data[0].match + '</h5><div class="divFrame">';
@@ -1309,7 +1313,11 @@
                         if (data.data[0].is_finished_num == 1) {
                             div += '<button class="mui-btn opbtn bggray">已结束</button>';
                         } else {
-                            div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                            if (getNowTime() > data.data[0].match_time) {
+                                div += '<button class="mui-btn opbtn bggray">参加</button>';
+                            } else {
+                                div += '<button class="mui-btn opbtn bgred signupMatchBtn">参加</button>';
+                            }
                         }
                         div += ' </div></div></li>';
                         // 人员头像版块
