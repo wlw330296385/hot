@@ -21,15 +21,15 @@ class Group extends Base{
         $group_id = input('param.group_id');
         $groupInfo = $this->GroupService->getGroupInfo(['id'=>$group_id]);
 
-        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>-1])->find();//上一期
-        $nowPool = db('pool')->where(['group_id'=>$group_id])->find();//本期
+        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>-1])->where('delete_time',null)->find();//上一期
+        $nowPool = db('pool')->where(['group_id'=>$group_id])->where('delete_time',null)->find();//本期
         $winnerList = [];
         
         if($lastPool){
-            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id'],'ranking'=>1])->select();
+            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id'],'ranking'=>1])->where('delete_time',null)->select();
         }
         // 是否已加入社群
-        $status_val = db('group_member')->where(['group_id'=>$group_id,'member_id'=>$this->memberInfo['id']])->value('status');
+        $status_val = db('group_member')->where(['group_id'=>$group_id,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->value('status');
 
         if (!$status_val) {
             $GroupApply = new \app\model\GroupApply;
@@ -44,7 +44,7 @@ class Group extends Base{
         $totalBonus = 0;
         if($nowPool){
             // 本期个人打卡次数
-            $totalPunch = db('group_punch')->where(['pool_id'=>$nowPool['id'],'member_id'=>$this->memberInfo['id']])->count();
+            $totalPunch = db('group_punch')->where(['pool_id'=>$nowPool['id'],'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->count();
             $membersPunch = $nowPool['members'];
             $totalBonus = $nowPool['bonus'];
         }
@@ -91,7 +91,7 @@ class Group extends Base{
         }
 
         // thelastpool
-        $lastSeason = db('pool')->where(['group_id'=>$group_id,'status'=>['egt',-1]])->value('season');//上一期     
+        $lastSeason = db('pool')->where(['group_id'=>$group_id,'status'=>['egt',-1]])->where('delete_time',null)->value('season');//上一期     
 
         $this->assign('lastSeason',$lastSeason?$lastSeason:0);
         $this->assign('groupInfo',$groupInfo);
@@ -190,9 +190,9 @@ class Group extends Base{
         // if($groupInfo['member_id']<>$this->memberInfo['id']){
         //     $this->error('权限不足');
         // }
-        $poolInfo = db('pool')->where(['group_id'=>$group_id])->find();//本期
+        $poolInfo = db('pool')->where(['group_id'=>$group_id])->where('delete_time',null)->find();//本期
          // 是否已加入社群
-         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
+         $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->value('id');
         $this->assign('poolInfo',$poolInfo);
         $this->assign('id',$id);
         $this->assign('groupInfo',$groupInfo);
@@ -206,14 +206,14 @@ class Group extends Base{
         if($groupInfo['member_id']<>$this->memberInfo['id']){
             $this->error('权限不足');
         }
-        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();//上一期
-        $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->find();//本期
+        $lastPool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->where('delete_time',null)->find();//上一期
+        $nowPool = db('pool')->where(['group_id'=>$group_id,'status'=>1])->where('delete_time',null)->find();//本期
         $winnerList = [];
         if($lastPool){
-            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id']])->select();
+            $winnerList = db('pool_winner')->where(['pool_id'=>$lastPool['id']])->where('delete_time',null)->select();
         }
         // 是否已加入社群
-        $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->value('id');
+        $id = db('group_member')->where(['group_id'=>$group_id,'status'=>1,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->value('id');
         $this->assign('lastPool',$lastPool);
         $this->assign('id',$id);
         $this->assign('winnerList',$winnerList);
