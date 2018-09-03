@@ -13,7 +13,7 @@ class Punch extends Base{
     public function index() {
     	$month_str = date('Ym',time());
     	$member_id = $this->memberInfo['id'];
-    	$puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->select();
+    	$puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
     	//本月打卡总数
     	$monthPunch = count($puchList);
 
@@ -30,9 +30,9 @@ class Punch extends Base{
     	$punchInfo = $this->PunchService->getPunchInfo(['id'=>$punch_id]);
     	$month_str = date('Ym',time());
     	// 累计打卡
-    	$totalPunch = db('punch')->where(['member_id'=>$punchInfo['member_id']])->count();
+    	$totalPunch = db('punch')->where(['member_id'=>$punchInfo['member_id']])->where('delete_time',null)->count();
     	//本月打卡
-    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$punchInfo['member_id']])->count();
+    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$punchInfo['member_id']])->where('delete_time',null)->count();
 
         // 是否已点赞
         $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$punch_id,'member_id'=>$this->memberInfo['id']]);
@@ -56,12 +56,12 @@ class Punch extends Base{
         $group_id = input('param.group_id');
         $is_pool = -1;
         if($group_id){
-            $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->value('id');
+            $is_pool = db('pool')->where(['group_id'=>$group_id,'status'=>2])->where('delete_time',null)->value('id');
         }
 
         $sport_plan_schedule_id = input('param.sport_plan_schedule_id');
         if($sport_plan_schedule_id){
-            $sportPlanScheduleInfo = db('sport_plan_schedule')->where(['id'=>$sport_plan_schedule_id])->find();
+            $sportPlanScheduleInfo = db('sport_plan_schedule')->where(['id'=>$sport_plan_schedule_id])->where('delete_time',null)->find();
         }else{
             $sportPlanScheduleInfo = [];
         }
@@ -69,7 +69,7 @@ class Punch extends Base{
     	$month_str = date('Ym',time());
 
     	//本月打卡
-    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->count();
+    	$monthPunch = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->count();
 
         
         $this->assign('is_pool',$is_pool?$is_pool:-1);

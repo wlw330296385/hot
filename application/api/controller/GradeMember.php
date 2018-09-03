@@ -84,4 +84,21 @@ class GradeMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取拥有订单的GradeMember数据不分页
+    public function getGradeMemberJoinBillListNoPageApi(){
+        try {
+            $grade_id = input('param.grade_id');
+            $result = db('grade_member lm')
+                    ->field('lm.*,b.id b_id,b.total,b.status as b_status')
+                    ->join('bill b','b.goods_id = lm.lesson_id and b.student_id = lm.student_id')
+                    ->where(['lm.grade_id'=>$grade_id])
+                    ->order('b.id desc')
+                    ->select();
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

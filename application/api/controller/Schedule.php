@@ -603,10 +603,12 @@ class Schedule extends Base
                     $dataSaveScheduleGiftStudent = [];
                     $lessonMemberMap['camp_id'] = $request['camp_id'];
                     $studentIDs = [];
+                    $billIDs = [];
                     $lessonMemberMap['lesson_id'] = $request['lesson_id'];
                     foreach ($studentList as $k => $student) {
                         
                         $studentIDs[] = $student['student_id'];
+                        $billIDs[] = $student['b_id'];
                         $dataSaveScheduleGiftStudent[$k] = [
                             'member' => $this->memberInfo['member'],
                             'member_id' => $this->memberInfo['id'],
@@ -630,7 +632,7 @@ class Schedule extends Base
                         return json(['code' => 100, 'msg' => '学员剩余课时更新' . $student['student'] . __lang('MSG_400')]);
                     }
                     // 保存赠课与学员订单关系记录
-                    $billMap['student_id'] = ['in',$studentIDs];
+                    $billMap['id'] = ['in',$billIDs];
                     $billMap['camp_id'] = $request['camp_id'];
                     $billMap['goods_id'] = $request['lesson_id'];
                     $billMap['status'] = 1;

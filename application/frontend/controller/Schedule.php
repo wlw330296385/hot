@@ -1,7 +1,6 @@
 <?php 
 namespace app\frontend\controller;
 use app\frontend\controller\Base;
-use app\service\CampService;
 use app\service\GradeService;
 use app\service\LessonService;
 use app\service\ScheduleService;
@@ -18,9 +17,8 @@ class Schedule extends Base
 	{
 		parent::_initialize();
 		$this->ScheduleService = new ScheduleService;
-		$campS = new CampService();
 		$camp_id = input('camp_id', 0);
-		$camp = $campS->getCampInfo($camp_id);
+		$camp = db('camp')->where(['id'=>$camp_id])->find();
 		$this->assign('campInfo', $camp);
 		$this->assign('camp_id', $camp_id);
 	}
