@@ -325,12 +325,14 @@ class LessonMember extends Base{
         try {
             $lesson_id = input('param.lesson_id');
             $result = db('lesson_member lm')
-                    ->field('lm.*,b.id b_id,b.total,b.status as b_status')
+                    ->field('lm.*,b.id b_id,b.total_gift as b_total,b.status as b_status,b.bill_order,b.create_time as b_c')
                     ->join('bill b','b.goods_id = lm.lesson_id and b.student_id = lm.student_id')
                     ->where(['lm.lesson_id'=>$lesson_id])
+                    ->where(['lm.is_school'=>-1])
+                    ->where(['b.status'=>1])
+                    ->where(['b.total_gift'=>0])
                     ->order('b.id desc')
                     ->select();
-            
             return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);

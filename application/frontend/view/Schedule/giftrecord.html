@@ -95,10 +95,22 @@
 
         <div class="camp-list camp-lesson-list detalis-list grade-list editor mt">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <form class="mui-input-group mt55">
-
+            <form class="mui-input-group">
                 <div class="page-header">
-                    <span class="course">选择赠送对应所在的课程或班级</span>
+                    <span class="course">注意事项</span>
+                </div>
+                <div class="explain-cont">
+                        <p>1. 公益课无需赠课</p>
+                        <p>2、训练营必须先从平台购买课时用于赠送操作;</p>
+                        {if $campInfo.rebate_type==1}
+                        <p>3. 赠课将与符合条件的订单关联,订单退款后,赠课数量返还给训练营</p>
+                        <p>4. 赠送课时的优惠政策以及产生的费用由训练营自行负责</p>
+                        <p>5. 转课生需要有对应课程订单方可赠课</p>
+                        {/if}
+                </div>
+                <div class="page-header">
+                    <span class="course">请选择课程或者班级
+                    </span>
                 </div>
 
                 <div class="mui-input-row">
@@ -144,15 +156,9 @@
                     <input type="text" name="remarks" value="" class="data" placeholder="请填写赠送留言">
                 </div>
 
-                <div class="page-header">
-                    <span class="course">注意事项</span>
-                </div>
+                
 
-                <div class="explain-cont mt55">
-                    <p>1、赠送课时的优惠政策以及产生的费用由训练营自行负责;</p>
-                    <p>2、训练营必须先从平台购买课时用于赠送操作;</p>
-                    <p>3、赠送出去的课时会在每月结算时进行抵扣;</p>
-                </div>
+                <div class="mt55"></div>
 
             </form>
 
@@ -326,11 +332,12 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
+                var b_id = $(this).attr("data-b_id");
+                var b_total = $(this).attr("data-b_total");
                 student_num = $("input[type=checkbox]:checked").length;
-                student_str.push({ student: student, student_id: student_id, id: id });
+                student_str.push({ student: student, student_id: student_id, id: id ,b_id:b_id});
+                console.log(student_str);
             });
-            console.log(student_str);
-            console.log(student_num);
         };
 
         //更新序号函数
@@ -397,7 +404,12 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
+                            let fff = '';
+                            if(data.data[i].transfer==1){
+                                 fff = "disabled='disabled'"
+                            }
+
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + ' data-b_id = "'+data.data[i].b_id+'" data-data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'"  type="checkbox"></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
@@ -424,7 +436,8 @@
                 data: {
                     camp_id: campID,
                     lesson_id: lesson_id,
-                    keyword: keyword
+                    keyword: keyword,
+                    is_school:-1
                 },
                 dataType: 'json',//服务器返回json格式数据
                 type: 'post',//HTTP请求类型
@@ -468,7 +481,7 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" type="checkbox"></div>'
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + wooApi.dateIt("Y-m-d",data.data[i].b_c)+data.data[i].student + '<text>'+data.data[i].bill_order+'</text></font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" data-b_id = "'+data.data[i].b_id+'"  data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'" type="checkbox" ></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
