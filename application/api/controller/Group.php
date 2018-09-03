@@ -428,4 +428,17 @@ class Group extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);   
         }
     }
+
+
+
+    public function getGroupMemberNoPageApi(){
+        try {
+            $map = input('post.');
+            $GroupMember = new \app\model\GroupMember;
+            $result = $GroupMember->where($map)->select();
+            return json(['msg'=>'获取成功','code'=>200,'data'=>$result]);
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);   
+        }
+    }
 }
