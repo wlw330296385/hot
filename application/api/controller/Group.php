@@ -358,7 +358,7 @@ class Group extends Base{
                 ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
                 // ->where(['pool.status'=>2])
                 // ->group('pool.group_id')
-                ->where('.group_member_delete_time',null)
+                ->where('group_member.delete_time',null)
                 ->where('pool.delete_time',null)
                 ->order('pool.create_time desc')
                 ->select();
