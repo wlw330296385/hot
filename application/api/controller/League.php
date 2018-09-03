@@ -3247,9 +3247,13 @@ class League extends Base
         // 保存赛程数据
         $scheduleData = json_decode($data['schedules'], true);
         foreach ($scheduleData as $k => $val) {
-            $scheduleData[$k]['status'] = $data['status'];
+            $scheduleData[$k]['match_id'] = $data['match_id'];
+            $scheduleData[$k]['match'] = $data['match'];
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
+            $scheduleData[$k]['match_group_id'] = $data['match_group_id'];
+            $scheduleData[$k]['match_time'] = $data['match_time'];
+            $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
         try {
