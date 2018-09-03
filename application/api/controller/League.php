@@ -229,6 +229,7 @@ class League extends Base
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
                     'realname' => $this->memberInfo['realname'],
+                    'telephone' => $this->memberInfo['telephone'],
                     'type' => 10,
                     'status' => 1
                 ]);
@@ -2245,6 +2246,7 @@ class League extends Base
                     'member' => $this->memberInfo['member'],
                     'member_avatar' => $this->memberInfo['avatar'],
                     'realname' => $this->memberInfo['realname'],
+                    'telephone' => $this->memberInfo['telephone'],
                     'type' => $matchMemberType,
                     'status' => 1
                 ];
@@ -2486,6 +2488,7 @@ class League extends Base
                     'member' => $memberInfo['member'],
                     'member_avatar' => $memberInfo['avatar'],
                     'realname' => $memberInfo['realname'],
+                    'telephone' => $memberInfo['telephone'],
                     'type' => $matchMemberType,
                     'status' => 1
                 ];
