@@ -186,12 +186,12 @@ class Pool extends Base{
             (
                 SELECT `member_id`, `group_id`,`member`,`avatar` 
                 FROM `group_member` 
-                WHERE `group_id` = :group_id1 ) AS `a`
+                WHERE `group_id` = :group_id1 AND delete_time is NULL ) AS `a`
              LEFT JOIN
             (
                 SELECT COUNT(id) as `c_id`,`member_id` ,`group_id`
                 FROM `group_punch`
-                WHERE `pool_id` = :pool_id AND `group_id` = :group_id2 GROUP BY `member_id` 
+                WHERE `pool_id` = :pool_id AND `group_id` = :group_id2 AND delete_time is NULL GROUP BY `member_id` 
                 ORDER BY `c_id` desc
             ) AS `b`
             ON `a`.`group_id` = `b`.`group_id` AND `a`.`member_id` = `b`.`member_id`
