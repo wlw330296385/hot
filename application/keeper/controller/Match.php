@@ -374,6 +374,20 @@ class Match extends Base {
         return view('Match/data/leagueData');
     }
 
+    // 联赛球队
+    public function leagueTeam() {
+        return view('Match/team/leagueTeam');
+    }
+    // 联赛奖项
+    public function leagueHonor() {
+        return view('Match/leagueHonor');
+    }
+     // 联赛花絮
+     public function leagueTidbit() {
+        return view('Match/leagueTidbit');
+    }
+
+
     /*=======以上是外部展示页，以下是管理操作页=======*/
 
     // 联赛球队

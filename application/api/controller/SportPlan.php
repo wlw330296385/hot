@@ -120,7 +120,7 @@ class SportPlan extends Base{
         try {
             $map = input('post.');
             $SportPlanSchedule = new \app\model\SportPlanSchedule;
-            $result = $SportPlanSchedule->where($map)->order('id asc')->paginate(100);
+            $result = $SportPlanSchedule->where($map)->order('sport_time asc')->paginate(100);
             if($result){
                 return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
             }else{
