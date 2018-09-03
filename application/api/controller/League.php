@@ -546,11 +546,18 @@ class League extends Base
         }
         // 检查会员所在球队信息
         // 根据team_id获取球队信息
+        $teamS = new TeamService();
+        $teamMemberRoleType = $teamS->checkMemberTeamRole($data['team_id'], $this->memberInfo['id']);
+        if ($teamMemberRoleType >= 1 ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
         $teamService = new TeamService();
         $team = $teamService->getTeam(['id' => $data['team_id']]);
         if (!$team) {
             return json(['code' => 100, 'msg' => '球队' . __lang('MSG_404')]);
         }
+
         $teamMember = $teamService->getTeamMemberInfo(['team_id' => $team['id'], 'member_id' => $this->memberInfo['id']]);
         if (!$teamMember || $teamMember['status_num'] != 1) {
             return json(['code' => 100, 'msg' => '您不是该球队的成员']);

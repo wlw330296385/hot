@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>打卡</title>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link rel="stylesheet" href="/static/frontend/css/calendar.css">
+
+    <style type="text/css">
+        .calendar{
+            border-radius: 0px;
+        }
+        .calendar-title {
+            height: 120px;
+            padding: 38px 25px;
+            background: #F60;
+        }
+        .calendar-title .iconfont{
+            font-size: 80px;
+        }
+        .calendar-title .title{
+            font-size: 44px;
+        }
+        .calendar-title .hotTitle{
+            font-size: 44px;
+            display: inline-block;
+            color: #fff;
+            vertical-align: top;
+            text-indent: 20px;
+        }
+        .calendar-title .arrow {
+            width: auto;
+            top:30px;
+            right: 20px;
+        }
+        .calendar-title .arrow .mui-icon{
+            font-size: 58px;
+        }
+        .calendar-week{
+            width: 100%;
+            font-size: 32px;
+        }
+        .calendar-date .item{
+            font-size: 32px;
+        }
+
+
+        #photoWall>div {
+            float: left;
+            width: 250px;
+            margin-top: -2px;
+        }
+        #photoWall img {
+            width: 248px;
+            height: 248px;
+            margin: 0px 1px;
+        }
+        .page-header{
+            background-color: #FFFFFF !important;
+            height: 128px;
+            padding: 20px 40px 20px 30px;
+            line-height: 80px
+        }
+        .page-header span {
+            font-size: 36px;
+        }
+        .page-header .pCount {
+            margin: 0px 10px;
+        }
+        .page-header img {
+            margin-right: 15px;
+            height: 80px;
+            width:80px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        .calendar-date .item-curDay, .calendar-date .item-curDay:hover{
+            background-color: #FFFFFF;
+            color: #333333;
+        }
+
+
+
+        html,body { margin:0px 0px 90px; padding:0px; width:1000px; background:#CCC; }
+        p{ color:#FFF; }
+        #popupShare { width:1000px; position:absolute; left:0; top:0;  z-index:999; }
+        #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; background:#000; }
+        #picBg { width:1000px; }
+        #qrcode { position:absolute; left:110px; top:1230px; z-index:888; color:#FFF;  }
+        #qrcode span { display:block; width:244px; height:40px; font-size:18px; }
+        #qrcode img { width:240px; margin-bottom: 20px; }
+        #qrcode p {font-size:24px; line-height:36px; }
+        #userInfo {  color:#FFF; text-align:left !important; }
+        #canvasPic { display:none; }
+        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:9999; font-size:42px; }
+        #fixTop a { background-color:#F60; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
+        #fixTop span { background-color:#690; display:none; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
+        #popupShare { visibility:hidden; position: absolute; top:0; left: 0; z-index: 8888; }
+        /*#popupShare img { width: 1000px; height:1799px; }*/
+    </style>
+</head>
+
+<body>
+
+<div id="pageShare">
+    <div id="calendar" class="calendar"></div>
+    <div class="mui-content">
+
+        <div id="photoWall"></div>
+        <div class="page-header">
+                <span class="fl">
+                    <img src="{$memberInfo.avatar}">
+                    <text>{$memberInfo.member}</text>
+                </span>
+                <span class="fr">
+                    <span class="wd49"><text class="punchYM">{$currYear}-{$currMonth}</text>月运动 <strong class="colororange pCount"></strong> 次
+                    </span>
+                </span>
+        </div>
+    </div>
+</div>
+
+<div id="fixTop">
+    <a href="#" id="btnSave">[ 点击生成图片并分享 ]</a>
+    
+    <span>请长按图片保存或转发朋友</span>
+</div>
+
+
+<!--canvasPic:页面转画布-->
+<div id="canvasPic"></div>
+<!--pageShare:画布转图片-->
+<div id="popupShare">
+    <img src="/static/frontend/images/images/blank.png" id="sharePic" />
+</div>
+
+</body>
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/mobile_date.js"></script>
+<script src="/static/frontend/js/calendar.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+
+
+    //初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+
+
+    // (function ($, doc) {
+
+    //     $.ready(function () {
+    //         var _getParam = function (obj, param) {
+    //             return obj[param] || '';
+    //         };
+    //         //开始时间
+    //         var btnTimes = $('.btnTime');
+    //         btnTimes.each(function (i, btn) {
+    //             btn.addEventListener('tap', function () {
+    //                 var optionsJson = this.getAttribute('data-options') || '{}';
+    //                 var options = JSON.parse(optionsJson);
+    //                 var wTime = this;
+    //                 var id = this.getAttribute('id');
+    //                 var picker = new $.DtPicker(options);
+    //                 picker.show(function (rs) {
+    //                     //wTime.innerText = rs.text;
+    //                     wTime.innerText = rs.y.text+'-'+rs.m.text;
+    //                     // document.getElementById('year').value=rs.y.text;
+                        
+    //                     toMonthPunchList(); 
+
+    //                     //滚动到低部
+    //                     mui("body").scroll().refresh();
+    //                     mui("body").scroll().scrollTo(0,0,100);
+
+    //                     picker.dispose();
+    //                 });
+    //             }, false);
+    //         });
+
+    //     });
+    // })(mui, document);
+
+    var count = 1
+
+    $(function () {
+
+        if ("{$memberInfo.id}" == 0) {
+            $(".group").attr("href", "javascript:;");
+            $(".punch").attr("href", "javascript:;");
+        }
+        $(".punch").on("tap", function () {
+            checkKogin()
+        });
+        $(".group").on("tap", function () {
+            checkKogin()
+        });
+        $(".goConfirm").click(function () {
+            mui.toast('暂未开放，敬请期待');
+        });
+
+        toMonthPunchList(); //输出月份的打卡记录列表
+
+        $(document).on("tap", ".arrow-prev", function () {
+            setTimeout(function () {
+                var month_str = $("#calendar .title").text();
+                toMonthPunchList();
+            }, 100)
+
+
+        });
+        $(document).on("tap", ".arrow-next", function () {
+            setTimeout(function () {
+                var month_str = $("#calendar .title").text();
+                toMonthPunchList();
+            }, 100)
+        });
+    })
+
+    function checkKogin() {
+        if ("{$memberInfo.id}" == 0) {
+            mui.confirm('请完善您的信息，以便进行后续操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
+                if (e.index === 1) {
+                    window.location.href = "{$fasturl}";
+                }
+            });
+            return false;
+        }
+    }
+
+
+    //输出月份的打卡记录列表
+    function toMonthPunchList() {
+        var url = "{:url('api/punch/getMonthPunchListApi','','',true)}";
+        var month_str = $("#calendar .title").text();
+        $(".punchYM").text(month_str);
+        mui.ajax({
+            url: url,
+            data: {
+                month_str: month_str,
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                console.log(data)
+                var newli = "";
+                
+                if (data.code === 200) {
+                    // 返回为空 显示无数据
+                    if (data.data.length != 0) {
+
+                       for (var i = 0; i <= data.data.length - 1; i++) {
+                            //标记日历
+                            var punch_time = data.data[i].punch_time
+                            $(".calendar-date .item").each(function () {
+                                var time = $(this).attr("data");
+                                var year = time.substring(0, 4);
+                                var month = time.substring(4, 6);
+                                var day = time.substring(6, 8);
+                                if (day < 10 && day.length == 1) {
+                                    day = "0" + day
+                                }
+                                var dateTime = year + "-" + month + "-" + day
+                                if (punch_time == dateTime) {
+                                    $(this).addClass("endDK");
+                                }
+                            });
+                            //插入图片
+                            var image_url = data.data[i].image_url
+                            newli += '<div><img src="'+image_url+'" /></div>';
+                        }
+                        $(".pCount").text(data.data.length);
+                        //补上缺少的方格
+                        var buDiv = data.data.length%4;
+                        if(buDiv>0){
+                           for (var p = buDiv; p <= 4 - 1; p++) {
+                                newli += '<div><img src="/static/frontend/images/punch_default.jpeg" /></div>';
+                            }
+                        }
+                    } else {
+                        newli = '<ul class="mui-table-view detalis-list list" style="background: transparent;"><li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>这个月没有运动打卡哦</p></li></ul>';
+                    }
+                } else {
+                    newli = '<ul class="mui-table-view detalis-list list" style="background: transparent;"><li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>这个月没有运动打卡哦</p></li></ul>';
+                }
+
+                $('#photoWall').html(newli);
+
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
+        });
+    };
+
+</script>
+
+<script>
+    window.onload = function () {
+        var flag = 0; //标记是拖曳还是点击
+        var oDiv = document.getElementById('drag');
+        var disX, moveX, L, T, starX, starY, starXEnd, starYEnd;
+        oDiv.addEventListener('touchstart', function (e) {
+            flag = 0;
+            e.preventDefault(); //阻止触摸时页面的滚动，缩放
+            disX = e.touches[0].clientX - this.offsetLeft;
+            disY = e.touches[0].clientY - this.offsetTop;
+            //手指按下时的坐标
+            starX = e.touches[0].clientX;
+            starY = e.touches[0].clientY;
+            //console.log(disX);
+        });
+        oDiv.addEventListener('touchmove', function (e) {
+            flag = 1;
+            L = e.touches[0].clientX - disX;
+            T = e.touches[0].clientY - disY;
+            //移动时 当前位置与起始位置之间的差值
+            starXEnd = e.touches[0].clientX - starX;
+            starYEnd = e.touches[0].clientY - starY;
+            //console.log(L);
+            if (L < 0) {
+                //限制拖拽的X范围，不能拖出屏幕
+                L = 0;
+            } else if (L > document.documentElement.clientWidth - this.offsetWidth) {
+                L = document.documentElement.clientWidth - this.offsetWidth;
+            }
+            if (T < 0) {
+                //限制拖拽的Y范围，不能拖出屏幕
+                T = 0;
+            } else if (T > document.documentElement.clientHeight - this.offsetHeight) {
+                T = document.documentElement.clientHeight - this.offsetHeight;
+            }
+            moveX = L + 'px';
+            moveY = T + 'px';
+            //console.log(moveX);
+            this.style.left = moveX;
+            this.style.top = moveY;
+        });
+        // window.addEventListener('touchend', function (e) {
+        //     //alert(parseInt(moveX))
+        //     //判断滑动方向
+        //     if (flag === 0) {
+        //         //点击
+
+        //     }
+        // });
+    }
+</script>
+
+<script type="text/javascript">
+
+    // setTimeout(function() {
+    //     document.getElementById("btnSave").click();
+    // }, 2000);
+
+    /*生成canvas图形*/
+
+    // 获取按钮id
+    var btnSave = document.getElementById("btnSave");
+    // 获取内容id
+    var content = $("#pageShare");
+    // 进行canvas生成
+    btnSave.onclick = function(){
+        ////////////////////////////////////////////////
+        var newTitle = $(".calendar-title .title").text()+' 运动'+$(".pCount").text()+'次';
+        $(".calendar-title .title").css("float","right").text(newTitle);
+        $(".calendar-title .title").before('<span class="hotTitle">篮球管家</span>');
+        $(".calendar-title .arrow").hide();
+        /////////////////////////////////////////////////
+        var h = content.clientHeight;
+        var w = content.clientWidth;
+        html2canvas(content, {
+            scale: 2,
+            onrendered: function(canvas) {
+
+                //添加属性
+                canvas.setAttribute('id','thecanvas');
+                //读取属性值
+                // var value= canvas.getAttribute('id');
+                document.getElementById('canvasPic').appendChild(canvas);
+                var oCanvas = document.getElementById("thecanvas");
+                var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute('src');
+                var element = document.getElementById('sharePic');
+                element.src = img_data2;
+//                $("#pageShare").hide();
+                $("#fixTop a").hide();
+                $("#popupShare").css("visibility","visible");
+                $("#fixTop span").show();
+            }
+        });
+    }
+
+
+
+</script>
+
+<!-- 将canvas图片保存成图片 -->
+<script src="/static/frontend/js/html2canvas/html2canvas.min.js"></script>
+<script src="/static/frontend/js/html2canvas/canvas2image.js"></script>
+<script src="/static/frontend/js/html2canvas/base64.js"></script>
+
+<script>
+    wx.config({
+        //debug: true,
+        appId: "{$jsapi['appId']}",
+        timestamp: "{$jsapi['timestamp']}",
+        nonceStr: "{$jsapi['nonceStr']}",
+        signature: "{$jsapi['signature']}",
+        jsApiList: [
+            // 所有要调用的 API 都要加到这个列表中
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ'
+        ]
+    });
+    wx.ready(function () {
+        // 分享到朋友圈
+        wx.onMenuShareTimeline({
+            title: '17运动，一起来运动吧！',
+            desc: '{$memberInfo.member}邀你来PK！',
+            link: "{$shareurl}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            success: function () {},
+            cancel: function () {}
+        });
+        // 分享给朋友
+        wx.onMenuShareAppMessage({
+            title: '17运动，一起来运动吧！',
+            desc: '{$memberInfo.member}邀你来PK！',
+            link: "{$shareurl}/pid/{$mid}",
+            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            type: "",
+            dataUrl: '',
+            success: function () {},
+            cancel: function () {}
+        });
+
+    });
+</script>
+
+</html>

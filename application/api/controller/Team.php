@@ -1948,6 +1948,8 @@ class Team extends Base
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            // 默认最大参与人数不限
+            $data['max'] = 9999;
             // 时间格式转换类型
             // 检查开始时间和结束时间与当前时间比较是否合法
             $nowTime = time();
