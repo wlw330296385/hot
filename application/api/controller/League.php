@@ -3203,7 +3203,10 @@ class League extends Base
     public function saveallmatchschedule()
     {
         $data = input('post.');
-        $data['member_id'] = $this->memberInfo['id'];
+        if (empty($data['match_id']) || empty($data['match_stage_id']) || empty($data['match_group_id']) || empty($data['match_time']) || empty($data['status']) || empty($data['schedules'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        // $data['member_id'] = $this->memberInfo['id'];
         // 数据验证器
         $validate = validate('MatchScheduleVal');
         if (!$validate->scene('add')->check($data)) {
@@ -3222,29 +3225,35 @@ class League extends Base
         if (!array_key_exists('scheduleList', $data) || is_null(json_decode($data['scheduleList']))) {
             return json(['code' => 100, 'msg' => '请提交预览赛程']);
         }
+
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
-        Db::startTrans();
-        try {
-            $matchSchedules = $leagueS->getMatchSchedules([
-                'match_id' => $data['match_id'],
-                'match_stage_id' => $data['match_stage_id']
-            ]);
-            if ($matchSchedules) {
-                $leagueS->delMatchSchedule([
-                    'match_id' => $data['match_id'],
-                    'match_stage_id' => $data['match_stage_id']
-                ], true);
-            }
-            Db::commit();
-        } catch (\Exception $e) {
-            Db::rollback();
-        }
+        // Db::startTrans();
+        // try {
+        //     $matchSchedules = $leagueS->getMatchSchedules([
+        //         'match_id' => $data['match_id'],
+        //         'match_stage_id' => $data['match_stage_id']
+        //     ]);
+        //     if ($matchSchedules) {
+        //         $leagueS->delMatchSchedule([
+        //             'match_id' => $data['match_id'],
+        //             'match_stage_id' => $data['match_stage_id']
+        //         ], true);
+        //     }
+        //     Db::commit();
+        // } catch (\Exception $e) {
+        //     Db::rollback();
+        // }
+
         // 保存赛程数据
-        $scheduleData = json_decode($data['scheduleList'], true);
+        $scheduleData = json_decode($data['schedules'], true);
         foreach ($scheduleData as $k => $val) {
-            $scheduleData[$k]['status'] = 1;
+            $scheduleData[$k]['match_id'] = $data['match_id'];
+            $scheduleData[$k]['match'] = $data['match'];
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
+            $scheduleData[$k]['match_group_id'] = $data['match_group_id'];
+            $scheduleData[$k]['match_time'] = $data['match_time'];
+            $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
         try {

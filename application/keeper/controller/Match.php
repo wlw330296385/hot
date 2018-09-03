@@ -275,12 +275,20 @@ class Match extends Base {
         // 工作人员类型
         $leagueS = new LeagueService();
         $types = $leagueS->getMatchMemberTypes();
+        
+        // 检查他是否为管理员
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+
         // 申请联赛工作人员按钮显示：查询联赛工作人员无数据就显示
-        $btnApplyWorkerShow = 0;
-        $matchmember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id']]);
-        if (!$matchmember || $matchmember['status'] != 1) {
-            $btnApplyWorkerShow = 1;
+        // if (!$matchmember || $matchmember['status'] != 1) {
+        //     $btnApplyWorkerShow = 1;
+        // }
+
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
         }
+
         // 联赛可报名状态标识：
         // 1 当前时间在报名开始时间与报名结束时间
         // 2 联赛报名状态字段apply_status：1可报名|2结束报名
@@ -303,7 +311,7 @@ class Match extends Base {
         }
 
         $this->assign('types', $types);
-        $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
+        $this->assign('is_manager', $is_manager);
         $this->assign('cansignup', $cansignup);
         return view('Match/leagueInfo');
     }
