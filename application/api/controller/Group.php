@@ -104,7 +104,7 @@ class Group extends Base{
                 unset($map['keyword']);
             }
 
-            $ids = db('group_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->column('group_id');
+            $ids = db('group_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->where('delete_time',null)->column('group_id');
             $map['id'] = ['not in',$ids];
             $result = $this->GroupService->getGroupList($map,$page);  
             if($result){
@@ -152,8 +152,10 @@ class Group extends Base{
                 ->field('pool.stake,group_member.group,pool.bonus,group.member_id as g_m_id,group.members,group.id,group.logo')
                 ->join('pool','group_member.group_id = pool.group_id')
                 ->join('group','group_member.group_id = group.id')
-       
                 ->where(['group_member.member_id'=>$member_id,'group_member.status'=>1])
+                ->where('group_member.delete_time',null)
+                ->where('group.delete_time',null)
+                ->where('pool.delete_time',null)
                 ->group('pool.group_id')
                 ->order('group_member.create_time desc')
                 ->select();
@@ -310,8 +312,8 @@ class Group extends Base{
             $group_id = input('param.group_id');
             $status = input('param.status',1);
             $page = input('param.page',1);
-            $group_member = db('group_member')->where(['group_id'=>$group_id,'status'=>$status])->page($page)->select();
-            $poolInfo = db('pool')->where(['group_id'=>$group_id,'status'=>2])->find();
+            $group_member = db('group_member')->where(['group_id'=>$group_id,'status'=>$status])->where('delete_time',null)->page($page)->select();
+            $poolInfo = db('pool')->where(['group_id'=>$group_id,'status'=>2])->where('delete_time',null)->find();
             foreach ($group_member as $key => $value) {
                     $group_member[$key]['c_p'] = 0;
                 }
@@ -320,7 +322,7 @@ class Group extends Base{
                 foreach ($group_member as $key => $value) {
                     $memberIDs[] = $value['member_id'];
                 }
-                $punchs = db('group_punch')->field('count(id) as c_id,member_id,member')->where(['member_id'=>['in',$memberIDs],'pool_id'=>$poolInfo['id']])->group('member_id')->select();
+                $punchs = db('group_punch')->field('count(id) as c_id,member_id,member')->where(['member_id'=>['in',$memberIDs],'pool_id'=>$poolInfo['id']])->where('delete_time',null)->group('member_id')->select();
                 foreach ($group_member as $key => $value) {
                     foreach ($punchs as $k => $val) {
                         if($val['member_id'] == $value['member_id']){
@@ -356,6 +358,8 @@ class Group extends Base{
                 ->where(['group_member.member_id'=>$this->memberInfo['id'],'group_member.status'=>1])
                 // ->where(['pool.status'=>2])
                 // ->group('pool.group_id')
+                ->where('.group_member_delete_time',null)
+                ->where('pool.delete_time',null)
                 ->order('pool.create_time desc')
                 ->select();
 
@@ -369,7 +373,7 @@ class Group extends Base{
                     }
                     $groupList[$key]['punchs'] = 0;
                 }
-                $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->where(['create_time'=>['between',[$punchTime_start,$punchTime_end]]])->group('pool_id')->select();
+                $punchList = db('group_punch')->field('count(id) as c_id,pool_id')->where(['pool_id'=>['in',$pool_ids]])->where(['member_id'=>$this->memberInfo['id']])->where(['create_time'=>['between',[$punchTime_start,$punchTime_end]]])->where('delete_time',null)->group('pool_id')->select();
                 foreach ($groupList as $key => $value) {
                     foreach ($punchList as $k => $val) {
                         if($val['pool_id'] == $value['p_id']){
@@ -394,7 +398,7 @@ class Group extends Base{
             $group_id = input('param.group_id');
             $member_id = $this->memberInfo['id'];
             $page = input('param.page',1);
-            
+            $status = input('param',1);
             $sql = "SELECT
                     `group_member`.*
                     , gp.c_punch
@@ -402,7 +406,7 @@ class Group extends Base{
                 FROM
                     `group_member`
                     LEFT JOIN (
-                    SELECT count(id) as c_punch,member_id FROM group_punch where group_id = {$group_id} GROUP BY member_id
+                    SELECT count(id) as c_punch,member_id FROM group_punch where group_id = {$group_id} AND delete_time is NULL GROUP BY member_id
                     ) as gp 
                     on gp.member_id = group_member.member_id
                     LEFT JOIN `follow` `follow` ON `follow`.`follow_id` = group_member.member_id 
@@ -410,6 +414,7 @@ class Group extends Base{
                 WHERE
                     `group_member`.`group_id` = {$group_id}
                     AND group_member.delete_time is null
+                    AND group_member.status = {$status}
                 ORDER BY
                     `gp`.c_punch desc
                     LIMIT
