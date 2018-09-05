@@ -334,7 +334,7 @@ class LessonMember extends Base{
             //         ->order('b.id desc')
             //         ->select();
 
-            $sql = "SELECT * FROM bill as b inner join lesson_member as lm
+            $sql = "SELECT lm.*,b.id b_id,b.total_gift as b_total,b.status as b_status,b.bill_order,b.create_time as b_c FROM bill as b inner join lesson_member as lm
                     on b.student_id = lm.student_id AND b.goods_id = lm.lesson_id
                     WHERE
                     b.`id`
