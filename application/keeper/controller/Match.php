@@ -825,7 +825,26 @@ class Match extends Base {
         
         $this->assign('showBtn', $showBtn);
         return view('Match/schedule/scheduleListOfLeague');
+    }   
+
+    // 创建赛程（选择对阵球队排排赛程操作）
+    public function createSchedule() {
+        // 获取联赛分组列表
+        $leagueS = new LeagueService();
+        $groups = $leagueS->getMatchGroups([
+            'match_id' => $this->league_id
+        ]);
+        $matchStageGroupInfo = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+
+
+        $this->assign('groups', $groups);
+        $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
+        return view('Match/schedule/createSchedule');
     }
+
 
     // 创建赛程
     public function createscheduleofleague() {
