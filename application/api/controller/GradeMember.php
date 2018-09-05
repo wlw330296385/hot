@@ -91,14 +91,24 @@ class GradeMember extends Base{
         try {
             $grade_id = input('param.grade_id');
             // $lesson_id = input('param.lesson_id');
-            $result = db('grade_member lm')
-                    ->field('lm.*,b.id b_id,b.total_gift as b_total,b.status as b_status,b.bill_order,b.create_time as b_c')
-                    ->join('bill b','b.goods_id = lm.lesson_id and b.student_id = lm.student_id')
-                    ->where(['lm.grade_id'=>$grade_id])
-                    ->where(['b.status'=>1])
-                    ->where(['b.total_gift'=>0])
-                    ->order('b.id desc')
-                    ->select();
+            // $result = db('grade_member lm')
+            //         ->field('lm.*,b.id b_id,b.total_gift as b_total,b.status as b_status,b.bill_order,b.create_time as b_c')
+            //         ->join('bill b','b.goods_id = lm.lesson_id and b.student_id = lm.student_id')
+            //         ->where(['lm.grade_id'=>$grade_id])
+            //         ->where(['b.status'=>1])
+            //         ->where(['b.total_gift'=>0])
+            //         ->order('b.id desc')
+            //         ->select();
+            $sql = "SELECT * FROM bill as b inner join grade_member as lm
+                    on b.student_id = lm.student_id AND b.goods_id = lm.lesson_id
+                    WHERE
+                    b.`id`
+                    in
+                    (SELECT max(`id`) FROM bill WHERE status = 1 AND total_gift = 0 group by `student_id`)
+                    AND lm.id = :grade_id
+                    AND lm.status = 1";
+
+            $result = Db::query($sql,['grade_id'=>$grade_id]);
             return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
