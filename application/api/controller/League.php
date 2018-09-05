@@ -3203,7 +3203,7 @@ class League extends Base
     public function saveallmatchschedule()
     {
         $data = input('post.');
-        if (empty($data['match_id']) || empty($data['match_stage_id']) || empty($data['match_group_id']) || empty($data['match_time']) || empty($data['status']) || empty($data['schedules'])) {
+        if (empty($data['match_id']) || empty($data['match_stage_id']) || empty($data['status']) || empty($data['schedules'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
         // $data['member_id'] = $this->memberInfo['id'];
@@ -3251,8 +3251,6 @@ class League extends Base
             $scheduleData[$k]['match'] = $data['match'];
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
-            $scheduleData[$k]['match_group_id'] = $data['match_group_id'];
-            $scheduleData[$k]['match_time'] = $data['match_time'];
             $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
