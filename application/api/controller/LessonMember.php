@@ -257,7 +257,6 @@ class LessonMember extends Base{
                 $res = Db::transaction(function() use ($transferData){
                     
                     db('transfer_lesson')->insert($transferData); 
-                    // return $TransferLesson->id;
                 });
                 //旧的
                 $data1 = ['transfer'=>1,'system_remarks'=>'转课操作','lesson_id'=>$new_lesson_id,'lesson'=>$new_lesson,'status'=>1,'camp'=>$value['camp'],'camp_id'=>$value['camp_id']];
