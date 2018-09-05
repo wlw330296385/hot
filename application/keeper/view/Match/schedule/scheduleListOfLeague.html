@@ -26,14 +26,22 @@
     </header>
 
     <div class="mui-content">
-
+        <div class="location-frame">
+            <span class="location-choise">
+                <select id="sort">
+                    <option value="0">全部分组</option>
+                    
+                </select>
+            </span>
+        </div>
         <div class="tab-pullRefresh">
-            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active">
+
+            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list border-b scheduleList1"></ul>
                 </div>
             </div>
-            <div id="offList" class="mui-scroll-wrapper mui-control-content">
+            <div id="offList" class="mui-scroll-wrapper mui-control-content" style="margin-top:45px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list border-b scheduleList0"></ul>
                 </div>
@@ -47,15 +55,9 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue  ">
-                <a href="{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}">创建对阵</a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggreen  ">
-                <a href="{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}">创建赛程</a>
-            </li>
-            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred  ">
-                <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建下一赛程</a>
-            </li>
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue createArray">创建对阵</li>
+            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggreen createSchedule">创建赛程</li>
+            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred createNextSchedule">创建下一赛程</li>
             <!-- <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue hide notEmpty">
                 <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建下一赛程</a>
             </li>
@@ -78,8 +80,33 @@
             window.top.location.href = this.href;
         });
 
+        var btnArray = ['取消', '确认'];
         $(function () {
 
+            $(".createArray").on("tap", function () {
+                mui.confirm("已为你分好组的球队预排了对阵信息，确认无误就提交数据吧！", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        window.location =
+                            "{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}";
+                    }
+                });
+            });
+            $(".createSchedule").on("tap", function () {
+                mui.confirm("小组对阵信息已经生成，为你的比赛日程添加赛程吧！", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        window.location =
+                            "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
+                    }
+                });
+            });
+            $(".createNextSchedule").on("tap", function () {
+                mui.confirm("你可以在此手动创建自定义赛程！", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        window.location =
+                            "{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}";
+                    }
+                });
+            });
             // var league_id = "{$league_id}";
             // // $showBtn = 1; 没分组 => 创建下一赛程（自填）
             // // $showBtn = 2; 有分组&没赛程 => 创建赛程（预览） + 创建下一赛程（自填）
@@ -230,13 +257,16 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `<div class="page-header border-b bggray2">`
+                            newli +=
+                                `
+                                    <div class="page-header border-b bggray2">`
                             if (data.data[i].date == 0) {
                                 newli +=
                                     `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
                             } else {
                                 newli +=
-                                    `<span class="course" style="padding-left:8px;">${data.data[i].date} </span>`
+                                    `<span class="course" style="padding-left:8px;">比赛日${i+1}</span>
+                                    <span class="fr f14">${data.data[i].date} </span>`
                             }
                             newli +=
                                 `</div><ul class="mui-table-view list border-b">
@@ -248,17 +278,20 @@
                                     var Ttime = "待定"
                                 } else {
                                     var Ttime = getTimeHM(dataSchedule.match_timestamp * 1000);
+                                    // if (Ttime = "00:00") {
+                                    //     var Ttime = "待定"
+                                    // }
                                 }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' +
                                     league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
                                 var urlToRecordInfo = "{:url('match/leagueScheduleInfo')}" +
                                     '/league_id/' + league_id + '/id/' + dataSchedule.id;
                                 // 根据状态判断跳转链接
-                                if (dataSchedule.status == 0) {
-                                    newli += `<a href="${urls}">`
-                                } else if (dataSchedule.status == 1){
-                                    newli += `<a href="${urlToRecordInfo}">`
-                                }
+                                // if (dataSchedule.status == 0) {
+                                newli += `<a href="${urls}">`
+                                // } else if (dataSchedule.status == 1) {
+                                //     newli += `<a href="${urlToRecordInfo}">`
+                                // }
                                 newli += `<li class="mui-table-view-cell listli border-b">`
 
                                 newli +=
@@ -321,12 +354,11 @@
         $('.schedule').on('tap', '.mui-btn', function () {
             var elem = this;
             var li = elem.parentNode.parentNode;
-            var btnArray = ['确认', '取消'];
             var txt = elem.innerHTML;
             var match_id = "{$league_id}"
             var schedule_id = elem.getAttribute('data-schedule_id');
             mui.confirm('确认删除赛程?', '提示', btnArray, function (e) {
-                if (e.index == 0) {
+                if (e.index == 1) {
                     var apiurl = "{:url('api/team/removeevent')}";
                     mui.ajax(apiurl, {
                         data: {

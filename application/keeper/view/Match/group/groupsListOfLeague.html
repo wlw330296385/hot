@@ -68,6 +68,7 @@
         $(function () {
             //初始化全局变量
             var count = 1;
+         
         })
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -134,22 +135,20 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             newli +=
-                                ` <ul class="mui-table-view detalis-list list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
+                                ` <ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
                             newli +=
                                 `<a class="mui-navigate-right"  href="#"><p>${data.data.data[i].name}</p></a>`
                             newli +=
                                 `<div class="mui-collapse-content" style="padding-bottom:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-40px; margin-bottom:0 !important">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
                                 newli +=
-                                    `<li class="mui-table-view-cell mui-media listli coach" style="padding-left:42px;">
-                                            <img class="mui-media-object mui-pull-left coachicon" src="${data.data.data[i].group_teams[j].team_logo}" style="width: 40px !important;height: 40px !important; float:left !important;">
+                                    `<li class="mui-table-view-cell listli groupTeam">
+                                            <img class="img40 mui-pull-left fl" src="${data.data.data[i].group_teams[j].team_logo}" style="margin-right:10px">
                                                 <div class="mui-media-body lineHeight20 wd73">
                                                     <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}`
                                 if (data.data.data[i].group_teams[j].is_seededteam == 1) {
                                     newli += `<font class="tipCorner bggreen">种子球队</font>`
-                                } else {
-                                    newli += ``
-                                }
+                                } 
                                 newli +=
                                     `</p>
                                                     <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
