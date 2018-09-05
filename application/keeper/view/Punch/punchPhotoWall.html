@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>打卡</title>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
@@ -16,6 +16,19 @@
     <link rel="stylesheet" href="/static/frontend/css/calendar.css">
 
     <style type="text/css">
+
+
+        html,body { margin:0px 0px 90px; padding:0px; width:1000px; background:#CCC; }
+        p{ color:#FFF; }
+        #popupShare { width:1000px; position:absolute; left:0; top:0;  z-index:999; }
+        #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; background:#000; }
+        #canvasPic { display:none; }
+        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:9999; font-size:42px; }
+        #fixTop a { background-color:#F60; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
+        #fixTop span { background-color:#690; display:none; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
+        #popupShare { visibility:hidden; position: absolute; top:0; left: 0; z-index: 8888; }
+        /*#popupShare img { width: 1000px; height:1799px; }*/
+
         .calendar{
             border-radius: 0px;
         }
@@ -89,23 +102,6 @@
         }
 
 
-
-        html,body { margin:0px 0px 90px; padding:0px; width:1000px; background:#CCC; }
-        p{ color:#FFF; }
-        #popupShare { width:1000px; position:absolute; left:0; top:0;  z-index:999; }
-        #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; background:#000; }
-        #picBg { width:1000px; }
-        #qrcode { position:absolute; left:110px; top:1230px; z-index:888; color:#FFF;  }
-        #qrcode span { display:block; width:244px; height:40px; font-size:18px; }
-        #qrcode img { width:240px; margin-bottom: 20px; }
-        #qrcode p {font-size:24px; line-height:36px; }
-        #userInfo {  color:#FFF; text-align:left !important; }
-        #canvasPic { display:none; }
-        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:9999; font-size:42px; }
-        #fixTop a { background-color:#F60; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
-        #fixTop span { background-color:#690; display:none; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
-        #popupShare { visibility:hidden; position: absolute; top:0; left: 0; z-index: 8888; }
-        /*#popupShare img { width: 1000px; height:1799px; }*/
     </style>
 </head>
 
@@ -159,73 +155,22 @@
     });
 
 
-    // (function ($, doc) {
-
-    //     $.ready(function () {
-    //         var _getParam = function (obj, param) {
-    //             return obj[param] || '';
-    //         };
-    //         //开始时间
-    //         var btnTimes = $('.btnTime');
-    //         btnTimes.each(function (i, btn) {
-    //             btn.addEventListener('tap', function () {
-    //                 var optionsJson = this.getAttribute('data-options') || '{}';
-    //                 var options = JSON.parse(optionsJson);
-    //                 var wTime = this;
-    //                 var id = this.getAttribute('id');
-    //                 var picker = new $.DtPicker(options);
-    //                 picker.show(function (rs) {
-    //                     //wTime.innerText = rs.text;
-    //                     wTime.innerText = rs.y.text+'-'+rs.m.text;
-    //                     // document.getElementById('year').value=rs.y.text;
-                        
-    //                     toMonthPunchList(); 
-
-    //                     //滚动到低部
-    //                     mui("body").scroll().refresh();
-    //                     mui("body").scroll().scrollTo(0,0,100);
-
-    //                     picker.dispose();
-    //                 });
-    //             }, false);
-    //         });
-
-    //     });
-    // })(mui, document);
-
-    var count = 1
-
     $(function () {
 
-        if ("{$memberInfo.id}" == 0) {
-            $(".group").attr("href", "javascript:;");
-            $(".punch").attr("href", "javascript:;");
-        }
-        $(".punch").on("tap", function () {
-            checkKogin()
-        });
-        $(".group").on("tap", function () {
-            checkKogin()
-        });
-        $(".goConfirm").click(function () {
-            mui.toast('暂未开放，敬请期待');
-        });
 
         toMonthPunchList(); //输出月份的打卡记录列表
 
         $(document).on("tap", ".arrow-prev", function () {
             setTimeout(function () {
-                var month_str = $("#calendar .title").text();
                 toMonthPunchList();
-            }, 100)
+            }, 1000)
 
 
         });
         $(document).on("tap", ".arrow-next", function () {
             setTimeout(function () {
-                var month_str = $("#calendar .title").text();
                 toMonthPunchList();
-            }, 100)
+            }, 1000)
         });
     })
 
@@ -310,58 +255,6 @@
         });
     };
 
-</script>
-
-<script>
-    window.onload = function () {
-        var flag = 0; //标记是拖曳还是点击
-        var oDiv = document.getElementById('drag');
-        var disX, moveX, L, T, starX, starY, starXEnd, starYEnd;
-        oDiv.addEventListener('touchstart', function (e) {
-            flag = 0;
-            e.preventDefault(); //阻止触摸时页面的滚动，缩放
-            disX = e.touches[0].clientX - this.offsetLeft;
-            disY = e.touches[0].clientY - this.offsetTop;
-            //手指按下时的坐标
-            starX = e.touches[0].clientX;
-            starY = e.touches[0].clientY;
-            //console.log(disX);
-        });
-        oDiv.addEventListener('touchmove', function (e) {
-            flag = 1;
-            L = e.touches[0].clientX - disX;
-            T = e.touches[0].clientY - disY;
-            //移动时 当前位置与起始位置之间的差值
-            starXEnd = e.touches[0].clientX - starX;
-            starYEnd = e.touches[0].clientY - starY;
-            //console.log(L);
-            if (L < 0) {
-                //限制拖拽的X范围，不能拖出屏幕
-                L = 0;
-            } else if (L > document.documentElement.clientWidth - this.offsetWidth) {
-                L = document.documentElement.clientWidth - this.offsetWidth;
-            }
-            if (T < 0) {
-                //限制拖拽的Y范围，不能拖出屏幕
-                T = 0;
-            } else if (T > document.documentElement.clientHeight - this.offsetHeight) {
-                T = document.documentElement.clientHeight - this.offsetHeight;
-            }
-            moveX = L + 'px';
-            moveY = T + 'px';
-            //console.log(moveX);
-            this.style.left = moveX;
-            this.style.top = moveY;
-        });
-        // window.addEventListener('touchend', function (e) {
-        //     //alert(parseInt(moveX))
-        //     //判断滑动方向
-        //     if (flag === 0) {
-        //         //点击
-
-        //     }
-        // });
-    }
 </script>
 
 <script type="text/javascript">

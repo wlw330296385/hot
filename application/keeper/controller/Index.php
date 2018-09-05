@@ -57,10 +57,12 @@ class Index extends Base{
         // 打卡总数
         $totalPunch = db('punch')->where(['member_id'=>$this->memberInfo['id']])->count();
         $fans = db('follow')->where(['follow_id'=>$this->memberInfo['id'],'type'=>1,'status'=>1])->count();
+        $teams = db('team_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->count();
 
         $this->assign('totalPunch',$totalPunch);
     	$this->assign('bannerList',$bannerList);
         $this->assign('fans',$fans);
+        $this->assign('teams',$teams);
         $this->assign('ArticleList',$ArticleList);
         $this->assign('bonusInfo',$bonusInfo);
         return view('Index/index');

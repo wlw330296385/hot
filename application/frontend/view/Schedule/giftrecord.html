@@ -35,9 +35,6 @@
             top: 250px
         }
 
-        .number {
-            width: 20% !important;
-        }
 
         .box {
             max-height: 300px;
@@ -47,6 +44,18 @@
 
         .editor .image-items .mui-input-group .mui-input-row {
             height: initial;
+        }
+        .mui-checkbox label, .mui-radio label{
+            float: left;
+            width: 35%;
+            padding-right:10px;
+        }
+        .bOrder {
+            font-size: 12px !important;
+            color:#999;
+            padding: 11px;
+            float: left;
+            line-height: 1.1;
         }
 
         #newdiv .tips {
@@ -77,6 +86,15 @@
             border-top: none;
             text-align: center;
         }
+        ol {
+            margin:0px;
+            padding:0px 0px 0px 18px;
+        }
+        ol li{
+            list-style: decimal;
+            font-size: 14px;
+            color: #8f8f94;
+        }
     </style>
 </head>
 
@@ -100,13 +118,15 @@
                     <span class="course">注意事项</span>
                 </div>
                 <div class="explain-cont">
-                        <p>1. 公益课无需赠课</p>
-                        <p>2、训练营必须先从平台购买课时用于赠送操作;</p>
+                    <ol>
+                        <li>公益课无需赠课；</li>
+                        <li>训练营必须先从平台购买课时用于赠送操作；</li>
                         {if $campInfo.rebate_type==1}
-                        <p>3. 赠课将与符合条件的订单关联,订单退款后,赠课数量返还给训练营</p>
-                        <p>4. 赠送课时的优惠政策以及产生的费用由训练营自行负责</p>
-                        <p>5. 转课生需要有对应课程订单方可赠课</p>
+                        <li>赠课将与符合条件的订单关联，订单退款后，<br />赠课数量返还给训练营；</li>
+                        <li>赠送的优惠政策以及产生的费用由训练营自行负责；</li>
+                        <li>转课生需要有对应课程订单方可赠课，否则不会在此列出来。</li>
                         {/if}
+                    </ol>
                 </div>
                 <div class="page-header">
                     <span class="course">请选择课程或者班级
@@ -409,7 +429,7 @@
                                  fff = "disabled='disabled'"
                             }
 
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + data.data[i].student + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + ' data-b_id = "'+data.data[i].b_id+'" data-data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'"  type="checkbox"></div>'
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '、 <font>' + data.data[i].student + '</font></label><font class="bOrder">订单：' + data.data[i].bill_order + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + ' data-b_id = "'+data.data[i].b_id+'" data-data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'"  type="checkbox"></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {
@@ -481,7 +501,7 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '</label><font>' + wooApi.dateIt("Y-m-d",data.data[i].b_c)+data.data[i].student + '<text>'+data.data[i].bill_order+'</text></font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" data-b_id = "'+data.data[i].b_id+'"  data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'" type="checkbox" ></div>'
+                            newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number w36">' + (i + 1) + '、 <font>' + data.data[i].student + '</font></label><font class="bOrder">订单：' + data.data[i].bill_order + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-lesson="' + data.data[i].lesson + '" value="' + data.data[i].student_id + '" data-b_id = "'+data.data[i].b_id+'"  data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'" type="checkbox" ></div>'
                         }
                         $(".box").empty();
                         if (newstudentli == '') {

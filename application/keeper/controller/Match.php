@@ -839,9 +839,24 @@ class Match extends Base {
             'type' => 1
         ]);
 
+        $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+        $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $matchStageGroupInfo['id']], $orderby);
+
+        $finalArray = array();
+        if (!empty($matchScheduleInfo)){
+            foreach ($matchScheduleInfo as $row) {
+                // dump($row);exit;
+                $temp = date("Y-m-d", $row['match_timestamp']);
+                if (!array_key_exists($temp, $finalArray)) {
+                    $finalArray[$temp] = array();
+                }
+                array_push($finalArray[$temp], $row);
+            }
+        }
 
         $this->assign('groups', $groups);
         $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
+        $this->assign('matchScheduleInfo', $finalArray);
         return view('Match/schedule/createSchedule');
     }
 
@@ -857,7 +872,6 @@ class Match extends Base {
             'match_id' => $this->league_id,
             'type' => 1
         ]);
-
 
         $this->assign('groups', $groups);
         $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
