@@ -38,15 +38,6 @@
             position: absolute;
         }
 
-        .addInput {
-            margin-top: 15px;
-        }
-
-        .addBtn {
-            margin-top: 15px;
-            padding: 12px 11px;
-        }
-
         .checkboxCont label{
             width: 12%;
             padding: 10px;
@@ -65,31 +56,36 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <a class="addSchedule colorblue">添加赛程</a>
+            <a class="addSchedule colorblue">增加赛程</a>
         </h1>
     </header>
 
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="match" value="{$leagueInfo.name}" class="data">
-        <input type="hidden" name="match_id" value="{$leagueInfo.id}" class="data">
-        <input type="hidden" name="add_mode" value="2" class="data">
+        <input type="hidden" name="match_id" value="{$league_id}" class="data">
+        <input type="hidden" name="match_stage" value="" class="data">
+        <input type="hidden" name="match_stage_id" value="" class="data">
+        <input type="hidden" name="status" value="0" class="data">
+
         <ul class="mui-table-view mb list">
             <li class="mui-table-view-cell listli">
                 <label>比赛阶段</label>
-                <span>小组赛</span>
+                <span class="match_stage"></span>
             </li>
         </ul>
+
         <form action="" class="mui-input-group mb44 formList">
 
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
-                    <span class="course">比赛日1</span>
+                    <span class="course">比赛日<text class="tnum">1</text></span>
+                    <span class="fr f14 deleteModel hide">删除</span>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="1" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
-                        <span></span>
+                        <span class="matchTime"></span>
                     </div>
                 </div>
                 <!-- start -->
@@ -105,9 +101,8 @@
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
-                        <a href="#firght" id="setleagueScoreBox" class="mui-icon mui-icon-personadd add"></a>
+                        <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
                     </div>
-                    <input type="hidden" class="data" name="scorers" value="">
                 </div>
                 <!-- end -->
             </div>
@@ -121,12 +116,15 @@
         </ul>
     </div>
 
-    <!--球队A-->
+    <!--选择对阵球队-->
     <div id="firght" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course">
+            <span class="f14 ">
                 <strong>选择对阵球队</strong>
+            </span>
+            <span class="fr">
+                <button type="button" id="closeConfirm">关闭</button>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="firghtConfirm">确认</button>
@@ -134,24 +132,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <form class="mui-input-group firghtList">
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="wd">FiremTeam VS F-18</label>
-                        <span>A组</span>
-                        <input name="checkbox-firght" type="checkbox" data-home_team="H1篮球队" data-home_team_id="3"
-                            data-home_team_logo="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" data-away_team="荣光WTF"
-                            data-away_team_id="12" data-away_team_logo="/uploads/images/team/2018/02/thumb_5a77daba6c6b5.jpg"
-                            data-homeaway_team_id="312">
-                    </div>
-                    <div class="mui-input-row mui-checkbox mui-left">
-                        <label class="wd">FiremTeam VS F-18</label>
-                        <span>B组</span>
-                        <input name="checkbox-firght" type="checkbox" data-home_team="FireTeam" data-home_team_id="8"
-                            data-home_team_logo="/uploads/images/team/2018/02/thumb_5a7c52d46e199.jpeg" data-away_team="F-18"
-                            data-away_team_id="11" data-away_team_logo="/uploads/images/team/2018/02/thumb_5a77daba6c6b5.jpg"
-                            data-homeaway_team_id="811">
-                    </div>
-                </form>
+                <form class="mui-input-group firghtList"></form>
             </div>
             <div class="mui-scrollbar mui-scrollbar-vertical">
                 <div class="mui-scrollbar-indicator"></div>
@@ -163,7 +144,6 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
-    <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         //初始化
@@ -203,22 +183,24 @@
                 });
             })
         })(mui, document);
-        let pstageId = ''
 
         $(function () {
-            getbattle()
+            getbattle(); //获取对阵信息
+            matchStage(); //获取比赛阶段数据
+
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
                 let listLength = $(".scheduleList").length + 1;
                 let str =
                     `<div class="scheduleList" data-num="${listLength}">
                         <div class="page-header bggray2 border-b">
-                            <span class="course">比赛日${listLength}</span>
+                            <span class="course">比赛日<text class="tnum">${listLength}</text></span>
+                            <span class="fr f14 deleteModel">删除</span>
                         </div>
                         <div class="mui-input-row timeTap" data-tnum="${listLength}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
                             <div class="mui-navigate-right">
                                 <label>比赛时间</label>
-                                <span></span>
+                                <span class="matchTime"></span>
                             </div>
                         </div>
                         <div class="operation-box mb clickTap" style="padding:15px;">
@@ -235,13 +217,16 @@
                                 <a class="del">[删除]</a>
                                 <a href="#firght" id="setleagueScoreBox" class="mui-icon mui-icon-personadd add"></a>
                             </div>
-                            <input type="hidden" class="data" name="scorers" value="">
                         </div>
                     </div>`;
                 $(".formList").append(str);
+
+                if ($(".scheduleList").length > 1) {
+                    $('.deleteModel').show();
+                }
             });
 
-            //获取分组序号并且赋值到球队列表
+            //获取序号并且赋值到对阵列表
             $(document).on("tap", ".add", function () {
                 $(".firghtList input[type=checkbox]").attr("data-num", $(this).parents(".scheduleList")
                     .attr("data-num"));
@@ -259,11 +244,12 @@
                         ` <div class="mui-input-row mui-checkbox checkboxCont ">
                                 <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                     <div class="mui-col-xs-2 order"></div>
-                                    <div class="mui-col-xs-2">${$(this).siblings("span").text()}</div>
-                                    <div class="mui-col-xs-6 mui-ellipsis">${$(this).attr("data-home_team")} VS ${$(this).attr("data-away_team")}</div>
+                                    <div class="mui-col-xs-2 matchGroup" data-group_id="${$(this).siblings("span").attr("data-group_id")}">${$(this).siblings("span").text()}</div>
+                                    <div class="mui-col-xs-6 mui-ellipsis mui-text-left">${$(this).attr("data-home_team")} VS ${$(this).attr("data-away_team")}</div>
                                     <input type="checkbox" name="" class="firght" value="" data-home_team="${$(this).attr("data-home_team")}" data-home_team_id="${$(this).attr("data-home_team_id")}"
-                                data-home_team_logo="${$(this).attr("data-home_team_logo")}" data-away_team="${$(this).attr("data-away_team")}"
-                                data-away_team_id="${$(this).attr("data-away_team_id")}" data-away_team_logo="${$(this).attr("data-away_team_logo")}"
+                                data-home_team_logo="${$(this).attr("data-home_team_logo")}" data-home_team_alias="${$(this).attr("data-home_team_alias")}" data-away_team="${$(this).attr("data-away_team")}"
+                                data-away_team_id="${$(this).attr("data-away_team_id")}" data-away_team_logo="${$(this).attr("data-away_team_logo")}" 
+                                data-away_team_alias="${$(this).attr("data-away_team_alias")}"
                                 data-homeaway_team_id="${$(this).attr("data-home_team_id")}${$(this).attr("data-away_team_id")}">
                                 </div>
                             </div>`
@@ -292,6 +278,7 @@
                     }
                 });
 
+
             });
 
             //列表复选框赋值
@@ -318,6 +305,27 @@
                 })
             });
 
+
+            // 删除整个比赛日
+            $(document).on("tap", ".deleteModel", function () {
+                var btnArray = ['取消', '确认'];
+                var thisdiv = $(this).parents(".scheduleList");
+                mui.confirm("确认删除该比赛日程？", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        thisdiv.remove();
+                        if ($(".scheduleList").length == 1) {
+                            $('.deleteModel').hide();
+                        }
+
+                        // 比赛日序号的更新
+                        var i = 1;
+                        $(".scheduleList").each(function () {
+                            $(this).find(".tnum").text(i++); //更新序号
+                        });
+                    }
+                })
+            })
+
             //全选
             $(".all").on('tap', function () {
                 $(".checkboxCont").find('input').prop('checked', true)
@@ -326,7 +334,7 @@
             $(".cancel").on('tap', function () {
                 $(".checkboxCont").find('input').prop('checked', false)
             })
-            //删除
+            //删除对阵信息
             $(document).on('tap', '.del', function () {
                 var thisBox = $(this).parents(".operation-btn").siblings(".box")
                 thisBox.find(".firght:checked").parents(
@@ -339,13 +347,42 @@
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
 
+
+
         });
-        var scheduleList = [];
-        var match_id = $('input[name=match_id]').val();
-        var match = $('input[name=match]').val();
+
+        var schedules = [];
         var league_id = "{$league_id}";
+
+        // 比赛阶段
+        function matchStage() {
+            mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
+                data: {
+                    league_id: league_id,
+                    type: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        $("input[name=match_stage]").val(data.data[0].name);
+                        $("input[name=match_stage_id]").val(data.data[0].id);
+                        $(".match_stage").text(data.data[0].name);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
+        // 请求api 获取对阵信息
         function getbattle() {
-            // 请求api 获取对阵信息
             var urlBuildBatte = "{:url('api/league/buildschedulebygroup')}";
             var match_id = "{$league_id}";
             mui.ajax({
@@ -366,47 +403,30 @@
                     if (data.code == 200) {
 
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli +=
-                                `<div class="page-header bggray2">
-                                            <span class="course">${data.data[i].group_name}</span>
-                                        </div>`
+                            newli += `<div class="mui-input-row mui-checkbox mui-left">`
                             for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
                                 newli +=
-                                    `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body wd">
-                                                    <p class="f14" style="margin-bottom: 8px;">
-                                                        <img class="img24" src="${data.data[i].battles[j].home_team_logo}" alt="">${data.data[i].battles[j].home_team}</p>
-                                                    <p class="f14">
-                                                        <img class="img24" src="${data.data[i].battles[j].away_team_logo}" alt="">${data.data[i].battles[j].away_team}</p>
-                                                </div>`
-                                newli += `</div></li>`
-                                var match_group_id = data.data[i].group_id;
-                                var match_group = data.data[i].group_name;
-                                var home_team_id = data.data[i].battles[j].home_team_id;
-                                var home_team = data.data[i].battles[j].home_team;
-                                var home_team_logo = data.data[i].battles[j].home_team_logo;
-                                var away_team_id = data.data[i].battles[j].away_team_id;
-                                var away_team = data.data[i].battles[j].away_team;
-                                var away_team_logo = data.data[i].battles[j].away_team_logo;
-                                scheduleList.push({
-                                    match_id,
-                                    match,
-                                    match_group_id,
-                                    match_group,
-                                    home_team_id,
-                                    home_team,
-                                    home_team_logo,
-                                    away_team_id,
-                                    away_team,
-                                    away_team_logo
-                                });
+                                    `<label class="wd mui-ellipsis">${data.data[i].battles[j].home_team} VS ${data.data[i].battles[j].away_team}</label>`
+                            }
+                            newli +=
+                                `<span class="matchGroup" data-group_id="${data.data[i].group_id}">${data.data[i].group_name}</span>`
+                            for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
+                                var battlesArray = data.data[i].battles[j]
+                                newli +=
+                                    `<input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" 
+                                            data-home_team_id="${battlesArray.home_team_id}" data-home_team_logo="${battlesArray.home_team_logo}" 
+                                            data-home_team_alias="${battlesArray.home_team_alias}"  data-away_team="${battlesArray.away_team}"
+                                            data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
+                                            data-away_team_alias="${battlesArray.away_team_alias}" 
+                                            data-homeaway_team_id="${battlesArray.home_team_id}${battlesArray.away_team_id}"> `
+                                newli += `</div>`
                             }
                         }
                         if (newli != '') {
-                            $(".schedule").empty().append(newli);
+                            $(".firghtList").empty().append(newli);
                         }
                     } else {
-                        $(".schedule").html('<p class="nodata">没有相关数据哦</p>');
+                        $(".firghtList").html('<p class="nodata">没有相关数据哦</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -417,62 +437,51 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            scheduleList = []
+            schedules = []
             $(".scheduleList").each(function () {
-                var home_team = $(this).find(".HomeTeam").text();
-                var home_team_id = $(this).find("input[name=home_team_id]").val();
-                var home_team_logo = $(this).find("input[name=home_team_logo]").val();
-                var away_team = $(this).find(".AwayTeam").text();
-                var away_team_id = $(this).find("input[name=away_team_id]").val();
-                var away_team_logo = $(this).find("input[name=away_team_logo]").val();
-                var match_stage_id = $(this).find("input[name=match_stage_id]").val();
-                var match_stage = $(this).find("input[name=match_stage]").val();
-                var court = $(this).find(".court").text();
-                var court_id = $(this).find("input[name=court_id]").val();
-                var match_time = $(this).find(".ui-alert").text();
-                var scheduleName = $(this).find(".course").text();
-                if (match_stage_id == '') {
-                    mui.toast("请选择" + scheduleName + "的比赛阶段");
-                    return false;
-                }
-                if (home_team_id == '') {
-                    mui.toast("请选择" + scheduleName + "的主队");
-                    return false;
-                }
-                if (away_team_id == '') {
-                    mui.toast("请选择" + scheduleName + "的客队");
-                    return false;
-                }
-                scheduleList.push({
-                    home_team,
-                    home_team_id,
-                    home_team_logo,
-                    away_team,
-                    away_team_id,
-                    away_team_logo,
-                    match_stage_id,
-                    match_stage,
-                    court,
-                    court_id,
-                    match_time
+                var match_time = $(this).find(".matchTime").text();
+                $(this).find(".checkboxCont").each(function () {
+                    var match_group = $(this).find(".matchGroup").text();
+                    var match_group_id = $(this).find(".matchGroup").attr("data-group_id");
+                    var home_team = $(this).find(".firght").attr("data-home_team");
+                    var home_team_id = $(this).find(".firght").attr("data-home_team_id");
+                    var home_team_logo = $(this).find(".firght").attr("data-home_team_logo");
+                    var home_team_alias = $(this).find(".firght").attr("data-home_team_alias");
+                    var away_team = $(this).find(".firght").attr("data-away_team");
+                    var away_team_id = $(this).find(".firght").attr("data-away_team_id");
+                    var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
+                    var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
+                    schedules.push({
+                        match_time,
+                        match_group,
+                        match_group_id,
+                        home_team,
+                        home_team_id,
+                        home_team_logo,
+                        home_team_alias,
+                        away_team,
+                        away_team_id,
+                        away_team_logo,
+                        away_team_alias
+                    })
                 })
             })
-            console.log(scheduleList)
+            console.log(schedules)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.scheduleList = JSON.stringify(scheduleList);
-            var url = "{:url('api/league/saveallcustommatchschedule')}";
+            objData.schedules = JSON.stringify(schedules);
+            var url = "{:url('api/league/saveallmatchschedule')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
-                mui.alert('编辑成功', '确定', function () {
+                mui.alert('创建成功', '确定', function () {
                     var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '编辑失败');
+                mui.alert(ajaxResult.msg, '创建失败');
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
                     if (data.code === 200) {
                         $('input[name=__token__]').val(data.data);

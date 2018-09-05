@@ -193,6 +193,13 @@
             </div>
             <p class="pline"></p>
             <div class="mui-input-row">
+                <label class="wd52">是否发布</label>
+                <div class="mui-switch status">
+                    <div class="mui-switch-handle"></div>
+                </div>
+                <input type="hidden" name="status" value="{$matchScheduleInfo.status}" class="data">
+            </div>
+            <div class="mui-input-row">
                 <label class="wd45">
                     <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色" class="data mui-text-left"
                         style="padding:0;height: initial;">
@@ -705,6 +712,22 @@
             $("#WorkDel").on('tap', '', function () {
                 $("input[name=custom_member]").val('');
                 mui("#work").popover("toggle");
+            });
+
+            // 设置是否发布
+            if ("{$matchScheduleInfo.status}" == "1") {
+                $(".status").addClass("mui-active");
+                $("input[name=status]").val(1)
+            } else   if ("{$matchScheduleInfo.status}" == "0"){
+                $("input[name=status]").val(0)
+            }
+            $(".status").on("tap", '', function () {
+                var st_m = $("input[name=status]");
+                if (st_m.val() == "0") {
+                    st_m.val("1");
+                } else {
+                    st_m.val("0");
+                }
             });
 
         });
