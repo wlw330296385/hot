@@ -3254,6 +3254,7 @@ class League extends Base
             $scheduleData[$k]['match'] = $data['match'];
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
+            $scheduleData[$k]['match_time'] = strtotime($scheduleData[$k]['match_time']);
             $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
