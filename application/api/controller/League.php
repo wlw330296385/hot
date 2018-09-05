@@ -3203,10 +3203,11 @@ class League extends Base
     public function saveallmatchschedule()
     {
         $data = input('post.');
-        if (empty($data['match_id']) || empty($data['match_stage_id']) || empty($data['status']) || empty($data['schedules'])) {
+
+        if (empty($data['match_id']) || empty($data['match_stage_id']) || empty($data['schedules'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
-        // $data['member_id'] = $this->memberInfo['id'];
+
         // 数据验证器
         $validate = validate('MatchScheduleVal');
         if (!$validate->scene('add')->check($data)) {
@@ -3226,6 +3227,8 @@ class League extends Base
             return json(['code' => 100, 'msg' => '请提交预览赛程']);
         }
 
+        $data['status'] = empty($data['status']) ? 0 : $data['status'];
+        
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
         // Db::startTrans();
         // try {
