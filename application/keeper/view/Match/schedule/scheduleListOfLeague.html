@@ -19,8 +19,8 @@
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('match/leagueManage',['league_id'=>$leagueInfo.id])}"></a>
-                <a class="mui-control-item mui-active" href="#onList">已发布</a>
-                <a class="mui-control-item" href="#offList">预排</a>
+                <a class="mui-control-item mui-active schedule1" href="#onList">已发布</a>
+                <a class="mui-control-item schedule0" href="#offList">预排</a>
             </div>
         </div>
     </header>
@@ -28,9 +28,11 @@
     <div class="mui-content">
         <div class="location-frame">
             <span class="location-choise">
-                <select id="sort">
+                <select class="fenzu">
                     <option value="0">全部分组</option>
-                    
+                    {volist name="groups" id="vo"}
+                    <option value="{$vo.id}">{$vo.name}</option>
+                    {/volist}
                 </select>
             </span>
         </div>
@@ -38,14 +40,16 @@
 
             <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list border-b scheduleList1"></ul>
+                    <ul class="mui-table-view list scheduleList1"></ul>
                 </div>
             </div>
             <div id="offList" class="mui-scroll-wrapper mui-control-content" style="margin-top:45px;">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view list border-b scheduleList0"></ul>
+                    <ul class="mui-table-view list scheduleList0"></ul>
                 </div>
             </div>
+
+            <div class="hideList hide"></div>
         </div>
 
 
@@ -55,9 +59,9 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue createArray">创建对阵</li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggreen createSchedule">创建赛程</li>
-            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred createNextSchedule">创建下一赛程</li>
+            <!-- <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgblue createArray">创建对阵</li> -->
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue createSchedule">创建赛程</li>
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred createNextSchedule">创建下一赛程</li>
             <!-- <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue hide notEmpty">
                 <a href="{:url('Match/createscheduleofleague1',['league_id'=>$leagueInfo.id])}">创建下一赛程</a>
             </li>
@@ -83,22 +87,9 @@
         var btnArray = ['取消', '确认'];
         $(function () {
 
-            $(".createArray").on("tap", function () {
-                mui.confirm("已为你分好组的球队预排了对阵信息，确认无误就提交数据吧！", "提示", btnArray, function (e) {
-                    if (e.index == 1) {
-                        window.location =
-                            "{:url('Match/createscheduleofleague',['league_id'=>$leagueInfo.id])}";
-                    }
-                });
-            });
-            $(".createSchedule").on("tap", function () {
-                mui.confirm("小组对阵信息已经生成，为你的比赛日程添加赛程吧！", "提示", btnArray, function (e) {
-                    if (e.index == 1) {
-                        window.location =
-                            "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
-                    }
-                });
-            });
+            if($(".fenzu").children().length<2){
+                $(".fenzu").parents(".location-frame").hide();
+            }
             $(".createNextSchedule").on("tap", function () {
                 mui.confirm("你可以在此手动创建自定义赛程！", "提示", btnArray, function (e) {
                     if (e.index == 1) {
@@ -147,104 +138,61 @@
                     }
                 })
             })
-
-            //初始化全局变量
-            var onCount = 1;
-            var offCount = 1;
-
-            mui('#onList').pullRefresh({
-                down: {
-                    //下拉刷新
-                    height: 50, //可选.默认50.触发下拉刷新拖动距离
-                    auto: true, //可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                    callback: pulldownRefreshOn
-                },
-                up: {
-                    //上拉加载
-                    height: 150, //可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefreshOn
-                }
-            });
-
-            mui('#offList').pullRefresh({
-                down: {
-                    //下拉刷新
-                    height: 50, //可选.默认50.触发下拉刷新拖动距离
-                    auto: true, //可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                    callback: pulldownRefreshOff
-                },
-                up: {
-                    //上拉加载
-                    height: 150, //可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefreshOff
-                }
-            });
-
-            //下拉刷新具体业务实现（上架）
-            function pulldownRefreshOn() {
-                setTimeout(function () {
-                    onCount = 1; //刷新并显示第一页
-                    var page = onCount;
-                    var gType = 1; //代表下拉刷新
-                    toList('onList', page, gType, 1); //具体取数据的方法
-                }, 100);
-            }
-
-            //上拉加载具体业务实现（上架）
-            function pullupRefreshOn() {
-                setTimeout(function () {
-                    onCount++; //翻下一页
-                    var page = onCount;
-                    var gType = 2; //代表上拉加载
-                    toList('onList', page, gType, 1); //具体取数据的方法
-                }, 100);
-            }
-
-            //下拉刷新具体业务实现（下架）
-            function pulldownRefreshOff() {
-                setTimeout(function () {
-                    offCount = 1; //刷新并显示第一页
-                    var page = offCount;
-                    var gType = 1; //代表下拉刷新
-                    toList('offList', page, gType, 0); //具体取数据的方法
-                }, 100);
-            }
-
-            //上拉加载具体业务实现（下架）
-            function pullupRefreshOff() {
-                setTimeout(function () {
-                    offCount++; //翻下一页
-                    var page = offCount;
-                    var gType = 2; //代表上拉加载
-                    toList('offList', page, gType, 0); //具体取数据的方法
-                }, 100);
-            }
-
+            toList()
+            getbattle()
         })
 
+        function getbattle() {
+            var urlBuildBatte = "{:url('api/league/buildschedulebygroup')}";
+            var match_id = "{$league_id}"
+            mui.ajax({
+                url: urlBuildBatte,
+                data: {
+                    match_id: match_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    $(".createSchedule").on("tap", function () {
+                        if (data.code == 200) {
+                            mui.confirm("小组分组对阵信息已经生成，为你的比赛日程添加赛程吧！", "提示", btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location =
+                                        "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
+                                }
+                            });
+                        } else {
+                            mui.confirm("暂无分组信息对阵信息，请先创建分组！", "提示", btnArray, function (e) {
+                                if (e.index == 1) {
+                                    window.location =
+                                        "{:url('Match/groupsListOfLeague',['league_id'=>$leagueInfo.id])}";
+                                }
+                            });
+                        }
+
+                    });
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
         // 接口获取数据并追加到页面
-        var toList = function (wList, page, gType, status) {
-            //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchschedulelistbytime')}" + '/?page=' + page;
+        function toList() {
+            var url = "{:url('api/league/getmatchschedulelistbytime')}";
             var league_id = "{$league_id}"
             mui.ajax({
                 url: url,
                 data: {
                     league_id: league_id,
-                    status: status,
-                    page: page
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -257,12 +205,9 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli +=
-                                `
-                                    <div class="page-header border-b bggray2">`
+                            newli += `<div class="page-header border-b bggray2">`
                             if (data.data[i].date == 0) {
-                                newli +=
-                                    `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
+                                newli += `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
                             } else {
                                 newli +=
                                     `<span class="course" style="padding-left:8px;">比赛日${i+1}</span>
@@ -278,74 +223,114 @@
                                     var Ttime = "待定"
                                 } else {
                                     var Ttime = getTimeHM(dataSchedule.match_timestamp * 1000);
-                                    // if (Ttime = "00:00") {
-                                    //     var Ttime = "待定"
-                                    // }
                                 }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' +
                                     league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
-                                var urlToRecordInfo = "{:url('match/leagueScheduleInfo')}" +
-                                    '/league_id/' + league_id + '/id/' + dataSchedule.id;
-                                // 根据状态判断跳转链接
-                                // if (dataSchedule.status == 0) {
                                 newli += `<a href="${urls}">`
-                                // } else if (dataSchedule.status == 1) {
-                                //     newli += `<a href="${urlToRecordInfo}">`
-                                // }
-                                newli += `<li class="mui-table-view-cell listli border-b">`
-
                                 newli +=
-                                    `<div class="mui-slider-right mui-disabled">
+                                    `<li class="mui-table-view-cell listli border-b" data-id="${dataSchedule.id}"  data-match_timestamp="${dataSchedule.match_timestamp}" data-status="${dataSchedule.status}" data-match_group_id="${dataSchedule.match_group_id}">
+                                        <div class="mui-slider-right mui-disabled">
                                             <span class="mui-btn mui-btn-red" data-schedule_id="${dataSchedule.id}">删除</span>
                                         </div>
                                         <div class="mui-slider-handle">
                                             <div class="mui-media-body wd">
                                                     <p class="f14" style="margin-bottom: 8px;">
-                                                        <img class="img24" src="${dataSchedule.home_team_logo}" style="margin-right:10px;">${dataSchedule.home_team}</p>
+                                                        <img class="img24 homeImg" src="${dataSchedule.home_team_logo}" style="margin-right:10px;"><text class="homeTeamClass">${dataSchedule.home_team}</text></p>
                                                     <p class="f14">
-                                                        <img class="img24" src="${dataSchedule.away_team_logo}" style="margin-right:10px;">${dataSchedule.away_team}</p>
+                                                        <img class="img24 awayImg" src="${dataSchedule.away_team_logo}" style="margin-right:10px;"><text class="awayTeamClass">${dataSchedule.away_team}</text></p>
                                                 </div>
                                                 <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
                                 if (dataSchedule.match_group_id == '') {
                                     newli += `<p style="line-height:62px;">${Ttime}</p>`
                                 } else {
                                     newli +=
-                                        `<p class="lineHeight32">${dataSchedule.match_group}</p><p class="lineHeight32">${Ttime}</p>`
+                                        `<p class="lineHeight32 match_group">${dataSchedule.match_group}</p><p class="lineHeight32">${Ttime}</p>`
                                 }
+
                                 newli += `</div></div></li></a>`
                             }
                             newli += `</ul>`
                         }
-                        if (newli != '') {
-                            $(".scheduleList").empty().append(newli);
-                        }
                     }
+                    $(".hideList").empty().append(newli);
 
-                    if (gType == 1) {
-                        //上拉刷新
-                        $(".scheduleList" + status).empty().append(newli);
-                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                        mui('#' + wList).pullRefresh().refresh(true);
-                        if (newli == '') {
-                            $(".scheduleList" + status).append(
-                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-                            );
-                        }
-                    } else {
-                        //下拉加载 gType==2
-                        $(".scheduleList" + status).append(newli);
-                    }
+                    // ///////////
+                    var liPublic = ''
+                    var liStatus12 = ''
+                    var liStatus0 = ''
+                    $(".hideList ul").each(function () {
+                        liStatus0 +=
+                            `<div class="page-header border-b bggray2">
+                                <span class="course" style="padding-left:8px;">${$(this).prev().find(".course").text()}</span>
+                                <span class="fr f14">${$(this).prev().find(".f14").text()}</span>
+                            </div>
+                            <ul class="mui-table-view list border-b">
+                                <p style="margin-bottom: 0;padding: 10px 0 0 22px;">${$(this).children("p").text()}</p>`
+                        liStatus12 +=
+                            `<div class="page-header border-b bggray2">
+                                <span class="course" style="padding-left:8px;">${$(this).prev().find(".course").text()}</span>
+                                <span class="fr f14">${$(this).prev().find(".f14").text()}</span>
+                            </div>
+                            <ul class="mui-table-view list border-b">
+                                <p style="margin-bottom: 0;padding: 10px 0 0 22px;">${$(this).children("p").text()}</p>`
+                        $(this).find("li").each(function () {
+                            var status = $(this).attr("data-status");
+                            var urls = "{:url('match/editscheduleofleague')}" +
+                                '/league_id/' + league_id + '/id/' + $(this).attr("data-id") +
+                                '/?from=scheduleList';
+                            if (status == 0) {
+                                liStatus0 += `<a href="${urls}">`
+                                liStatus0 +=
+                                    `<li class="mui-table-view-cell listli border-b">
+                                        <div class="mui-slider-right mui-disabled">
+                                            <span class="mui-btn mui-btn-red" data-schedule_id="${$(this).find(".mui-btn").attr("data-schedule_id")}">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle">
+                                            <div class="mui-media-body wd">
+                                                <p class="f14" style="margin-bottom: 8px;">
+                                                    <img class="img24" src="${$(this).find(".homeImg").attr("src")}" style="margin-right:10px;">${$(this).find(".homeTeamClass").text()}</p>
+                                                <p class="f14">
+                                                    <img class="img24" src="${$(this).find(".awayImg").attr("src")}" style="margin-right:10px;">${$(this).find(".awayTeamClass").text()}</p>
+                                            </div>
+                                        <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`
+                                if ($(this).attr("data-match_timestamp") == '') {
+                                    liStatus0 +=
+                                        `<p style="line-height:62px;">待定</p>`
+                                } else {
+                                    liStatus0 +=
+                                        `<p class="lineHeight32">${$(this).find(".match_group").text()}</p>
+                                              <p class="lineHeight32">${getTimeHM(dataSchedule.match_timestamp * 1000)}</p>`
+                                }
+                                liStatus0 += `</div></li></a>`;
+                                $(".scheduleList0").empty().append(liStatus0);
+                            } else {
+                                liStatus12 +=
+                                    `<li class="mui-table-view-cell listli border-b">
+                                        <div class="mui-slider-right mui-disabled">
+                                            <span class="mui-btn mui-btn-red" data-schedule_id="${$(this).find(".mui-btn").attr("data-schedule_id")}">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle">
+                                            <div class="mui-media-body wd">
+                                                <p class="f14" style="margin-bottom: 8px;">
+                                                    <img class="img24" src="${$(this).find(".homeImg").attr("src")}" style="margin-right:10px;">${$(this).find(".homeTeamClass").text()}</p>
+                                                <p class="f14">
+                                                    <img class="img24" src="${$(this).find(".awayImg").attr("src")}" style="margin-right:10px;">${$(this).find(".awayTeamClass").text()}</p>
+                                            </div>
+                                        <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">
+                                            <p class="lineHeight32">${$(this).find(".match_group").text()}</p>
+                                            <p class="lineHeight32">16:16</p>
+                                        </div>
+                                    </li>`;
+                                $(".scheduleList1").empty().append(liStatus12);
+                            }
+                        })
+                        liStatus0 += `</ul>`;
+                        liStatus12 += `</ul>`;
 
-                    if (newli != '') {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                    } else {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                    }
-
+                    })
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
             });
         };

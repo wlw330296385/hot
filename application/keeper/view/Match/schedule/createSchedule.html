@@ -326,11 +326,10 @@
 
             //列表复选框赋值
             $(document).on("tap", ".add", function () {
-                $(".firghtList input[type=checkbox]").attr("data-num", $(this).parents(".scheduleList")
-                    .attr("data-num"));
+                $(".firghtList input[type=checkbox]").attr("data-num", $(this).parents(".scheduleList").attr("data-num"));
                 //每次打开先清空所有选择
-                $("input[type='checkbox']").prop("checked", false);
-                $("input[type='checkbox']").prop("disabled", false);
+                $(".firghtList input[type='checkbox']").prop("checked", false);
+                $(".firghtList input[type='checkbox']").prop("disabled", false);
                 //然后遍历出对应所选
                 var dataNum = $(".firghtList input[type=checkbox]").attr("data-num");
                 $(this).parents(".operation-btn").siblings(".box").find(".checkboxCont").each(function () {
@@ -524,27 +523,27 @@
                 return isCheck
             }
             console.log(schedules)
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.schedules = JSON.stringify(schedules);
-            // var url = "{:url('api/league/saveallmatchschedule')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert('创建成功', '确定', function () {
-            //         var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.schedules = JSON.stringify(schedules);
+            var url = "{:url('api/league/saveallmatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('创建成功', '确定', function () {
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
 </body>

@@ -822,6 +822,11 @@ class Match extends Base {
             // 有分组的赛程信息
             $showBtn = 5;
         }
+        $groups = $leagueS->getMatchGroups([
+            'match_id' => $this->league_id
+        ]);
+
+        $this->assign('groups', $groups);
         
         $this->assign('showBtn', $showBtn);
         return view('Match/schedule/scheduleListOfLeague');
