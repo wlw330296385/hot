@@ -82,6 +82,15 @@ class Index extends Base{
 
             unset($map);
             $map['match_record.home_team_id|match_record.away_team_id'] = ['in', $teamIds];
+
+            // 比赛场次 和里面统一
+            $matchs = db('match')->join('match_record','match.id = match_record.match_id')
+            ->where($map)
+            ->where("`match_org_id` = 0 OR `is_record` = 1")
+            ->where("match.delete_time IS NULL")
+            ->order("match_record.match_time desc")
+            ->count();
+
             $matchRecordModel = new MatchRecord();
             $lastMatch = $matchRecordModel->field('*, abs(unix_timestamp(now()) - `match_time`) AS diff') -> where($map)->order('diff asc')->find();
 
@@ -111,13 +120,6 @@ class Index extends Base{
         $fans = db('follow')->where(['follow_id'=>$this->memberInfo['id'],'type'=>1,'status'=>1])->count();
         $teams = count($teamIds);
         
-        // 比赛场次 和里面统一
-        $matchs = db('match')->join('match_record','match.id = match_record.match_id')
-        ->where($map)
-        ->where("`match_org_id` = 0 OR `is_record` = 1")
-        ->where("match.delete_time IS NULL")
-        ->order("match_record.match_time desc")
-        ->count();
         $matchs = empty($matchs) ? 0 : $matchs;
 
         $matchDiff = empty($lastMatch["diff"]) ? 0 : $lastMatch["diff"];
