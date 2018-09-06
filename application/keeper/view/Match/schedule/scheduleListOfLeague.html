@@ -83,11 +83,21 @@
         mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
-
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
         var btnArray = ['取消', '确认'];
         $(function () {
 
-            if($(".fenzu").children().length<2){
+            if ($(".fenzu").children().length < 2) {
                 $(".fenzu").parents(".location-frame").hide();
             }
             $(".createNextSchedule").on("tap", function () {
