@@ -386,10 +386,7 @@ class Match extends Base {
     public function leagueTeam() {
         return view('Match/team/leagueTeam');
     }
-    // 联赛奖项
-    public function leagueHonor() {
-        return view('Match/leagueHonor');
-    }
+ 
      // 联赛花絮
      public function leagueTidbit() {
         return view('Match/leagueTidbit');
@@ -1069,7 +1066,33 @@ class Match extends Base {
         $this->assign('matchRecordInfo', $matchRecordInfo);
         return view('Match/record/editRecordScoreOfLeague');
     }
-  
+    
+    // 联赛荣誉列表
+    public function honorListOfLeague() {
+        return view('Match/honor/listOfLeague');
+    }
+    // 联赛创建荣誉
+    public function createHonorOfLeague() {
+        return view('Match/honor/createOfLeague');
+    }
+     // 联赛荣誉详情（外部展示）
+     public function honorInfo() {
+        return view('Match/honor/info');
+    }
+    // 联赛荣誉详情
+    public function honorInfoOfLeague() {
+        return view('Match/honor/infoOfLeague');
+    }
+    // 联赛编辑荣誉
+    public function honotEditOfLeague() {
+        return view('Match/honor/editOfLeague');
+    }
+    // 联赛荣誉
+    public function leagueHonor() {
+        return view('Match/honor/leagueHonor');
+    }
+
+
     // 联赛动态列表
     public function dynamicListOfLeague() {
         return view('Match/dynamic/listOfLeague');
