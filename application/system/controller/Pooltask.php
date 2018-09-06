@@ -316,7 +316,7 @@ class Pooltask extends Base{
      * 发送模板消息
      */
     public function sendMessage(){
-        $list = db('pool_winner')->field('member.openid,member.member,pool_winner.winner_bonus,pool_winner.create_time,pool_winner.pool,pool_winner.ranking,pool_winner.group_id')->join('member','member.id = pool_winner.member_id')->where(['pool_winner.is_message'=>-1,'pool_winner.winner_bonus'=>['gt',0]])->order('pool_winner.id desc')->select();
+        $list = db('pool_winner')->field('member.openid,member.member,pool_winner.winner_bonus,pool_winner.create_time,pool_winner.pool,pool_winner.ranking,pool_winner.group_id')->join('member','member.id = pool_winner.member_id')->join('pool','pool.id=pool_winner.pool_id')->where(['pool_winner.is_message'=>-1,'pool_winner.winner_bonus'=>['gt',0]])->order('pool_winner.id desc')->select();
         // $list = [['member_id'=>8,'winner_bonus'=>999,'create_time'=>1531404000,'openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q']];
         $WechatService = new \app\service\WechatService();
         //给获奖名单发消息
