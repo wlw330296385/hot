@@ -132,6 +132,7 @@ class Punch extends Base{
                     $value['punch_id'] = $result['data'];
                     $value['month_str'] = date('Ym',time());
                     $value['date_str'] = date('Ymd',time());
+                    $value['avatar'] = $this->memberInfo['avatar'];
                     db('pool')->where(['id'=>$value['pool_id']])->inc('members',1)->inc('bonus',$value['stake'])->update();
                 }
                 
