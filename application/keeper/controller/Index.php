@@ -5,6 +5,10 @@ use app\service\MemberService;
 use app\service\WechatService;
 use app\service\BannerService;
 use app\service\TeamService;
+use app\service\MatchService;
+use app\model\MatchRecord;
+use app\model\TeamEvent;
+use think\Db;
 use think\Cookie;
 
 class Index extends Base{
@@ -54,17 +58,88 @@ class Index extends Base{
         }
         //平台礼包结束
 
-        // 打卡总数
+        // 获取所在球队列表 获取距离现在最近的一条 球队活动/比赛
+        $teamS = new TeamService();
+        $matchS = new MatchService();
+        $memberInTeam = $teamS->myTeamAll($this->memberInfo["id"]);
+        $lastMatch = "";
+        $lastEvent = "";
+        $myTeamId = 0;
+        $teamIds = [];
+        if ($memberInTeam) {
+            foreach ($memberInTeam as $team) {
+                array_push($teamIds, $team['team_id']);
+            }
+            $map['team_id'] = ['in', $teamIds];
+            $map['status'] = 1;
+            $teamEventModel = new TeamEvent();
+            $lastEvent = $teamEventModel->field('*, abs(unix_timestamp(now()) - `start_time`) AS diff') -> where($map)->order('diff asc')->find();
+            if (!empty($lastEvent)) {
+                $lastEvent = $lastEvent -> toArray();
+                $lastEvent['memberlist'] = $teamS->teamEventMembers(['event_id' => $lastEvent['id'], 'status' => ['>', 0]]);
+                $lastEvent['start_time_ts'] = strtotime($lastEvent['start_time']);
+            }
+
+            unset($map);
+            $map['match_record.home_team_id|match_record.away_team_id'] = ['in', $teamIds];
+            $matchRecordModel = new MatchRecord();
+            $lastMatch = $matchRecordModel->field('*, abs(unix_timestamp(now()) - `match_time`) AS diff') -> where($map)->order('diff asc')->find();
+
+            if (!empty($lastMatch)) {
+                $lastMatch = $lastMatch -> toArray();
+                foreach($teamIds as $tempId) {
+                    if ( $tempId == $lastMatch["home_team_id"] ) {
+                        $myTeamId = $tempId;break;
+                    } else if ($tempId == $lastMatch["away_team_id"]) {
+                        $myTeamId = $tempId;break;
+                    }
+                }
+                $lastMatch['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $lastMatch['id'],
+                    'team_id' => $myTeamId,
+                    'status' => ['>', 0],
+                    'team_member_id' => ['>', 0]
+                ]);
+                $lastMatch['max'] = $teamS->getTeamMemberCount(['team_id' => $myTeamId, 'status' => 1]);
+                $lastMatch['match_time_ts'] = strtotime($lastMatch['match_time']);
+            }
+
+        }
+
+        // 统计
         $totalPunch = db('punch')->where(['member_id'=>$this->memberInfo['id']])->count();
         $fans = db('follow')->where(['follow_id'=>$this->memberInfo['id'],'type'=>1,'status'=>1])->count();
-        $teams = db('team_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->count();
+        $teams = count($teamIds);
+        
+        // 比赛场次 和里面统一
+        $matchs = db('match')->join('match_record','match.id = match_record.match_id')
+        ->where($map)
+        ->where("`match_org_id` = 0 OR `is_record` = 1")
+        ->where("match.delete_time IS NULL")
+        ->order("match_record.match_time desc")
+        ->count();
+        $matchs = empty($matchs) ? 0 : $matchs;
+
+        $matchDiff = empty($lastMatch["diff"]) ? 0 : $lastMatch["diff"];
+        $eventDiff = empty($lastEvent["diff"]) ? 0 : $lastEvent["diff"];
+        if ($matchDiff < $eventDiff) {
+            $uiQueue = array('match', 'event');
+        } else {
+            $uiQueue = array('event', 'match');
+        }
 
         $this->assign('totalPunch',$totalPunch);
     	$this->assign('bannerList',$bannerList);
         $this->assign('fans',$fans);
         $this->assign('teams',$teams);
+        $this->assign('matchs',$matchs);
         $this->assign('ArticleList',$ArticleList);
         $this->assign('bonusInfo',$bonusInfo);
+        $this->assign('lastEvent',$lastEvent);
+        $this->assign('lastMatch',$lastMatch);
+        $this->assign('uiQueue',$uiQueue);
+        // dump($lastEvent);
+        // dump($lastMatch);exit;
         return view('Index/index');
     }
 
