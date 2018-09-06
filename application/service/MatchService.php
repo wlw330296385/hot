@@ -967,9 +967,9 @@ class MatchService {
     }
 
     // 仅获取一条比赛记录
-    public function getMatchRecordOnly($map) {
+    public function getMatchRecordOnly($map, $order = 'id desc') {
         $model = new MatchRecord();
-        $res = $model->where($map)->find();
+        $res = $model->where($map)->order($order)->find();
         if (!$res) {
             return $res;
         }

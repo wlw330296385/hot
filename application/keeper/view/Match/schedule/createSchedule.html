@@ -77,7 +77,7 @@
 
         <form action="" class="mui-input-group mb44 formList">
 
-            <!--             <div class="scheduleList" data-num="1">
+            <div class="scheduleList hide" data-num="1">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日<text class="tnum">1</text></span>
                     <span class="fr f14 deleteModel hide">删除</span>
@@ -103,14 +103,13 @@
                         <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
                     </div>
                 </div>
-            </div> -->
-
+            </div>
 
             {volist name="matchScheduleInfo" id="vo1" key="a"}
             <div class="scheduleList" data-num="{$a}">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日<text class="tnum">{$a}</text></span>
-                    <span class="fr f14 deleteModel hide">删除</span>
+                    <span class="fr f14 deleteModel">删除</span>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
                     <div class="mui-navigate-right">
@@ -150,6 +149,8 @@
                 </div>
             </div>
             {/volist}
+
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -231,6 +232,9 @@
             getbattle(); //获取对阵信息
             matchStage(); //获取比赛阶段数据
 
+            if ("{$matchScheduleInfo | count}" == 0) {
+                $(".scheduleList").show()
+            }
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
                 let listLength = $(".scheduleList").length + 1;
@@ -329,8 +333,8 @@
                 $(".firghtList input[type=checkbox]").attr("data-num", $(this).parents(".scheduleList")
                     .attr("data-num"));
                 //每次打开先清空所有选择
-                $("input[type='checkbox']").prop("checked", false);
-                $("input[type='checkbox']").prop("disabled", false);
+                $(".firghtList input[type='checkbox']").prop("checked", false);
+                $(".firghtList input[type='checkbox']").prop("disabled", false);
                 //然后遍历出对应所选
                 var dataNum = $(".firghtList input[type=checkbox]").attr("data-num");
                 $(this).parents(".operation-btn").siblings(".box").find(".checkboxCont").each(function () {
@@ -416,6 +420,14 @@
                         $("input[name=match_stage]").val(data.data[0].name);
                         $("input[name=match_stage_id]").val(data.data[0].id);
                         $(".match_stage").text(data.data[0].name);
+                    } else {
+                        var btnArray = ['取消', '确认'];
+                        mui.confirm("请先创建小组赛比赛阶段", "提示", btnArray, function (e) {
+                            if (e.index == 1) {
+                                window.location =
+                                    "{:url('Match/creatematchstage',['league_id'=>$leagueInfo.id])}";
+                            }
+                        });
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -524,27 +536,27 @@
                 return isCheck
             }
             console.log(schedules)
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.schedules = JSON.stringify(schedules);
-            // var url = "{:url('api/league/saveallmatchschedule')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert('创建成功', '确定', function () {
-            //         var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.schedules = JSON.stringify(schedules);
+            var url = "{:url('api/league/saveallmatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('创建成功', '确定', function () {
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
 </body>
