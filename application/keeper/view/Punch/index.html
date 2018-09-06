@@ -120,7 +120,7 @@
 
     <p class="pline"></p>
     <div class="mui-content">
-        <div class="list" style="margin-bottom: 110px;">
+        <div class="list" style="margin-bottom: 60px;">
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
@@ -179,10 +179,35 @@
             </div>
 
             <ul class="mui-table-view mb punchList">
-                <p class="moreRecord mui-text-center bggray2" style="padding-top:15px;">
-                    <a href="{:url('punch/punchList')}">点击查看更多打卡记录</a>
-                </p>
             </ul>
+            <p class="moreRecord mui-text-center bggray2 f12" style="padding-top:10px;">
+                <a href="{:url('punch/punchList')}">点击查看更多打卡记录</a>
+            </p>
+
+            <div class="page-header whitebg">
+                <span class="course">
+                    他/她也在打卡哦
+                </span>
+            </div>
+            <ul class="mui-table-view mui-grid-view">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="#">
+                        <img class="mui-media-object" src="../images/shuijiao.jpg">
+                        <div class="mui-media-body">幸福就是可以一起睡觉</div></a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="#">
+                        <img class="mui-media-object" src="../images/muwu.jpg">
+                        <div class="mui-media-body">想要一间这样的木屋，静静的喝咖啡</div></a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="#"><img class="mui-media-object" src="../images/cbd.jpg">
+                        <div class="mui-media-body">Color of SIP CBD</div></a></li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <a href="#">
+                        <img class="mui-media-object" src="../images/yuantiao.jpg">
+                        <div class="mui-media-body">静静看这世界</div></a></li>
+            </ul>    
+
+
             <div class="dragClass" id="drag">
                 <a class="punch" href="{:url('Punch/createPunch')}">打卡</a>
                 <div class="waveRaidus"></div>
@@ -333,12 +358,10 @@
                         newli += '</div></a></li>'
                     }
                     if (newli == '') {
-                        $(".punchList .moreRecord").html(
-                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-                        );
+                        newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有打卡记录哦</p></li>'
                     }
                 }
-                $(".punchList .moreRecord").before(newli);
+                $(".punchList").html(newli);
 
             },
             error: function (xhr, type, errerThrown) {
