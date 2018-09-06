@@ -1,0 +1,112 @@
+{extend name="layout/common" /} {block name="page-content"}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="dataTables_wrapper form-inline dt-bootstrap">
+                    <div class="row hotTbHeader">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>课程名称</label>
+                                <div class="input-group radius4">
+                                    <input type="text" name="schedule" class="form-control pull-right radius4" placeholder="课程名称" style="border:none !important;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>负责教练</label>
+                                <div class="input-group radius4">
+                                    <input type="text" name="coach" class="form-control pull-right radius4" placeholder="教练名称" style="border:none !important;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit" class="btn btn-success btn-flat radius4">搜索</button>
+                                    <button type="reset" class="btn btn-default btn-flat radius4">重置</button>
+                                    <a href="{:url('schedule/creatSchedule')}">
+                                        <button type="button" class="btn btn-warning btn-flat radius4">录课</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="box-body">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>课程名称</th>
+                                            <th>班级</th>
+                                            <th>所属训练营</th>
+                                            <th>负责教练</th>
+                                            <th>助教</th>
+                                            <th>上课学生</th>     
+                                            <th>训练时间</th>
+                                            <th>场地</th>
+                                            <th>状态</th>
+                                            <th>结算日期</th>
+                                            <th>是否已结算</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {volist name="scheduleList" id="vo"}
+                                        <tr>
+                                            <td>{$vo.id}</td>
+                                            <td>{$vo.lesson}</td>
+                                            <td>{$vo.grade}</td>
+                                            <td>{$vo.camp}</td>
+                                            <td>{$vo.coach}</td>
+                                            <td>{$vo.assistant_str}</td>
+                                            <th>{volist name="$vo.student_strs" id="v"}{$v.student},{/volist}</th>
+                                            <td>{$vo.lesson_time}</td>
+                                            <td>{$vo.court}</td>
+                                            <td>
+                                                {$vo.status==-1?'未审':'已审'}
+                                            </td>
+                                            <td>{$vo.can_settle_date}</td>
+                                            <td>
+                                                {if $vo.is_settle==0}未结算{else /}已结算{/if}
+                                            </td>
+                                            <td>
+                                            {if $vo.is_settle ==0 && $vo.status==0}
+                                                <a href="{:url('schedule/check', ['schedule_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-xs btn-success" title="审核">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                            {/if}
+
+                                            {if $vo.status == -1}
+                                                <a href="{:url('schedule/updatSchedule', ['schedule_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-xs btn-warning" title="编辑">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                
+                                                <a href="{:url('schedule/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn"  title="删除">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            {/if}
+                                                <a href="{:url('schedule/scheduleInfo', ['schedule_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-xs btn-info" title="详情">
+                                                    <i class="fa fa-inbox"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {/volist}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="box-footer clearfix">
+                                {if $scheduleList} {$scheduleList->render()} {/if}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{/block}

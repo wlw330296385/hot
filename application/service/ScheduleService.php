@@ -30,12 +30,7 @@ class ScheduleService
     public function getscheduleList($map = [], $page = 1, $p = '10', $order = 'id desc', $field = '*')
     {
         $res = Schedule::where($map)->field($field)->order($order)->page($page, $p)->select();
-        if ($res) {
-            $result = $res->toArray();
-            return $result;
-        } else {
-            return $res;
-        }
+        return $res;
     }
 
     public function getScheduleListByPage($map = [], $order = 'id desc', $paginate = 10)
@@ -47,16 +42,11 @@ class ScheduleService
                 $item->assistant_str = '';
                 if($item->assistants){
                     foreach ($item->assistants as $key => $value) {
-                        $item->assistant_str .=','.$value;
+                        $item->assistant_str .=$value.',';
                     }
                 }
             });
-        if ($result) {
-            $list = $result->toArray();
-            return $list;
-        } else {
-            return $result;
-        }
+        return $result;
     }
 
     // 发布课时

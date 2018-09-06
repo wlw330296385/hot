@@ -53,7 +53,12 @@ class Lesson extends Backend{
                 ->select();
 
             
+            $assignList = [];
+            if($lessonInfo['isprivate'] == 1){
+                $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
+            }
             
+            $this->assign('assignList',$assignList);
             $this->assign('fansList',$fansList);
             $this->assign('coachList',$coachList);  
             $this->assign('gradeCategoryList',$gradeCategoryList);
@@ -123,7 +128,9 @@ class Lesson extends Backend{
 
             $this->assign('lessonInfo',$lessonInfo);
             $this->assign('gradeCategoryList',$gradeCategoryList);
+            $this->assign('coachList',$coachList);
             $this->assign('assignList',$assignList);
+            $this->assign('fansList',$fansList);
             return view('Lesson/updateLesson');
         }
 	}

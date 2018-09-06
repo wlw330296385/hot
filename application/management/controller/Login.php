@@ -18,7 +18,7 @@ class Login extends Controller
 	public function login(){
 
 		if (cookie('member_id')) {
-            $this->error('你已经登录，无需重复登录', url('Guider/choose'));
+            $this->error('请重新选择训练营', url('Guider/choose'));
         }
 		if(request()->isPost()){
 			$username = input('post.username');
