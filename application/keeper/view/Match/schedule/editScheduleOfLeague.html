@@ -112,8 +112,11 @@
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛场地</label>
-                    <span class="courtCont domData wd60" name="court">{$matchScheduleInfo.court}</span>
+                    <span class="courtCont domData wd60" name="court">{if
+                        $matchScheduleInfo.court==''}{$leagueInfo.court}{else/}{$matchScheduleInfo.court}{/if}</span>
+                    {if $matchScheduleInfo.court_id==''}<input type="hidden" name="court_id" value="-1" class="court_id data">{else/}
                     <input type="hidden" name="court_id" value="{$matchScheduleInfo.court_id}" class="court_id data">
+                    {/if}
                 </a>
             </div>
             <div class="mui-input-row">
@@ -163,22 +166,27 @@
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}
                 </div>
-                <div class="box" id="hideStList" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                <div class="box" id="hideStList" style="display: none">{volist name="matchScheduleInfo.scorers_list"
+                    id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}</div>
-                <div class="box" id="hideStListIni" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                <div class="box" id="hideStListIni" style="display: none">{volist name="matchScheduleInfo.scorers_list"
+                    id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}</div>
 
@@ -201,15 +209,17 @@
             </div>
             <div class="mui-input-row">
                 <label class="wd45">
-                    <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色" class="data mui-text-left"
-                        style="padding:0;height: initial;">
+                    <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色"
+                        class="data mui-text-left" style="padding:0;height: initial;">
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;height: 40px;">
                     <span>
                         {volist name="matchScheduleInfo.custom_member_list" id="vol"}
-                        <input type="text" value="{$vol.workMember}" data-member_id="{$vol.member_id}" placeholder="请选择角色" class="custom_member"> {/volist}
+                        <input type="text" value="{$vol.workMember}" data-member_id="{$vol.member_id}" placeholder="请选择角色"
+                            class="custom_member"> {/volist}
                         <input type="text" value="" data-member_id="" placeholder="请选择角色" class="custom_member">
-                        <input type="hidden" name="custom_member" value='{$matchScheduleInfo.custom_member}' placeholder="请选择角色" class="data">
+                        <input type="hidden" name="custom_member" value='{$matchScheduleInfo.custom_member}'
+                            placeholder="请选择角色" class="data">
                     </span>
                 </a>
             </div>
@@ -452,7 +462,7 @@
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
-                //开始时间
+                //比赛时间
                 var resultStart = $('#resultStart')[0];
                 var btnStart = $('.btnStart');
                 btnStart.each(function (i, btn) {
@@ -479,6 +489,13 @@
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
+            
+            // 判断是否只是年月日的日期格式
+            var timeYYR = match_time.substr(0, 10);
+            var timeHM = match_time.substr(11, 16);
+            if(timeHM=='00:00'){
+                $(".match_time").text(timeYYR)
+            }
 
             // 设置球衣颜色默认值
             $('#homeTeamColor option[value="{$matchScheduleInfo.home_team_color}"').prop("selected", true);
@@ -499,7 +516,7 @@
             allTeamList(); //全部球队列表
             getbattle(); //球队分组列表
             toRefereelist(); //裁判列表
-            toScorelist();  //记分员列表
+            toScorelist(); //记分员列表
             toScorersInital(); // 记分员赋值
             toCourtList(wCourt, courtKeyword, 1);
 
@@ -650,7 +667,8 @@
                 changeIndex();
                 $("#hideStList").empty();
                 $("#inactiveList input[type=checkbox]").each(function () {
-                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
                                     <input name="member" class="stdList" value="${$(this).val()}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
@@ -679,7 +697,8 @@
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
                 $(".scoreList input[type=checkbox]:checked").each(function () {
-                    var str = `<div class="mui-input-row mui-checkbox checkboxCont">
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
                                     <label style="width:20%;">${$(this).attr("data-realname")}</label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
                                     <input name="member" class="stdList" value="${$(this).attr("data-member_id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
@@ -688,7 +707,7 @@
                     $("#hideStList").append(str);
                 });
 
-                changeIndex();//调用-更新序号
+                changeIndex(); //调用-更新序号
                 mui("#score").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
@@ -700,7 +719,10 @@
                 console.log(workMember)
                 var member_id = $(this).attr("data-member_id");
                 var custom = []
-                custom.push({ workMember, member_id })
+                custom.push({
+                    workMember,
+                    member_id
+                })
                 let custom_member = JSON.stringify(custom);
                 console.log(custom_member)
 
@@ -718,7 +740,7 @@
             if ("{$matchScheduleInfo.status}" == "1") {
                 $(".status").addClass("mui-active");
                 $("input[name=status]").val(1)
-            } else   if ("{$matchScheduleInfo.status}" == "0"){
+            } else if ("{$matchScheduleInfo.status}" == "0") {
                 $("input[name=status]").val(0)
             }
             $(".status").on("tap", '', function () {
@@ -736,7 +758,7 @@
         function changeIndex() {
             var i = 1;
             $(".checkboxCont").each(function () { //循环checkboxCont
-                $(this).find("label").text(i++);//更新序号
+                $(this).find("label").text(i++); //更新序号
             });
         }
 
@@ -757,23 +779,28 @@
                     match_id: league_id,
                     match_stage_id: "{$pstageid}"
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `<li class="mui-table-view-cell listli promotionli" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}" data-team_logo="${data.data[i].team_logo}">
+                            newli +=
+                                `<li class="mui-table-view-cell listli promotionli" data-team="${data.data[i].team}" data-team_id="${data.data[i].team_id}" data-team_logo="${data.data[i].team_logo}">
                                             <label><img class="img24 teamlogo mui-pull-left" src="${data.data[i].team_logo}">${data.data[i].team}</label>
                                             <span class="wd36">${data.data[i].match_group}</span>
                                         </li>`
                         }
                         $(".promotionList").empty().append(newli);
                     } else {
-                        $(".promotionList").append('<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对阵名称" /><button class="mui-btn addBtn">确认</button></div>');
+                        $(".promotionList").append(
+                            '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="" placeholder="输入对阵名称" /><button class="mui-btn addBtn">确认</button></div>'
+                        );
 
                     }
                 },
@@ -792,22 +819,27 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `<li class="mui-table-view-cell listli allli" data-team="${data.data.data[i].team.name}" data-team_id="${data.data.data[i].team_id}">
+                            newli +=
+                                `<li class="mui-table-view-cell listli allli" data-team="${data.data.data[i].team.name}" data-team_id="${data.data.data[i].team_id}">
                                             <img class="img24 teamlogo mui-pull-left" src="${data.data.data[i].team.logo}">${data.data.data[i].team.name}
                                         </li>`
                         }
                         $(".teamList").empty().append(newli);
                     } else {
-                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
+                        $(".teamList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -825,20 +857,26 @@
                 data: {
                     league_id: league_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += `<ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
-                            newli += `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
-                            newli += `<div class="mui-collapse-content" style="padding-left:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
+                            newli +=
+                                `<ul class="mui-table-view list border-b"><li class="mui-table-view-cell mui-collapse listli mui-active">`;
+                            newli +=
+                                `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data.data[i].name}</p></a>`
+                            newli +=
+                                `<div class="mui-collapse-content" style="padding-left:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-20px;">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}">
+                                newli +=
+                                    `<li class="mui-table-view-cell tlistli" data-team_id="${data.data.data[i].group_teams[j].team_id}">
                                             <img class="img24 mui-pull-left teamlogo" src="${data.data.data[i].group_teams[j].team_logo}"><text>${data.data.data[i].group_teams[j].team.team}</text>
                                         <li>`;
                             }
@@ -846,7 +884,9 @@
                         }
                         $(".teamList").empty().append(newli);
                     } else {
-                        $(".teamList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>');
+                        $(".teamList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -872,16 +912,21 @@
                     page: page,
                     keyword: keyword
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].id + '"><font class="court">' + data.data.data[i].court + '</font></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data
+                                .data[i].id + '"><font class="court">' + data.data.data[i].court +
+                                '</font></li>'
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
@@ -908,16 +953,19 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[i].referee.id + '>' + data.data[i].realname + '</li>'
+                            newli += '<li class="mui-table-view-cell listli" data-referee_id = ' + data.data[
+                                i].referee.id + '>' + data.data[i].realname + '</li>'
                         }
                         $(".refereeList").empty().append(newli);
                     } else {
@@ -939,17 +987,22 @@
                     league_id: league_id,
                     type: 8
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].realname + '</label>';
-                            newli += '<input name="checkbox-score" class="score" type="checkbox" data-realname=' + data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                                i].realname + '</label>';
+                            newli +=
+                                '<input name="checkbox-score" class="score" type="checkbox" data-realname=' +
+                                data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
                         }
                         $(".scoreList").empty().append(newli);
@@ -967,16 +1020,19 @@
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-member_id="' + data.data[i].member_id + '">' + data.data[i].realname + '</li>'
+                            newli += '<li class="mui-table-view-cell listli" data-member_id="' + data.data[
+                                i].member_id + '">' + data.data[i].realname + '</li>'
                         }
                         $(".workList").empty().append(newli);
                     } else {
@@ -1010,7 +1066,10 @@
             $("#inactiveList .stdList").each(function () {
                 realname = $(this).attr("data-realname");
                 member_id = $(this).val();
-                scorersList.push({ realname, member_id })
+                scorersList.push({
+                    realname,
+                    member_id
+                })
             })
             let scorers = JSON.stringify(scorersList);
             console.log(scorers)

@@ -77,7 +77,7 @@
 
         <form action="" class="mui-input-group mb44 formList">
 
-<!--             <div class="scheduleList" data-num="1">
+            <!--             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日<text class="tnum">1</text></span>
                     <span class="fr f14 deleteModel hide">删除</span>
@@ -107,42 +107,48 @@
 
 
             {volist name="matchScheduleInfo" id="vo1" key="a"}
-                <div class="scheduleList" data-num="{$a}">
-                    <div class="page-header bggray2 border-b">
-                        <span class="course">比赛日<text class="tnum">{$a}</text></span>
-                        <span class="fr f14 deleteModel hide">删除</span>
-                    </div>
-                    <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
-                        <div class="mui-navigate-right">
-                            <label>比赛时间</label>
-                            <span class="matchTime">{$key}</span>
-                        </div>
-                    </div>
-                    <div class="operation-box mb clickTap" style="padding:15px;">
-                        <div class="mui-input-row">
-                            <label class="wd45">选择对阵的球队</label>
-                        </div>
-                        <div class="box">
-                            {volist name="vo1" id="vo2" key="b"}
-                            <div class="mui-input-row mui-checkbox checkboxCont ">
-                                <div class="mui-row mui-text-center f14" style="line-height: 41px;">
-                                    <div class="mui-col-xs-2 order">{$b}</div>
-                                    <div class="mui-col-xs-2 matchGroup" data-group_id="{$vo2.match_group_id}">{$vo2.match_group}</div>
-                                    <div class="mui-col-xs-6 mui-ellipsis mui-text-left">{$vo2.home_team} VS {$vo2.away_team}</div>
-                                    <input type="checkbox" name="" class="firght" value="" {if condition="$vo2.status >= 2"} disabled="disabled" {/if} data-home_team="{$vo2.home_team}" data-home_team_id="{$vo2.home_team_id}" data-home_team_logo="{$vo2.home_team_logo}" data-home_team_alias="{$vo2.home_team_alias}" data-away_team="{$vo2.away_team}" data-away_team_id="{vo2.away_team_id}" data-away_team_logo="{$vo2.away_team_logo}" data-away_team_alias="{$vo2.away_team_alias}" data-homeaway_team_id="{$vo2.home_team_id}{$vo2.away_team_id}">
-                                </div>
-                            </div>
-                            {/volist}
-                        </div>
-                        <div class="operation-btn">
-                            <span class="mui-badge">0</span>
-                            <a class="all">全选</a>
-                            <a class="cancel">取消</a>
-                            <a class="del">[删除]</a>
-                            <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
-                        </div>
+            <div class="scheduleList" data-num="{$a}">
+                <div class="page-header bggray2 border-b">
+                    <span class="course">比赛日<text class="tnum">{$a}</text></span>
+                    <span class="fr f14 deleteModel hide">删除</span>
+                </div>
+                <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
+                    <div class="mui-navigate-right">
+                        <label>比赛时间</label>
+                        <span class="matchTime">{$key}</span>
                     </div>
                 </div>
+                <div class="operation-box mb clickTap" style="padding:15px;">
+                    <div class="mui-input-row">
+                        <label class="wd45">选择对阵的球队</label>
+                    </div>
+                    <div class="box">
+                        {volist name="vo1" id="vo2" key="b"}
+                        <div class="mui-input-row mui-checkbox checkboxCont ">
+                            <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                                <div class="mui-col-xs-2 order">{$b}</div>
+                                <div class="mui-col-xs-2 matchGroup" data-group_id="{$vo2.match_group_id}">{$vo2.match_group}</div>
+                                <div class="mui-col-xs-6 mui-ellipsis mui-text-left">{$vo2.home_team} VS
+                                    {$vo2.away_team}</div>
+                                <input type="checkbox" name="" class="firght" value="" {if condition="$vo2.status >= 2"
+                                    } disabled="disabled" {/if} data-status="{$vo2.status}" data-home_team="{$vo2.home_team}"
+                                    data-home_team_id="{$vo2.home_team_id}" data-home_team_logo="{$vo2.home_team_logo}"
+                                    data-home_team_alias="{$vo2.home_team_alias}" data-away_team="{$vo2.away_team}"
+                                    data-away_team_id="{$vo2.away_team_id}" data-away_team_logo="{$vo2.away_team_logo}"
+                                    data-away_team_alias="{$vo2.away_team_alias}" data-homeaway_team_id="{$vo2.home_team_id}-{$vo2.away_team_id}">
+                            </div>
+                        </div>
+                        {/volist}
+                    </div>
+                    <div class="operation-btn">
+                        <span class="mui-badge">{$key+1}</span>
+                        <a class="all">全选</a>
+                        <a class="cancel">取消</a>
+                        <a class="del">[删除]</a>
+                        <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
+                    </div>
+                </div>
+            </div>
             {/volist}
         </form>
 
@@ -283,11 +289,11 @@
                                     <div class="mui-col-xs-2 order"></div>
                                     <div class="mui-col-xs-2 matchGroup" data-group_id="${$(this).siblings("span").attr("data-group_id")}">${$(this).siblings("span").text()}</div>
                                     <div class="mui-col-xs-6 mui-ellipsis mui-text-left">${$(this).attr("data-home_team")} VS ${$(this).attr("data-away_team")}</div>
-                                    <input type="checkbox" name="" class="firght" value="" data-home_team="${$(this).attr("data-home_team")}" data-home_team_id="${$(this).attr("data-home_team_id")}"
+                                    <input type="checkbox" name="" class="firght" value="" data-status="${$(this).attr("data-status")}" data-home_team="${$(this).attr("data-home_team")}" data-home_team_id="${$(this).attr("data-home_team_id")}"
                                 data-home_team_logo="${$(this).attr("data-home_team_logo")}" data-home_team_alias="${$(this).attr("data-home_team_alias")}" data-away_team="${$(this).attr("data-away_team")}"
                                 data-away_team_id="${$(this).attr("data-away_team_id")}" data-away_team_logo="${$(this).attr("data-away_team_logo")}" 
                                 data-away_team_alias="${$(this).attr("data-away_team_alias")}"
-                                data-homeaway_team_id="${$(this).attr("data-home_team_id")}${$(this).attr("data-away_team_id")}">
+                                data-homeaway_team_id="${$(this).attr("data-home_team_id")}-${$(this).attr("data-away_team_id")}">
                                 </div>
                             </div>`
 
@@ -450,12 +456,12 @@
                             for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
                                 var battlesArray = data.data[i].battles[j]
                                 newli +=
-                                    `<input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" 
+                                    `<input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" data-status="0"
                                             data-home_team_id="${battlesArray.home_team_id}" data-home_team_logo="${battlesArray.home_team_logo}" 
                                             data-home_team_alias="${battlesArray.home_team_alias}"  data-away_team="${battlesArray.away_team}"
                                             data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
                                             data-away_team_alias="${battlesArray.away_team_alias}" 
-                                            data-homeaway_team_id="${battlesArray.home_team_id}${battlesArray.away_team_id}"> `
+                                            data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> `
                                 newli += `</div>`
                             }
                         }
@@ -474,57 +480,71 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
             schedules = []
+            var isCheck = true;
             $(".scheduleList").each(function () {
                 var match_time = $(this).find(".matchTime").text();
+                if (match_time == '') {
+                    var dayTime = $(this).find(".tnum").text();
+                    mui.toast("请选择比赛日" + dayTime + "的比赛时间");
+                    isCheck = false;
+                    return false;
+                }
                 $(this).find(".checkboxCont").each(function () {
-                    var match_group = $(this).find(".matchGroup").text();
-                    var match_group_id = $(this).find(".matchGroup").attr("data-group_id");
-                    var home_team = $(this).find(".firght").attr("data-home_team");
-                    var home_team_id = $(this).find(".firght").attr("data-home_team_id");
-                    var home_team_logo = $(this).find(".firght").attr("data-home_team_logo");
-                    var home_team_alias = $(this).find(".firght").attr("data-home_team_alias");
-                    var away_team = $(this).find(".firght").attr("data-away_team");
-                    var away_team_id = $(this).find(".firght").attr("data-away_team_id");
-                    var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
-                    var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
-                    schedules.push({
-                        match_time,
-                        match_group,
-                        match_group_id,
-                        home_team,
-                        home_team_id,
-                        home_team_logo,
-                        home_team_alias,
-                        away_team,
-                        away_team_id,
-                        away_team_logo,
-                        away_team_alias
-                    })
+                    var status = $(this).find(".firght").attr("data-status");
+                    if (status == 0 || status == 1) {
+                        var match_group = $(this).find(".matchGroup").text();
+                        var match_group_id = $(this).find(".matchGroup").attr("data-group_id");
+                        var home_team = $(this).find(".firght").attr("data-home_team");
+                        var home_team_id = $(this).find(".firght").attr("data-home_team_id");
+                        var home_team_logo = $(this).find(".firght").attr("data-home_team_logo");
+                        var home_team_alias = $(this).find(".firght").attr("data-home_team_alias");
+                        var away_team = $(this).find(".firght").attr("data-away_team");
+                        var away_team_id = $(this).find(".firght").attr("data-away_team_id");
+                        var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
+                        var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
+                        schedules.push({
+                            match_time,
+                            match_group,
+                            match_group_id,
+                            home_team,
+                            home_team_id,
+                            home_team_logo,
+                            home_team_alias,
+                            away_team,
+                            away_team_id,
+                            away_team_logo,
+                            away_team_alias
+                        })
+                    }
                 })
             })
-            console.log(schedules)
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.schedules = JSON.stringify(schedules);
-            var url = "{:url('api/league/saveallmatchschedule')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert('创建成功', '确定', function () {
-                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '创建失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
+            if (!isCheck) {
+                return isCheck
             }
+            console.log(schedules)
+            // var data = wooApi.getInputData('input', 'data');
+            // datas = wooApi.getInputData('select', 'data', data);
+            // // 获取其他标签值
+            // arrData = wooApi.getDomData('domData', datas);
+            // var objData = wooApi.arrTOobj(arrData);
+            // objData.schedules = JSON.stringify(schedules);
+            // var url = "{:url('api/league/saveallmatchschedule')}";
+            // var ajaxResult = wooApi.asyncF(url, objData);
+            // if (ajaxResult.code == 200) {
+            //     mui.alert('创建成功', '确定', function () {
+            //         var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '创建失败');
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //             $('input[name=__token__]').val(data.data);
+            //         }
+            //     }, 'json');
+            // }
         };
     </script>
 </body>
