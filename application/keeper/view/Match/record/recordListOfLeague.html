@@ -16,53 +16,39 @@
 
 <body>
 
-    <header class="mui-bar mui-bar-nav for-tab">
-        <div class="camp-lesson-list">
-            <div class="mui-segmented-control mb">
-                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('match/leagueManage',['league_id'=>$league_id])}"></a>
-                <a class="mui-control-item" href="#onRankList">排名</a>
-                <a class="mui-control-item" href="#onHonorList">荣誉</a>
-            </div>
-        </div>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a href="{:url('match/leagueManage',['league_id'=>$league_id])}" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">阶段列表</h1>
     </header>
 
     <div class="mui-content">
 
-        <div class="tab-pullRefresh">
-            <!-- 积分排名 -->
-            <div id="onRankList" class="mui-scroll-wrapper mui-control-content mui-active whitebg">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view mui-text-center" style="margin-top:0">
-                        <li class="mui-table-view-cell border-b">
-                            <ul class="mui-row" style="padding:0">
-                                <li class="mui-col-xs-1 mui-col-sm-1">
-                                    <p>排名</p>
-                                </li>
-                                <li class="mui-col-xs-6 mui-col-sm-6">
-                                    <p>球队</p>
-                                </li>
-                                <li class="mui-col-xs-2 mui-col-sm-2">
-                                    <p>胜</p>
-                                </li>
-                                <li class="mui-col-xs-2 mui-col-sm-2">
-                                    <p>负</p>
-                                </li>
-                                <li class="mui-col-xs-1 mui-col-sm-1">
-                                    <p>积分</p>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <div class="rankList"></div>
-                </div>
-            </div>
-            <!-- 荣誉 -->
-            <div id="onHonorList" class="mui-scroll-wrapper mui-control-content">
-                <div class="mui-scroll">
-                    <ul class="mui-table-view list honorList"></ul>
-                </div>
-            </div>
-        </div>
+        <!-- <div id="refreshContainer" class="mui-scroll-wrapper mt44">
+            <div class="mui-scroll"> -->
+        <ul class="mui-table-view mui-text-center" style="margin-top:0">
+            <li class="mui-table-view-cell border-b">
+                <ul class="mui-row" style="padding:0">
+                    <li class="mui-col-xs-1 mui-col-sm-1">
+                        <p>排名</p>
+                    </li>
+                    <li class="mui-col-xs-6 mui-col-sm-6">
+                        <p>球队</p>
+                    </li>
+                    <li class="mui-col-xs-2 mui-col-sm-2">
+                        <p>胜</p>
+                    </li>
+                    <li class="mui-col-xs-2 mui-col-sm-2">
+                        <p>负</p>
+                    </li>
+                    <li class="mui-col-xs-1 mui-col-sm-1">
+                        <p>积分</p>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <div class="rankList"></div>
+        <!-- </div>
+        </div> -->
 
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -77,120 +63,103 @@
             window.top.location.href = this.href;
         });
 
+        //弹出框滚动必须写在mui专用的初始化
+        (function ($) {
+            $(".mui-scroll-wrapper").scroll({
+                //bounce: false,//滚动条是否有弹力默认是true
+                indicators: true //是否显示滚动条,默认是true
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
+
         $(function () {
-
             //初始化全局变量
-            var onCount = 1;
-            var offCount = 1;
-            mui('#onRankList').pullRefresh({
-                down: {
-                    //下拉刷新
-                    height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto: true,//可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                    callback: pulldownRefreshOn
-                },
-                up: {
-                    //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefreshOn
-                }
-            });
+            // var onCount = 1;
+            // var offCount = 1;
 
-            mui('#onHonorList').pullRefresh({
-                down: {
-                    //下拉刷新
-                    height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto: true,//可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                    callback: pulldownRefreshOff
-                },
-                up: {
-                    //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
-                    //auto:true,//可选,默认false.自动上拉加载一次
-                    contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-                    callback: pullupRefreshOff
-                }
-            });
+            // mui('#refreshContainer').pullRefresh({
+            //     down: {
+            //         //下拉刷新
+            //         height: 50, //可选.默认50.触发下拉刷新拖动距离
+            //         auto: true, //可选,默认false.自动下拉刷新一次
+            //         contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+            //         contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+            //         contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+            //         callback: pulldownRefreshOn
+            //     },
+            //     up: {
+            //         //上拉加载
+            //         height: 150, //可选.默认50.触发上拉加载拖动距离
+            //         //auto:true,//可选,默认false.自动上拉加载一次
+            //         contentrefresh: '正在加载...',
+            //         contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+            //         callback: pullupRefreshOn
+            //     }
+            // });
 
-            //下拉刷新具体业务实现（排名）
-            function pulldownRefreshOn() {
-                setTimeout(function () {
-                    onCount = 1;//刷新并显示第一页
-                    var page = onCount;
-                    var gType = 1;//代表下拉刷新
-                    toRankList('onRankList', page, gType, 1);//具体取数据的方法
-                }, 100);
-            }
+            // //下拉刷新具体业务实现
+            // function pulldownRefreshOn() {
+            //     setTimeout(function () {
+            //         onCount = 1; //刷新并显示第一页
+            //         var page = onCount;
+            //         var gType = 1; //代表下拉刷新
+            //         toList(page, gType); //具体取数据的方法
+            //     }, 100);
+            // }
 
-            //上拉加载具体业务实现（排名）
-            function pullupRefreshOn() {
-                setTimeout(function () {
-                    onCount++;//翻下一页
-                    var page = onCount;
-                    var gType = 2;//代表上拉加载
-                    toRankList('onRankList', page, gType, 1);//具体取数据的方法
-                }, 100);
-            }
-
-            //下拉刷新具体业务实现（荣誉）
-            function pulldownRefreshOff() {
-                setTimeout(function () {
-                    offCount = 1;//刷新并显示第一页
-                    var page = offCount;
-                    var gType = 1;//代表下拉刷新
-                    toHonorList('onHonorList', page, gType, -1);//具体取数据的方法
-                }, 100);
-            }
-
-            //上拉加载具体业务实现（荣誉）
-            function pullupRefreshOff() {
-                setTimeout(function () {
-                    offCount++;//翻下一页
-                    var page = offCount;
-                    var gType = 2;//代表上拉加载
-                    toHonorList('onHonorList', page, gType, -1);//具体取数据的方法
-                }, 100);
-            }
+            // //上拉加载具体业务实现
+            // function pullupRefreshOn() {
+            //     setTimeout(function () {
+            //         onCount++; //翻下一页
+            //         var page = onCount;
+            //         var gType = 2; //代表上拉加载
+            //         toList(page, gType); //具体取数据的方法
+            //     }, 100);
+            // }
+            toList()
         });
 
 
 
         // 接口获取数据并追加到页面
-        var toRankList = function (wList, page, gType) {
+        var toList = function (page, gType) {
             //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchranklist')}" + '/?page=' + page;
+            var url = "{:url('api/league/getmatchranklist','','',true)}" + '/?page=' + page;
             var league_id = "{$league_id}"
             mui.ajax({
                 url: url,
                 data: {
                     league_id: league_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `<div class="page-header bggray2">
+                            if (data.data[i].match_group == '') {
+                                newli +=
+                                    `<div class="page-header bggray2">
+                                        <span class="course">${data.data[i].match_stage}</span>
+                                      </div>`
+                            } else {
+                                newli +=
+                                    `<div class="page-header bggray2">
                                         <span class="course">${data.data[i].match_stage}（${data.data[i].match_group}）</span>
-                                      </div>
-                        <ul class="mui-table-view mui-text-center">`
+                                      </div>`
+                            }
+                            newli += `<ul class="mui-table-view mui-text-center">`
                             for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                                newli += `<li class="mui-table-view-cell">
-                                <a href="">
+                                newli +=
+                                    `<li class="mui-table-view-cell">
                                     <ul class="mui-row" style="padding:0">
                                         <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
                                             <p class="colororange">
@@ -212,101 +181,39 @@
                                             </p>
                                         </li>
                                     </ul>
-                                </a>
                             </li>`
                             }
                             newli += `</ul>`
                         }
                     }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $(".rankList").empty().append(newli);
-                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                        mui('#' + wList).pullRefresh().refresh(true);
-                        if (newli == '') {
-                            $(".rankList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                        }
-                    } else {
-                        //下拉加载 gType==2
-                        $(".rankList").append(newli);
+                    // if (gType == 1) {
+                    //上拉刷新
+                    $(".rankList").empty().append(newli);
+                    // mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                    // mui('#refreshContainer').pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $(".rankList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
+                    // } else {
+                    //下拉加载 gType==2
+                    // $(".rankList").append(newli);
+                    // }
 
-                    if (newli != '') {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                    } else {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                    }
+                    // if (newli != '') {
+                    //     mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                    // } else {
+                    //     mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                    // }
 
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    // mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                 }
             });
         };
-
-        // 接口获取数据并追加到页面
-        var toHonorList = function (wList, page, gType) {
-            //搜索关键字不能完全为空，否则查询为空
-            var url = "{:url('api/league/getmatchranklist')}" + '/?page=' + page;
-            var league_id = "{$league_id}"
-            mui.ajax({
-                url: url,
-                data: {
-                    league_id: league_id,
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data)
-                    var newli = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `
-                    <li class="mui-table-view-cell listli">
-                        <div class="mui-slider-right mui-disabled" data-id="2">
-                            <span class="mui-btn mui-btn-red" data-action="del">删除</span>
-                        </div>
-                        <div class="mui-slider-handle">
-                            <a href="">
-                                <div class="mui-media-body wd83">
-                                    奖项名称：<strong class="colororange f16"> MVP</strong>
-                                    <p class="mui-ellipsis lineHeight20">授奖单位：大热篮球俱乐部</p>
-                                    <p class="mui-ellipsis lineHeight20">授奖日期：2018-07-10</p>
-                                </div>
-                            </a>
-                        </div>
-                            </li>`
-                        }
-                    }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $(".honorList").empty().append(newli);
-                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                        mui('#' + wList).pullRefresh().refresh(true);
-                        if (newli == '') {
-                            $(".honorList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
-                        }
-                    } else {
-                        //下拉加载 gType==2
-                        $(".honorList").append(newli);
-                    }
-
-                    if (newli != '') {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                    } else {
-                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-                }
-            });
-        };
-
     </script>
 
 

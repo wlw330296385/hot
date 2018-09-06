@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>联赛奖项</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--自定义多色图标icon.js-->
+    <script src="/static/frontend/iconfont/iconfont.js"></script>
+    <style>
+        .mui-popover {
+            height: 260px;
+        }
+
+        .page-header .more {
+            padding-right: 0px;
+        }
+
+        .nav-list .nav-list-frame .navli {
+            width: 25%;
+        }
+
+        .nav-list .nav-list-frame a {
+            padding: 10px 0 !important;
+        }
+
+        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
+            font-size: 2.2em;
+        }
+
+        .coloricon {
+            width: 2.4em;
+            height: 2.4em;
+            vertical-align: -0.7em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .leagueGroup {
+            vertical-align: middle;
+            display: inline-flex;
+        }
+
+        .leagueTypeSet {
+            color: #737373;
+            font-size: 14px;
+        }
+
+        .leagueTypeSet .circleIcon {
+            margin-right: 10px;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50%;
+        }
+
+        .leaguePadding {
+            padding: 11px 15px !important;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .colactive {
+            color: #dd524d !important
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header class="mui-bar mui-bar-transparent">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="list coach mt55 ">
+
+            <div class="img16x9" style="background-image:url('{$leagueInfo.cover}')"></div>
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$leagueInfo.name}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                        <p>{$leagueInfo.city} {$leagueInfo.area}</p>
+                        <p class="f12">
+                            参赛队：
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 关注：
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong>
+                        </p>
+                    </div>
+                    <div class="price-frame" style="padding:0">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="nav-list record mb">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-Regulations"></span>
+                            <span class="f14" style="display: block;">章程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-Schedule"></span>
+                            <span class="f14" style="display: block;">赛程</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueRecord', ['league_id' => $leagueInfo.id])}">
+
+                            <span class="icon iconfont icon-th-Record"></span>
+                            <span class="f14" style="display: block;">战绩</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueData', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-data"></span>
+                            <span class="f14" style="display: block;">数据</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueTeam', ['league_id' => $leagueInfo.id])}">
+                            <span class="icon iconfont icon-th-Regulations"></span>
+                            <span class="f14" style="display: block;">球队</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueHonor', ['league_id' => $leagueInfo.id])}" class="colactive">
+                            <span class="icon iconfont icon-th-Schedule"></span>
+                            <span class="f14" style="display: block;">奖项</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="{:url('match/leagueTidbit', ['league_id' => $leagueInfo.id])}">
+
+                            <span class="icon iconfont icon-th-Record"></span>
+                            <span class="f14" style="display: block;">花絮</span>
+                        </a>
+                    </li>
+                    <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                        <a href="javascript:void()">
+                            <span class="icon iconfont icon-th-data"></span>
+                            <span class="f14" style="display: block;">直播</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--联赛奖项-->
+            <div class="page-header border-b">
+                <span class="course">联赛奖项</span>
+            </div>
+            <ul class="mui-table-view list honorList">
+                <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
+                    <p>暂无数据</p>
+                </li>
+            </ul>
+
+            <!--底部操作-->
+            <ul class="mui-table-view operation mt">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="{:url('match/leagueInfo', ['league_id' => $leagueInfo.id])}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli">
+                    <a href="">咨询</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script>
+        mui.init({
+            swipeBack: false
+        });
+        // a标签跳转
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        followStatus(); //判断当前的关注状态
+        // getbattle(); //分组列表
+
+
+        // 关注联赛
+        $(".follow").on("tap", '', function () {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        // 小组列表
+        function getbattle() {
+            var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
+            let league_id = "{$league_id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli +=
+                                `
+                                    <div class="page-header border-b">
+                                        <span class="course">参赛队分组表</span>
+                                        <span class="more">${data.data.data[i].name}</span>
+                                    </div>
+                                    <ul class="mui-table-view mui-text-center leagueTypeSet">`
+                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                newli +=
+                                    `<li class="mui-table-view-cell lineHeight32">
+                                            <ul class="mui-table-view mui-row">
+                                                <li class="mui-col-sm-2 mui-col-xs-2">
+                                                    <strong class="f18">${j + 1}</strong>
+                                                </li>
+                                                <li class="mui-col-sm-10 mui-col-xs-10 leagueGroup">
+                                                    <img src="${data.data.data[i].group_teams[j].team_logo}" class="circleIcon" />
+                                                    <span>${data.data.data[i].group_teams[j].team.team}</span>
+                                                </li>
+                                            </ul>
+                                        </li>`;
+                            }
+                            newli += `</ul>`;
+                        }
+                        if (newli != '') {
+                            $(".teamList").empty().append(newli);
+                        }
+                    } else {
+                        $(".teamList").html('<p class="nodata">没有相关数据哦</p>');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+    </script>
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                success: function () {},
+                cancel: function () {}
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$leagueInfo.name}',
+                desc: '{$leagueInfo.match_org.name}',
+                link: "{$shareurl}/pid/{$mid}",
+                imgUrl: "{:request()->root(true)}{$leagueInfo.logo}",
+                type: "",
+                dataUrl: '',
+                success: function () {},
+                cancel: function () {}
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

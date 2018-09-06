@@ -38,7 +38,7 @@
         </div>
         <div class="tab-pullRefresh">
 
-            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px;">
+            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45"px;>
                 <div class="mui-scroll">
                     <ul class="mui-table-view list scheduleList1"></ul>
                 </div>
@@ -97,9 +97,6 @@
         var btnArray = ['取消', '确认'];
         $(function () {
 
-            if ($(".fenzu").children().length < 2) {
-                $(".fenzu").parents(".location-frame").hide();
-            }
             $(".createNextSchedule").on("tap", function () {
                 mui.confirm("你可以在此手动创建自定义赛程！", "提示", btnArray, function (e) {
                     if (e.index == 1) {
@@ -261,6 +258,12 @@
                             }
                             newli += `</ul>`
                         }
+                    } else {
+                        $(".fenzu").parents(".location-frame").hide();
+                        $("#onList").css("margin","0");
+                        $("#offList").css("margin","0");
+                        $(".scheduleList0").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".scheduleList1").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
                     }
                     $(".hideList").empty().append(newli);
 
@@ -332,6 +335,7 @@
                                         </div>
                                     </li>`;
                                 $(".scheduleList1").empty().append(liStatus12);
+
                             }
                         })
                         liStatus0 += `</ul>`;

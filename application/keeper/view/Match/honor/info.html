@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>荣誉详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--icon扩展样式icons-extra.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+        <div class="list coach mb44">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="mui-media-object mui-pull-left coachicon" src="{leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{leagueInfo.name}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p>{leagueInfo.city} {leagueInfo.area}</p>
+                        <p class="f12">队员：
+                            <strong class="colororange">{leagueInfo.member_num}</strong>人 |
+                            <a href="{:url('team/fans')}">粉丝：
+                                <strong class="colororange">{leagueInfo.fans_num}</strong>
+                            </a>
+                        </p>
+                    </div>
+                    <div class="price-frame" style="padding:0">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-home-game colororange"></span>奖项名称</label>
+                    <span>{honorInfo.name}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-name colororange"></span>赛事名称</label>
+                    <span>{honorInfo.match}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-home-activity colororange"></span>授奖单位</label>
+                    <span>{honorInfo.award_org}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EndTime colororange"></span>授奖时间</label>
+                    <span>{honorInfo.honor_time}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>获奖者</label>
+                    <span class="honorList"></span>
+                </li>
+            </ul>
+
+            <!-- 荣誉简介 -->
+            <div class="page-header border-b honorDes">
+                <span class="course">荣誉简介
+                    <span class="noDataTip"></span>
+                </span>
+            </div>
+            <ul class="mui-table-view mb">
+                <li class="listli desimg">{honorInfo.introduction}</li>
+            </ul>
+
+            <div class="page-header border-b">
+                <span class="course wd52">评论</span>
+                <span class="more">评论
+                    <span class="comment_count">0</span>&nbsp;|&nbsp;
+                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>：
+                    <span class="thumbup_count">0</span>
+                </span>
+            </div>
+            <ul class="mui-table-view comment-list"></ul>
+
+            <!--底部操作-->
+            <ul class="mui-table-view operation">
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="{:url('team/teamInfo',['league_id'=>$leagueInfo['id']])}">
+                        <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                    <a href="#shareGuide">
+                        分享
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                    <a href="{:url('team/honorEdit')}">
+                        编辑
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
+                    <a href="#fbcomment">
+                        评论
+                    </a>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-8 mui-col-sm-8 opli bgblue">
+                    <a href="#fbcomment">
+                        发表评论
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
+    </div>
+    <!-- 发表评论 -->
+    <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
+            <ul class="mui-table-view operation">
+                <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                    <i class="mui-icon mui-icon-compose"></i>
+                    <span class="type ">发表评论</span>
+                    <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="listli">
+                    <textarea rows="4" class="comment" placeholder="请输入内容"></textarea>
+                </li>
+                <li class="mui-col-xs-12 opli commentBtn">发表</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        var count = 1;
+        $(function () {
+
+            // 去逗号
+            var honorList = $(".honorList").text()
+            $(".honorList").text(honorList.substring(0, honorList.length - 1));
+
+            // 荣誉简介默认的提示
+            if ($(".desimg").html() == '') {
+                $(".honorDes").find(".noDataTip").append("（暂无）");
+                $(".desimg").parent().hide();
+            }
+
+            // 关注球队
+            $(".follow").on("tap", '', function () {
+                var team_id = "{teamInfo.id}";
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 4,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //评论功能
+            $(".commentBtn").on('tap', function () {
+                var commented_id = "{honorInfo.id}";
+                var commented = "{honorInfo.name}";
+                var team_id = "{honorInfo.prize_team_id}";
+                var comment = $(".comment").val();
+
+                if (comment == '') {
+                    mui.toast("评价内容不能为空哦");
+                    return false;
+                }
+
+                mui.ajax("{:url('api/team/addteamcomment')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 5,
+                        comment: comment,
+                        commented: commented,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('评价成功，感谢你的评价！');
+                            $(".comment-list").empty();
+                            toCommentList();
+                            mui('#fbcomment').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#fbcomment').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{honorInfo.id}";
+                var commented = "{honorInfo.name}";
+                var team_id = "{honorInfo.prize_team_id}";
+                mui.ajax("{:url('api/team/dianzan')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 5,
+                        commented: commented,
+                        team_id: team_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
+                            isthumbsup();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
+
+            pulldownRefresh(); //页面打开时获取一次最新评论信息
+            isthumbsup(); //点赞状态
+            followStatus(); //判断当前的关注状态
+        });
+
+        // 判断当前的关注状态
+        function followStatus() {
+            var team_id = "{teamInfo.id}"
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 4,
+                    team_id: team_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("取消关注");
+                        } else {
+                            $(".follow").text("关注");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+        // 点赞状态
+        function isthumbsup() {
+            var commented_id = "{honorInfo.id}";
+            mui.ajax("{:url('api/team/isthumbup')}", {
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 5,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                count = 1;//刷新并显示第一页
+                var page = count;
+                var gType = 1;//代表下拉刷新
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                count++;//翻下一页
+                var page = count;
+                var gType = 2;//代表上拉加载
+                toCommentList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //获取评论列表
+        function toCommentList(page, gType) {
+            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
+            var commented_id = "{honorInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    commented_id: commented_id,
+                    comment_type: 5,
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        $(".comment_count").text(data.data.length);
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                        }
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.comment-list").empty().append(newli);
+                        if (newli == '') {
+                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.comment-list").append(newli);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+    </script>
+</body>
+
+</html>
