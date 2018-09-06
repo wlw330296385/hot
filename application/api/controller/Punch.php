@@ -83,7 +83,7 @@ class Punch extends Base{
             $b->add(new \DateInterval('P1M'));
             $e = $b->format('Y-m-d');
             $member_id = input('param.member_id',$this->memberInfo['id']);
-            $result = db('punch')->where(['punch_time'=>['>=',$s],'member_id'=>$member_id])->where(['punch_time'=>['<',$e]])->where('delete_time',null)->select();
+            $result = db('punch')->where(['punch_time'=>['>=',$s],'member_id'=>$member_id])->where(['punch_time'=>['<',$e]])->where('delete_time',null)->order('punch_time asc')->select();
 
             return json(['code'=>200,'msg'=>'查询成功','data'=>$result]);
         } catch (Exception $e) {
