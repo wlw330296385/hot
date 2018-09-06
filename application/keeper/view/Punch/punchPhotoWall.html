@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title>打卡</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>每月运动照片墙</title>
+    <meta name="viewport" content="width=1000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
@@ -20,92 +20,190 @@
 
         html,body { margin:0px 0px 90px; padding:0px; width:1000px; background:#CCC; }
         p{ color:#FFF; }
-        #popupShare { width:1000px; position:absolute; left:0; top:0;  z-index:999; }
+        #popupShare { width:1000px; visibility:hidden; position: absolute; top:0; left: 0; z-index: 888; }
         #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; background:#000; }
         #canvasPic { display:none; }
-        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:9999; font-size:42px; }
+        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:997; font-size:42px; }
         #fixTop a { background-color:#F60; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
         #fixTop span { background-color:#690; display:none; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
-        #popupShare { visibility:hidden; position: absolute; top:0; left: 0; z-index: 8888; }
-        /*#popupShare img { width: 1000px; height:1799px; }*/
+        #photoWall>div { float: left; width: 25%; margin: -2px 0px; padding: 1px; }
+        #photoWall img { width: 100%; margin: 0px; }
 
-        .calendar{
-            border-radius: 0px;
-        }
-        .calendar-title {
-            height: 120px;
-            padding: 38px 25px;
-            background: #F60;
-        }
-        .calendar-title .iconfont{
-            font-size: 80px;
-        }
-        .calendar-title .title{
-            font-size: 44px;
-        }
-        .calendar-title .hotTitle{
-            font-size: 44px;
-            display: inline-block;
-            color: #fff;
-            vertical-align: top;
-            text-indent: 20px;
-        }
-        .calendar-title .arrow {
-            width: auto;
-            top:30px;
-            right: 20px;
-        }
-        .calendar-title .arrow .mui-icon{
-            font-size: 58px;
-        }
-        .calendar-week{
-            width: 100%;
-            font-size: 32px;
-        }
-        .calendar-date .item{
-            font-size: 32px;
-        }
+        .mui-content { background-color: #FFFFFF; }
+        .calendar{ border-radius: 0px; }
+        .calendar-title { height: 120px; padding: 38px 25px; background: #F60; }
+        .calendar-title .iconfont{ font-size: 80px; }
+        .calendar-title .title{ font-size: 44px; }
+        .calendar-title .hotTitle{ font-size: 44px; display: inline-block; color: #fff; vertical-align: top; text-indent: 20px; }
+        .calendar-title .arrow { width: auto; top:30px; right: 20px; }
+        .calendar-title .arrow .mui-icon{ font-size: 58px; }
+        .calendar-week{ width: 100%; font-size: 32px; }
+        .calendar-date .item{ font-size: 32px; }
+        .calendar-date .item-curDay, .calendar-date .item-curDay:hover{ background-color: #FFFFFF; color: #ddd; }
+        .calendar-date .item-curMonth.item-curDay, .calendar-date .item-curMonth.item-curDay:hover{ background-color: #FFFFFF; color: #333; }
+
+        .page-header{ width:100%; height: 128px; background-color: #FFFFFF !important; padding: 20px 40px 20px 30px; line-height: 80px }
+        .page-header span { font-size: 36px; }
+        .page-header .pCount { margin: 0px 10px; }
+        .page-header img { margin-right: 15px; height: 80px; width:80px; border-radius: 50%; vertical-align: middle; }
+
+        .s2000 { width: 2000px !important;  }
+        .s2000 .calendar-title { height: 200px; padding: 80px 50px; }
+        .s2000 .calendar-title .iconfont{ font-size: 160px; }
+        .s2000 .calendar-title .title{ font-size: 86px; }
+        .s2000 .calendar-title .hotTitle{ font-size: 86px; }
+        .s2000 .calendar-title .arrow { width: auto; top:50px; right: 50px; }
+        .s2000 .calendar-title .arrow .mui-icon{ font-size: 86px; }
+        .s2000 .calendar-week{ width: 100%; font-size: 72px; }
+        .s2000 .calendar-date .item{ font-size: 72px; }
+
+        .s2000 .page-header{ width:100%; height: 265px; padding: 60px 50px; line-height: 100px }
+        .s2000 .page-header span { font-size: 72px; }
+        .s2000 .page-header .pCount { margin: 0px 20px; }
+        .s2000 .page-header img { margin-right: 35px; height: 160px; width:160px; border-radius: 50%; vertical-align: middle; }
 
 
-        #photoWall>div {
-            float: left;
-            width: 250px;
-            margin-top: -2px;
-        }
-        #photoWall img {
-            width: 248px;
-            height: 248px;
-            margin: 0px 1px;
-        }
-        .page-header{
-            background-color: #FFFFFF !important;
-            height: 128px;
-            padding: 20px 40px 20px 30px;
-            line-height: 80px
-        }
-        .page-header span {
-            font-size: 36px;
-        }
-        .page-header .pCount {
-            margin: 0px 10px;
-        }
-        .page-header img {
-            margin-right: 15px;
-            height: 80px;
-            width:80px;
-            border-radius: 50%;
-            vertical-align: middle;
-        }
-        .calendar-date .item-curDay, .calendar-date .item-curDay:hover{
-            background-color: #FFFFFF;
-            color: #333333;
-        }
+        .mui-backdrop{ display: none; background-color: #000; opacity: 0.9; }
+
+        @-webkit-keyframes rotate_pacman_half_up {
+          0% {
+            -webkit-transform: rotate(270deg);
+                    transform: rotate(270deg); }
+
+          50% {
+            -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg); }
+
+          100% {
+            -webkit-transform: rotate(270deg);
+                    transform: rotate(270deg); } }
+
+        @keyframes rotate_pacman_half_up {
+          0% {
+            -webkit-transform: rotate(270deg);
+                    transform: rotate(270deg); }
+
+          50% {
+            -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg); }
+
+          100% {
+            -webkit-transform: rotate(270deg);
+                    transform: rotate(270deg); } }
+
+        @-webkit-keyframes rotate_pacman_half_down {
+          0% {
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg); }
+
+          50% {
+            -webkit-transform: rotate(0deg);
+                    transform: rotate(0deg); }
+
+          100% {
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg); } }
+
+        @keyframes rotate_pacman_half_down {
+          0% {
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg); }
+
+          50% {
+            -webkit-transform: rotate(0deg);
+                    transform: rotate(0deg); }
+
+          100% {
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg); } }
+
+        @-webkit-keyframes pacman-balls {
+          75% {
+            opacity: 0.7; }
+
+          100% {
+            -webkit-transform: translate(-100px, -6.25px);
+                    transform: translate(-100px, -6.25px); } }
+
+        @keyframes pacman-balls {
+          75% {
+            opacity: 0.7; }
+
+          100% {
+            -webkit-transform: translate(-100px, -6.25px);
+                    transform: translate(-100px, -6.25px); } }
+
+        .pacman {
+                position: fixed;
+                left: 500px;
+                top: 500px;
+                z-index: 9999;
+                display: none;
+         }
+          .pacman > div:nth-child(2) {
+            -webkit-animation: pacman-balls 1s 0s infinite linear;
+                    animation: pacman-balls 1s 0s infinite linear; }
+          .pacman > div:nth-child(3) {
+            -webkit-animation: pacman-balls 1s 0.33s infinite linear;
+                    animation: pacman-balls 1s 0.33s infinite linear; }
+          .pacman > div:nth-child(4) {
+            -webkit-animation: pacman-balls 1s 0.66s infinite linear;
+                    animation: pacman-balls 1s 0.66s infinite linear; }
+          .pacman > div:nth-child(5) {
+            -webkit-animation: pacman-balls 1s 0.99s infinite linear;
+                    animation: pacman-balls 1s 0.99s infinite linear; }
+          .pacman > div:first-of-type {
+            width: 0px;
+            height: 0px;
+            border-right: 25px solid transparent;
+            border-top: 25px solid #fff;
+            border-left: 25px solid #fff;
+            border-bottom: 25px solid #fff;
+            border-radius: 25px;
+            -webkit-animation: rotate_pacman_half_up 0.5s 0s infinite;
+                    animation: rotate_pacman_half_up 0.5s 0s infinite; }
+          .pacman > div:nth-child(2) {
+            width: 0px;
+            height: 0px;
+            border-right: 25px solid transparent;
+            border-top: 25px solid #fff;
+            border-left: 25px solid #fff;
+            border-bottom: 25px solid #fff;
+            border-radius: 25px;
+            -webkit-animation: rotate_pacman_half_down 0.5s 0s infinite;
+                    animation: rotate_pacman_half_down 0.5s 0s infinite;
+            margin-top: -50px; }
+          .pacman > div:nth-child(3), .pacman > div:nth-child(4), .pacman > div:nth-child(5), .pacman > div:nth-child(6) {
+            background-color: #fff;
+            width: 15px;
+            height: 15px;
+            border-radius: 100%;
+            margin: 2px;
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            -webkit-transform: translate(0, -6.25px);
+                -ms-transform: translate(0, -6.25px);
+                    transform: translate(0, -6.25px);
+            top: 25px;
+            left: 100px; }
 
 
     </style>
 </head>
 
 <body>
+
+<div class="loader">
+    <div class="loader-inner pacman">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <div class="mui-backdrop"></div>
 
 <div id="pageShare">
     <div id="calendar" class="calendar"></div>
@@ -114,8 +212,8 @@
         <div id="photoWall"></div>
         <div class="page-header">
                 <span class="fl">
-                    <img src="{$memberInfo.avatar}">
-                    <text>{$memberInfo.member}</text>
+                    <img src="{$userInfo.avatar}" style="border-radius: 50%; ">
+                    <text>{$userInfo.member}</text>
                 </span>
                 <span class="fr">
                     <span class="wd49"><text class="punchYM">{$currYear}-{$currMonth}</text>月运动 <strong class="colororange pCount"></strong> 次
@@ -126,7 +224,7 @@
 </div>
 
 <div id="fixTop">
-    <a href="#" id="btnSave">[ 点击生成图片并分享 ]</a>
+    <a id="btnSave">[ 点击生成图片并分享 ]</a>
     
     <span>请长按图片保存或转发朋友</span>
 </div>
@@ -160,7 +258,9 @@
 
         toMonthPunchList(); //输出月份的打卡记录列表
 
+
         $(document).on("tap", ".arrow-prev", function () {
+            $(".pCount").text("0");
             setTimeout(function () {
                 toMonthPunchList();
             }, 1000)
@@ -168,6 +268,7 @@
 
         });
         $(document).on("tap", ".arrow-next", function () {
+            $(".pCount").text("0");
             setTimeout(function () {
                 toMonthPunchList();
             }, 1000)
@@ -190,11 +291,13 @@
     function toMonthPunchList() {
         var url = "{:url('api/punch/getMonthPunchListApi','','',true)}";
         var month_str = $("#calendar .title").text();
+        var userID = "{$userInfo.id}"
         $(".punchYM").text(month_str);
         mui.ajax({
             url: url,
             data: {
                 month_str: month_str,
+                member_id: userID
             },
             dataType: 'json', //服务器返回json格式数据
             type: 'post', //HTTP请求类型
@@ -212,20 +315,9 @@
 
                        for (var i = 0; i <= data.data.length - 1; i++) {
                             //标记日历
-                            var punch_time = data.data[i].punch_time
-                            $(".calendar-date .item").each(function () {
-                                var time = $(this).attr("data");
-                                var year = time.substring(0, 4);
-                                var month = time.substring(4, 6);
-                                var day = time.substring(6, 8);
-                                if (day < 10 && day.length == 1) {
-                                    day = "0" + day
-                                }
-                                var dateTime = year + "-" + month + "-" + day
-                                if (punch_time == dateTime) {
-                                    $(this).addClass("endDK");
-                                }
-                            });
+                            var punch_time = data.data[i].punch_time;
+                            var clName = ".calendar-date .item-curMonth.c"+punch_time.substring(8);
+                            $(clName).addClass("endDK");
                             //插入图片
                             var image_url = data.data[i].image_url
                             newli += '<div><img src="'+image_url+'" /></div>';
@@ -246,7 +338,6 @@
                 }
 
                 $('#photoWall').html(newli);
-
 
             },
             error: function (xhr, type, errerThrown) {
@@ -276,28 +367,45 @@
         $(".calendar-title .title").css("float","right").text(newTitle);
         $(".calendar-title .title").before('<span class="hotTitle">篮球管家</span>');
         $(".calendar-title .arrow").hide();
-        /////////////////////////////////////////////////
-        var h = content.clientHeight;
-        var w = content.clientWidth;
-        html2canvas(content, {
-            scale: 2,
-            onrendered: function(canvas) {
 
-                //添加属性
-                canvas.setAttribute('id','thecanvas');
-                //读取属性值
-                // var value= canvas.getAttribute('id');
-                document.getElementById('canvasPic').appendChild(canvas);
-                var oCanvas = document.getElementById("thecanvas");
-                var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute('src');
-                var element = document.getElementById('sharePic');
-                element.src = img_data2;
-//                $("#pageShare").hide();
-                $("#fixTop a").hide();
-                $("#popupShare").css("visibility","visible");
-                $("#fixTop span").show();
-            }
-        });
+        var getHeight = $("#pageShare").height();
+        $("#pageShare").addClass("s2000");
+          var width = $(".item").width()
+          $(".item").css("height", width)
+          $(".item").css("line-height", width + "px");
+
+        ///////////////////////////////////////////////// 
+        $(".mui-backdrop").show();
+        $(".pacman").show();
+                
+        setTimeout(function () {
+           
+            var h = content.clientHeight;
+            var w = content.clientWidth;
+            html2canvas(content, {
+                scale: 2,
+                onrendered: function(canvas) {
+
+                    //添加属性
+                    canvas.setAttribute('id','thecanvas');
+                    //读取属性值
+                    // var value= canvas.getAttribute('id');
+                    document.getElementById('canvasPic').appendChild(canvas);
+                    var oCanvas = document.getElementById("thecanvas");
+                    var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute('src');
+                    var element = document.getElementById('sharePic');
+                    element.src = img_data2;
+                   $("#pageShare").hide();
+                    $("#fixTop a").hide();
+                    $("#popupShare img").css("width","1000px")
+                    $("#popupShare").css("visibility","visible");
+                    $("#fixTop span").show();
+                    $(".mui-backdrop").hide();
+                    $(".pacman").hide();
+                }
+            });
+
+        }, 2000)
     }
 
 
