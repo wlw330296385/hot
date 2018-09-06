@@ -86,26 +86,34 @@ $(function () {
         // allDay: 得到当前列表显示的所有天数
         var allDay = new Date(year, month - 1, i + 1 - firstDay.getDay());
         var allDay_str = returnDateStr(allDay);
+        //console.log(allDay_str);
+        var cDay = allDay_str.substr(6)
         $(this).text(allDay.getDate()).attr('data', allDay_str);
+
         if (returnDateStr(new Date()) === allDay_str) {
-          $(this).attr('class', 'item item-curDay');
+          if (returnDateStr(firstDay).substr(0, 6) === allDay_str.substr(0, 6)) {
+            $(this).attr('class', 'item item-curMonth item-curDay c'+cDay);
+          }else{
+            $(this).attr('class', 'item item-curDay');
+          }
         } else if (returnDateStr(firstDay).substr(0, 6) === allDay_str.substr(0, 6)) {
-          $(this).attr('class', 'item item-curMonth');
+          $(this).attr('class', 'item item-curMonth c'+cDay);
         } else {
           $(this).attr('class', 'item');
         }
+        
       });
 
       // 修复9月份天数没有添加item-curMonth这个类的问题
-      if (month == "09") {
-        $("#calendar .calendar-date .item").each(function () {
-          var data = $(this).attr("data");
-          var dataMonth = data.substring(4, 5);
-          if (dataMonth == "9") {
-            $(this).addClass("item-curMonth")
-          }
-        })
-      }
+      // if (month == "09") {
+      //   $("#calendar .calendar-date .item").each(function () {
+      //     var data = $(this).attr("data");
+      //     var dataMonth = data.substring(4, 5);
+      //     if (dataMonth == "9") {
+      //       $(this).addClass("item-curMonth")
+      //     }
+      //   })
+      // }
 
     },
 
@@ -236,8 +244,8 @@ $(function () {
     var month = date.getMonth() + 1;
     var day = date.getDate();
 
-    month = month < 9 ? ('0' + month) : ('' + month);
-    day = day < 9 ? ('0' + day) : ('' + day);
+    month = month < 10 ? ('0' + month) : ('' + month);
+    day = day < 10 ? ('0' + day) : ('' + day);
 
     return year + month + day;
   };

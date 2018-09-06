@@ -123,7 +123,10 @@ class Punch extends Base{
     public function punchPhotoWall(){
         $currYear = date('Y',time());
         $currMonth = date('m',time());
-        $member_id = input('param.member_id');
+        
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $userInfo = db('member')->where(['id'=>$member_id])->find();
+        $this->assign('userInfo',$userInfo);
 
         $this->assign('currYear',$currYear);
         $this->assign('currMonth',$currMonth);
