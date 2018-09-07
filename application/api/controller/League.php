@@ -1090,13 +1090,13 @@ class League extends Base
             }
             // 获取分组列表数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroups($data);
+            $result = $leagueService->getMatchGroups($data, 'id asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
             foreach ($result as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']], 'id asc');
                 if ($groupTeams) {
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
@@ -1166,13 +1166,13 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroupPaginator($data);
+            $result = $leagueService->getMatchGroupPaginator($data, 'id asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
             foreach ($result['data'] as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']], 'id asc');
                 if ($groupTeams) {
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
