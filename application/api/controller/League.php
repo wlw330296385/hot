@@ -3312,9 +3312,17 @@ class League extends Base
             if (input('?page')) {
                 unset($data['page']);
             }
+
+            $is_public = 1;
+            if (isset($data['is_public']) && $data['is_public'] == 0) {
+                $is_public = 0;
+            }
+            unset($data['is_public']);
+
             $leagueS = new LeagueService();
             $orderby = ['match_time' => 'asc', 'id' => 'desc'];
             $_result = $leagueS->getMatchSchedules($data, $orderby);
+
             if (!$_result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
@@ -3324,14 +3332,23 @@ class League extends Base
                 $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
                 $_result1[$value['match_stage'] . '|' . $date][] = $value;
             }
+
             foreach ($_result1 as $key => $value) {
                 $_array = [];
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
+                
+                foreach($value as $key => $row) {
+                    if ( ($is_public == 1 && $row["status"] < 1) || ($is_public == 0 && $row["status"] > 0)) {
+                        unset($value[$key]);
+                    }
+                }
                 $_array['stage']['schedules'] = $value;
+
                 array_push($result, $_array);
             }
+            
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {
