@@ -680,14 +680,41 @@ class StatisticsCamp extends Camp{
         $month_start = strtotime($monthStart);
         $month_end = strtotime($monthEnd)+86399;
         //查询条件：camp_id，monthstart，monthend
-        $list = db('output')
-            ->where(['camp'=>$camp_id,'type'=>-1])
-            ->where(['create_time'=>['between',[$month_start,$month_end]]])
-            ->where('delete_time',null)->select();
-
+        $CampWithdraw = new \app\model\CampWithdraw;
+        $list = $CampWithdraw
+            ->field('camp_withdraw.*,camp_bankcard.account,camp_bankcard.bank,camp_bankcard.bank_branch,camp_bankcard.telephone,camp_bankcard.bank_card')
+            ->join('camp_bankcard','camp_withdraw.bank_id = camp_bankcard.id')
+            ->where(['camp_withdraw.camp_id'=>$camp_id])
+            ->where(['camp_withdraw.create_time'=>['between',[$month_start,$month_end]]])
+            ->where('camp_withdraw.delete_time',null)
+            ->order('camp_withdraw.id desc')
+            ->paginate(20);
         $this->assign('list',$list);
         return $this->fetch('StatisticsCamp/campWithdraw');
     }
+
+    //申请提现
+    public function withdraw(){
+        $w = date('w',time());
+        $d = date('d',time());
+        $m = input('param.ym',date('Ym',time()));
+        $type = input('param.type');
+        if($this->campInfo['rebate_type'] == 1){
+            if($d<15){
+                $this->error('每月15号之后方可申请提现');
+            }  
+            $date_str = [($m-1)*100,$m*100];
+            $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
+            $count = db('income')->where($map)->count('income');
+        }else{
+            if($w<>0 && $w <> 5 $w <> 6){
+                $this->error('周五至周日可申请提现');
+            }
+        }
+
+        
+    }
+
     // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）
     public function campCoachSalaryMth(){
         $camp_id = $this->camp_member['camp_id'];

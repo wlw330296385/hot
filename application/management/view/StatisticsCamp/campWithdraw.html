@@ -27,7 +27,13 @@
 								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
 							<h3 class="totalRight">
-								<span><small>提现总额：</small><strong class="text-yellow monthIn"></strong></span>
+
+								<span>
+                                    <small>提现总额：</small><strong class="text-yellow monthIn"></strong>
+
+                                    当前训练营余额:{$campInfo.balance}
+                                    <button type="button" class="btn btn-info col-sm-6" id="goWithdraw">申请提现</button>
+                                </span>
 							</h3>
 						</div>
 					</div>
@@ -43,21 +49,32 @@
 										<th>提现金额</th>
 										<th>冻结金额</th>
 										<th>会员</th>
-										<th>余额</th>
 										<th>真实姓名</th>
 										<th>提现账号</th>
 										<th>手续费</th>
 										<th>联系电话</th>
 										<th>申请时间</th>
-										<th>完成提现时间</th>
-										<th>是否到账</th>
+										<th>备注</th>
 										<th>状态</th>
+                                        <th>系统回复</th>
 									</tr>
 									</thead>
 									<tbody>
 									{volist name='list' id="vol"}
     									<tr>
-    										需求不明，无具体记录
+                                            <td>{$i}</td>
+    										<td>{$vol.withdraw}</td>
+                                            <td>{$vol.buffer}</td>
+                                            <td>{$vol.member}</td>
+                                            <td>{$vol.account}</td>
+                                            <td>{$vol.bank_card}</td>
+                                            <td>{$vol.camp_withdraw_fee}</td>
+                                            <td>{$vol.telephone}</td>
+                                            <td>{$vol.create_time}</td>
+                                            <td>{$vol.remarks}</td>
+                                            <td>{$vol.status}</td>
+                                            <td>{$vol.system_remarks}</td>
+
     									</tr>
 									{/volist}
 									</tbody>
@@ -85,11 +102,6 @@
 
 
 {block name='js'}
-
-<!-- Bootstrap WYSIHTML5 -->
-<!--<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>-->
-<!-- date-range-picker -->
-<!--<script src="/static/plugins/moment/moment.js"></script>-->
 <script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
 <script>
 
@@ -167,6 +179,28 @@
             window.location.href="{:url('management/StatisticsCamp/campWithdraw')}"+"/monthstart/"+beginDate+"/monthend/"+endDate;
         })
 
+
+        $('#goWithdraw').on('click',function(){
+
+            if("{$camp_member.type}"!=4){
+                alert('权限不足');
+                return false;
+            }
+
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: '训练营余额提现',
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['900px', '650px'],
+                    content: "{:url('withdraw')}"
+                });
+            });
+        })
 
     })
 
