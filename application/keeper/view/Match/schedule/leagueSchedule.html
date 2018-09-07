@@ -132,7 +132,6 @@
                         <option value="1">第一组</option>
                         <option value="2">第二组</option>
                         <option value="3">第三组</option>
-                        <option value="4">第四组</option>
                     </select>
                 </span>
             </div>
@@ -178,10 +177,20 @@
 
         rankList(4); //赛程列表
         followStatus(); // 当前的关注状态
+        var sort = ''
+        var match_group_id = ''
         //选择查看赛程类型
         $("#sort").on("change", function () {
             sort = $(this).find("option:checked").val();
-            rankList(sort);
+            match_group_id = ''
+            rankList(sort, match_group_id);
+        });
+
+        //选择查看赛程类型
+        $("#group").on("change", function () {
+            sort = ''
+            match_group_id = $(this).find("option:checked").val();
+            rankList(sort, match_group_id);
         });
 
         // 关注联赛
@@ -247,7 +256,7 @@
         }
 
         // 赛程列表
-        function rankList(sort) {
+        function rankList(sort, match_group_id) {
             var url = "{:url('api/league/getshowmatchschedulelist','','',true)}";
             var league_id = "{$league_id}";
             mui.ajax({
@@ -255,6 +264,7 @@
                 data: {
                     league_id: league_id,
                     sort: sort,
+                    match_group_id: match_group_id,
                     status: 1
                 },
                 dataType: 'json', //服务器返回json格式数据

@@ -106,7 +106,7 @@
             {/if}
 
             {volist name="matchScheduleInfo" id="vo1" key="a"}
-            <div class="scheduleList" data-num="{$a}" >
+            <div class="scheduleList" data-num="{$a}">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日<text class="tnum">{$a}</text></span>
                     <span class="fr f14 deleteModel">删除</span>
@@ -511,50 +511,67 @@
                         var away_team_id = $(this).find(".firght").attr("data-away_team_id");
                         var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
                         var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
-                        var id = $(this).find(".checkboxCont").attr("data-id");
-                        schedules.push({
-                            match_time,
-                            match_group,
-                            match_group_id,
-                            home_team,
-                            home_team_id,
-                            home_team_logo,
-                            home_team_alias,
-                            away_team,
-                            away_team_id,
-                            away_team_logo,
-                            away_team_alias,
-                            id:id
-                        })
+                        var id = $(this).attr("data-id");
+                        if (id != undefined) {
+                            schedules.push({
+                                match_time,
+                                match_group,
+                                match_group_id,
+                                home_team,
+                                home_team_id,
+                                home_team_logo,
+                                home_team_alias,
+                                away_team,
+                                away_team_id,
+                                away_team_logo,
+                                away_team_alias,
+                                id: id
+                            })
+                        } else {
+                            schedules.push({
+                                match_time,
+                                match_group,
+                                match_group_id,
+                                home_team,
+                                home_team_id,
+                                home_team_logo,
+                                home_team_alias,
+                                away_team,
+                                away_team_id,
+                                away_team_logo,
+                                away_team_alias,
+                            })
+                        }
+
                     }
                 })
-               
+
             })
             if (!isCheck) {
                 return isCheck
             }
             console.log(schedules)
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.schedules = JSON.stringify(schedules);
-            // var url = "{:url('api/league/saveallmatchschedule')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert('创建成功', '确定', function () {
-            //         var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '创建失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.schedules = JSON.stringify(schedules);
+            var url = "{:url('api/league/saveallmatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('创建成功', '确定', function () {
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '创建失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
 </body>

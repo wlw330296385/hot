@@ -1090,13 +1090,13 @@ class League extends Base
             }
             // 获取分组列表数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroups($data);
+            $result = $leagueService->getMatchGroups($data, 'id asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
             foreach ($result as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']], 'id asc');
                 if ($groupTeams) {
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
@@ -1166,13 +1166,13 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroupPaginator($data);
+            $result = $leagueService->getMatchGroupPaginator($data, 'id asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
             foreach ($result['data'] as $k => $val) {
                 // 遍历获取分组下球队列表数据
-                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']]);
+                $groupTeams = $leagueService->getMatchGroupTeams(['group_id' => $val['id']], 'id asc');
                 if ($groupTeams) {
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
@@ -3312,9 +3312,17 @@ class League extends Base
             if (input('?page')) {
                 unset($data['page']);
             }
+
+            $is_public = 1;
+            if (isset($data['is_public']) && $data['is_public'] == 0) {
+                $is_public = 0;
+            }
+            unset($data['is_public']);
+
             $leagueS = new LeagueService();
             $orderby = ['match_time' => 'asc', 'id' => 'desc'];
             $_result = $leagueS->getMatchSchedules($data, $orderby);
+
             if (!$_result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
@@ -3324,14 +3332,21 @@ class League extends Base
                 $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
                 $_result1[$value['match_stage'] . '|' . $date][] = $value;
             }
+
             foreach ($_result1 as $key => $value) {
                 $_array = [];
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
-                $_array['stage']['schedules'] = $value;
+                $_array['stage']['schedules'] = array();
+                foreach($value as $key => $row) {
+                    if ( ($is_public == 1 && $row["status"] < 1) || ($is_public == 0 && $row["status"] > 0)) {
+                        array_push($_array['stage']['schedules'], $row);
+                    }
+                }
                 array_push($result, $_array);
             }
+            
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {
@@ -3405,33 +3420,31 @@ class League extends Base
             if (input('?page')) {
                 unset($map['page']);
             }
-            if (input('?param.sort')) {
-                $sort = input('sort', 0, 'intval');
-                unset($map['sort']);
-                switch ($sort) {
-                    case 1:
-                        {
-                            // match_time区间 查询条件组合:当前时间至所选未来7天
-                            $nowTime = time();
-                            $dateTimeStamp = strtotime("+7 days");
-                            $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
-                            $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
-                            break;
-                        }
-                    case 2:
-                        {
-                            // 未完成的赛程
-                            $map['status'] = 1;
-                            break;
-                        }
-                    case 3:
-                        {
-                            // 已完成有比分信息的赛程
-                            $map['status'] = 2;
-                        }
-                    default:
-                        break;
-                }
+            if ( empty($map['match_group_id']) ) {
+                unset($map['match_group_id']);
+            }
+            $sort = input('sort', 0, 'intval');
+            unset($map['sort']);
+            switch ($sort) {
+                case 1:
+                    // match_time区间 查询条件组合:当前时间至所选未来7天
+                    $nowTime = time();
+                    $dateTimeStamp = strtotime("+7 days");
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                    $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
+                    break;
+                case 2:
+                    // 未完成的赛程
+                    $map['status'] = 1;
+                    break;
+                case 3:
+                    // 已完成有比分信息的赛程
+                    $map['status'] = 2;
+                    break;
+                default:
+                    // 默认查全部已公布
+                    $map['status'] = ['in','1,2'];
+                    break;
             }
             $leagueS = new LeagueService();
             $matchS = new MatchService();
