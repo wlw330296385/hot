@@ -93,6 +93,11 @@
         .highlight {
             color:#dd524d !important;
         }
+        .follow{
+            padding: 2px 8px !important;
+            float: right;
+            margin-top: 8px;
+        }
     </style>
 </head>
 
@@ -100,6 +105,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backHref"></a>
+        <!-- <button type="button" class="btn bgred follow" data-member_id="{$punchInfo.member_id}">关注</button> -->
     </header>
 
     <div class="mui-content">
@@ -107,18 +113,20 @@
 
             <ul class="mui-table-view mb border-b">
                 <li class="mui-table-view-cell listli">
+                    <a href="{:url('/keeper/punch/memberHomePage',['member_id'=>$punchInfo.member_id])}" class="mui-navigate-right">
                     <img class="mui-media-object mui-pull-left img45" src="{$punchInfo.avatar}">
                     <div class="mui-media-body wd45">
                         <strong class="f16 punchMember"></strong>
                         <p class="mui-ellipsis lineHeight20">{$punchInfo.city} {$punchInfo.area}</p>
                     </div>
-                    <div class="price-frame mui-text-left" style="padding-top: 5px;">
+                    <div class="price-frame mui-text-left" style="padding-top: 5px; padding-right: 15px;">
                         <p class="f12">本月打卡
                             <text class="colororange f18">{$monthPunch}</text>
                         </p>
                         <p class="f12">累计打卡 {$totalPunch}</p>
 
                     </div>
+                    </a>
                 </li>
             </ul>
 
@@ -360,6 +368,37 @@
                 }
 
             });
+            
+            // 关注会员
+            $(document).on("tap", ".follow", function () {
+                var member_id = $(this).attr("data-member_id");
+                var thisText = $(this).text();
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 1,
+                        member_id: member_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            setTimeout("window.location.reload()", 1000)
+
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
 
             // 选择打赏币
             $(document).on("tap", ".classH", function () {

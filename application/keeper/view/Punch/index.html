@@ -110,6 +110,61 @@
             margin-left: 5px;
             margin-right: 5px;
         }
+
+        .punchList img {
+            border-radius: 5px;
+        }
+
+        .others_punchList li {
+            padding: 10px;
+        }
+        .others_punchList img {
+            border-radius: 6px;
+        }
+        .others_punchList .mui-media-body {
+            height: auto !important;
+        }
+        .others_punchList .mui-media-body p{
+            font-size: 12px;
+            margin: 8px;
+        }
+
+        .banner {
+            background:url('/static/frontend/images/hot_gray.png');
+            background-size:cover;
+            height: 180px;
+            position: relative;
+        }
+
+        /* 效果CSS开始 */
+        .eye_wrapper{
+            text-align: center;
+            position: absolute;
+            bottom: -20px;
+            z-index: 9;
+        }
+        .eye_wrapper .head{
+            width:90%;
+        }
+        .eye_wrapper2{
+            text-align: center;
+            position: absolute;
+            bottom: -20px;
+            z-index: 10;
+        }
+        .eye_wrapper2 .eye{
+            width:90%;
+        }
+        .eye_wrapper .eye-left{
+            position:absolute;
+            top:97px;
+            left:30px}
+        .eye_wrapper .eye-right{
+            position:absolute;
+            top:95px;
+            left:96px}
+        /* 效果CSS结束 */
+
     </style>
 </head>
 
@@ -180,32 +235,28 @@
 
             <ul class="mui-table-view mb punchList">
             </ul>
-            <p class="moreRecord mui-text-center bggray2 f12" style="padding-top:10px;">
-                <a href="{:url('punch/punchList')}">点击查看更多打卡记录</a>
+            <p class="moreRecord mui-text-center bggray2 f14" style="padding:10px;">
+                <a href="{:url('punch/punchList')}">查看更多我的打卡记录</a>
             </p>
 
-            <div class="page-header whitebg">
-                <span class="course">
-                    他/她也在打卡哦
+            <div class="banner">
+                <div class="eye_wrapper">
+                    <img alt="Head" class="head" src="/static/frontend/images/hotCartoon.png" />
+                </div>
+                <div class="eye_wrapper2">
+                    <img alt="eye" class="eye" src="/static/frontend/images/hotCartoon2.png" />
+                </div>
+            </div>
+
+            <div class="page-header whitebg mui-text-center">
+                <span class="f14">
+                    他/她们也在打卡哦！
                 </span>
             </div>
-            <ul class="mui-table-view mui-grid-view">
-                <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#">
-                        <img class="mui-media-object" src="../images/shuijiao.jpg">
-                        <div class="mui-media-body">幸福就是可以一起睡觉</div></a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#">
-                        <img class="mui-media-object" src="../images/muwu.jpg">
-                        <div class="mui-media-body">想要一间这样的木屋，静静的喝咖啡</div></a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#"><img class="mui-media-object" src="../images/cbd.jpg">
-                        <div class="mui-media-body">Color of SIP CBD</div></a></li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-6">
-                    <a href="#">
-                        <img class="mui-media-object" src="../images/yuantiao.jpg">
-                        <div class="mui-media-body">静静看这世界</div></a></li>
-            </ul>    
+            <ul class="mui-table-view mui-grid-view others_punchList"></ul> 
+            <p class="moreOthers mui-text-center bggray2 f14" style="padding:10px;">
+                查看更多...
+            </p>   
 
 
             <div class="dragClass" id="drag">
@@ -224,6 +275,78 @@
 <script src="/static/frontend/js/mobile_date.js"></script>
 <script src="/static/frontend/js/calendar.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+<script>
+
+    var oCount = 1;
+    $(function () {
+        
+        toOtherList(1, 1);
+        //点击查看更多别人的打卡记录
+        $(".moreOthers").click(function () {
+            pullupRefresh();
+        })
+        //下拉刷新具体业务实现
+        function pulldownRefresh() {
+            setTimeout(function () {
+                oCount = 1;//刷新并显示第一页
+                var page = oCount;
+                var gType = 1;//代表下拉刷新
+                toOtherList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+        //上拉加载具体业务实现
+        function pullupRefresh() {
+            setTimeout(function () {
+                oCount++;//翻下一页
+                var page = oCount;
+                var gType = 2;//代表上拉加载
+                toOtherList(page, gType);//具体取数据的方法
+            }, 100);
+        }
+
+    })
+        //接口获取数据并追加到页面
+        var toOtherList = function (page, gType) {
+                // 打卡首页的打卡记录列表
+                var member_id = "{$memberInfo.id}"
+                var url = "{:url('api/punch/getOtherPunchListApi','','',true)}" +'/member_id/'+ member_id+'/?page=' + page;
+                mui.ajax({
+                    url: url,
+                    data: {
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data)
+                        var newli = '';
+                        if (data.code == 200) {
+                            for (var i = 0; i <= data.data.length - 1; i++) {
+                                var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=list';
+                                newli += '<li class="mui-table-view-cell mui-media mui-col-xs-6"><a href="' + urls + '"><img class="mui-media-object" src="' + data.data[i].image_url + '"><div class="mui-media-body"><text class="colororange">' +  data.data[i].member +'</text> # '+ data.data[i].name +' '+ data.data[i].duration + 'min<p class="f12">'+data.data[i].punch_time+'</p></div></a></li>'
+                            }
+                        }
+                        if (gType == 1) {
+                            //上拉刷新
+                            $("ul.others_punchList").empty().append(newli);
+                            if (newli == '') {
+                                $("ul.others_punchList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有任何打卡记录，怪哉！</p></li>');
+                            }
+                        } else {
+                            //下拉加载 gType==2
+                            $("ul.others_punchList").append(newli);
+                        }
+
+                    },
+                    error: function (xhr, type, errerThrown) {
+                        mui.toast('网络异常,请稍候再试');
+                    }
+                });
+        };
+</script>
+
 <script>
     var count = 1
 
@@ -296,22 +419,6 @@
                         var punch_time = data.data[i].punch_time;
                         var clName = ".calendar-date .item-curMonth.c"+punch_time.substring(8);
                         $(clName).addClass("endDK");
-
-                        // $(".calendar-date .item-curMonth").each(function () {
-                        //     var time = $(this).attr("data");
-                        //     var year = time.substring(0, 4);
-                        //     var month = time.substring(4, 6);
-                        //     var day = time.substring(6, 8);
-                        //     if (day < 10 && day.length == 1) {
-                        //         day = "0" + day
-                        //     }
-                        //     var dateTime = year + "-" + month + "-" + day
-                        //     console.log(dateTime)
-                        //     if (punch_time == dateTime) {
-                        //         $(this).addClass("endDK");
-                        //         return;
-                        //     }
-                        // });
                     }
                 }
             },
@@ -348,7 +455,7 @@
                             '" class="mui-navigate-right">';
                         newli += '<img class="mui-media-object mui-pull-left" src="' + data.data[i].image_url +
                             '"><div class="mui-media-body wd f16">' + data.data[i].member +
-                            ' <i class="colorgray">|</i> <strong>' + data.data[i].name + '</strong>';
+                            ' <i class="colorgray">|</i> <strong>' + data.data[i].name + '</strong> <i class="colorgray">|</i> <text class="f12">' + data.data[i].duration + 'min</text>';
                         newli += '<p class="lineHeight20">' + data.data[i].punch_time +
                             ' &nbsp;<i class="icon iconfont icon-punch-bonuspool colororange f16"></i> 打卡金 <text class="colororange">' +
                             data.data[i].stakes + '</text> &nbsp;打赏 <text class="colororange">' + data.data[
@@ -356,6 +463,9 @@
                             '</text> &nbsp; <i class="mui-icon-extra mui-icon-extra-like f14"></i> <text class="colororange">' +
                             data.data[i].likes + '</text></p>';
                         newli += '</div></a></li>'
+                        if(i==2){
+                            break;
+                        }
                     }
                     if (newli == '') {
                         newli = '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有打卡记录哦</p></li>'
@@ -369,6 +479,16 @@
             }
         });
     };
+
+    var int=self.setInterval("looklook()",2000)
+    function looklook(){
+        if($('.eye_wrapper2').hasClass('hide')){
+            $('.eye_wrapper2').removeClass("hide");
+        }else{
+            $('.eye_wrapper2').addClass("hide");
+        }
+    }
+    
 </script>
 <!-- 悬浮拖动按钮 -->
 <script>
