@@ -3338,14 +3338,12 @@ class League extends Base
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
-                
+                $_array['stage']['schedules'] = array();
                 foreach($value as $key => $row) {
                     if ( ($is_public == 1 && $row["status"] < 1) || ($is_public == 0 && $row["status"] > 0)) {
-                        unset($value[$key]);
+                        array_push($_array['stage']['schedules'], $row);
                     }
                 }
-                $_array['stage']['schedules'] = $value;
-
                 array_push($result, $_array);
             }
             
