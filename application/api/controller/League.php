@@ -3445,6 +3445,10 @@ class League extends Base
                             $map['status'] = 2;
                         }
                     default:
+                        {
+                            // 默认查全部已公布
+                            $map['status'] = ['in','1,2'];
+                        }
                         break;
                 }
             }
