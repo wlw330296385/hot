@@ -11,6 +11,16 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mbNumber {
+            width: 10%;
+            font-size: 20px;
+            line-height: 62px;
+            float: left;
+            text-align: center;
+            margin-right: 4px;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,7 +47,7 @@
             </span>
         </div>
         <div class="tab-pullRefresh">
-            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px";>
+            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px" ;>
                 <div class="mui-scroll">
                     <ul class="mui-table-view list scheduleList1"></ul>
                 </div>
@@ -122,7 +132,7 @@
             $(document).on("tap", ".clearList", function () {
                 mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
                     if (e.index == 1) {
-                          var league_id = "{$league_id}";
+                        var league_id = "{$league_id}";
                         mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
                             data: {
                                 match_id: league_id,
@@ -154,6 +164,15 @@
                 toList(0)
             })
             getbattle()
+
+            $(document).on("tap", ".releaseSchedule", function () {
+                var dayText = $(this).prev().text();
+                mui.confirm("确认发布" + dayText + "的赛程?", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.toast("开发中，敬请期待");
+                    }
+                })
+            })
         })
 
         function getbattle() {
@@ -227,8 +246,9 @@
                                     newli += `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
                                 } else {
                                     newli +=
-                                        `<span class="course" style="padding-left:8px;">比赛日${i+1}</span>
-                                    <span class="fr f14">${data.data[i].date} </span>`
+                                        `<span class="f14" style="padding-left:8px;">比赛日${i + 1}</span>
+                                        <span  class="f14 colororange releaseSchedule" style="padding-left:8px;">发布赛程</span>
+                                            <span class="fr f14">${data.data[i].date} </span>`
                                 }
                                 newli +=
                                     `</div><ul class="mui-table-view list border-b">
@@ -252,7 +272,8 @@
                                             <span class="mui-btn mui-btn-red" data-schedule_id="${dataSchedule.id}">删除</span>
                                         </div>
                                         <div class="mui-slider-handle">
-                                            <div class="mui-media-body wd">
+                                            <div class="mbNumber colororange">${j+1}</div>
+                                            <div class="mui-media-body wd66">
                                                     <p class="f14" style="margin-bottom: 8px;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" style="margin-right:10px;">${dataSchedule.home_team}</p>
                                                     <p class="f14">

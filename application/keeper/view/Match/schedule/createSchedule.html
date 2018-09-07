@@ -66,7 +66,7 @@
         <input type="hidden" name="match_id" value="{$league_id}" class="data">
         <input type="hidden" name="match_stage" value="" class="data">
         <input type="hidden" name="match_stage_id" value="" class="data">
-        <input type="hidden" name="status" value="0" class="data">
+        <!-- <input type="hidden" name="status" value="0" class="data"> -->
 
         <ul class="mui-table-view mb list">
             <li class="mui-table-view-cell listli">
@@ -177,9 +177,6 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form class="mui-input-group firghtList"></form>
-            </div>
-            <div class="mui-scrollbar mui-scrollbar-vertical">
-                <div class="mui-scrollbar-indicator"></div>
             </div>
         </div>
     </div>
@@ -324,6 +321,10 @@
 
 
             });
+            $(document).on("tap", "#closeConfirm", function () {
+                mui("#firght").popover("toggle");
+            })
+            
 
             //列表复选框赋值
             $(document).on("tap", ".add", function () {
@@ -468,8 +469,8 @@
                                             data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
                                             data-away_team_alias="${battlesArray.away_team_alias}" 
                                             data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> `
-                                newli += `</div>`
                             }
+                            newli += `</div>`
                         }
                         if (newli != '') {
                             $(".firghtList").empty().append(newli);
@@ -510,6 +511,7 @@
                         var away_team_id = $(this).find(".firght").attr("data-away_team_id");
                         var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
                         var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
+                        var status = $(this).find(".firght").attr("data-status");
                         var id = $(this).attr("data-id");
                         if (id != undefined) {
                             schedules.push({
@@ -524,6 +526,7 @@
                                 away_team_id,
                                 away_team_logo,
                                 away_team_alias,
+                                status,
                                 id: id
                             })
                         } else {
@@ -539,6 +542,7 @@
                                 away_team_id,
                                 away_team_logo,
                                 away_team_alias,
+                                status
                             })
                         }
 
