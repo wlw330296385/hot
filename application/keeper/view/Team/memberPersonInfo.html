@@ -107,7 +107,9 @@
                         <img class="mui-media-object mui-pull-left logostyle" src="{$memberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
                         <p class="mui-ellipsis lineHeight20 region">{$memberInfo.city} {$memberInfo.area}</p>
                         <p class="mui-ellipsis lineHeight20">年龄:
-                            <text class="colororange">{:date('Y',time()) - ((int)$memberInfo.birthday===0000?date('Y',time()):(int)$memberInfo.birthday)}</text> 身高:
+                            <text class="colororange">{:date('Y',time()) -
+                                ((int)$memberInfo.birthday===0000?date('Y',time()):(int)$memberInfo.birthday)}</text>
+                            身高:
                             <text class="colororange">{$memberInfo.height}</text> 体重:
                             <text class="colororange">{$memberInfo.weight}</text>
                         </p>
@@ -132,10 +134,10 @@
                     </div>
                 </div>
             </form>
-            <div class="nav-list">
+            <div class="nav-list borderStyle">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <a href="{:url('index/latelyMatchList')}" style="height: 83px;">
+                        <a href="{:url('index/latelyMatchList')}">
                             <svg class="coloricon" aria-hidden="true">
                                 <use xlink:href="#icon-p-game"></use>
                             </svg>
@@ -144,25 +146,31 @@
                         </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-p-efficiency"></use>
-                        </svg>
-                        <span class="f14" style="display: block;">效率</span>
-                        <div class="mui-media-body f18 colororange efficiency">0</div>
+                        <a href="javascript:void(0)">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-efficiency"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">效率</span>
+                            <div class="mui-media-body f18 colororange efficiency">0</div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-p-workout"></use>
-                        </svg>
-                        <span class="f14" style="display: block;">锻炼</span>
-                        <div class="mui-media-body f18 colororange">{$totalPunch}</div>
+                        <a href="javascript:void(0)">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-workout"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">锻炼</span>
+                            <div class="mui-media-body f18 colororange">{$totalPunch}</div>
+                        </a>
                     </li>
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                        <svg class="coloricon" aria-hidden="true">
-                            <use xlink:href="#icon-p-constitution"></use>
-                        </svg>
-                        <span class="f14" style="display: block;">体质</span>
-                        <div class="mui-media-body f18 colororange bmi">0</div>
+                        <a href="javascript:void(0)">
+                            <svg class="coloricon" aria-hidden="true">
+                                <use xlink:href="#icon-p-constitution"></use>
+                            </svg>
+                            <span class="f14" style="display: block;">体质</span>
+                            <div class="mui-media-body f18 colororange bmi">0</div>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -293,7 +301,8 @@
                 {volist name="memberTeamList" id="vo"}
                 <li class="mui-table-view-cell mui-media listli">
                     <a href="{:url('team/teamInfo', ['team_id' => $vo.team.id])}" class="mui-navigate-right">
-                        <img class="mui-media-object mui-pull-left coachicon" style="height: 42px !important; width: 42px !important" src="{$vo.team.logo}">
+                        <img class="mui-media-object mui-pull-left coachicon" style="height: 42px !important; width: 42px !important"
+                            src="{$vo.team.logo}">
                         <div class="mui-media-body wd60">{$vo.team.name}
                             <p class="mui-ellipsis">入队{$vo.join_years}年 &nbsp;入队时间:{$vo.join_date}</p>
                         </div>
@@ -481,10 +490,12 @@
                         type: 1,
                         member_id: member_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -525,10 +536,12 @@
                         tags: tags,
                         tag_ids: tag_ids,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -561,10 +574,12 @@
                         commented_member_id: id,
                         commented_member: member,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -596,10 +611,12 @@
                     data: {
                         id: thisID,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -635,10 +652,12 @@
                 data: {
                     member_id: member_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -664,19 +683,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
@@ -689,10 +708,12 @@
                     commented_member_id: member_id,
                     comment_type: 4,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
@@ -700,13 +721,16 @@
                         $(".comment-list").prev().find(".noDataTip").text("")
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[i].id + '">';
+                            newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data[
+                                i].id + '">';
                             if (data.data[i].can_delete == 0) {
                                 newli += '<a>';
                             } else {
                                 newli += '<a href="#deletepl">';
                             }
-                            newli += '<div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
+                            newli += '<div class="mui-pull-right">' + data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></a></li>'
                         }
                     } else {
                         $(".comment-list").prev().find(".noDataTip").append("（暂无）");
@@ -733,10 +757,12 @@
                     type: 1,
                     member_id: member_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -762,10 +788,12 @@
                     member_id: team_member_id,
                     year: sYear
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -804,16 +832,19 @@
         function toTagAllList() {
             mui.ajax("{:url('api/tag/tagall')}", {
                 data: {},
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name +
+                                '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
                         }
                         $(".tagAll").empty();
                         $(".tagAll").append(div);
@@ -838,16 +869,20 @@
                     //commented_id: member_id,
                     commented_member_id: member_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag +
+                                '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' +
+                                data.data[i].count + '</samll>)</span>'
                         }
                         $(".tagCommentList").empty().show();
                         $(".tagCommentList").append(div);
@@ -865,23 +900,26 @@
 
         //获取荣誉列表
         function toHonorList() {
-            
+
             var url = "{:url('api/member/getmemberandteamhonorlist','','',true)}";
             mui.ajax({
                 url: url,
                 data: {
                     member_id: member_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.slice(0, 5).length - 1; i++) {
-                            var urlTeam = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].team_honor_id + '/team_id/' + data.data[i].team_id;
+                            var urlTeam = "{:url('team/honorinfo')}" + '/honor_id/' + data.data[i].team_honor_id +
+                                '/team_id/' + data.data[i].team_id;
                             var urlMember = "{:url('member/memberHonorInfo')}" + '/id/' + data.data[i].id;
                             var honor_time = data.data[i].honor_time;
                             var date = new Date();
@@ -889,13 +927,20 @@
                             newli += '<li class="mui-table-view-cell mui-collapse listli">';
                             newli += '<a class="mui-navigate-right"><p class="fl">' + yearNum + '</p>';
                             if (data.data[i].hasOwnProperty("team_honor_id") == true) {
-                                newli += '<p class="fr pdr15">' + data.data[i].team_honor + '</p></a><div class="mui-collapse-content">';
-                                newli += '<a href="' + urlTeam + '"><p><text class="colororange" style="margin-right:10px;">' + data.data[i].team_honor + '</text>/所在球队：' + data.data[i].team + '';
+                                newli += '<p class="fr pdr15">' + data.data[i].team_honor +
+                                    '</p></a><div class="mui-collapse-content">';
+                                newli += '<a href="' + urlTeam +
+                                    '"><p><text class="colororange" style="margin-right:10px;">' + data.data[
+                                        i].team_honor + '</text>/所在球队：' + data.data[i].team + '';
                             } else {
-                                newli += '<p class="fr pdr15">' + data.data[i].name + '</p></a><div class="mui-collapse-content">';
-                                newli += '<a href="' + urlMember + '"><p><text class="colororange" style="margin-right:10px;">' + data.data[i].name + '</text>';
+                                newli += '<p class="fr pdr15">' + data.data[i].name +
+                                    '</p></a><div class="mui-collapse-content">';
+                                newli += '<a href="' + urlMember +
+                                    '"><p><text class="colororange" style="margin-right:10px;">' + data.data[
+                                        i].name + '</text>';
                             }
-                            newli += '</p><p>授奖单位：' + data.data[i].award_org + '</p><p>授奖时间：' + data.data[i].honor_time + '</p></a></div>';
+                            newli += '</p><p>授奖单位：' + data.data[i].award_org + '</p><p>授奖时间：' + data.data[i]
+                                .honor_time + '</p></a></div>';
                             newli += '</li>';
                         }
                     }
