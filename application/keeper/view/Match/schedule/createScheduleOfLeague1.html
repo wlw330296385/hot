@@ -96,9 +96,9 @@
                 </div>
                 <div class="mui-input-row h-auto">
                     <a href="#court" class="mui-navigate-right clickTap courtTap">
-                        <label>比赛场地</label>
-                        <span class="wd60 court"></span>
-                        <input type="hidden" name="court_id" value="">
+                        <label class="wd45">比赛场地(可修改)</label>
+                        <span class="wd45 court">{$leagueInfo.court}</span>
+                        <input type="hidden" name="court_id" value="-1">
                     </a>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="1">
@@ -331,9 +331,9 @@
                           
                             <div class="mui-input-row h-auto">
                                 <a href="#court" class="mui-navigate-right clickTap courtTap">
-                                    <label>比赛场地</label>
-                                    <span class="wd60 court"></span>
-                                    <input type="hidden" name="court_id" value="">
+                                    <label class="wd45">比赛场地(可修改)</label>
+                                    <span class="wd45 court">{$leagueInfo.court}</span>
+                                    <input type="hidden" name="court_id" value="-1">
                                 </a>
                             </div>
                             <div class="mui-input-row timeTap" data-tnum="${listLength}">
@@ -864,6 +864,7 @@
         // 获取数据并进行提交
         function submitAction() {
             scheduleList = []
+            var isOk = true
             $(".scheduleList").each(function () {
                 var home_team = $(this).find(".HomeTeam").text();
                 var home_team_id = $(this).find("input[name=home_team_id]").val();
@@ -879,15 +880,15 @@
                 var scheduleName = $(this).find(".course").text();
                 if (match_stage_id == '') {
                     mui.toast("请选择" + scheduleName + "的比赛阶段");
-                    return false;
+                    return isOk = false;
                 }
                 if (home_team_id == '') {
                     mui.toast("请选择" + scheduleName + "的主队");
-                    return false;
+                    return isOk = false;
                 }
                 if (away_team_id == '') {
                     mui.toast("请选择" + scheduleName + "的客队");
-                    return false;
+                    return isOk = false;
                 }
                 scheduleList.push({
                     home_team,
@@ -903,6 +904,7 @@
                     match_time
                 })
             })
+            if (!isOk) { return isOk }
             console.log(scheduleList)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);

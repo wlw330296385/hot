@@ -170,6 +170,27 @@
                     style="padding-right: 2px;">
             </div>
 
+            <p class="pline"></p>
+
+            <div class="mui-input-row">
+                <label class="wd45">
+                    <input type="text" name="custom_role" value="" placeholder="请填写自定义角色" class="data mui-text-left"
+                        style="padding:0;height: initial;">
+                </label>
+                <a href="#work" class="mui-navigate-right" style="width: 55%;height: 40px;">
+                    <span>
+                        <input type="text" value="" data-member_id="" placeholder="请选择角色" class="custom_member">
+                        <input type="hidden" name="custom_member" value='' placeholder="请选择角色" class="data">
+                    </span>
+                </a>
+            </div>
+            <div class="mui-input-row">
+                <label>联系方式</label>
+                <span>
+                    <input type="text" value="" name="telephone" placeholder="联系方式（选填）" class="data">
+                </span>
+            </div>
+
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">联赛简介</span>
             </div>
@@ -203,6 +224,23 @@
             <input type="file" class="fileStyle file1">
         </div>
         <button class="clipBtnStyle clipBtn1">截取</button>
+    </div>
+    <!--工作人员-->
+    <div id="work" class="mui-popover" style="margin: 0">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course wd45">
+                <strong>工作人员</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="workDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list workList"></ul>
+            </div>
+        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -397,6 +435,61 @@
                 })
             });
 
+            // 选择工作人员
+            $(".workList").on('tap', 'li', function () {
+                var workMember = $(this).text();
+                console.log(workMember)
+                var member_id = $(this).attr("data-member_id");
+                var custom = []
+                custom.push({
+                    workMember,
+                    member_id
+                })
+                let custom_member = JSON.stringify(custom);
+                console.log(custom_member)
+
+                $(".custom_member").val(workMember);
+                $("input[name=custom_member]").val(custom_member);
+                mui("#work").popover("toggle");
+            });
+            //清除
+            $("#workDel").on('tap', '', function () {
+                $("input[name=custom_member]").val('');
+                mui("#work").popover("toggle");
+            });
+
+            //自定义获取工作人员列表
+            var url = "{:url('api/league/getmatchmemberlist','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id,
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli += '<li class="mui-table-view-cell listli" data-member_id="' +
+                                data.data[
+                                    i].member_id + '">' + data.data[i].realname + '</li>'
+                        }
+                        $(".workList").empty().append(newli);
+                    } else {
+                        $(".workList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+
         })
 
         // 获取数据并进行提交
@@ -451,21 +544,21 @@
             objData.introduce = introduce;
             var url = "{:url('api/api/league/updatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '联赛修改成功', '确定', function () {
-                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '修改失败', function () {
-                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑联赛简介</p>");
-                });
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
-                    }
-                }, 'json');
-            }
+            // if (ajaxResult.code == 200) {
+            //     mui.alert(ajaxResult.msg, '联赛修改成功', '确定', function () {
+            //         var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
+            //         window.top.location.href = goUrl;
+            //     })
+            // } else {
+            //     mui.alert(ajaxResult.msg, '修改失败', function () {
+            //         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑联赛简介</p>");
+            //     });
+            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+            //         if (data.code === 200) {
+            //             $('input[name=__token__]').val(data.data);
+            //         }
+            //     }, 'json');
+            // }
         };
     </script>
     <script>
