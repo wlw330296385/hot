@@ -27,6 +27,27 @@ class Punch extends Base{
              return json(['code'=>100,'msg'=>$e->getMessage()]);
          }
      }
+
+     // 获取其他打卡列表
+    public function getOtherPunchListApi(){
+         try{
+            $member_id = input('param.member_id');
+            $map = input('post.');
+            if($member_id){
+                $map['member_id'] = ['neq',$member_id];
+            }
+            $page = input('param.page')?input('param.page'):1; 
+            $result = $this->PunchService->getPunchList($map,$page);  
+            if($result){
+                return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'查询有误']);
+            }  
+            
+         }catch (Exception $e){
+             return json(['code'=>100,'msg'=>$e->getMessage()]);
+         }
+     }
      // 获取打卡列表 无page
     public function getPunchListNoPageApi(){
          try{

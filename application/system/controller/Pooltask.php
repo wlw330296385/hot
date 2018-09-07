@@ -93,29 +93,29 @@ class Pooltask extends Base{
 
     public function lottery(){
         $date_str = date('Ymd',time());
-        $poolList_3 = $this->Pool->where([
-                    'end_str'=>$date_str,
+        $poolList_3 = db('pool')->where([
+                    'end_str'=>['elt',$date_str],
                     'status'=>2,
                     'type'  =>3
                 ])->select();
         $this->lottery2($poolList_3);
         $this->lottery1($poolList_3);
 
-        $poolList_2 = $this->Pool->where([
-                    'end_str'=>$date_str,
+        $poolList_2 = db('pool')->where([
+                    'end_str'=>['elt',$date_str],
                     'status'=>2,
                     'type'  =>2
                 ])->select();
         $this->lottery2($poolList_2);
 
-        $poolList_1 = $this->Pool->where([
-                    'end_str'=>$date_str,
+        $poolList_1 = db('pool')->where([
+                    'end_str'=>['elt',$date_str],
                     'status'=>2,
                     'type'  =>1
                 ])->select();
         $this->lottery1($poolList_1);
 
-        $this->Pool->save(['status'=>-1],['end_str'=>$date_str,'status'=>2]);
+        $this->Pool->isUpdate(true)->save(['status'=>-1],['end_str'=>['elt',$date_str],'status'=>2]);
         $data = ['crontab'=>'每日擂台开奖'];
         $this->record($data);
     }
@@ -218,17 +218,15 @@ class Pooltask extends Base{
                 // dump($theFirstReward);
                 // dump($theSecondReward);
                 // dump($theThirdReward);
-                
+
                 // 更新奖金池
-                $result = $this->Pool->save(['winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m)],['id'=>$value['id']]);
+                $result = $this->Pool->isUpdate(true)->save(['winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m),'status'=>-1],['id'=>$value['id']]);
                 // 奖金得主诞生
                 $winners = array_merge($c_f_m,$c_s_m,$c_t_m);
                 $model->saveAll($winners);
                 $this->updateMembersHotcoin($winners);
 
             }
-            $data = ['crontab'=>'每日擂台开奖(热币)'];
-            $this->record($data);
         }catch(Exception $e){
             $data = ['crontab'=>'每日擂台开奖(热币)','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data);
@@ -286,13 +284,11 @@ class Pooltask extends Base{
                 // dump($the_third_winner_list);
                 $winner_list = array_merge($the_first_winner_list,$the_second_winner_list,$the_third_winner_list);
                 // 更新奖金池
-                $result = $this->Pool->save(['winner_list_s'=>json_encode([$the_first_winner_list,$the_second_winner_list,$the_third_winner_list])],['id'=>$value['id']]);
+                $result = $this->Pool->isUpdate(true)->save(['winner_list_s'=>json_encode([$the_first_winner_list,$the_second_winner_list,$the_third_winner_list])],['id'=>$value['id']]);
                 // 奖金得主诞生
                 $model->saveAll($winner_list);
             }
             
-            $data = ['crontab'=>'每日擂台开奖(卡券)'];
-            $this->record($data);
         } catch (Exception $e) {
             $data = ['crontab'=>'每日擂台开奖(卡券)','status'=>0,'callback_str'=>$e->getMessage()];
             $this->record($data);
@@ -318,6 +314,7 @@ class Pooltask extends Base{
     public function sendMessage(){
         $list = db('pool_winner')->field('member.openid,member.member,pool_winner.winner_bonus,pool_winner.create_time,pool_winner.pool,pool_winner.ranking,pool_winner.group_id')->join('member','member.id = pool_winner.member_id')->join('pool','pool.id=pool_winner.pool_id')->where(['pool_winner.is_message'=>-1,'pool_winner.winner_bonus'=>['gt',0]])->order('pool_winner.id desc')->select();
         // $list = [['member_id'=>8,'winner_bonus'=>999,'create_time'=>1531404000,'openid'=>'o83291CzkRqonKdTVSJLGhYoU98Q']];
+
         $WechatService = new \app\service\WechatService();
         //给获奖名单发消息
         foreach ($list as $key => $value) {
