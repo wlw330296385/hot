@@ -128,10 +128,10 @@
                 </span>
                 <span class="location-choise">
                     <select id="group">
-                        <option value="4">全部（按组别）</option>
-                        <option value="1">第一组</option>
-                        <option value="2">第二组</option>
-                        <option value="3">第三组</option>
+                        <option value="">全部（按组别）</option>
+                        {volist name="matchGroupInfo" id="vo"}
+                        <option value="{$vo.id}">{$vo.name}</option>
+                        {/volist}
                     </select>
                 </span>
             </div>
@@ -175,7 +175,7 @@
             window.top.location.href = this.href;
         });
 
-        rankList(4); //赛程列表
+        rankList(); //赛程列表
         followStatus(); // 当前的关注状态
         var sort = ''
         var match_group_id = ''
@@ -264,8 +264,7 @@
                 data: {
                     league_id: league_id,
                     sort: sort,
-                    match_group_id: match_group_id,
-                    status: 1
+                    match_group_id: match_group_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型

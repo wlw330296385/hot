@@ -3313,9 +3313,12 @@ class League extends Base
                 unset($data['page']);
             }
 
-            $is_public = 1;
-            if (isset($data['is_public']) && $data['is_public'] == 0) {
-                $is_public = 0;
+            // 预排和公开
+            if (!isset($data['status'])) {
+                $data["status"] = ['>', 0];
+                if (isset($data['is_public']) && $data['is_public'] == 0) {
+                    $data["status"] = 0;
+                }
             }
             unset($data['is_public']);
 
@@ -3338,12 +3341,7 @@ class League extends Base
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
-                $_array['stage']['schedules'] = array();
-                foreach($value as $key => $row) {
-                    if ( ($is_public == 1 && $row["status"] < 1) || ($is_public == 0 && $row["status"] > 0)) {
-                        array_push($_array['stage']['schedules'], $row);
-                    }
-                }
+                $_array['stage']['schedules'] = $value;
                 array_push($result, $_array);
             }
             
