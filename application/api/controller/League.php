@@ -3314,9 +3314,11 @@ class League extends Base
             }
 
             // 预排和公开
-            $data["status"] = ['>', 0];
-            if (isset($data['is_public']) && $data['is_public'] == 0) {
-                $data["status"] = 0;
+            if (!isset($data['status'])) {
+                $data["status"] = ['>', 0];
+                if (isset($data['is_public']) && $data['is_public'] == 0) {
+                    $data["status"] = 0;
+                }
             }
             unset($data['is_public']);
 
