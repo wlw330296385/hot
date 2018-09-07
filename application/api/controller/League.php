@@ -3420,37 +3420,31 @@ class League extends Base
             if (input('?page')) {
                 unset($map['page']);
             }
-            if (input('?param.sort')) {
-                $sort = input('sort', 0, 'intval');
-                unset($map['sort']);
-                switch ($sort) {
-                    case 1:
-                        {
-                            // match_time区间 查询条件组合:当前时间至所选未来7天
-                            $nowTime = time();
-                            $dateTimeStamp = strtotime("+7 days");
-                            $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
-                            $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
-                            break;
-                        }
-                    case 2:
-                        {
-                            // 未完成的赛程
-                            $map['status'] = 1;
-                            break;
-                        }
-                    case 3:
-                        {
-                            // 已完成有比分信息的赛程
-                            $map['status'] = 2;
-                        }
-                    default:
-                        {
-                            // 默认查全部已公布
-                            $map['status'] = ['in','1,2'];
-                        }
-                        break;
-                }
+            if ( empty($map['match_group_id']) ) {
+                unset($map['match_group_id']);
+            }
+            $sort = input('sort', 0, 'intval');
+            unset($map['sort']);
+            switch ($sort) {
+                case 1:
+                    // match_time区间 查询条件组合:当前时间至所选未来7天
+                    $nowTime = time();
+                    $dateTimeStamp = strtotime("+7 days");
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+                    $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
+                    break;
+                case 2:
+                    // 未完成的赛程
+                    $map['status'] = 1;
+                    break;
+                case 3:
+                    // 已完成有比分信息的赛程
+                    $map['status'] = 2;
+                    break;
+                default:
+                    // 默认查全部已公布
+                    $map['status'] = ['in','1,2'];
+                    break;
             }
             $leagueS = new LeagueService();
             $matchS = new MatchService();
