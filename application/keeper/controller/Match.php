@@ -356,7 +356,7 @@ class Match extends Base {
         $id = input('param.id', 0, 'intval');
         $leagueS = new LeagueService();
         // $matchScheduleInfo = $leagueS->getMatchSchedule(['id' => $id]);
-        $matchGroupInfo = $leagueS->getMatchGroups(['match_id' => $this->league_id], 'id asc');
+        $matchGroupInfo = $leagueS->getMatchGroups(['match_id' => $this->league_id], 'name asc');
 
         $this->assign('matchGroupInfo', $matchGroupInfo);
         return view('Match/schedule/leagueSchedule');

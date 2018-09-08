@@ -5038,4 +5038,35 @@ class League extends Base
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         }
     }
+
+    public function setMatchScheduleStatus() {
+        
+        $data = input('post.');
+        if (!isset($data["match_time"]) || empty($data["league_id"]) || !isset($data["status"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $match_time_ts = strtotime($data["match_time"]);
+        $dateTimeStamp = getStartAndEndUnixTimestamp(date('Y', $match_time_ts), date('m', $match_time_ts), date('d', $match_time_ts));
+
+        $leagueS = new LeagueService();
+        $map['match_time'] = ['>', $dateTimeStamp['start']];
+        $map['match_time'] = ['<', $dateTimeStamp['end']];
+        $map['match_id'] = intval($data["league_id"]);
+        //仅可修改status = 0，1的情况，若修改为1，则先查出为0的赛程
+        $map['status'] = intval($data["status"]) == 1 ? 0 : 1;
+        $new_status = intval($data["status"]) == 1 ? 1 : 0;
+
+        $result = $leagueS->getMatchSchedules($map);
+        if(empty($result)){
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        } else {
+            foreach ($result as $key => $row) {
+                $result[$key]["status"] = $new_status;
+            }
+        }
+
+        $leagueS->saveAllMatchSchedule($result);
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
 }
