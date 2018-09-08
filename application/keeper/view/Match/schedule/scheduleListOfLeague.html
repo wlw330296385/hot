@@ -35,10 +35,10 @@
         </div>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content ">
         <div class="location-frame">
             <span class="location-choise">
-                <select class="fenzu">
+                <select class="fenzu" id="group">
                     <option value="0">全部分组</option>
                     {volist name="groups" id="vo"}
                     <option value="{$vo.id}">{$vo.name}</option>
@@ -47,12 +47,12 @@
             </span>
         </div>
         <div class="tab-pullRefresh">
-            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active" style="margin-top:45px" ;>
+            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active mb44" style="margin-top:45px" ;>
                 <div class="mui-scroll">
                     <ul class="mui-table-view list scheduleList1"></ul>
                 </div>
             </div>
-            <div id="offList" class="mui-scroll-wrapper mui-control-content" style="margin-top:45px;">
+            <div id="offList" class="mui-scroll-wrapper mui-control-content mb44" style="margin-top:45px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list scheduleList0"></ul>
                 </div>
@@ -156,6 +156,7 @@
                     }
                 })
             })
+
             toList(1)
             $(".schedule1").on("tap", function () {
                 toList(1)
@@ -163,7 +164,13 @@
             $(".schedule0").on("tap", function () {
                 toList(0)
             })
-            getbattle()
+            getbattle();
+
+            //选择查看赛程类型
+            // $("#group").on("change", function () {
+            //     sort = ''
+            //     match_group_id = $(this).find("option:checked").val();
+            // });
 
             // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
@@ -303,6 +310,7 @@
                 success: function (data) {
                     console.log(data)
                     var newli = '';
+                    var Ttime = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].stage.schedules != '') {
@@ -330,9 +338,12 @@
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
                                 var dataSchedule = data.data[i].stage.schedules[j]
                                 if (dataSchedule.match_timestamp == '') {
-                                    var Ttime = "待定"
+                                    Ttime = "待定"
                                 } else {
-                                    var Ttime = getTimeHM(dataSchedule.match_timestamp * 1000);
+                                    Ttime = getTimeHM(dataSchedule.match_timestamp * 1000);
+                                    if (Ttime == "00:00") {
+                                        Ttime = "待定"
+                                    }
                                 }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' +
                                     league_id + '/id/' + dataSchedule.id + '/?from=scheduleList';
@@ -345,9 +356,9 @@
                                         <div class="mui-slider-handle">
                                             <div class="mbNumber colororange">${j+1}</div>
                                             <div class="mui-media-body wd66">
-                                                    <p class="f14" style="margin-bottom: 8px;">
+                                                    <p class="f14 mui-ellipsis" style="margin-bottom: 8px;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" style="margin-right:10px;">${dataSchedule.home_team}</p>
-                                                    <p class="f14">
+                                                    <p class="f14 mui-ellipsis">
                                                         <img class="img24" src="${dataSchedule.away_team_logo}" style="margin-right:10px;">${dataSchedule.away_team}</p>
                                                 </div>
                                                 <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
