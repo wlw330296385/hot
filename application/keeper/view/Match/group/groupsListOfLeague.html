@@ -61,14 +61,11 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        mui(".mui-content").on("tap", "a", function () {
-            window.top.location.href = this.href;
-        });
 
         $(function () {
             //初始化全局变量
             var count = 1;
-         
+
         })
         mui.init({
             swipeBack: true, //启用右滑关闭功能
@@ -139,7 +136,8 @@
                             newli +=
                                 `<a class="mui-navigate-right"  href="#"><p>${data.data.data[i].name}</p></a>`
                             newli +=
-                                `<div class="mui-collapse-content" style="padding-bottom:0"><ul class="mui-table-view list" style="margin-top:-8px;margin-left:-40px; margin-bottom:0 !important">`;
+                                `<div class="mui-collapse-content" style="padding-bottom:0">
+                                    <ul class="mui-table-view list secendUl" style="margin-top:-8px;margin-left:-40px; margin-bottom:0 !important">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
                                 newli +=
                                     `<li class="mui-table-view-cell listli groupTeam">
@@ -148,12 +146,12 @@
                                                     <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}`
                                 if (data.data.data[i].group_teams[j].is_seededteam == 1) {
                                     newli += `<font class="tipCorner bggreen">种子球队</font>`
-                                } 
+                                }
                                 newli +=
                                     `</p>
                                                     <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
                                                 </div>
-                                            <li>`;
+                                            </li>`;
                             }
                             newli += `</ul></div></li></ul>`
                         }
@@ -161,6 +159,8 @@
                     if (gType == 1) {
                         //上拉刷新
                         $(".groupsList").empty().append(newli);
+
+
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
@@ -172,6 +172,13 @@
                         //下拉加载 gType==2
                         $(".groupsList").append(newli);
                     }
+                    //种子球队排列在第一位
+                    $(".secendUl li").each(function () {
+                        var secendLi = $(this).find(".tipCorner").text();
+                        if (secendLi == "种子球队") {
+                            $(this).parents(".secendUl").prepend(this);
+                        }
+                    });
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
                     } else {
