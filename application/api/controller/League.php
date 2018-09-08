@@ -3294,13 +3294,17 @@ class League extends Base
                 unset($data['page']);
             }
 
-            // 预排和公开
-            if (!isset($data['status'])) {
-                $data["status"] = ['>', 0];
+            // 查询全部stauts，最后在过滤
+            if (isset($data['status'])) {
+                $status = intval($data["status"]);
+            } else {
                 if (isset($data['is_public']) && $data['is_public'] == 0) {
-                    $data["status"] = 0;
+                    $status = 0;
+                } else {
+                    $status = null;
                 }
             }
+            unset($data['status']);
             unset($data['is_public']);
 
             $leagueS = new LeagueService();
@@ -3322,7 +3326,13 @@ class League extends Base
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
-                $_array['stage']['schedules'] = $value;
+                $_array['stage']['schedules'] = array();
+                foreach($value as $key => $row) {
+                    // 指定过status通过 或 未指定则只有status = 1，2通过 
+                    if ( (isset($status) && $row["status"] == $status) || (!isset($status) && $row["status"] > 0) ) {
+                        array_push($_array['stage']['schedules'], $row);
+                    }
+                }
                 array_push($result, $_array);
             }
             
