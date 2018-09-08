@@ -9,6 +9,8 @@ class Salaryin extends Base{
 	private $SalaryInService;
 	public function __construct(){
 		parent::__construct();
+
+        $this->CampService = new CampService();
 		$this->SalaryInService = new SalaryInService($this->memberInfo['id']);
 	}
 
