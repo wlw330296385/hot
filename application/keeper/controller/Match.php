@@ -842,7 +842,7 @@ class Match extends Base {
             'type' => 1
         ]);
 
-        $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+        $orderby = ['match_time' => 'asc', 'id' => 'asc'];
         $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $matchStageGroupInfo['id']], $orderby);
 
         $finalArray = array();
