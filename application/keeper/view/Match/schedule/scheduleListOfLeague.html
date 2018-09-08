@@ -165,14 +165,79 @@
             })
             getbattle()
 
+            // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
                 var dayText = $(this).prev().text();
+                var match_time = $(this).next().text();
                 mui.confirm("确认发布" + dayText + "的赛程?", "提示", btnArray, function (e) {
                     if (e.index == 1) {
-                        mui.toast("开发中，敬请期待");
+                        var league_id = "{$league_id}";
+                        mui.ajax("{:url('api/league/setMatchScheduleStatus')}", {
+                            data: {
+                                league_id: league_id,
+                                match_time: match_time,
+                                status: 1
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast("发布成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000)
+
+                                }
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
                     }
                 })
             })
+
+            // 设为预排赛程
+            $(document).on("tap", ".prearrangeSchedule", function () {
+                var dayText = $(this).prev().text();
+                var match_time = $(this).next().text();
+                mui.confirm("确认将" + dayText + "的赛程设为预排吗?", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        var league_id = "{$league_id}";
+                        mui.ajax("{:url('api/league/setMatchScheduleStatus')}", {
+                            data: {
+                                league_id: league_id,
+                                match_time: match_time,
+                                status: 0
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    mui.toast("设置成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000)
+                                }
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+                    }
+                })
+            })
+
         })
 
         function getbattle() {
@@ -246,9 +311,15 @@
                                     newli += `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
                                 } else {
                                     newli +=
-                                        `<span class="f14" style="padding-left:8px;">比赛日${i + 1}</span>
-                                        <span  class="f14 colororange releaseSchedule" style="padding-left:8px;">发布赛程</span>
-                                            <span class="fr f14">${data.data[i].date} </span>`
+                                        `<span class="f14" style="padding-left:8px;">比赛日${i + 1}</span>`
+                                    if (is_public != 1) {
+                                        newli +=
+                                            `<span  class="f14 colororange releaseSchedule" style="padding-left:8px;">发布赛程</span>`
+                                    } else {
+                                        newli +=
+                                            `<span  class="f14 colororange prearrangeSchedule" style="padding-left:8px;">设为预排赛程</span>`
+                                    }
+                                    newli += `<span class="fr f14 match_time">${data.data[i].date}</span>`
                                 }
                                 newli +=
                                     `</div><ul class="mui-table-view list border-b">
