@@ -3208,7 +3208,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => '请提交预览赛程']);
         }
 
-        $data['status'] = empty($data['status']) ? 0 : $data['status'];
+        // $data['status'] = empty($data['status']) ? 0 : $data['status'];
 
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
         // Db::startTrans();
@@ -3236,7 +3236,7 @@ class League extends Base
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
             $scheduleData[$k]['match_time'] = strtotime($scheduleData[$k]['match_time']);
-            $scheduleData[$k]['status'] = $data['status'];
+            // $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
         try {

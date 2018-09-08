@@ -90,8 +90,8 @@ class Student extends Base
 		$finishedSchedule = db('schedule_member')
 							->where([
 									'user_id'=>$student_id,
-									// 'status'=>1,
-									// 'type' =>1,
+									'status'=>1,
+									'type' =>1,
 									'is_school'=>-1
 								])
 							->count();
