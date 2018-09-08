@@ -5050,14 +5050,13 @@ class League extends Base
         $dateTimeStamp = getStartAndEndUnixTimestamp(date('Y', $match_time_ts), date('m', $match_time_ts), date('d', $match_time_ts));
 
         $leagueS = new LeagueService();
-        $map['match_time'] = ['>', $dateTimeStamp['start']];
-        $map['match_time'] = ['<', $dateTimeStamp['end']];
+        $map['match_time'] = ['between',[$dateTimeStamp['start'], $dateTimeStamp['end']]];
         $map['match_id'] = intval($data["league_id"]);
         //仅可修改status = 0，1的情况，若修改为1，则先查出为0的赛程
         $map['status'] = intval($data["status"]) == 1 ? 0 : 1;
         $new_status = intval($data["status"]) == 1 ? 1 : 0;
 
-        $result = $leagueS->getMatchSchedules($map);
+        $result = db("match_schedule")->where($map)->select();
         if(empty($result)){
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         } else {
