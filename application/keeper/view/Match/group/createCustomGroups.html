@@ -128,8 +128,8 @@
             })
         })(mui, document);
 
-        let groupList = [];
-        let groupTeam = [];
+        var groupList = [];
+        var groupTeam = [];
         $(function () {
             teamList(); //获取球队列表
             $(document).on("tap", ".fenpei", function () {
@@ -255,9 +255,9 @@
 
         // 
         var fenPeiCont = function () {
-            let league_id = "{$leagueInfo.id}";
-            let totalNum = $(".totalNum").text();
-            let groupNum = $("input[name=groupNum]").val();
+            var league_id = "{$leagueInfo.id}";
+            var totalNum = $(".totalNum").text();
+            var groupNum = $("input[name=groupNum]").val();
             if (groupNum == '') {
                 mui.toast("请输入分组数");
                 return false;
@@ -266,8 +266,8 @@
                 mui.toast("分组数不能大于球队总数");
                 return false;
             }
-            let str = '';
-            for (let i = 0; i <= groupNum - 1; i++) {
+            var str = '';
+            for (var i = 0; i <= groupNum - 1; i++) {
                 str +=
                     `<div class="page-header border-b bggray2 groupsTip">
                             <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}" style="padding:0;width:20%">
@@ -284,7 +284,7 @@
 
         // 获取球队列表
         function teamList() {
-            let league_id = "{$league_id}"
+            var league_id = "{$league_id}"
             mui.ajax("{:url('api/league/leagueteams')}", {
                 data: {
                     league_id: league_id
@@ -328,20 +328,20 @@
             groupList = []
             var isOk = true //用变量记住状态
             $(".frame ul").each(function () {
-                let groupName = $(this).find("input[name=groupName]").val();
-                if (!(/^.{0,2}$/).test(groupName)) {
-                    mui.toast("组名只能填写两个文字");
-                    return isOk = false;
-                }
+                var groupName = $(this).prev().siblings(".groupsTip").find("input[name=groupName]").val();
+                // if (!(/^.{0,2}$/).test(groupName)) {
+                //     mui.toast("组名只能填写两个文字");
+                //     return isOk = false;
+                // }
                 groupTeam = [];
                 $(this).find("li").each(function () {
-                    let team = $(this).attr("data-team");
-                    let team_id = $(this).attr("data-team_id");
-                    let team_logo = $(this).attr("data-team_logo");
-                    let match = $(this).attr("data-match");
-                    let match_id = $(this).attr("data-match_id");
-                    let members_num = $(this).attr("data-members_num");
-                    let is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
+                    var team = $(this).attr("data-team");
+                    var team_id = $(this).attr("data-team_id");
+                    var team_logo = $(this).attr("data-team_logo");
+                    var match = $(this).attr("data-match");
+                    var match_id = $(this).attr("data-match_id");
+                    var members_num = $(this).attr("data-members_num");
+                    var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
                     groupTeam.push({
                         team,
                         team_id,
@@ -363,7 +363,7 @@
 
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
-                let group = groupList[i].groupTeam.length
+                var group = groupList[i].groupTeam.length
                 if (group == 0) {
                     mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;
