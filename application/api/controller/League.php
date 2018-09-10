@@ -3027,6 +3027,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息，不能删除']);
         }
         try {
+            // $leagueS->saveMatchSchedule(['id' => $scheduleInfo['id'], 'status' => -1]);
             $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
@@ -5049,7 +5050,17 @@ class League extends Base
         $match_time_ts = strtotime($data["match_time"]);
         $dateTimeStamp = getStartAndEndUnixTimestamp(date('Y', $match_time_ts), date('m', $match_time_ts), date('d', $match_time_ts));
 
+        // 检查会员操作权限（联赛工作人员-管理员以上）
         $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
         $map['match_time'] = ['between',[$dateTimeStamp['start'], $dateTimeStamp['end']]];
         $map['match_id'] = intval($data["league_id"]);
         //仅可修改status = 0，1的情况，若修改为1，则先查出为0的赛程
@@ -5061,7 +5072,9 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         } else {
             foreach ($result as $key => $row) {
-                $result[$key]["status"] = $new_status;
+                if (empty($row["delete_time"])) {
+                    $result[$key]["status"] = $new_status;
+                }
             }
         }
 
