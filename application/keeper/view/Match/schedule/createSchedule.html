@@ -56,7 +56,12 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <a class="addSchedule colorblue">增加赛程</a>
+            <!-- <a class="addSchedule ">直接创建赛程</a> -->
+            <!-- <a class="addSchedule colorblue">增加日程</a> -->
+            <a href="{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}">
+                <button type="button" style="margin-top: 6px;">直接创建赛程</button>
+            </a>
+            <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">增加日程</button>
         </h1>
     </header>
 
@@ -66,7 +71,6 @@
         <input type="hidden" name="match_id" value="{$league_id}" class="data">
         <input type="hidden" name="match_stage" value="" class="data">
         <input type="hidden" name="match_stage_id" value="" class="data">
-        <!-- <input type="hidden" name="status" value="0" class="data"> -->
 
         <ul class="mui-table-view mb list">
             <li class="mui-table-view-cell listli">
@@ -260,7 +264,7 @@
                             </div>
                         </div>
                     </div>`;
-                $(".formList").append(str);
+                $(".formList").prepend(str);
 
                 if ($(".scheduleList").length > 1) {
                     $('.deleteModel').show();
@@ -324,7 +328,7 @@
             $(document).on("tap", "#closeConfirm", function () {
                 mui("#firght").popover("toggle");
             })
-            
+
 
             //列表复选框赋值
             $(document).on("tap", ".add", function () {
@@ -453,24 +457,21 @@
                     if (data.code == 200) {
 
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += `<div class="mui-input-row mui-checkbox mui-left">`
-                            for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
-                                newli +=
-                                    `<label class="wd mui-ellipsis">${data.data[i].battles[j].home_team} VS ${data.data[i].battles[j].away_team}</label>`
-                            }
-                            newli +=
-                                `<span class="matchGroup" data-group_id="${data.data[i].group_id}">${data.data[i].group_name}</span>`
                             for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
                                 var battlesArray = data.data[i].battles[j]
                                 newli +=
-                                    `<input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" data-status="0"
-                                            data-home_team_id="${battlesArray.home_team_id}" data-home_team_logo="${battlesArray.home_team_logo}" 
-                                            data-home_team_alias="${battlesArray.home_team_alias}"  data-away_team="${battlesArray.away_team}"
-                                            data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
-                                            data-away_team_alias="${battlesArray.away_team_alias}" 
-                                            data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> `
+                                    `<div class="mui-input-row mui-checkbox mui-left">
+                                    <span class="matchGroup" data-group_id="${data.data[i].group_id}">${data.data[i].group_name}</span>
+                                    <label class="wd mui-ellipsis">${battlesArray.home_team} VS ${battlesArray.away_team}</label>
+                                    <input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" data-status="0"
+                                          data-home_team_id="${battlesArray.home_team_id}" data-home_team_logo="${battlesArray.home_team_logo}" 
+                                          data-home_team_alias="${battlesArray.home_team_alias}"  data-away_team="${battlesArray.away_team}"
+                                        data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
+                                        data-away_team_alias="${battlesArray.away_team_alias}" 
+                                            data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> 
+                                </div>`
                             }
-                            newli += `</div>`
+
                         }
                         if (newli != '') {
                             $(".firghtList").empty().append(newli);
@@ -554,7 +555,7 @@
                 return isCheck
             }
             console.log(schedules)
-            var btnArray = ['取消','确认'];
+            var btnArray = ['取消', '确认'];
             mui.confirm("本赛程为初次预排，提交后需编辑完善修改信息后才能生效", "提示", btnArray, function (e) {
                 if (e.index == 1) {
                     var data = wooApi.getInputData('input', 'data');
