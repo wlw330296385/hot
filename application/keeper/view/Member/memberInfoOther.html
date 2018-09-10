@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>会员信息</title>
+    <title>会员资料</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -11,54 +11,91 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .mui-row {
+            padding: 15px;
+            background-color: #FFF;
+            margin: 0px 0px 5px;
+        }
+
+    </style>
 </head>
 
 <body class="whitebg">
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">个人信息</h1>
+        <h1 class="mui-title f12">会员号：{$memberInfo.hot_id}</h1>
     </header>
 
     <div class="mui-content">
+        
+            <ul class="mui-row">
+                <li class="mui-col-xs-2 mui-col-sm-2">
+                    <img src="{$memberInfo.avatar}" class="img50">
+                </li>
+                <li class="mui-col-xs-6 mui-col-sm-6" style="padding: 5px 10px">
+                    <text class="f16">{$memberInfo.member}</text> <i class="icon iconfont icon-sex{$memberInfo.sex}"></i><br />
+                    <text class="f12 colorgray">昵称：{$memberInfo.nickname}</text>
+                </li>
+                <li class="mui-col-xs-4 mui-col-sm-4 mui-text-right">
+                    <span class="f12">{$memberInfo['city']} {$memberInfo['area']}南山区</span>
+                </li>
+            </ul>
 
-        <form action="" class="mui-input-group">
-            <div class="mui-input-row h-auto">
-                <label>头像</label>
-                <img src="{$memberInfo['avatar']}" alt="头像" class="img45" style="margin-right: 18px;width:45px;height: 45px;">
+
+            <div class="mui-input-group mb">
+                <div class="mui-input-row">
+                    <label>基本信息</label>
+                    <span><text class="showage"></text> 身高 {$memberInfo['height']}cm / 体重 {$memberInfo['weight']}kg</span>
+                </div>
+                <div class="mui-input-row">
+                    <label>个人宣言</label>
+                    <span>{$memberInfo.descri}</span>
+                </div>
             </div>
-            <div class="mui-input-row">
-                <label>会员ID</label>
-                <span>{$memberInfo['hot_id']}</span>
+
+
+            <div class="mui-input-group mb">
+                <div class="mui-input-row">
+                    <label>运动轨迹</label>
+                </div>
+                <div class="mui-input-row h-auto">
+                     <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> 
+                </div>
             </div>
-            <div class="mui-input-row">
-                <label>姓名</label>
-                <span class="name">{$memberInfo['member']}</span>
+
+            <div class="mui-input-group mb">
+                <div class="mui-input-row">
+                    <label>球员信息</label>
+                    <span>查看</span>
+                </div>
             </div>
-            <div class="mui-input-row">
-                <label>性别</label>
-                <span class="sex">{$memberInfo['sex']|format_sex}</span>
-            </div>
-            <div class="mui-input-row">
-                <label>身高</label>
-                <span class="height">{$memberInfo['height']}cm</span>
-            </div>
-            <div class="mui-input-row">
-                <label>体重</label>
-                <span class="weight">{$memberInfo['weight']}kg</span>
-            </div>
-            <div class="mui-input-row">
-                <label>出生日期</label>
-                <span class="birthday">{$memberInfo['birthday']}</span>
-            </div>
-            <div class="mui-input-row">
-                <label>所属地区</label>
-                <span>{$memberInfo['province']} {$memberInfo['city']} {$memberInfo['area']}</span>
-            </div>
-        </form>
 
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function () {
+
+            var memberBirthday = "{$memberInfo['birthday']}";
+            var getAge = ages(memberBirthday);
+            $(".showage").text(getAge);
+
+        })
+
+        function ages(str)   
+          {   
+                var r = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);     
+                if(r==null)return   false;     
+                var d = new Date(r[1], r[3]-1, r[4]);     
+                if (d.getFullYear()==r[1]&&(d.getMonth()+1)==r[3]&&d.getDate()==r[4])   
+                {
+                    var Y = new   Date().getFullYear();   
+                      return((Y-r[1])+"岁");   
+                }
+        }   
+    </script>
 </body>
 
 </html>

@@ -96,7 +96,7 @@
         .follow{
             padding: 2px 8px !important;
             float: right;
-            margin-top: 8px;
+            margin-top: 2px !important;
         }
     </style>
 </head>
@@ -105,7 +105,7 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-icon mui-icon-left-nav mui-pull-left arrow backHref"></a>
-        <!-- <button type="button" class="btn bgred follow" data-member_id="{$punchInfo.member_id}">关注</button> -->
+        <button class="mui-btn bgred follow hide">关注</button>
     </header>
 
     <div class="mui-content">
@@ -369,36 +369,6 @@
 
             });
             
-            // 关注会员
-            $(document).on("tap", ".follow", function () {
-                var member_id = $(this).attr("data-member_id");
-                var thisText = $(this).text();
-                mui.ajax("{:url('api/follow/focus')}", {
-                    data: {
-                        type: 1,
-                        member_id: member_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
-                    success: function (data) {
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast(data.msg);
-                            setTimeout("window.location.reload()", 1000)
-
-                        } else {
-                            mui.toast(data.msg);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            })
 
             // 选择打赏币
             $(document).on("tap", ".classH", function () {
@@ -572,7 +542,10 @@
                 }
             });
 
-            pulldownRefresh(); //页面打开时获取一次最新评论信息
+            //获取关注状态
+            followStatus();
+            //页面打开时获取一次最新评论信息
+            pulldownRefresh(); 
             isthumbsup()
 
             //点赞功能
@@ -618,15 +591,101 @@
             });
 
 
+            // 关注会员
+            $(".follow").on("tap", '', function () {
+
+                if ("{$memberInfo.id}" == 0) {
+                    checkMember()
+                }else{
+                    if($(this).text()=="关注"){
+                        followMe();
+                    }else{
+                        mui.confirm('您确认取消对他/她的关注吗？', '提示', ['继续关注', '确定'], function (e) {
+                            if (e.index === 1) {
+                                followMe();
+                            }
+                        });
+                    }
+                }
+            });
+
         });
+
+
+        //执行关注/取消关注操作
+        function followMe(){
+
+            mui.ajax("{:url('api/follow/focus')}", {
+                data: {
+                    type: 1,
+                    member_id: '{$punchInfo.member_id}'
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        followStatus();
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+        }
+
+
+        // 判断当前的关注状态
+        function followStatus() {
+
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 1,
+                    member_id: '{$punchInfo.member_id}'
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("bgred");
+                        } else {
+                            $(".follow").text("关注");
+                            $(".follow").addClass("bgred");
+                        }
+                    }
+                    $(".follow").show();
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+
+        }
+
 
         function checkMember(){
 
-            mui.confirm('请完善您的信息，再操作，谢谢！', '提示', ['打卡首页', '前往完善'], function (e) {
+            mui.confirm('请完善您的信息，再操作，谢谢！', '提示', ['取消', '前往完善'], function (e) {
                 if (e.index === 1) {
                     window.location.href = "{$fasturl}";
-                }else{
-                    window.location.href = "{:url('/keeper/punch/index')}";
                 }
             });
 
