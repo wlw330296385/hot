@@ -483,7 +483,7 @@
         var league_id = "{$league_id}";
         var court_id = "{$matchScheduleInfo.court_id}";
         var match_time = "{$matchScheduleInfo.match_time}";
-        var from = wooApi.GetQueryString('from');
+        var status = wooApi.GetQueryString('status');
 
         $(function () {
             var courtKeyword = '';
@@ -1128,11 +1128,11 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert('编辑成功', '确定', function () {
-                    if (from == 'scheduleList') {
-                        var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    } else {
-                        var goUrl = "{:url('match/matchListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    }
+                    // if ("{$matchScheduleInfo.status}" == 0) {
+                        var goUrl = "{:url('match/scheduleListofleague')}" + '/league_id/' + league_id + '?status=' +"{$matchScheduleInfo.status}";
+                    // } else{
+                        // var goUrl = "{:url('match/scheduleListofleague')}" + '/league_id/' + league_id + '?status=' +status;
+                    // }
                     window.top.location.href = goUrl;
                 })
             } else {

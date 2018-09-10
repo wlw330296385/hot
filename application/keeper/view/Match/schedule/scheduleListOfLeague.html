@@ -113,6 +113,13 @@
             $(".schedule0").on("tap", function () {
                 toList(0)
             })
+
+            //选择查看赛程类型
+            $("#group").on("change", function () {
+                match_group_id = $(this).find("option:checked").val();
+                toList(1,match_group_id)
+                toList(0,match_group_id)
+            });
             getbattle();
 
             // 根据编辑的入口返回显示对应的tab列表
@@ -170,11 +177,6 @@
 
 
 
-            //选择查看赛程类型
-            // $("#group").on("change", function () {
-            //     sort = ''
-            //     match_group_id = $(this).find("option:checked").val();
-            // });
 
             // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
@@ -336,14 +338,15 @@
         }
 
         // 接口获取数据并追加到页面
-        function toList(is_public) {
+        function toList(is_public, match_group_id) {
             //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/getmatchschedulelistbytime')}";
             mui.ajax({
                 url: url,
                 data: {
                     league_id: league_id,
-                    is_public: is_public
+                    is_public: is_public,
+                    match_group_id: match_group_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
