@@ -2035,13 +2035,16 @@ class League extends Base
         if ($this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
-        $checkMatchOrgMember = $leagueService->getMatchOrgMember([
-            'match_org_id' => $match['match_org_id'],
-            'member_id' => $this->memberInfo['id']
+
+        $power = $leagueService->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
         ]);
-        if (!$checkMatchOrgMember || $checkMatchOrgMember['status'] != 1) {
+        if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+
         // 若是邀请裁判员 检查该会员有无裁判员资质
         if ($data['type'] == 7) {
             $refereeS = new RefereeService();
@@ -5080,5 +5083,38 @@ class League extends Base
 
         $leagueS->saveAllMatchSchedule($result);
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    public function delLeagueAndRelevancy() {
+
+        $data = input('post.');
+        if ( empty($data["league_id"]) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power != 10) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 检查有没有 已经打完的比赛记录，如果有 那么该联赛不能删除
+        $map["match_id"] = intval($data["league_id"]);
+        $map["is_record"] = 1;
+        $count = $leagueS->getMatchRecordCount($map);
+        if (!empty($count)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $result = $leagueS->delLeagueAndRelevancy($map);
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
     }
 }
