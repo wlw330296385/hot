@@ -697,22 +697,54 @@ class StatisticsCamp extends Camp{
     public function withdraw(){
         $w = date('w',time());
         $d = date('d',time());
-        $m = input('param.ym',date('Ym',time()));
-        $type = input('param.type');
-        if($this->campInfo['rebate_type'] == 1){
-            if($d<15){
-                $this->error('每月15号之后方可申请提现');
-            }  
-            $date_str = [($m-1)*100,$m*100];
-            $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
-            $count = db('income')->where($map)->count('income');
-        }else{
-            if($w<>0 && $w <> 5 $w <> 6){
-                $this->error('周五至周日可申请提现');
-            }
-        }
+        $Ym = input('param.Ym',date('Ym',time()));
+        $type = input('param.type',1);
 
-        
+        // 最后一次提现的时间点
+        $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]]])->find();
+        if($lastWitchdraw){
+            $point_in_time = $lastWitchdraw['point_in_time'];
+        }else{
+            $point_in_time = 2018-01-01;
+        }
+        if($this->campInfo['rebate_type'] == 1){
+            // 15号之后方可提现
+            // if($d<15){
+            //     $this->error('每月15号之后方可申请提现');
+            // }
+
+            
+
+            if($type ==1){
+                // 获取上个月的时间点
+                $time =  strtotime(date('Ym01',time()));
+                $e = date('Ymd',strtotime('-1 day',$time));
+                $date_str = [$point_in_time,$e];
+                dump($date_str);
+                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $income = db('income')->where($map1)->sum('income');
+                $output = db('output')->where($map_1)->sum('output');
+            }
+            
+        }else{
+            // 周五-日方可提现
+            // if($w<>0 && $w <> 5 $w <> 6){
+            //     $this->error('周五至周日可申请提现');
+            // }
+            // 获取上周日的时间点
+            $e = date('Ymd', strtotime('-1 sunday', time()));
+            $date_str = [$point_in_time,$e];
+
+            $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
+            $income = db('income')->where($map)->sum('income');
+            $output = 0;
+        }
+        dump($income);
+        dump($output);
+        $this->assign('income',$income);
+        $this->assign('output',$output);
+        return view('StatisticsCamp/withdraw');
     }
 
     // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）

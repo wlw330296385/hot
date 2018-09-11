@@ -1,0 +1,169 @@
+{extend name="layout/common"/}
+{block name="css"}
+
+
+{/block}
+{block name="page-content"}
+
+<!----------------------------------- 训练营提现列表 ： 开始-------------------------------------------->
+
+<div class="row">
+    {if $campInfo.rebate_type == 1}
+	<div class="col-lg-6 col-xs-6 btn">
+      <!-- small box -->
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>课时收入</h3>
+
+          <p>课时收入只能于每月15号后申请,并且只能提现上个月之前的收入</p>
+        </div>
+        <div class="icon inner">
+          <i class="ion ion-pie-graph"></i>
+        </div>
+        <a href="{:url('withdraw',['type'=>1])}" class="small-box-footer">
+            选择此提现
+            <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+
+
+
+    <div class="col-lg-6 col-xs-6 btn">
+      <!-- small box -->
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3>活动收入</h3>
+
+          <p>活动收入只能于每周日后申请,并且只能提现上周日之前的收入</p>
+        </div>
+        <div class="icon inner">
+          <i class="ion ion-pie-graph"></i>
+        </div>
+        <a href="{:url('withdraw',['type'=>2])}" class="small-box-footer">
+            选择此提现
+            <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+
+    {/if}
+</div>
+
+<!----------------------------------- 训练营提现列表 ： 结束-------------------------------------------->
+
+
+<div class="box box-default">
+            <div class="box-header with-border">
+              <h3 class="box-title">收入支出图</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="studentAll" style="height: 400px"></div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer no-padding">
+              <ul class="nav nav-pills nav-stacked">
+                <li><a href="#">总收入
+                  <span class="pull-right text-red"><i class="fa fa-angle-down"></i> 12%</span></a></li>
+                <li><a href="#">课时收入 <span class="pull-right text-green"><i class="fa fa-angle-up"></i> 4%</span></a>
+                </li>
+                <li><a href="#">赠课支出
+                  <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i> 0%</span></a></li>
+              </ul>
+            </div>
+            <!-- /.footer -->
+          </div>
+
+
+{/block}
+
+
+{block name='js'}
+    
+<script src="/static/plugins/echart/echarts.min.js"></script>
+<script src="/static/plugins/echart/hot.js"></script>
+
+
+<script type="text/javascript">
+    var domSA = document.getElementById("studentAll");
+    var studentAll = echarts.init(domSA,"hot");
+    option = {
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient : 'vertical',
+            x : 'left',
+            data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true, 
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'center',
+                            max: 1548
+                        }
+                    }
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        series : [
+            {
+                name:'访问来源',
+                type:'pie',
+                radius : ['50%', '70%'],
+                itemStyle : {
+                    normal : {
+                        label : {
+                            show : false
+                        },
+                        labelLine : {
+                            show : false
+                        }
+                    },
+                    emphasis : {
+                        label : {
+                            show : true,
+                            position : 'center',
+                            textStyle : {
+                                fontSize : '30',
+                                fontWeight : 'bold'
+                            }
+                        }
+                    }
+                },
+                data:[
+                    {value:335, name:'直接访问'},
+                    {value:310, name:'邮件营销'},
+                    {value:234, name:'联盟广告'},
+                    {value:135, name:'视频广告'},
+                    {value:1548, name:'搜索引擎'}
+                ]
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    studentAll.setOption(option);                
+</script>
+{/block}
+
+
