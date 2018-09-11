@@ -64,6 +64,7 @@
                 <span class="match_time">{$matchScheduleInfo.match_time}</span>
             </li>
         </ul>
+
         <div class="page-header bggray2">
             <span class="course wd45">
                 <strong>裁判名单</strong>
@@ -86,6 +87,7 @@
                 <span>{$matchScheduleInfo.referee3}</span>
             </li>
         </ul>
+
         <div class="page-header bggray2">
             <span class="course wd45">
                 <strong>记分员</strong>
@@ -101,11 +103,6 @@
             {/volist}
         </div>
 
-        <!--删除赛程-->
-        <!-- <div class="success-frame" style="padding-top:30px;">
-            <button type="button" class="mui-btn mui-btn-danger f16 wd45 deleteSchedule">删除</button>
-        </div> -->
-
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -113,34 +110,6 @@
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
-        });
-
-        //删除赛程
-        $('.deleteSchedule').on('tap', function () {
-            var match_id = "{$league_id}"
-            var schedule_id = "{$matchScheduleInfo.id}";
-            var apiurl = "{:url('api/match/')}";
-            mui.ajax(apiurl, {
-                data: {
-                    match_id: match_id,
-                    schedule_id: schedule_id
-                },
-                dataType: 'json',
-                type: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    if (data.code == 200) {
-                        window.location.go(-1);
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errotThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
         });
     </script>
 </body>

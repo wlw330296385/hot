@@ -49,10 +49,12 @@
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <form action="" class="mui-input-group mb44">
+
             <div class="mui-input-row">
                 <label>联赛组织</label>
                 {if condition="$orgId"}
-                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称" disabled>
+                <input type="text" name="match_org" value="{$matchOrgInfo.name}" class="data" placeholder="请输入联赛组织名称"
+                    disabled>
                 <input type="hidden" name="match_org_id" value="{$matchOrgInfo.id}" class="data"> {else/}
                 <div class="mui-navigate-right">
                     <span class="select-row">
@@ -72,6 +74,7 @@
                 <label>联赛名称</label>
                 <input type="text" name="name" value="" class="data" placeholder="请输入联赛名称">
             </div>
+
             <div class="mui-input-row">
                 <label>负责人姓名</label>
                 <input type="text" name="charge_name" value="" class="data" placeholder="输入负责人真实姓名">
@@ -92,6 +95,7 @@
                     <input type="hidden" name="cover" value="" class="data">
                 </a>
             </div>
+
             <div class="mui-input-row" id='showCityPicker3'>
                 <div class="mui-navigate-right">
                     <label>联赛地区</label>
@@ -123,31 +127,31 @@
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnStartbm">
+            <div class="mui-input-row timeTap" data-num="1">
                 <div class="mui-navigate-right">
                     <label class="wd36">报名开始时间</label>
-                    <span id="resultStartbm" class="ui-alert domData" name="reg_start_time"></span>
+                    <span class="domData" name="reg_start_time"></span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnEndbm">
+            <div class="mui-input-row timeTap" data-num="2">
                 <div class="mui-navigate-right">
                     <label class="wd36">报名结束时间</label>
-                    <span id="resultEndbm" class="ui-alert domData" name="reg_end_time"></span>
+                    <span class="domData" name="reg_end_time"></span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnStartls" data-options='{"type":"date"}'>
+            <div class="mui-input-row timeTap" data-num="3" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label class="wd36">联赛开始时间</label>
-                    <span id="resultStartls" class="ui-alert domData" name="start_time"></span>
+                    <span class="domData" name="start_time"></span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnEndls" data-options='{"type":"date"}'>
+            <div class="mui-input-row timeTap" data-num="4" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label class="wd36">联赛结束时间</label>
-                    <span id="resultEndls" class="ui-alert domData" name="end_time"></span>
+                    <span class="domData" name="end_time"></span>
                 </div>
             </div>
 
@@ -165,10 +169,12 @@
                     </span>
                 </div>
             </div>
+
             <div class="mui-input-row">
                 <label class="wd45">球队成员下限数</label>
                 <input type="number" name="min_teammembers" value="" class="data wd52" placeholder="球员下限数不小于5">
             </div>
+
             <div class="mui-input-row">
                 <label class="wd45">球队成员上限数</label>
                 <input type="number" name="max_teammembers" value="" class="data wd52" placeholder="球队成员上限数">
@@ -183,12 +189,13 @@
                 <label class="wd45">球队参赛费用</label>
                 <input type="number" name="entry_fees" value="" class="data wd52" placeholder="输入参赛费用">
             </div>
+
             <div class="mui-input-row">
                 <label class="wd45">球队参赛保证金</label>
                 <input type="number" name="deposit" value="" class="data wd52" placeholder="输入球队参赛保证金">
             </div>
 
-            <div class="page-header" style="background: #efeff4;">
+            <div class="page-header bggray2">
                 <span class="course">联赛简介</span>
             </div>
             <textarea name="introduce" class="introduce" style="display: none"></textarea>
@@ -197,7 +204,7 @@
         </form>
 
         <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-media mui-col-xs-12 opli bgred" onclick="submitAction()">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bgred" onclick="submitAction()">
                 创建联赛
             </li>
         </ul>
@@ -211,6 +218,7 @@
         </div>
         <button class="clipBtnStyle clipBtn">截取</button>
     </div>
+
     <!-- 封面 -->
     <div id="txpopover1" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="clipAreaStyle clipArea1"></div>
@@ -281,7 +289,8 @@
                 var cityResult3 = doc.getElementById('cityResult3');
                 showCityPickerButton.addEventListener('tap', function (event) {
                     cityPicker3.show(function (items) {
-                        cityResult3.innerText = _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
+                        cityResult3.innerText = _getParam(items[0], 'text') + " " +
+                            _getParam(items[1], 'text') + " " + _getParam(items[2], 'text');
                         //返回 false 可以阻止选择框的关闭
                         //return false;
                         getProvince = _getParam(items[0], 'text');
@@ -293,71 +302,23 @@
                     });
                 }, false);
 
-                //联赛开始时间
-                var resultStartls = $('#resultStartls')[0];
-                var btnStartls = $('.btnStartls');
-                btnStartls.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
+                // 时间选择
+                $(document).on("tap", ".timeTap", function () {
+                    var tnum = this.getAttribute('data-num');
+                    this.classList.add("btnTime" + tnum);
+                    this.children[0].children[1].classList.add("chosise_time" + tnum);
+                    var resultTime = $('.chosise_time' + tnum)[0];
+                    var btnTime = $('.btnTime' + tnum);
+                    btnTime.each(function (i, btn) {
                         var optionsJson = this.getAttribute('data-options') || '{}';
                         var options = JSON.parse(optionsJson);
                         var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
                         picker.show(function (rs) {
-                            resultStartls.innerText = rs.text;
+                            resultTime.innerText = rs.text;
                             picker.dispose();
                         });
-                    }, false);
-                });
-
-                //联赛结束时间
-                var resultEndls = $('#resultEndls')[0];
-                var btnEndls = $('.btnEndls');
-                btnEndls.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultEndls.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
-                //报名开始时间
-                var resultStartbm = $('#resultStartbm')[0];
-                var btnStartbm = $('.btnStartbm');
-                btnStartbm.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultStartbm.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
-                //报名结束时间
-                var resultEndbm = $('#resultEndbm')[0];
-                var btnEndbm = $('.btnEndbm');
-                btnEndbm.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultEndbm.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
+                    });
                 });
 
             });
@@ -459,7 +420,6 @@
                 }, 'json');
             }
         };
-
     </script>
     <script>
         var pc = new PhotoClip('.clipArea', {
