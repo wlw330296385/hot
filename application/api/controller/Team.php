@@ -3170,12 +3170,18 @@ class Team extends Base
         $leagueS = new LeagueService();
         $teamS = new TeamService();
 
+        // 已在联赛内的球队 更新 和 不在联赛内的球队 创建
         if (!empty($team_id)) {
             $matchTeamInfo = $leagueS->getMatchTeamInfoSimple(['match_id' => $match_id, 'team_id' => $team_id]);
             if (empty($matchTeamInfo)) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
             $data['id'] = $matchTeamInfo['team_id'];
+        } else {
+            $teams_count = $leagueS->getMatchTeamCount(['match_id' => $match_id, 'status' => 1]);
+            if ($matchInfo["teams_max"] <= $teams_count) {
+                return json(['code' => 100, 'msg' => "联赛的参赛球队已满额，无法继续创建球队"]);
+            }
         }
 
         $res = $teamS->saveVirtualTeam($data);
