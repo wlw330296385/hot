@@ -725,6 +725,8 @@ class StatisticsCamp extends Camp{
                 $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                 $income = db('income')->where($map1)->sum('income');
                 $output = db('output')->where($map_1)->sum('output');
+                $legend = ['课时收入','赠课支出'];
+                $title = '课时收入支出图';
             }
             
         }else{
@@ -739,11 +741,13 @@ class StatisticsCamp extends Camp{
             $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
             $income = db('income')->where($map)->sum('income');
             $output = 0;
+            $legend = ['课时收入','活动收入','支出'];
         }
-        dump($income);
-        dump($output);
+        
         $this->assign('income',$income);
         $this->assign('output',$output);
+        $this->assign('legend',json_encode($legend));
+        $this->assign('title',$title);
         return view('StatisticsCamp/withdraw');
     }
 

@@ -189,26 +189,27 @@ class Salaryin extends Base {
                 }
                 $map['camp_id'] = $request['camp_id'];
                 // 如果训练营营主也是教练身份 也列出工资列表
-                $coachIsCampPower4 = getCampPower($map['camp_id'], $map['member_id']);
-                if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
-                    $map['member_type'] = ['lt', 5];
-                }
+                // $coachIsCampPower4 = getCampPower($map['camp_id'], $map['member_id']);
+                // if ($coachIsCampPower4 && $coachIsCampPower4 != 4) {
+                //     $map['member_type'] = ['lt', 5];
+                // }
             }
             // 要查询的时间段（年、月），默认当前年月
-            if (input('?param.year') || input('?param.month')) {
+            if (input('?param.y') || input('?param.m')) {
                 // 判断年、月参数是否为数字格式
-                $year = input('year', date('Y'));
-                $month = input('month', date('m'));
+                $year = input('y', date('Y'));
+                $month = input('m', date('m'));
                 if (!is_numeric($year) || !is_numeric($month) ) {
                     return json(['code' => 100, 'msg' => '时间格式错误']);
                 }
                 // 根据传入年、月 获取月份第一天和最后一天，拼接时间查询条件
-
+                $when = getStartAndEndUnixTimestamp($year, $month);
                 $map['create_time'] = ['between', [$when['start'], $when['end']]];
             } else {
                 list($start, $end) = Time::month();
                 $map['create_time'] = ['between', [$start, $end]];
             }
+            // dump($map);
             // 获取工资数据
             $salaryList = $this->SalaryInService->getSalaryInList($map, 'create_time desc');
 
@@ -304,13 +305,16 @@ class Salaryin extends Base {
             $year = input('param.y');
             $month = input('param.m');
             if (!is_numeric($year) || !is_numeric($month) ) {
+
                 $year = date('Y');
                 $month = date('m');
             }
             $when = getStartAndEndUnixTimestamp($year, $month);
-            
 
+     
             $map['type'] = ['>',1];
+            $map['schedule_member.'.$between] = ['between',[$when['start'],$when['end']]];
+
             $result = db('schedule_member')
                     ->field('schedule.s_coach_salary
                         ,schedule.s_assistant_salary

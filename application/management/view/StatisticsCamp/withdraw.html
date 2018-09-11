@@ -33,14 +33,14 @@
       <!-- small box -->
       <div class="small-box bg-yellow">
         <div class="inner">
-          <h3>活动收入</h3>
+          <h3>其他收入</h3>
 
-          <p>活动收入只能于每周日后申请,并且只能提现上周日之前的收入</p>
+          <p>其他收入只能于每周日后申请,并且只能提现上周日之前的收入</p>
         </div>
         <div class="icon inner">
           <i class="ion ion-pie-graph"></i>
         </div>
-        <a href="{:url('withdraw',['type'=>2])}" class="small-box-footer">
+        <a hrefa="{:url('withdraw',['type'=>2])}" class="small-box-footer">
             选择此提现
             <i class="fa fa-arrow-circle-right"></i>
         </a>
@@ -54,32 +54,39 @@
 
 
 <div class="box box-default">
-            <div class="box-header with-border">
-              <h3 class="box-title">收入支出图</h3>
+    <div class="box-header with-border">
+      <h3 class="box-title">{$title}</h3>
 
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div id="studentAll" style="height: 400px"></div>
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer no-padding">
-              <ul class="nav nav-pills nav-stacked">
-                <li><a href="#">总收入
-                  <span class="pull-right text-red"><i class="fa fa-angle-down"></i> 12%</span></a></li>
-                <li><a href="#">课时收入 <span class="pull-right text-green"><i class="fa fa-angle-up"></i> 4%</span></a>
-                </li>
-                <li><a href="#">赠课支出
-                  <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i> 0%</span></a></li>
-              </ul>
-            </div>
-            <!-- /.footer -->
-          </div>
+      <div class="box-tools pull-right">
+        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+      </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div id="studentAll" style="height: 400px"></div>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer no-padding">
+      <ul class="nav nav-pills nav-stacked">
+        <li><a href="#">课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i>{$income}</span></a>
+        </li>
+        <li><a href="#">赠课支出
+          <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i> -{$output}</span></a></li>
+
+        <li><a href="">
+            <strong href="#">可提现
+          <span class="pull-right text-red">{$income-$output}</span></strong></a></li>
+      </ul>
+    </div>
+    <!-- /.footer -->
+    <form method="post">
+        <div class="box-footer pull-right">
+            <button type="submit" class="btn btn-success ">提现</button>
+        </div>
+    </form>
+</div>
 
 
 {/block}
@@ -94,7 +101,14 @@
 <script type="text/javascript">
     var domSA = document.getElementById("studentAll");
     var studentAll = echarts.init(domSA,"hot");
-    option = {
+    console.log({$legend})
+    var legend = {$legend};
+    option = { 
+        title : {
+            text: "{$title}",
+            subtext: "{$campInfo.camp}",
+            x:'center'
+        },
         tooltip : {
             trigger: 'item',
             formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -102,7 +116,7 @@
         legend: {
             orient : 'vertical',
             x : 'left',
-            data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+            data:legend
         },
         toolbox: {
             show : true,
@@ -128,7 +142,7 @@
         calculable : true,
         series : [
             {
-                name:'访问来源',
+                name:'数据来源',
                 type:'pie',
                 radius : ['50%', '70%'],
                 itemStyle : {
@@ -152,11 +166,8 @@
                     }
                 },
                 data:[
-                    {value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:234, name:'联盟广告'},
-                    {value:135, name:'视频广告'},
-                    {value:1548, name:'搜索引擎'}
+                    {value:{$income}, name:legend[0]},
+                    {value:{$output}, name:legend[1]},
                 ]
             }
         ]
