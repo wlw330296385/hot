@@ -286,7 +286,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
         }
 
-        if (isset($data['custom_member']) ) {
+        if (empty($data['custom_member']) ) {
             $custom_member = $data['custom_member'];
             unset($data['custom_member']);
 
