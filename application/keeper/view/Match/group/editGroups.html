@@ -211,7 +211,7 @@
                                 data.data[i].name +
                                 '</text><input type="hidden" class="checkTeamId" value=""></li>';
                             newli +=
-                                '<ul class="mui-table-view detalis-list list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' +
+                                '<ul class="mui-table-view list border-b secendUl"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' +
                                 data.data[i].name +
                                 '" placeholder="请填写组名" style="padding:0;width:20%" /><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
                                 ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
@@ -247,7 +247,16 @@
                         }
                         $(".frame").empty().append(newli);
                         $(".groupNameLi").empty().append(groupNameLi)
+                        //种子球队排列在第一位
+                        $(".secendUl li").each(function () {
+                            var is_seedTeam = $(this).find(".seedTeam").attr(
+                                "data-is_seedteam");
+                            if (is_seedTeam == 1) {
+                                $(this).siblings(".groupsTip").after(this);
+                            }
+                        });
                     }
+
                 },
                 error: function (xhr, type, errorThrown) {
                     //异常处理；
@@ -258,6 +267,9 @@
 
             // 设置种子球队
             $(document).on("tap", ".seedTeam", function () {
+                $(this).parents("li").siblings().find(".seedTeam").removeClass("bggreen");
+                $(this).parents("li").siblings().find(".seedTeam").addClass("bggray");
+                $(this).parents("li").siblings().find(".seedTeam").attr("data-is_seedTeam", 0);
                 if ($(this).hasClass("bggreen") == false) {
                     $(this).removeClass("bggray");
                     $(this).addClass("bggreen");
@@ -310,14 +322,6 @@
         // 获取数据并进行提交
         function submitAction() {
             var isOk = true //用变量记住状态
-            $(".groupsTip").each(function () {
-                let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
-                if (checkSeed > 1) {
-                    mui.toast("每个小组只能有一支种子球队！")
-                    return isOk = false;
-                }
-            });
-
             groupList = []
 
             $(".frame ul").each(function () {

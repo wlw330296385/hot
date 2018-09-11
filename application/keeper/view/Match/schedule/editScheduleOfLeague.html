@@ -58,14 +58,14 @@
                 <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
             </div>
 
-            <div class="mui-input-row selectTeam hide">
+            <!-- <div class="mui-input-row selectTeam hide">
                 <a href="#HomeTeam" class="mui-navigate-right clickTap homeTeamTap">
                     <label>主队</label>
                     <span class="HomeTeam domData" name="home_team" style="width: 60%">{$matchScheduleInfo.home_team}</span>
                     <input type="hidden" name="home_team_id" value="{$matchScheduleInfo.home_team_id}" class="data">
                     <input type="hidden" name="home_team_logo" value="{$matchScheduleInfo.home_team_logo}" class="data">
                 </a>
-            </div>
+            </div> -->
 
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
@@ -85,14 +85,15 @@
                 <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
                 <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
             </div>
-            <div class="mui-input-row selectTeam hide">
+            <!-- <div class="mui-input-row selectTeam hide">
                 <a href="#AwayTeam" class="mui-navigate-right clickTap awayTeamTap">
                     <label>客队</label>
                     <span class="AwayTeam domData" name="away_team" style="width: 60%">{$matchScheduleInfo.away_team}</span>
                     <input type="hidden" name="away_team_id" value="{$matchScheduleInfo.away_team_id}" class="data">
                     <input type="hidden" name="away_team_logo" value="{$matchScheduleInfo.away_team_logo}" class="data">
                 </a>
-            </div>
+            </div> -->
+
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>客队球衣颜色</label>
@@ -109,6 +110,7 @@
                 <label>比赛类型</label>
                 <span class="select-row">{$matchScheduleInfo.match_stage}</span>
             </div>
+
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛场地</label>
@@ -119,14 +121,24 @@
                     {/if}
                 </a>
             </div>
+
             <div class="mui-input-row">
                 <label>比赛场地场号</label>
                 <input type="text" name="court_no" value="{$matchScheduleInfo.court_no}" class="data" placeholder="请输入比赛场地场号（如：1号场）">
             </div>
-            <div class="mui-input-row picker btnStart">
+
+            <div class="mui-input-row btnStart" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>比赛时间</label>
-                    <span id="resultStart" class="ui-alert domData match_time" name="match_time">{$matchScheduleInfo.match_time}</span>
+                    <span id="resultStart" class="match_time">{$matchScheduleInfo.match_time}</span>
+                    <input type="hidden" class="data" name="match_time" value="">
+                </div>
+            </div>
+
+            <div class="mui-input-row btnHM" data-options='{"type":"time"}'>
+                <div class="mui-navigate-right">
+                    <label>具体时间</label>
+                    <span class="resultHM"></span>
                 </div>
             </div>
 
@@ -142,6 +154,7 @@
                     <input type="hidden" name="referee1_id" value="{$matchScheduleInfo.referee1_id}" class="data">
                 </a>
             </div>
+
             <div class="mui-input-row">
                 <a href="#referee2" class="mui-navigate-right">
                     <label>副裁判</label>
@@ -149,6 +162,7 @@
                     <input type="hidden" name="referee2_id" value="{$matchScheduleInfo.referee2_id}" class="data">
                 </a>
             </div>
+
             <div class="mui-input-row">
                 <a href="#referee3" class="mui-navigate-right">
                     <label>副裁判</label>
@@ -199,7 +213,9 @@
                 </div>
                 <input type="hidden" class="data" name="scorers" value="">
             </div>
+
             <p class="pline"></p>
+
             <div class="mui-input-row">
                 <label class="wd52">是否发布</label>
                 <div class="mui-switch status">
@@ -207,7 +223,8 @@
                 </div>
                 <input type="hidden" name="status" value="{$matchScheduleInfo.status}" class="data">
             </div>
-            <div class="mui-input-row">
+
+            <!-- <div class="mui-input-row">
                 <label class="wd45">
                     <input type="text" name="custom_role" value="{$matchScheduleInfo.custom_role}" placeholder="请填写自定义角色"
                         class="data mui-text-left" style="padding:0;height: initial;">
@@ -228,8 +245,9 @@
                 <span>
                     <input type="text" value="" name="telephone" placeholder="联系方式（选填）" class="data">
                 </span>
-            </div>
+            </div> -->
         </form>
+
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
                 提交
@@ -319,6 +337,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn" id="CourtDel">清除</button>
+                <button class="mui-btn closeCourt">关闭</button>
             </span>
         </div>
         <div class="pop-search">
@@ -352,6 +371,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn" id="RefereeDel1">清除</button>
+                <button class="mui-btn closeRe1">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -369,6 +389,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn" id="RefereeDel2">清除</button>
+                <button class="mui-btn closeRe2">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -386,6 +407,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn" id="RefereeDel3">清除</button>
+                <button class="mui-btn closeRe3">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -404,6 +426,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="scoreConfirm">确认</button>
+                <button class="mui-btn closeScore">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -422,6 +445,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn" id="RefereeDel2">清除</button>
+                <button class="mui-btn closeWork">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -471,9 +495,23 @@
                         var options = JSON.parse(optionsJson);
                         var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
-
                         picker.show(function (rs) {
                             resultStart.innerText = rs.text;
+                            picker.dispose();
+                        });
+                    }, false);
+                });
+                //具体时间
+                var resultHM = $('.resultHM')[0];
+                var btnHM = $('.btnHM');
+                btnHM.each(function (i, btn) {
+                    btn.addEventListener('tap', function () {
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        var picker = new $.DtPicker(options);
+                        picker.show(function (rs) {
+                            resultHM.innerText = rs.text;
                             picker.dispose();
                         });
                     }, false);
@@ -481,20 +519,23 @@
             });
         })(mui, document);
 
-        let league_id = "{$league_id}";
-        let court_id = "{$matchScheduleInfo.court_id}";
-        let match_time = "{$matchScheduleInfo.match_time}";
-        let from = wooApi.GetQueryString('from');
+        var league_id = "{$league_id}";
+        var court_id = "{$matchScheduleInfo.court_id}";
+        var match_time = "{$matchScheduleInfo.match_time}";
+        var status = wooApi.GetQueryString('status');
+
         $(function () {
             var courtKeyword = '';
             var wCourt = '';
             var pageCR = 1;
-            
-            // 判断是否只是年月日的日期格式
-            var timeYYR = match_time.substr(0, 10);
+
+            // 对输出的比赛时间做拆分
+            var timeYYR = match_time.substr(0, 10); //年月日
             var timeHM = match_time.substr(11, 16);
-            if(timeHM=='00:00'){
-                $(".match_time").text(timeYYR)
+            $(".match_time").text(timeYYR);
+            $(".resultHM").text(timeHM);
+            if ($(".resultHM").text() == "00:00") {
+                $(".resultHM").text("");
             }
 
             // 设置球衣颜色默认值
@@ -522,9 +563,9 @@
 
             // 选择主队
             $(document).on('tap', '.teamAList li', function () {
-                let home_team = $.trim($(this).attr("data-team"));
-                let home_team_id = $(this).attr("data-team_id");
-                let home_team_logo = $(this).attr("data-team_logo");
+                var home_team = $.trim($(this).attr("data-team"));
+                var home_team_id = $(this).attr("data-team_id");
+                var home_team_logo = $(this).attr("data-team_logo");
                 if ($("input[name=away_team_id]").val() == home_team_id) {
                     mui.toast("球队已存在,请重新选择");
                     return false;
@@ -534,11 +575,12 @@
                 $("input[name=home_team_logo]").val(home_team_logo)
                 mui("#HomeTeam").popover("toggle");
             });
+
             // 选择客队
             $(document).on('tap', '.teamBList li', function () {
-                let away_team = $.trim($(this).attr("data-team"));
-                let away_team_id = $(this).attr("data-team_id");
-                let away_team_logo = $(this).attr("data-team_logo");
+                var away_team = $.trim($(this).attr("data-team"));
+                var away_team_id = $(this).attr("data-team_id");
+                var away_team_logo = $(this).attr("data-team_logo");
                 if ($("input[name=home_team_id]").val() == away_team_id) {
                     mui.toast("球队已存在,请重新选择");
                     return false;
@@ -590,13 +632,17 @@
                     toCourtList(keyword, "court", pageCR);
                 }
             });
+            //关闭
+            $(".closeCourt").on('tap', '', function () {
+                mui("#court").popover("toggle");
+            });
 
             // 选择裁判
             $(".refereeList1").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee1_id = $(this).attr("data-referee_id");
-                let page_referee2_id = $("input[name=referee2_id]").val();
-                let page_referee3_id = $("input[name=referee3_id]").val();
+                var page_referee2_id = $("input[name=referee2_id]").val();
+                var page_referee3_id = $("input[name=referee3_id]").val();
                 if (referee1_id == page_referee2_id || referee1_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -611,12 +657,17 @@
                 $("input[name=referee1_id]").val("");
                 mui("#referee1").popover("toggle");
             });
+            //关闭
+            $(".closeRe1").on('tap', '', function () {
+                mui("#referee1").popover("toggle");
+            });
+
             // 选择裁判
             $(".refereeList2").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee2_id = $(this).attr("data-referee_id");
-                let page_referee1_id = $("input[name=referee1_id]").val();
-                let page_referee3_id = $("input[name=referee3_id]").val();
+                var page_referee1_id = $("input[name=referee1_id]").val();
+                var page_referee3_id = $("input[name=referee3_id]").val();
                 if (referee2_id == page_referee1_id || referee2_id == page_referee3_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -632,12 +683,17 @@
                 $("input[name=referee2_id]").val("");
                 mui("#referee2").popover("toggle");
             });
+            //关闭
+            $(".closeRe2").on('tap', '', function () {
+                mui("#referee2").popover("toggle");
+            });
+
             // 选择裁判
             $(".refereeList3").on('tap', 'li', function () {
                 var referee = $(this).text();
                 var referee3_id = $(this).attr("data-referee_id");
-                let page_referee1_id = $("input[name=referee1_id]").val();
-                let page_referee2_id = $("input[name=referee2_id]").val();
+                var page_referee1_id = $("input[name=referee1_id]").val();
+                var page_referee2_id = $("input[name=referee2_id]").val();
                 if (referee3_id == page_referee1_id || referee3_id == page_referee2_id) {
                     mui.toast("裁判已选择,请选择其他裁判");
                     return false;
@@ -650,6 +706,10 @@
             $("#RefereeDel3").on('tap', '', function () {
                 $(".referee3").text('');
                 $("input[name=referee3_id]").val("");
+                mui("#referee3").popover("toggle");
+            });
+            //关闭
+            $(".closeRe3").on('tap', '', function () {
                 mui("#referee3").popover("toggle");
             });
 
@@ -712,6 +772,10 @@
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
+            //关闭
+            $(".closeScore").on('tap', '', function () {
+                mui("#score").popover("toggle");
+            });
 
             // 选择工作人员
             $(".workList").on('tap', 'li', function () {
@@ -723,7 +787,7 @@
                     workMember,
                     member_id
                 })
-                let custom_member = JSON.stringify(custom);
+                var custom_member = JSON.stringify(custom);
                 console.log(custom_member)
 
                 $(".custom_member").val(workMember);
@@ -733,6 +797,10 @@
             //清除
             $("#WorkDel").on('tap', '', function () {
                 $("input[name=custom_member]").val('');
+                mui("#work").popover("toggle");
+            });
+            //关闭
+            $(".closeWork").on('tap', '', function () {
                 mui("#work").popover("toggle");
             });
 
@@ -772,7 +840,6 @@
         // 联赛晋级球队列表
         function promotionTeamList() {
             var url = "{:url('api/league/getmatchstageadvteams')}";
-            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -813,7 +880,6 @@
         // 联赛全部球队列表
         function allTeamList() {
             var url = "{:url('api/league/leagueteampage')}";
-            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -851,7 +917,6 @@
         // 分组列表
         function getbattle() {
             var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
-            let league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -1049,20 +1114,22 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            let court_id = $("input[name=court_id]").val();
-            let match_time = $(".match_time").text();
+            var court_id = $("input[name=court_id]").val();
+            var match_time = $(".match_time").text();
+            var resultHM = $(".resultHM").text();
+            $("input[name=match_time]").val(match_time + " " + resultHM)
             if (court_id == 0) {
                 mui.toast("请选择比赛场地");
                 return false;
             }
-            if (match_time == '') {
-                mui.toast("请选择比赛时间");
+            if (resultHM == '' || resultHM == "00:00") {
+                mui.toast("请编辑比赛具体时间");
                 return false;
             }
 
             // 记分员
-            let scorersList = []
-            let realname = ''
+            var scorersList = []
+            var realname = ''
             $("#inactiveList .stdList").each(function () {
                 realname = $(this).attr("data-realname");
                 member_id = $(this).val();
@@ -1071,20 +1138,20 @@
                     member_id
                 })
             })
-            let scorers = JSON.stringify(scorersList);
+            var scorers = JSON.stringify(scorersList);
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
 
             // 根据页面内容变化传对应变量区分（用于是否发通知）
-            let page_court_id = $("input[name=court_id]").val();
-            let page_match_time = $(".match_time").text();
-            let referee1_id = "{$matchScheduleInfo.referee1_id}";
-            let referee2_id = "{$matchScheduleInfo.referee2_id}";
-            let referee3_id = "{$matchScheduleInfo.referee3_id}";
-            let page_referee1_id = $("input[name=referee1_id]").val();
-            let page_referee2_id = $("input[name=referee2_id]").val();
-            let page_referee3_id = $("input[name=referee3_id]").val();
+            var page_court_id = $("input[name=court_id]").val();
+            var page_match_time = $(".match_time").text();
+            var referee1_id = "{$matchScheduleInfo.referee1_id}";
+            var referee2_id = "{$matchScheduleInfo.referee2_id}";
+            var referee3_id = "{$matchScheduleInfo.referee3_id}";
+            var page_referee1_id = $("input[name=referee1_id]").val();
+            var page_referee2_id = $("input[name=referee2_id]").val();
+            var page_referee3_id = $("input[name=referee3_id]").val();
             // 裁判改变（通知所有裁判）
             if (referee1_id != page_referee1_id || referee2_id != page_referee2_id || referee3_id != page_referee3_id) {
                 console.log("裁判发生了改变");
@@ -1127,11 +1194,8 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert('编辑成功', '确定', function () {
-                    if (from == 'scheduleList') {
-                        var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    } else {
-                        var goUrl = "{:url('match/matchListOfLeague')}" + '/league_id/' + "{$league_id}";
-                    }
+                    var goUrl = "{:url('match/scheduleListofleague')}" + '/league_id/' + league_id + '?status=' +
+                        "{$matchScheduleInfo.status}";
                     window.top.location.href = goUrl;
                 })
             } else {

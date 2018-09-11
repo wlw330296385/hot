@@ -342,4 +342,9 @@ class Member extends Base{
         ]);
     }
 
+    // 体质数据编辑
+    public function memberConstitution(){
+        return view('Member/memberConstitution');
+    }
+
 }

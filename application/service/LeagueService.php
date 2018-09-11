@@ -182,6 +182,8 @@ class LeagueService
         $result['fans_num'] = getfansnum($result['id'], 5);
         // 比赛场次数
         $result['records_count'] = $this->getMatchRecordCount(['match_id' => $result['id']]);
+        // 替换teams_count
+        $result['teams_count'] = $this->getMatchTeamCount(['match_id' => $result['id'], 'status' => 1]);
         return $result;
     }
 
@@ -1281,6 +1283,43 @@ class LeagueService
             return $res;
         } else {
             return $res->toArray();
+        }
+
+    }
+
+    public function delLeagueAndRelevancy($map) {
+
+        $timestamp = time();
+        $match_id = intval($map["match_id"]);
+
+        // 启动事务
+        Db::startTrans();
+        try{
+            Db::table('match')->where('id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_apply')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_comment')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_group')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_group_team')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_member')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_news')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            // Db::table('match_new_comment')->where('match_id', $match_id)->update(['delete_time' => $timestamp]); //没有match_id字段
+            Db::table('match_record')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_record_member')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_referee')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_referee_apply')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_schedule')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_stage')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_stage_advteam')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_statistics')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_team')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            Db::table('match_team_member')->where('match_id', $match_id)->update(['delete_time' => $timestamp]);
+            // 提交事务
+            Db::commit();
+            return true;
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            return false;
         }
 
     }

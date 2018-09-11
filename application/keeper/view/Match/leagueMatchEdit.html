@@ -105,31 +105,31 @@
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnStartbm">
+            <div class="mui-input-row timeTap" data-num="1">
                 <div class="mui-navigate-right">
                     <label class="wd36">报名开始时间</label>
-                    <span id="resultStartbm" class="ui-alert domData" name="reg_start_time">{$leagueInfo.reg_start_time}</span>
+                    <span class="domData" name="reg_start_time">{$leagueInfo.reg_start_time}</span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnEndbm">
+            <div class="mui-input-row timeTap" data-num="2">
                 <div class="mui-navigate-right">
                     <label class="wd36">报名结束时间</label>
-                    <span id="resultEndbm" class="ui-alert domData" name="reg_end_time">{$leagueInfo.reg_end_time}</span>
+                    <span class="domData" name="reg_end_time">{$leagueInfo.reg_end_time}</span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnStartls" data-options='{"type":"date"}'>
+            <div class="mui-input-row timeTap" data-num="3" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label class="wd36">联赛开始时间</label>
-                    <span id="resultStartls" class="ui-alert domData" name="start_time">{$leagueInfo.start_time}</span>
+                    <span class="domData" name="start_time">{$leagueInfo.start_time}</span>
                 </div>
             </div>
 
-            <div class="mui-input-row picker btnEndls" data-options='{"type":"date"}'>
+            <div class="mui-input-row timeTap" data-num="4" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label class="wd36">联赛结束时间</label>
-                    <span id="resultEndls" class="ui-alert domData" name="end_time">{$leagueInfo.end_time}</span>
+                    <span class="domData" name="end_time">{$leagueInfo.end_time}</span>
                 </div>
             </div>
 
@@ -168,6 +168,13 @@
                 <small class="unit">/元</small>
                 <input type="number" name="deposit" value="{$leagueInfo.deposit}" class="data wd36" placeholder="输入球队参赛保证金"
                     style="padding-right: 2px;">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd52">是否公开</label>
+                <div class="mui-switch is_open">
+                    <div class="mui-switch-handle"></div>
+                </div>
+                <input type="hidden" name="is_open" value="{$leagueInfo.is_open}" class="data">
             </div>
 
             <p class="pline"></p>
@@ -318,78 +325,31 @@
                     });
                 }, false);
 
-                //联赛开始时间
-                var resultStartls = $('#resultStartls')[0];
-                var btnStartls = $('.btnStartls');
-                btnStartls.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
+                // 时间选择
+                $(document).on("tap", ".timeTap", function () {
+                    var tnum = this.getAttribute('data-num');
+                    this.classList.add("btnTime" + tnum);
+                    this.children[0].children[1].classList.add("chosise_time" + tnum);
+                    var resultTime = $('.chosise_time' + tnum)[0];
+                    var btnTime = $('.btnTime' + tnum);
+                    btnTime.each(function (i, btn) {
                         var optionsJson = this.getAttribute('data-options') || '{}';
                         var options = JSON.parse(optionsJson);
                         var id = this.getAttribute('id');
                         var picker = new $.DtPicker(options);
-
                         picker.show(function (rs) {
-                            resultStartls.innerText = rs.text;
+                            resultTime.innerText = rs.text;
                             picker.dispose();
                         });
-                    }, false);
-                });
-
-                //联赛结束时间
-                var resultEndls = $('#resultEndls')[0];
-                var btnEndls = $('.btnEndls');
-                btnEndls.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultEndls.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
-                //报名开始时间
-                var resultStartbm = $('#resultStartbm')[0];
-                var btnStartbm = $('.btnStartbm');
-                btnStartbm.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultStartbm.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
-                });
-
-                //报名结束时间
-                var resultEndbm = $('#resultEndbm')[0];
-                var btnEndbm = $('.btnEndbm');
-                btnEndbm.each(function (i, btn) {
-                    btn.addEventListener('tap', function () {
-                        var optionsJson = this.getAttribute('data-options') || '{}';
-                        var options = JSON.parse(optionsJson);
-                        var id = this.getAttribute('id');
-                        var picker = new $.DtPicker(options);
-
-                        picker.show(function (rs) {
-                            resultEndbm.innerText = rs.text;
-                            picker.dispose();
-                        });
-                    }, false);
+                    });
                 });
 
             });
         })(mui, document);
+
         var league_id = "{$leagueInfo.id}";
         $(function () {
+
             // 设置比赛类型默认值
             $('#leagueType option[value="{$leagueInfo.type_num}"]').prop("selected", true);
             var format = "{$leagueInfo.format}";
@@ -405,13 +365,29 @@
                 $("#format").text("1v1");
             }
 
+            // 设置是否发布
+            if ("{$leagueInfo.is_open}" == "1") {
+                $(".is_open").addClass("mui-active");
+                $("input[name=is_open]").val(1)
+            } else if ("{$leagueInfo.is_open}" == "0") {
+                $("input[name=is_open]").val(0)
+            }
+            $(".is_open").on("tap", '', function () {
+                var st_m = $("input[name=is_open]");
+                if (st_m.val() == "0") {
+                    st_m.val("1");
+                } else {
+                    st_m.val("0");
+                }
+            });
+
             //删除赛程
             $('.deleteLeague').on('tap', function () {
                 var league_id = "{$league_id}"
                 var btnArray = ['取消', '确认']
-                mui.confirm("确定要删除联赛吗？", "提示", btnArray, function (e) {
+                mui.confirm("删除后与联赛相关联的数据将全部清除，不可恢复！确定要删除联赛吗？", "提示", btnArray, function (e) {
                     if (e.index == 1) {
-                        mui.ajax("{:url('api/match/')}", {
+                        mui.ajax("{:url('api/league/delLeagueAndRelevancy')}", {
                             data: {
                                 league_id: league_id
                             },
@@ -422,7 +398,11 @@
                             },
                             success: function (data) {
                                 if (data.code == 200) {
-                                    window.location.go(-1);
+                                    mui.toast("联赛删除成功");
+                                    setTimeout(function () {
+                                        window.location.href =
+                                            "{:url('match/myleague',['org_id'=>$leagueInfo.match_org_id])}";
+                                    }, 1500)
                                 } else {
                                     mui.toast(data.msg);
                                 }
@@ -434,6 +414,7 @@
                     }
                 })
             });
+
 
             // 选择工作人员
             $(".workList").on('tap', 'li', function () {
@@ -477,8 +458,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += '<li class="mui-table-view-cell listli" data-member_id="' +
-                                data.data[
-                                    i].member_id + '">' + data.data[i].realname + '</li>'
+                                data.data[i].member_id + '">' + data.data[i].realname + '</li>'
                         }
                         $(".workList").empty().append(newli);
                     } else {
@@ -544,21 +524,21 @@
             objData.introduce = introduce;
             var url = "{:url('api/api/league/updatematch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert(ajaxResult.msg, '联赛修改成功', '确定', function () {
-            //         var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '修改失败', function () {
-            //         $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑联赛简介</p>");
-            //     });
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '联赛修改成功', '确定', function () {
+                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '修改失败', function () {
+                    $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑联赛简介</p>");
+                });
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
     <script>

@@ -78,8 +78,11 @@
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛场地</label>
-                    <span class="courtCont domData wd60" name="court">{$matchScheduleInfo.court}</span>
+                    <span class="courtCont domData wd60" name="court">{if
+                        $matchScheduleInfo.court==''}{$leagueInfo.court}{else/}{$matchScheduleInfo.court}{/if}</span>
+                    {if $matchScheduleInfo.court_id==''}<input type="hidden" name="court_id" value="-1" class="court_id data">{else/}
                     <input type="hidden" name="court_id" value="{$matchScheduleInfo.court_id}" class="court_id data">
+                    {/if}
                 </a>
             </div>
             <div class="mui-input-row picker btnStart">
@@ -129,22 +132,27 @@
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}
                 </div>
-                <div class="box" id="hideStList" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                <div class="box" id="hideStList" style="display: none">{volist name="matchScheduleInfo.scorers_list"
+                    id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}</div>
-                <div class="box" id="hideStListIni" style="display: none">{volist name="matchScheduleInfo.scorers_list" id="vol"}
+                <div class="box" id="hideStListIni" style="display: none">{volist name="matchScheduleInfo.scorers_list"
+                    id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <label style="width:20%;">{$vol.realname}</label>
                         <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}" type="checkbox">
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
                     </div>
                     {/volist}</div>
 
@@ -161,7 +169,7 @@
             </div>
 
             {if $matchScheduleInfo.custom_role==''}
-           {else} <p class="pline"></p>
+            {else} <p class="pline"></p>
             <div class="mui-input-row">
                 <label class="wd45" name="custom_role">{$matchScheduleInfo.custom_role}</label>
                 {volist name="matchScheduleInfo.custom_member_list" id="vol"}
@@ -660,8 +668,9 @@
                 mui.toast("请选择比赛场地");
                 return false;
             }
-            if (match_time == '') {
-                mui.toast("请选择比赛时间");
+            var timeHM = match_time.substr(11, 16);
+            if (timeHM == "00:00") {
+                mui.toast("请编辑比赛时间");
                 return false;
             }
 

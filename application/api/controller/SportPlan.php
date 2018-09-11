@@ -184,6 +184,7 @@ class SportPlan extends Base{
                 return json(['code'=>100,'msg'=>'已有打卡,不可操作']);
             }
             $data = input('post.');
+            $data["sport_time"] = strtotime($data["sport_time"]);
             $result = $SportPlanSchedule->save($data,['id'=>$sport_plan_schedule_id]);
             if($result){
                 return json(['code'=>200,'msg'=>'操作成功','data'=>$result]);

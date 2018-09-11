@@ -133,4 +133,20 @@ class Punch extends Base{
         return view('Punch/punchPhotoWall');
     }
 
+
+    //月打卡照片墙
+    public function memberHomePage(){
+        $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
+        $userInfo = db('member')->where(['id'=>$member_id])->find();
+        $this->assign('userInfo',$userInfo);
+
+        $month_str = date('Ym',time());
+        $puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$member_id])->where('delete_time',null)->select();
+        //本月打卡总数
+        $monthPunch = count($puchList);
+        $this->assign('monthPunch',$monthPunch);
+
+        return view('Punch/memberHomePage');
+    }
+
 }

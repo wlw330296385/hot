@@ -84,7 +84,7 @@
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="teamConfirm">确认</button>
-                <button class="mui-btn-default">关闭</button>
+                <button class="mui-btn-default closeModel">关闭</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
@@ -128,8 +128,8 @@
             })
         })(mui, document);
 
-        let groupList = [];
-        let groupTeam = [];
+        var groupList = [];
+        var groupTeam = [];
         $(function () {
             teamList(); //获取球队列表
             $(document).on("tap", ".fenpei", function () {
@@ -197,6 +197,16 @@
                 });
             });
 
+            // 关闭弹框
+            $(document).on("tap", ".closeModel", function () {
+                mui("#team").popover("toggle");
+            })
+
+            // 删除球队
+            $(document).on("tap", ".deleteTeam", function () {
+                $(this).parents("li").remove();
+            });
+
             //列表复选框赋值
             $(document).on("tap", ".addTeam", function () {
                 $(".teamList input[type=checkbox]").attr("data-num", $(this).siblings().text());
@@ -209,34 +219,27 @@
                         var team_id = $(this).attr("data-team_id")
                         $(".teamList input[name='checkbox']").each(function () {
                             if ($(this).attr("data-team_id") == team_id) {
-                                $(this).attr("checked", "true");
+                                $(this).prop("checked", true);
                                 $(this).attr("disabled", "disabled")
                             }
                         })
                     }
+                });
+                $(this).parents(".frame").find("li").each(function () {
+                    var team_id = $(this).attr("data-team_id")
+                    $(".teamList input[name='checkbox']").each(function () {
+                        if ($(this).attr("data-team_id") == team_id) {
+                            $(this).attr("disabled", "disabled")
+                        }
+                    })
                 })
             });
-
-            $(document).on("tap", ".addTeam", function () {
-                $(".teamList input[type=checkbox]").attr("data-num", $(this).siblings().text());
-                //每次打开先清空所有选择
-                $("input[name='checkbox']").prop("checked", false);
-                //然后遍历出对应所选
-                var dataNum = $(".teamList input[type=checkbox]").attr("data-num");
-                $(this).parents(".groupsTip").next().find("li").each(function () {
-                    if (dataNum == $(this).parents().prev().find(".groupNum").text()) {
-                        var team_id = $(this).attr("data-team_id")
-                        $(".teamList input[name='checkbox']").filter(function () {
-                            return $(this).attr("data-team_id") == team_id
-                        }).prop("checked", true);
-                    }
-                })
-            });
-
-
 
             // 设置种子球队
             $(document).on("tap", ".seedTeam", function () {
+                $(this).parents("li").siblings().find(".seedTeam").removeClass("bggreen");
+                $(this).parents("li").siblings().find(".seedTeam").addClass("bggray");
+                $(this).parents("li").siblings().find(".seedTeam").attr("data-is_seedTeam", 0);
                 if ($(this).hasClass("bggreen") == false) {
                     $(this).removeClass("bggray");
                     $(this).addClass("bggreen");
@@ -247,18 +250,14 @@
                     $(this).attr("data-is_seedTeam", 0);
                 }
             });
-            // 删除球队
-            $(document).on("tap", ".deleteTeam", function () {
-                $(this).parents("li").remove();
-            });
 
         });
 
         // 
         var fenPeiCont = function () {
-            let league_id = "{$leagueInfo.id}";
-            let totalNum = $(".totalNum").text();
-            let groupNum = $("input[name=groupNum]").val();
+            var league_id = "{$leagueInfo.id}";
+            var totalNum = $(".totalNum").text();
+            var groupNum = $("input[name=groupNum]").val();
             if (groupNum == '') {
                 mui.toast("请输入分组数");
                 return false;
@@ -267,8 +266,8 @@
                 mui.toast("分组数不能大于球队总数");
                 return false;
             }
-            let str = '';
-            for (let i = 0; i <= groupNum - 1; i++) {
+            var str = '';
+            for (var i = 0; i <= groupNum - 1; i++) {
                 str +=
                     `<div class="page-header border-b bggray2 groupsTip">
                             <input type="text" class="course" name="groupName" value="组${i + 1}" placeholder="组${i + 1}" style="padding:0;width:20%">
@@ -277,7 +276,7 @@
                                     <a href="#team" class="addTeam" style="color:#007aff">添加</a>
                                 </span>
                         </div>
-                            <ul class="mui-table-view list border-b"></ul>
+                            <ul class="mui-table-view list border-b ulClass"></ul>
                     `
             }
             $(".frame").empty().append(str);
@@ -285,7 +284,7 @@
 
         // 获取球队列表
         function teamList() {
-            let league_id = "{$league_id}"
+            var league_id = "{$league_id}"
             mui.ajax("{:url('api/league/leagueteams')}", {
                 data: {
                     league_id: league_id
@@ -326,32 +325,23 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            $(".groupsTip").each(function () {
-                let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
-                console.log(checkSeed)
-                if (checkSeed > 1) {
-                    mui.toast("每个小组只能有一支种子球队！")
-                    return false;
-                }
-            });
-
             groupList = []
             var isOk = true //用变量记住状态
             $(".frame ul").each(function () {
-                let groupName = $(this).find("input[name=groupName]").val();
-                if (!(/^.{0,2}$/).test(groupName)) {
-                    mui.toast("组名只能填写两个文字");
-                    return isOk = false;
-                }
+                var groupName = $(this).prev().siblings(".groupsTip").find("input[name=groupName]").val();
+                // if (!(/^.{0,2}$/).test(groupName)) {
+                //     mui.toast("组名只能填写两个文字");
+                //     return isOk = false;
+                // }
                 groupTeam = [];
                 $(this).find("li").each(function () {
-                    let team = $(this).attr("data-team");
-                    let team_id = $(this).attr("data-team_id");
-                    let team_logo = $(this).attr("data-team_logo");
-                    let match = $(this).attr("data-match");
-                    let match_id = $(this).attr("data-match_id");
-                    let members_num = $(this).attr("data-members_num");
-                    let is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
+                    var team = $(this).attr("data-team");
+                    var team_id = $(this).attr("data-team_id");
+                    var team_logo = $(this).attr("data-team_logo");
+                    var match = $(this).attr("data-match");
+                    var match_id = $(this).attr("data-match_id");
+                    var members_num = $(this).attr("data-members_num");
+                    var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
                     groupTeam.push({
                         team,
                         team_id,
@@ -373,7 +363,7 @@
 
             console.log(groupList)
             for (var i = 0; i < groupList.length; i++) {
-                let group = groupList[i].groupTeam.length
+                var group = groupList[i].groupTeam.length
                 if (group == 0) {
                     mui.alert("每个组别不能少于一支球队，请重新分配或者移动操作");
                     return false;

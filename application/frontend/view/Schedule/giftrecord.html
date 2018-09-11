@@ -260,7 +260,13 @@
         var lesson_id = '';
         var grade_id = '';
         var keyword = '';
-        $(function () {
+
+        $(function(){
+
+            changeIndex();
+            toLessonList();
+            toGradeList(keyword);
+
             //选择课程
             $(".lessonlist").on('tap', 'li', function () {
                 var lesson = $(this).text();
@@ -297,9 +303,6 @@
                 mui("#Grade").popover("toggle");
             });
 
-            changeIndex();
-            toLessonList();
-            toGradeList(keyword);
         });
 
         // 获取数据并进行提交
@@ -368,14 +371,16 @@
             });
         };
 
+
         //课程列表接口获取数据并追加到页面
         function toLessonList() {
-            var url = "{:url('api/lesson/getLessonListApi','','',true)}";
+            var url = "{:url('api/lesson/getLessonListNoPageApi','','',true)}";
             var campID = "{$camp_id}";
             mui.ajax({
                 url: url,
                 data: {
                     camp_id: campID,
+                    status:1,
                     is_school:-1
                 },
                 dataType: 'json',//服务器返回json格式数据
@@ -424,11 +429,6 @@
                     if (data.code == 200) {
                         var newstudentli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            let fff = '';
-                            if(data.data[i].transfer==1){
-                                 fff = "disabled='disabled'"
-                            }
-
                             newstudentli = newstudentli + '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number">' + (i + 1) + '、 <font>' + data.data[i].student + '</font></label><font class="bOrder">订单：' + data.data[i].bill_order + '</font><input name="student" data-id="' + data.data[i].id + '" data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" value="' + data.data[i].student_id + ' data-b_id = "'+data.data[i].b_id+'" data-data-b_total="'+data.data[i].b_total+'"  data-b_status = "'+data.data[i].b_status+'"  type="checkbox"></div>'
                         }
                         $(".box").empty();

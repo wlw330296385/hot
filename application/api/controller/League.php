@@ -169,20 +169,13 @@ class League extends Base
         $data['end_time'] = strtotime($data['end_time']);
         $data['reg_start_time'] = strtotime($data['reg_start_time']);
         $data['reg_end_time'] = strtotime($data['reg_end_time']);
-        // 时间字段严谨性校验
-        // $newTime = time();
+        // 时间字段校验，允许创建过往的联赛
         if ($data['start_time'] >= $data['end_time']) {
             return json(['code' => 100, 'msg' => '联赛开始时间不能晚于联赛结束时间']);
         }
-
         if ($data['reg_start_time'] >= $data['reg_end_time']) {
             return json(['code' => 100, 'msg' => '联赛开始报名时间不能晚于联赛截止报名时间']);
         }
-
-        if ($data['reg_start_time'] >= $data['start_time']) {
-            return json(['code' => 100, 'msg' => '联赛开始报名时间不能晚于联赛正式开始时间']);
-        }
-
         if ($data['reg_end_time'] >= $data['start_time']) {
             return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
         }
@@ -277,30 +270,18 @@ class League extends Base
         $data['end_time'] = strtotime($data['end_time']);
         $data['reg_start_time'] = strtotime($data['reg_start_time']);
         $data['reg_end_time'] = strtotime($data['reg_end_time']);
-        // 时间字段严谨性校验
-        $nowTime = time();
-        if ($data['start_time'] != strtotime($league['start_time']) && $data['start_time'] <= $nowTime) {
-            return json(['code' => 100, 'msg' => '联赛开始时间不能大于当前时间']);
-        }
-        if ($data['end_time'] != strtotime($league['end_time']) && $data['end_time'] <= $nowTime) {
-            return json(['code' => 100, 'msg' => '联赛结束时间不能大于当前时间']);
-        }
-        if ($data['reg_start_time'] != strtotime($league['reg_start_time']) && $data['reg_start_time'] <= $nowTime) {
-            return json(['code' => 100, 'msg' => '报名开始时间不能大于当前时间']);
-        }
-        if ($data['reg_end_time'] != strtotime($league['reg_end_time']) && $data['reg_end_time'] <= $nowTime) {
-            return json(['code' => 100, 'msg' => '报名结束时间不能大于当前时间']);
-        }
+
+        // 时间字段校验，允许创建过往的联赛
         if ($data['start_time'] >= $data['end_time']) {
-            return json(['code' => 100, 'msg' => '联赛开始时间不能大于联赛结束时间']);
+            return json(['code' => 100, 'msg' => '联赛开始时间不能晚于联赛结束时间']);
         }
         if ($data['reg_start_time'] >= $data['reg_end_time']) {
-            return json(['code' => 100, 'msg' => '报名开始时间不能大于报名结束时间']);
+            return json(['code' => 100, 'msg' => '联赛开始报名时间不能晚于联赛截止报名时间']);
         }
-        // 报名时间不能大于比赛开始时间
-        if ($data['reg_start_time'] >= $data['start_time'] || $data['reg_end_time'] >= $data['start_time']) {
-            return json(['code' => 100, 'msg' => '报名时间不能大于联赛开始时间']);
+        if ($data['reg_end_time'] >= $data['start_time']) {
+            return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
         }
+
         try {
             // 保存联赛信息
             $res = $matchS->saveMatch($data);
@@ -2054,13 +2035,16 @@ class League extends Base
         if ($this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         }
-        $checkMatchOrgMember = $leagueService->getMatchOrgMember([
-            'match_org_id' => $match['match_org_id'],
-            'member_id' => $this->memberInfo['id']
+
+        $power = $leagueService->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
         ]);
-        if (!$checkMatchOrgMember || $checkMatchOrgMember['status'] != 1) {
+        if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+
         // 若是邀请裁判员 检查该会员有无裁判员资质
         if ($data['type'] == 7) {
             $refereeS = new RefereeService();
@@ -2732,9 +2716,9 @@ class League extends Base
         $data['match_time'] = $matchTime = strtotime($data['match_time']);
         $nowTime = time();
         // 赛程比赛时间必须大于当前时间
-        if ( $matchTime < $nowTime ) {
-            return json(['code' => 100, 'msg' => '比赛时间不能小于当前时间']);
-        }
+        // if ( $matchTime < $nowTime ) {
+        //     return json(['code' => 100, 'msg' => '比赛时间不能小于当前时间']);
+        // }
         // 赛程比赛时间要求在联赛开始时间与结束时间区间
         if ( $matchTime < $leagueInfo['start_time'] ) {
             return json(['code' => 100, 'msg' => '比赛时间不能小于联赛开始时间']);
@@ -3046,6 +3030,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息，不能删除']);
         }
         try {
+            // $leagueS->saveMatchSchedule(['id' => $scheduleInfo['id'], 'status' => -1]);
             $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
@@ -3227,7 +3212,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => '请提交预览赛程']);
         }
 
-        $data['status'] = empty($data['status']) ? 0 : $data['status'];
+        // $data['status'] = empty($data['status']) ? 0 : $data['status'];
 
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
         // Db::startTrans();
@@ -3255,7 +3240,7 @@ class League extends Base
             $scheduleData[$k]['match_stage_id'] = $data['match_stage_id'];
             $scheduleData[$k]['match_stage'] = $data['match_stage'];
             $scheduleData[$k]['match_time'] = strtotime($scheduleData[$k]['match_time']);
-            $scheduleData[$k]['status'] = $data['status'];
+            // $scheduleData[$k]['status'] = $data['status'];
             $scheduleData[$k]['add_mode'] = 1;
         }
         try {
@@ -3313,17 +3298,21 @@ class League extends Base
                 unset($data['page']);
             }
 
-            // 预排和公开
-            if (!isset($data['status'])) {
-                $data["status"] = ['>', 0];
+            // 查询全部stauts，最后在过滤
+            if (isset($data['status'])) {
+                $status = intval($data["status"]);
+            } else {
                 if (isset($data['is_public']) && $data['is_public'] == 0) {
-                    $data["status"] = 0;
+                    $status = 0;
+                } else {
+                    $status = null;
                 }
             }
+            unset($data['status']);
             unset($data['is_public']);
 
             $leagueS = new LeagueService();
-            $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+            $orderby = ['match_time' => 'asc', 'id' => 'asc'];
             $_result = $leagueS->getMatchSchedules($data, $orderby);
 
             if (!$_result) {
@@ -3341,7 +3330,13 @@ class League extends Base
                 $keyExplode = explode('|', $key);
                 $_array['date'] = $keyExplode[1];
                 $_array['stage']['name'] = $keyExplode[0];
-                $_array['stage']['schedules'] = $value;
+                $_array['stage']['schedules'] = array();
+                foreach($value as $key => $row) {
+                    // 指定过status通过 或 未指定则只有status = 1，2通过 
+                    if ( (isset($status) && $row["status"] == $status) || (!isset($status) && $row["status"] > 0) ) {
+                        array_push($_array['stage']['schedules'], $row);
+                    }
+                }
                 array_push($result, $_array);
             }
             
@@ -5045,6 +5040,81 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_000')]);
         } else {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        }
+    }
+
+    public function setMatchScheduleStatus() {
+        
+        $data = input('post.');
+        if (!isset($data["match_time"]) || empty($data["league_id"]) || !isset($data["status"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $match_time_ts = strtotime($data["match_time"]);
+        $dateTimeStamp = getStartAndEndUnixTimestamp(date('Y', $match_time_ts), date('m', $match_time_ts), date('d', $match_time_ts));
+
+        // 检查会员操作权限（联赛工作人员-管理员以上）
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        $map['match_time'] = ['between',[$dateTimeStamp['start'], $dateTimeStamp['end']]];
+        $map['match_id'] = intval($data["league_id"]);
+        //仅可修改status = 0，1的情况，若修改为1，则先查出为0的赛程
+        $map['status'] = intval($data["status"]) == 1 ? 0 : 1;
+        $new_status = intval($data["status"]) == 1 ? 1 : 0;
+
+        $result = db("match_schedule")->where($map)->select();
+        if(empty($result)){
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        } else {
+            foreach ($result as $key => $row) {
+                if (empty($row["delete_time"])) {
+                    $result[$key]["status"] = $new_status;
+                }
+            }
+        }
+
+        $leagueS->saveAllMatchSchedule($result);
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    public function delLeagueAndRelevancy() {
+
+        $data = input('post.');
+        if ( empty($data["league_id"]) ) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['league_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power != 10) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 检查有没有 已经打完的比赛记录，如果有 那么该联赛不能删除
+        $map["match_id"] = intval($data["league_id"]);
+        $map["is_record"] = 1;
+        $count = $leagueS->getMatchRecordCount($map);
+        if (!empty($count)) {
+            return json(['code' => 100, 'msg' => "该联赛已有完成的比赛，无法删除"]);
+        }
+
+        $result = $leagueS->delLeagueAndRelevancy($map);
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
 }

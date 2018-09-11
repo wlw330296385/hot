@@ -266,7 +266,7 @@ class Salaryin extends Base {
 
             $map['type'] = 1;
             // 获取工资数据
-            $salaryList = $this->SalaryInService->getSalaryInPagintor($map, "$order desc");
+            $salaryList = $this->SalaryInService->getSalaryInPagintor($map, "id desc");
             $salarySum = $this->SalaryInService->countSalaryin($map);
             //dump($salaryList);
             if (!$salaryList) {

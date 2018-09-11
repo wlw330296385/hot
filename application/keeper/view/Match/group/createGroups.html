@@ -191,6 +191,9 @@
 
             // 设置种子球队
             $(document).on("tap", ".seedTeam", function () {
+                $(this).parents("li").siblings().find(".seedTeam").removeClass("bggreen");
+                $(this).parents("li").siblings().find(".seedTeam").addClass("bggray");
+                $(this).parents("li").siblings().find(".seedTeam").attr("data-is_seedTeam", 0);
                 if ($(this).hasClass("bggreen") == false) {
                     $(this).removeClass("bggray");
                     $(this).addClass("bggreen");
@@ -243,15 +246,6 @@
         // 获取数据并进行提交
         function submitAction() {
             var isOk = true //用变量记住状态
-            $(".groupsTip").each(function () {
-                let checkSeed = $(this).siblings("li").find(".seedTeam.bggreen").length;
-                console.log(checkSeed)
-                if (checkSeed > 1) {
-                    mui.toast("每个小组只能有一支种子球队！")
-                    return isOk = false;
-                }
-            });
-
             groupList = []
             $(".frame ul").each(function () {
                 var groupName = $(this).find("input[name=groupName]").val();

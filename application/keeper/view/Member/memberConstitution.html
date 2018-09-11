@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>体质编辑</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <!--选择器样式-->
+    <link href="/static/frontend/css/mui.picker.min.css" rel="stylesheet" />
+    <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
+    <style>
+        .mui-input-row a {
+            display: table;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">体质编辑</h1>
+    </header>
+
+    <div class="mui-content">
+
+        <form action="" class="mui-input-group">
+            <div class="mui-input-row" id="showUserPickerHeight">
+                <label>身高</label>
+                <span id='userResulth' class="height">{$memberInfo['height']}</span>
+            </div>
+            <div class="mui-input-row" id="showUserPickerWeight">
+                <label>体重</label>
+                <span id='userResultw' class="weight">{$memberInfo['weight']}</span>
+            </div>
+        </form>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
+                <a href="{:url('keeper/index/index')}">
+                    <span class="mui-icon icon iconfont icon-nav-Home"></span>
+                </a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bggreen successBtn">提交</li>
+        </ul>
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js "></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <!--选择器-->
+    <script src="/static/frontend/js/mui.picker.min.js"></script>
+    <script src="/static/frontend/js/mui.poppicker.js"></script>
+    <script src="/static/frontend/js/height.data.js"></script>
+    <script src="/static/frontend/js/weight.data.js"></script>
+
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                var _getParam = function (obj, param) {
+                    return obj[param] || '';
+                };
+
+                //身高选择
+                var userPickerh = new $.PopPicker();
+                userPickerh.setData(heightData);
+                var showUserPickerButton = doc.getElementById('showUserPickerHeight');
+                var userResulth = doc.getElementById('userResulth');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPickerh.show(function (items) {
+                        userResulth.innerText = _getParam(items[0], 'text');
+                    });
+                }, false);
+
+                //体重选择
+                var userPickerw = new $.PopPicker();
+                userPickerw.setData(weightData);
+                var showUserPickerButton = doc.getElementById('showUserPickerWeight');
+                var userResultw = doc.getElementById('userResultw');
+                showUserPickerButton.addEventListener('tap', function (event) {
+                    userPickerw.show(function (items) {
+                        userResultw.innerText = _getParam(items[0], 'text');
+                    });
+                }, false);
+
+            });
+        })(mui, document);
+
+        //体质数据编辑
+        $(".successBtn").click(function () {
+            var btnArray = ['取消', '确认'];
+            mui.confirm('修改体质数据将会更新到个人数据，是否确认修改？', '', btnArray, function (e) {
+                if (e.index == 1) {
+                    var height = $(".height").text();
+                    var weight = $(".weight").text();
+                    mui.ajax("{:url('api/member/updateMemberApi')}", {
+                        data: {
+                            height: height,
+                            weight: weight,
+                        },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        success: function (data) {
+                            console.log(data)
+                            mui.toast(data.msg)
+                            setTimeout(function () {
+                                window.location.href =
+                                    "{:url('keeper/index/index')}"
+                            }, 1500)
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(data);
+                            mui.toast("网络异常,请稍候再试");
+                        }
+                    });
+                }
+            })
+        })
+    </script>
+
+
+</body>
+
+</html>
