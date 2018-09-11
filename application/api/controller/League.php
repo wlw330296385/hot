@@ -5107,7 +5107,7 @@ class League extends Base
         $map["is_record"] = 1;
         $count = $leagueS->getMatchRecordCount($map);
         if (!empty($count)) {
-            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            return json(['code' => 100, 'msg' => "该联赛已有完成的比赛，无法删除"]);
         }
 
         $result = $leagueS->delLeagueAndRelevancy($map);

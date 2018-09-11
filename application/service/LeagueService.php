@@ -182,6 +182,8 @@ class LeagueService
         $result['fans_num'] = getfansnum($result['id'], 5);
         // 比赛场次数
         $result['records_count'] = $this->getMatchRecordCount(['match_id' => $result['id']]);
+        // 替换teams_count
+        $result['teams_count'] = $this->getMatchTeamCount(['match_id' => $result['id'], 'status' => 1]);
         return $result;
     }
 
