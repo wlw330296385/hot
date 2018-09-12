@@ -73,26 +73,26 @@
                         <div class="page-header">
                             <span class="course">理事</span>
                         </div>
-                        <ul class="mui-table-view detalis-list list border-b matchAdmin "></ul>
+                        <ul class="mui-table-view list border-b matchAdmin "></ul>
                         <div class="page-header">
                             <span class="course">队员</span>
                         </div>
-                        <ul class="mui-table-view detalis-list list border-b matchCommon"></ul>
+                        <ul class="mui-table-view list border-b matchCommon"></ul>
                     </div>
                 </div>
                 <div id="offlineMemberList" class="mui-scroll-wrapper mui-control-content mb44" style="top:182px">
                     <div class="mui-scroll">
-                        <ul class="mui-table-view detalis-list list border-b match-1 OA_task_match"></ul>
+                        <ul class="mui-table-view list border-b match-1 OA_task_match"></ul>
                     </div>
                 </div>
                 <div id="nolineMemberList" class="mui-scroll-wrapper mui-control-content mb44" style="top:182px">
                     <div class="mui-scroll">
-                        <ul class="mui-table-view detalis-list list border-b match0"></ul>
+                        <ul class="mui-table-view list border-b match0"></ul>
                     </div>
                 </div>
                 <div id="nocontactMatchList" class="mui-scroll-wrapper mui-control-content mb44" style="top:182px">
                     <div class="mui-scroll">
-                        <ul class="mui-table-view detalis-list list border-b match-2"></ul>
+                        <ul class="mui-table-view list border-b match-2"></ul>
                     </div>
                 </div>
 
@@ -207,7 +207,6 @@
                 var newlitmNull = ''
                 var newlilsNull = ''
                 if (data.code == 200) {
-                    teamMemberList = []
                     for (var i = 0; i <= data.data.length - 1; i++) {
 
                         if (data.data[i].role_arr != 0) {
@@ -228,8 +227,9 @@
 
                 // 理事排序整体操作
                 $(".depositLsDiv").empty().append(newlils)
-                teamMemberLsList = []
-                teamMemberLsNullList = []
+                teamMemberLsList = [] //有球衣号码的理事列表
+                teamMemberLsNullList = [] //没有球衣号码的理事列表
+                // 遍历隐藏div内的理事的数据
                 $(".depositLsDiv p").each(function () {
                     var id = $(this).attr("data-id");
                     var number = $(this).attr("data-number");
@@ -240,6 +240,7 @@
                     var height = $(this).attr("data-height");
                     var weight = $(this).attr("data-weight");
                     var role_arr = ''
+                    // 理事角色
                     teamMemberLsListChild = []
                     $(this).find("span").each(function () {
                         role_arr = $(this).text();
@@ -251,7 +252,9 @@
                         teamMemberLsList.push({ id, number, avatar, name, position, age, height, weight, teamMemberLsListChild })
                         teamMemberLsList.sort(compare("number")).reverse();  // 排序
                     }
-                })
+                })  
+                
+                // 遍历获取的有球衣号码的理事列表
                 for (var i = 0; i <= teamMemberLsList.length - 1; i++) {
                     var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsList[i].id;
                     newlilsAfter += `<li class="mui-table-view-cell mui-media listli"><a href="${urls}" class="mui-navigate-right">`
@@ -272,6 +275,7 @@
                                 </div>
                             </li>`
                 }
+                 // 遍历获取的没有球衣号码的理事列表
                 for (var i = 0; i <= teamMemberLsNullList.length - 1; i++) {
                     var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsNullList[i].id;
                     newlilsNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
@@ -289,7 +293,7 @@
                             </li>`
                 }
                 $(".matchAdmin").empty().append(newlilsAfter);
-                $(".matchAdmin li:last-child").after(newlilsNull);
+                $(".matchAdmin").append(newlilsNull);
                 // 理事排序整体操作end
 
 
@@ -298,8 +302,9 @@
 
                 // 队员排序整体操作
                 $(".depositTmDiv").empty().append(newlitm)
-                teamMemberList = []
-                teamMemberNullList = []
+                teamMemberList = [] //有球衣号码的队员列表
+                teamMemberNullList = [] //没有球衣号码的队员列表
+                // 遍历隐藏div内的队员的数据
                 $(".depositTmDiv p").each(function () {
                     var id = $(this).attr("data-id");
                     var number = $(this).attr("data-number");
@@ -316,6 +321,7 @@
                         teamMemberList.sort(compare("number")).reverse();  // 排序
                     }
                 })
+                //遍历获取的有球衣号码的队员列表
                 for (var i = 0; i <= teamMemberList.length - 1; i++) {
                     var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberList[i].id;
                     newlitmAfter += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
@@ -333,6 +339,7 @@
                                 </div>
                             </li>`
                 }
+                 //遍历获取的没有球衣号码的队员列表
                 for (var i = 0; i <= teamMemberNullList.length - 1; i++) {
                     var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberNullList[i].id;
                     newlitmNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
@@ -351,7 +358,7 @@
                             </li>`
                 }
                 $(".matchCommon").empty().append(newlitmAfter);
-                $(".matchCommon li:last-child").after(newlitmNull);
+                $(".matchCommon").append(newlitmNull);
                 // 队员排序整体操作end
 
                 if (newlils == '') {
