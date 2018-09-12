@@ -146,7 +146,7 @@
                             </li>
                             <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                                 <a href="#totalScheuleTips">
-                                    <span>公益课/未结算</span>
+                                    <span>公益 / 未结</span>
                                     <div class="mui-media-body" id="schoolSchedule"></div>
                                 </a>
                             </li>
@@ -154,8 +154,8 @@
                         <ul class="mui-table-view">
                             <li class="mui-table-view-cell border-b">
                                 <ul class="mui-row table">
-                                    <li class="mui-col-sm-8 mui-col-xs-8" style="padding-left: 10px;">上课时间 / 班级</li>
-                                    <li class="mui-col-sm-4 mui-col-xs-4 mui-text-center">状态</li>
+                                    <li class="mui-col-sm-9 mui-col-xs-9" style="padding-left: 10px;">上课时间 / 班级</li>
+                                    <li class="mui-col-sm-3 mui-col-xs-3 mui-text-center">状态</li>
                                 </ul>
                             </li>
                         </ul>
@@ -198,9 +198,9 @@
                         <ul class="mui-table-view mui-text-center">
                             <li class="mui-table-view-cell border-b">
                                 <ul class="mui-row table">
-                                    <li class="mui-col-sm-5 mui-col-xs-5">订单名称(课程)</li>
+                                    <li class="mui-col-sm-5 mui-col-xs-6 mui-text-left">订单名称(课程)</li>
                                     <li class="mui-col-sm-3 mui-col-xs-3">金额(元)</li>
-                                    <li class="mui-col-sm-4 mui-col-xs-4">提交日期</li>
+                                    <li class="mui-col-sm-4 mui-col-xs-3 mui-text-right">提交日期</li>
                                 </ul>
                             </li>
                         </ul>
@@ -544,7 +544,7 @@
             success: function (data) {
                 var newli = '';
                 // 校园课时
-                $('#schoolSchedule').text(data.data.total - {$finishedSchedule} - {$unsettle}+'/'+{$unsettle});
+                $('#schoolSchedule').text(data.data.total - {$finishedSchedule} - {$unsettle}+' / '+{$unsettle});
                 console.log(data.data.total)
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
@@ -560,7 +560,7 @@
                         }else{
                             scheduleStatus = '<font class="tipCorner bggray">已结算</font>';
                         }
-                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].schedule_time + '<br />' + data.data.data[i].schedule +'</li><li class="mui-col-xs-4 mui-col-sm-4">'+scheduleStatus+' </li></ul></li></a>';
+                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-9 mui-col-sm-9 mui-text-left">' + data.data.data[i].schedule_time + '<br />' + data.data.data[i].schedule +'</li><li class="mui-col-xs-3 mui-col-sm-3">'+scheduleStatus+' </li></ul></li></a>';
                         //判断第一页是否有未结算的课时
 
                         // if(data.data.data[i].status=="未结算" && data.data.data[i].is_school == -1){
@@ -647,7 +647,7 @@
                         if(data.data.data[i].is_pay==='未付款'){
                             tips = '<p class="colorred f12">[ '+data.data.data[i].is_pay+' ]</p>';
                         }
-                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-5 mui-col-sm-5">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-4 mui-col-sm-4">' + data.data.data[i].create_time + tips + '</li></ul></li></a>';
+                        newli = newli + '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-6 mui-col-sm-6 mui-text-left">' + data.data.data[i].goods + '</li><li class="mui-col-xs-3 mui-col-sm-3">' + data.data.data[i].balance_pay + '</li><li class="mui-col-xs-3 mui-col-sm-3 mui-text-right">' + data.data.data[i].create_time + tips + '</li></ul></li></a>';
                     }
                     console.log(newli)
                     if (gType == 1) {

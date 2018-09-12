@@ -92,25 +92,25 @@ class Index extends Base{
             ->count();
 
             $matchRecordModel = new MatchRecord();
-            $lastMatch = $matchRecordModel->field('*, abs(unix_timestamp(now()) - `match_time`) AS diff') -> where($map)->order('diff asc')->find();
+            $lastMatchRecord = $matchRecordModel->field('*, abs(unix_timestamp(now()) - `match_time`) AS diff') -> where($map)->order('diff asc')->find();
 
-            if (!empty($lastMatch)) {
-                $lastMatch = $lastMatch -> toArray();
+            if (!empty($lastMatchRecord)) {
+                $lastMatchRecord = $lastMatchRecord -> toArray();
                 foreach($teamIds as $tempId) {
-                    if ( $tempId == $lastMatch["home_team_id"] ) {
+                    if ( $tempId == $lastMatchRecord["home_team_id"] ) {
                         $myTeamId = $tempId;break;
-                    } else if ($tempId == $lastMatch["away_team_id"]) {
+                    } else if ($tempId == $lastMatchRecord["away_team_id"]) {
                         $myTeamId = $tempId;break;
                     }
                 }
-                $lastMatch['reg_number'] = $matchS->getMatchRecordMemberCount([
-                    'match_record_id' => $lastMatch['id'],
+                $lastMatchRecord['reg_number'] = $matchS->getMatchRecordMemberCount([
+                    'match_record_id' => $lastMatchRecord['id'],
                     'team_id' => $myTeamId,
                     'status' => ['>', 0],
                     'team_member_id' => ['>', 0]
                 ]);
-                $lastMatch['max'] = $teamS->getTeamMemberCount(['team_id' => $myTeamId, 'status' => 1]);
-                $lastMatch['match_time_ts'] = strtotime($lastMatch['match_time']);
+                $lastMatchRecord['max'] = $teamS->getTeamMemberCount(['team_id' => $myTeamId, 'status' => 1]);
+                $lastMatchRecord['match_time_ts'] = strtotime($lastMatchRecord['match_time']);
             }
 
         }
@@ -122,7 +122,7 @@ class Index extends Base{
         
         $matchs = empty($matchs) ? 0 : $matchs;
 
-        $matchDiff = empty($lastMatch["diff"]) ? 0 : $lastMatch["diff"];
+        $matchDiff = empty($lastMatchRecord["diff"]) ? 0 : $lastMatchRecord["diff"];
         $eventDiff = empty($lastEvent["diff"]) ? 0 : $lastEvent["diff"];
         if ($matchDiff < $eventDiff) {
             $uiQueue = array('match', 'event');
@@ -134,14 +134,13 @@ class Index extends Base{
     	$this->assign('bannerList',$bannerList);
         $this->assign('fans',$fans);
         $this->assign('teams',$teams);
+        $this->assign('myTeamId',$myTeamId);
         $this->assign('matchs',$matchs);
         $this->assign('ArticleList',$ArticleList);
         $this->assign('bonusInfo',$bonusInfo);
         $this->assign('lastEvent',$lastEvent);
-        $this->assign('lastMatch',$lastMatch);
+        $this->assign('lastMatchRecord',$lastMatchRecord);
         $this->assign('uiQueue',$uiQueue);
-        // dump($lastEvent);
-        // dump($lastMatch);exit;
         return view('Index/index');
     }
 
