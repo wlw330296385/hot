@@ -206,7 +206,7 @@ class BillService {
                 }
             }else{
                 db('camp_member')->insert(['type'=>1,'camp_id'=>$data['camp_id'],'member_id'=>$data['member_id'],'camp'=>$data['camp'],'member'=>$data['member'],'status'=>1,'create_time'=>time()]);
-            }
+            }   
             // lesson_member操作
             $LessonMember = new LessonMember;
             $is_student2 = $LessonMember->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->find();

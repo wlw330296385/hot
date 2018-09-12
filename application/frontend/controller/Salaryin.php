@@ -29,10 +29,14 @@ class Salaryin extends Base{
         $m = input('param.month',date('m',time()));
         // $y = date('Y',time());
         // $m = date('m',time());
+        if($power == 2){
+            $map = ['camp_member.member_id'=>$this->memberInfo['id'],'camp_member.status'=>1,'camp_member.camp_id'=>$camp_id];
+        }else{
+            $map = ['camp_member.type'=>['in',[2,4]],'camp_member.status'=>1,'camp_member.camp_id'=>$camp_id];
+        }
         // 教练总数和教练列表
-        $coachList = db('camp_member')->field('camp_member.member,camp_member.member_id,coach.id as coach_id,coach.coach')->join('coach','coach.member_id = camp_member.member_id')->where(['camp_member.type'=>['in',[2,4]],'camp_member.status'=>1,'camp_member.camp_id'=>$camp_id])->order('camp_member.id desc')->select();
+        $coachList = db('camp_member')->field('camp_member.member,camp_member.member_id,coach.id as coach_id,coach.coach')->join('coach','coach.member_id = camp_member.member_id')->where($map)->order('camp_member.id desc')->select();
         $coachCount = count($coachList);
-
         $coachIDs = [];
         $memberIDs = [];
         foreach ($coachList as $key => $value) {
