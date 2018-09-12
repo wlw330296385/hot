@@ -59,15 +59,15 @@ class Student extends Base
 		$campInfo = db('camp')->where(['id'=>$camp_id])->find();
 		
 		//学生的班级	
-		$studentGradeList = Db::view('grade_member')
-							->view('grade','*','grade.id=grade_member.grade_id')
-							->where([
-								'grade_member.student_id'=>$student_id,
-								'grade_member.camp_id'=>$camp_id,
-								'grade_member.status'=>1
-							])
-							->order('grade_member.id desc')
-							->select();
+		// $studentGradeList = db('grade_member')
+		// 					->join('grade','grade.id=grade_member.grade_id')
+		// 					->where([
+		// 						'grade_member.student_id'=>$student_id,
+		// 						'grade_member.camp_id'=>$camp_id,
+		// 						'grade_member.status'=>1
+		// 					])
+		// 					->order('grade_member.id desc')
+		// 					->select();
 		// 学员-课程课量
         $schedulenum = db('lesson_member')->whereNull('delete_time')
             ->where([
@@ -114,7 +114,7 @@ class Student extends Base
         $this->assign('totalSchedule',$totalSchedule);
 		$this->assign('campInfo',$campInfo);
 		$this->assign('studentInfo',$studentInfo);
-		$this->assign('studentGradeList',$studentGradeList);
+		// $this->assign('studentGradeList',$studentGradeList);
 		$this->assign('notPayBill',$notPayBill);
 		$this->assign('payBill',$payBill);
 		$this->assign('repayBill',$repayBill);
