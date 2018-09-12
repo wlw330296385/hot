@@ -208,14 +208,14 @@
             <div class="mui-input-row picker btn" id="demo3" data-options='{"beginYear":2011,"endYear":2050}'>
                 <div class="mui-navigate-right">
                     <label>时间</label>
-                    <span id="result" class="ui-alert domData match_time" name="match_time">{$matchInfo.match_time}</span>
+                    <span id="result" class="domData match_time" name="match_time">{$matchInfo.match_time}</span>
                 </div>
             </div>
 
             <div class="mui-input-row" id='showCityPicker3'>
                 <div class="mui-navigate-right">
                     <label>比赛地区</label>
-                    <span id="cityResult3" class="ui-alert">{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
+                    <span id="cityResult3">{$matchInfo.province} {$matchInfo.city} {$matchInfo.area}</span>
                     <input type="hidden" name="province" value="{$matchInfo.province}" class="data" id="province">
                     <input type="hidden" name="city" value="{$matchInfo.city}" class="data" id="city">
                     <input type="hidden" name="area" value="{$matchInfo.area}" class="data" id="area">
@@ -237,7 +237,7 @@
                 <label>场地费用</label>
                 <input type="number" name="court_cost" value="{$matchInfo.court_cost}" class="data" placeholder="请输入场地费用">
             </div>
-            <div class="mui-input-row courtCostBearDiv">
+            <!-- <div class="mui-input-row courtCostBearDiv">
                 <div class="mui-navigate-right">
                     <label class="wd45">场地付费方式</label>
                     <span class="select-row">
@@ -249,7 +249,7 @@
                         </select>
                     </span>
                 </div>
-            </div>
+            </div> -->
 
             <p class="pline"></p>
 
@@ -397,7 +397,7 @@
             <div class="mui-scroll-wrapper" style="top:38px !important;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list teamList">
-                        <p class="nohave">请先搜索你要对战的对手！</p>
+                        <p class="nohave">请先搜索对手！平台球队有数据的关联。非平台对手<a class="noInPlatform colororange">点击设置</a></p>
                     </ul>
                     <ul class="mui-pager">
                         <li>
@@ -910,8 +910,8 @@
         album = [];
         var totalNum = '';//序号总和的变量
         var directentry = $("input[name=directentry]").val();
-        var court_cost_bear_pd = "{$matchInfo.court_cost_bear}";
-        console.log(court_cost_bear_pd)
+        // var court_cost_bear_pd = "{$matchInfo.court_cost_bear}";
+        // console.log(court_cost_bear_pd)
         $(function () {
 
             var teamKeyword = '';
@@ -942,6 +942,16 @@
             toRefereeList1(wReferee1, "referee1", 1);
             toRefereeList2(wReferee2, "referee2", 1);
             toRefereeList3(wReferee3, "referee3", 1);
+            
+            // 不搜索的情况下，对手不在平台时候点击
+            $(document).on("tap", ".noInPlatform", function () {
+                var str =
+                    `<div class="mui-text-center">
+                                <input type="text" class="addInput wd66" value="" placeholder="输入对手名称">
+                                <button class="mui-btn addBtn">设为对手</button>
+                            </div>`
+                $(".teamList").empty().append(str);
+            });
 
             // 设置比赛类型默认值
             $('#matchType option[value="{$matchInfo.type_num}"]').prop("selected", true);
@@ -1045,11 +1055,11 @@
                 $(".away_color_text input[name=color]").parent(".color").hide();
             }
 
-            if (court_cost_bear_pd != 0) {
-                $(".courtCostBearDiv").show();
-            } else {
-                $(".courtCostBearDiv").hide();
-            }
+            // if (court_cost_bear_pd != 0) {
+            //     $(".courtCostBearDiv").show();
+            // } else {
+            //     $(".courtCostBearDiv").hide();
+            // }
 
             ////////////////////////////////////////////////////////////
             // 去逗号
@@ -1630,26 +1640,26 @@
                 return false;
             }
 
-            if (court_cost_bear_pd != 0) {
-                // 场地费用与付费方式判断
-                var court_cost_bear = $("#courtCostBear").children("option:selected").val()
-                var court_cost = $("input[name=court_cost]").val();
-                if (!(/^[0-9]*$/).test(court_cost)) {
-                    mui.toast("场地费用请填写数字");
-                    return false;
-                }
-                if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
-                    mui.toast("填写场地费用与付费方式不对应");
-                    return false;
-                }
-            }
+            // if (court_cost_bear_pd != 0) {
+            //     // 场地费用与付费方式判断
+            //     var court_cost_bear = $("#courtCostBear").children("option:selected").val()
+            //     var court_cost = $("input[name=court_cost]").val();
+            //     if (!(/^[0-9]*$/).test(court_cost)) {
+            //         mui.toast("场地费用请填写数字");
+            //         return false;
+            //     }
+            //     if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost == '' && court_cost_bear != 0)) {
+            //         mui.toast("填写场地费用与付费方式不对应");
+            //         return false;
+            //     }
+            // }
 
 
             var away_team = $(".away_team_Cont").text();
             var isFinished = $("#isFinished").children("option:selected").val();
             if (isFinished == 1) {
                 if (away_team == '') {
-                    mui.alert("如果选择完成比赛录入，请完善客队信息。");
+                    mui.alert("已选择完成比赛录入，请完善客队信息。");
                     return false;
                 }
             }
@@ -1844,7 +1854,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
-                                newli = newli + '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data.data[i].opponent_team_id + '" ><label class="nameHistory">' + data.data.data[i].opponent_team + '</label></li>'
+                                newli = newli + '<li class="mui-table-view-cell listli" data-id="' + data.data.data[i].opponent_team_id + '" ><label class="nameHistory">' + data.data.data[i].opponent_team.name + '</label></li>'
                             }
                         }
                         $(wTeamList).empty();
@@ -1926,6 +1936,7 @@
                         HomeMemberList = [];//报名人员列表数组
                         $("#inactiveList").empty();
                         for (var i = 0; i <= data.data.length - 1; i++) {
+                            console.log(data.data[i].name)
                             inactiveDiv += '<div class="mui-input-row mui-checkbox checkboxCont"><label class="number" style="width:20%">' + (i + 1) + '</label><font class="f14">' + data.data[i].name + '</font><input name="member" value="' + data.data[i].id + '" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '"  data-name="' + data.data[i].name + '"  data-id="' + data.data[i].id + '" data-tmid="' + data.data[i].team_member_id + '" type="checkbox"><input type="hidden" class="stdList" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-name="' + data.data[i].name + '"  data-tmid="' + data.data[i].team_member_id + '"></div>'
                             HomeMemberList.push({ name: data.data[i].name, member: data.data[i].member, member_id: data.data[i].member_id, tmid: data.data[i].team_member_id });
                         };
