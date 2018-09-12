@@ -70,6 +70,8 @@
     <!-- /.box-body -->
     <div class="box-footer no-padding">
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#">当前训练营余额 <span class="pull-right text-red">{$campInfo.balance}</span></a>
+        </li>
         <li><a href="#">课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i>{$income}</span></a>
         </li>
         <li><a href="#">赠课支出
@@ -77,13 +79,14 @@
 
         <li><a href="">
             <strong href="#">可提现
-          <span class="pull-right text-red">{$income-$output}</span></strong></a></li>
+          <span class="pull-right text-red">{if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}$income-$output{elseif ($income-$output)<$campInfo['balance'] && ($income-$output)<0} 不可提现 {else /}{$campInfo.balance}{/if}</span></strong></a></li>
       </ul>
     </div>
     <!-- /.footer -->
     <form method="post">
         <div class="box-footer pull-right">
-            <button type="submit" class="btn btn-success ">提现</button>
+            <input type="hidden" name="type" value="{$type}">
+            <button type="submit" class="btn btn-success" {if $income-$output<=0} disabled="disabled"{/if} >提现</button>
         </div>
     </form>
 </div>

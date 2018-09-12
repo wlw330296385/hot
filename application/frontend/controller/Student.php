@@ -118,7 +118,7 @@ class Student extends Base
 		$this->assign('notPayBill',$notPayBill);
 		$this->assign('payBill',$payBill);
 		$this->assign('repayBill',$repayBill);
-		// $this->assign('studentScheduleList',$studentScheduleList);
+		$this->assign('unsettle',$unsettle);
 		$this->assign('studentBillList',$studentBillList);
 		$this->assign('totalBill',$totalBill);
 		$this->assign('studentcando', $studentcando);

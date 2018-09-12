@@ -699,7 +699,6 @@ class StatisticsCamp extends Camp{
         $d = date('d',time());
         $Ym = input('param.Ym',date('Ym',time()));
         $type = input('param.type',1);
-
         // 最后一次提现的时间点
         $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]]])->find();
         if($lastWitchdraw){
@@ -720,7 +719,6 @@ class StatisticsCamp extends Camp{
                 $time =  strtotime(date('Ym01',time()));
                 $e = date('Ymd',strtotime('-1 day',$time));
                 $date_str = [$point_in_time,$e];
-                dump($date_str);
                 $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                 $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                 $income = db('income')->where($map1)->sum('income');
@@ -743,12 +741,23 @@ class StatisticsCamp extends Camp{
             $output = 0;
             $legend = ['课时收入','活动收入','支出'];
         }
-        
-        $this->assign('income',$income);
-        $this->assign('output',$output);
-        $this->assign('legend',json_encode($legend));
-        $this->assign('title',$title);
-        return view('StatisticsCamp/withdraw');
+        if(request()->isPost()){
+
+            // 如果是负数不允许提现
+
+
+            //如果小于余额,只能提余额
+
+        }else{
+
+            
+            $this->assign('income',$income);
+            $this->assign('output',$output);
+            $this->assign('legend',json_encode($legend));
+            $this->assign('title',$title);
+            $this->assign('type',$type);
+            return view('StatisticsCamp/withdraw');
+        }
     }
 
     // 训练营工资列表月表（列出对应训练营所有的教练员当月的工资）
