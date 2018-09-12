@@ -62,7 +62,7 @@ class Index extends Base{
         $teamS = new TeamService();
         $matchS = new MatchService();
         $memberInTeam = $teamS->myTeamAll($this->memberInfo["id"]);
-        $lastMatch = "";
+        $lastMatchRecord = "";
         $lastEvent = "";
         $myTeamId = 0;
         $teamIds = [];

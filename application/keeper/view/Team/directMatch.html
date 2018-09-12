@@ -109,6 +109,7 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="team_id" value="{$team_id}" class="data">
         <input type="hidden" name="team" value="{$teamInfo.name}" class="data">
+        <input type="hidden" name="is_finished" value="1" class="data">
 
         <form action="" class="mui-input-group mb44">
 
@@ -201,7 +202,6 @@
                 </div>
             </div>
 
-
             <div class="mui-input-row h-auto">
                 <a href="#court" class="mui-navigate-right">
                     <label>比赛地点</label>
@@ -216,20 +216,6 @@
                 <label>场地费用</label>
                 <input type="text" name="court_cost" value="" class="data" placeholder="请输入场地费用">
             </div>
-
-            <!-- <div class="mui-input-row">
-                <div class="mui-navigate-right">
-                    <label>场地付费方式</label>
-                    <span class="select-row">
-                        <select class="data" id="courtCostBear" name="court_cost_bear">
-                            <option value="0">免费</option>
-                            <option value="1">费用AA</option>
-                            <option value="2">主队负责</option>
-                            <option value="3">客队负责</option>
-                        </select>
-                    </span>
-                </div>
-            </div> -->
 
             <div class="page-header bggray2">
                 <span class="f12">选择裁判（请选择裁判价位及数量，系统将随机安排裁判，如须指定裁判请点击搜索查询。）</span>
@@ -279,14 +265,6 @@
                 <input type="number" name="record[other_cost]" value="" class="data" placeholder="请填写其它费用">
             </div>
             <p class="pline"></p>
-
-            <!-- <div class="mui-input-row">
-                <label class="wd36">是否完成录入</label>
-                <div class="mui-switch isRelease">
-                    <div class="mui-switch-handle"></div>
-                </div>
-                <input type="hidden" name="is_finished" value="{$matchInfo.is_finished}" class="data">
-            </div> -->
 
             <div class="mui-input-row h-auto">
                 <label>备注</label>
@@ -360,7 +338,7 @@
             <div class="mui-scroll-wrapper" style="top:38px !important;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list teamList">
-                        <p class="nohave">请先搜索你要对战的对手！</p>
+                        <p class="nohave">请先搜索对手！平台球队有数据的关联。非平台对手<a class="noInPlatform colororange">点击设置</a></p>
                     </ul>
                     <ul class="mui-pager">
                         <li>
@@ -876,26 +854,16 @@
             toRefereeList2(wReferee2, "referee2", 1);
             toRefereeList3(wReferee3, "referee3", 1);
 
-            // 是否完成录入操作
-            var is_finished = "{$matchInfo.is_finished}";
-            if (is_finished == "已完成") {
-                $("input[name=is_finished]").val("1");
-            } else {
-                $("input[name=is_finished]").val("-1");
-            }
-            $(".isRelease").on("tap", '', function () {
-                var send_m = $("input[name=is_finished]");
-                if (send_m.val() == "-1") {
-                    send_m.val("1");
-                } else {
-                    send_m.val("-1");
-                }
+            // 不搜索的情况下，对手不在平台时候点击
+            $(document).on("tap", ".noInPlatform", function () {
+                var str =
+                    `<div class="mui-text-center">
+                                <input type="text" class="addInput wd66" value="" placeholder="输入对手名称">
+                                <button class="mui-btn addBtn">设为对手</button>
+                            </div>`
+                $(".teamList").empty().append(str);
             });
 
-            // 给是否完成录入赋值
-            if (is_finished == "已完成") {
-                $(".isRelease").addClass("mui-active");
-            }
             ///////////////裁判1//////////////////////////////////
             //搜索裁判
             $("#search1").on("tap", function () {
@@ -1295,26 +1263,26 @@
             });
 
             // 客场球服
-            $(".awayColorList").on('tap', 'li', function () {
-                //显示的内容
-                var away_color_text = $.trim($(this).html());
-                $(".away_color_text").html(away_color_text);
-                //颜色的中文赋值
-                var away_team_color = $(this).find("font").text();
-                $("input[name='record[away_team_color]']").val(away_team_color).addClass("data");
-                //颜色的英文赋值
-                var away_team_colorstyle = $(this).find("input[name=color]").val();
-                $("input[name='record[away_team_colorstyle]']").val(away_team_colorstyle).addClass(
-                    "data");
-                mui("#awayColor").popover("toggle");
-            });
-            //清除客场颜色
-            $("#awayDel").on('tap', '', function () {
-                $(".away_color_text").text('');
-                $("input[name='record[away_team_color]']").val("");
-                $("input[name='record[away_team_colorstyle]']").val("");
-                mui("#awayColor").popover("toggle");
-            });
+            // $(".awayColorList").on('tap', 'li', function () {
+            //     //显示的内容
+            //     var away_color_text = $.trim($(this).html());
+            //     $(".away_color_text").html(away_color_text);
+            //     //颜色的中文赋值
+            //     var away_team_color = $(this).find("font").text();
+            //     $("input[name='record[away_team_color]']").val(away_team_color).addClass("data");
+            //     //颜色的英文赋值
+            //     var away_team_colorstyle = $(this).find("input[name=color]").val();
+            //     $("input[name='record[away_team_colorstyle]']").val(away_team_colorstyle).addClass(
+            //         "data");
+            //     mui("#awayColor").popover("toggle");
+            // });
+            // //清除客场颜色
+            // $("#awayDel").on('tap', '', function () {
+            //     $(".away_color_text").text('');
+            //     $("input[name='record[away_team_color]']").val("");
+            //     $("input[name='record[away_team_colorstyle]']").val("");
+            //     mui("#awayColor").popover("toggle");
+            // });
 
             //全选
             $(".all").click(function () {
@@ -1488,26 +1456,31 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            // 场地费用与付费方式判断
-            var court_cost_bear = $("#courtCostBear").children("option:selected").val()
+            var home_score = $("input[name='record[home_score]']").val();
+            var away_score = $("input[name='record[away_score]']").val();
+            var away_team_id = $("input[name='record[away_team_id]']").val();
+            var match_time = $("input[name=match_time]").val();
+            var court_id = $("input[name=court_id]").val();
             var court_cost = $("input[name=court_cost]").val();
+            if (home_score == '' || away_score == '') {
+                mui.toast("比分不能为空");
+                return false;
+            }
+            if (away_team_id == '') {
+                mui.toast("请选择客队");
+                return false;
+            }
+            if (match_time == '') {
+                mui.toast("请选择比赛时间");
+                return false;
+            }
+            if (court_id == '') {
+                mui.toast("请选择比赛地点");
+                return false;
+            }
             if (!(/^[0-9]*$/).test(court_cost)) {
                 mui.toast("场地费用请填写数字");
                 return false;
-            }
-            if ((court_cost > 0 && court_cost_bear == 0) || (court_cost == 0 && court_cost_bear != 0) || (court_cost ==
-                    '' && court_cost_bear != 0)) {
-                mui.toast("填写场地费用与付费方式不对应");
-                return false;
-            }
-
-            var away_team = $(".away_team_Cont").text();
-            var isFinished = $("#isFinished").children("option:selected").val();
-            if (isFinished == 1) {
-                if (away_team == '') {
-                    mui.alert("如果选择完成比赛录入，请完善客队信息。");
-                    return false;
-                }
             }
 
             albumImg(); //调用活动花絮图片组好的数组
@@ -1553,10 +1526,6 @@
                 return false;
             }
 
-            // referee1 = { referee: referee_1, referee_id: referee_id1, referee_cost: referee_cost1 };
-            // referee2 = { referee: referee_2, referee_id: referee_id2, referee_cost: referee_cost2 };
-            // referee3 = { referee: referee_3, referee_id: referee_id3, referee_cost: referee_cost3 };
-
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
@@ -1568,9 +1537,6 @@
             objData.remarks = remarks;
             var description = $('textarea.description').val();
             objData.description = description;
-            // objData.referee1 = JSON.stringify(referee1);
-            // objData.referee2 = JSON.stringify(referee2);
-            // objData.referee3 = JSON.stringify(referee3);
 
             var url = "{:url('api/match/directteammatch')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -1678,8 +1644,8 @@
                             if (data.data.data[i].id != "{$team_id}") {
                                 newli = newli +
                                     '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data
-                                    .data[i].opponent_team_id + '"><label class="nameHistory">' + data.data
-                                    .data[i].opponent_team + '</label></li>'
+                                    .data[i].opponent_team_id + '" ><label class="nameHistory">' + data.data
+                                    .data[i].opponent_team.name + '</label></li>'
                             }
                         }
                         $(wTeamList).empty();
