@@ -254,6 +254,7 @@ class League extends Base
         }
         // 接收输入变量
         $data = input('post.');
+
         // 数据验证
         $validate = validate('MatchVal');
         if (!$validate->scene('league_edit')->check($data)) {
@@ -264,6 +265,9 @@ class League extends Base
         $league = $matchS->getMatch(['id' => $data['id']]);
         if (!$league) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        } else if ($league["member_id"] != $this->memberInfo['id']) {
+            // 若不是创建人不能修改
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 时间格式转换
         $data['start_time'] = strtotime($data['start_time']);
@@ -280,6 +284,22 @@ class League extends Base
         }
         if ($data['reg_end_time'] >= $data['start_time']) {
             return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
+        }
+
+        if (empty($data['custom_member']) ) {
+            $custom_member = $data['custom_member'];
+            unset($data['custom_member']);
+
+            $condition['member_id'] = $custom_member['member_id'];
+            $condition["match_id"] = $data['id'];
+            $condition["status"] = 1;
+            $map["custom_role"] = $custom_member["custom_role"];
+            $map["telephone"] = $custom_member["telephone"];
+            $leagueS = new LeagueService();
+            $result = $leagueS->saveMatchMember($map, $condition);
+            if ($result["code"] != 200) {
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
+            }
         }
 
         try {

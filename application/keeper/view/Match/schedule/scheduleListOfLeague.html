@@ -58,10 +58,7 @@
                     <ul class="mui-table-view list scheduleList0 ulHtml"></ul>
                 </div>
             </div>
-
-            <div class="hideList hide"></div>
         </div>
-
 
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
@@ -100,12 +97,12 @@
             })
         })(mui);
 
-
         var btnArray = ['取消', '确认'];
         var league_id = "{$league_id}";
         var status = wooApi.GetQueryString('status');
 
         $(function () {
+
             toList(1)
             $(".schedule1").on("tap", function () {
                 toList(1)
@@ -117,8 +114,8 @@
             //选择查看赛程类型
             $("#group").on("change", function () {
                 match_group_id = $(this).find("option:checked").val();
-                toList(1,match_group_id)
-                toList(0,match_group_id)
+                toList(1, match_group_id)
+                toList(0, match_group_id)
             });
             getbattle();
 
@@ -174,9 +171,6 @@
                     }
                 })
             })
-
-
-
 
             // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
@@ -289,6 +283,7 @@
 
         })
 
+        // 获取对阵信息判断跳转链接
         function getbattle() {
             var urlBuildBatte = "{:url('api/league/buildschedulebygroup')}";
             mui.ajax({
@@ -303,22 +298,23 @@
                     'Content-Type': 'application/json'
                 },
                 success: function (data) {
-                    console.log(data);
+                    console.log(data)
                     var newli = '';
                     $(".createSchedule").on("tap", function () {
-                        var ulhtml = $(".ulHtml li").hasClass("nodata");
+                        // var onlist = $("#onlist .ulHtml li").hasClass("nodata");
+                        // var offlist = $("#offlist .ulHtml li").hasClass("nodata");
                         if (data.code == 200) {
-                            if (ulhtml == true) {
-                                mui.confirm("小组分组对阵信息已经生成，请添加比赛日程！", "提示", btnArray, function (e) {
-                                    if (e.index == 1) {
-                                        window.location =
-                                            "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
-                                    }
-                                });
-                            } else {
-                                window.location =
-                                    "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
-                            }
+                            // if (onlist == true && offlist == true) {
+                            //     mui.confirm("小组分组对阵信息已经生成，请添加比赛日程！", "提示", btnArray, function (e) {
+                            //         if (e.index == 1) {
+                            //             window.location =
+                            //                 "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
+                            //         }
+                            //     });
+                            // } else {
+                            window.location =
+                                "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
+                            // }
                         } else {
                             mui.confirm("暂无分组信息对阵信息，请先创建分组！", "提示", btnArray, function (e) {
                                 if (e.index == 1) {
@@ -327,9 +323,7 @@
                                 }
                             });
                         }
-
                     });
-
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
@@ -339,7 +333,6 @@
 
         // 接口获取数据并追加到页面
         function toList(is_public, match_group_id) {
-            //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/getmatchschedulelistbytime')}";
             mui.ajax({
                 url: url,
@@ -395,7 +388,13 @@
                                 }
                                 var urls = "{:url('match/editscheduleofleague')}" + '/league_id/' +
                                     league_id + '/id/' + dataSchedule.id;
-                                newli += `<a href="${urls}">`
+                                var urlsInfo = "{:url('match/leagueScheduleInfo')}" + '/league_id/' +
+                                    league_id + '/id/' + dataSchedule.id + '?status=2';
+                                if (dataSchedule.status == 2) {
+                                    newli += `<a href="${urlsInfo}">`
+                                } else {
+                                    newli += `<a href="${urls}">`
+                                }
                                 newli +=
                                     `<li class="mui-table-view-cell listli border-b">
                                         <div class="mui-slider-right mui-disabled">

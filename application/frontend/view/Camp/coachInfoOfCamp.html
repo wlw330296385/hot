@@ -174,8 +174,8 @@
                     <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
                             <a href="#">
-                                <span>本月工资</span>
-                                <div class="mui-media-body">{$SalaryMonth}</div>
+                                <span><text class="mtext">本</text>月工资</span>
+                                <div class="mui-media-body" id="mSalary">{$SalaryMonth}</div>
                             </a>
                         </li>
                         <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
@@ -191,8 +191,14 @@
                         <p class="mui-navigate-right">工资表<span class="btnTime" id="salaryinTime" data-options='{"type":"month"}'><b class="salaryYear">{$y}</b> 年 <b class="salaryMonth">{$m}</b> 月</span></p>
                     </li>
                 </ul>
-                <ul class="mui-table-view list detalis-list border-b">
-                    <li class="mui-table-view-cell listli">月份<span>工资</span></li>
+                <ul class="mui-table-view mb">
+                    <li class="mui-table-view-cell">
+                        <ul class="mui-row table">
+                            <li class="mui-col-xs-3" id="salaryTypeTitle" style="padding-left: 6px;">结算工资</li>
+                            <li class="mui-col-xs-6">日期 / 班级</li>
+                            <li class="mui-col-xs-3 mui-text-center">工资</li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="mui-table-view list detalis-list salary">
                 </ul>
@@ -477,7 +483,15 @@
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell mui-media"><a href="' + urls + '"><ul class="mui-row table"><li class="mui-col-xs-10 mui-col-sm-10 mui-text-left">' + data.data.data[i].grade + '<p>' + data.data.data[i].lesson_time + '</p></li><li class="mui-col-xs-2 mui-col-sm-2">' + data.data.data[i].students + '</li></ul></a></li>';
+                        var scheduleStatus = '';
+                        if(data.data.data[i].is_school == 1){
+                            scheduleStatus = '<font class="tipCorner bggreen">公益课</font>';
+                        }else if(data.data.data[i].is_settle==0){
+                            scheduleStatus = '<font class="tipCorner bgblue">未结算</font>';
+                        }else{
+                            scheduleStatus = '<font class="tipCorner bggray">已结算</font>';
+                        }
+                        newli += '<a href="' + urls + '"><li class="mui-table-view-cell mui-media border-b"><ul class="mui-row table"><li class="mui-col-xs-8 mui-col-sm-8 mui-text-left">' + data.data.data[i].grade + '<br />' + data.data.data[i].lesson_time +'</li><li class="mui-col-xs-2 mui-col-sm-2">'+data.data.data[i].students+' 人</li><li class="mui-col-xs-2 mui-col-sm-2">'+scheduleStatus+' </li></ul></li></a>';
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -491,6 +505,9 @@
                         //下拉加载 gType==2
                         $("ul.schedule").append(newli);
                     }
+
+
+
                 } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
@@ -512,6 +529,7 @@
     var toCoachSalaryinList = function (wList, page, gType, sYear, sMonth) {
         var url = "{:url('api/salaryin/coachSalaryinListPage','','',true)}/?page=" + page + "&y="+sYear+"&m="+sMonth;
         var campID = "{$camp_id}";
+        var mText = sMonth.replace(/\b(0+)/gi,"");
         mui.ajax(url, {
             data: {
                 camp_id: campID,
@@ -524,10 +542,23 @@
             success:function(data){
                 //console.log(data);
                 var newli = '';
+                var salaryCount = 0;
                 if (data.code == 200) {
+                    var salaryNum = 0;
+                    var urls = '#';
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].schedule_id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell"><a href="' + urls + '">' + data.data.data[i].schedule_time + '<span>' + data.data.data[i].push_salary + '</span></li>';
+
+                        salaryNum = parseInt(data.data.data[i].salary) +  parseInt(data.data.data[i].push_salary);
+                        salaryCount += salaryNum;
+
+                        urls = "{:url('schedule/scheduleInfo')}" + '/schedule_id/' + data.data.data[i].schedule_id + '/camp_id/' + campID;
+
+                        newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row table">';
+                        newli += '<li class="mui-col-xs-3"><font class="tipCorner bgblue">已结算</font></li><li class="mui-col-xs-6">'+  data.data.data[i].schedule_time + '<br /><text class="colorgray">'+data.data.data[i].grade+'</text></li>';
+                        newli += '<li class="mui-col-xs-3 mui-text-center">'+ salaryNum +'</li>';
+                        newli += '</ul></a></li>';
+
+
                     }
                     if (gType == 1) {
                         //上拉刷新
@@ -541,9 +572,13 @@
                         //下拉加载 gType==2
                         $("ul.salary").append(newli);
                     }
+
                 } else {
                     mui.toast('数据获取失败,请稍候再试');
                 }
+                 //最终统计赋值
+                $('#mSalary').text(salaryCount);
+                $(".mtext").text(mText);
 
                 if (newli != '') {
                     mui('#' + wList).pullRefresh().endPullupToRefresh(false);

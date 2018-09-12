@@ -234,6 +234,11 @@ class Match extends Base {
 
     // 修改联赛信息
     public function leaguematchedit() {
+        $leagueS = new LeagueService();
+        $map["match_id"] = $this->league_id;
+        $map["custom_role"] = array('exp','is not null');
+        $customMemberInfo = $leagueS->getMatchMember($map);
+        $this->assign('customMemberInfo', $customMemberInfo);
         return view('Match/leagueMatchEdit');
     }
 

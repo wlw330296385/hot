@@ -17,6 +17,19 @@
             background-color: #FFF;
             margin: 0px 0px 5px;
         }
+        .mui-input-group .h-auto {
+            padding-top: 14px;
+            padding-bottom: 16px;
+        }
+        .punchList {
+            padding-right:20px;
+            display: block;
+        }
+        .punchList img{
+            margin-right:4%;
+            width: 20% !important;
+            height: auto !important;
+        }
 
     </style>
 </head>
@@ -39,7 +52,7 @@
                     <text class="f12 colorgray">昵称：{$memberInfo.nickname}</text>
                 </li>
                 <li class="mui-col-xs-4 mui-col-sm-4 mui-text-right">
-                    <span class="f12">{$memberInfo['city']} {$memberInfo['area']}南山区</span>
+                    <span class="f12">{$memberInfo['city']} {$memberInfo['area']}</span>
                 </li>
             </ul>
 
@@ -59,28 +72,34 @@
             <div class="mui-input-group mb">
                 <div class="mui-input-row">
                     <label>运动轨迹</label>
+                    <span>运动打卡 <text class="punchTotal colororange">0</text> 次</span>
                 </div>
                 <div class="mui-input-row h-auto">
-                     <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> <img src="{$memberInfo.avatar}" class="img50"> 
+                     <a href="{:url('/keeper/punch/memberHomePage',['member_id'=>$memberInfo.id])}" class="mui-navigate-right punchList"></a>
                 </div>
             </div>
 
             <div class="mui-input-group mb">
                 <div class="mui-input-row">
-                    <label>球员信息</label>
+                    <a href="{:url('/keeper/team/memberpersoninfo',['member_id'=>$memberInfo.id])}" class="mui-navigate-right">
+                    <label>球员数据</label>
                     <span>查看</span>
+                    </a>
                 </div>
             </div>
 
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
-<script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
         $(function () {
 
             var memberBirthday = "{$memberInfo['birthday']}";
             var getAge = ages(memberBirthday);
             $(".showage").text(getAge);
+
+            //获取当前会员运动记录
+            toPunchList(1,1); 
 
         })
 
@@ -94,7 +113,48 @@
                     var Y = new   Date().getFullYear();   
                       return((Y-r[1])+"岁");   
                 }
-        }   
+        }  
+
+        //获取我的打卡记录列表
+        function toPunchList(page, gType) {
+            var url = "{:url('api/punch/getPunchListByPageApi','','',true)}" + '/?page=' + page;
+            var member_id = "{$memberInfo.id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: member_id,
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli = "";
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].image_url + '" />';
+                            if(i==3){
+                                break;
+                            }
+                        }
+                        $(".punchTotal").text(data.data.total)
+                    }
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("a.punchList").empty().append(newli);
+                        if (newli == '') {
+                            $("a.punchList").html('他没有运动记录哦！');
+                        }
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
     </script>
 </body>
 

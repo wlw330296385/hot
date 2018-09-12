@@ -56,12 +56,10 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <!-- <a class="addSchedule ">直接创建赛程</a> -->
-            <!-- <a class="addSchedule colorblue">增加日程</a> -->
             <a href="{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}">
                 <button type="button" style="margin-top: 6px;">直接创建赛程</button>
             </a>
-            <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">增加日程</button>
+            <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">添加日程</button>
         </h1>
     </header>
 
@@ -366,9 +364,9 @@
                         }
 
                         // 比赛日序号的更新
-                        var i = 1;
+                        var i = $(".scheduleList").length;
                         $(".scheduleList").each(function () {
-                            $(this).find(".tnum").text(i++); //更新序号
+                            $(this).find(".tnum").text(i--); //更新序号
                         });
                     }
                 })
@@ -387,15 +385,13 @@
                 var thisBox = $(this).parents(".operation-btn").siblings(".box")
                 thisBox.find(".firght:checked").parents(
                     ".checkboxCont").remove();
-                var i = 1;
+                var i = $(".scheduleList").length;
                 thisBox.find(".checkboxCont").each(function () { //循环checkboxCont
-                    $(this).find(".order").text(i++); //更新序号
+                    $(this).find(".order").text(i--); //更新序号
                 });
                 totalNum = thisBox.find(".checkboxCont").length;
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
-
-
 
         });
 
