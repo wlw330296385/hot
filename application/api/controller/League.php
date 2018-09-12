@@ -1749,7 +1749,7 @@ class League extends Base
                 'url' => url('keeper/match/orginvitation', ['id' => $applyId['data']], '', true),
                 'keyword1' => '邀请加入联赛组织',
                 'keyword2' => $this->memberInfo['member'],
-                'keyword3' => date('Y-m- H:i', time()),
+                'keyword3' => date('Y-m-d H:i', time()),
                 'remark' => '点击查看详情',
                 'steward_type' => 2,
             ];
@@ -2146,7 +2146,7 @@ class League extends Base
             'url' => url('keeper/match/workerinvitation', ['id' => $applyId['data']], '', true),
             'keyword1' => '联赛邀请担任' . $typeStr,
             'keyword2' => $this->memberInfo['member'],
-            'keyword3' => date('Y-m- H:i', time()),
+            'keyword3' => date('Y-m-d H:i', time()),
             'remark' => '点击查看详情',
             'steward_type' => 2,
         ];
@@ -2382,7 +2382,7 @@ class League extends Base
             'url' => url('keeper/match/workerapplyinfo', ['apply_id' => $applyId['data']], '', true),
             'keyword1' => '会员申请联赛担任' . $typeStr,
             'keyword2' => $this->memberInfo['member'],
-            'keyword3' => date('Y-m- H:i', time()),
+            'keyword3' => date('Y-m-d H:i', time()),
             'remark' => '点击查看详情',
             'steward_type' => 2,
         ];
