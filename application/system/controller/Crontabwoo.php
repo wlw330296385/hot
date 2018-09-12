@@ -235,15 +235,16 @@ class Crontabwoo extends Base {
                     $dataCampFinance = [
                         'camp_id' => $schedule['camp_id'],
                         'camp' => $schedule['camp'],
-                        'money'=>$incomeSchedule,
+                        'money'=>$incomeCampSalary,
                         'type' => 3,
-                        'e_balance' => (float)($campInfo['balance']+$incomeSchedule),
+                        'e_balance' => (float)($campInfo['balance']+$incomeCampSalary),
                         's_balance'=>(float)$campInfo['balance'],
                         'rebate_type' => $campInfo['rebate_type'],
-                        'schedule_rebate' => $campInfo['rebate_type'],
+                        'schedule_rebate' => $campInfo['schedule_rebate'],
                         'f_id' => $schedule['id'],
                         'date' => date('Ymd', $schedule['lesson_time']),
-                        'datetime' => $schedule['lesson_time']
+                        'datetime' => $schedule['lesson_time'],
+                        'date_str'=>date('Ymd',time()),
 
                     ];
                     $this->insertcampfinance($dataCampFinance,0,1);
@@ -411,7 +412,7 @@ class Crontabwoo extends Base {
                     'e_balance' => $campInfo['balance'],
                     's_balance'=>$campInfo['balance'],
                     'rebate_type' => $campInfo['rebate_type'],
-                    'schedule_rebate' => $campInfo['rebate_type'],
+                    'schedule_rebate' => $campInfo['schedule_rebate'],
                     'f_id' => $schedule['id'],
                     'date' => date('Ymd', $schedule['lesson_time']),
                     'datetime' => $schedule['lesson_time']

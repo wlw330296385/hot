@@ -204,16 +204,9 @@ class Financial extends Base {
             $map['create_time'] = ['between', [$start, $end]];
            // 初始化统计输出结果
             $resultArr = ['schedule_salaryin' => 0, 'system_extract' => 0, 'coach_salary' => 0, 'camp_income' => 0];
-            // 获取平台服务抽取比例
-            $setting = SystemService::getSite();
-            $sysrebate = $setting['sysrebate'];
-            // 获取数据
-            // 获取课时结算总收入、平台服务支出输出结果
-            $scheduleS = new ScheduleService();
-            $scheduleSalaryin = $scheduleS->scheduleIncome($map);
+            $scheduleSalaryin = db('income')->where($map)->where(['type'=>3])->sum('income');
             if ($scheduleSalaryin) {
                 $resultArr['schedule_salaryin'] = $scheduleSalaryin;
-                $resultArr['system_extract'] = $scheduleSalaryin*$sysrebate;
             }
             // 获取教练工资支出
             $salaryInS = new SalaryInService($this->memberInfo['id']);

@@ -17,12 +17,16 @@ class Index extends Controller
     }
 
     public function index1(){
-        $list = db('schedule')->field('schedule.coach as s_c,coach.coach as c_c,schedule.id,schedule.status,schedule.is_settle')->join('coach','coach.id = schedule.coach_id')->where(['schedule.create_time'=>['between',[1533610564,1534906564]]])->order('schedule.id desc')->select();
+        $list = db('camp_finance')->field('schedule.cost*schedule.students as money2,camp_finance.money,camp_finance.id')->join('schedule','camp_finance.f_id = schedule.id')->where(['camp_finance.camp_id'=>13,'camp_finance.type'=>3])->order('camp_finance.id desc')->select();
+        $ids = [];
         foreach ($list as $key => $value) {
-            if($value['c_c']<>$value['s_c']){
-                dump($value);
+            if(($value['money2'])==$value['money']){
+                $ids[] = $value['id'];
             }
         }
+        $res = db('camp_finance')->where(['id'=>['in',$ids],'camp_id'=>13])->dec('e_balance','money*schedule_rebate')->update();
+        $res = db('camp_finance')->where(['id'=>['in',$ids],'camp_id'=>13])->dec('money','money*schedule_rebate')->update();
+        
     }
 
     public function index2(){
