@@ -6,11 +6,20 @@ class StatisticsCamp extends Backend{
     private $campInfo;
 	public function _initialize(){
 		parent::_initialize();
-        $camp_id = input('param.camp_id',9);
+        $camp_id = input('param.camp_id');
+        if($camp_id){
+            $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
+            cookie('camp_id',$this->campInfo['id'],'curcamp_');
+            cookie('camp',$this->campInfo['camp'],'curcamp_');
+        }else{
+            $this->campInfo = cookie('curcamp_.camp');
+            if(!$this->campInfo){
+                $this->campInfo = db('camp')->where(['id'=>9])->find();
+                cookie('camp_id',$this->campInfo['id'],'curcamp_');
+                cookie('camp',$this->campInfo['camp'],'curcamp_');
+            }
+        }
         
-        $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-        cookie('camp_id',$this->campInfo['id'],'curcamp_');
-        cookie('camp',$this->campInfo['camp'],'curcamp_');
 	}
 
     // 课时列表
@@ -436,7 +445,7 @@ class StatisticsCamp extends Backend{
         $camp_id = $this->campInfo['id'];
         $lesson_id = input('param.lesson_id');
         $list = db('schedule_giftbuy')
-        ->field('sum(schedule_giftbuy.quantity) as s_q,schedule_giftbuy.create_time,schedule_giftbuy.lesson_id,schedule_giftbuy.member,lesson.lesson,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,schedule_giftbuy.camp_id')
+        ->field('schedule_giftbuy.create_time,schedule_giftbuy.lesson_id,schedule_giftbuy.member,lesson.lesson,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,schedule_giftbuy.camp_id')
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
         ->where(['schedule_giftbuy.camp_id'=>$camp_id])
         ->where('schedule_giftbuy.delete_time',null)
@@ -454,6 +463,8 @@ class StatisticsCamp extends Backend{
         $ScheduleGiftrecord = new \app\model\ScheduleGiftrecord;
         if($lesson_id){
             $map = ['schedule_giftrecord.lesson_id'=>$lesson_id];
+        }else{
+            $map = ['schedule_giftrecord.camp_id'=>$camp_id];
         }
         
         $list = db('schedule_giftrecord')
@@ -461,13 +472,38 @@ class StatisticsCamp extends Backend{
         ->join('lesson','lesson.id = schedule_giftrecord.lesson_id')
         ->where($map)
         ->where('schedule_giftrecord.delete_time',null)
-        ->order('schedule_giftrecord.id asc')
+        ->order('schedule_giftrecord.create_time desc')
         ->select();
         $lessonList = db('lesson')->where(['camp_id'=>$camp_id])->select();
         $this->assign('list',$list);
         $this->assign('lessonList',$lessonList);
         $this->assign('lesson_id',$lesson_id);
         return view('StatisticsCamp/campGiftInfo');
+    }
+
+
+    public function campGiftbuy(){
+        $camp_id = $this->campInfo['id'];
+        $lesson_id= input('param.lesson_id');
+        $ScheduleGiftrecord = new \app\model\ScheduleGiftrecord;
+        if($lesson_id){
+            $map = ['schedule_giftbuy.lesson_id'=>$lesson_id];
+        }else{
+            $map = ['schedule_giftbuy.camp_id'=>$camp_id];
+        }
+        
+        $list = db('schedule_giftbuy')
+        ->field('schedule_giftbuy.*,lesson.cost')
+        ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
+        ->where($map)
+        ->where('schedule_giftbuy.delete_time',null)
+        ->order('schedule_giftbuy.create_time desc')
+        ->select();
+        $lessonList = db('lesson')->where(['camp_id'=>$camp_id])->select();
+        $this->assign('list',$list);
+        $this->assign('lessonList',$lessonList);
+        $this->assign('lesson_id',$lesson_id);
+        return view('StatisticsCamp/campGiftbuy');
     }
 
 
@@ -582,15 +618,86 @@ class StatisticsCamp extends Backend{
             ->where($map)
             ->join('schedule','schedule.id = salary_in.schedule_id')
             ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
+            ->order('schedule.id desc')
             ->select();
         }else{
             $scheduleList = [];
         }
         
-        // dump($scheduleList);die;
+        
         $this->assign('scheduleList',$scheduleList);
-
         return view('StatisticsCamp/lessonSchedule');
+    }
+
+
+    public function excelLessonSchedule(){
+        $lesson_id = input('param.lesson_id');
+        $monthStart = input('param.monthstart',date('Ymd',strtotime('-1 month', strtotime("first day of this month"))));
+        $monthEnd = input('param.monthend',date('Ymd'));
+        $month_start = strtotime($monthStart);
+        $month_end = strtotime($monthEnd)+86399;
+        $camp_id = input('param.camp_id');
+        $keyword = input('param.keyword');
+        $member_id = input('param.member_id');
+        if($camp_id){
+            $map['salary_in.camp_id'] = $camp_id;
+        }
+        if($keyword){
+            $map['salary_in.lesson'] = ['like'=>"%$keyword%"];
+        }
+        if($member_id){
+            $map['salary_in.member_id'] = $member_id;
+        }
+        if($lesson_id){
+            $map['salary_in.lesson_id'] = $lesson_id;
+        }
+        if(isset($map)){
+            $scheduleList = db('salary_in')
+            ->field('
+                from_unixtime(schedule.lesson_time,"%Y-%m-%d %H:%i:%s") as l_t,
+                salary_in.lesson,
+                schedule.grade,
+                schedule.students,
+                schedule.student_str,
+                salary_in.realname,
+                (schedule.cost*schedule.students) as s_cost,
+                (salary_in.push_salary+salary_in.salary) as s_salary,
+                (schedule.cost*schedule.students*schedule.schedule_rebate) as rebate,
+                (schedule.cost*schedule.students*(1-schedule.schedule_rebate)- schedule.s_coach_salary - schedule.s_assistant_salary) as camp_income,
+                schedule.can_settle_date
+                ')
+            ->where($map)
+            ->join('schedule','schedule.id = salary_in.schedule_id')
+            ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
+            ->order('schedule.id desc')
+            ->select();
+            foreach ($scheduleList as $key => $value) {
+                $list = unserialize($value['student_str']);
+                $student_str = '';
+                foreach ($list as $k => $val) {
+                    $student_str.=$val['student'].',';
+                }
+                $scheduleList[$key]['student_str'] = $student_str;
+            }
+            $xlsName  = "课时结算表";
+            $xlsCell = [
+                ['l_t','上课时间'],
+                ['lesson','课程'],
+                ['grade','班级'],
+                ['students','学生人数'],
+                ['student_str','学生'],
+                ['realname','教练'],
+                ['s_cost','课时总价'],
+                ['s_salary','教练工资'],
+                ['rebate','平台分成'],
+                ['camp_income','训练营收入'],
+                ['can_settle_date','结算日期'],
+            ];
+            $xlsData  = $scheduleList;
+            exportExcel($xlsName,$xlsCell,$xlsData);
+        }else{
+            $this->error('数据为空,不生成excle');
+        }
     }
 
     //课时统计

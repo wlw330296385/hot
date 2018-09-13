@@ -1,0 +1,237 @@
+{extend name="layout/common"/}
+{block name="css"}
+{/block}
+{block name="page-content"}
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-body">
+				<div class="dataTables_wrapper form-inline dt-bootstrap">
+					<div class="row hotTbHeader">
+						<div class="col-sm-12">
+							<div class="form-group">
+                                <label class="control-label">课程 </label>
+                                <!--<input class="form-control" type="text" name="camp" >-->
+                                <select name="lesson_id" class="form-control">
+                                    <option value="">选择课程</option>
+                                    {volist name="lessonList" id="vo"}<option value="{$vo.id}" {if condition="$lesson_id eq $vo['id']"}selected{/if}>{$vo.lesson}</option>{/volist}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">课时月份 </label>
+								<div class="input-group">
+									<input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+								</div>
+                            </div>
+							<div class="form-group">
+								<!-- /.input group -->
+								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+							</div>
+							<h3 class="totalRight">
+								<span><small>本月购买课量：</small><strong class="text-yellow monthGift">0</strong></span>
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-body -->
+			<div class="box-body">
+				<table id="lessonList" class="table table-bordered table-striped dataTable">
+					<thead>
+					<tr role="row">
+						<th class="">购买时间</th>
+						<th>课程序号</th>
+						<th>关联课程</th>
+						<th>操作人</th>
+                        <th>购买数量</th>
+                        <th>当前课程单价</th>
+                        <th>备注</th>  
+					</tr>
+					</thead>
+					<tbody>
+					{volist name="list" id="vol"}
+					<tr role="row">
+						<td>{$vol.create_time|date='Y-m-d H:i',###}</td>
+						<td>{$vol.lesson_id}</td>
+						<td>{$vol.lesson}</td>
+						<td>{$vol.member}</td>
+						<td class="sCount">{$vol.quantity}</td>
+                        <td>{$vol.cost}元/节</td>
+                        <td>{$vol.remarks}</td>
+					</tr>
+					{/volist}
+					</tbody>
+                    <tfoot>
+                    <tr role="row" class="odd">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<!-- Modal : Camp -->
+<!-- <div class="modal fade" id="campModal" tabindex="-1" role="dialog" aria-labelledby="campModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="campModalLabel">请选择训练营</h4>
+			</div>
+			<div class="modal-body">
+				<div class="input-group input-group-sm">
+					<input type="text" name="campKeyword" class="form-control campKeyword" placeholder="请输入训练营名称 ...">
+					<span class="input-group-btn">
+                      <button type="button" id="searchCampBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+				</div>
+				<div class="tableScroll">
+					<table id="campList" class="table table-bordered table-striped dataTable">
+						<thead>
+						<tr role="row">
+							<th>训练营名称</th>
+							<th>所属地区</th>
+							<th>详情</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr role="row" class="nodata"><td colspan="4">请搜索训练营</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div> -->
+
+
+{/block}
+
+
+{block name='js'}
+
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script>
+
+    var currDateYM = localStorage.getItem('currDateYM');
+
+    $(function () {
+
+        //=========================== 初始化数据 ==============================//
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+        if(currDateYM==''||currDateYM==null) {
+            var currDate = new Date();
+            var currYear = currDate.getFullYear();
+            var currMonth = currDate.getMonth();
+            if(currMonth==0){
+                currDateYM = parseInt(currYear)-1+'-12';
+            }else{
+                currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+                currDateYM = currYear+'-'+ currMonth ;
+            }
+            localStorage.setItem('currDateYM',currDateYM);
+        }
+
+        //判断是否有指定训练营和教练员的本地存储
+        $("input[name=dateYM]").val(currDateYM);
+
+
+         //遍历需要统计的数据列，并赋值到对应位置
+        var mCount=0;
+        $(".mCount").each(function () {
+            mCount += parseInt($(this).text());
+        });
+        var sCount=0;
+        var smCount=0;
+        $(".sCount").each(function () {
+            smCount = parseInt($(this).parent().find(".mCount").text());
+            sCount += parseInt($(this).text())*smCount;
+        });
+
+        $(".monthMember").text(mCount);
+        $(".monthGift").text(sCount);
+
+
+
+        //=========================== 初始化数据 ==============================//
+
+
+
+        $('#lessonList,#eventList').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'searching'   : false,
+            'ordering'    : true,
+            'info'        : false,
+            'autoWidth'   : true,
+        });
+
+        //选择年月
+        $('#dateYM').datepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm",
+            minViewMode: 1,
+            todayBtn: true
+        });
+
+ 		//查询统计
+        $("#goSearch").on("click", function () {
+            var lesson_id = $("select[name=lesson_id] option:selected").val();
+            var getYM = $("input[name=dateYM]").val();
+            if(lesson_id==""){
+                alert("请指定课程！");
+                return false;
+            }
+            //设置本地存储
+            localStorage.setItem('currDateYM',getYM);
+            //拆分日期
+            var arrYM = getYM.split('-');
+            var getLastDate = new Date(arrYM[0],arrYM[1],0);
+            var beginDate = arrYM[0]+arrYM[1]+'01';
+            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+
+            window.location.href="{:url('/admin/Statistics_Camp/campGiftbuy/')}"+"lesson_id/"+lesson_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
+        })
+
+
+        //判断是否有年月的本地存储，没则获取当前月的上一个月
+
+        var currDate = new Date();
+        var currYear = currDate.getFullYear();
+        var currMonth = currDate.getMonth();
+        if(currMonth==0){
+            currDateYM = parseInt(currYear)-1+'-12';
+        }else{
+            currMonth = currMonth<10 ? "0"+currMonth:currMonth;
+            currDateYM = currYear+'-'+ currMonth ;
+        }
+        localStorage.setItem('currDateYM',currDateYM);
+        
+
+        
+    })
+
+
+
+</script>
+{/block}

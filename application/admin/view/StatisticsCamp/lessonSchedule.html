@@ -60,7 +60,8 @@
 							</div>
 							<div class="form-group">
 								<!-- /.input group -->
-								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+								<button type="button" class="btn btn-success goSearch" >确认查询</button>
+								<button type="button" class="btn btn-info goSearch" data="data">导出数据</button>
 							</div>
 						</div>
 					</div>
@@ -120,7 +121,7 @@
 											<small>计算规则：[ 主教练底薪{$vol.coach_salary}+助教底薪{$vol.assistant_salary}x助教人数 + 教练人数(1+{$total_assistant})x人头基数{$vol.salary_base}x学生总数{$vol.students}]</small>
 										</td>
 										<td>{$vol.cost*$vol.students*$vol.schedule_rebate}</td>
-										<td>{if $vol.rebate_type == 2}{$vol.schedule_income}{else/}{$vol.schedule_income*(1-$vol.schedule_rebate)}{/if}</td>
+										<td>{if $vol.rebate_type == 2}{$vol.cost*$vol.students}{else/}{$vol.cost*$vol.students*(1-$vol.schedule_rebate)}{/if}</td>
 										<td>{$vol.create_time|date='Y-m-d',###}</td>
 									</tr>
 									{/volist}
@@ -445,7 +446,7 @@
         });
 
         //查询统计
-        $("#goSearch").on("click", function () {
+        $(".goSearch").on("click", function () {
             var camp = $("input[name=camp]").val();
             var camp_id = $("input[name=camp_id]").val();
             var coach = $("input[name=coach]").val();
@@ -480,8 +481,13 @@
             var getLastDate = new Date(arrYM[0],arrYM[1],0);
             var beginDate = arrYM[0]+arrYM[1]+'01';
             var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
+            var a = $(this).attr('data');
+            if(a){
+            	window.location.href="{:url('/admin/Statistics_Camp/excelLessonSchedule/')}"+linkPram+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            }else{
 
-            window.location.href="{:url('/admin/Statistics_Camp/lessonSchedule/')}"+linkPram+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            	window.location.href="{:url('/admin/Statistics_Camp/lessonSchedule/')}"+linkPram+"/monthstart/"+beginDate+"/monthend/"+endDate;
+            }
         })
 
 

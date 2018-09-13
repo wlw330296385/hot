@@ -10,35 +10,29 @@ class Student extends Backend {
     }
     // 学员列表
     public function index() {
-        // 搜索筛选
-        $map = [];
-        $camp_id = input('camp_id');
-        if ($camp_id) {
-            $map['grade_member.camp_id']=$camp_id;
+        $type = input('param.type');
+        $status = input('param.status');
+        $keyword = input('param.keyword');
+        $camp_id = input('param.camp_id',9);
+        $map['lesson_member.camp_id'] = $camp_id;
+        $map['bill.is_pay'] = 1;
+        $map['bill.goods_type'] = 1;
+        if ($type) {
+            $map['lesson_member.type'] = $type;
         }
-        $camp = input('camp');
-        if ($camp) {
-            $map['grade_member.camp'] = ['like', '%'. $camp .'%'];
+        if($status){
+            $map['lesson_member.status'] = $status;
         }
-        $name = input('name');
-        if ($name) {
-            $map['student.student'] = ['like', '%'. $name .'%'];
+        if($keyword){
+            $map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
         }
-        $tel = input('tel');
-        if ($tel) {
-            $map['member.telephone'] = $tel;
-        }
-        // 视图查询 grade_member - student
-        $studentList = Db::view('student','student,member_id,id')
-            ->view('member', 'member,hot_id,telephone', 'member.id=student.member_id', 'left')
-            ->view('grade_member', 'camp,camp_id,grade,grade_id,status', 'grade_member.student_id=student.id', 'LEFT')
-            ->where($map)
-            ->where('grade_member.delete_time', null)
-            ->order('student.member_id desc')
-            ->paginate(15, false, ['query' => request()->param()]);
-//        dump($list->toArray());die;
+
+
+        $campList = db('camp')->select();
+        $studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
         $this->assign('studentList', $studentList);
         $this->assign('camp_id', $camp_id);
+        $this->assign('campList',$campList);
         return $this->fetch();
     }
 
