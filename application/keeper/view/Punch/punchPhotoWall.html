@@ -63,6 +63,11 @@
         .s2000 .page-header img { margin-right: 35px; height: 160px; width:160px; border-radius: 50%; vertical-align: middle; }
 
 
+        #qrcode { position:absolute; left:110px; top:1230px; z-index:888; color:#FFF;  }
+        #qrcode span { display:block; width:244px; height:40px; font-size:18px; }
+        #qrcode img { width:240px; margin-bottom: 20px; }
+        #qrcode p {font-size:24px; line-height:36px; }
+
         .mui-backdrop{ display: none; background-color: #000; opacity: 0.9; }
 
         @-webkit-keyframes rotate_pacman_half_up {
@@ -220,6 +225,12 @@
                     </span>
                 </span>
         </div>
+        <div class="shareInfo">
+            <div>17运动，一起运动！<br />记录你的运动轨迹！</div>
+            <div class="qrcode">
+                <img src="{$qrcodeimg}" />
+            </div>
+        </div>
     </div>
 </div>
 
@@ -241,6 +252,7 @@
 <script src="/static/frontend/js/mui.min.js"></script>
 <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
 <script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/wooApi.js"></script>
 <script src="/static/frontend/js/mobile_date.js"></script>
 <script src="/static/frontend/js/calendar.js"></script>
 <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -251,6 +263,22 @@
     mui.init({
         swipeBack: true //启用右滑关闭功能
     });
+
+    var sInitDate = '';
+    var getYM = wooApi.GetQueryString('ym');
+    if(getYM!=''&&getYM!=null&&getYM!='undefined'){
+        $("#calendar .title").text(getYM);
+        sInitDate = getYM+'-01'
+    }
+    //日历控件:注意设置的日期的月日必须是两位数（如2018-08-08）
+    $('#calendar').calendar({
+        setDate: sInitDate
+    });
+
+    var wUrl = "{$shareurl}/member_id/{$userInfo.id}/pid/{$mid}";
+    var punchYM = '{$currMonth}';
+    var punchTimes = 0;
+
 
 
     $(function () {
@@ -293,6 +321,7 @@
         var month_str = $("#calendar .title").text();
         var userID = "{$userInfo.id}"
         $(".punchYM").text(month_str);
+        console.log(punchYM)
         mui.ajax({
             url: url,
             data: {
@@ -302,6 +331,7 @@
             dataType: 'json', //服务器返回json格式数据
             type: 'post', //HTTP请求类型
             timeout: 10000, //超时时间设置为10秒；
+            async:false,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -320,14 +350,16 @@
                             $(clName).addClass("endDK");
                             //插入图片
                             var image_url = data.data[i].image_url
-                            newli += '<div><img src="'+image_url+'" /></div>';
+                            var urls = "{:url('punch/punchInfo')}/" + 'punch_id/' + data.data[i].id + '/?punch=punchInfo';
+                            newli += '<div><a href="'+urls+'"><img src="'+image_url+'" /></a></div>';
                         }
                         $(".pCount").text(data.data.length);
+                        punchTimes = data.data.length;
                         //补上缺少的方格
                         var buDiv = data.data.length%4;
                         if(buDiv>0){
                            for (var p = buDiv; p <= 4 - 1; p++) {
-                                newli += '<div><img src="/static/frontend/images/punch_default.jpeg" /></div>';
+                                newli += '<div><a href="/keeper/punch/"><img src="/static/frontend/images/punch_default.jpeg" /></a></div>';
                             }
                         }
                     } else {
@@ -344,6 +376,13 @@
                 mui.toast('网络异常,请稍候再试');
             }
         });
+
+        //更新到微信分享
+        punchYM = month_str.substring(5);
+        if(punchYM<10){
+            punchYM = month_str.substring(6);
+        }
+        WeChatShare(wUrl+'?ym='+month_str,'{$memberInfo.member} # '+punchYM+'月运动照片墙','本月运动打卡'+punchTimes+'次，累计打卡{$totalPunch}次')
     };
 
 </script>
@@ -418,6 +457,9 @@
 <script src="/static/frontend/js/html2canvas/base64.js"></script>
 
 <script>
+
+function WeChatShare(url,title,desc){
+
     wx.config({
         //debug: true,
         appId: "{$jsapi['appId']}",
@@ -435,19 +477,19 @@
     wx.ready(function () {
         // 分享到朋友圈
         wx.onMenuShareTimeline({
-            title: '17运动，一起来运动吧！',
-            desc: '{$memberInfo.member}邀你来PK！',
-            link: "{$shareurl}/pid/{$mid}",
-            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            title: title,
+            desc: desc,
+            link: url,
+            imgUrl: "{:request()->root(true)}/{$memberInfo.avatar}",
             success: function () {},
             cancel: function () {}
         });
         // 分享给朋友
         wx.onMenuShareAppMessage({
-            title: '17运动，一起来运动吧！',
-            desc: '{$memberInfo.member}邀你来PK！',
-            link: "{$shareurl}/pid/{$mid}",
-            imgUrl: "{:request()->root(true)}/static/frontend/images/sport.jpg",
+            title: title,
+            desc: desc,
+            link: url,
+            imgUrl: "{:request()->root(true)}/{$memberInfo.avatar}",
             type: "",
             dataUrl: '',
             success: function () {},
@@ -455,6 +497,9 @@
         });
 
     });
+
+}
+
 </script>
 
 </html>
