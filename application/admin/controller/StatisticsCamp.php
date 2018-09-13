@@ -9,17 +9,19 @@ class StatisticsCamp extends Backend{
         $camp_id = input('param.camp_id');
         if($camp_id){
             $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-            cookie('camp_id',$this->campInfo['id'],'curcamp_');
-            cookie('camp',$this->campInfo['camp'],'curcamp_');
+            cookie(['prefix' => 'think_', 'expire' => 86400]);
+            cookie('camp_id',$this->campInfo['id']);
+            cookie('campInfo',$this->campInfo);
+            
         }else{
-            $this->campInfo = cookie('curcamp_.camp');
+            $this->campInfo = cookie('campInfo');
+            dump($this->campInfo = cookie('campInfo'));
             if(!$this->campInfo){
                 $this->campInfo = db('camp')->where(['id'=>9])->find();
-                cookie('camp_id',$this->campInfo['id'],'curcamp_');
-                cookie('camp',$this->campInfo['camp'],'curcamp_');
+                cookie('camp_id',$this->campInfo['id']);
+                cookie('campInfo',$this->campInfo);
             }
         }
-        
 	}
 
     // 课时列表

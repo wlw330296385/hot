@@ -10,6 +10,7 @@ class Base extends Controller {
     public $AuthService;
     public $admin;
     public function _initialize() {
+        
         $this->AuthService = new AuthService;
         // 检查控制台登录
         if ( !$this->AuthService->islogin() ) {

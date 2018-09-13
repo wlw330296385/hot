@@ -18,7 +18,7 @@ class Backend extends Base {
         $site = $SystemS->getSite();
         $this->site = $site;
         $this->assign('site', $site);
-        $this->assign('admin', session('admin') );
+        $this->assign('admin', session('admin'));
         if(config('develop_mode') == 0){
             //存储权限节点
             // dump($_SESSION);
