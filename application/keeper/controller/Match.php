@@ -597,7 +597,7 @@ class Match extends Base {
         if (!$applyInfo) {
             $this->error(__lang('MSG_404'));
         }
-        // 查询联赛联赛信息
+        // 查询联赛联赛信息 因organization_type = 4 所以 organization_id 代表 联赛ID
         $leagueInfo = $leagueS->getLeaugeInfoWithOrg(['id' => $applyInfo['organization_id']]);
         // 更新apply阅读状态为已读
         try {

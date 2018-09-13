@@ -2523,33 +2523,35 @@ class League extends Base
         if (!$id) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
-        // 查询联赛工作人员数据
+        // 查询要删除的联赛工作人员信息
         $leagueS = new LeagueService();
-        $matchMember = $leagueS->getMatchMember(['id' => $id]);
-        if (!$matchMember) {
+        $delMemberInfo = $leagueS->getMatchMember(['id' => $id]);
+        if (!$delMemberInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        } else if ($delMemberInfo['type'] == 10) {
+            return json(['code' => 100, 'msg' => '负责人不能删除']);
         }
+        
         // 检查会员登录信息
         if ($this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
-        // 检查会员操作权限(联赛工作人员)
-        $matchMemberPower = $leagueS->getMatchMember([
-            'match_id' => $matchMember['match_id'],
+        // 检查当前会员操作权限(联赛工作人员)
+        $myMemberInfo = $leagueS->getMatchMember([
+            'match_id' => $delMemberInfo['match_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        if (!$matchMemberPower || $matchMemberPower['type'] < 10) {
-            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-        }
         // 负责人不能删除
-        if ($matchMember['type'] == 10) {
-            return json(['code' => 100, 'msg' => '负责人不能删除']);
+        if (!$myMemberInfo || $myMemberInfo['type'] < 9) {
+            return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
+        } else if ($delMemberInfo['type'] >= $myMemberInfo['type']) {
+            return json(['code' => 100, 'msg' => "权限不足，不可删除"]);
         }
-
+        
         try {
             // 删除联赛工作人员数据
-            $resultDelete = $leagueS->delMatchMember($matchMember['id']);
+            $resultDelete = $leagueS->delMatchMember($delMemberInfo['id']);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
@@ -2562,15 +2564,15 @@ class League extends Base
         try {
             $messageContent = [
                 'title' => '联赛工作人员被移出通知',
-                'content' => '您已被移出联赛' . $matchMember['match'],
+                'content' => '您已被移出联赛' . $delMemberInfo['match'],
                 'url' => url('keeper/message/index', '', '', true),
-                'keyword1' => '您已被移出联赛' . $matchMember['match'],
+                'keyword1' => '您已被移出联赛' . $delMemberInfo['match'],
                 'keyword2' => '被移出联赛',
                 'remark' => '点击登录平台查看更多信息',
                 'steward_type' => 2
             ];
             $messageS = new MessageService();
-            $messageS->sendMessageToMember($matchMember['member_id'], $messageContent, config('wxTemplateID.informationChange'));
+            $messageS->sendMessageToMember($delMemberInfo['member_id'], $messageContent, config('wxTemplateID.informationChange'));
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
         }
@@ -3461,8 +3463,9 @@ class League extends Base
             }
             $leagueS = new LeagueService();
             $matchS = new MatchService();
-            $orderby = ['match_time' => 'asc', 'id' => 'desc'];
+            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
             $_result = $leagueS->getMatchSchedules($map, $orderby);
+
             if (!$_result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
@@ -3499,6 +3502,7 @@ class League extends Base
                 $_array['stage']['schedules'] = $value;
                 array_push($result, $_array);
             }
+            // dump($result);exit;
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             } else {
