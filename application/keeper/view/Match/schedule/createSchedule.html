@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>新建赛程</title>
+    <title>管理赛程</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -136,7 +136,8 @@
                                     data-home_team_id="{$vo2.home_team_id}" data-home_team_logo="{$vo2.home_team_logo}"
                                     data-home_team_alias="{$vo2.home_team_alias}" data-away_team="{$vo2.away_team}"
                                     data-away_team_id="{$vo2.away_team_id}" data-away_team_logo="{$vo2.away_team_logo}"
-                                    data-away_team_alias="{$vo2.away_team_alias}" data-homeaway_team_id="{$vo2.home_team_id}-{$vo2.away_team_id}">
+                                    data-match_time="{$vo2.match_time}" data-away_team_alias="{$vo2.away_team_alias}"
+                                    data-homeaway_team_id="{$vo2.home_team_id}-{$vo2.away_team_id}">
                             </div>
                         </div>
                         {/volist}
@@ -292,7 +293,7 @@
                                     <input type="checkbox" name="" class="firght" value="" data-status="${$(this).attr("data-status")}" data-home_team="${$(this).attr("data-home_team")}" data-home_team_id="${$(this).attr("data-home_team_id")}"
                                 data-home_team_logo="${$(this).attr("data-home_team_logo")}" data-home_team_alias="${$(this).attr("data-home_team_alias")}" data-away_team="${$(this).attr("data-away_team")}"
                                 data-away_team_id="${$(this).attr("data-away_team_id")}" data-away_team_logo="${$(this).attr("data-away_team_logo")}" 
-                                data-away_team_alias="${$(this).attr("data-away_team_alias")}"
+                                data-away_team_alias="${$(this).attr("data-away_team_alias")}" data-match_time="0"
                                 data-homeaway_team_id="${$(this).attr("data-home_team_id")}-${$(this).attr("data-away_team_id")}">
                                 </div>
                             </div>`
@@ -488,8 +489,8 @@
             schedules = []
             var isCheck = true;
             $(".scheduleList").each(function () {
-                var match_time = $(this).find(".matchTime").text();
-                if (match_time == '') {
+                var matchTime = $(this).find(".matchTime").text();
+                if (matchTime == '') {
                     var dayTime = $(this).find(".tnum").text();
                     mui.toast("请选择比赛日" + dayTime + "的比赛时间");
                     isCheck = false;
@@ -509,6 +510,11 @@
                         var away_team_logo = $(this).find(".firght").attr("data-away_team_logo");
                         var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
                         var status = $(this).find(".firght").attr("data-status");
+                        var match_time = $(this).find(".firght").attr("data-match_time");
+
+                        if (match_time == 0) {
+                            match_time = matchTime
+                        }
                         var id = $(this).attr("data-id");
                         if (id != undefined) {
                             schedules.push({
@@ -578,7 +584,6 @@
                     }
                 }
             })
-
 
         };
     </script>
