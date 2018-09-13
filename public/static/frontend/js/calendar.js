@@ -1,11 +1,6 @@
 // 关于月份： 在设置时要-1，使用时要+1
 $(function () {
 
-  $('#calendar').calendar({
-    ifSwitch: true, // 是否切换月份
-    hoverDate: true, // hover是否显示当天信息
-    backToday: true // 是否返回当天
-  });
   var width = $(".item").width()
   $(".item").css("height", width)
   $(".item").css("line-height", width + "px");
@@ -24,7 +19,7 @@ $(function () {
 
     this.opts = $.extend({}, this.defaults, options);
 
-    // console.log(this.opts);
+    //console.log(this.opts);
   };
 
   Calendar.prototype = {
@@ -181,7 +176,7 @@ $(function () {
       if (this.opts.ifSwitch) {
         this.$arrow_prev.bind('click', function () {
           var _date = dateObj.getDate();
-
+console.log(_date)
           dateObj.setDate(new Date(_date.getFullYear(), _date.getMonth() - 1, 1));
 
           self.showCalendar();
@@ -204,6 +199,15 @@ $(function () {
             self.showCalendar();
           }
         });
+      }
+
+      if (this.opts.setDate) {
+          var gYear = this.opts.setDate.substring(0,4);
+          var gMonth = this.opts.setDate.substring(5,7);
+          console.log(gYear)
+          console.log(gMonth)
+          dateObj.setDate(new Date(gYear, gMonth-1, 1));
+           self.showCalendar();
       }
 
       this.$calendarDate_item.hover(function () {

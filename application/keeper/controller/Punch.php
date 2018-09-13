@@ -2,6 +2,7 @@
 namespace app\keeper\controller;
 use app\keeper\controller\Base;
 use app\service\PunchService;
+use app\service\WechatService;
 // 打卡
 class Punch extends Base{
 	private $PunchService;	
@@ -127,9 +128,19 @@ class Punch extends Base{
         $member_id = input('param.member_id')?input('param.member_id'):$this->memberInfo['id'];
         $userInfo = db('member')->where(['id'=>$member_id])->find();
         $this->assign('userInfo',$userInfo);
+        // 累计打卡
+        $totalPunch = db('punch')->where(['member_id'=>$member_id])->where('delete_time',null)->count();
+        $this->assign('totalPunch',$totalPunch);
 
         $this->assign('currYear',$currYear);
         $this->assign('currMonth',$currMonth);
+
+        $callback = url('keeper/punch/index', ['pid' => $member_id], '', true);
+        $wechatS = new WechatService();
+        $url = $wechatS->oauthredirect($callback);
+        $qrcodeimg = buildqrcode($url) ;
+        $this->assign('qrcodeimg', $qrcodeimg);
+
         return view('Punch/punchPhotoWall');
     }
 
