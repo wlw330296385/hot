@@ -13,10 +13,11 @@
             <input type="hidden" name="camp_id" value="{$campInfo.id}">
             <input type="hidden" name="member" value="{$memberInfo.member}">
             <input type="hidden" name="member_id" value="{$memberInfo.id}">
-            <input type="hidden" name="camp" value="{$campInfo.camp}">
-            <input type="hidden" name="camp_id" value="{$campInfo.id}">
-            <input type="hidden" name="member" value="{$memberInfo.member}">
-            <input type="hidden" name="member_id" value="{$memberInfo.id}">
+            <input type="hidden" name="gradecate_setion" value="{$gradeInfo.gradecate_setion}">
+            <input type="hidden" name="gradecate_id" value="{$gradeInfo.gradecate_id}">
+            <input type="hidden" name="gradecate_setion_id" value="{$gradeInfo.gradecate_setion_id}">
+            <input type="hidden" name="cost" value="{$gradeInfo.cost}">
+            <input type="hidden" name="lesson_id" value="{$gradeInfo.lesson_id}">
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
@@ -43,11 +44,36 @@
                         <label for="">课程类型</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="grade" value="{$gradeInfo.gradecate}" disabled="disabled">
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="gradecate" value="{$gradeInfo.gradecate}" disabled="disabled">
                     </div>
                 </div>
             </div>
 
+            <div class="form-group">    
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 text-right">
+                        <label for="">是否修改学员列表</label>
+                    </div>
+                    <div class="col-md-5 col-sm-5">
+                        <input type="text" class="form-control" placeholder="请选择学员" name="student_str" value="{$gradeInfo.student_str}" id="gradePrivate">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-sm-2 text-right">
+                </div>
+                <div class="col-md-5 col-sm-5">
+                    <div class="memberInput-row" style="display: none">
+                        <div style="margin-bottom:10px;">
+                            <button type="button" class="btn btn-primary choisePrivate" data-toggle="modal" data-target="#privateModal">选择学生</button>
+                            <button type="button" class="btn btn-default choiseAll">全选</button>
+                            <button type="button" class="btn btn-default choiseCancel">取消</button>
+                            <button type="button" class="btn btn-danger choiseDelete">删除</button>
+                        </div>
+                        <ul class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
@@ -72,7 +98,8 @@
                     <div class="col-md-2 col-sm-2 text-right">
                         <label for="">训练时间</label>
                     </div>
-                    <div class="col-md-5 col-sm-5" id="datetimepicker">
+                    <div class="col-md-5 col-sm-5">
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker">
                     </div>
                 </div>
             </div>
@@ -183,8 +210,8 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <select class="form-control" name="status">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
+                            <option value="-1">否</option>
+                            <option value="1" {if $gradeInfo.status=='当前班级'} selected="selected"  {/if} >是</option>
                         </select>
                     </div>
                 </div>
@@ -263,6 +290,7 @@
                         </thead>
                         <tbody>
                             <!-- 场地列表 -->
+                            {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
                                 <td>北头篮球场</td>
                                 <td>深圳市</td>
@@ -301,16 +329,15 @@
                         <thead>
                             <tr role="row">
                                 <th>教练员名称</th>
-                                <th>所属地区</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- 教练列表 -->
+                            {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
-                                <td>张伟荣</td>
-                                <td>深圳市</td>
+                                <td>{$vol.coach}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>
@@ -318,6 +345,7 @@
                                     <span class="btn btn-xs btn-info" data-coach="张伟荣" data-coach_id="7">确定</span>
                                 </td>
                             </tr>
+                            {/volist}
                         </tbody>
                     </table>
                 </div>
@@ -418,6 +446,7 @@
                                 </thead>
                                 <tbody>
                                     <!-- 粉丝列表 -->
+                                    {volist name+"fansList" }
                                     <tr role="row" class="odd">
                                         <td>HoChen</td>
                                         <td>深圳市</td>
@@ -576,23 +605,29 @@
                                 <thead>
                                     <tr role="row">
                                         <th>学员名称</th>
-                                        <th>所属地区</th>
+                                        <th>剩余课时</th>
                                         <th>详情</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody class="active">
                                     <!-- 学生列表 -->
+                                    {volist name="assignList" id="vol"}
                                     <tr role="row" class="odd">
-                                        <td>张伟荣</td>
-                                        <td>深圳市</td>
+                                        <td>{$vol.student}</td>
+                                        <td>{$vol.rest_schedule}</td>
                                         <td>
                                             <a href="">查看详情</a>
                                         </td>
                                         <td>
-                                            <span class="btn btn-xs btn-info choiseAdd" data-private="Hochen" data-private_id="1">添加</span>
+                                            {if !$vol['g_id']}
+                                            <span class="btn btn-xs btn-info choiseAdd" data-private="{$vol.member}" data-private_id="{$vol.member_id}">添加</span>
+                                            {else /}
+                                            <span class="btn btn-xs btn-success" data-private="{$vol.member}" data-private_id="{$vol.member_id}">已添加</span>
+                                            {/if}
                                         </td>
                                     </tr>
+                                    {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -749,13 +784,10 @@
         });
 
 
-        // 选择是否为私密课程显示隐藏选择会员框
-        $("#gradePrivate").change(function () {
-            if ($(this).children('option:selected').text() == '是') {
-                $(".memberInput-row").show();
-            } else {
-                $(".memberInput-row").hide();
-            }
+        // 选择是否为学员列表显示隐藏选择会员框
+        $("#gradePrivate").on('focus',function () {
+            $(".memberInput-row").show();
+            
         });
 
         $(".choiseAdd").on("click", function () {

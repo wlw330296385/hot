@@ -58,7 +58,7 @@ class Grade extends Backend{
 	public function gradeList(){
 		$GradeService = new \app\service\GradeService;
 		$gradeList = $GradeService->getGradeListByPage(['camp_id'=>$this->campInfo['id']]);
- 
+
         $this->assign('gradeList',$gradeList);
         return view('Grade/gradeList');
 	}
@@ -104,7 +104,12 @@ class Grade extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-            $assignList = db('grade_member')->where(['grade_id'=>$grade_id])->select();
+            $assignList = db('lesson_member')
+                    ->field('lesson_member.*,grade_member.student_id as g_id,grade_member.lesson_id as gl_id')
+                    ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
+                    ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
+                    ->order('lesson_member.id desc')
+                    ->select();
             $this->assign('gradeInfo',$gradeInfo);
             $this->assign('gradeCategoryList',$gradeCategoryList);
             $this->assign('coachList',$coachList);
