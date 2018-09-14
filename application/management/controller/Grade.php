@@ -104,6 +104,12 @@ class Grade extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
+            $courtList = db('court_camp')
+                ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
+                ->join('court','court.id=court_camp.court_id')
+                ->where(['court_camp.camp_id' => $camp_id])
+                ->order('court_camp.id desc')
+                ->select();
             $assignList = db('lesson_member')
                     ->field('lesson_member.*,grade_member.student_id as g_id,grade_member.lesson_id as gl_id')
                     ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
@@ -111,6 +117,7 @@ class Grade extends Backend{
                     ->order('lesson_member.id desc')
                     ->select();
             $this->assign('gradeInfo',$gradeInfo);
+            $this->assign('courtList',$courtList);
             $this->assign('gradeCategoryList',$gradeCategoryList);
             $this->assign('coachList',$coachList);
             $this->assign('assignList',$assignList);
