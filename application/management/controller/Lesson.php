@@ -53,9 +53,17 @@ class Lesson extends Backend{
                 ->select();
 
             
+            $courtList = db('court_camp')
+                ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
+                ->join('court','court.id=court_camp.court_id')
+                ->where(['court_camp.camp_id' => $camp_id])
+                ->order('court_camp.id desc')
+                ->select();
             
             $this->assign('fansList',$fansList);
             $this->assign('coachList',$coachList);  
+            
+            $this->assign('courtList',$courtList); 
             $this->assign('gradeCategoryList',$gradeCategoryList);
             return view('Lesson/createLesson');
         }  
@@ -120,10 +128,17 @@ class Lesson extends Backend{
             }
             
             
-
+            $courtList = db('court_camp')
+                ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
+                ->join('court','court.id=court_camp.court_id')
+                ->where(['court_camp.camp_id' => $camp_id])
+                ->order('court_camp.id desc')
+                ->select();
+                
             $this->assign('lessonInfo',$lessonInfo);
             $this->assign('gradeCategoryList',$gradeCategoryList);
             $this->assign('coachList',$coachList);
+            $this->assign('courtList',$courtList);
             $this->assign('assignList',$assignList);
             $this->assign('fansList',$fansList);
             return view('Lesson/updateLesson');
