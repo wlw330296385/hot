@@ -156,7 +156,7 @@
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 5,
-                    team_id: league_id
+                    league_id: league_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -168,9 +168,11 @@
                     console.log(data);
                     if (data.code == 200) {
                         if (data.data === 1) {
-                            $(".follow").text("取消关注");
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
                         } else {
                             $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
                         }
                     }
                 },
