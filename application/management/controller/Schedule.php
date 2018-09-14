@@ -39,9 +39,6 @@ class Schedule extends Backend{
             }
         }else{
             $camp_id = $this->campInfo['id'];
-            // 课程分类
-            $GradeCategoryService = new \app\service\GradeCategoryService;
-            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
             //粉丝列表
             $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
             //教练列表
@@ -51,12 +48,24 @@ class Schedule extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-
+            $grade_id = input('param.grade_id');
+            if($grade_id){
+                $map = ['id'=>$grade_id];
+            }else{
+                $map = ['camp_id'=>$camp_id,'status'=>1];
+            }
+            $gradeList = db('grade')->where($map)->where('delete_time',null)->select();
             
-            
+            $courtList = db('court_camp')
+                ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
+                ->join('court','court.id=court_camp.court_id')
+                ->where(['court_camp.camp_id' => $camp_id])
+                ->order('court_camp.id desc')
+                ->select();
             $this->assign('fansList',$fansList);
+            $this->assign('gradeList',$gradeList);  
             $this->assign('coachList',$coachList);  
-            $this->assign('gradeCategoryList',$gradeCategoryList);
+            $this->assign('courtList',$courtList);  
             return view('Schedule/createSchedule');
         }  
     }

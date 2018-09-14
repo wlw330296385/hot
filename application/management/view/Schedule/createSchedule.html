@@ -23,82 +23,50 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">课程名称</label>
+                        <label for="">选择班级</label>
                     </div>
-                    <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
+                    <div class="col-md-8 col-sm-12">
+                        <select name='grade' class="col-lg-4 col-sm-6">
+                            {volist name="gradeList" id="vol"}
+                            <option>
+                                {$vol.grade}
+                            </option>
+                            {/volist}
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">课程类型</label>
+                        <label for="">课程名称</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <select name="gradecate_id" class="form-control lessonType">
-                            {volist name="gradeCategoryList" id="vol"}
-                            <optgroup label="{$vol.name}" data-gradecate_setion="{$vol.name}" data-gradecate_setion_id="{$vol.id}">
-                                {volist name="$vol.daughter" id="v"}
-                                <option value="{$v.id}" selected="true">{$v.name}{/volist}</option>
-                            </optgroup>
-                            {/volist}
-                        </select>
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
+                        //根据班级的选择来显示课程名称
                     </div>
                 </div>
-                <input type="hidden" name="gradecate" class="gradecate " value="">
-                <input type="hidden" name="gradecate_id" class="gradecate_id " value="">
-                <input type="hidden" name="gradecate_setion" class="gradecate_setion " value="">
-                <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id " value="">
             </div>
+            
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
                         <label for="">课程单价</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程单价" name="cost">
+                        <input type="text" class="form-control" placeholder="请输入课程单价" name="cost">//根据班级的选择来显示课程单价
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">课程数量</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <div data-toggle="modal" data-target="#domModal">
-                            <input type="text" class="form-control" placeholder="请输入课程数量" name="doms" value="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">训练周期</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <select class="form-control" name="week">
-                            <option value="不限">不限</option>
-                            <option value="周日">周日</option>
-                            <option value="周一">周一</option>
-                            <option value="周二">周二</option>
-                            <option value="周三">周三</option>
-                            <option value="周四">周四</option>
-                            <option value="周五">周五</option>
-                            <option value="周六">周六</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
                         <label for="">训练时间</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker">
+                        <input type="text" class="form-control" placeholder="请输入训练时间" name="lesson_time" id="datetimepicker">
+                        //2018-9-14 17:33:13 跟前端一样
                     </div>
                 </div>
             </div>
@@ -138,6 +106,7 @@
                         <div data-toggle="modal" data-target="#courtModal">
                             <input type="text" class="form-control" placeholder="请选择训练地点" name="court">
                             <input type="hidden" name="court_id" class="court_id " value="">
+                            //courtList
                         </div>
                     </div>
                 </div>
@@ -152,28 +121,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">最少开课人数</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入最少开课人数" name="min">
-                    </div>
-                </div>
-
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">最多开课人数</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入最多开课人数" name="max">
-                    </div>
-                </div>
-
-            </div>
+           
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
@@ -183,6 +131,7 @@
                         <div data-toggle="modal" data-target="#coachModal">
                             <input type="text" class="form-control" placeholder="请选择主教练" name="coach">
                             <input type="hidden" name="coach_id" class="coach_id " value="">
+                            //coachList
                         </div>
                     </div>
                 </div>
@@ -195,8 +144,9 @@
                     <div class="col-md-5 col-sm-5">
                         <div data-toggle="modal" data-target="#assistantModal">
                             <input type="text" class="form-control" placeholder="请选择助理教练" name="assistants" value="">
-                            <input type="hidden" name="assistant_ids" class="assistant_ids" value="">
+                            <input type="hidden" name="assistant_ids" class="assistant_ids" value="">//coachList
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -208,7 +158,7 @@
                     <div class="col-md-5 col-sm-5">
                         <div data-toggle="modal" data-target="#leaderModal">
                             <input type="text" class="form-control" placeholder="请选择领队" name="leader">
-                            <input type="hidden" name="leader_id" class="leader_id" value="">
+                            <input type="hidden" name="leader_id" class="leader_id" value="">//fansList
                         </div>
                     </div>
                 </div>
@@ -221,7 +171,7 @@
                     <div class="col-md-5 col-sm-5">
                         <div data-toggle="modal" data-target="#teacherModal">
                             <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
-                            <input type="hidden" name="teacher_id" class="teacher_id" value="">
+                            <input type="hidden" name="teacher_id" class="teacher_id" value="">//fansList 
                         </div>
                     </div>
                 </div>
@@ -229,7 +179,7 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">课程封面</label>
+                        <label for="">上课照片</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <div class="box-header">
@@ -246,56 +196,21 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">咨询电话</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入咨询电话" name="telephone">
-                    </div>
-                </div>
-
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">是否上架</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <select class="form-control" name="status">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">设为私密课程</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <select id="lessonPrivate" class="form-control" name="isprivate">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
+           
             <div class="row">
                 <div class="col-md-2 col-sm-2 text-right">
                 </div>
                 <div class="col-md-5 col-sm-5">
-                    <div class="memberInput-row" style="display: none">
+                    <div class="memberInput-row">
                         <div style="margin-bottom:10px;">
-                            <button type="button" class="btn btn-primary choisePrivate" data-toggle="modal" data-target="#privateModal">选择私密会员</button>
+                            <button type="button" class="btn btn-primary choisePrivate" data-toggle="modal" data-target="#privateModal">选择上课学生</button>
                             <button type="button" class="btn btn-default choiseAll">全选</button>
                             <button type="button" class="btn btn-default choiseCancel">取消</button>
                             <button type="button" class="btn btn-danger choiseDelete">删除</button>
                         </div>
-                        <ul class="list-group"></ul>
+                        <ul class="list-group">
+                            <li>//根据选择的班级列出课程学生</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -322,75 +237,6 @@
             </div>
         </div>
     </form>
-</div>
-
-<!-- 课量选择 -->
-<div class="modal fade" id="domModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="colse" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">请选择课量</h4>
-            </div>
-            <div class="modal-body">
-                <div class="tableScroll">
-                    <table id="domList" class="table table-bordered table-striped dataTable">
-                        <thead>
-                            <tr role="row">
-                                <th>课时</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr role="row" class="odd">
-                                <td>1课时</td>
-                                <td>
-                                    <input type="checkbox" value="1" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>5课时</td>
-                                <td>
-                                    <input type="checkbox" value="5" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>10课时</td>
-                                <td>
-                                    <input type="checkbox" value="10" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>15课时</td>
-                                <td>
-                                    <input type="checkbox" value="15" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>20课时</td>
-                                <td>
-                                    <input type="checkbox" value="20" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>30课时</td>
-                                <td>
-                                    <input type="checkbox" value="30" class="dom">
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" id="clearAssiatant">清除所选课量</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="domConfirm">确定</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- 训练地点 -->
