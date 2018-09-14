@@ -13,36 +13,6 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/icons-extra.css" />
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .teamLogo {
-            width: 100%;
-            border-radius: 50%;
-        }
-
-        @media screen and (min-width: 320px) {
-            .teamLogo {
-                height: 5.4rem;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .teamLogo {
-                height: 6.6rem;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            .teamLogo {
-                height: 7.4rem;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .teamLogo {
-                height: 14.8rem;
-            }
-        }
-    </style>
     <style type="text/css">
         .mui-preview-image.mui-fullscreen {
             position: fixed;
@@ -134,6 +104,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -143,6 +114,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -152,6 +124,7 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
@@ -161,15 +134,10 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
-        }
-
-        /* 底部按钮点击去除背景颜色 */
-
-        .operation .opli a.mui-active {
-            background-color: inherit
         }
     </style>
 </head>
@@ -182,6 +150,7 @@
 
     <div class="mui-content">
         <div class="list mb44">
+
             <!-- 球队比分 -->
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
@@ -213,13 +182,11 @@
                 </li>
             </ul>
 
-            <!-- 比赛信息 -->
+            <!-- 基本信息 -->
+            <div class="page-header">
+                <span class="course">基本信息</span>
+            </div>
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>对手</label>
-                    <span class="away_team">{$matchInfo.record.away_team}</span>
-                </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>比赛时间</label>
@@ -233,23 +200,29 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
-                    <span>{$matchInfo.court}</span>
+                    <span class="court">{$matchInfo.court}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Cost colororange"></span>场地费用</label>
-                    <span>{$matchInfo.court_cost}</span>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
                 </li>
+            </ul>
+
+            <!-- 裁判信息 -->
+            <div class="page-header">
+                <span class="course">裁判信息</span>
+            </div>
+            {notempty name="refereeList"}
+            <ul class="mui-table-view mb">
+                {volist name="$refereeList" id="vol"}
                 <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
-                    <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
+                    <a href="{:url('referee/refereeinfo',['referee_id'=>$vol.referee_id])}" class="mui-navigate-right">
+                        <label><span class="icon iconfont icon-activity-Referee colororange"></span>裁判{$key+1}</label>
+                        <span class="refereeList">{$vol.referee}</span>
+                    </a>
                 </li>
-                <li class="mui-table-view-cell listli refereeName">
-                    <label>
-                        <span class="icon iconfont icon-activity-Referee colororange"></span>裁判名单</label>
-                    <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                </li>
+                {/volist}
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
@@ -260,15 +233,30 @@
                         <span class="icon iconfont icon-activity-Cost colororange"></span>裁判费用</label>
                     <span class="wd60">{$matchInfo.record.referee_cost}</span>
                 </li>
+            </ul>
+            {else/}
+            <p class="nohave whitebg">暂无裁判信息</p>
+            {/notempty}
+
+            <!-- 其他信息 -->
+            <div class="page-header">
+                <span class="course">其他信息</span>
+            </div>
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-Cost colororange"></span>场地费用</label>
+                    <span>{$matchInfo.court_cost}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
+                    <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
+                </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-Cost colororange"></span>其他费用</label>
                     <span class="wd60">{$matchInfo.record.other_cost}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
-                    <span class="match_time">{$matchInfo.type}</span>
                 </li>
             </ul>
 
@@ -279,7 +267,8 @@
                         <b class="colororange rate">0%</b>
                     </span>
                     <span class="more f14">
-                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}/?matchofteam=1" class="mui-navigate-right">
+                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}/?matchofteam=1"
+                            class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/{$countTeamMember}
                         </a>
                     </span>
@@ -296,14 +285,16 @@
                 <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
                     {volist name="matchInfo.record.album" id="vol"}
                     <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
-                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;">
+                    </div>
                     {/volist}
                 </div>
             </div>
             {else/}
-            <p class="nohave whitebg">还没有上传花絮图哦</p>
+            <p class="nohave whitebg">暂无比赛花絮</p>
             {/notempty}
 
+            <!-- 评论 -->
             <div class="page-header border-b ">
                 <span class="course wd52">评论</span>
                 <span class="more f14">评论
@@ -321,13 +312,15 @@
                         <span class="mui-icon icon iconfont icon-nav-Home"></span>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee" style="display:none">申请执裁</li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 opli bgblue matchpk apply-referee"
+                    style="display:none">申请执裁</li>
                 <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bgred signupBtn status1" style="display:none">参加</li>
                 <li class="mui-table-view-cell mui-col-xs-10 mui-col-sm-10 opli bgblue status2" style="display:none">
                     <a href="#fbcomment">发表评论</a>
                 </li>
                 <li class="mui-table-view-cell mui-col-xs-5 mui-col-sm-5 opli bggreen status3" style="display:none">
-                    <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">编辑/录入 </a>
+                    <a href="{:url('team/matchEdit',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}">编辑/录入
+                    </a>
                 </li>
             </ul>
 
@@ -373,10 +366,9 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             toSignUpList(); // 报名/参赛人员
-
-            // 去逗号
-            var refereeList = $(".refereeList").text()
-            $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
+            
+            var imgWidth = $(".teamLogo").width();
+            $(".teamLogo").css("height",imgWidth)
 
             // 没有对手比分不显示
             var homeTeam = "{$matchInfo.record.home_score}";
@@ -401,6 +393,10 @@
             var match_time = "{$matchInfo.match_time}";
             if (match_time == 0) {
                 $(".match_time").text("待定");
+            }
+            var court = "{$matchInfo.court}";
+            if (court == '') {
+                $(".court").text("待定");
             }
 
             // 场地付费方式文字转换中文
@@ -438,16 +434,17 @@
                         match_record_id: match_record_id,
                         referee_id: referee_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast("你已提交申请，请耐心等待回复");
-                        }
-                        else {
+                        } else {
                             mui.toast(data.msg);
                         }
                     },
@@ -466,10 +463,12 @@
                     data: {
                         match_id: match_id,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -503,10 +502,12 @@
                         comment_type: 3,
                         comment: comment
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -534,10 +535,12 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -624,10 +627,12 @@
                     commented_id: commented_id,
                     comment_type: 3,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -651,19 +656,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
@@ -676,24 +681,32 @@
                     commented_id: commented_id,
                     comment_type: 3,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
                         if (newli == '') {
-                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                            $("ul.comment-list").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                            );
                         }
                     } else {
                         //下拉加载 gType==2
@@ -718,10 +731,12 @@
                     team_id: "{$team_id}"
                     // is_apply: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
@@ -732,12 +747,13 @@
                             // 出勤率
                             var rateNum = data.data.length / "{$countTeamMember}" * 100;
                             $(".rate").text(parseInt(rateNum) + "%");
-                            inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                            inactiveDiv += '<img src="' + data.data[i].avatar +
+                                '" style="margin-right:3px">'
                         };
                         $(".imgShow").append(inactiveDiv);
                     }
                     if (data.code == 100) {
-                        $(".imgShow").append('<p class="mui-text-center">还没有参赛人员哦</p>');
+                        $(".imgShow").append('<p class="mui-text-center">暂无参赛人员</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {

@@ -178,16 +178,16 @@
             </div>
 
             <p class="pline"></p>
-
             <div class="mui-input-row">
                 <label class="wd45">
-                    <input type="text" name="custom_role" value="{$customMemberInfo.custom_role|default=''}" placeholder="请填写自定义角色" class="data mui-text-left"
-                        style="padding:0;height: initial;">
+                    <input type="text" name="custom_role" value="{$customMemberInfo.custom_role|default=''}"
+                        placeholder="请填写自定义角色" class="mui-text-left" style="padding:0;height: initial;">
                 </label>
                 <a href="#work" class="mui-navigate-right" style="width: 55%;height: 40px;">
                     <span>
-                        <input type="text" value="{$customMemberInfo.member|default=''}" data-member_id="{$customMemberInfo.member_id|default=''}" placeholder="请选择角色" class="custom_member">
-                        <input type="hidden" name="custom_member" value='{$customMemberInfo.member|default=''}' placeholder="请选择角色" class="data">
+                        <input type="text" value="{$customMemberInfo.member|default=''}" placeholder="请选择角色" name="custom_member_text">
+                        <input type="hidden" name="custom_member_id" value='{$customMemberInfo.member_id|default=''}'>
+                        <input type="hidden" name="custom_member" value='{$customMemberInfo.member|default=''}' class="data">
                     </span>
                 </a>
             </div>
@@ -195,11 +195,12 @@
             <div class="mui-input-row">
                 <label>联系方式</label>
                 <span>
-                    <input type="text" value="{if condition='!empty($customMemberInfo.telephone)'}{$customMemberInfo.telephone}{/if}" name="telephone" placeholder="联系方式（选填）" class="data">
+                    <input type="text" value="{if condition='!empty($customMemberInfo.telephone)'}{$customMemberInfo.telephone}{/if}"
+                        name="telephone" placeholder="联系方式（选填）">
                 </span>
             </div>
-            
-            
+
+
 
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">联赛简介</span>
@@ -384,6 +385,7 @@
                 }
             });
 
+
             //删除赛程
             $('.deleteLeague').on('tap', function () {
                 var league_id = "{$league_id}"
@@ -422,18 +424,9 @@
             // 选择工作人员
             $(".workList").on('tap', 'li', function () {
                 var workMember = $(this).text();
-                console.log(workMember)
-                var member_id = $(this).attr("data-member_id");
-                var custom = []
-                custom.push({
-                    workMember,
-                    member_id
-                })
-                let custom_member = JSON.stringify(custom);
-                console.log(custom_member)
-
-                $(".custom_member").val(workMember);
-                $("input[name=custom_member]").val(custom_member);
+                var workMemberId = $(this).attr("data-custom_member_id");
+                $("input[name=custom_member_text]").val(workMember);
+                $("input[name=custom_member_id]").val(workMemberId);
                 mui("#work").popover("toggle");
             });
             //清除
@@ -460,7 +453,7 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-member_id="' +
+                            newli += '<li class="mui-table-view-cell listli" data-custom_member_id="' +
                                 data.data[i].member_id + '">' + data.data[i].realname + '</li>'
                         }
                         $(".workList").empty().append(newli);
@@ -511,6 +504,18 @@
                     return false;
                 }
             }
+            
+            // 自定义角色
+            var custom_role = $("input[name=custom_role]").val();
+            var telephone = $("input[name=telephone]").val();
+            var member_id = $("input[name=custom_member_id]").val();
+            var custom = []
+            custom={custom_role,
+                telephone,
+                member_id}
+            var custom_member = JSON.stringify(custom);
+            $("input[name=custom_member]").val(custom_member)
+            console.log(custom_member)
 
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
