@@ -286,8 +286,8 @@ class League extends Base
             return json(['code' => 100, 'msg' => '联赛截止报名时间不能晚于联赛正式开始时间']);
         }
 
-        if (empty($data['custom_member']) ) {
-            $custom_member = $data['custom_member'];
+        if (!empty($data['custom_member']) ) {
+            $custom_member = json_decode($data['custom_member'],true);
             unset($data['custom_member']);
 
             $condition['member_id'] = $custom_member['member_id'];
@@ -295,6 +295,7 @@ class League extends Base
             $condition["status"] = 1;
             $map["custom_role"] = $custom_member["custom_role"];
             $map["telephone"] = $custom_member["telephone"];
+            
             $leagueS = new LeagueService();
             $result = $leagueS->saveMatchMember($map, $condition);
             if ($result["code"] != 200) {
