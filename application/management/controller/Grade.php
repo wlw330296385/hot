@@ -2,7 +2,7 @@
 namespace app\management\controller;
 use app\management\controller\Backend;
 // 按课时结算的训练营财务页面
-class Lesson extends Backend{
+class Grade extends Backend{
 	public function _initialize(){
 		
 		parent::_initialize();
@@ -17,22 +17,13 @@ class Lesson extends Backend{
 		
 	}
 
-    public function createLesson(){
+    public function createGrade(){
 
         if(request()->isPost()){
             $data = input('post.');
-            $LessonService = new \app\service\LessonService;
-            $result = $LessonService->createLesson($data);
+            $GradeService = new \app\service\GradeService;
+            $result = $GradeService->createGrade($data);
             if ($result['code'] == 200) {
-                if ($data['isprivate'] == 1) {
-                    $dataLessonAssign['lesson_id'] = $result['data'];
-                    $dataLessonAssign['lesson'] = $data['lesson'];
-                    $dataLessonAssign['memberData'] = $data['memberData'];
-                    $resultSaveLessonAssign = $LessonService->saveLessonAssign($dataLessonAssign);
-                    if (!$resultSaveLessonAssign) {
-                        $this->error("私密课程须选择指定会员");
-                    }
-                }
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);
@@ -52,47 +43,46 @@ class Lesson extends Backend{
                 ->order('cm.id desc')
                 ->select();
 
+            $assignList = db('grade_member')->where(['grade_id'=>$grade_id])->select();
             
             
+            $this->assign('assignList',$assignList);
             $this->assign('fansList',$fansList);
             $this->assign('coachList',$coachList);  
             $this->assign('gradeCategoryList',$gradeCategoryList);
-            return view('Lesson/createLesson');
+            return view('Grade/createGrade');
         }  
     }
 
 	//课程列表
-	public function lessonList(){
-		$LessonService = new \app\service\LessonService;
-		$lessonList = $LessonService->getLessonListByPage(['camp_id'=>$this->campInfo['id']]);
+	public function gradeList(){
+		$GradeService = new \app\service\GradeService;
+		$gradeList = $GradeService->getGradeListByPage(['camp_id'=>$this->campInfo['id']]);
  
-
-        $this->assign('lessonList',$lessonList);
-        return view('Lesson/lessonList');
+        $this->assign('gradeList',$gradeList);
+        return view('Grade/gradeList');
 	}
 
 
     //课程列表
-    public function lessonInfo(){
-        $lesson_id = input('param.lesson_id');
-        $LessonService = new \app\service\LessonService;
-        $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
-        $assignList = [];
-        if($lessonInfo['isprivate'] == 1){
-            $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
-        }
+    public function gradeInfo(){
+        $grade_id = input('param.grade_id');
+        $GradeService = new \app\service\GradeService;
+        $gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
+        $assignList = db('grade_member')->where(['grade_id'=>$grade_id])->select();
         
-        $this->assign('lessonInfo',$lessonInfo);
+        
+        $this->assign('gradeInfo',$gradeInfo);
         $this->assign('assignList',$assignList);
-        return view('Lesson/lessonInfo');
+        return view('Grade/gradeInfo');
 }
 
-	public function updateLesson(){
-		$lesson_id = input('param.lesson_id');
-        $LessonService = new \app\service\LessonService;
+	public function updateGrade(){
+		$grade_id = input('param.grade_id');
+        $GradeService = new \app\service\GradeService;
         if(request()->isPost()){
             $data = input('post.');
-            $result = $LessonService->updateLesson($data,$lesson_id);
+            $result = $GradeService->updateGrade($data,$grade_id);
             if ($result['code'] == 200) {
                 $this->success($result['msg']);
             }else{
@@ -100,7 +90,7 @@ class Lesson extends Backend{
             }
         }else{
             $camp_id = $this->campInfo['id'];
-            $lessonInfo = $LessonService->getLessonInfo(['id'=>$lesson_id]);
+            $gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
 
             // 课程分类
             $GradeCategoryService = new \app\service\GradeCategoryService;
@@ -114,19 +104,13 @@ class Lesson extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-            $assignList = [];
-            if($lessonInfo['isprivate'] == 1){
-                $assignList = db('lesson_assign_member')->where(['lesson_id'=>$lesson_id])->select();
-            }
-            
-            
-
-            $this->assign('lessonInfo',$lessonInfo);
+            $assignList = db('grade_member')->where(['grade_id'=>$grade_id])->select();
+            $this->assign('gradeInfo',$gradeInfo);
             $this->assign('gradeCategoryList',$gradeCategoryList);
             $this->assign('coachList',$coachList);
             $this->assign('assignList',$assignList);
             $this->assign('fansList',$fansList);
-            return view('Lesson/updateLesson');
+            return view('Grade/updateGrade');
         }
 	}
 }

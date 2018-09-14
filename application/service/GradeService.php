@@ -17,21 +17,15 @@ class GradeService{
     // 班级列表
     public function getGradeList($map=[],$page = 1, $order='id desc',$p=10) {
         $res = Grade::with('lesson')->where($map)->order($order)->page($page,$p)->select();
-        // echo Grade::getlastsql();
-        if($res){   
-            $result = $res->toArray();
-        }
+
         return $res;
     }
 
     // 获取班级列表（关联课程信息、无分页)
     public function getGradeAllWithLesson($map , $order='id desc') {
-        $query = Grade::with('lesson')->where($map)->order($order)->select();
-        if($query){
-            return $query->toArray();
-        } else {
-            return $query;
-        }
+        $result = Grade::with('lesson')->where($map)->order($order)->select();
+        return $result;
+        
     }
 
     // 班级分页
@@ -43,12 +37,8 @@ class GradeService{
                 ->paginate($paginate);
                 // echo $this->GradeModel->getlastsql();die;
 
-        if($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
             return $result;
-        }
+        
         
     }
 
@@ -60,12 +50,8 @@ class GradeService{
                 ->order($order)
                 ->select();
 
-        if($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
+        
         
     }
 
@@ -173,12 +159,8 @@ class GradeService{
         $result = GradeMember::where($map)
                 // ->page($page,$paginate)
                 ->select();
-        if($result){
-            $res = $result->toArray();
-            return $res;
-        }else{
-            return $result;
-        }
+        return $result;
+        
     }
 
 
@@ -201,7 +183,7 @@ class GradeService{
         $model = new Grade();
         $result = $model->update(['id' => $gradeid, 'status' => $status]);
 //        dump($result);
-        return $result->toArray();
+        return $result;
     }
 
     // (软)删除班级 2017/10/2

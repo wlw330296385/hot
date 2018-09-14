@@ -8,15 +8,9 @@
                     <div class="row hotTbHeader">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>训练营</label>
-                                <div class="input-group radius4">
-                                    <input type="text" name="camp" class="form-control pull-right radius4" placeholder="训练营名称" style="border:none !important;">
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label>课程名称</label>
                                 <div class="input-group radius4">
-                                    <input type="text" name="lesson" class="form-control pull-right radius4" placeholder="课程名称" style="border:none !important;">
+                                    <input type="text" name="grade" class="form-control pull-right radius4" placeholder="课程名称" style="border:none !important;">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -29,7 +23,7 @@
                                 <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-success btn-flat radius4">搜索</button>
                                     <button type="reset" class="btn btn-default btn-flat radius4">重置</button>
-                                    <a href="{:url('lesson/createLesson')}">
+                                    <a href="{:url('grade/createGrade')}">
                                         <button type="button" class="btn btn-warning btn-flat radius4">发布课程</button>
                                     </a>
                                 </div>
@@ -42,44 +36,58 @@
                                 <table class="table table-striped table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>课程名称</th>
+                                            <th>序号</th>
+                                            <th>班级名称</th>
+                                            <th>所属课程</th>
                                             <th>课程类型(父类)</th>
                                             <th>课程类型</th>
-                                            <th>所属训练营</th>
-                                            <th>负责教练</th>
+                                            <th>主教练</th>
+                                            <th>主教薪资</th>
+                                            <th>助教</th>
+                                            <th>助教薪资</th>
+                                            <th>学生</th>
                                             <th>训练时间</th>
                                             <th>场地</th>
-                                            <th>历史赠课</th>
-                                            <th>剩余赠课</th>
                                             <th>状态</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {volist name="lessonList" id="vo"}
+                                        {volist name="gradeList" id="vo"}
                                         <tr>
-                                            <td>{$vo.id}</td>
+                                            <td>{$i}</td>
+                                            <td>{$vo.grade}</td>
                                             <td>{$vo.lesson}</td>
                                             <td>{$vo.gradecate_setion}</td>
                                             <td>{$vo.gradecate}</td>
-                                            <td>{$vo.camp}</td>
                                             <td>{$vo.coach}</td>
-                                            <td>{$vo.lesson_time}</td>
+                                            <td>￥{$vo.coach_salary}/人</td>
+                                            <td>
+                                                    {php}
+                                                    { if($vo['assistant']) {
+                                                    $l = unserialize($vo['assistant']);
+                                                        foreach($l as $k=> $v){
+                                                            echo $v.' ';
+                                                        }
+                                                    }
+                                                } 
+                                                    {/php}
+                                                </td>
+                                            <td>￥{$vo.assistant_salary}/人</td>
+                                                <td>{$vo.student_str}</td>
+                                            <td>{$vo.week} {$vo.lesson_time}</td>
                                             <td>{$vo.court}</td>
-                                            <td>{$vo.total_giftschedule}</td>
-                                            <td>{$vo.resi_giftschedule}</td>
                                             <td>
                                                 {$vo.status}
                                             </td>
                                             <td>
-                                                <a href="{:url('lesson/updateLesson', ['lesson_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-xs btn-info">
+                                                <a href="{:url('grade/updateGrade', ['grade_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-md btn-info" title="编辑">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <a href="{:url('lesson/lessonInfo', ['lesson_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-xs btn-info">
+                                                <a href="{:url('grade/gradeInfo', ['grade_id' => $vo['id'],'camp_id' => $vo['camp_id']])}" class="btn btn-md btn-success" title="详情">
                                                     <i class="fa fa-inbox"></i>
                                                 </a>
-                                                <a href="{:url('lesson/sdel', ['id' => $vo['id']])}" class="btn btn-xs btn-danger del-btn">
+                                                <a href="{:url('grade/sdel', ['id' => $vo['id']])}" class="btn btn-md btn-danger del-btn" title="删除">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             </td>
@@ -91,7 +99,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="box-footer clearfix">
-                                {if $lessonList} {$lessonList->render()} {/if}
+                                {if $gradeList} {$gradeList->render()} {/if}
                             </div>
                         </div>
                     </div>
