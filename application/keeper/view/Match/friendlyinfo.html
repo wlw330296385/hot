@@ -18,35 +18,6 @@
             color: #737373
         }
 
-        .teamLogo {
-            width: 100%;
-            border-radius: 50%;
-        }
-
-        @media screen and (min-width: 320px) {
-            .teamLogo {
-                height: 5.4rem;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .teamLogo {
-                height: 6.6rem;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            .teamLogo {
-                height: 7.4rem;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .teamLogo {
-                height: 14.8rem;
-            }
-        }
-
         .integral {
             background: #fff;
             line-height: 40px;
@@ -64,17 +35,12 @@
             width: 16.5%;
         }
 
-        /* 底部按钮点击去除背景颜色 */
-
-        .operation .opli a.mui-active {
-            background-color: inherit
-        }
     </style>
 </head>
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
 
     </header>
@@ -82,7 +48,7 @@
     <div class="mui-content">
         <div class="list coach mt55">
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
+                <li class="mui-table-view-cell listli mui-text-center" style="padding:15px;">
                     <div class="mui-row">
                         <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
                             <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
@@ -139,6 +105,10 @@
                 </ul>
             </div>
 
+            <!-- 基本信息 -->
+            <div class="page-header border-b">
+                <span class="course">基本信息</span>
+            </div>
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -158,8 +128,50 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>比赛地点</label>
-                    <span>{$matchInfo.court}</span>
+                    <span class="court">{$matchInfo.court}</span>
                 </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
+                    <span class="match_time">{$matchInfo.type}</span>
+                </li>
+            </ul>
+
+            <!-- 裁判信息 -->
+            <div class="page-header border-b">
+                <span class="course">裁判信息</span>
+            </div>
+            {notempty name="refereeList"}
+            <ul class="mui-table-view mb">
+                {volist name="$refereeList" id="vol"}
+                <li class="mui-table-view-cell listli">
+                    <a href="{:url('referee/refereeinfo',['referee_id'=>$vol.referee_id])}" class="mui-navigate-right">
+                        <label><span class="icon iconfont icon-activity-Referee colororange"></span>裁判{$key+1}</label>
+                        <span class="refereeList">{$vol.referee}</span>
+                    </a>
+                </li>
+                {/volist}
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
+                    <span class="wd60 refereeCostBear">{$matchInfo.record.referee_cost_bear}</span>
+                </li>
+                <li class="mui-table-view-cell listli refereeCost">
+                    <label>
+                        <span class="icon iconfont icon-activity-Cost colororange"></span>裁判费用</label>
+                    <span class="wd60">{$matchInfo.record.referee_cost}</span>
+                </li>
+            </ul>
+            {else/}
+            <p class="nohave whitebg">暂无裁判信息</p>
+            {/notempty}
+
+
+            <!-- 其他信息 -->
+            <div class="page-header border-b">
+                <span class="course">其他信息</span>
+            </div>
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-opponent colororange"></span>场地费用</label>
@@ -170,22 +182,6 @@
                         <span class="icon iconfont icon-activity-EventLocati colororange"></span>场地付费方式</label>
                     <span class="wd60 courtCostBear">{$matchInfo.court_cost_bear}</span>
                 </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判名单</label>
-                    <span class="wd60 refereeList">{volist name="$refereeList" id="vol"}{$vol.referee},{/volist}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-EventLocati colororange"></span>裁判付费方式</label>
-                    <span class="wd60 refereeCostBear">{$matchInfo.record.referee_cost_bear}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-category colororange"></span>比赛类型</label>
-                    <span class="match_time">{$matchInfo.type}</span>
-                </li>
-
             </ul>
 
             <div class="mui-row mui-text-center integral">
@@ -372,17 +368,17 @@
         });
         AMap.plugin('AMap.Geolocation', function () {
             geolocation = new AMap.Geolocation({
-                enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                showButton: true,        //显示定位按钮，默认：true
-                buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
-                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                enableHighAccuracy: true, //是否使用高精度定位，默认:true
+                timeout: 10000, //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0, //定位结果缓存0毫秒，默认：0
+                convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true, //显示定位按钮，默认：true
+                buttonPosition: 'RB', //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: true //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
             });
 
             geolocation.getCurrentPosition(function (status, result) {
@@ -401,10 +397,12 @@
                         lat2: lat2,
                         lng2: lng2
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -448,9 +446,8 @@
             toTagCommentList() //已经发表的标签
             toTagAllList(); //获取所有标签列表
 
-            // 去逗号
-            var refereeList = $(".refereeList").text()
-            $(".refereeList").text(refereeList.substring(0, refereeList.length - 1));
+            var imgWidth = $(".teamLogo").width();
+            $(".teamLogo").css("height", imgWidth)
 
             // 是否显示申请执裁按钮
             var memberRefereeInfoId = "{$memberRefereeInfo.id}";
@@ -484,6 +481,10 @@
             var match_time = $(".match_time").text();
             if (match_time == 0) {
                 $(".match_time").text("待定")
+            }
+            var court = "{$matchInfo.court}";
+            if (court == '') {
+                $(".court").text("待定");
             }
 
             // 场地付费方式文字转换中文
@@ -537,10 +538,12 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -568,16 +571,17 @@
                         match_record_id: match_record_id,
                         referee_id: referee_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
                             mui.toast("你已提交申请，请耐心等待回复");
-                        }
-                        else {
+                        } else {
                             mui.toast(data.msg);
                         }
                     },
@@ -596,10 +600,12 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -647,10 +653,12 @@
                         telphone: telphone,
                         remarks: remarks
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -694,10 +702,12 @@
                     tags: tags,
                     tag_ids: tag_ids,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -721,19 +731,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
 
@@ -747,17 +757,23 @@
                     commented_id: commented_id,
                     comment_type: 3,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
                     if (gType == 1) {
@@ -785,21 +801,25 @@
                 data: {
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             // newli = newli + '<select class="data choiseTeam" name="team"><option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option></select>'
-                            newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' + data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
+                            newli = newli + '<option value="' + data.data[i].team.id + '" data-logo="' +
+                                data.data[i].team.logo + '">' + data.data[i].team.name + '</option>'
                         }
                         $(".selectTeam").empty().append(newli);
                     } else {
-                        $(".selectTeam").empty().append("<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
+                        $(".selectTeam").empty().append(
+                            "<a href='{:url('team/createteam')}'>没有效力的球队,赶紧去创建吧</a>");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -818,10 +838,12 @@
                     team_id: team_id,
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
@@ -832,7 +854,9 @@
                             // var cDoms = data.data[i].role_text;
                             // cDoms = cDoms.substring(0, cDoms.length - 1);
 
-                            newli += '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' + data.data[i].avatar + '" alt="">'
+                            newli +=
+                                '<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 navli logostyle" id="logoframe"><img class="logostyle" src="' +
+                                data.data[i].avatar + '" alt="">'
                             // if (data.data[i].role_text != '') {
                             //     newli += '<div class="mui-media-body role">' + cDoms + '</div>'
                             // } else {
@@ -861,16 +885,19 @@
         function toTagAllList() {
             mui.ajax("{:url('api/tag/tagall')}", {
                 data: {},
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name +
+                                '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
                         }
                         $(".tagAll").empty();
                         $(".tagAll").append(div);
@@ -894,16 +921,20 @@
                     comment_type: 2,
                     commented_id: "{$teamInfo.id}",
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag +
+                                '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' +
+                                data.data[i].count + '</samll>)</span>'
                         }
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);

@@ -73,35 +73,6 @@
             padding: 5px;
         }
 
-        .teamLogo {
-            width: 100%;
-            border-radius: 50%;
-        }
-
-        @media screen and (min-width: 320px) {
-            .teamLogo {
-                height: 5.4rem;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .teamLogo {
-                height: 6.6rem;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            .teamLogo {
-                height: 7.4rem;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .teamLogo {
-                height: 14.8rem;
-            }
-        }
-
         .nav-list .nav-list-frame .navli {
             width: 16.5%;
         }
@@ -126,12 +97,12 @@
         <div class="tab-pullRefresh">
 
             <!-- 比赛设置信息 -->
-            <div id="onMatchSetting" class="mui-scroll-wrapper mui-control-content mui-active mt55">
+            <div id="onMatchSetting" class="mui-scroll-wrapper mui-control-content mui-active mb44">
 
                 <div class="mui-scroll">
                     <!-- 球队比分 -->
                     <ul class="mui-table-view mb">
-                        <li class="mui-table-view-cell listli mui-text-center" style="padding:25px 15px">
+                        <li class="mui-table-view-cell listli mui-text-center" style="padding:15px">
                             <div class="mui-row">
                                 <div class="mui-col-sm-4 mui-col-xs-4" style="padding:5px;margin-left:13px">
                                     <img src="{$matchRecordInfo.home_team_logo}" class="teamLogo">
@@ -159,9 +130,10 @@
                             </div>
                         </li>
                     </ul>
+
+                    <!-- 基本信息 -->
                     <div class="page-header bggray2">
-                        <span class="course wd45">
-                            <strong>{$leagueInfo.name}</strong>
+                        <span class="course wd45">{$leagueInfo.name}
                         </span>
                     </div>
                     <ul class="mui-table-view mb">
@@ -181,6 +153,8 @@
                             <span class="match_time">{$matchRecordInfo.match_time}</span>
                         </li>
                     </ul>
+
+                    <!-- 裁判信息 -->
                     <div class="page-header bggray2">
                         <span class="course wd45">
                             裁判评价
@@ -188,28 +162,49 @@
                     </div>
                     <ul class="mui-table-view mb">
                         <li class="mui-table-view-cell listli">
+                            {if $matchRecordInfo.referee2_id ==''}
                             <label>
                                 <span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
-                            <span>{$matchRecordInfo.referee1}</span>
+                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span>{else/}
+                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee1_id])}" class="mui-navigate-right">
+                                <label>
+                                    <span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                                <span>{$matchRecordInfo.referee1}</span>
+                            </a>
+                            {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
+                            {if $matchRecordInfo.referee2_id ==''}
                             <label>
                                 <span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁判</label>
-                            <span>{$matchRecordInfo.referee2}</span>
+                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span>{else/}
+                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee2_id])}" class="mui-navigate-right">
+                                <label>
+                                    <span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁判</label>
+                                <span>{$matchRecordInfo.referee2}</span>
+                            </a>
+                            {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
+                            {if $matchRecordInfo.referee3_id ==''}
                             <label>
                                 <span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
-                            <span>{$matchRecordInfo.referee3}</span>
+                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span> {else/}
+                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee3_id])}" class="mui-navigate-right">
+                                <label>
+                                    <span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
+                                <span>{$matchRecordInfo.referee3}</span>
+                            </a>
+                            {/if}
                         </li>
                     </ul>
+
+                    <!-- 记录员 -->
                     <div class="page-header bggray2">
-                        <span class="course wd45">
-                            记录员
-                            <span class="noDataTip">（暂无）</span>
-                        </span>
+                        <span class="course wd45">记录员</span>
                     </div>
-                    <div class="box mui-input-group">
+                    {notempty name="matchRecordInfo.scorers_list"}
+                    <div class="box mui-input-group recorder">
                         {volist name="matchRecordInfo.scorers_list" id="vol"}
                         <div class="mui-input-row mui-checkbox">
                             <label>{$key+1}
@@ -218,20 +213,31 @@
                         </div>
                         {/volist}
                     </div>
+                    {else/}
+                    <p class="nohave whitebg">暂无记录员</p>
+                    {/notempty}
+
 
                     <!-- 比赛花絮 -->
-                    <div class="page-header border-b">
-                        <span class="course">比赛花絮
-                            <span class="noDataTip">（暂无）</span>
-                        </span>
+                    <div class="page-header">
+                        <span class="course">比赛花絮</span>
                     </div>
-                    <!-- <div class="mui-content-padded whitebg" style="margin: 0">
+                    {notempty name="matchInfo.record.album"}
+                    <div class="mui-content-padded whitebg" style="margin: 0">
                         <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
+                            {volist name="matchInfo.record.album" id="vol"}
                             <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
-                                <img src="" style="width: 100%;height: 6rem;">
+                                <img src="{$vol}" style="width: 100%;height: 6rem;">
                             </div>
+                            {/volist}
                         </div>
-                    </div> -->
+                    </div>
+                    {else/}
+                    <p class="nohave whitebg">暂无比赛花絮</p>
+                    {/notempty}
+
+
+                    <!-- 评论 -->
                     <div class="page-header border-b ">
                         <span class="course wd52">评论</span>
                         <span class="more f14">评论
@@ -333,7 +339,6 @@
         </ul>
     </div>
 
-
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list coach">
@@ -358,6 +363,10 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+        // a标签跳转
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
@@ -378,6 +387,9 @@
         // isthumbsup() //点赞状态
 
         $(function () {
+
+            var imgWidth = $(".teamLogo").width();
+            $(".teamLogo").css("height", imgWidth)
 
             //评论功能
             $(".commentBtn11111").on('tap', function () {
@@ -701,6 +713,9 @@
                         $(".homeMembersList").empty().append(newli);
                         $(".homeTeamList").empty().append(newli1);
 
+                    } else {
+                        $(".homeMembersList").empty().append('<p class="nohave">暂无数据</p>');
+                        $(".homeTeamList").empty().append('<p class="nohave">暂无数据</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -857,6 +872,9 @@
                         }
                         $(".awayMembersList").empty().append(newli);
                         $(".awayTeamList").empty().append(newli1);
+                    } else {
+                        $(".awayMembersList").empty().append('<p class="nohave">暂无数据</p>');
+                        $(".awayTeamList").empty().append('<p class="nohave">暂无数据</p>');
                     }
                 },
                 error: function (xhr, type, errerThrown) {
