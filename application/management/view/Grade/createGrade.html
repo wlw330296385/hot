@@ -33,31 +33,14 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">所属课程</label>
+                        <label for="">选择课程</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <select name="gradecate_id" class="form-control lessonType">
-                            {volist name="gradeCategoryList" id="vol"}
-                            <optgroup label="{$vol.name}" data-gradecate_setion="{$vol.name}" data-gradecate_setion_id="{$vol.id}">
-                                {volist name="$vol.daughter" id="v"}
-                                <option value="{$v.id}" selected="true">{$v.name}{/volist}</option>
-                            </optgroup>
+                        <select name="lesson" class="form-control lessonType">
+                            {volist name="lessonList" id="vol"}
+                            <option>{$vol.lesson}</option>//这里要注意,把课程类型和id顺便附上去
                             {/volist}
                         </select>
-                    </div>
-                </div>
-                <input type="hidden" name="gradecate" class="gradecate " value="">
-                <input type="hidden" name="gradecate_id" class="gradecate_id " value="">
-                <input type="hidden" name="gradecate_setion" class="gradecate_setion " value="">
-                <input type="hidden" name="gradecate_setion_id" class="gradecate_setion_id " value="">
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">课程类型</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程单价" name="cost">
                     </div>
                 </div>
             </div>
@@ -69,8 +52,9 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <div data-toggle="modal" data-target="#leaderModal">
-                            <input type="text" class="form-control" placeholder="请选择领队" name="leader">
-                            <input type="hidden" name="leader_id" class="leader_id" value="">
+                            <input type="text" class="form-control" placeholder="请选择学员" name="student_str">
+                            //这里只能用api读取,根据课程不同,学生不同
+
                         </div>
                     </div>
                 </div>
@@ -256,6 +240,7 @@
                         <div data-toggle="modal" data-target="#teacherModal">
                             <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
                             <input type="hidden" name="teacher_id" class="teacher_id" value="">
+                            //planList
                         </div>
                     </div>
                 </div>
@@ -269,8 +254,8 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <select id="lessonPrivate" class="form-control" name="isprivate">
-                            <option value="0">当前（立即生效）</option>
-                            <option value="1">预排（预备生效）</option>
+                            <option value="1">当前（立即生效）</option>
+                            <option value="-1">预排</option>
                         </select>
                     </div>
                 </div>
@@ -283,26 +268,6 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <input type="text" class="form-control" placeholder="请输入备注信息" name="remarks">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">合照封面</label>
-                    </div>
-                    <div class="col-md-5 col-sm-5">
-                        <div class="box-header">
-                            <div class="col-sm-12 col-md-12">
-                                <a class="btn-banner" href="#" title="点击替换图片">
-                                    <img class="img-thumbnail" id="uploader-preview1" src="">
-                                    <div class="row">
-                                        <div id="filePicker1">选择上传</div>
-                                    </div>
-                                    <input id="uploader-input1" type="hidden" name="cover" value="">
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -320,74 +285,6 @@
     </form>
 </div>
 
-<!-- 课量选择 -->
-<div class="modal fade" id="domModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="colse" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">请选择课量</h4>
-            </div>
-            <div class="modal-body">
-                <div class="tableScroll">
-                    <table id="domList" class="table table-bordered table-striped dataTable">
-                        <thead>
-                            <tr role="row">
-                                <th>课时</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr role="row" class="odd">
-                                <td>1课时</td>
-                                <td>
-                                    <input type="checkbox" value="1" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>5课时</td>
-                                <td>
-                                    <input type="checkbox" value="5" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>10课时</td>
-                                <td>
-                                    <input type="checkbox" value="10" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>15课时</td>
-                                <td>
-                                    <input type="checkbox" value="15" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>20课时</td>
-                                <td>
-                                    <input type="checkbox" value="20" class="dom">
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>30课时</td>
-                                <td>
-                                    <input type="checkbox" value="30" class="dom">
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" id="clearAssiatant">清除所选课量</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="domConfirm">确定</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- 训练地点 -->
 <div class="modal fade" id="courtModal">
@@ -412,9 +309,11 @@
                         </thead>
                         <tbody>
                             <!-- 场地列表 -->
+                            {volist name="courtList" id="vol"}
                             <tr role="row" class="odd">
-                                <td>北头篮球场</td>
-                                <td>深圳市</td>
+                                <td>{$vol.court}</td>
+                                <td>{$vol.city}</td>
+                                <td>{$vol.area}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>
@@ -422,6 +321,7 @@
                                     <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
                                 </td>
                             </tr>
+                            {/volist}
                         </tbody>
                     </table>
                 </div>
@@ -450,23 +350,24 @@
                         <thead>
                             <tr role="row">
                                 <th>教练员名称</th>
-                                <th>所属地区</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- 教练列表 -->
+                            
+                            {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
-                                <td>张伟荣</td>
-                                <td>深圳市</td>
+                                <td>{$vol.coach}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <span class="btn btn-xs btn-info" data-coach="张伟荣" data-coach_id="7">确定</span>
+                                    <span class="btn btn-xs btn-info" >确定</span>
                                 </td>
                             </tr>
+                            {/volist}
                         </tbody>
                     </table>
                 </div>
@@ -502,26 +403,18 @@
                         </thead>
                         <tbody>
                             <!-- 教练列表 -->
+                            
+                            {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
-                                <td>HoChen</td>
-                                <td>深圳市</td>
+                                <td>{$vol.coach}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <input type="checkbox" value="HoChen" class="checkbox-assistant" data-id="1">
+                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
                                 </td>
                             </tr>
-                            <tr role="row" class="odd">
-                                <td>张伟荣</td>
-                                <td>深圳市</td>
-                                <td>
-                                    <a href="">查看详情</a>
-                                </td>
-                                <td>
-                                    <input type="checkbox" value="张伟荣" class="checkbox-assistant" data-id="7">
-                                </td>
-                            </tr>
+                            {/volist}
                         </tbody>
                     </table>
                 </div>
@@ -560,23 +453,24 @@
                                 <thead>
                                     <tr role="row">
                                         <th>粉丝名称</th>
-                                        <th>所属地区</th>
                                         <th>详情</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- 粉丝列表 -->
-                                    <tr role="row" class="odd">
-                                        <td>HoChen</td>
-                                        <td>深圳市</td>
-                                        <td>
-                                            <a href="">查看详情</a>
-                                        </td>
-                                        <td>
-                                            <span class="btn btn-xs btn-info" data-leader="HoChen" data-leader_id="1">确定</span>
-                                        </td>
-                                    </tr>
+                                    
+                            {volist name="fansList" id="vol"}
+                            <tr role="row" class="odd">
+                                <td>{$vol.member}</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
+                                </td>
+                            </tr>
+                            {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -587,23 +481,23 @@
                                 <thead>
                                     <tr role="row">
                                         <th>教练员名称</th>
-                                        <th>所属地区</th>
                                         <th>详情</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody class="active">
                                     <!-- 教练列表 -->
-                                    <tr role="row" class="odd">
-                                        <td>张伟荣</td>
-                                        <td>深圳市</td>
-                                        <td>
-                                            <a href="">查看详情</a>
-                                        </td>
-                                        <td>
-                                            <span class="btn btn-xs btn-info" data-leader="张伟荣" data-leader_id="7">确定</span>
-                                        </td>
-                                    </tr>
+                                {volist name="coachList" id="vol"}
+                                <tr role="row" class="odd">
+                                    <td>{$vol.coach}</td>
+                                    <td>
+                                        <a href="">查看详情</a>
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
+                                    </td>
+                                </tr>
+                                {/volist}
                                 </tbody>
                             </table>
                         </div>

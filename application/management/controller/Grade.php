@@ -30,9 +30,6 @@ class Grade extends Backend{
             }
         }else{
             $camp_id = $this->campInfo['id'];
-            // 课程分类
-            $GradeCategoryService = new \app\service\GradeCategoryService;
-            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
             //粉丝列表
             $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
             //教练列表
@@ -42,14 +39,19 @@ class Grade extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-
-            $assignList = db('grade_member')->where(['grade_id'=>$grade_id])->select();
-            
-            
-            $this->assign('assignList',$assignList);
+            $courtList = db('court_camp')
+                ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
+                ->join('court','court.id=court_camp.court_id')
+                ->where(['court_camp.camp_id' => $camp_id])
+                ->order('court_camp.id desc')
+                ->select();
+            $planList = db('plan')->where(['camp_id'=>$camp_id])->where('delete_time',null)->select();
+            $lessonList = db('lesson')->where(['camp_id'=>$camp_id])->where('delete_time',null)->select();
             $this->assign('fansList',$fansList);
+            $this->assign('planList',$planList);
+            $this->assign('courtList',$courtList);
             $this->assign('coachList',$coachList);  
-            $this->assign('gradeCategoryList',$gradeCategoryList);
+            $this->assign('lessonList',$lessonList);  
             return view('Grade/createGrade');
         }  
     }
@@ -92,9 +94,6 @@ class Grade extends Backend{
             $camp_id = $this->campInfo['id'];
             $gradeInfo = $GradeService->getGradeInfo(['id'=>$grade_id]);
 
-            // 课程分类
-            $GradeCategoryService = new \app\service\GradeCategoryService;
-            $gradeCategoryList = $GradeCategoryService->getGradeCategoryList();
             //粉丝列表
             $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
             //教练列表
@@ -116,9 +115,10 @@ class Grade extends Backend{
                     ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
                     ->order('lesson_member.id desc')
                     ->select();
+            $planList = db('plan')->where(['camp_id'=>$camp_id])->where('delete_time',null)->select();
             $this->assign('gradeInfo',$gradeInfo);
             $this->assign('courtList',$courtList);
-            $this->assign('gradeCategoryList',$gradeCategoryList);
+            $this->assign('planList',$planList);
             $this->assign('coachList',$coachList);
             $this->assign('assignList',$assignList);
             $this->assign('fansList',$fansList);
