@@ -38,7 +38,9 @@
                     <div class="col-md-5 col-sm-5">
                         <select name="lesson" class="form-control lessonType">
                             {volist name="lessonList" id="vol"}
-                            <option>{$vol.lesson}</option>//这里要注意,把课程类型和id顺便附上去
+                            <option data-id="{$vol.id}" data-is_school="{$vol.is_school}" data-gradecate="{$vol.gradecate}"
+                                data-gradecate_id="{$vol.gradecate_id}" data-gradecate_setion="{$vol.gradecate_setion}"
+                                data-gradecate_setion_id="{$vol.gradecate_setion_id}">{$vol.lesson}</option>
                             {/volist}
                         </select>
                     </div>
@@ -51,7 +53,7 @@
                         <label for="">学员名单</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <div data-toggle="modal" data-target="#leaderModal">
+                        <div data-toggle="modal" data-target="#studentModal">
                             <input type="text" class="form-control" placeholder="请选择学员" name="student_str">
                             //这里只能用api读取,根据课程不同,学生不同
 
@@ -286,6 +288,38 @@
 </div>
 
 
+<!-- 学员名单 -->
+<div class="modal fade" id="studentModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">请选择助理教练</h4>
+            </div>
+            <div class="modal-body">
+                <div class="tableScroll">
+                    <table id="studentList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>学员名称</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearAssiatant">清除所选教练</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="assistantConfirm">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 训练地点 -->
 <div class="modal fade" id="courtModal">
     <div class="modal-dialog" role="document">
@@ -313,12 +347,11 @@
                             <tr role="row" class="odd">
                                 <td>{$vol.court}</td>
                                 <td>{$vol.city}</td>
-                                <td>{$vol.area}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
+                                    <span class="btn btn-xs btn-info" data-court="{$vol.court}" data-court_id="{$vol.id}">确定</span>
                                 </td>
                             </tr>
                             {/volist}
@@ -356,7 +389,6 @@
                         </thead>
                         <tbody>
                             <!-- 教练列表 -->
-                            
                             {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
                                 <td>{$vol.coach}</td>
@@ -364,7 +396,7 @@
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <span class="btn btn-xs btn-info" >确定</span>
+                                    <span class="btn btn-xs btn-info" data-coach="{$vol.coach}" data-coach_id="{$vol.id}">确定</span>
                                 </td>
                             </tr>
                             {/volist}
@@ -396,14 +428,13 @@
                         <thead>
                             <tr role="row">
                                 <th>教练员名称</th>
-                                <th>所属地区</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- 教练列表 -->
-                            
+
                             {volist name="coachList" id="vol"}
                             <tr role="row" class="odd">
                                 <td>{$vol.coach}</td>
@@ -411,7 +442,7 @@
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
+                                    <input type="checkbox" value="{$vol.coach}" class="checkbox-assistant" data-id="{$vol.id}">
                                 </td>
                             </tr>
                             {/volist}
@@ -459,18 +490,19 @@
                                 </thead>
                                 <tbody>
                                     <!-- 粉丝列表 -->
-                                    
-                            {volist name="fansList" id="vol"}
-                            <tr role="row" class="odd">
-                                <td>{$vol.member}</td>
-                                <td>
-                                    <a href="">查看详情</a>
-                                </td>
-                                <td>
-                                    <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
-                                </td>
-                            </tr>
-                            {/volist}
+
+                                    {volist name="fansList" id="vol"}
+                                    <tr role="row" class="odd">
+                                        <td>{$vol.member}</td>
+                                        <td>
+                                            <a href="">查看详情</a>
+                                        </td>
+                                        <td>
+                                            <span class="btn btn-xs btn-info" data-leader="{$vol.member}"
+                                                data-leader_id="{$vol.id}">确定</span>
+                                        </td>
+                                    </tr>
+                                    {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -487,17 +519,17 @@
                                 </thead>
                                 <tbody class="active">
                                     <!-- 教练列表 -->
-                                {volist name="coachList" id="vol"}
-                                <tr role="row" class="odd">
-                                    <td>{$vol.coach}</td>
-                                    <td>
-                                        <a href="">查看详情</a>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-xs btn-info" data-court="北头篮球场" data-court_id="12">确定</span>
-                                    </td>
-                                </tr>
-                                {/volist}
+                                    {volist name="coachList" id="vol"}
+                                    <tr role="row" class="odd">
+                                        <td>{$vol.coach}</td>
+                                        <td>
+                                            <a href="">查看详情</a>
+                                        </td>
+                                        <td>
+                                            <span class="btn btn-xs btn-info" data-leader="{$vol.coach}" data-leader_id="{$vol.id}">确定</span>
+                                        </td>
+                                    </tr>
+                                    {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -545,16 +577,18 @@
                                 </thead>
                                 <tbody>
                                     <!-- 粉丝列表 -->
+                                    {volist name="fansList" id="vol"}
                                     <tr role="row" class="odd">
-                                        <td>HoChen</td>
-                                        <td>深圳市</td>
+                                        <td>{$vol.member}</td>
                                         <td>
                                             <a href="">查看详情</a>
                                         </td>
                                         <td>
-                                            <span class="btn btn-xs btn-info" data-teacher="HoChen" data-teacher_id="1">确定</span>
+                                            <span class="btn btn-xs btn-info" data-teacher="{$vol.member}"
+                                                data-teacher_id="{$vol.id}">确定</span>
                                         </td>
                                     </tr>
+                                    {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -572,16 +606,18 @@
                                 </thead>
                                 <tbody class="active">
                                     <!-- 教练列表 -->
+                                    {volist name="coachList" id="vol"}
                                     <tr role="row" class="odd">
-                                        <td>张伟荣</td>
-                                        <td>深圳市</td>
+                                        <td>{$vol.coach}</td>
                                         <td>
                                             <a href="">查看详情</a>
                                         </td>
                                         <td>
-                                            <span class="btn btn-xs btn-info" data-teacher="张伟荣" data-teacher_id="7">确定</span>
+                                            <span class="btn btn-xs btn-info" data-teacher="{$vol.coach}"
+                                                data-teacher_id="{$vol.id}">确定</span>
                                         </td>
                                     </tr>
+                                    {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -717,19 +753,41 @@
             $("input[name=area]").val($(this).text());
         })
 
-        // 课程类型选择复赋值
+        //所属课程api
         $(".lessonType").on("change", function () {
-            var gradecate_setion = $(this).children().children('option:selected').parent().attr(
-                "data-gradecate_setion");
-            var gradecate_setion_id = $(this).children().children('option:selected').parent().attr(
-                "data-gradecate_setion_id");
-            var gradecate = $(this).children().children('option:selected').text();
-            var gradecate_id = $(this).children().children('option:selected').val();
+            console.log(123456)
+            //获取课程的大小类型及ID
+            var gradecate_setion = $(this).attr('data-gradecate_setion');
+            var gradecate_setion_id = $(this).attr('data-gradecate_setion_id');
+            var gradecate = $(this).attr('data-gradecate');
+            var gradecate_id = $(this).attr('data-gradecate_id');
+            var is_school = $(this).attr('data-is_school');
             $("input[name='gradecate_setion']").val(gradecate_setion);
             $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
             $("input[name='gradecate']").val(gradecate);
             $("input[name='gradecate_id']").val(gradecate_id);
-        });
+            $("input[name='is_school']").val(is_school);
+            $(".gradeTypeCont").text(gradecate_setion + gradecate);
+            //获取课程名称及ID并获取对应的学生
+            var lesson_id = $(this).children("option:checked").attr("data-id");
+            console.log(lesson_id)
+            toStudentList(lesson_id, '', 'student', 1);
+            $(".lesson_id").val(lesson_id);
+        })
+
+        // 课程类型选择复赋值
+        // $(".lessonType").on("change", function () {
+        //     var gradecate_setion = $(this).children().children('option:selected').parent().attr(
+        //         "data-gradecate_setion");
+        //     var gradecate_setion_id = $(this).children().children('option:selected').parent().attr(
+        //         "data-gradecate_setion_id");
+        //     var gradecate = $(this).children().children('option:selected').text();
+        //     var gradecate_id = $(this).children().children('option:selected').val();
+        //     $("input[name='gradecate_setion']").val(gradecate_setion);
+        //     $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
+        //     $("input[name='gradecate']").val(gradecate);
+        //     $("input[name='gradecate_id']").val(gradecate_id);
+        // });
 
         //课量选择
         $("#domConfirm").click(function () {
@@ -737,7 +795,7 @@
                 function () {
                     return $(this).val()
                 }).get().join(","));
-            mui('#domModal').modal('hide');
+            // mui('#domModal').modal('hide');
         })
 
         //训练场地 
@@ -908,4 +966,64 @@
             $(this).find(".order").text(i++); //更新序号
         });
     }
+
+    function toStudentList(lesson_id) {
+        var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}";
+        var campID = "{$campInfo.id}";
+        $.ajax({
+            url: url,
+            data: {
+                lesson_id: lesson_id,
+                camp_id: campID,
+                status: 1
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                console.log(data)
+                if (data.code == 200) {
+                    var newli = '';
+                    var tys = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        // tys = '';
+                        // if (data.data[i].type == "体验生") {
+                        //     tys = '<span class="tips">体验生</span>'
+                        // }
+                        // newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                        //         i].student + tys +
+                        //     '</label><input name="checkbox-student" class="student" value="' + data.data[i]
+                        //     .student + '" type="checkbox" data-id="' + data.data[i].id +
+                        //     '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[
+                        //         i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' +
+                        //     data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson +
+                        //     '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i]
+                        //     .member + '" data-member_id="' + data.data[i].member_id +
+                        //     '" data-student_typenum="' + data.data[i].type_num + '" ></div>'
+                        newli +=
+                            ` <tr role="row" class="odd">
+                                <td>${data.data[i].student}</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <input type="checkbox" value="${data.data[i].student}" class="checkbox-assistant" data-id="${data.data[i].id}">
+                                </td>
+                            </tr>`
+                    }
+
+                    $("#studentList tbody").empty();
+                    if (newli == '') {
+                        newli =
+                            '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                    }
+                    $("#studentList tbody").append(newli);
+                } else {}
+            },
+            error: function (xhr, type, errerThrown) {}
+        });
+    };
 </script> {/block}
