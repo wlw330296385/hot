@@ -134,6 +134,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -143,6 +144,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -152,6 +154,7 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
@@ -161,6 +164,7 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
@@ -226,7 +230,8 @@
             <div class="page-header">
                 <span class="course">球队数据</span>
                 <span class="more">
-                    <a href="{:url('team/teamMemberAllData',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                    <a href="{:url('team/teamMemberAllData',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}"
+                        class="mui-navigate-right">
                         球员数据
                     </a>
                 </span>
@@ -378,7 +383,8 @@
                         <b class="colororange rate">0%</b>
                     </span>
                     <span class="more f14">
-                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}" class="mui-navigate-right">
+                        <a href="{:url('team/matchSignupList',['team_id'=>$teamInfo['id'],'match_id'=>$matchInfo['id']])}"
+                            class="mui-navigate-right">
                             <b class="colororange signup_num">0</b>/{$countTeamMember}
                         </a>
                     </span>
@@ -394,7 +400,8 @@
                 <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
                     {volist name="matchInfo.record.album" id="vol"}
                     <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
-                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;">
+                    </div>
                     {/volist}
                 </div>
             </div>
@@ -489,7 +496,7 @@
                 if (homeTeam == 0 && awayTeam == 0) {
                     $(".score").hide();
                 }
-                
+
                 // 数据得失分统计
                 $(".gainLoss").text(homeTeam - awayTeam)
 
@@ -524,10 +531,12 @@
                             type: 4,
                             team_id: team_id
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             //服务器返回响应，根据响应结果，分析是否登录成功；
                             console.log(data);
@@ -561,10 +570,12 @@
                             comment_type: 3,
                             comment: comment
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
@@ -592,10 +603,12 @@
                             commented_id: commented_id,
                             comment_type: 3,
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
@@ -622,17 +635,21 @@
                         type: 4,
                         team_id: team_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
                             if (data.data === 1) {
-                                $(".follow").text("取消关注");
+                                $(".follow").text("已关注");
+                                $(".follow").removeClass("mui-btn-danger");
                             } else {
                                 $(".follow").text("关注");
+                                $(".follow").addClass("mui-btn-danger");
                             }
                         }
                     },
@@ -651,10 +668,12 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -678,19 +697,19 @@
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+                    count = 1; //刷新并显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toCommentList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toCommentList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
             function pullupRefresh() {
                 setTimeout(function () {
-                    count++;//翻下一页
+                    count++; //翻下一页
                     var page = count;
-                    var gType = 2;//代表上拉加载
-                    toCommentList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toCommentList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //获取评论列表
@@ -703,24 +722,32 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             $(".comment_count").text(data.data.length);
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                                newli = newli +
+                                    '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                    data.data[i].create_time +
+                                    '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                    '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
                             $("ul.comment-list").empty().append(newli);
                             if (newli == '') {
-                                $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                                $("ul.comment-list").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                                );
                             }
                         } else {
                             //下拉加载 gType==2
@@ -744,10 +771,12 @@
                         status: 1,
                         // is_apply: 1
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         if (data.code == 200) {
@@ -758,7 +787,8 @@
                                 // 出勤率
                                 var rateNum = data.data.length / "{$countTeamMember}" * 100;
                                 $(".rate").text(parseInt(rateNum) + "%");
-                                inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                                inactiveDiv += '<img src="' + data.data[i].avatar +
+                                    '" style="margin-right:3px">'
                             };
                             $(".imgShow").append(inactiveDiv);
                         }
@@ -790,22 +820,22 @@
             wx.ready(function () {
                 // 分享到朋友圈
                 wx.onMenuShareTimeline({
-                    title: "{$teamInfo.name}",
+                    title: "{$matchInfo.record.home_team}比赛详情",
                     link: "{$shareurl}/pid/{$mid}",
                     imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
-                    success: function () { },
-                    cancel: function () { }
+                    success: function () {},
+                    cancel: function () {}
                 });
                 // 分享给朋友
                 wx.onMenuShareAppMessage({
-                    title: "{$teamInfo.name}",
-                    desc: "{$teamInfo.descri}",
+                    title: "{$matchInfo.record.home_team}比赛详情",
+                    desc: '对手：{$matchInfo.record.away_team}\n地点：{$matchInfo.court}\n时间：{$matchInfo.match_time}',
                     link: "{$shareurl}/pid/{$mid}",
                     imgUrl: "{:request()->root(true)}{$teamInfo.logo}",
                     type: "",
                     dataUrl: '',
-                    success: function () { },
-                    cancel: function () { }
+                    success: function () {},
+                    cancel: function () {}
                 });
 
             });

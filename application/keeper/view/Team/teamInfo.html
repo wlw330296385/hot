@@ -279,7 +279,8 @@
                     <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
-                    <a href="{:url('index/lateLyMatchList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lateLyMatchList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}"
+                        class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
@@ -301,7 +302,8 @@
                     <span class="noDataTip"></span>
                 </span>
                 <span class="more pdr15">
-                    <a href="{:url('index/lateLyEventList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}" class="mui-navigate-right">更多</a>
+                    <a href="{:url('index/lateLyEventList',['team_id'=>$teamInfo['id']])}/?team_id={$teamInfo.id}"
+                        class="mui-navigate-right">更多</a>
                 </span>
             </div>
             <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
@@ -379,7 +381,7 @@
                 </li>
             </ul>
 
-            
+
             <div class="page-header border-b">
                 <span class="course wd52">评论</span>
                 <span class="more f14">评论
@@ -950,9 +952,11 @@
                     console.log(data);
                     if (data.code == 200) {
                         if (data.data === 1) {
-                            $(".follow").text("取消关注");
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
                         } else {
                             $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
                         }
                     }
                 },
@@ -1173,9 +1177,15 @@
                         var url = "{:url('team/eventinfo')}" + '/team_id/' + data.data[0].team_id +
                             '/event_id/' + data.data[0].id;
                         if (getNowTime() > data.data[0].start_time) {
-                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                            div +=
+                                ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' +
+                                Tmonth + '月</p><h1 class="day colorgray">' + Tday +
+                                '</h1><p class="hours">' + Ttime + '</p></div>';
                         } else {
-                            div += ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgreen">' + Tday + '</h1><p class="hours">' + Ttime + '</p></div>';
+                            div +=
+                                ' <li class="mui-table-view-cell mui-media listli liFrame"><div class="mainInfoLeft fl mui-text-center"><p class="month bgblack">' +
+                                Tmonth + '月</p><h1 class="day colorgreen">' + Tday +
+                                '</h1><p class="hours">' + Ttime + '</p></div>';
                         }
                         div += '<div class="mui-media-body mainInfoRight wd66"><h5 class="title">' + data.data[
                             0].event + '</h5>';
@@ -1299,9 +1309,13 @@
                                 '<p class="month bgblack">0月</p><h1 class="day" style="font-size: 25px;padding: 15px 21px;">待定</h1><p class="hours">00:00</p>';
                         } else {
                             if (getNowTime() > data.data[0].match_time) {
-                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                                div += '<p class="month bgblack">' + Tmonth +
+                                    '月</p><h1 class="day colorgray">' + Tday + '</h1><p class="hours">' +
+                                    Ttime + '</p>';
                             } else {
-                                div += '<p class="month bgblack">' + Tmonth + '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' + Ttime + '</p>';
+                                div += '<p class="month bgblack">' + Tmonth +
+                                    '月</p><h1 class="day colorred">' + Tday + '</h1><p class="hours">' +
+                                    Ttime + '</p>';
                             }
                         }
                         div += '</div><div class="mui-media-body mainInfoRight wd66"><h5 class="title">' +
