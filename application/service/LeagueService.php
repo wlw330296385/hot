@@ -1323,4 +1323,53 @@ class LeagueService
         }
 
     }
+
+    // public function countScheduleAndRecord($map) {
+
+    //     if (!empty($map["match_id"])) {
+    //         $map["match_schedule.match_id"] = $map["match_id"];
+    //         unset($map["match_id"]);
+    //     }
+    //     $model = new MatchSchedule();
+    //     $count = $model
+    //     ->join('match_record','match_record.match_schedule_id = match_schedule.id','left')
+    //     ->where($map)
+    //     ->order('match_record.match_time asc')
+    //     ->count();
+
+    //     return empty($count) ? 0 : $count;
+    // }
+
+    public function getScheduleAndRecordList($map) {
+
+        // 已完成 输出最近已完成所有比赛，包括联赛中已完成的一场
+        // 未完成 输出最近未完成所有比赛，但不包括未完成的联赛
+        // 没传 默认输出最近所有比赛，但不包括未完成的联赛
+        // if (!empty($map["is_finished"])) {
+        //     if ($map["is_finished"] == 1) {
+        //         $ext_sql = '(`match_org_id` = 0 AND `is_finished` = 1) OR `is_record` = 1';
+        //     } else {
+        //         $ext_sql = '`match_org_id` = 0 AND `is_finished` = -1';
+        //     }
+        // } else {
+        //     $ext_sql = '`match_org_id` = 0 OR `is_record` = 1';
+        // }
+        // unset($map["is_finished"]);
+
+        if (!empty($map["match_id"])) {
+            $map["match_schedule.match_id"] = $map["match_id"];
+            unset($map["match_id"]);
+        }
+
+        $model = new MatchSchedule();
+        $result = $model
+        ->field('match_schedule.*, IFNULL(match_record.home_score, 0) AS home_score, IFNULL(match_record.away_score, 0) AS away_score, IFNULL(match_record.id, 0) as match_record_id')
+        ->join('match_record','match_record.match_schedule_id = match_schedule.id', 'left')
+        ->where($map)
+        ->order('match_record.match_time asc')
+        ->select();
+
+        $result = $result->toArray();
+        return $result;
+    }
 }

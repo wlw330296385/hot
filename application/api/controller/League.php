@@ -3422,94 +3422,173 @@ class League extends Base
         }
     }
 
+//     // 获取赛程列表(外部展示)
+//     public function getshowmatchschedulelist()
+//     {
+//         try {
+//             $map = input('param.');
+//             $page = input('page', 1, 'intval');
+//             // 参数league_id -> match_id
+//             if (input('?param.league_id')) {
+//                 unset($map['league_id']);
+//                 $map['match_id'] = input('param.league_id');
+//             }
+//             if (input('?page')) {
+//                 unset($map['page']);
+//             }
+//             if ( empty($map['match_group_id']) ) {
+//                 unset($map['match_group_id']);
+//             }
+//             $sort = input('sort', 0, 'intval');
+//             unset($map['sort']);
+//             switch ($sort) {
+//                 case 1:
+//                     // match_time区间 查询条件组合:当前时间至所选未来7天
+//                     $nowTime = time();
+//                     $dateTimeStamp = strtotime("+7 days");
+//                     $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
+//                     $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
+//                     break;
+//                 case 2:
+//                     // 未完成的赛程
+//                     $map['status'] = 1;
+//                     break;
+//                 case 3:
+//                     // 已完成有比分信息的赛程
+//                     $map['status'] = 2;
+//                     break;
+//                 default:
+//                     // 默认查全部已公布
+//                     $map['status'] = ['in','1,2'];
+//                     break;
+//             }
+//             $leagueS = new LeagueService();
+//             $matchS = new MatchService();
+//             $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+//             $_result = $leagueS->getMatchSchedules($map, $orderby);
+
+//             if (!$_result) {
+//                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+//             }
+//             $_result1 = $result = [];
+//             // 遍历获取赛程比赛结果信息
+//             foreach ($_result as $key => $value) {
+//                 $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $value['id'], 'match_id' => $value['match_id']]);
+//                 if ($recordInfo) {
+// //                    $_result[$key]['match_time'] = ($recordInfo['match_time']) ? date('Y-m-d H:i', $recordInfo['match_time']) : '';
+// //                    $_result[$key]['match_timestamp'] = $recordInfo['match_time'];
+//                     $_result[$key]['match_record_id'] = $recordInfo['id'];
+//                     $_result[$key]['home_team_score'] = $recordInfo['home_score'];
+//                     $_result[$key]['away_team_score'] = $recordInfo['away_score'];
+//                 } else {
+//                     $_result[$key]['match_record_id'] = 0;
+//                     $_result[$key]['home_team_score'] = 0;
+//                     $_result[$key]['away_team_score'] = 0;
+//                 }
+//             }
+//             // 根据比赛时间（年月日）对数据分片
+//             foreach ($_result as $key => $value) {
+//                 $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
+//                 $_result1[$value['match_stage'] . '|' . $date][] = $value;
+//             }
+//             $dayArr = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+//             foreach ($_result1 as $key => $value) {
+//                 $_array = [];
+//                 $keyExplode = explode('|', $key);
+//                 $datetime = strtotime($keyExplode[1]);
+//                 $_array['datetime'] = $datetime;
+//                 $_array['date'] = ($datetime) ? date('n月d', $datetime) : '';
+//                 $_array['day'] = ($datetime) ? $dayArr[date('w', $datetime)] : '';
+//                 $_array['stage']['name'] = $keyExplode[0];
+//                 $_array['stage']['schedules'] = $value;
+//                 array_push($result, $_array);
+//             }
+//             // dump($result);exit;
+//             if (!$result) {
+//                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+//             } else {
+//                 $result = arraySort($result, 'datetime', SORT_DESC);
+//                 return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+//             }
+//         } catch (Exception $e) {
+//             trace('error: ' . $e->getMessage(), 'error');
+//             return json(['code' => 100, 'msg' => $e->getMessage()]);
+//         }
+//     }
+
     // 获取赛程列表(外部展示)
     public function getshowmatchschedulelist()
     {
         try {
-            $map = input('param.');
-            $page = input('page', 1, 'intval');
             // 参数league_id -> match_id
             if (input('?param.league_id')) {
-                unset($map['league_id']);
                 $map['match_id'] = input('param.league_id');
             }
-            if (input('?page')) {
-                unset($map['page']);
+            if (input('?param.match_group_id')){
+                $match_group_id = input('param.match_group_id');
             }
-            if ( empty($map['match_group_id']) ) {
-                unset($map['match_group_id']);
-            }
+            
             $sort = input('sort', 0, 'intval');
-            unset($map['sort']);
-            switch ($sort) {
-                case 1:
-                    // match_time区间 查询条件组合:当前时间至所选未来7天
-                    $nowTime = time();
-                    $dateTimeStamp = strtotime("+7 days");
-                    $endDate = getStartAndEndUnixTimestamp(date('Y', $dateTimeStamp), date('m', $dateTimeStamp), date('d', $dateTimeStamp));
-                    $map['match_time'] = ['between', [$nowTime, $endDate['end']]];
-                    break;
-                case 2:
-                    // 未完成的赛程
-                    $map['status'] = 1;
-                    break;
-                case 3:
-                    // 已完成有比分信息的赛程
-                    $map['status'] = 2;
-                    break;
-                default:
-                    // 默认查全部已公布
-                    $map['status'] = ['in','1,2'];
-                    break;
-            }
+            
             $leagueS = new LeagueService();
             $matchS = new MatchService();
-            $orderby = ['match_time' => 'desc', 'id' => 'desc'];
-            $_result = $leagueS->getMatchSchedules($map, $orderby);
 
-            if (!$_result) {
-                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
+            // $count = $leagueS->countScheduleAndRecord($map);
+            $result = $leagueS->getScheduleAndRecordList($map);
+            if (!$result) {
+                return json(['code' => 200, 'msg' => __lang('MSG_000')]);
             }
-            $_result1 = $result = [];
-            // 遍历获取赛程比赛结果信息
-            foreach ($_result as $key => $value) {
-                $recordInfo = $matchS->getMatchRecord(['match_schedule_id' => $value['id'], 'match_id' => $value['match_id']]);
-                if ($recordInfo) {
-//                    $_result[$key]['match_time'] = ($recordInfo['match_time']) ? date('Y-m-d H:i', $recordInfo['match_time']) : '';
-//                    $_result[$key]['match_timestamp'] = $recordInfo['match_time'];
-                    $_result[$key]['match_record_id'] = $recordInfo['id'];
-                    $_result[$key]['home_team_score'] = $recordInfo['home_score'];
-                    $_result[$key]['away_team_score'] = $recordInfo['away_score'];
-                } else {
-                    $_result[$key]['match_record_id'] = 0;
-                    $_result[$key]['home_team_score'] = 0;
-                    $_result[$key]['away_team_score'] = 0;
-                }
-            }
+
+            $s_num = 1;
+
+            $result1 = $result2 = [];
             // 根据比赛时间（年月日）对数据分片
-            foreach ($_result as $key => $value) {
-                $date = ($value['match_timestamp']) ? date('Y-m-d', $value['match_timestamp']) : 0;
-                $_result1[$value['match_stage'] . '|' . $date][] = $value;
+            foreach ($result as $key => $value) {
+                $timestamp = strtotime($value['match_time']);
+                $date = !empty($value['match_time']) ? date('Y-m-d', $timestamp) : 0;
+                $value["s_num"] = $s_num;
+                $s_num++;
+
+                if ( !empty($match_group_id) && $match_group_id != $value["match_group_id"]) {
+                    continue;
+                } 
+
+                if ($sort == 1) { 
+                    $startTimeStamp = strtotime("-3 days");
+                    $endTimeStamp = strtotime("+3 days");
+                    $startDate = getStartAndEndUnixTimestamp(date('Y', $startTimeStamp), date('m', $startTimeStamp), date('d', $startTimeStamp));
+                    $endDate = getStartAndEndUnixTimestamp(date('Y', $endTimeStamp), date('m', $endTimeStamp), date('d', $endTimeStamp));
+                    if ($timestamp < $startDate['start'] || $timestamp > $endDate['end']) {
+                        continue;
+                    }
+                } else if ($sort == 2 && $value["status"] != 1) { 
+                    continue;
+                } else if ($sort == 3 && $value["status"] != 2) { 
+                    continue;
+                } else if ($value["status"] < 1) {
+                    continue;
+                }
+
+                $date = ($value['match_time']) ? date('Y-m-d', strtotime($value['match_time']) ) : 0;
+                $result1[$value['match_stage'] . '|' . $date][] = $value;
+                
             }
+
             $dayArr = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            foreach ($_result1 as $key => $value) {
+            foreach ($result1 as $key => $value) {
                 $_array = [];
                 $keyExplode = explode('|', $key);
                 $datetime = strtotime($keyExplode[1]);
                 $_array['datetime'] = $datetime;
                 $_array['date'] = ($datetime) ? date('n月d', $datetime) : '';
                 $_array['day'] = ($datetime) ? $dayArr[date('w', $datetime)] : '';
-                $_array['stage']['name'] = $keyExplode[0];
-                $_array['stage']['schedules'] = $value;
-                array_push($result, $_array);
+                $_array['match_stage'] = $keyExplode[0];
+                $_array['schedules'] = $value;
+                array_push($result2, $_array);
             }
-            // dump($result);exit;
-            if (!$result) {
-                return json(['code' => 100, 'msg' => __lang('MSG_000')]);
-            } else {
-                $result = arraySort($result, 'datetime', SORT_DESC);
-                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
-            }
+
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result2]);
+            
         } catch (Exception $e) {
             trace('error: ' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
