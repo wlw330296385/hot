@@ -70,13 +70,59 @@
     <!-- /.box-body -->
     <div class="box-footer no-padding">
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#">当前训练营余额 <span class="pull-right text-red">{$campInfo.balance}</span></a>
+        <li><a href="#">当前训练营余额 <span class="pull-right">{$campInfo.balance}</span></a>
         </li>
-        <li><a href="#">课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i>{$income}</span></a>
+        {if $campInfo.rebate_type == 1}
+        <li><a href="#">上个月底至上次提现之前的课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i> &nbsp; {$income}</span></a>
         </li>
-        <li><a href="#">赠课支出
-          <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i> -{$output}</span></a></li>
-
+        <li><a href="#">上个月底至上次提现之前的赠课支出
+          <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i>  &nbsp;  -{$output}</span></a></li>
+        {else /}
+        <li><a href="#">上个星期日至上次提现之前的课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i> &nbsp; {$income}</span></a>
+        </li>
+        <li><a href="#">上个星期日至上次提现之前的赠课支出
+          <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i>  &nbsp;  -{$output}</span></a></li>
+        {/if}
+        {if $campInfo.rebate_type == 1}
+            <li>
+                <a href="#">提现手续费
+                    <span class="pull-right text-yellow"></i>0</span>
+                </a>
+            </li>
+            {else /}
+            <li>
+                <a href="#">提现手续费
+                    <span class="pull-right text-red">
+                        {if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}
+                            {($income-$output) * $campInfo.schedule_rebate}
+                        {elseif (($income-$output)<$campInfo['balance'] && ($income-$output))<0}
+                             0 
+                        {else /}
+                            {$campInfo['balance']*$campInfo['schedule_rebate']}
+                        {/if}
+                    </span>
+                </a>
+            </li>
+        {/if}
+        <li><a href="#">提现账号:</a>
+        </li>
+    
+        {if $campBankcard}
+        <li><a href="#">银行 <span class="pull-right">{$campBankcard.bank}</span></a>
+            
+        </li>
+        <li><a href="#">支行 <span class="pull-right">{$campBankcard.bank_branch}</span></a>
+        </li>
+        <li><a href="#">银行卡用户名 <span class="pull-right">{$campBankcard.account}</span></a>
+        </li>
+        <li><a href="#">卡号 <span class="pull-right">{$campBankcard.bank_card}</span></a>
+        </li>
+        <li><a href="#">联系手机 <span class="pull-right">{$campBankcard.telephone}</span></a>
+        </li>
+        {else /}
+        <li><a href="#">请先于手机端添加银行账号,方可提现</a>
+        </li>
+        {/if}
         <li><a href="">
             <strong href="#">可提现
           <span class="pull-right text-red">{if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}$income-$output{elseif ($income-$output)<$campInfo['balance'] && ($income-$output)<0} 不可提现 {else /}{$campInfo.balance}{/if}</span></strong></a></li>
@@ -85,8 +131,11 @@
     <!-- /.footer -->
     <form method="post">
         <div class="box-footer pull-right">
+            {if $campBankcard}
+            <input type="hidden" name="bank_id" value="{$campBankcard.id}">
+            {/if}
             <input type="hidden" name="type" value="{$type}">
-            <button type="submit" class="btn btn-success" {if $income-$output<=0} disabled="disabled"{/if} >提现</button>
+            <button type="submit" class="btn btn-success" {if ($income-$output<=0)||!$campBankcard} disabled="disabled"{/if} >提现</button>
         </div>
     </form>
 </div>

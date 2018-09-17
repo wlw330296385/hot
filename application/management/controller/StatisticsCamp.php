@@ -699,6 +699,7 @@ class StatisticsCamp extends Camp{
         $d = date('d',time());
         $Ym = input('param.Ym',date('Ym',time()));
         $type = input('param.type',1);
+        $data = [];
         // 最后一次提现的时间点
         $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]]])->find();
         if($lastWitchdraw){
@@ -732,6 +733,9 @@ class StatisticsCamp extends Camp{
             $output = 0;
             $legend = ['课时收入','活动收入','支出'];
         }
+
+        $campBankcard = db('camp_bankcard')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->find();
+
         if(request()->isPost()){
             if($this->campInfo['rebate_type'] == 1){
                 if($d<15){
@@ -761,7 +765,7 @@ class StatisticsCamp extends Camp{
             //营业额版训练营
             }else{
                 // 周五-日方可提现
-                if($w<>0 && $w <> 5 $w <> 6){
+                if($w<>0 && $w <> 5 && $w <> 6){
                     $this->error('周五至周日可申请提现');
                 }
                 $e = date('Ymd', strtotime('-1 sunday', time()));
@@ -780,7 +784,8 @@ class StatisticsCamp extends Camp{
 
             }
             
-            $data = [];
+            
+            $data['bank_id'] = input('param.bank_id');
             $data['withdraw'] = $withdraw;
             $data['s_balance'] = $this->campInfo['balance'];
             $data['e_balance'] = $this->campInfo['balance'] - $data['withdraw'];
@@ -788,22 +793,58 @@ class StatisticsCamp extends Camp{
             $data['camp'] = $this->campInfo['camp'];
             $data['rebate_type'] = $this->campInfo['rebate_type'];
             $data['schedule_rebate'] = $this->campInfo['schedule_rebate'];
-            $data['buffer'] = $withdraw;
+            $data['camp_id'] = $this->campInfo['id'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             if($this->campInfo['rebate_type'] == 2){
                 $data['camp_withdraw_fee'] = $data['buffer']*$this->campInfo['schedule_rebate'];
             }else{
                 $data['camp_withdraw_fee'] = 0;
             }
-
-            
+            // $data['buffer'] = $withdraw + $data['camp_withdraw_fee'];
+            $data['point_in_time'] = $e;
+            $data['buffer'] = $withdraw;
+            $CampWithdrawService = new \app\service\CampWithdrawService;
+            $result = $CampWithdrawService->createCampWithdraw($data);
+            if($result['code'] == 200){
+                $openid = $this->memberInfo['openid'];
+                $messageData = [
+                    "touser" => $openid,
+                    "template_id" => config('wxTemplateID.withdraw'),
+                    "url" => "https://m.hot-basketball.com/frontend/camp/campwallet/camp_id/{$data['camp_id']}",
+                    "topcolor"=>"#FF0000",
+                    "data" => [
+                        'first' => ['value' => '您的提现申请成功'],
+                        'keyword1' => ['value' => "{$data['withdraw']}"],
+                        'keyword2' => ['value' => "{$data['camp_withdraw_fee']}"],
+                        'keyword3' => ['value' => ($data['withdraw'] - $data['camp_withdraw_fee'])],
+                        'keyword4' => ['value' => "篮球管家公众号"],
+                        'remark' => ['value' => "该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。"]
+                    ]
+                ];
+                $saveData = [
+                    'title'=>"您的提现申请成功",
+                    'content'=>"该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。",
+                    'url'=>url('frontend/camp/campwallet',['camp_id'=>$data['camp_id']],'',true),
+                    'member_id'=>$this->memberInfo['id']
+                ];
+                $MessageService = new \app\service\MessageService;
+                $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
+                db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
+                //更新cookie
+                cookie('campInfo.balance',($this->campInfo['balance']-$data['buffer']));
+                $this->success($result['msg']);
+            }else{
+                $this->error($result['msg']);
+            }
         }else{
 
-            
-            $this->assign('income',$income);
-            $this->assign('output',$output);
+            $this->assign('income',$income?$income:0);
+            $this->assign('output',$output?$output:0);
             $this->assign('legend',json_encode($legend));
             $this->assign('title',$title);
             $this->assign('type',$type);
+            $this->assign('campBankcard',$campBankcard);
             return view('StatisticsCamp/withdraw');
         }
     }
