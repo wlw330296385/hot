@@ -33,7 +33,7 @@
             {if $campBankcard}
 
             <!--账号更新：开始-->
-            <form id="editForm" action="" class="mui-input-group"  method="post">
+            <form action="" class="mui-input-group forms"  method="post">
                 <div class="mui-input-row">
                     <label>训练营名称</label>
                     <span>{$campInfo.camp}</span>
@@ -81,7 +81,7 @@
             {else /}
 
             <!--账号添加：开始-->
-            <form id="addForm" action="" class="mui-input-group" method="post">
+            <form  action="" class="mui-input-group forms" method="post">
                 <div class="mui-input-row">
                     <label>训练营名称</label>
                     <span>{$campInfo.camp}</span>
@@ -275,7 +275,7 @@
 
 
         //提交/修改账号信息
-        $('#submit-form').on("submit",function(){
+        $('form').on("submit",function(){
 
             //短信验证
             var code = document.getElementById('code').value;
@@ -283,26 +283,28 @@
 
             $('.validate-result span').remove('.code_yz');
             //console.log(code);
-            if(!codeReg.test(code)){
-                $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
-                return false;
-            }else{
-                var telephone = document.getElementById('telephone').value;
-                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-                if(result.code == 200){
-                    mui.toast(result.msg);
-                }else{
-                    $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
-                    return false;
-                }
-            }
+            // if(!codeReg.test(code)){
+            //     $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
+            //     return false;
+            // }else{
+            //     var telephone = document.getElementById('telephone').value;
+            //     var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+            //     if(result.code == 200){
+            //         mui.toast(result.msg);
+            //     }else{
+            //         $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
+            //         return false;
+            //     }
+            // }
 
 
-            var validateResult = $(".validate-result span").text();
-            if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
-                mui.toast("提交失败，请填写完整并保证信息格式正确！");
-                return false;
-            }
+            // var validateResult = $(".validate-result span").text();
+            // if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
+            //     mui.toast("提交失败，请填写完整并保证信息格式正确！");
+            //     return false;
+            // }
+            $('form').unserialize();
+            $(this).submit();
 
         });
 

@@ -17,6 +17,11 @@ class Bankcard extends Camp{
 	public function createBankcard(){
 
 		$campBankcard = [];
+		if(request()->isPost()){
+
+		}else{
+			$campbankcard_id = input('param.id');
+		}
 
 		$this->assign('campBankcard',$campBankcard);
 		return $this->fetch();

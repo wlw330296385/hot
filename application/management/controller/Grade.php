@@ -28,14 +28,12 @@ class Grade extends Backend{
             $result = $GradeService->createGrade($data);
             if ($result['code'] == 200) {
                 $grade_id = $result['data'];
-                if(!empty($data['studentData']) && $data['studentData'] != '[]'){
-                    $studentData = json_decode($data['studentData'],true);
-                    $StudentService = new \app\service\StudentService;
-                    foreach ($studentData as $key => $value) {
-                       $studentData[$key]['grade'] = $data['grade'];
-                       $studentData[$key]['grade_id'] = $grade_id;
+                $studentData = json_decode($data['studentData'], true);
+                if ( !empty($studentData)) {
+                    $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
+                    if ($resSaveGradeMember['code'] == 100) {
+                        return json($resSaveGradeMember);
                     }
-                    $res = $StudentService->saveAllStudent($studentData);
                 }
                 $this->success($result['msg']);
             }else{
