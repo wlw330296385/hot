@@ -152,11 +152,12 @@ class Grade extends Backend{
                 ->order('court_camp.id desc')
                 ->select();
             $assignList = db('lesson_member')
-                    ->field('lesson_member.*,grade_member.student_id as g_id,grade_member.lesson_id as gl_id')
+                    ->field('lesson_member.*,grade_member.student_id as gs_id,grade_member.lesson_id as gl_id,grade_member.grade_id as g_id')
                     ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
                     ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
                     ->order('lesson_member.id desc')
                     ->select();
+            // dump($assignList);die;
             $planList = db('plan')->where(['camp_id'=>$camp_id])->where('delete_time',null)->select();
             $this->assign('gradeInfo',$gradeInfo);
             $this->assign('courtList',$courtList);
