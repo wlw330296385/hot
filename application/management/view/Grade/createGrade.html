@@ -16,17 +16,13 @@
         <div class="box-body">
             <input type="hidden" name="camp" value="{$campInfo.camp}">
             <input type="hidden" name="camp_id" value="{$campInfo.id}">
-            <input type="hidden" name="member" value="{$memberInfo.member}">
-            <input type="hidden" name="member_id" value="{$memberInfo.id}">
-            <input type="hidden" name="memberData" value="">
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
                         <label for="">班级名称</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入课程名称" name="lesson">
+                        <input type="text" class="form-control" placeholder="请输入课程名称" name="grade">
                     </div>
                 </div>
             </div>
@@ -36,14 +32,32 @@
                         <label for="">选择课程</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <select name="lesson" class="form-control lessonType">
+                        <select class="form-control lessonType">
                             {volist name="lessonList" id="vol"}
                             <option data-id="{$vol.id}" data-is_school="{$vol.is_school}" data-gradecate="{$vol.gradecate}"
                                 data-gradecate_id="{$vol.gradecate_id}" data-gradecate_setion="{$vol.gradecate_setion}"
                                 data-gradecate_setion_id="{$vol.gradecate_setion_id}">{$vol.lesson}</option>
                             {/volist}
                         </select>
+                        <input type="hidden" name="lesson" value="">
+                        <input type="hidden" name="lesson_id" value="">
                     </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 text-right">
+                        <label for="">课程类型</label>
+                    </div>
+                    <div class="col-md-5 col-sm-5">
+                        <span class="form-control gradeType"></span>
+                    </div>
+                    <input type="hidden" name="gradecate" value="">
+                    <input type="hidden" name="gradecate_id" value="">
+                    <input type="hidden" name="gradecate_setion" value="">
+                    <input type="hidden" name="gradecate_setion_id" value="">
+                    <input type="hidden" name="is_school" value="">
                 </div>
             </div>
 
@@ -54,9 +68,11 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <div data-toggle="modal" data-target="#studentModal">
-                            <input type="text" class="form-control" placeholder="请选择学员" name="student_str">
-                            //这里只能用api读取,根据课程不同,学生不同
-
+                            <span class="form-control students"></span>
+                            <input type="hidden" name="student_str" value="">
+                            <input type="hidden" name="students" value="">
+                            <input type="hidden" name="studentData" value="">
+                            <div id="hideStList"></div>
                         </div>
                     </div>
                 </div>
@@ -163,7 +179,7 @@
                         <label for="">主教底薪</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="选填" name="min">
+                        <input type="text" class="form-control" placeholder="选填" name="coach_salary">
                     </div>
                 </div>
 
@@ -187,7 +203,7 @@
                         <label for="">助教底薪</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="选填" name="min">
+                        <input type="text" class="form-control" placeholder="选填" name="assistant_salary">
                     </div>
                 </div>
 
@@ -199,7 +215,7 @@
                         <label for="">提成基数</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="选填" name="min">
+                        <input type="text" class="form-control" placeholder="选填" name="salary_base">
                     </div>
                 </div>
 
@@ -255,7 +271,7 @@
                         <label for="">生效状态</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <select id="lessonPrivate" class="form-control" name="isprivate">
+                        <select class="form-control" name="status">
                             <option value="1">当前（立即生效）</option>
                             <option value="-1">预排</option>
                         </select>
@@ -270,6 +286,26 @@
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <input type="text" class="form-control" placeholder="请输入备注信息" name="remarks">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 text-right">
+                        <label for="">合照封面</label>
+                    </div>
+                    <div class="col-md-5 col-sm-5">
+                        <div class="box-header">
+                            <div class="col-sm-12 col-md-12">
+                                <a class="btn-banner" href="#" title="点击替换图片">
+                                    <img class="img-thumbnail" id="uploader-preview1" src="">
+                                    <div class="row">
+                                        <div id="filePicker1">选择上传</div>
+                                    </div>
+                                    <input id="uploader-input1" type="hidden" name="logo" value="">
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,9 +332,16 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">请选择助理教练</h4>
+                <h4 class="modal-title">请选择学员</h4>
             </div>
             <div class="modal-body">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control studentName" placeholder="请输入学员姓名..." value="">
+                    <span class="input-group-btn">
+                        <button type="button" id="searchStudentBtn" class="btn btn-default btn-flat"><i class="fa fa-search"></i>
+                            搜索</button>
+                    </span>
+                </div>
                 <div class="tableScroll">
                     <table id="studentList" class="table table-bordered table-striped dataTable">
                         <thead>
@@ -308,13 +351,17 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="text-center">请先选择课程!</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" id="clearAssiatant">清除所选教练</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="assistantConfirm">确定</button>
+                <button type="button" class="btn btn-default pull-left" id="clearStudent">清除所选学员</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="studentConfirm">确定</button>
             </div>
         </div>
     </div>
@@ -451,7 +498,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" id="clearAssiatant">清除所选教练</button>
+                <button type="button" class="btn btn-default pull-left" id="clearAssistant">清除所选教练</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" id="assistantConfirm">确定</button>
             </div>
         </div>
@@ -632,91 +679,6 @@
     </div>
 </div>
 
-<!-- 私密会员 -->
-<div class="modal fade" id="privateModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">请选择你要添加的私密会员</h4>
-            </div>
-            <div class="modal-body">
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <a href="#fansTab2" data-toggle="tab"> 粉丝列表</a>
-                    </li>
-                    <li>
-                        <a href="#studentTab2" data-toggle="tab">学生列表</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade in active" id="fansTab2">
-                        <div class="tableScroll">
-                            <table class="table table-bordered table-striped dataTable privateList">
-                                <thead>
-                                    <tr role="row">
-                                        <th>粉丝名称</th>
-                                        <th>所属地区</th>
-                                        <th>详情</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- 粉丝列表 -->
-                                    <tr role="row" class="odd">
-                                        <td>HoChen</td>
-                                        <td>深圳市</td>
-                                        <td>
-                                            <a href="">查看详情</a>
-                                        </td>
-                                        <td>
-                                            <span class="btn btn-xs btn-info choiseAdd" data-private="张伟荣"
-                                                data-private_id="7">添加</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="studentTab2">
-                        <div class="tableScroll">
-                            <table class="table table-bordered table-striped dataTable privateList">
-                                <thead>
-                                    <tr role="row">
-                                        <th>学员名称</th>
-                                        <th>所属地区</th>
-                                        <th>详情</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="active">
-                                    <!-- 学生列表 -->
-                                    <tr role="row" class="odd">
-                                        <td>张伟荣</td>
-                                        <td>深圳市</td>
-                                        <td>
-                                            <a href="">查看详情</a>
-                                        </td>
-                                        <td>
-                                            <span class="btn btn-xs btn-info choiseAdd" data-private="Hochen"
-                                                data-private_id="1">添加</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left clearPrivate">清除所选会员</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 {/block} {block name='js'}
 
@@ -733,6 +695,7 @@
 <link rel="stylesheet" href="/static/backend/adminlte/css/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/static/backend/adminlte/css/city-picker.css">
 <script type="text/javascript">
+    var lesson_id = ''
     $(function () {
 
         // boostrap时间选择器
@@ -755,47 +718,92 @@
 
         //所属课程api
         $(".lessonType").on("change", function () {
-            console.log(123456)
             //获取课程的大小类型及ID
-            var gradecate_setion = $(this).attr('data-gradecate_setion');
-            var gradecate_setion_id = $(this).attr('data-gradecate_setion_id');
-            var gradecate = $(this).attr('data-gradecate');
-            var gradecate_id = $(this).attr('data-gradecate_id');
-            var is_school = $(this).attr('data-is_school');
+            var gradecate_setion = $(this).children("option:checked").attr('data-gradecate_setion');
+            var gradecate_setion_id = $(this).children("option:checked").attr(
+                'data-gradecate_setion_id');
+            var gradecate = $(this).children("option:checked").attr('data-gradecate');
+            var gradecate_id = $(this).children("option:checked").attr('data-gradecate_id');
+            var is_school = $(this).children("option:checked").attr('data-is_school');
+            var lesson = $(this).children("option:checked").text();
+            lesson_id = $(this).children("option:checked").attr("data-id");
+            console.log(is_school)
             $("input[name='gradecate_setion']").val(gradecate_setion);
             $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
             $("input[name='gradecate']").val(gradecate);
             $("input[name='gradecate_id']").val(gradecate_id);
             $("input[name='is_school']").val(is_school);
-            $(".gradeTypeCont").text(gradecate_setion + gradecate);
+            $("input[name=lesson]").val(lesson);
+            $("input[name=lesson_id]").val(lesson_id);
+            $(".gradeType").text(gradecate_setion + gradecate);
             //获取课程名称及ID并获取对应的学生
-            var lesson_id = $(this).children("option:checked").attr("data-id");
-            console.log(lesson_id)
-            toStudentList(lesson_id, '', 'student', 1);
-            $(".lesson_id").val(lesson_id);
-        })
+            toStudentList(lesson_id, '');
 
-        // 课程类型选择复赋值
-        // $(".lessonType").on("change", function () {
-        //     var gradecate_setion = $(this).children().children('option:selected').parent().attr(
-        //         "data-gradecate_setion");
-        //     var gradecate_setion_id = $(this).children().children('option:selected').parent().attr(
-        //         "data-gradecate_setion_id");
-        //     var gradecate = $(this).children().children('option:selected').text();
-        //     var gradecate_id = $(this).children().children('option:selected').val();
-        //     $("input[name='gradecate_setion']").val(gradecate_setion);
-        //     $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
-        //     $("input[name='gradecate']").val(gradecate);
-        //     $("input[name='gradecate_id']").val(gradecate_id);
-        // });
+        });
 
-        //课量选择
-        $("#domConfirm").click(function () {
-            $("input[name='doms']").val($(".dom:checked").map(
-                function () {
-                    return $(this).val()
-                }).get().join(","));
-            // mui('#domModal').modal('hide');
+        // 学员名单
+        $("#studentConfirm").on('click', '', function () {
+            var inputList = "";
+            var studentNames = "";
+            studentList = [];
+            $("#studentList input[name='checkbox-student']:checked").each(function (i) {
+                var student_id = $(this).attr("data-student_id");
+                var student = $(this).val();
+                var student_typenum = $(this).attr("data-type_num");
+                var camp = $(this).attr("data-camp");
+                var camp_id = $(this).attr("data-camp_id");
+                var lesson = $(this).attr("data-lesson");
+                var lesson_id = $(this).attr("data-lesson_id");
+                var member = $(this).attr("data-member");
+                var member_id = $(this).attr("data-member_id");
+                studentList[i] = {
+                    student: student,
+                    student_id: student_id,
+                    camp: camp,
+                    camp_id: camp_id,
+                    lesson: lesson,
+                    lesson_id: lesson_id,
+                    member: member,
+                    member_id: member_id,
+                    type: student_typenum
+                };
+                inputList += '<input type="hidden" class="stdList" data-student="' + student +
+                    '" data-student_id="' + student_id + '" data-camp="' + camp +
+                    '" data-camp_id="' + camp_id + '" data-lesson="' + lesson +
+                    '" data-lesson_id="' + lesson_id + '" data-member="' + member +
+                    '" data-member_id="' + member_id + '" data-student_typenum="' +
+                    student_typenum + '">';
+                studentNames += student + ','
+            });
+            $("#hideStList").empty();
+            $("#hideStList").html(inputList);
+            $(".students").text(studentNames.substring(0, studentNames.length - 1))
+            $("input[name=student_str]").val(studentNames.substring(0, studentNames.length - 1))
+            $("input[name=studentData]").val(JSON.stringify(studentList));
+            console.log(inputList)
+            console.log(studentList)
+            console.log(studentNames)
+
+            //班级成员
+            $("input[name=students]").val(studentList.length)
+            $("#newdiv .mui-checkbox").removeClass("matchStudent");
+            $('#student').modal('hide');
+        });
+        $("#clearStudent").on("click", function () {
+            $("input[name=student_str]").val('');
+            $("input[name=students]").val('');
+            $("input[name=studentData]").val('');
+            $('#coachModal').modal('hide');
+        });
+
+        //搜索训练营
+        $("#searchStudentBtn").on("click", '', function () {
+            var keyword = $(".studentName").val();
+            if (keyword == "") {
+                alert("请输入学员姓名！");
+            } else {
+                toStudentList(lesson_id, keyword);
+            }
         })
 
         //训练场地 
@@ -862,7 +870,12 @@
                 $(this).prop("checked", false);
                 return false;
             }
-        })
+        });
+        $("#clearAssistant").on("click", function () {
+            $("input[name=assistant_ids]").val('');
+            $("input[name=assistants]").val('');
+            $('#assistantModal').modal('hide');
+        });
 
         //领队
         $(".leaderList tbody").on("click", ".btn", function () {
@@ -892,97 +905,22 @@
             $('#teacherModal').modal('hide');
         });
 
-        // 选择是否为私密课程显示隐藏选择会员框
-        $("#lessonPrivate").change(function () {
-            if ($(this).children('option:selected').text() == '是') {
-                $(".memberInput-row").show();
-            } else {
-                $(".memberInput-row").hide();
-            }
-        });
-
-        $(".choiseAdd").on("click", function () {
-            var thisVal = $(this).attr("data-private");
-            var thisId = $(this).attr("data-private_id");
-            var pirvateList =
-                `<li class="list-group-item" data-private="${thisVal}" data-id="${thisId}"><span class="order" style="margin-right:10px;">1</span><span>${thisVal}</span><input type="checkbox" value="" style="float:right"></li>`
-            var isExist = true;
-            $(".list-group .list-group-item").each(function () {
-                var list_id = $(this).attr("data-id");
-                if (list_id == thisId) {
-                    isExist = false;
-                    alert("该会员已在列表中");
-                    return false;
-                }
-            });
-            if (isExist == true) {
-                $(".memberInput-row .list-group").append(pirvateList);
-            }
-            changeIndex();
-            var totalNum = $(".list-group-item").length;
-            $(".mui-badge").text(totalNum);
-
-            // 提交私密会员名单
-            var isPrivate = $("#lessonPrivate").val();
-            if (isPrivate == 1) {
-                var memberList = [];
-                $(".list-group-item").each(function (i) {
-                    memberList[i] = {
-                        member: $(this).attr("data-private"),
-                        id: $(this).attr("data-id")
-                    };
-                });
-            }
-            $("input[name=memberData]").val(JSON.stringify(memberList))
-        });
-        $(".clearPrivate").on("click", function () {
-            $(".memberInput-row .list-group").html('')
-            $('#privateModal').modal('hide');
-        });
-
-
-        //全选
-        $(".choiseAll").click(function () {
-            $(".list-group-item").find('input').prop('checked', true)
-        })
-
-        //取消全选
-        $(".choiseCancel").click(function () {
-            $(".list-group-item").find('input').prop('checked', false)
-        })
-
-        //删除
-        $(".choiseDelete").click(function () {
-            $(".list-group-item").find("input:checked").parents(".list-group-item").remove();
-            $(".order").text($(".list-group-item").length);
-            changeIndex();
-        });
-
     })
-    //更新序号函数
-    function changeIndex() {
-        var i = 1;
-        $(".list-group-item").each(function () { //循环checkboxCont
-            $(this).find(".order").text(i++); //更新序号
-        });
-    }
 
-    function toStudentList(lesson_id) {
+    function toStudentList(lesson_id, keyword) {
         var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}";
         var campID = "{$campInfo.id}";
         $.ajax({
             url: url,
             data: {
                 lesson_id: lesson_id,
+                keyword: keyword,
                 camp_id: campID,
                 status: 1
             },
             dataType: 'json', //服务器返回json格式数据
             type: 'post', //HTTP请求类型
             timeout: 10000, //超时时间设置为10秒；
-            headers: {
-                'Content-Type': 'application/json'
-            },
             success: function (data) {
                 console.log(data)
                 if (data.code == 200) {
@@ -1010,18 +948,20 @@
                                     <a href="">查看详情</a>
                                 </td>
                                 <td>
-                                    <input type="checkbox" value="${data.data[i].student}" class="checkbox-assistant" data-id="${data.data[i].id}">
+                                    <input name="checkbox-student" class="student" value="${data.data[i].student}" type="checkbox" 
+                                    data-id="${data.data[i].id}" data-student_id="${data.data[i].student_id}" data-student="${data.data[i].student}" 
+                                    data-camp="${data.data[i].camp}" data-camp_id="${data.data[i].camp_id}" data-lesson="${data.data[i].lesson}" data-lesson_id="${data.data[i].lesson_id}"
+                                     data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-student_typenum="${data.data[i].type_num}">
                                 </td>
                             </tr>`
                     }
 
                     $("#studentList tbody").empty();
                     if (newli == '') {
-                        newli =
-                            '<li class="nodata"><i class="icon iconfont icon-hothome-trainingpoi"></i><p>没有查找到数据哦</p></li>'
+                        newli = '<tr><td colspan="3" class="text-center">没有查找到数据!</td></tr>'
                     }
                     $("#studentList tbody").append(newli);
-                } else {}
+                }
             },
             error: function (xhr, type, errerThrown) {}
         });
