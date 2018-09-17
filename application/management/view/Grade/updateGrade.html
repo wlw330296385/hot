@@ -56,7 +56,6 @@
                     <input type="hidden" name="is_school" value="{$gradeInfo.is_school}">
                 </div>
             </div>
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
@@ -65,13 +64,13 @@
                     <div class="col-md-5 col-sm-5">
                         <div id="setStudentCBox" data-toggle="modal" data-target="#studentModal">
                             <span class="form-control students">{$gradeInfo.student_str}</span>
-                            <div id="hideStList">
+                            <!-- <div id="hideStList">
                                 {volist name="assignList" id="vol"}
                                 <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}"
                                     data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}"
                                     data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}"
                                     data-member="{$vol.member}" data-student_typenum="{$vol.type}"> {/volist}
-                            </div>
+                            </div> -->
                             <input type="hidden" name="students" class="students" value="{$gradeInfo.students}">
                             <input type="hidden" name="studentData" value="">
                         </div>
@@ -353,9 +352,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="3" class="text-center">请先选择课程!</td>
+                            {volist name="assignList" id="vol"}
+                            <tr role="row" class="odd">
+                                <td>{$vol.student}</td>
+                                <td>{$vol.rest_schedule}</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    {if !$vol['g_id']}
+                                    <span class="btn btn-xs btn-info choiseAdd" data-private="{$vol.member}"
+                                        data-private_id="{$vol.member_id}">添加</span>
+                                    {else /}
+                                    <span class="btn btn-xs btn-success" data-private="{$vol.member}" data-private_id="{$vol.member_id}">已添加</span>
+                                    {/if}
+                                </td>
                             </tr>
+                            {/volist}
                         </tbody>
                     </table>
                 </div>
@@ -733,52 +746,53 @@
             $("input[name=area]").val($(this).text());
         })
 
-        toStudentList()
+        // toStudentList()
 
-        //学员列表初始值
-        $(".stdList").each(function (i) {
-            var id = $(this).attr("data-id");
-            var student_id = $(this).attr("data-student_id");
-            var student = $(this).attr("data-student");
-            var student_typenum = $(this).attr("data-student_typenum");
-            var camp = $(this).attr("data-camp");
-            var camp_id = $(this).attr("data-camp_id");
-            var lesson = $(this).attr("data-lesson");
-            var lesson_id = $(this).attr("data-lesson_id");
-            var member = $(this).attr("data-member");
-            var member_id = $(this).attr("data-member_id");
-            var grade = "{$gradeInfo.grade}";
-            var grade_id = "{$gradeInfo.id}";
-            studentList[i] = {
-                grade: grade,
-                grade_id: grade_id,
-                student: student,
-                student_id: student_id,
-                camp: camp,
-                camp_id: camp_id,
-                lesson: lesson,
-                lesson_id: lesson_id,
-                member: member,
-                member_id: member_id,
-                type: student_typenum,
-                status: 1
-            };
-        });
+        // //学员列表初始值
+        // $(".stdList").each(function (i) {
+        //     var id = $(this).attr("data-id");
+        //     var student_id = $(this).attr("data-student_id");
+        //     var student = $(this).attr("data-student");
+        //     var student_typenum = $(this).attr("data-student_typenum");
+        //     var camp = $(this).attr("data-camp");
+        //     var camp_id = $(this).attr("data-camp_id");
+        //     var lesson = $(this).attr("data-lesson");
+        //     var lesson_id = $(this).attr("data-lesson_id");
+        //     var member = $(this).attr("data-member");
+        //     var member_id = $(this).attr("data-member_id");
+        //     var grade = "{$gradeInfo.grade}";
+        //     var grade_id = "{$gradeInfo.id}";
+        //     studentList[i] = {
+        //         grade: grade,
+        //         grade_id: grade_id,
+        //         student: student,
+        //         student_id: student_id,
+        //         camp: camp,
+        //         camp_id: camp_id,
+        //         lesson: lesson,
+        //         lesson_id: lesson_id,
+        //         member: member,
+        //         member_id: member_id,
+        //         type: student_typenum,
+        //         status: 1
+        //     };
+        // });
+        // console.log(studentList)
 
-        //学员列表复选框赋值
-        $("#setStudentCBox").on('click', '', function () {
-            //每次打开先清空所有选择
-            $("input[name='checkbox-student']").prop("checked", false);
-            //然后遍历出对应所选
-            $(".stdList").each(function (i) {
-                var id = $(this).attr("data-id");
-                var student_id = $(this).attr("data-student_id");
-                var student = $(this).attr("data-student");
-                $("#studentList").find("input[name='checkbox-student']").filter(function () {
-                    return $(this).attr("data-student_id") == student_id
-                }).prop("checked", true);
-            });
-        });
+        // //学员列表复选框赋值
+        // $("#setStudentCBox").on('click', '', function () {
+        //     //每次打开先清空所有选择
+        //     $("input[name='checkbox-student']").prop("checked", false);
+        //     //然后遍历出对应所选
+        //     $(".stdList").each(function (i) {
+        //         var id = $(this).attr("data-id");
+        //         var student_id = $(this).attr("data-student_id");
+        //         var student = $(this).attr("data-student");
+        //         $("#studentList").find("input[name='checkbox-student']").filter(function () {
+        //             return $(this).attr("data-student_id") == student_id
+        //         }).prop("checked", true);
+        //     });
+        // });
 
         //助教复选框赋值
         $("#setAsCoach").on('tap', '', function () {
@@ -817,7 +831,6 @@
         $("#studentConfirm").on('click', '', function () {
             var inputList = "";
             var studentNames = "";
-            studentList = [];
             $("#studentList input[name='checkbox-student']:checked").each(function (i) {
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).val();
@@ -858,7 +871,6 @@
 
             //班级成员
             $("input[name=students]").val(studentList.length)
-            $("#newdiv .mui-checkbox").removeClass("matchStudent");
             $('#student').modal('hide');
         });
         $("#clearStudent").on("click", function () {
