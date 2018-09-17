@@ -21,6 +21,8 @@ class Lesson extends Backend{
 
         if(request()->isPost()){
             $data = input('post.');
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $LessonService = new \app\service\LessonService;
             $result = $LessonService->createLesson($data);
             if ($result['code'] == 200) {

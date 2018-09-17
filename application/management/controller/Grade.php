@@ -21,6 +21,9 @@ class Grade extends Backend{
 
         if(request()->isPost()){
             $data = input('post.');
+            
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $GradeService = new \app\service\GradeService;
             $result = $GradeService->createGrade($data);
             if ($result['code'] == 200) {
