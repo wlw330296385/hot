@@ -28,13 +28,13 @@ class Grade extends Backend{
             $result = $GradeService->createGrade($data);
             if ($result['code'] == 200) {
                 $grade_id = $result['data'];
-                $studentData = json_decode($data['studentData'], true);
-                if ( !empty($studentData)) {
-                    $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
-                    if ($resSaveGradeMember['code'] == 100) {
-                        return json($resSaveGradeMember);
+                $studentData = json_decode($data['studentData'],true);
+                    $StudentService = new \app\service\StudentService;
+                    foreach ($studentData as $key => $value) {
+                       $studentData[$key]['grade'] = $data['grade'];
+                       $studentData[$key]['grade_id'] = $grade_id;
                     }
-                }
+                    $res = $StudentService->saveAllStudent($studentData);
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);
@@ -155,7 +155,6 @@ class Grade extends Backend{
                     ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
                     ->order('lesson_member.id desc')
                     ->select();
-            // dump($assignList);die;
             $planList = db('plan')->where(['camp_id'=>$camp_id])->where('delete_time',null)->select();
             $this->assign('gradeInfo',$gradeInfo);
             $this->assign('courtList',$courtList);
