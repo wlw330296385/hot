@@ -64,13 +64,6 @@
                     <div class="col-md-5 col-sm-5">
                         <div id="setStudentCBox" data-toggle="modal" data-target="#studentModal">
                             <span class="form-control students">{$gradeInfo.student_str}</span>
-                            <!-- <div id="hideStList">
-                                {volist name="assignList" id="vol"}
-                                <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}"
-                                    data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}"
-                                    data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}"
-                                    data-member="{$vol.member}" data-student_typenum="{$vol.type}"> {/volist}
-                            </div> -->
                             <input type="hidden" name="students" class="students" value="{$gradeInfo.students}">
                             <input type="hidden" name="studentData" value="">
                         </div>
@@ -347,6 +340,7 @@
                         <thead>
                             <tr role="row">
                                 <th>学员名称</th>
+                                <th>剩余课时</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
@@ -361,10 +355,19 @@
                                 </td>
                                 <td>
                                     {if $vol['g_id']<>$gradeInfo.id}
-                                    <span class="btn btn-xs btn-info choiseAdd" data-private="{$vol.member}"
-                                        data-private_id="{$vol.member_id}">添加</span>
+                                    <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox" 
+                                    data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" 
+                                    data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}"
+                                     data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}">
+                                    <!-- <span class="btn btn-xs btn-info choiseAdd" data-private="{$vol.member}"
+                                        data-private_id="{$vol.member_id}">添加</span> -->
                                     {else /}
-                                    <span class="btn btn-xs btn-success" data-private="{$vol.member}" data-private_id="{$vol.member_id}">已添加</span>
+                                    <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox" 
+                                    data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" 
+                                    data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}"
+                                     data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}" checked>
+                                    <!-- <input type="checkbox" value="{$vol.member}" class="checkbox-student" data-id="{$vol.member_id}" checked> -->
+                                    <!-- <span class="btn btn-xs btn-success" data-private="{$vol.member}" data-private_id="{$vol.member_id}">已添加</span> -->
                                     {/if}
                                 </td>
                             </tr>
@@ -712,7 +715,7 @@
     var lesson_id = ''
     var studentList = [];
     $(function () {
-
+     
         // boostrap时间选择器
         $('#datetimepicker').datetimepicker({
             format: 'hh:ii',
@@ -779,28 +782,6 @@
         // });
         // console.log(studentList)
 
-        // //学员列表复选框赋值
-        // $("#setStudentCBox").on('click', '', function () {
-        //     //每次打开先清空所有选择
-        //     $("input[name='checkbox-student']").prop("checked", false);
-        //     //然后遍历出对应所选
-        //     $(".stdList").each(function (i) {
-        //         var id = $(this).attr("data-id");
-        //         var student_id = $(this).attr("data-student_id");
-        //         var student = $(this).attr("data-student");
-        //         $("#studentList").find("input[name='checkbox-student']").filter(function () {
-        //             return $(this).attr("data-student_id") == student_id
-        //         }).prop("checked", true);
-        //     });
-        // });
-
-        //助教复选框赋值
-        $("#setAsCoach").on('tap', '', function () {
-            //每次打开先清空所有选择
-            $("input[name='checkbox-assistant']").prop("checked", false);
-            //然后遍历出对应所选
-            toAssistantCheckbox();
-        });
 
         //所属课程api
         $(".lessonType").on("change", function () {
@@ -988,7 +969,11 @@
             $("input[name=teacher]").val('');
             $('#teacherModal').modal('hide');
         });
-
+        // $('form').unserialize()f
+        // $("form").on("submit",function(){
+        //     console.log(0)
+        //     unserialize()
+        // })
     })
 
     function toStudentList(lesson_id, keyword) {
@@ -1011,20 +996,6 @@
                     var newli = '';
                     var tys = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        // tys = '';
-                        // if (data.data[i].type == "体验生") {
-                        //     tys = '<span class="tips">体验生</span>'
-                        // }
-                        // newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
-                        //         i].student + tys +
-                        //     '</label><input name="checkbox-student" class="student" value="' + data.data[i]
-                        //     .student + '" type="checkbox" data-id="' + data.data[i].id +
-                        //     '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[
-                        //         i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' +
-                        //     data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson +
-                        //     '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i]
-                        //     .member + '" data-member_id="' + data.data[i].member_id +
-                        //     '" data-student_typenum="' + data.data[i].type_num + '" ></div>'
                         newli +=
                             ` <tr role="row" class="odd">
                                 <td>${data.data[i].student}</td>
