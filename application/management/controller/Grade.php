@@ -99,16 +99,6 @@ class Grade extends Backend{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
-            if($data['address']){
-                $address = explode(' ', $data['address']);
-                $data['province'] = $address[0];
-                $data['city'] = $address[1];
-                if($address[2]){
-                    $data['area'] = $address[2];
-                }else{
-                    $data['area'] = $address[1];
-                }             
-            }
             $result = $GradeService->updateGrade($data,$grade_id);
             if ($result['code'] == 200) {
                 $studentData = json_decode($data['studentData'], true);
