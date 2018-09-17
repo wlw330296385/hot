@@ -429,7 +429,7 @@ class StatisticsCamp extends Camp{
     // 附加支出
     public function campOutput(){
         $camp_id = $this->camp_member['camp_id'];
-        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
         if(isPost()){
             $data = input('post.');
             $data['type'] = -2;
@@ -707,13 +707,7 @@ class StatisticsCamp extends Camp{
             $point_in_time = 2018-01-01;
         }
         if($this->campInfo['rebate_type'] == 1){
-            // 15号之后方可提现
-            // if($d<15){
-            //     $this->error('每月15号之后方可申请提现');
-            // }
-
             
-
             if($type ==1){
                 // 获取上个月的时间点
                 $time =  strtotime(date('Ym01',time()));
@@ -728,10 +722,7 @@ class StatisticsCamp extends Camp{
             }
             
         }else{
-            // 周五-日方可提现
-            // if($w<>0 && $w <> 5 $w <> 6){
-            //     $this->error('周五至周日可申请提现');
-            // }
+           
             // 获取上周日的时间点
             $e = date('Ymd', strtotime('-1 sunday', time()));
             $date_str = [$point_in_time,$e];
@@ -742,12 +733,69 @@ class StatisticsCamp extends Camp{
             $legend = ['课时收入','活动收入','支出'];
         }
         if(request()->isPost()){
+            if($this->campInfo['rebate_type'] == 1){
+                if($d<15){
+                    $this->error('每月15号之后方可申请提现');
+                }
+                // 如果是负数不允许提现
+                if($type ==1){
+                    // 获取上个月的时间点
+                    $time =  strtotime(date('Ym01',time()));
+                    $e = date('Ymd',strtotime('-1 day',$time));
+                    $date_str = [$point_in_time,$e];
+                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                    $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                    $income = db('income')->where($map1)->sum('income');
+                    $output = db('output')->where($map_1)->sum('output');
+                    $withdraw = $income - $output;
+                    if($withdraw<0){
+                        $this->error('收入为赤字不可提现');
+                    }
+                    //如果小于余额,只能提余额
+                    if($withdraw >$this->campInfo['balance']){
+                        $withdraw = $this->campInfo['balance'];
+                    }
+                }else{
+                    $this->error('其它收入未开放提现');
+                }
+            //营业额版训练营
+            }else{
+                // 周五-日方可提现
+                if($w<>0 && $w <> 5 $w <> 6){
+                    $this->error('周五至周日可申请提现');
+                }
+                $e = date('Ymd', strtotime('-1 sunday', time()));
+                $date_str = [$point_in_time,$e];
 
-            // 如果是负数不允许提现
+                $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
+                $income = db('income')->where($map)->sum('income');
+                $withdraw = $income;
+                if($withdraw<0){
+                    $this->error('收入为赤字不可提现');
+                }
+                //如果小于余额,只能提余额
+                if($withdraw >$this->campInfo['balance']){
+                    $withdraw = $this->campInfo['balance'];
+                }
 
+            }
+            
+            $data = [];
+            $data['withdraw'] = $withdraw;
+            $data['s_balance'] = $this->campInfo['balance'];
+            $data['e_balance'] = $this->campInfo['balance'] - $data['withdraw'];
+            $data['camp_type'] = $this->campInfo['type'];
+            $data['camp'] = $this->campInfo['camp'];
+            $data['rebate_type'] = $this->campInfo['rebate_type'];
+            $data['schedule_rebate'] = $this->campInfo['schedule_rebate'];
+            $data['buffer'] = $withdraw;
+            if($this->campInfo['rebate_type'] == 2){
+                $data['camp_withdraw_fee'] = $data['buffer']*$this->campInfo['schedule_rebate'];
+            }else{
+                $data['camp_withdraw_fee'] = 0;
+            }
 
-            //如果小于余额,只能提余额
-
+            
         }else{
 
             
