@@ -120,7 +120,9 @@
         <li><a href="#">联系手机 <span class="pull-right">{$campBankcard.telephone}</span></a>
         </li>
         {else /}
-        <li><a href="#">请先于手机端添加银行账号,方可提现</a>
+        <li>
+                <a ><button class="btn btn-danger" id="add_bankcard">点击添加银行账号,方可提现</button></a>
+            
         </li>
         {/if}
         <li><a href="">
@@ -148,7 +150,29 @@
     
 <script src="/static/plugins/echart/echarts.min.js"></script>
 <script src="/static/plugins/echart/hot.js"></script>
-
+<script type="text/javascript">
+    $(function(){
+        $('#add_bankcard').on('click',function(){
+            var iframeurl = "{:url('management/bankcard/createBankcard')}";
+            // alert(iframeurl);return;
+            var title = "添加银行卡";
+            layui.use('layer', function() {
+                var layer = layui.layer;
+                    
+                    layer.open({
+                    skin:'layui-layer-lan',
+                    type: 2,
+                    title: title,
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['400px', '650px'],
+                    content: iframeurl
+                });
+            });
+        })
+    })
+</script>
 
 <script type="text/javascript">
     var domSA = document.getElementById("studentAll");
