@@ -63,16 +63,17 @@
                         <label for="">学员名单</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <div data-toggle="modal" data-target="#studentModal">
+                        <div id="setStudentCBox" data-toggle="modal" data-target="#studentModal">
                             <span class="form-control students">{$gradeInfo.student_str}</span>
                             <div id="hideStList">
-                                {volist name="students" id="vol"}
+                                {volist name="assignList" id="vol"}
                                 <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}"
                                     data-student_id="{$vol.student_id}" data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}"
                                     data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}" data-member_id="{$vol.member_id}"
                                     data-member="{$vol.member}" data-student_typenum="{$vol.type}"> {/volist}
                             </div>
-                            <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
+                            <input type="hidden" name="students" class="students" value="{$gradeInfo.students}">
+                            <input type="hidden" name="studentData" value="">
                         </div>
                     </div>
                 </div>
@@ -696,6 +697,7 @@
 <link rel="stylesheet" href="/static/backend/adminlte/css/city-picker.css">
 <script type="text/javascript">
     var lesson_id = ''
+    var studentList = [];
     $(function () {
 
         // boostrap时间选择器
@@ -764,7 +766,7 @@
         });
 
         //学员列表复选框赋值
-        $("#setStudentCBox").on('tap', '', function () {
+        $("#setStudentCBox").on('click', '', function () {
             //每次打开先清空所有选择
             $("input[name='checkbox-student']").prop("checked", false);
             //然后遍历出对应所选
@@ -772,7 +774,7 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
-                $("#newdiv").find("input[name='checkbox-student']").filter(function (index) {
+                $("#studentList").find("input[name='checkbox-student']").filter(function () {
                     return $(this).attr("data-student_id") == student_id
                 }).prop("checked", true);
             });
