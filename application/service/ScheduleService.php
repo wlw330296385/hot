@@ -381,7 +381,7 @@ class ScheduleService
      * @return array
      * 2018年4月11日改动:不需要判断mid;
      */
-    function decStudentRestschedule($students, $schedule)
+    public function decStudentRestschedule($students, $schedule)
     {
         $gradeMemberDb = db('grade_member');
         $modelLessonMember = new LessonMember();
@@ -410,7 +410,7 @@ class ScheduleService
                     // 学员从班级毕业（grade_member数据 status=4）
                     $grademember = $gradeMemberDb->where(['camp_id' => $schedule['camp_id'], 'lesson_id' => $lessonmember['lesson_id'], 'student_id' => $lessonmember['student_id']])->whereNull('delete_time')->find();
                     if ($grademember) {
-                        $gradeMemberDb->where('id', $grademember['id'])->update(['status' => 4, 'update_time' => time(), 'system_remarks' => date('Ymd') . '学员完成课时毕业']);
+                        $gradeMemberDb->where('id', $grademember['id'])->delete();
                         // 更新学员所在班级学员名单，剔除学员（查询班级其他在班学员名单，更新班级数据）
                         $reserveStudentList = $gradeMemberDb->where(['grade_id' => $grademember['grade_id'], 'status' => 1])->column('student');
                         $reserveStudentStr = '';
