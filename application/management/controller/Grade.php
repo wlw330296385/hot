@@ -39,13 +39,14 @@ class Grade extends Backend{
             if ($result['code'] == 200) {
                 $grade_id = $result['data'];
                 if(!empty($data['studentData']) && $data['studentData'] != '[]'){
-                $studentData = json_decode($data['studentData'],true);
-                $StudentService = new \app\service\StudentService;
-                foreach ($studentData as $key => $value) {
-                   $studentData[$key]['grade'] = $data['grade'];
-                   $studentData[$key]['grade_id'] = $grade_id;
+                    $studentData = json_decode($data['studentData'],true);
+                    $StudentService = new \app\service\StudentService;
+                    foreach ($studentData as $key => $value) {
+                       $studentData[$key]['grade'] = $data['grade'];
+                       $studentData[$key]['grade_id'] = $grade_id;
+                    }
+                    $res = $StudentService->saveAllStudent($studentData);
                 }
-                $res = $StudentService->saveAllStudent($studentData);
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);
