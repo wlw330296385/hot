@@ -1361,6 +1361,11 @@ class LeagueService
             unset($map["match_id"]);
         }
 
+        if (!empty($map["status"])) {
+            $map["match_schedule.status"] = $map["status"];
+            unset($map["status"]);
+        }
+
         $model = new MatchSchedule();
         $result = $model
         ->field('match_schedule.*, IFNULL(match_record.home_score, 0) AS home_score, IFNULL(match_record.away_score, 0) AS away_score, IFNULL(match_record.id, 0) as match_record_id')

@@ -18,20 +18,31 @@
     <style type="text/css">
 
 
-        html,body { margin:0px 0px 90px; padding:0px; width:1000px; background:#CCC; }
+        html,body { margin:0px 0px 90px; padding:0px; width:1000px; }
         p{ color:#FFF; }
+
         #popupShare { width:1000px; visibility:hidden; position: absolute; top:0; left: 0; z-index: 888; }
-        #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; background:#000; }
+        #pageShare { width:1000px; font-family: "Microsoft Yahei", Arial, sans-serif; position:relative; }
         #canvasPic { display:none; }
-        #fixTop{ width:1000px; height:90px; text-align:center; line-height:85px; position:fixed; left:0; bottom:0; z-index:997; font-size:42px; }
-        #fixTop a { background-color:#F60; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
-        #fixTop span { background-color:#690; display:none; display:block; width:100%; height:90px; color:#fff; text-decoration:none; }
+        #fixTop{ width:1000px; height:100px; background-color:#F60; text-align:center; position:fixed; left:0; bottom:0; z-index:997; font-size:42px; }
+        #fixTop span,#fixTop a { display:block; width:25%; height:100px; line-height:85px; color:#fff; text-decoration:none; float: left; }
+        #fixTop a { width:50%; }
+        #fixTop .mui-icon { font-size: 56px; }
+
+        #fixTopAfter { display: none; background-color:#690; color:#fff; text-decoration:none; font-size: 42px; width:1000px; height:100px; line-height:95px; text-align:center; position:fixed; left:0; bottom:0; z-index:997; }
+        #fixTopAfter .fr { display:block; float: left; width: 80%; }
+        #fixTopAfter .fl { display:block; width: 10%; float: left; margin-top: 20px; color:#fff; font-size: 56px;  }
+
+        #photoWall { position: relative; z-index: 10; }
         #photoWall>div { float: left; width: 25%; margin: -2px 0px; padding: 1px; }
         #photoWall img { width: 100%; margin: 0px; }
+        #wallTop { position: absolute; left: 0px; top:0px; z-index: -1 }
+        #wallbottom { position: absolute; left: 0px; bottom:0px; z-index: 1 }
 
-        .mui-content { background-color: #FFFFFF; }
+        .mui-content { background:#FFF; padding-top: 30px; }
+        #calendar { background: none !important; padding:30px 0px 0px; border: none !important; }
         .calendar{ border-radius: 0px; }
-        .calendar-title { height: 120px; padding: 38px 25px; background: #F60; }
+        .calendar-title { height: 120px; padding: 38px 25px; background:none; display: none; }
         .calendar-title .iconfont{ font-size: 80px; }
         .calendar-title .title{ font-size: 44px; }
         .calendar-title .hotTitle{ font-size: 44px; display: inline-block; color: #fff; vertical-align: top; text-indent: 20px; }
@@ -42,10 +53,19 @@
         .calendar-date .item-curDay, .calendar-date .item-curDay:hover{ background-color: #FFFFFF; color: #ddd; }
         .calendar-date .item-curMonth.item-curDay, .calendar-date .item-curMonth.item-curDay:hover{ background-color: #FFFFFF; color: #333; }
 
-        .page-header{ width:100%; height: 128px; background-color: #FFFFFF !important; padding: 20px 40px 20px 30px; line-height: 80px }
-        .page-header span { font-size: 36px; }
+        .page-header{ width:95%; margin:0px auto; padding: 60px 20px 20px; background: none !important; line-height: 60px; color:#FFF; text-align: right; }
+        .page-header span { font-size: 42px; text-shadow: 1px 1px 1px #222; }
+        .page-header .fl text { font-size: 48px; }
         .page-header .pCount { margin: 0px 10px; }
-        .page-header img { margin-right: 15px; height: 80px; width:80px; border-radius: 50%; vertical-align: middle; }
+        .page-header img { margin-right: 15px; height: 100px; width:100px; border-radius: 50%; vertical-align: middle; }
+
+        .shareInfo { width: 100%; padding: 50px 30px 50px; position: relative; z-index: 20; }
+        .shareInfo .fr { margin-top: 90px; }
+        .shareInfo .iconfont { font-size: 160px; opacity: 0.3; color:#FFF; }
+        .sInfo { line-height: 52px; margin-top: 20px; font-size: 32px; color:#FFF; }
+        .qrcode { float: left; color:#333; text-align: center; }
+        .qrcode span { display:block; width:244px; height:40px; font-size:18px; }
+        .qrcode img { width:200px; margin-right: 20px; }
 
         .s2000 { width: 2000px !important;  }
         .s2000 .calendar-title { height: 200px; padding: 80px 50px; }
@@ -57,16 +77,19 @@
         .s2000 .calendar-week{ width: 100%; font-size: 72px; }
         .s2000 .calendar-date .item{ font-size: 72px; }
 
-        .s2000 .page-header{ width:100%; height: 265px; padding: 60px 50px; line-height: 100px }
-        .s2000 .page-header span { font-size: 72px; }
+        .s2000 .page-header{ width:95%; padding: 150px 60px 60px; line-height: 100px }
+        .s2000 .page-header span { font-size: 72px; text-shadow: 8px 8px 8px #222; }
+        .s2000 .page-header .fl text { font-size: 82px; }
         .s2000 .page-header .pCount { margin: 0px 20px; }
         .s2000 .page-header img { margin-right: 35px; height: 160px; width:160px; border-radius: 50%; vertical-align: middle; }
 
+        .s2000 .shareInfo { width: 100%; padding: 150px 80px 150px;}
+        .s2000 .shareInfo .fr { margin-top: 200px; }
+        .s2000 .shareInfo .iconfont { font-size: 320px; opacity: 0.3; }
+        .s2000 .sInfo { line-height: 110px; margin-top: 40px; font-size: 78px;}
+        .s2000 .qrcode { float: left; color:#333; text-align: center; }
+        .s2000 .qrcode img { width:400px; margin-right: 40px; }
 
-        #qrcode { position:absolute; left:110px; top:1230px; z-index:888; color:#FFF;  }
-        #qrcode span { display:block; width:244px; height:40px; font-size:18px; }
-        #qrcode img { width:240px; margin-bottom: 20px; }
-        #qrcode p {font-size:24px; line-height:36px; }
 
         .mui-backdrop{ display: none; background-color: #000; opacity: 0.9; }
 
@@ -211,33 +234,46 @@
   <div class="mui-backdrop"></div>
 
 <div id="pageShare">
-    <div id="calendar" class="calendar"></div>
+    <div id="wallTop"><img src="/static/frontend/images/photowalltop.jpg" width="100%" /></div>
+    <div class="page-header">
+            <span class="fl">
+                <img src="{$userInfo.avatar}" style="border-radius: 50%; ">
+                <text>{$userInfo.member}</text>
+            </span>
+            <span class="fr">
+                <span class="wd49">
+                    <text class="punchYM">{$currYear}-{$currMonth}</text> 运动 <strong class="colororange pCount"></strong> 次<br />
+                    累计打卡 <strong class="colororange">{$totalPunch}</strong> 次
+                </span>
+            </span>
+    </div>
+    <div id="calendar" class="calendar">
+    </div>
     <div class="mui-content">
 
         <div id="photoWall"></div>
-        <div class="page-header">
-                <span class="fl">
-                    <img src="{$userInfo.avatar}" style="border-radius: 50%; ">
-                    <text>{$userInfo.member}</text>
-                </span>
-                <span class="fr">
-                    <span class="wd49"><text class="punchYM">{$currYear}-{$currMonth}</text>月运动 <strong class="colororange pCount"></strong> 次
-                    </span>
-                </span>
-        </div>
+        <div style="clear: both;"></div>
         <div class="shareInfo">
-            <div>17运动，一起运动！<br />记录你的运动轨迹！</div>
+            <div class="fr"><span class="icon iconfont icon-logo-Big"></span></div>
             <div class="qrcode">
                 <img src="{$qrcodeimg}" />
             </div>
+            <div class="sInfo">17运动，一起运动<br />记录您运动的每一天！<br />篮球管家</div>
+            <div style="clear: both;"></div>
         </div>
+        <div id="wallbottom"><img src="/static/frontend/images/photowallbottom.jpg" width="100%" /></div>
     </div>
 </div>
 
 <div id="fixTop">
-    <a id="btnSave">[ 点击生成图片并分享 ]</a>
-    
-    <span>请长按图片保存或转发朋友</span>
+    <span class="month-prev"><i class="mui-icon mui-icon-back"></i> 上月</span>
+    <a id="btnSave">合成图片并分享</a>
+    <span class="month-next">下月 <i class="mui-icon mui-icon-forward"></i></span>
+</div>
+
+<div id="fixTopAfter">
+    <span class="mui-icon mui-icon-close fl"></span>
+    <span class="fr">请长按图片保存或转发朋友</span>
 </div>
 
 
@@ -292,8 +328,6 @@
             setTimeout(function () {
                 toMonthPunchList();
             }, 1000)
-
-
         });
         $(document).on("tap", ".arrow-next", function () {
             $(".pCount").text("0");
@@ -301,6 +335,28 @@
                 toMonthPunchList();
             }, 1000)
         });
+
+
+        $(document).on("tap", ".month-prev", function () {
+            $(".arrow-prev").trigger("click");
+            $(".pCount").text("0");
+            setTimeout(function () {
+                toMonthPunchList();
+            }, 1000)
+        });
+        $(document).on("tap", ".month-next", function () {
+            $(".arrow-next").trigger("click");
+            $(".pCount").text("0");
+            setTimeout(function () {
+                toMonthPunchList();
+            }, 1000)
+        });
+
+        $(document).on("tap", ".mui-icon-close", function () {
+            window.location.reload();
+
+        });
+
     })
 
     function checkKogin() {
@@ -434,11 +490,11 @@
                     var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute('src');
                     var element = document.getElementById('sharePic');
                     element.src = img_data2;
-                   $("#pageShare").hide();
-                    $("#fixTop a").hide();
+                    $("#pageShare").hide();
+                    $("#fixTop").hide();
                     $("#popupShare img").css("width","1000px")
                     $("#popupShare").css("visibility","visible");
-                    $("#fixTop span").show();
+                    $("#fixTopAfter").show();
                     $(".mui-backdrop").hide();
                     $(".pacman").hide();
                 }

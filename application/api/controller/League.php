@@ -3534,6 +3534,7 @@ class League extends Base
             $matchS = new MatchService();
 
             // $count = $leagueS->countScheduleAndRecord($map);
+            $map["status"] = ['>',0];
             $result = $leagueS->getScheduleAndRecordList($map);
             if (!$result) {
                 return json(['code' => 200, 'msg' => __lang('MSG_000')]);
@@ -3564,8 +3565,6 @@ class League extends Base
                 } else if ($sort == 2 && $value["status"] != 1) { 
                     continue;
                 } else if ($sort == 3 && $value["status"] != 2) { 
-                    continue;
-                } else if ($value["status"] < 1) {
                     continue;
                 }
 
