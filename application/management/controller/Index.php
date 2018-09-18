@@ -178,22 +178,32 @@ class Index extends Backend
 			$monthlyStudentsData[$key] = $value;
 		}
 
-
+		//每月学生场地
+		$monthlyCourtStudent = [];
 		$monthData = [0,0,0,0,0,0,0,0,0,0,0,0];
 		$monthly_court_students = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->select();
 		$monthlyCourtStudentsData = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->group('court_id')->select();
-		dump($monthly_court_students);
-		foreach ($monthly_court_students as $key => $value) {
-			$monthly_court_students[$key]['data'] = $monthData;
+		// 初始化
+		$list = [];
+		foreach ($monthlyCourtStudentsData as $key => $value) {
+			$list[$key]['type'] = 'line';
+			$list[$key]['name'] = $value['court'];
+			$list[$key]['data'] = $monthData;
 			$m = substr($value['date_str'],-2,2);
-			foreach ($monthlyCourtStudentsData as $k => $val) {
-				if($m == $k){
-					$monthlyCourtStudentsData[$k] = $value['students'];
+			$monthlyCourtStudent['legend'][] = $value['court'];
+		}
+
+		foreach ($list as $key => $value) {
+			
+			foreach ($monthly_court_students as $k => $val) {
+				$m = (int)substr($val['date_str'],-2,2);
+				if($val['court']==$value['name']){
+					$list[$key]['data'][$m] = $val['students'];
 				}
 			}
 		}
-		
-		$this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData,true));
+		$monthlyCourtStudent['data'] = $list;
+		$this->assign('monthlyCourtStudent',json_encode($monthlyCourtStudent,true));
 		$this->assign('monthlyStudentsData',json_encode($monthlyStudentsData,true));
 		$this->assign('lessonBuyData',json_encode($lessonBuyData,true));
 		$this->assign('gradeCourtData',json_encode($gradeCourtData,true));

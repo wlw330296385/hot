@@ -11,6 +11,7 @@ class Backend extends Base {
     public $cur_camp;
     public $site;
     public $admin;
+    public $campInfo;
     public function _initialize() {
         parent::_initialize();
         // 获取平台数据
@@ -41,7 +42,28 @@ class Backend extends Base {
         // 获取侧边栏菜单
         $sidebar_menu = MenuModel::getSidebarMenu();
 
+        // 暂存campInfo
+        $camp_id = input('param.camp_id');
 
+        if($camp_id){
+            $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
+
+            cookie('camp_id',$this->campInfo['id']);
+            session('campInfo',$this->campInfo);
+            
+        }else{
+            $this->campInfo = session('campInfo');
+            if(!$this->campInfo){
+                $camp_id = cookie('camp_id');
+                if(!$camp_id){
+                    $camp_id = 9;
+                }
+                $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
+                cookie('camp_id',$this->campInfo['id']);
+                session('campInfo',$this->campInfo);
+
+            }
+        }
         $this->assign('_sidebar_menus', $sidebar_menu);
         
     }

@@ -3,24 +3,9 @@ namespace app\admin\controller;
 use app\admin\controller\base\Backend;
 // 按课时结算的训练营财务页面
 class StatisticsCamp extends Backend{
-    private $campInfo;
 	public function _initialize(){
 		parent::_initialize();
-        $camp_id = input('param.camp_id');
-        if($camp_id){
-            $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-
-            cookie('camp_id',$this->campInfo['id']);
-            cookie('campInfo',$this->campInfo);
-            
-        }else{
-            $this->campInfo = cookie('campInfo');
-            if(!$this->campInfo){
-                $this->campInfo = db('camp')->where(['id'=>9])->find();
-                cookie('camp_id',$this->campInfo['id']);
-                cookie('campInfo',$this->campInfo);
-            }
-        }
+        
 	}
 
     // 课时列表
@@ -884,7 +869,7 @@ class StatisticsCamp extends Backend{
 
     // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
     public function campIndex(){
-   
+
         //查询条件：camp_id，member_id，monthstart，monthend
         $campInfo = $this->campInfo;
         $Time = new \think\helper\Time;
