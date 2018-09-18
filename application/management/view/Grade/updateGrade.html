@@ -64,6 +64,7 @@
                     <div class="col-md-5 col-sm-5">
                         <div id="setStudentCBox" data-toggle="modal" data-target="#studentModal">
                             <span class="form-control students">{$gradeInfo.student_str}</span>
+                            <input type="hidden" name="student_str" value="{$gradeInfo.student_str}">
                             <input type="hidden" name="students" class="students" value="{$gradeInfo.students}">
                             <input type="hidden" name="studentData" value="">
                         </div>
@@ -96,11 +97,10 @@
                         <label for="">训练时间</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" value="" placeholder="请输入课程名称" name="lesson_time" id="datetimepicker">
+                        <input type="text" class="form-control" value="" placeholder="请选择训练时间" name="lesson_time" id="datetimepicker">
                     </div>
                 </div>
             </div>
-
 
             <div class="form-group">
                 <div class="row">
@@ -248,10 +248,9 @@
                         <label for="">教案</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <div data-toggle="modal" data-target="#teacherModal">
-                            <input type="text" class="form-control" placeholder="请选择班主任" name="teacher">
-                            <input type="hidden" name="teacher_id" class="teacher_id" value="">
-                            //planList
+                        <div data-toggle="modal" data-target="#planModal">
+                            <input type="text" class="form-control" placeholder="请选择教案" name="plan" value="{$gradeInfo.plan}">
+                            <input type="hidden" name="plan_id" value="{$gradeInfo.plan_id}">
                         </div>
                     </div>
                 </div>
@@ -261,7 +260,7 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
-                        <label for="">生效状态 {$gradeInfo.status}</label>
+                        <label for="">生效状态</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
                         <select class="form-control" name="status">
@@ -355,20 +354,19 @@
                                 </td>
                                 <td>
                                     {if $vol['g_id']<>$gradeInfo.id}
-                                    <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox" 
-                                    data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" 
-                                    data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}"
-                                     data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}">
-                                    <!-- <span class="btn btn-xs btn-info choiseAdd" data-private="{$vol.member}"
-                                        data-private_id="{$vol.member_id}">添加</span> -->
-                                    {else /}
-                                    <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox" 
-                                    data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}" 
-                                    data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}" data-lesson_id="{$vol.lesson_id}"
-                                     data-member="{$vol.member}" data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}" checked="checked">
-                                    <!-- <input type="checkbox" value="{$vol.member}" class="checkbox-student" data-id="{$vol.member_id}" checked> -->
-                                    <!-- <span class="btn btn-xs btn-success" data-private="{$vol.member}" data-private_id="{$vol.member_id}">已添加</span> -->
-                                    {/if}
+                                        <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox"
+                                            data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}"
+                                            data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}"
+                                            data-lesson_id="{$vol.lesson_id}" data-member="{$vol.member}"
+                                            data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}">
+                                        {else /}
+                                        <input name="checkbox-student" class="student" value="{$vol.student}" type="checkbox"
+                                            data-id="{$vol.id}" data-student_id="{$vol.student_id}" data-student="{$vol.student}"
+                                            data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson="{$vol.lesson}"
+                                            data-lesson_id="{$vol.lesson_id}" data-member="{$vol.member}"
+                                            data-member_id="{$vol.member_id}" data-student_typenum="{$vol.type}"
+                                            checked="checked">
+                                        {/if}
                                 </td>
                             </tr>
                             {/volist}
@@ -695,10 +693,53 @@
         </div>
     </div>
 </div>
+<!-- 教案 -->
+<div class="modal fade" id="planModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">请选择训练场地</h4>
+            </div>
+            <div class="modal-body">
+                <div class="tableScroll">
+                    <table id="planList" class="table table-bordered table-striped dataTable">
+                        <thead>
+                            <tr role="row">
+                                <th>教案名称</th>
+                                <th>详情</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 教案列表 -->
+                            {volist name="planList" id="vol"}
+                            <tr role="row" class="odd">
+                                <td>{$vol.outline}</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <span class="btn btn-xs btn-info" data-plan="{$vol.outline}" data-plan_id="{$vol.id}">确定</span>
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" id="clearPlan">清除所选场地</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {/block} {block name='js'}
-
 <script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
 <script>
     var serverUrl = "{:url('Upload/uploadImg',['dir'=>'article'])}";
@@ -715,7 +756,7 @@
     var lesson_id = ''
     var studentList = [];
     $(function () {
-     
+
         // boostrap时间选择器
         $('#datetimepicker').datetimepicker({
             format: 'hh:ii',
@@ -725,8 +766,14 @@
 
         $("input[name=lesson_time]").val("{$gradeInfo.lesson_time}");
 
+        var status = "{$gradeInfo.status}";
+        if (status == "当前班级") {
+            status = 1
+        } else {
+            status = -1
+        }
         $('select[name="week"]').find('option[value="{$gradeInfo.week}"]').prop("selected", true);
-        $('select[name="status"]').find('option[value="{$gradeInfo.status}"]').prop("selected", true);
+        $('select[name="status"]').find('option[value="' + status + '"]').prop("selected", true);
 
         //省市区
         if ("{$gradeInfo.province}" != '') {
@@ -751,36 +798,37 @@
 
         // toStudentList()
 
-        // //学员列表初始值
-        // $(".stdList").each(function (i) {
-        //     var id = $(this).attr("data-id");
-        //     var student_id = $(this).attr("data-student_id");
-        //     var student = $(this).attr("data-student");
-        //     var student_typenum = $(this).attr("data-student_typenum");
-        //     var camp = $(this).attr("data-camp");
-        //     var camp_id = $(this).attr("data-camp_id");
-        //     var lesson = $(this).attr("data-lesson");
-        //     var lesson_id = $(this).attr("data-lesson_id");
-        //     var member = $(this).attr("data-member");
-        //     var member_id = $(this).attr("data-member_id");
-        //     var grade = "{$gradeInfo.grade}";
-        //     var grade_id = "{$gradeInfo.id}";
-        //     studentList[i] = {
-        //         grade: grade,
-        //         grade_id: grade_id,
-        //         student: student,
-        //         student_id: student_id,
-        //         camp: camp,
-        //         camp_id: camp_id,
-        //         lesson: lesson,
-        //         lesson_id: lesson_id,
-        //         member: member,
-        //         member_id: member_id,
-        //         type: student_typenum,
-        //         status: 1
-        //     };
-        // });
-        // console.log(studentList)
+        //学员列表初始值
+        $("#studentList").find("input[name=checkbox-student]:checked").each(function (i) {
+            var id = $(this).attr("data-id");
+            var student_id = $(this).attr("data-student_id");
+            var student = $(this).attr("data-student");
+            var student_typenum = $(this).attr("data-student_typenum");
+            var camp = $(this).attr("data-camp");
+            var camp_id = $(this).attr("data-camp_id");
+            var lesson = $(this).attr("data-lesson");
+            var lesson_id = $(this).attr("data-lesson_id");
+            var member = $(this).attr("data-member");
+            var member_id = $(this).attr("data-member_id");
+            var grade = "{$gradeInfo.grade}";
+            var grade_id = "{$gradeInfo.id}";
+            studentList[i] = {
+                grade: grade,
+                grade_id: grade_id,
+                student: student,
+                student_id: student_id,
+                camp: camp,
+                camp_id: camp_id,
+                lesson: lesson,
+                lesson_id: lesson_id,
+                member: member,
+                member_id: member_id,
+                type: student_typenum,
+                status: 1
+            };
+        });
+        console.log(studentList)
+        $("input[name=studentData]").val(JSON.stringify(studentList));
 
 
         //所属课程api
@@ -794,7 +842,6 @@
             var is_school = $(this).children("option:checked").attr('data-is_school');
             var lesson = $(this).children("option:checked").text();
             lesson_id = $(this).children("option:checked").attr("data-id");
-            console.log(is_school)
             $("input[name='gradecate_setion']").val(gradecate_setion);
             $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
             $("input[name='gradecate']").val(gradecate);
@@ -846,9 +893,10 @@
             $(".students").text(studentNames.substring(0, studentNames.length - 1))
             $("input[name=student_str]").val(studentNames.substring(0, studentNames.length - 1))
             $("input[name=studentData]").val(JSON.stringify(studentList));
-            console.log(inputList)
-            console.log(studentList)
-            console.log(studentNames)
+            // console.log(inputList)
+            // console.log(studentList)
+            // console.log(studentNames)
+            // console.log($("input[name=studentData]").val())
 
             //班级成员
             $("input[name=students]").val(studentList.length)
@@ -968,6 +1016,21 @@
             $("input[name=teacher_id]").val('');
             $("input[name=teacher]").val('');
             $('#teacherModal').modal('hide');
+        });
+
+
+        //教案
+        $("#planList tbody").on("click", ".btn", function () {
+            var plan_id = $(this).attr("data-plan_id");
+            var plan = $(this).attr("data-plan");
+            $("input[name=plan_id]").val(plan_id);
+            $("input[name=plan]").val(plan);
+            $('#planModal').modal('hide');
+        });
+        $("#clearPlan").on("click", function () {
+            $("input[name=plan_id]").val('');
+            $("input[name=plan]").val('');
+            $('#planModal').modal('hide');
         });
         // $('form').unserialize()f
         // $("form").on("submit",function(){
