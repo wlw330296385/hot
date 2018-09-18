@@ -277,12 +277,15 @@
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bgred hide signUpBtn">
                     <a href="{:url('match/signUpLeague', ['league_id' => $leagueInfo.id])}">报名</a>
                 </li>
+                <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggray hide ongoingBtn">进行中</li>
                 <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli bggray hide endBtn">已结束</li>
+
                 {else/}
                 <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggray hide waitBtn">等待报名</li>
                 <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bgred hide signUpBtn">
                     <a href="{:url('match/signUpLeague', ['league_id' => $leagueInfo.id])}">报名</a>
                 </li>
+                <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggray hide ongoingBtn">进行中</li>
                 <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggray hide endBtn">已结束</li>
                 {/if}
               
@@ -388,9 +391,11 @@
             var cansignup = "{$cansignup}"
             if (cansignup == -1) {
                 $(".waitBtn").show();
-            } else if (cansignup == 1) {
-                $(".signUpBtn").show();
             } else if (cansignup == 0) {
+                $(".signUpBtn").show();
+            } else if (cansignup == 1) {
+                $(".ongoingBtn").show();
+            }else if (cansignup == 2) {
                 $(".endBtn").show();
             }
 
