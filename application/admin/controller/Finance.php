@@ -43,7 +43,7 @@ class Finance extends Backend {
         }
         $days = input('days');
         if ($days) {
-            if (!checkDatetimeIsValid($days)) {
+            if (!checkDatetimeIsValid($days, 'Y-m-d')) {
                 $this->error('查看日期格式不合法');
             }
 
