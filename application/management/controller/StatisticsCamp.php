@@ -721,17 +721,26 @@ class StatisticsCamp extends Camp{
                 $legend = ['课时收入','赠课支出'];
                 $title = '课时收入支出图';
             }
-            
+            $this->assign('income',$income?$income:0);
+            $this->assign('output',$output?$output:0);
         }else{
            
             // 获取上周日的时间点
             $e = date('Ymd', strtotime('-1 sunday', time()));
             $date_str = [$point_in_time,$e];
 
-            $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
-            $income = db('income')->where($map)->sum('income');
+            $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+            $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
+            $income1 = db('income')->where($map1)->sum('income');
+            $income2 = db('income')->where($map2)->sum('income');
             $output = 0;
+            $income = $income1+$income2;
             $legend = ['课时收入','活动收入','支出'];
+            $title = '收入支出图';
+            $this->assign('income1',$income1?$income1:0);
+            $this->assign('income2',$income2?$income2:0);
+            $this->assign('income',$income?$income:0);
+            $this->assign('output',$output?$output:0);
         }
 
         $campBankcard = db('camp_bankcard')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->find();
@@ -763,6 +772,7 @@ class StatisticsCamp extends Camp{
                     $this->error('其它收入未开放提现');
                 }
             //营业额版训练营
+
             }else{
                 // 周五-日方可提现
                 if($w<>0 && $w <> 5 && $w <> 6){
@@ -839,8 +849,7 @@ class StatisticsCamp extends Camp{
             }
         }else{
 
-            $this->assign('income',$income?$income:0);
-            $this->assign('output',$output?$output:0);
+            
             $this->assign('legend',json_encode($legend));
             $this->assign('title',$title);
             $this->assign('type',$type);

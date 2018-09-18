@@ -29,12 +29,12 @@ class Grade extends Backend{
             if ($result['code'] == 200) {
                 $grade_id = $result['data'];
                 $studentData = json_decode($data['studentData'],true);
-                    $StudentService = new \app\service\StudentService;
-                    foreach ($studentData as $key => $value) {
-                       $studentData[$key]['grade'] = $data['grade'];
-                       $studentData[$key]['grade_id'] = $grade_id;
-                    }
-                    $res = $StudentService->saveAllStudent($studentData);
+                $StudentService = new \app\service\StudentService;
+                foreach ($studentData as $key => $value) {
+                   $studentData[$key]['grade'] = $data['grade'];
+                   $studentData[$key]['grade_id'] = $grade_id;
+                }
+                $res = $StudentService->saveAllStudent($studentData);
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);
@@ -119,12 +119,15 @@ class Grade extends Backend{
                             'salary_base' => $data['salary_base']
                         ]);
                 }
+
                 db('grade_member')->where(['grade_id'=>$grade_id])->delete();
                 if ( !empty($studentData)) {
-                    $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
-                    if ($resSaveGradeMember['code'] == 100) {
-                        return json($resSaveGradeMember);
+                    $StudentService = new \app\service\StudentService;
+                    foreach ($studentData as $key => $value) {
+                       $studentData[$key]['grade'] = $data['grade'];
+                       $studentData[$key]['grade_id'] = $grade_id;
                     }
+                    $res = $StudentService->saveAllStudent($studentData);
                 }
                 $this->success($result['msg']);
             }else{

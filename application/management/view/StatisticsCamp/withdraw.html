@@ -78,7 +78,7 @@
         <li><a href="#">上个月底至上次提现之前的赠课支出
           <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i>  &nbsp;  -{$output}</span></a></li>
         {else /}
-        <li><a href="#">上个星期日至上次提现之前的课时收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i> &nbsp; {$income}</span></a>
+        <li><a href="#">上个星期日至上次提现之前的订单收入 <span class="pull-right text-green"> <i class="fa fa-angle-right"></i> &nbsp; {$income}</span></a>
         </li>
         <li><a href="#">上个星期日至上次提现之前的赠课支出
           <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i>  &nbsp;  -{$output}</span></a></li>
@@ -94,7 +94,7 @@
                 <a href="#">提现手续费
                     <span class="pull-right text-red">
                         {if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}
-                            {($income-$output) * $campInfo.schedule_rebate}
+                            {$income* $campInfo.schedule_rebate}
                         {elseif (($income-$output)<$campInfo['balance'] && ($income-$output))<0}
                              0 
                         {else /}
@@ -127,7 +127,7 @@
         {/if}
         <li><a href="">
             <strong href="#">可提现
-          <span class="pull-right text-red">{if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}$income-$output{elseif ($income-$output)<$campInfo['balance'] && ($income-$output)<0} 不可提现 {else /}{$campInfo.balance}{/if}</span></strong></a></li>
+          <span class="pull-right text-red">{if ($income-$output)<$campInfo['balance'] && ($income-$output)>0}{$income-$output}{elseif ($income-$output)<$campInfo['balance'] && ($income-$output)<0} 不可提现 {else /}{$campInfo.balance}{/if}</span></strong></a></li>
       </ul>
     </div>
     <!-- /.footer -->
@@ -242,8 +242,14 @@
                     }
                 },
                 data:[
+                {if $campInfo.rebate_type==1}
                     {value:{$income}, name:legend[0]},
                     {value:{$output}, name:legend[1]},
+                {else /}
+                    {value:{$income1}, name:legend[0]},
+                    {value:{$income2}, name:legend[1]},
+                    {value:{$output}, name:legend[3]},
+                {/if}
                 ]
             }
         ]

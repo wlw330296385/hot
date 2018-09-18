@@ -10,7 +10,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">本月营业额</span>
-				<span class="info-box-number">￥28960</span>
+				<span class="info-box-number">￥{$monthIncome}</span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -22,8 +22,8 @@
 			<span class="info-box-icon bg-yellow"><i class="icon iconfont icon-training-wage"></i></span>
 
 			<div class="info-box-content">
-				<span class="info-box-text">总营业额</span>
-				<span class="info-box-number">￥74,360</span>
+				<span class="info-box-text">本年收益</span>
+				<span class="info-box-number">￥{$yearIncome}</span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -39,8 +39,8 @@
 			<span class="info-box-icon bg-yellow"><i class="icon iconfont icon-training-wage"></i></span>
 
 			<div class="info-box-content">
-				<span class="info-box-text">本月收益</span>
-				<span class="info-box-number">￥2,4130</span>
+				<span class="info-box-text">总收益</span>
+				<span class="info-box-number">￥{$totalIncome}</span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -52,8 +52,8 @@
 			<span class="info-box-icon bg-yellow"><i class="icon iconfont icon-training-wage"></i></span>
 
 			<div class="info-box-content">
-				<span class="info-box-text">总收益</span>
-				<span class="info-box-number">￥56,000</span>
+				<span class="info-box-text">总赠课</span>
+				<span class="info-box-number">{$totalGift}</span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -70,7 +70,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">本月已上课量</span>
-				<span class="info-box-number">2,00 <small>节</small></span>
+				<span class="info-box-number">{$monthSchedule} <small>节</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -83,7 +83,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">总已上课量</span>
-				<span class="info-box-number">2,000 <small>节</small></span>
+				<span class="info-box-number">{$totalSchedule} <small>节</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -100,7 +100,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">本月上课人流量</span>
-				<span class="info-box-number">876 <small>人次</small></span>
+				<span class="info-box-number">{$monthStudents} <small>人次</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -113,7 +113,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">总上课人流量</span>
-				<span class="info-box-number">8076 <small>人次</small></span>
+				<span class="info-box-number">{$totalStudents} <small>人次</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -130,7 +130,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">本月新增会员</span>
-				<span class="info-box-number">160 <small>人</small></span>
+				<span class="info-box-number">{$monthNewStudents} <small>人</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -143,7 +143,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">本月离营学员</span>
-				<span class="info-box-number">10 <small>人</small></span>
+				<span class="info-box-number">{$monthofflineStudents} <small>人</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -161,7 +161,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">在学会员</span>
-				<span class="info-box-number">1960 <small>人</small></span>
+				<span class="info-box-number">{$onlineStudents} <small>人</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -174,7 +174,7 @@
 
 			<div class="info-box-content">
 				<span class="info-box-text">历史学员</span>
-				<span class="info-box-number">2,410 <small>人</small></span>
+				<span class="info-box-number">{$totalStudent} <small>人</small></span>
 			</div>
 			<!-- /.info-box-content -->
 		</div>
@@ -313,8 +313,18 @@
     for(var i=1;i<=currDate;i++){
         arrDate.push(i)
     }
+
     /////////////////////////////////////////////////////////////////////////////////////// 营业额折线图（本月）
 
+
+    let eventBill = JSON.parse('{$eventBill}');
+    let lessonBill = JSON.parse('{$lessonBill}');
+    let eventBillYear = JSON.parse('{$eventBillYear}');
+    let lessonBillYear = JSON.parse('{$lessonBillYear}');
+    let gradeCourtData = JSON.parse('{$gradeCourtData}');
+    let lessonBuyData = JSON.parse('{$lessonBuyData}');
+    let monthlyCourtStudentsData = JSON.parse('{$monthlyCourtStudentsData}');
+    let monthlyStudentsData = JSON.parse('{$monthlyStudentsData}');
     var domTM = document.getElementById("turnoverMonth");
     var turnoverMonth = echarts.init(domTM,"hot");
 
@@ -347,12 +357,12 @@
             {
                 name:'培训',
                 type:'line',
-                data:[10000, 20000, 10000, 20000, 10500, 10000, 20000, 20000, 10400, 10000, 20000, 20000, 10000, 20000, 10000, 20000, 10000, 10000, 20000, 30000, 20000, 10000, 10000, 20000, 20000, 10000, 20000, 30000, 20000, 10000, 10000]
+                data:lessonBill
             },
             {
                 name:'活动',
                 type:'line',
-                data:[1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1200, 1000, 1000, 1000, 1100, 1200, 1000, 1500, 1000, 1000, 1000, 1000, 1000, 1020, 1000, 1000, 1000, 1000, 1100]
+                data:eventBill
             }
         ]
     };
@@ -366,11 +376,11 @@
 
     var domTY = document.getElementById("turnoverYear");
     var turnoverYear = echarts.init(domTY,"hot");
-
+    console.log(lessonBillYear)
     // 指定图表的配置项和数据
     optionTY = {
         title: {
-            text: currYear+' 营业额折线图'
+            text: "{:date('Y',time())} 年营业额折线图"
         },
         tooltip: {
             trigger: 'axis'
@@ -396,12 +406,12 @@
             {
                 name:'培训',
                 type:'line',
-                data:[10000, 20000, 30000, 30000, 20000, 100000, 10000, 20000, 30000, 40000, 50000, 60000, 70000]
+                data:lessonBillYear
             },
             {
                 name:'活动',
                 type:'line',
-                data:[10000, 10000, 10000, 10000, 10000, 20000, 20000, 10000, 10000, 10000, 10000, 10000, 10000]
+                data:eventBillYear
             }
         ]
     };
@@ -415,12 +425,12 @@
 
     var domLC = document.getElementById("canvasLocation");
     var canvasLocation = echarts.init(domLC,"hot");
-
+    console.log(gradeCourtData.legend)
     // 指定图表的配置项和数据
     optionLCT = {
         title : {
             text: '学生训练点分布',
-            subtext: '5个训练点',
+            subtext: gradeCourtData.legend.length+'个训练点',
             x:'center'
         },
         tooltip : {
@@ -430,7 +440,7 @@
         legend: {
             orient: 'vertical',
             left: 'left',
-            data: ['前海北头','鼎泰风华','南山小学','南外二小','松坪小学']
+            data: gradeCourtData.legend
         },
         series : [
             {
@@ -438,13 +448,7 @@
                 type: 'pie',
                 radius : '65%',
                 center: ['50%', '50%'],
-                data:[
-                    {value:335, name:'前海北头'},
-                    {value:310, name:'鼎泰风华'},
-                    {value:234, name:'南山小学'},
-                    {value:135, name:'南外二小'},
-                    {value:1548, name:'松坪小学'}
-                ],
+                data:gradeCourtData.series,
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
@@ -463,12 +467,12 @@
 
     var domLS = document.getElementById("canvasLesson");
     var canvasLesson = echarts.init(domLS,"hot");
-
+    console.log(lessonBuyData)
     // 指定图表的配置项和数据
     optionLS = {
         title : {
             text: '课程购买饼图',
-            subtext: '5个课程',
+            subtext: lessonBuyData.legend.length+'个课程',
             x:'center'
         },
         tooltip : {
@@ -478,7 +482,7 @@
         legend: {
             orient: 'vertical',
             left: 'left',
-            data: ['北头室外课程','鼎泰小学基础班','南小课后班','南外大课间','大热常规班']
+            data: lessonBuyData.legend
         },
         series : [
             {
@@ -504,13 +508,7 @@
                         show: false
                     }
                 },
-                data:[
-                    {value:335, name:'北头室外课程'},
-                    {value:310, name:'鼎泰小学基础班'},
-                    {value:234, name:'南小课后班'},
-                    {value:135, name:'南外大课间'},
-                    {value:1548, name:'大热常规班'}
-                ],
+                data:lessonBuyData.series,
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
@@ -562,7 +560,7 @@
             {
                 name:'学员',
                 type:'line',
-                data:[100, 200, 300, 300, 200, 150, 100, 240, 300, 400, 350, 600, 200]
+                data:monthlyStudentsData
             }
         ]
     };

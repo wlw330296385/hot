@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 32
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 100126
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50553
+ Source Host           : localhost:3306
  Source Schema         : hot
 
  Target Server Type    : MySQL
- Target Server Version : 100126
+ Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 11/04/2018 14:29:23
+ Date: 18/09/2018 14:12:40
 */
 
 SET NAMES utf8mb4;
@@ -38,7 +38,7 @@ CREATE TABLE `member_menu`  (
   `create_time` int(10) NOT NULL,
   `update_time` int(10) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 168 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 198 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of member_menu
@@ -65,8 +65,38 @@ INSERT INTO `member_menu` VALUES (161, 157, 'management', '提现列表', 'fa fa
 INSERT INTO `member_menu` VALUES (162, 0, 'management', '学员管理', 'fa fa-user', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (163, 162, 'management', '学员列表', 'fa fa-genderless', 0, 'Student/studentList', '_self', 1, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (164, 162, 'management', '学员档案', 'fa fa-genderless', 0, 'Student/studentInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (165, 0, 'management', '首页', 'fa fa-home', 0, 'index/indexOfCoach', '_self', 1, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (165, 0, 'management', '首页', 'fa fa-home', 0, 'index/indexOfCoach', '_self', 0, 0, 1, 2, 2, 0, 0);
 INSERT INTO `member_menu` VALUES (166, 144, 'management', '退费列表', 'fa fa-genderless', 0, 'StatisticsCamp/refundList', '_self', 1, 0, 1, 3, 1, 0, 0);
-INSERT INTO `member_menu` VALUES (167, 144, 'management', '退费处理', 'fa fa-genderless', 0, 'StatisticsCamp/refundDeal', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (167, 144, 'management', '退费处理', 'fa fa-genderless', 0, 'StatisticsCamp/refundDeal', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (168, 0, 'management', '机构管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (169, 168, 'management', 'Banner管理', 'fa fa-cog', 0, 'banner/index', '_self', 1, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (170, 169, 'management', 'Banner编辑', 'fa fa-cog', 0, 'banner/edit', '_self', 0, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (171, 169, 'management', 'Banner删除', 'fa fa-cog', 0, 'banner/delete', '_self', 0, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (172, 169, 'management', 'Banner添加', 'fa fa-cog', 0, 'banner/add', '_self', 0, 0, 1, 2, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (173, 174, 'management', '特殊活动报名列表', 'fa fa-cog', 0, 'Apps/appsApplyList', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (174, 0, 'management', '活动管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (175, 174, 'management', '活动列表', 'fa fa-cog', 0, 'event/eventList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (176, 174, 'management', '活动详情', 'fa fa-cog', 0, 'event/eventInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (177, 174, 'management', '添加活动', 'fa fa-cog', 0, 'event/createEvent', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (178, 174, 'management', '编辑活动', 'fa fa-cog', 0, 'event/updateEvent', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (179, 0, 'management', '课程管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (180, 179, 'management', '课程列表', 'fa fa-cog', 0, 'lesson/lessonList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (181, 179, 'management', '添加课程', 'fa fa-cog', 0, 'lesson/createLesson', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (182, 179, 'management', '课程详情', 'fa fa-cog', 0, 'lesson/lessonInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (183, 179, 'management', '编辑课程', 'fa fa-cog', 0, 'lesson/updateLesson', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (184, 0, 'management', '课时管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (185, 184, 'management', '课时列表', 'fa fa-cog', 0, 'schedule/scheduleList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (186, 184, 'management', '课时审核', 'fa fa-cog', 0, 'schedule/check', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (187, 184, 'management', '课时详情', 'fa fa-cog', 0, 'schedule/scheduleInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (188, 184, 'management', '课时编辑', 'fa fa-cog', 0, 'schedule/updateSchedule', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (189, 184, 'management', '创建课时', 'fa fa-cog', 0, 'schedule/createSchedule', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (190, 184, 'management', '创建课时', 'fa fa-cog', 0, 'schedule/createSchedule', '_self', 0, 0, 1, 2, 2, 0, 0);
+INSERT INTO `member_menu` VALUES (191, 0, 'management', '提现申请', 'fa fa-cog', 0, 'StatisticsCamp/Withdraw', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (192, 0, 'management', '班级管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (193, 192, 'management', '班级列表', 'fa fa-cog', 0, 'grade/gradeList', '_self', 1, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (194, 192, 'management', '添加班级', 'fa fa-cog', 0, 'grade/creategrade', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (195, 192, 'management', '班级详情', 'fa fa-cog', 0, 'grade/gradeInfo', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (196, 192, 'management', '编辑班级', 'fa fa-cog', 0, 'grade/updategrade', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (197, 191, 'management', '添加银行卡', 'fa fa-cog', 0, 'bankcard/createBankcard', '_self', 0, 0, 1, 3, 1, 0, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
