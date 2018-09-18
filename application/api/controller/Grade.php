@@ -202,11 +202,13 @@ class Grade extends Base{
             }
             db('grade_member')->where(['grade_id'=>$grade_id])->delete();
             if ( !empty($studentData)) {
-                $resSaveGradeMember = $GradeService->saveAllGradeMember($studentData,$grade_id);
-                if ($resSaveGradeMember['code'] == 100) {
-                    return json($resSaveGradeMember);
+                $StudentService = new \app\service\StudentService;
+                    foreach ($studentData as $key => $value) {
+                       $studentData[$key]['grade'] = $data['grade'];
+                       $studentData[$key]['grade_id'] = $grade_id;
+                    }
+                    $res = $StudentService->saveAllStudent($studentData);
                 }
-            }
             $result = $GradeService->updateGrade($data, $data['grade_id']);
             return json($result);
         }catch (Exception $e){

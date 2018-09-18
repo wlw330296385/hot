@@ -884,6 +884,7 @@ class StatisticsCamp extends Backend{
 
     // 训练营工资列表（列出对应训练营下指定教练员当月的工资）
     public function campIndex(){
+   
         //查询条件：camp_id，member_id，monthstart，monthend
         $campInfo = $this->campInfo;
         $Time = new \think\helper\Time;
@@ -1002,7 +1003,8 @@ class StatisticsCamp extends Backend{
         
         //历史学员
         $totalStudent = db('camp_member')->where(['camp_id'=>$campInfo['id'],'type'=>1])->count();
-    
+        
+
 
 
 
@@ -1091,8 +1093,8 @@ class StatisticsCamp extends Backend{
         foreach ($monthly_court_students as $key => $value) {
             $monthlyCourtStudentsData[$key] = $value;
         }
-        
-        
+
+
         $this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData));
         $this->assign('monthlyStudentsData',json_encode($monthlyStudentsData));
         $this->assign('lessonBuyData',json_encode($lessonBuyData,true));

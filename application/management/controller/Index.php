@@ -120,16 +120,23 @@ class Index extends Backend
 
 		// 教学点分布
 		$gradeCourt = db('grade')->field('sum(students) as s_students,court')->where(['status'=>1,'camp_id'=>$campInfo['id']])->group('court_id')->select();
-		$gradeCourtData = [];
+	
+		$gradeCourtData = [
+			'legend'=>[],
+			'series'=>[],	
+		];
 		foreach ($gradeCourt as $key => $value) {
 			$gradeCourtData['legend'][] = $value['court'];
 			$gradeCourtData['series'][] = ['value'=>$value['s_students'],'name'=>$value['court']];
 		}
 
-
+		// dump($gradeCourtData);die;
 		// 课程购买饼图
 		$lessonBuy = db('bill')->field("sum(total) as s_total,goods,goods_id")->where(['camp_id'=>$campInfo['id'],'is_pay'=>1,'goods_type'=>1])->group('goods_id')->select();
-		$lessonBuyData = [];
+		$lessonBuyData = [
+			'legend'=>[],
+			'series'=>[],	
+		];
 		foreach ($lessonBuy as $key => $value) {
 			$lessonBuyData['legend'][] = $value['goods'];
 			$lessonBuyData['series'][] = ['value'=>$value['s_total'],'name'=>$value['goods']];
@@ -172,15 +179,22 @@ class Index extends Backend
 		}
 
 
-		$monthlyCourtStudentsData = [];
+		$monthData = [0,0,0,0,0,0,0,0,0,0,0,0];
 		$monthly_court_students = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->select();
+		$monthlyCourtStudentsData = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->group('court_id')->select();
+		dump($monthly_court_students);
 		foreach ($monthly_court_students as $key => $value) {
-			$monthlyCourtStudentsData[$key] = $value;
+			$monthly_court_students[$key]['data'] = $monthData;
+			$m = substr($value['date_str'],-2,2);
+			foreach ($monthlyCourtStudentsData as $k => $val) {
+				if($m == $k){
+					$monthlyCourtStudentsData[$k] = $value['students'];
+				}
+			}
 		}
 		
-		
-		$this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData));
-		$this->assign('monthlyStudentsData',json_encode($monthlyStudentsData));
+		$this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData,true));
+		$this->assign('monthlyStudentsData',json_encode($monthlyStudentsData,true));
 		$this->assign('lessonBuyData',json_encode($lessonBuyData,true));
 		$this->assign('gradeCourtData',json_encode($gradeCourtData,true));
 		$this->assign('lessonBillYear',json_encode($lessonBillYear));
