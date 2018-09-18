@@ -65,11 +65,32 @@
 
     </div>
 
+    <!-- 工作人员角色popover -->
+    <div id="typePopover" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="f14">
+                <strong>请选择修改的角色</strong>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list typeList">
+                    {volist name="types" id="vo"}
+                    <li class="mui-table-view-cell listli" data-type="{$key}">
+                        {$vo}
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
         markNum()
+        followStatus()
         // 关注联赛
         $(".follow").on("tap", '', function () {
             var league_id = "{$league_id}";
@@ -120,12 +141,13 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data[i].member_id;
+                        var urls = "{:url('match/workMemberInfo')}" + '/member_id/' + data.data[i].member_id +
+                            '/id/' + data.data[i].id;
                         newli +=
                             `<li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
-                                    ${data.data[i].realname}
-                                    <span class="colororange">${data.data[i].type_text}</span>
+                                    <text class="realName">${data.data[i].realname}</text>
+                                    <span class="colororange" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
                                 </a>
                                 <div class="mui-collapse-content dataCollapse">
                                 <div class="fl wd60">
@@ -134,7 +156,10 @@
                                 </div>`
                         if (data.data[i].type != 10) {
                             newli +=
-                                `<button class="btn bgred fr deleteWorker" data-id="${data.data[i].id}" style="margin-top: 6px;padding: 4px 8px;">删除</button>`
+                                `<button class="btn bgred fr deleteWorker" data-id="${data.data[i].id}" style="margin-top: 6px;padding: 4px 8px;">删除</button>
+                                <a href="#typePopover" class="modifyBtn" data-id="${data.data[i].id}">
+                                    <button class="btn fr modifyWorker" style="margin-top: 6px;margin-right: 6px;padding: 4px 8px;">编辑</button>
+                                 </a>`
                         }
                         newli += `</div>
                             </li>`
@@ -152,14 +177,66 @@
 
         // 删除工作人员
         $(document).on('tap', '.deleteWorker', function () {
-            var btnArray = ['确认', '取消'];
+            var btnArray = ['取消', '确认'];
             var id = $(this).attr("data-id");
             mui.confirm('确认删除该工作人员吗', '提示', btnArray, function (e) {
-                if (e.index == 0) {
+                if (e.index == 1) {
                     var apiurl = "{:url('api/league/delmatchmember')}";
                     mui.ajax(apiurl, {
                         data: {
                             id: id,
+                        },
+                        dataType: 'json',
+                        type: 'post',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        success: function (data) {
+                            if (data.code == 200) {
+                                mui.toast(data.msg);
+                                location.reload();
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errotThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+                }
+            });
+        });
+
+        // 点击修改角色给 typelist赋值
+        $(document).on("tap", ".modifyBtn", function () {
+            $(".typeList").attr("data-id", $(this).attr("data-id"));
+            $(".typeList").attr("data-name", $(this).parent(".dataCollapse").siblings().find(".realName").text());
+            $(".typeList").attr("data-type", $(this).parent(".dataCollapse").siblings().find("span").attr(
+                "data-type"));
+            $(".typeList li").each(function () {
+                $(this).show();
+                var thisType = $(this).attr("data-type");
+                var parentType = $(this).parent().attr("data-type");
+                if (thisType == parentType) {
+                    $(this).hide();
+                }
+            })
+        });
+
+        // 修改工作人员角色
+        $(document).on('tap', '.typeList li', function () {
+            var btnArray = ['取消', '确认'];
+            var type = $(this).attr("data-type");
+            var id = $(this).parent().attr("data-id");
+            var name = $(this).parent().attr("data-name");
+            var thisRole = $(this).text();
+            mui.confirm('确认把' + name + '设置为' + thisRole + '吗？', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    var apiurl = "{:url('api/league/updateMatchMember')}";
+                    mui.ajax(apiurl, {
+                        data: {
+                            id: id,
+                            type: type
                         },
                         dataType: 'json',
                         type: 'post',
