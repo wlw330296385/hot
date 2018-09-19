@@ -1153,7 +1153,7 @@ class Match extends Base {
     }
 
     // 联赛动态详情
-    public function dynamicinfoOfLeague() {
+    public function dynamicInfoOfLeague() {
         $id = input('param.article_id');
         $articleS = new ArticleService();
         $articleInfo = $articleS->getArticleInfo([
@@ -1166,7 +1166,7 @@ class Match extends Base {
         }
 
         $this->assign('articleInfo', $articleInfo);
-        return view('Match/dynamic/infoOfLeague');
+        return view('Match/dynamic/InfoOfLeague');
     }
     // 联赛编辑动态
     public function dynamicEditOfLeague() {
