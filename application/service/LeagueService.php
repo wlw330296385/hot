@@ -1371,7 +1371,7 @@ class LeagueService
         ->field('match_schedule.*, IFNULL(match_record.home_score, 0) AS home_score, IFNULL(match_record.away_score, 0) AS away_score, IFNULL(match_record.id, 0) as match_record_id')
         ->join('match_record','match_record.match_schedule_id = match_schedule.id', 'left')
         ->where($map)
-        ->order('match_record.match_time asc')
+        ->order('match_schedule.match_time asc')
         ->select();
 
         $result = $result->toArray();
