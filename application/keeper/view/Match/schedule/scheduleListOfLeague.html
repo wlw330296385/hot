@@ -35,7 +35,9 @@
         </div>
     </header>
 
-    <div class="mui-content ">
+    <div class="mui-content">
+
+        <!-- 分组选择 -->
         <div class="location-frame" style="position: fixed;width: 100%;">
             <span class="location-choise">
                 <select class="fenzu" id="group">
@@ -46,9 +48,10 @@
                 </select>
             </span>
         </div>
+
+        <!-- 列表内容 -->
         <div class="tab-pullRefresh">
-            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active onActive mb44" style="margin-top:45px"
-                ;>
+            <div id="onList" class="mui-scroll-wrapper mui-control-content mui-active onActive mb44" style="margin-top:45px;">
                 <div class="mui-scroll">
                     <ul class="mui-table-view list scheduleList1 ulHtml"></ul>
                 </div>
@@ -60,18 +63,19 @@
             </div>
         </div>
 
+        <!-- 底部操作按钮 -->
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
                 <a href="{:url('match/leaguemanage',['league_id'=>$leagueInfo.id])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-3 mui-col-xs-3 opli clearList">清空赛程</li>
-            <li class="mui-table-view-cell mui-col-sm-7 mui-col-xs-7 opli bgblue createSchedule">创建赛程</li>
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bgblue createSchedule">创建赛程</li>
             <!-- <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgred createNextSchedule">创建下一赛程</li> -->
         </ul>
 
     </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/getDate.js"></script>
@@ -88,13 +92,8 @@
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $(".mui-scroll-wrapper").scroll({
-                //bounce: false,//滚动条是否有弹力默认是true
                 indicators: true //是否显示滚动条,默认是true
             });
-            // 关闭弹出菜单
-            $("body").on('tap', '.mui-backdrop', function () {
-                mui(".mui-popover.mui-active").popover("toggle");
-            })
         })(mui);
 
         var btnArray = ['取消', '确认'];
@@ -142,35 +141,6 @@
                     }
                 });
             });
-
-            // 清空赛程操作-未产生赛果情况下才可以清空
-            $(document).on("tap", ".clearList", function () {
-                mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
-                    if (e.index == 1) {
-                        var league_id = "{$league_id}";
-                        mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
-                            data: {
-                                match_id: league_id,
-                            },
-                            dataType: 'json', //服务器返回json格式数据
-                            type: 'post', //HTTP请求类型
-                            timeout: 10000, //超时时间设置为10秒；
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            success: function (data) {
-                                console.log(data)
-                                if (data.code == 200) {
-                                    mui.toast(data.msg);
-                                    setTimeout('location.reload()', 2000);
-                                } else {
-                                    mui.toast(data.msg);
-                                }
-                            },
-                        });
-                    }
-                })
-            })
 
             // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
@@ -301,20 +271,9 @@
                     console.log(data)
                     var newli = '';
                     $(".createSchedule").on("tap", function () {
-                        // var onlist = $("#onlist .ulHtml li").hasClass("nodata");
-                        // var offlist = $("#offlist .ulHtml li").hasClass("nodata");
                         if (data.code == 200) {
-                            // if (onlist == true && offlist == true) {
-                            //     mui.confirm("小组分组对阵信息已经生成，请添加比赛日程！", "提示", btnArray, function (e) {
-                            //         if (e.index == 1) {
-                            //             window.location =
-                            //                 "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
-                            //         }
-                            //     });
-                            // } else {
                             window.location =
                                 "{:url('Match/createschedule',['league_id'=>$leagueInfo.id])}";
-                            // }
                         } else {
                             mui.confirm("暂无分组信息对阵信息，请先创建分组！", "提示", btnArray, function (e) {
                                 if (e.index == 1) {
