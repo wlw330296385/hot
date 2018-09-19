@@ -171,13 +171,16 @@ class League extends Base
         $data['reg_end_time'] = strtotime($data['reg_end_time']);
         // 时间字段校验，允许创建过往的联赛
         if ($data['start_time'] >= $data['end_time']) {
-            return json(['code' => 100, 'msg' => '联赛开始时间不能大于联赛结束时间']);
+            return json(['code' => 100, 'msg' => '联赛结束时间应该大于联赛开始时间']);
         }
         if ($data['reg_start_time'] >= $data['reg_end_time']) {
-            return json(['code' => 100, 'msg' => '联赛开始报名时间不能大于联赛截止报名时间']);
+            return json(['code' => 100, 'msg' => '报名结束时间应该大于报名开始时间']);
+        }
+        if (date('Y-m-d',$data['reg_end_time']) == date('Y-m-d',$data['start_time'])) {
+            return json(['code' => 100, 'msg' => '报名结束时间不能与联赛开始时间在同一天']);
         }
         if ($data['reg_end_time'] > $data['start_time']) {
-            return json(['code' => 100, 'msg' => '联赛截止报名时间不能大于联赛正式开始时间']);
+            return json(['code' => 100, 'msg' => '联赛开始时间应该大于报名结束时间']);
         }
 
         // 创建联赛 status=0 待审核
@@ -5030,9 +5033,12 @@ class League extends Base
             $map = [
                 'comment_type' => $comment_type,
                 'member_id' => $this->memberInfo['id'],
-                'match_id' => $data['match_id'],
-                'match_record_id' => $data['match_record_id']
+                'match_id' => $data['match_id']
             ];
+            // 如果是联赛下的某场比赛
+            if ($comment_type == 2) {
+                $map['match_record_id'] = $data['match_record_id'];
+            }
             $hasCommented = $leagueS->getCommentInfo($map);
             // 有评论记录就更新记录的thumbsup字段
             if ($hasCommented) {
@@ -5049,11 +5055,8 @@ class League extends Base
             $result = $leagueS->saveComment($data);
             if ($result['code'] == 200) {
                 // 返回最新的点赞数统计
-                $thumbsupCount = $leagueS->getCommentThumbsCount([
-                    'comment_type' => $comment_type,
-                    'match_id' => $data['match_id'],
-                    'match_record_id' => $data['match_record_id']
-                ]);
+                unset($map['member_id']);
+                $thumbsupCount = $leagueS->getCommentThumbsCount($map);
                 $result['thumbsup_count'] = $thumbsupCount;
             }
             return json($result);
