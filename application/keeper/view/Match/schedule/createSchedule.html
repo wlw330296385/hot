@@ -49,6 +49,10 @@
         .checkboxCont .firghtTeam{
             margin-left: 25px;
         }
+        .clearOperation{
+            margin: 20px 0 60px 0;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -76,7 +80,7 @@
                 <span class="match_stage"></span>
             </li>
         </ul>
-        <form action="" class="mui-input-group mb44 formList">
+        <form action="" class="mui-input-group formList">
             {if condition="empty($matchScheduleInfo)"}
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
@@ -152,9 +156,9 @@
                 </div>
             </div>
             {/volist}
-
-
         </form>
+
+        <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -232,6 +236,11 @@
             getbattle(); //获取对阵信息
             matchStage(); //获取比赛阶段数据
 
+            // 当赛程数量大于等于1条的时候显示清空按钮
+            if ($(".scheduleList").length >= 1) {
+                $(".clearOperation").show();
+            }
+
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
                 let listLength = $(".scheduleList").length + 1;
@@ -268,6 +277,10 @@
                 if ($(".scheduleList").length > 1) {
                     $('.deleteModel').show();
                 }
+                // 滚回到顶部
+                $('html,body').animate({
+                    scrollTop: '0px'
+                }, 500);
             });
 
             //获取序号并且赋值到对阵列表
@@ -365,9 +378,9 @@
                         }
 
                         // 比赛日序号的更新
-                        var i = $(".scheduleList").length;
+                        var i = 1;
                         $(".scheduleList").each(function () {
-                            $(this).find(".tnum").text(i--); //更新序号
+                            $(this).find(".tnum").text(i++); //更新序号
                         });
                     }
                 })
@@ -393,6 +406,35 @@
                 totalNum = thisBox.find(".checkboxCont").length;
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
+
+            // 清空赛程操作-未产生赛果情况下才可以清空
+            $(document).on("tap", ".clearScheduleList a", function () {
+                mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
+                    if (e.index == 1) {
+                        var league_id = "{$league_id}";
+                        mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
+                            data: {
+                                match_id: league_id,
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                    setTimeout('location.reload()', 2000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                        });
+                    }
+                })
+            })
 
         });
 
@@ -489,6 +531,7 @@
             schedules = []
             var isCheck = true;
             $(".scheduleList").each(function () {
+
                 var matchTime = $(this).find(".matchTime").text();
                 if (matchTime == '') {
                     var dayTime = $(this).find(".tnum").text();
@@ -511,7 +554,14 @@
                         var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
                         var status = $(this).find(".firght").attr("data-status");
                         var match_time = $(this).find(".firght").attr("data-match_time");
-
+                        // 用于判断原来时间与最后选择时间是否一致
+                        var match_time_yyr = match_time.substr(0, 10); //年月日
+                        var match_time_hm = match_time.substr(11, 16); //时分
+                        // 如果时间不一样，就把最新的时间和原本的时分拼接提交
+                        if (match_time_yyr != matchTime) {
+                            match_time = matchTime + ' ' + match_time_hm
+                        }
+                        //a
                         if (match_time == 0) {
                             match_time = matchTime
                         }

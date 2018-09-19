@@ -290,7 +290,7 @@
                 <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggray hide ongoingBtn">进行中</li>
                 <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggray hide endBtn">已结束</li>
                 {/if}
-              
+
             </ul>
 
         </div>
@@ -310,25 +310,6 @@
                 </li>
                 <li class="mui-col-xs-12 opli commentBtn">发表</li>
             </ul>
-        </div>
-    </div>
-
-    <!-- 工作人员角色popover -->
-    <div class="mui-popover" id="typePopover" style="margin: 0;" data-matchid="{$leagueInfo.id}" data-memberid="{$memberInfo.id}">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course">申请成为联赛工作人员</span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list typeList">
-                    {volist name="types" id="vo"}
-                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}">
-                        <font class="type">{$vo}</font>
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
         </div>
     </div>
 
@@ -397,7 +378,7 @@
                 $(".signUpBtn").show();
             } else if (cansignup == 1) {
                 $(".ongoingBtn").show();
-            }else if (cansignup == 2) {
+            } else if (cansignup == 2) {
                 $(".endBtn").show();
             }
 
@@ -472,27 +453,13 @@
                 });
             });
 
-            // 工作人员角色popover点击绑定
-            $('.typeList').on('tap', 'li', function () {
-                // 需要会员实名
-                var realname = "{$memberInfo.realname}";
-                if (realname.length == 0 || realname == "") {
-                    mui.confirm('需要完善实名信息', '提示', ['取消', '完善信息'], function (e) {
-                        if (e.index === 1) {
-                            window.location.href = "{:url('member/memberInfo')}";
-                        }
-                    });
-                    mui("#typePopover").popover("toggle");
-                    return;
-                }
-                var type = $(this).attr('data-type');
-                var match_id = $('#typePopover').attr('data-matchid');
-                var member_id = $('#typePopover').attr('data-memberid');
-                mui.ajax("{:url('api/league/applyleagueworker')}", {
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var match_id = "{$league_id}";
+                mui.ajax("{:url('api/league/dianzan')}", {
                     data: {
-                        match_id: match_id,
-                        member_id: member_id,
-                        type: type
+                        comment_type: 1,
+                        match_id: match_id
                     },
                     dataType: 'json', //服务器返回json格式数据
                     type: 'post', //HTTP请求类型
@@ -500,38 +467,6 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast("已经发送申请，请耐心等待回复");
-                            //location.reload();
-                            mui("#typePopover").popover("toggle");
-                        } else {
-                            mui.toast(data.msg);
-                            mui("#typePopover").popover("toggle");
-                            //location.reload();
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-            //点赞功能
-            $(".thumbsup").on('tap', function () {
-                var commented_id = "{$leagueInfo.id}";
-                mui.ajax("{:url('api/match/dianzan')}", {
-                    data: {
-                        commented_id: commented_id,
-                        comment_type: 1,
-                        match_id:commented_id
-                    },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -548,7 +483,7 @@
                 });
             });
 
-            // isthumbsup() //点赞状态
+            isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
             toCommentList(); //获取评论列表
             toDynamicList(); //获取联赛动态列表
@@ -556,37 +491,38 @@
         });
 
         // 点赞状态
-        // function isthumbsup() {
-        //     var match_id = "{$league_id}";
-        //     mui.ajax("{:url('api/league/isthumbup')}", {
-        //         data: {
-        //             match_id: match_id,
-        //             comment_type: 1,
-        //             match_record_id: 0
-        //         },
-        //         dataType: 'json',//服务器返回json格式数据
-        //         type: 'post',//HTTP请求类型
-        //         timeout: 10000,//超时时间设置为10秒；
-        //         headers: { 'Content-Type': 'application/json' },
-        //         success: function (data) {
-        //             console.log(data);
-        //             if (data.code == 200) {
-        //                 $(".thumbup_count").text(data.thumbsup_count);
-        //                 if (data.thumbsup == 1) {
-        //                     $(".thumbsup").css("color", "red");
-        //                 } else {
-        //                     $(".thumbsup").css("color", "#737373");
-        //                 }
-        //             } else {
-        //                 mui.toast(data.msg);
-        //             }
-        //         },
-        //         error: function (xhr, type, errorThrown) {
-        //             //异常处理；
-        //             console.log(type);
-        //         }
-        //     });
-        // }
+        function isthumbsup() {
+            var match_id = "{$league_id}";
+            mui.ajax("{:url('api/league/isthumbup')}", {
+                data: {
+                    match_id: match_id,
+                    comment_type: 1,
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        $(".thumbup_count").text(data.thumbsup_count);
+                        if (data.thumbsup == 1) {
+                            $(".thumbsup").css("color", "red");
+                        } else {
+                            $(".thumbsup").css("color", "#737373");
+                        }
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
 
         // 判断当前的关注状态
         function followStatus() {
