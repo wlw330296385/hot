@@ -1,6 +1,7 @@
 <?php 
 namespace app\management\controller;
 use app\management\controller\Base;
+use think\Session;
 
 
 /**
