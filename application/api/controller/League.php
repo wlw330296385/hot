@@ -5033,9 +5033,12 @@ class League extends Base
             $map = [
                 'comment_type' => $comment_type,
                 'member_id' => $this->memberInfo['id'],
-                'match_id' => $data['match_id'],
-                'match_record_id' => $data['match_record_id']
+                'match_id' => $data['match_id']
             ];
+            // 如果是联赛下的某场比赛
+            if ($comment_type == 2) {
+                $map['match_record_id'] = $data['match_record_id'];
+            }
             $hasCommented = $leagueS->getCommentInfo($map);
             // 有评论记录就更新记录的thumbsup字段
             if ($hasCommented) {
@@ -5052,11 +5055,8 @@ class League extends Base
             $result = $leagueS->saveComment($data);
             if ($result['code'] == 200) {
                 // 返回最新的点赞数统计
-                $thumbsupCount = $leagueS->getCommentThumbsCount([
-                    'comment_type' => $comment_type,
-                    'match_id' => $data['match_id'],
-                    'match_record_id' => $data['match_record_id']
-                ]);
+                unset($map['member_id']);
+                $thumbsupCount = $leagueS->getCommentThumbsCount($map);
                 $result['thumbsup_count'] = $thumbsupCount;
             }
             return json($result);
