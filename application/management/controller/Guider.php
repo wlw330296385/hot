@@ -59,7 +59,7 @@ class Guider extends Base
 			}
 			
 		}
-		Session::clear();
+		Session::delete('campInfo');
 		$this->assign('campList',$campList);
 		return view('Guider/choose');	
 	}
