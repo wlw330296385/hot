@@ -70,12 +70,12 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="f12">温馨提示：<br />1.如是机构，账号名称（对公账户）需跟主体证件上的机构名称保持一致；<br />2.我们会给该账户汇入一笔非常小的金额和备注信息，后续审核人员会致电您确认。<br />3.为了提高到账效率，请尽量填写开户银行支行名称</span>
                 </div>
-            </form>
             <span class="tip-box validate-result"></span>
 
             <div class="tjbtn mb44">
                 <input type="submit" class="mui-btn btn" id="submit-form" value="提交">
             </div>
+            </form>
             <!--账号更新：结束-->
 
             {else /}
@@ -118,12 +118,12 @@
                 <div class="page-header" style="background: #efeff4;">
                     <span class="f12">温馨提示：<br />1.如是机构，账号名称（对公账户）需跟主体证件上的机构名称保持一致；<br />2.我们会给该账户汇入一笔非常小的金额和备注信息，后续审核人员会致电您确认。<br />3.为了提高到账效率，请尽量填写开户银行支行名称</span>
                 </div>
-            </form>
             <span class="tip-box validate-result"></span>
 
             <div class="tjbtn mb44">
                 <input type="submit" class="mui-btn btn" id="submit-form" value="提交">
             </div>
+            </form>
             <!--账号添加：结束-->
 
             {/if}
@@ -275,47 +275,58 @@
 
 
         //提交/修改账号信息
-        $('form').on("submit",function(){
+        // $('form').on("submit",function(){
 
-            //短信验证
-            var code = document.getElementById('code').value;
-            var codeReg = /^\d{6,6}$/;
+        //     //短信验证
+        //     var code = document.getElementById('code').value;
+        //     var codeReg = /^\d{6,6}$/;
 
-            $('.validate-result span').remove('.code_yz');
-            //console.log(code);
-            // if(!codeReg.test(code)){
-            //     $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
-            //     return false;
-            // }else{
-            //     var telephone = document.getElementById('telephone').value;
-            //     var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
-            //     if(result.code == 200){
-            //         mui.toast(result.msg);
-            //     }else{
-            //         $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
-            //         return false;
-            //     }
-            // }
-
-
-            // var validateResult = $(".validate-result span").text();
-            // if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
-            //     mui.toast("提交失败，请填写完整并保证信息格式正确！");
-            //     return false;
-            // }
-            $('form').unserialize();
-            $(this).submit();
-
-        });
+        //     $('.validate-result span').remove('.code_yz');
+        //     console.log(code);
+        //     if(!codeReg.test(code)){
+        //         $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
+        //         return false;
+        //     }else{
+        //         var telephone = document.getElementById('telephone').value;
+        //         var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+        //         if(result.code == 200){
+        //             mui.toast(result.msg);
+        //         }else{
+        //             $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
+        //             return false;
+        //         }
+        //     }
 
 
-        //银行选择
-        $('#bankList a').on("click","",function(){
-            var bank = $(this).attr("title");
-            console.log(bank)
-            $("input[name=bank]").val(bank);
-            mui("#bankList").popover("toggle");
-        });
+        //     var validateResult = $(".validate-result span").text();
+        //     if(validateResult!=""||account==""||bank==""||bankcard==""||telephone==""||smscode==""){
+        //         mui.toast("提交失败，请填写完整并保证信息格式正确！");
+        //         return false;
+        //     }
+        //     $('form').unserialize();
+        //     $(this).submit();
+
+        // });
+
+        $('#submit-form').on("click",function(){
+            $(this).attr("disabled","true");
+            //$('form').submit();
+         });
+
+        // $('form.forms').submit(function(){
+        //     alert("just do it");
+        //     // $(this).attr("disabled","true");
+        //     //return false;
+        //  });
+
+
+        // //银行选择
+        // $('#bankList a').on("click","",function(){
+        //     var bank = $(this).attr("title");
+        //     console.log(bank)
+        //     $("input[name=bank]").val(bank);
+        //     mui("#bankList").popover("toggle");
+        // });
 
 
     });
