@@ -19,7 +19,7 @@ class Guider extends Base
 
 	public function choose(){
 		$campList = db('camp_member')->where(['member_id'=>$this->memberInfo['id'],'status'=>1,'type'=>['egt',2]])->select();
-		Session::clear();
+		
 		if(request()->isPost()){
 			$key = input('post.key');
 			$camp = $campList[$key];
@@ -59,7 +59,7 @@ class Guider extends Base
 			}
 			
 		}
-		
+		Session::clear();
 		$this->assign('campList',$campList);
 		return view('Guider/choose');	
 	}
