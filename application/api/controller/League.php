@@ -5082,18 +5082,17 @@ class League extends Base
             $map = [
                 'comment_type' => $comment_type,
                 'member_id' => $this->memberInfo['id'],
-                'match_id' => $data['match_id'],
-                'match_record_id' => $data['match_record_id']
+                'match_id' => $data['match_id']
             ];
+            // 如果是联赛下的某场比赛
+            if ($comment_type == 2) {
+                $map['match_record_id'] = $data['match_record_id'];
+            }
             $commentInfo = $leagueS->getCommentInfo($map);
             // 点赞字段值
             $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
             // 点赞数统计
-            $thumbupCount = $leagueS->getCommentThumbsCount([
-                'comment_type' => $comment_type,
-                'match_id' => $data['match_id'],
-                'match_record_id' => $data['match_record_id']
-            ]);
+            $thumbupCount = $leagueS->getCommentThumbsCount($map);
             return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
