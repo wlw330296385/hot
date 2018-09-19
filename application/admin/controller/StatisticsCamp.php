@@ -873,7 +873,7 @@ class StatisticsCamp extends Backend{
         //查询条件：camp_id，member_id，monthstart，monthend
         $campInfo = $this->campInfo;
         $Time = new \think\helper\Time;
-        $campInfo = db('camp')->where(['id'=>$campInfo['id']])->find();
+        $campList = db('camp')->where('delete_time',null)->select();
 
 
         if($campInfo['rebate_type'] == 2){//营业额版
@@ -1073,14 +1073,32 @@ class StatisticsCamp extends Backend{
         }
 
 
-        $monthlyCourtStudentsData = [];
+        //每月学生场地
+        $monthlyCourtStudent = [];
+        $monthData = [0,0,0,0,0,0,0,0,0,0,0,0];
         $monthly_court_students = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->select();
-        foreach ($monthly_court_students as $key => $value) {
-            $monthlyCourtStudentsData[$key] = $value;
+        $monthlyCourtStudentsData = db('monthly_court_students')->where(['camp_id'=>$campInfo['id'],'date_str'=>['between',[$yearStart,$yearEnd]]])->group('court_id')->select();
+        // 初始化
+        $list = [];
+        foreach ($monthlyCourtStudentsData as $key => $value) {
+            $list[$key]['type'] = 'line';
+            $list[$key]['name'] = $value['court'];
+            $list[$key]['data'] = $monthData;
+            $m = substr($value['date_str'],-2,2);
+            $monthlyCourtStudent['legend'][] = $value['court'];
         }
 
-
-        $this->assign('monthlyCourtStudentsData',json_encode($monthlyCourtStudentsData));
+        foreach ($list as $key => $value) {
+            
+            foreach ($monthly_court_students as $k => $val) {
+                $m = (int)substr($val['date_str'],-2,2);
+                if($val['court']==$value['name']){
+                    $list[$key]['data'][$m-1] = $val['students'];
+                }
+            }
+        }
+        $monthlyCourtStudent['data'] = $list;
+        $this->assign('monthlyCourtStudent',json_encode($monthlyCourtStudent,true));
         $this->assign('monthlyStudentsData',json_encode($monthlyStudentsData));
         $this->assign('lessonBuyData',json_encode($lessonBuyData,true));
         $this->assign('gradeCourtData',json_encode($gradeCourtData,true));
@@ -1114,6 +1132,7 @@ class StatisticsCamp extends Backend{
 
         $this->assign('yearNewStudents',$yearNewStudents?$yearNewStudents:0);
         $this->assign('yearofflineStudents',$yearofflineStudents?$yearofflineStudents:0);
+        $this->assign('campList',$campList);
         return $this->fetch('StatisticsCamp/campIndex');
     }
 }

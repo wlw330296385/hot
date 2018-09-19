@@ -714,7 +714,7 @@ class StatisticsCamp extends Camp{
                 $time =  strtotime(date('Ym01',time()));
                 $e = date('Ymd',strtotime('-1 day',$time));
                 $date_str = [$point_in_time,$e];
-                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>3];
                 $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                 $income = db('income')->where($map1)->sum('income');
                 $output = db('output')->where($map_1)->sum('output');
@@ -756,12 +756,12 @@ class StatisticsCamp extends Camp{
                     $time =  strtotime(date('Ym01',time()));
                     $e = date('Ymd',strtotime('-1 day',$time));
                     $date_str = [$point_in_time,$e];
-                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>3];
                     $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                     $income = db('income')->where($map1)->sum('income');
                     $output = db('output')->where($map_1)->sum('output');
                     $withdraw = $income - $output;
-                    if($withdraw<0){
+                    if($withdraw<=0){
                         $this->error('收入为赤字不可提现');
                     }
                     //如果小于余额,只能提余额
@@ -780,10 +780,12 @@ class StatisticsCamp extends Camp{
                 }
                 $e = date('Ymd', strtotime('-1 sunday', time()));
                 $date_str = [$point_in_time,$e];
-
-                $map  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>$type];
-                $income = db('income')->where($map)->sum('income');
-                $withdraw = $income;
+                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
+                $income1 = db('income')->where($map1)->sum('income');
+                $income2 = db('income')->where($map2)->sum('income');
+                $output = 0;
+                $withdraw = $income1+$income2;
                 if($withdraw<0){
                     $this->error('收入为赤字不可提现');
                 }
@@ -842,7 +844,7 @@ class StatisticsCamp extends Camp{
                 $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
                 db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
                 //更新cookie
-                cookie('campInfo.balance',($this->campInfo['balance']-$data['buffer']));
+                session('campInfo.balance',($this->campInfo['balance']-$data['buffer']));
                 $this->success($result['msg']);
             }else{
                 $this->error($result['msg']);
