@@ -348,4 +348,20 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    public function getLessonMemberJoinGradeMemberListApi(){
+        try {
+            $lesson_id = input('param.lesson_id');
+            $result = db('lesson_member')
+                    ->field('lesson_member.*,grade_member.student_id as gs_id,grade_member.lesson_id as gl_id,grade_member.grade_id as g_id')
+                    ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
+                    ->where(['lesson_member.lesson_id'=>$lesson_id,'lesson_member.status'=>1])
+                    ->order('lesson_member.id desc')
+                    ->select();
+            return json(['code'=>200,'msg'=>'获取成功','data'=>$result]);        
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }

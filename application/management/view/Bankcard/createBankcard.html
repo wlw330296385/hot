@@ -37,34 +37,33 @@
                 <div class="mui-input-row">
                     <label>训练营名称</label>
                     <span>{$campInfo.camp}</span>
-                    <input type="hidden" name="campid" value="{$campInfo.id}">
                 </div>
                 <div class="mui-input-row">
                     <label>账户名称</label>
-                    <input type="text" class="" name="account" value="{$campBankcard.account}" placeholder="请输入公司或个人账号名称">
+                    <input type="text" class="" name="account" value="{$campBankcard.account}" placeholder="请输入公司或个人账号名称" required="required">
                 </div>
                 <div class="mui-input-row">
                     <a href="#bankList" class="mui-navigate-right" style="padding-right: 20px;">
                         <label>开户银行</label>
-                        <input type="text" name="bank" class="bank" value="{$campBankcard.bank}" placeholder="请输入开户银行名称">
+                        <input type="text" name="bank" class="bank" value="{$campBankcard.bank}" placeholder="请输入开户银行名称" required="required">
                     </a>
                 </div>
                 <div class="mui-input-row">
                     <label>支行名称</label>
-                    <input type="text" name="bank_branch" class="bank_branch" value="{$campBankcard.bank_branch}" placeholder="请输入开户银行支行名称">
+                    <input type="text" name="bank_branch" class="bank_branch" value="{$campBankcard.bank_branch}" placeholder="请输入开户银行支行名称" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>银行账号</label>
-                    <input type="number" name="bankcard" value="{$campBankcard.bank_card}" placeholder="请输入开户银行账号">
+                    <input type="number" name="bank_card" value="{$campBankcard.bank_card}" placeholder="请输入开户银行账号" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>预留电话</label>
-                    <input type="number" id="telephone" name="telephone" value="{$campBankcard.telephone}" placeholder="请输入预留手机号码">
+                    <input type="number" id="telephone" name="telephone" value="{$campBankcard.telephone}" placeholder="请输入预留手机号码" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>短信验证码</label>
                     <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
-                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
+                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;"  required="required">
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -85,34 +84,33 @@
                 <div class="mui-input-row">
                     <label>训练营名称</label>
                     <span>{$campInfo.camp}</span>
-                    <input type="hidden" name="campid" value="{$campInfo.id}">
                 </div>
                 <div class="mui-input-row">
                     <label>账户名称</label>
-                    <input type="text" class="" name="account" value="" placeholder="请输入公司或个人账号名称">
+                    <input type="text" class="" name="account" value="" placeholder="请输入公司或个人账号名称" required="required">
                 </div>
                 <div class="mui-input-row">
                     <a href="#bankList" class="mui-navigate-right" style="padding-right: 20px;">
                         <label>开户银行</label>
-                        <input type="text" name="bank" class="bank" value="" placeholder="请输入开户银行名称">
+                        <input type="text" name="bank" class="bank" value="" placeholder="请输入开户银行名称" required="required">
                     </a>
                 </div>
                 <div class="mui-input-row">
                     <label>支行名称</label>
-                    <input type="text" name="bank_branch" class="bank_branch" value="" placeholder="请输入开户银行支行名称">
+                    <input type="text" name="bank_branch" class="bank_branch" value="" placeholder="请输入开户银行支行名称" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>银行账号</label>
-                    <input type="number" name="bankcard" value="" placeholder="请输入开户银行账号">
+                    <input type="number" name="bank_card" value="" placeholder="请输入开户银行账号" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>预留电话</label>
-                    <input type="number" id="telephone" name="telephone" value="" placeholder="请输入预留手机号码">
+                    <input type="number" id="telephone" name="telephone" value="" placeholder="请输入预留手机号码" required="required">
                 </div>
                 <div class="mui-input-row">
                     <label>短信验证码</label>
                     <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" >
-                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;" >
+                    <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 40%;"  required="required">
                 </div>
 
                 <div class="page-header" style="background: #efeff4;">
@@ -308,25 +306,46 @@
 
         // });
 
-        $('#submit-form').on("click",function(){
-            $(this).attr("disabled","true");
-            //$('form').submit();
-         });
-
-        // $('form.forms').submit(function(){
-        //     alert("just do it");
-        //     // $(this).attr("disabled","true");
-        //     //return false;
+        // $('#submit-form').on("click",function(){
+        //     $(this).attr("disabled","true");
+        //     $('form').submit();
         //  });
 
+        $('form').submit(function(){
+            //短信验证
+            var code = document.getElementById('code').value;
+            var codeReg = /^\d{6,6}$/;
 
-        // //银行选择
-        // $('#bankList a').on("click","",function(){
-        //     var bank = $(this).attr("title");
-        //     console.log(bank)
-        //     $("input[name=bank]").val(bank);
-        //     mui("#bankList").popover("toggle");
-        // });
+            $('.validate-result span').remove('.code_yz');
+    
+            if(!codeReg.test(code)){
+                $('.validate-result').append('<span class="code_yz">请填写正确的验证码</span>');
+                return false;
+            }else{
+                var telephone = document.getElementById('telephone').value;
+                var result = smsCode.validateSmsCodeApi(telephone,code,"{:url('api/sms/validateSmsCodeApi','','',true)}");
+                if(result.code == 200){
+                    mui.toast(result.msg);
+                }else{
+                    $('.validate-result').append('<span class="code_yz">验证码无效,请重试</span>');
+                    return false;
+                }
+            }
+
+
+            var validateResult = $(".validate-result span").text();
+            
+            $(this).attr("disabled","true");
+        });
+
+
+        //银行选择
+        $('#bankList a').on("click","",function(){
+            var bank = $(this).attr("title");
+            console.log(bank)
+            $("input[name=bank]").val(bank);
+            mui("#bankList").popover("toggle");
+        });
 
 
     });

@@ -52,7 +52,7 @@ class Withdraw extends Backend{
             $action = input('param.action');//2=同意,3=已打款,4=同意并已打款,-1=拒绝;
             
             $CampWithdraw = new \app\model\CampWithdraw;
-            $campWithdrawInfo = $CampWithdraw->where(['id'=>$campWithdraw_id])->find();
+            $campWithdrawInfo = db('camp_withdraw')->where(['id'=>$campWithdraw_id])->find();
             // -2:个人取消(解冻)|-1:拒绝(解冻)|1:申请中(冻结)|2:已同意(并解冻)|3:已打款
             if(!$campWithdrawInfo){
                 $this->error('传参错误,找不到提现信息');

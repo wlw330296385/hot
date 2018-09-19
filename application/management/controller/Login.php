@@ -75,8 +75,6 @@ class Login extends Controller
         // cookie('member_id', null);
         Cache::clear(); 
         Session::delete('campInfo');
-        // Session::delete('memberInfo');
-        // Session::delete('camp_member');
         $this->success('清空成功');
     }
 
