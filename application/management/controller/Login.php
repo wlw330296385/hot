@@ -16,7 +16,7 @@ class Login extends Controller
 	}
 
 	public function login(){
-
+		Session::clear();
 		if (cookie('member_id')) {
             $this->error('请重新选择训练营', url('Guider/choose'));
         }
@@ -65,7 +65,7 @@ class Login extends Controller
         // $group_id = session('admin.group_id');
         // Cache::rm('group_id_menu_auth_'.$group_id); 
         // Cache::clear(); 
-        Session::delete('memberInfo');
+        Session::clear();
         cookie('member_id', null);
         //$this->success('退出成功', url('Login/index'));
         $this->redirect('Login/login');
@@ -74,6 +74,7 @@ class Login extends Controller
     public function clearCache(){
         // cookie('member_id', null);
         Cache::clear(); 
+        Session::delete('campInfo');
         // Session::delete('memberInfo');
         // Session::delete('camp_member');
         $this->success('清空成功');
