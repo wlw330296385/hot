@@ -370,18 +370,40 @@
             $(document).on("tap", ".deleteModel", function () {
                 var btnArray = ['取消', '确认'];
                 var thisdiv = $(this).parents(".scheduleList");
+                var date = $(this).parents(".page-header").siblings(".timeTap").find(".matchTime").text();
+                var league_id = "{$league_id}";
                 mui.confirm("确认删除该比赛日程？", "提示", btnArray, function (e) {
                     if (e.index == 1) {
-                        thisdiv.remove();
-                        if ($(".scheduleList").length == 1) {
-                            $('.deleteModel').hide();
-                        }
-
-                        // 比赛日序号的更新
-                        var i = 1;
-                        $(".scheduleList").each(function () {
-                            $(this).find(".tnum").text(i++); //更新序号
+                        mui.ajax("{:url('api/league/delmatchschedulebydate','','',true)}", {
+                            data: {
+                                match_id: league_id,
+                                date: date
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast("删除成功");
+                                    thisdiv.remove();
+                                    if ($(".scheduleList").length == 1) {
+                                        $('.deleteModel').hide();
+                                    }
+                                    // 比赛日序号的更新
+                                    var i = 1;
+                                    $(".scheduleList").each(function () {
+                                        $(this).find(".tnum").text(i++); //更新序号
+                                    });
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
                         });
+
                     }
                 })
             })
