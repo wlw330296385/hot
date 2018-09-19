@@ -9,26 +9,15 @@ class Camp extends Backend{
 	public function _initialize(){
 		parent::_initialize();
         // 暂存campInfo
-        $camp_id = input('param.camp_id');
-
-        if($camp_id){
+        $camp_id = $this->camp_member['camp_id'];
+        $this->campInfo = session('campInfo');
+        if(!$this->campInfo){
+            $camp_id = $this->camp_member['camp_id'];
             $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-
             cookie('camp_id',$this->campInfo['id']);
             session('campInfo',$this->campInfo);
-            
-        }else{
-            $this->campInfo = session('campInfo');
-            if(!$this->campInfo){
-                $camp_id = $this->camp_member['id'];
-                if(!$camp_id){
-                    $camp_id = 9;
-                }
-                $this->campInfo = db('camp')->where(['id'=>$camp_id])->find();
-                cookie('camp_id',$this->campInfo['id']);
-                session('campInfo',$this->campInfo);
 
-            }
         }
+        $this->assign('campInfo',$this->campInfo);
 	}
 }

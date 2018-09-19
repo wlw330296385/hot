@@ -197,8 +197,9 @@ class Index extends Backend
 			
 			foreach ($monthly_court_students as $k => $val) {
 				$m = (int)substr($val['date_str'],-2,2);
+				//如果场地名一样,就按月份塞数据进去
 				if($val['court']==$value['name']){
-					$list[$key]['data'][$m] = $val['students'];
+					$list[$key]['data'][$m-1] = $val['students'];
 				}
 			}
 		}

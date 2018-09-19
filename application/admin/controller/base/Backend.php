@@ -65,6 +65,7 @@ class Backend extends Base {
             }
         }
         $this->assign('_sidebar_menus', $sidebar_menu);
+        $this->assign('campInfo', $this->campInfo);
         
     }
 
