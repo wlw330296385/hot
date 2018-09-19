@@ -247,7 +247,9 @@
             <div class="page-header whitebg border-b">
                 <span class="course wd52">评论</span>
                 <span class="more f14">评论
-                    <span class="comment_count">0</span>
+                    <span class="comment_count">0</span>&nbsp;|&nbsp;
+                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
+                    <span class="thumbup_count">0</span>
                 </span>
             </div>
             <ul class="mui-table-view comment-list coach"></ul>
@@ -518,32 +520,33 @@
             });
 
             //点赞功能
-            // $(".thumbsup").on('tap', function () {
-            //     var commented_id = "{teamInfo.id}";
-            //     mui.ajax("{:url('api/team/dianzan')}", {
-            //         data: {
-            //             commented_id: commented_id,
-            //             comment_type: 1,
-            //         },
-            //         dataType: 'json',//服务器返回json格式数据
-            //         type: 'post',//HTTP请求类型
-            //         timeout: 10000,//超时时间设置为10秒；
-            //         headers: { 'Content-Type': 'application/json' },
-            //         success: function (data) {
-            //             console.log(data);
-            //             if (data.code == 200) {
-            //                 $(".thumbup_count").text(data.thumbup_count);
-            //                 isthumbsup();
-            //             } else {
-            //                 mui.toast(data.msg);
-            //             }
-            //         },
-            //         error: function (xhr, type, errorThrown) {
-            //             //异常处理；
-            //             console.log(type);
-            //         }
-            //     });
-            // });
+            $(".thumbsup").on('tap', function () {
+                var commented_id = "{$leagueInfo.id}";
+                mui.ajax("{:url('api/match/dianzan')}", {
+                    data: {
+                        commented_id: commented_id,
+                        comment_type: 1,
+                        match_id:commented_id
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            $(".thumbup_count").text(data.thumbup_count);
+                            isthumbsup();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            });
 
             // isthumbsup() //点赞状态
             followStatus(); //判断当前的关注状态
