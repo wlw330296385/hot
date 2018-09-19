@@ -268,6 +268,10 @@
                 if ($(".scheduleList").length > 1) {
                     $('.deleteModel').show();
                 }
+                // 滚回到顶部
+                $('html,body').animate({
+                    scrollTop: '0px'
+                }, 500);
             });
 
             //获取序号并且赋值到对阵列表
@@ -489,6 +493,7 @@
             schedules = []
             var isCheck = true;
             $(".scheduleList").each(function () {
+
                 var matchTime = $(this).find(".matchTime").text();
                 if (matchTime == '') {
                     var dayTime = $(this).find(".tnum").text();
@@ -511,7 +516,14 @@
                         var away_team_alias = $(this).find(".firght").attr("data-away_team_alias");
                         var status = $(this).find(".firght").attr("data-status");
                         var match_time = $(this).find(".firght").attr("data-match_time");
-
+                        // 用于判断原来时间与最后选择时间是否一致
+                        var match_time_yyr = match_time.substr(0, 10); //年月日
+                        var match_time_hm = match_time.substr(11, 16); //时分
+                        // 如果时间不一样，就把最新的时间和原本的时分拼接提交
+                        if (match_time_yyr != matchTime) {
+                            match_time = matchTime + ' ' + match_time_hm
+                        }
+                        //a
                         if (match_time == 0) {
                             match_time = matchTime
                         }
