@@ -34,6 +34,10 @@
             height: 370px;
             background: #fff !important;
         }
+        .settingFinished{
+            margin: 20px 0 60px 0;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -49,7 +53,8 @@
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="id" class="data" value="{$leagueInfo.id}">
-        <form action="" class="mui-input-group mb44">
+        <input type="hidden" name="is_finished" value="" class="data">
+        <form action="" class="mui-input-group">
 
             <div class="mui-input-row">
                 <label>联赛名称</label>
@@ -176,13 +181,13 @@
                 </div>
                 <input type="hidden" name="is_open" value="{$leagueInfo.is_open}" class="data">
             </div>
-            <div class="mui-input-row">
+            <!-- <div class="mui-input-row">
                 <label class="wd52">设置联赛完成</label>
                 <div class="mui-switch is_finished">
                     <div class="mui-switch-handle"></div>
                 </div>
                 <input type="hidden" name="is_finished" value="0" class="data">
-            </div>
+            </div> -->
 
             <p class="pline"></p>
             <div class="mui-input-row">
@@ -207,8 +212,6 @@
                 </span>
             </div>
 
-
-
             <div class="page-header" style="background: #efeff4;">
                 <span class="course">联赛简介</span>
             </div>
@@ -216,6 +219,8 @@
             <div id="articleEditor" class="tuwenIntro">{$leagueInfo.introduce}</div>
 
         </form>
+
+        <p class="settingFinished">联赛已结束，点击<a class="isFinished colororange">完成联赛</a></p>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-6 opli bgred deleteLeague">
@@ -399,22 +404,25 @@
             // } else if ("{$leagueInfo.is_open}" == "0") {
             //     $("input[name=is_open]").val(0)
             // }
-            $(".is_finished").on("tap", '', function () {
-                var finishedStatus = $("input[name=is_finished]");
-                var btnArray = ["取消", "确认"]
-                if (finishedStatus.val() == "0") {
-                    mui.confirm('设置完成联赛，将清除工作人员，记录员，裁判员与联赛的关系，是否确认？', '提示', btnArray, function (e) {
-                        if (e.index == 1) {
-                            // $(".is_finished").addClass("mui-active")
-                            finishedStatus.val("1");
-                        }else{
-                            // $(".is_finished").removeClass("mui-active")
-                        }
-                    })
-                } else {
-                    finishedStatus.val("0");
-                }
-            });
+            // $(".is_finished").on("tap", '', function () {
+            //     var finishedStatus = $("input[name=is_finished]");
+            //     var btnArray = ["取消", "确认"];
+            //     var $this = $(this)
+            //     if (finishedStatus.val() == "0") {
+            //         $this.children(".mui-switch-handle").css("transform", "inherit");
+            //         $this.removeClass("mui-active");
+            //         mui.confirm('设置完成联赛，将清除工作人员，记录员，裁判员与联赛的关系，是否确认？', '提示', btnArray, function (e) {
+            //             if (e.index == 1) {
+            //                 console.log(this)
+            //                 $this.children(".mui-switch-handle").css("transform", "translate(43px, 0px)");
+            //                 $this.addClass("mui-active");
+            //                 finishedStatus.val("1");
+            //             } else {}
+            //         })
+            //     } else {
+            //         finishedStatus.val("0");
+            //     }
+            // });
 
 
             //删除赛程
@@ -464,6 +472,16 @@
             $("#workDel").on('tap', '', function () {
                 $("input[name=custom_member]").val('');
                 mui("#work").popover("toggle");
+            });
+
+            // 设置完成联赛,解除工作人员与联赛记录
+            $(".isFinished").on("tap", function () {
+                var btnArray = ["取消", "确认"];
+                mui.confirm("设置完成联赛，将清除工作人员，记录员，裁判员与联赛的关系，是否确认？", "提示", function (e) {
+                    if (e.index == 1) {
+                        $("input[name=is_finished]").val();
+                    }
+                })
             });
 
             //自定义获取工作人员列表
