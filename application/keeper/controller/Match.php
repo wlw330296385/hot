@@ -573,20 +573,29 @@ class Match extends Base {
     // 联赛工作人员列表
     public function workListOfLeague() {
          // 工作人员类型
-         $leagueS = new LeagueService();
-         $types = $leagueS->getMatchMemberTypes();
-         return view('Match/work/workListOfLeague', [
-             'types' => $types
-         ]);
+        $leagueS = new LeagueService();
+        $types = $leagueS->getMatchMemberTypes();
+        return view('Match/work/workListOfLeague', [
+            'types' => $types
+        ]);
     }
 
     // 联赛工作人员详情
     public function workMemberInfo() {
         // 工作人员类型
         $leagueS = new LeagueService();
+        $member_id = input('member_id', 0, 'intval');
+
+
+        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id]);
+        if (empty($matchMemberInfo)) {
+            $this->error("没有找到该工作人员的信息");
+        }
         $types = $leagueS->getMatchMemberTypes();
+        $matchMemberInfo["type"] = $types[$matchMemberInfo["type"]];
         return view('Match/work/workMemberInfo', [
-            'types' => $types
+            'types' => $types,
+            'matchMemberInfo' => $matchMemberInfo
         ]);
    }
 
