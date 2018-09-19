@@ -3139,6 +3139,62 @@ class League extends Base
         }
     }
 
+    // 删除某比赛日的赛程
+    public function delmatchschedulebydate()
+    {
+        $match_id = input('match_id', 0, 'intval');
+        $date = input('date', '', 'string');
+        if (!$match_id || !$date) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $leagueS = new LeagueService();
+
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查会员操作权限
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $match_id,
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 获取赛程详情
+        $date_arr = explode('-', $date);
+        $dateTimeStamp = getStartAndEndUnixTimestamp($date_arr[0],$date_arr[1],$date_arr[2]);
+
+        $map['match_id'] = $match_id;
+        $map['match_time'] = ['between',[$dateTimeStamp['start'],$dateTimeStamp['end']]];
+        $schedules = $leagueS->getMatchSchedules($map);
+        if (!$schedules) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $id_arr = [];
+        foreach ($schedules as $key => $value) {
+            if ($value["status"] == 2) {
+                return json(['code' => 100, 'msg' => '删除失败，当日赛程中已经有完成的比赛']);
+            }
+            array_push($id_arr, $value['id']);
+        }
+
+        try {
+            $result = $leagueS->delMatchSchedule($id_arr);
+        } catch (Exception $e) {
+            trace('error:' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
     // 清空联赛所有赛程
     public function clearmatchschedule() {
         $match_id = input('match_id', 0, 'intval');
