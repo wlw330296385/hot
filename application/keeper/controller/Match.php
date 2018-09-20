@@ -1242,4 +1242,29 @@ class Match extends Base {
    public function leagueGuide() {
     return view('Match/leagueGuide');
 }
+
+    // 联赛招募列表（对外）
+    public function recruitmentList() {
+        return view('Match/recruitment/recruitmentList');
+    }
+    // 联赛招募列表（对内）
+    public function recruitmentListOfLeague() {
+        return view('Match/recruitment/recruitmentListOfLeague');
+    }
+    // 联赛招募详情（对外）
+    public function recruitmentInfo() {
+        return view('Match/recruitment/recruitmentInfo');
+    }
+    // 联赛招募详情（对内）
+    public function recruitmentInfoOfLeague() {
+        return view('Match/recruitment/recruitmentInfoOfLeague');
+    }
+    // 联赛创建招募
+    public function createRecruitment() {
+        return view('Match/recruitment/createRecruitment');
+    }
+    // 联赛编辑招募
+    public function updateRecruitment() {
+        return view('Match/recruitment/updateRecruitment');
+    }
 }
