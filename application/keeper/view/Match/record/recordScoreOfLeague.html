@@ -125,7 +125,7 @@
 
             <div class="operation-box mb">
                 <div class="mui-input-row">
-                    <label>记分员</label>
+                    <label>记录员</label>
                 </div>
                 <div class="box" id="inactiveList">
                     {volist name="matchScheduleInfo.scorers_list" id="vol"}
@@ -242,12 +242,12 @@
         </div>
     </div>
 
-    <!--记分员-->
+    <!--记录员-->
     <div id="score" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="course wd36">
-                <strong>记分员</strong>
+                <strong>记录员</strong>
             </span>
             <span class="fr">
                 <button class="mui-btn-blue" id="scoreConfirm">确认</button>
@@ -318,8 +318,8 @@
             var pageCR = 1;
             toCourtList(wCourt, courtKeyword, 1);
             toRefereelist(); //裁判列表
-            toScorelist(); //记分员列表
-            toScorersInital(); // 记分员赋值
+            toScorelist(); //记录员列表
+            toScorersInital(); // 记录员赋值
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
@@ -431,7 +431,7 @@
                 $(".mui-badge").text(totalNum);
             });
 
-            //记分员复选框赋值
+            //记录员复选框赋值
             $("#setleagueScoreBox").on('tap', '', function () {
                 //每次打开先清空所有选择
                 $("input[name='checkbox-score']").prop("checked", false);
@@ -444,7 +444,7 @@
                 });
             });
 
-            // 选择添加记分员
+            // 选择添加记录员
             $("#scoreConfirm").on('tap', function () {
                 $("#inactiveList").empty();
                 $("#hideStList").empty();
@@ -515,7 +515,7 @@
             });
         }
 
-        // 记分员赋值
+        // 记录员赋值
         function toScorersInital() {
             totalNum = $("#inactiveList .checkboxCont").length;
             $(".mui-badge").text(totalNum);
@@ -610,7 +610,7 @@
 
         function toScorelist() {
             var url = "{:url('api/league/getmatchmemberlist','','',true)}";
-            //自定义获取记分员列表
+            //自定义获取记录员列表
             mui.ajax({
                 url: url,
                 data: {
@@ -675,7 +675,7 @@
             }
 
 
-            // 记分员
+            // 记录员
             let scorersList = []
             let realname = ''
             $("#inactiveList .stdList").each(function () {

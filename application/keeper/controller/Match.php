@@ -671,8 +671,8 @@ class Match extends Base {
                 $applyInfo['type_text'] = '管理员';
                 break;  // 管理员
             case 8:
-                $applyInfo['type_text'] = '记分员';
-                break;  // 记分员
+                $applyInfo['type_text'] = '记录员';
+                break;  // 记录员
             case 6:
                 $applyInfo['type_text'] = '裁判员';
                 break;  // 裁判员

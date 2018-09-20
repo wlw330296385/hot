@@ -2094,7 +2094,7 @@ class League extends Base
                 break;  // 管理员
             case 8:
                 $applyType = 8;
-                break;  // 记分员
+                break;  // 记录员
             case 7:
                 $applyType = 6;
                 break;  // 裁判员
@@ -2200,9 +2200,9 @@ class League extends Base
                 $matchMemberType = 9;
                 break;  // 管理员
             case 8:
-                $applyTypeStr = '记分员';
+                $applyTypeStr = '记录员';
                 $matchMemberType = 8;
-                break;  // 记分员
+                break;  // 记录员
             case 6:
                 $applyTypeStr = '裁判员';
                 $matchMemberType = 7;
@@ -2330,7 +2330,7 @@ class League extends Base
                 break;  // 管理员
             case 8:
                 $applyType = 8;
-                break;  // 记分员
+                break;  // 记录员
             case 7:
                 $applyType = 6;
                 break;  // 裁判员
@@ -2440,9 +2440,9 @@ class League extends Base
                 $matchMemberType = 9;
                 break;  // 管理员
             case 8:
-                $applyTypeStr = '记分员';
+                $applyTypeStr = '记录员';
                 $matchMemberType = 8;
-                break;  // 记分员
+                break;  // 记录员
             case 6:
                 $applyTypeStr = '裁判员';
                 $matchMemberType = 7;
@@ -2853,9 +2853,9 @@ class League extends Base
         $messageS = new MessageService();
         /**
          * 根据标识 对指定人群发送比赛信息更新消息
-         * 1 check_court_time：改变比赛时间、场地 出赛2支球队领队与队长、裁判员、记分员、自定义人物
+         * 1 check_court_time：改变比赛时间、场地 出赛2支球队领队与队长、裁判员、记录员、自定义人物
          * 2 check_referee: 改变裁判员名单 发送给相应裁判员
-         * 3 check_scorers: 改变记分员名单 发送给相应记分员
+         * 3 check_scorers: 改变记录员名单 发送给相应记录员
          */
         $sendMessageMembers = [];
         $teamS = new TeamService();
@@ -2892,7 +2892,7 @@ class League extends Base
         // check_scorers
         if (array_key_exists('check_scorers', $data) && $data['check_scorers']) {
             $sendMessageMembers = array_merge($sendMessageMembers, $scorerIds);
-            $changeStr = '记分员修改';
+            $changeStr = '记录员修改';
         }
         // check_referee
         if (array_key_exists('check_referee', $data) && $data['check_referee']) {
@@ -2960,11 +2960,11 @@ class League extends Base
         $messageS = new MessageService();
         $teamS = new TeamService();
         $refereeS = new RefereeService();
-        // 收到通知人群：2支球队的领队和队长、相关裁判员、记分员、自定义人物会员
+        // 收到通知人群：2支球队的领队和队长、相关裁判员、记录员、自定义人物会员
         $sendMessageMembers = [];
         // 裁判员名单集合
         $refereeMemberIds = [];
-        // 记分员名单集合
+        // 记录员名单集合
         $scorerIds = [];
         // 自定义人物会员
         $customId = [];
@@ -4113,7 +4113,7 @@ class League extends Base
         if (!$validate->scene('league_add')->check($data)) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
-        // 验证会员操作权限 记分员以上才能操作
+        // 验证会员操作权限 记录员以上才能操作
         if (!$this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
@@ -4255,7 +4255,7 @@ class League extends Base
         if (!$validate->scene('league_edit')->check($data)) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
-        // 验证会员操作权限 记分员以上才能操作
+        // 验证会员操作权限 记录员以上才能操作
         if (!$this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
@@ -4367,7 +4367,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
 
-        // 验证会员操作权限 记分员以上才能操作
+        // 验证会员操作权限 记录员以上才能操作
         if (!$this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
@@ -5190,7 +5190,7 @@ class League extends Base
         if (!$validateResult) {
             return json(['code' => 100, 'msg' => $validate->getError()]);
         }
-        // 验证会员操作权限 记分员以上才能操作
+        // 验证会员操作权限 记录员以上才能操作
         if (!$this->memberInfo['id'] === 0) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
