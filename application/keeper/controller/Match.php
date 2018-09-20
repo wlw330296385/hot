@@ -574,9 +574,16 @@ class Match extends Base {
     public function workListOfLeague() {
          // 工作人员类型
         $leagueS = new LeagueService();
+
+        $myInfo = $leagueS->getMatchMember(['member_id' => $this->memberInfo['id'], 'match_id' => $this->league_id, 'status' => 1]);
+        if (empty($myInfo) || $myInfo['type'] < 9) {
+            $this->error("你不是该联赛的管理人员");
+        }
+
         $types = $leagueS->getMatchMemberTypes();
         return view('Match/work/workListOfLeague', [
-            'types' => $types
+            'types' => $types,
+            'myInfo' => $myInfo
         ]);
     }
 
@@ -587,12 +594,11 @@ class Match extends Base {
         $member_id = input('member_id', 0, 'intval');
 
 
-        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id]);
+        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id, 'status' => 1]);
         if (empty($matchMemberInfo)) {
             $this->error("没有找到该工作人员的信息");
         }
         $types = $leagueS->getMatchMemberTypes();
-        $matchMemberInfo["type"] = $types[$matchMemberInfo["type"]];
         return view('Match/work/workMemberInfo', [
             'types' => $types,
             'matchMemberInfo' => $matchMemberInfo
