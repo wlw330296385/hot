@@ -2549,7 +2549,7 @@ class League extends Base
             'status' => 1
         ]);
         if (!$myMatchMember) {
-            return json(['code' => 100, 'msg' => "修改失败，你不是该联赛的管理员"]);
+            return json(['code' => 100, 'msg' => "修改失败，你不是该联赛的工作人员"]);
         }
 
         // 如果有权限的改动
@@ -2571,10 +2571,10 @@ class League extends Base
             }
         }
 
-        if ($matchMemberInfo['id'] != $myMatchMember['id'] && $matchMemberInfo['type'] >= $myMatchMember['type']) {
+        if ($matchMemberInfo['id'] != $myMatchMember['id'] && $matchMemberInfo['type'] >= $myMatchMember['type'] && $myMatchMember['type'] < 9) {
             return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
         }
-        
+
         try {
             // 修改联赛工作人员数据
             $data['id'] = $matchMemberInfo['id'];
