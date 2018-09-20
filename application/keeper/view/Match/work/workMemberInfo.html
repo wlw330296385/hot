@@ -22,9 +22,9 @@
 
     <div class="mui-content">
 
-
         <form action="" class="mui-input-group">
-
+            <input type="hidden" name="member_id" class="data" value="{$matchMemberInfo.member_id}">
+            <input type="hidden" name="league_id" class="data" value="{$league_id}">
             <div class="page-header bggray2">
                 <span class="course wd45">
                     <strong>基本信息</strong>
@@ -32,22 +32,33 @@
             </div>
             <div class="mui-input-row">
                 <label>姓名</label>
-                <span>{$matchMemberInfo.member}</span>
+                <span>{$matchMemberInfo.realname}</span>
             </div>
             <div class="mui-input-row">
-                <label>角色</label>
-                <span>{$matchMemberInfo.type}</span>
+                <div class="mui-navigate-right typeRole">
+                    <label>角色</label>
+                    {if $memberInfo.id == $matchMemberInfo.member_id}
+                    <span name="type" class="data">{$matchMemberInfo.type}</span>
+                    {else}
+                    <span class="select-row">
+                        <select name="type" id="roleSelect" class="data">
+                            {volist name="types" id="vo"}
+                            <option value="{$key}">{$vo}</option>
+                            {/volist}
+                        </select>
+                    </span>
+                    {/if}
+                </div>
             </div>
             <div class="mui-input-row">
                 <label>职能</label>
-                <input type="text" name="" value="{$matchMemberInfo.job_description}" class="data" placeholder="请填写职能信息">
+                <input type="text" name="job_description" value="{$matchMemberInfo.job_description}" class="data"
+                    placeholder="请填写职能信息">
             </div>
-
             <div class="mui-input-row">
                 <label>电话</label>
-                <input type="text" name="" value="{$matchMemberInfo.telephone}" class="data" placeholder="请填写电话">
+                <input type="text" name="telephone" value="{$matchMemberInfo.telephone}" class="data" placeholder="请填写电话">
             </div>
-
         </form>
 
         <ul class="mui-table-view operation mt">
@@ -56,131 +67,44 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli modifyWorker">
-                <a href="#typePopover">修改角色</a>
+            {if $memberInfo.id == $matchMemberInfo.member_id}
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bggreen confirmBtn">
+                提交
             </li>
+            {else/}
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred deleteWorker">
                 删除
             </li>
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bggreen confirmBtn">
+                提交
+            </li>
+            {/if}
         </ul>
 
     </div>
 
-    <!-- 工作人员角色popover -->
-    <div id="typePopover" class="mui-popover">
-        <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="f14">
-                <strong>请选择修改的角色</strong>
-            </span>
-        </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <ul class="mui-table-view list typeList">
-                    {volist name="types" id="vo"}
-                    <li class="mui-table-view-cell listli" data-type="{$key}">
-                        {$vo}
-                    </li>
-                    {/volist}
-                </ul>
-            </div>
-        </div>
-    </div>
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-        markNum()
-        followStatus()
-        // 关注联赛
-        $(".follow").on("tap", '', function () {
-            var league_id = "{league_id}";
-            mui.ajax("{:url('api/follow/focus')}", {
-                data: {
-                    type: 5,
-                    league_id: league_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast(data.msg);
-                        followStatus();
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        });
-
-        // 联赛工作人员列表
-        var url = "{:url('api/league/getmatchmembers','','',true)}";
-        var match_id = "{leagueInfo.id}";
-        mui.ajax({
-            url: url,
-            data: {
-                match_id: match_id
-            },
-            dataType: 'json', //服务器返回json格式数据
-            type: 'post', //HTTP请求类型
-            timeout: 10000, //超时时间设置为10秒；
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            success: function (data) {
-                console.log(data)
-                var newli = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('member/memberInfoother')}" + '/member_id/' + data.data[i].member_id;
-                        newli +=
-                            `<li class="mui-table-view-cell mui-collapse listli">
-                                <a class="mui-navigate-right">
-                                    <text class="realName">${data.data[i].realname}</text>
-                                    <span class="colororange" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
-                                </a>
-                                <div class="mui-collapse-content dataCollapse">
-                                <div class="fl wd60">
-                                    <p>职能：暂定</p>
-                                    <p>联系电话：暂定</p>
-                                </div>`
-                        if (data.data[i].type != 10) {
-                            newli +=
-                                `<button class="btn bgred fr deleteWorker" data-id="${data.data[i].id}" style="margin-top: 6px;padding: 4px 8px;">删除</button>
-                                <a href="#typePopover" class="modifyBtn" data-id="${data.data[i].id}">
-                                    <button class="btn fr modifyWorker" style="margin-top: 6px;margin-right: 6px;padding: 4px 8px;">修改角色</button>
-                                 </a>`
-                        }
-                        newli += `</div>
-                            </li>`
-                    }
-                }
-                $("ul.worker").empty().append(newli);
-                if (newli == '') {
-                    $("ul.worker").html('<p class="nodata">没有相关数据哦</p>');
-                }
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-            }
-        });
+        var type = "{$matchMemberInfo.type}";
+        if (type == "管理员") {
+            type = 9
+        } else if (type == "记录员") {
+            type = 8
+        } else if (type == "裁判员") {
+            type = 7
+        } else if (type == "工作人员") {
+            type = 0
+        }
+        $('#roleSelect option[value="' + type + '"]').prop("selected", true);
 
         // 删除工作人员
         $(document).on('tap', '.deleteWorker', function () {
-            var btnArray = ['确认', '取消'];
-            var id = $(this).attr("data-id");
+            var btnArray = ['取消', '确认'];
+            var id = "{$matchMemberInfo.id}";
             mui.confirm('确认删除该工作人员吗', '提示', btnArray, function (e) {
-                if (e.index == 0) {
+                if (e.index == 1) {
                     var apiurl = "{:url('api/league/delmatchmember')}";
                     mui.ajax(apiurl, {
                         data: {
@@ -194,7 +118,7 @@
                         success: function (data) {
                             if (data.code == 200) {
                                 mui.toast(data.msg);
-                                location.reload();
+                                window.history.go(-1)
                             } else {
                                 mui.toast(data.msg);
                             }
@@ -207,118 +131,29 @@
             });
         });
 
-        // 点击修改角色给 typelist赋值
-        $(document).on("tap", ".modifyBtn", function () {
-            $(".typeList").attr("data-id", $(this).attr("data-id"));
-            $(".typeList").attr("data-name", $(this).parent(".dataCollapse").siblings().find(".realName").text());
-            $(".typeList").attr("data-type", $(this).parent(".dataCollapse").siblings().find("span").attr(
-                "data-type"));
-            $(".typeList li").each(function () {
-                $(this).show();
-                var thisType = $(this).attr("data-type");
-                var parentType = $(this).parent().attr("data-type");
-                if (thisType == parentType) {
-                    $(this).hide();
-                }
-            })
-        });
-
-        // 修改工作人员角色
-        $(document).on('tap', '.typeList li', function () {
-            var btnArray = ['取消', '确认'];
-            var type = $(this).attr("data-type");
-            var id = $(this).parent().attr("data-id");
-            var name = $(this).parent().attr("data-name");
-            var thisRole = $(this).text();
-            mui.confirm('确认把' + name + '设置为' + thisRole + '吗？', '提示', btnArray, function (e) {
-                if (e.index == 1) {
-                    var apiurl = "{:url('api/league/updateMatchMember')}";
-                    mui.ajax(apiurl, {
-                        data: {
-                            id: id,
-                            type: type
-                        },
-                        dataType: 'json',
-                        type: 'post',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        success: function (data) {
-                            if (data.code == 200) {
-                                mui.toast(data.msg);
-                                location.reload();
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errotThrown) {
-                            mui.toast('网络异常,请稍候再试');
-                        }
-                    });
-                }
-            });
-        });
-
-
-        // 判断当前的关注状态
-        function followStatus() {
-            var league_id = "{league_id}";
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 5,
-                    league_id: league_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("已关注");
-                            $(".follow").removeClass("mui-btn-danger");
-                        } else {
-                            $(".follow").text("关注");
-                            $(".follow").addClass("mui-btn-danger");
-                        }
+        // 获取数据并进行提交
+        $(document).on('tap', '.confirmBtn', function () {
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            var url = "{:url('api/league/updateMatchMember')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '提交成功', '确定', function () {
+                    var goUrl = "{:url('match/worklistofleague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '提交失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
-
-        function markNum() {
-            var organization_id = "{league_id}";
-            mui.ajax("{:url('api/apply/getApplyListByPageApi','','',true)}", {
-                data: {
-                    organization_id: organization_id,
-                    apply_type: 1,
-                    status: 1
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        $(".markNum").text(data.data.total)
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
+                }, 'json');
+            }
+        });
     </script>
 </body>
 
