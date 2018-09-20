@@ -2559,6 +2559,8 @@ class League extends Base
                 return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
             } else if ($myMatchMember['type'] < 9) {
                 return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
+            } else if ($myMatchMember['type'] <= $matchMemberInfo['type']) {
+                return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
             } else if ($myMatchMember['type'] <= $data['type']) {
                 return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
             } else if ($data['type'] == 7) {
@@ -2571,8 +2573,13 @@ class League extends Base
             }
         }
 
-        if ($matchMemberInfo['id'] != $myMatchMember['id'] && $matchMemberInfo['type'] >= $myMatchMember['type'] && $myMatchMember['type'] < 9) {
-            return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
+        // 如果修改别人的信息 需要管理员权限，并且对方不是管理员以上
+        if ($matchMemberInfo['id'] != $myMatchMember['id']) {
+            if ($matchMemberInfo['type'] >= 9) {
+                return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
+            } else if ($myMatchMember['type'] < 9) {
+                return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
+            }
         }
 
         try {
