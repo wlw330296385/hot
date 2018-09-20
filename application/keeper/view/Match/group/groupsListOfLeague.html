@@ -35,10 +35,10 @@
                 </a>
             </li>
             {eq name="$btnEditAction" value="1"}
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred editGroupBtn">
                 <a href="{:url('Match/editGroups',['league_id'=>$leagueInfo.id])}">编辑分组</a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue">
+            <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgblue createMatchBtn">
                 <a href="{:url('Match/creatematchstage',['league_id'=>$leagueInfo.id])}">新建比赛阶段</a>
             </li>
             {else/}
@@ -65,8 +65,32 @@
         $(function () {
             //初始化全局变量
             var count = 1;
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/league/matchrecordlistbystage','','',true)}", {
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        $(".editGroupBtn").hide();
+                        $(".createMatchBtn").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                        $(".createMatchBtn").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        });
 
-        })
+
         mui.init({
             swipeBack: true, //启用右滑关闭功能
             pullRefresh: {
