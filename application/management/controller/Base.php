@@ -18,7 +18,7 @@ class Base extends Controller
 		}else{
 			if($member_id <> $memberInfo['id']){
 				cookie('member_id',null);
-				$this->error('登登陆超时,请重新登录','Login/login');
+				$this->error('登陆超时,请重新登录','Login/login');
 			}
 			$this->memberInfo = $memberInfo;
 			$this->assign('memberInfo',$memberInfo);

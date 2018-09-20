@@ -714,11 +714,11 @@ class StatisticsCamp extends Camp{
                 $time =  strtotime(date('Ym01',time()));
                 $e = date('Ymd',strtotime('-1 day',$time));
                 $date_str = [$point_in_time,$e];
-                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>3];
+                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
                 $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                 $income = db('income')->where($map1)->sum('income');
                 $output = db('output')->where($map_1)->sum('output');
-                $legend = ['课时收入','赠课支出'];
+                $legend = ['收入','支出'];
                 $title = '课时收入支出图';
             }
             $this->assign('income',$income?$income:0);
@@ -729,16 +729,17 @@ class StatisticsCamp extends Camp{
             $e = date('Ymd', strtotime('-1 sunday', time()));
             $date_str = [$point_in_time,$e];
 
-            $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
-            $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
-            $income1 = db('income')->where($map1)->sum('income');
-            $income2 = db('income')->where($map2)->sum('income');
-            $output = 0;
-            $income = $income1+$income2;
-            $legend = ['课时收入','活动收入','支出'];
+            // $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
+            // $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
+            // $income1 = db('income')->where($map1)->sum('income');
+            // $income2 = db('income')->where($map2)->sum('income');
+            
+            $map1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
+            $map_1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
+            $output = db('output')->where($map_1)->sum('output');
+            $income = db('income')->where($map1)->sum('income');
+            $legend = ['收入','支出'];
             $title = '收入支出图';
-            $this->assign('income1',$income1?$income1:0);
-            $this->assign('income2',$income2?$income2:0);
             $this->assign('income',$income?$income:0);
             $this->assign('output',$output?$output:0);
         }
@@ -756,7 +757,7 @@ class StatisticsCamp extends Camp{
                     $time =  strtotime(date('Ym01',time()));
                     $e = date('Ymd',strtotime('-1 day',$time));
                     $date_str = [$point_in_time,$e];
-                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>3];
+                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
                     $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
                     $income = db('income')->where($map1)->sum('income');
                     $output = db('output')->where($map_1)->sum('output');
@@ -780,12 +781,12 @@ class StatisticsCamp extends Camp{
                 }
                 $e = date('Ymd', strtotime('-1 sunday', time()));
                 $date_str = [$point_in_time,$e];
-                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
-                $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
-                $income1 = db('income')->where($map1)->sum('income');
-                $income2 = db('income')->where($map2)->sum('income');
+                $map1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
+                $map_1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
+                $output = db('output')->where($map_1)->sum('output');
+                $income = db('income')->where($map1)->sum('income');
                 $output = 0;
-                $withdraw = $income1+$income2;
+                $withdraw = $income;
                 if($withdraw<0){
                     $this->error('收入为赤字不可提现');
                 }

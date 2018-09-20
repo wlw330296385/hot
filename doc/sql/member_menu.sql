@@ -11,7 +11,7 @@
  Target Server Version : 50553
  File Encoding         : 65001
 
- Date: 18/09/2018 14:12:40
+ Date: 19/09/2018 16:05:33
 */
 
 SET NAMES utf8mb4;
@@ -91,7 +91,7 @@ INSERT INTO `member_menu` VALUES (187, 184, 'management', '课时详情', 'fa fa
 INSERT INTO `member_menu` VALUES (188, 184, 'management', '课时编辑', 'fa fa-cog', 0, 'schedule/updateSchedule', '_self', 0, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (189, 184, 'management', '创建课时', 'fa fa-cog', 0, 'schedule/createSchedule', '_self', 0, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (190, 184, 'management', '创建课时', 'fa fa-cog', 0, 'schedule/createSchedule', '_self', 0, 0, 1, 2, 2, 0, 0);
-INSERT INTO `member_menu` VALUES (191, 0, 'management', '提现申请', 'fa fa-cog', 0, 'StatisticsCamp/Withdraw', '_self', 0, 0, 1, 3, 1, 0, 0);
+INSERT INTO `member_menu` VALUES (191, 0, 'management', '提现申请', 'fa fa-cog', 0, 'StatisticsCamp/Withdraw', '_self', 1, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (192, 0, 'management', '班级管理', 'fa fa-cog', 0, '', '_self', 1, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (193, 192, 'management', '班级列表', 'fa fa-cog', 0, 'grade/gradeList', '_self', 1, 0, 1, 3, 1, 0, 0);
 INSERT INTO `member_menu` VALUES (194, 192, 'management', '添加班级', 'fa fa-cog', 0, 'grade/creategrade', '_self', 0, 0, 1, 3, 1, 0, 0);
