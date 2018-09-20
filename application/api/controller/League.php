@@ -2522,74 +2522,85 @@ class League extends Base
 
     // 修改联赛工作人员
     public function updateMatchMember()
-    {
-        $id = input('id', 0, 'intval');
-        if (input('?type')) {
-            $type = input('type', 0, 'intval');
+    {   
+        $data = input('post.');
+        if (!empty($data['league_id'])) {
+            $data['match_id'] = $data['league_id'];
+            unset($data['league_id']);
         }
-        if (!$id || !isset($type)) {
+        if (empty($data['member_id']) || empty($data['match_id'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
+
         // 查询要删除的联赛工作人员信息
         $leagueS = new LeagueService();
-        $matchMemberInfo = $leagueS->getMatchMember(['id' => $id]);
+        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $data['member_id'], 'match_id' => $data['match_id']]);
         if (!$matchMemberInfo) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
-        } else if ($matchMemberInfo['type'] == 10) {
-            return json(['code' => 100, 'msg' => '无法修改负责人权限']);
         }
         
-        // 检查当前会员操作权限(联赛工作人员)
+         // 检查当前会员操作权限(联赛工作人员)
         if (empty($this->memberInfo['id'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         $myMatchMember = $leagueS->getMatchMember([
-            'match_id' => $matchMemberInfo['match_id'],
+            'match_id' => $data['match_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        if (!$myMatchMember || $myMatchMember['type'] < 9) {
-            return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
-        } else if ($matchMemberInfo['id'] == $myMatchMember['id']) {
-            return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
-        } else if ($matchMemberInfo['type'] >= $myMatchMember['type']) {
-            return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
-        } else if ($myMatchMember['type'] <= $type) {
-            return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
+        if (!$myMatchMember) {
+            return json(['code' => 100, 'msg' => "修改失败，你不是该联赛的管理员"]);
         }
 
-        // 如果为裁判员，先要检查资质
-        if ($type == 7) {
-            $refereeS = new RefereeService();
-            $refereeInfo = $refereeS->getReferee(['member_id' => $matchMemberInfo['member_id'], 'status' => 1]);
-            if (empty($refereeInfo)) {
-                return json(['code' => 100, 'msg' => "该成员未通过裁判员审核，修改失败"]);
+        // 如果有权限的改动
+        if (!empty($data['type']) && $matchMemberInfo['type'] != $data['type']) {
+
+            if ($matchMemberInfo['id'] == $myMatchMember['id']) {
+                return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
+            } else if ($myMatchMember['type'] < 9) {
+                return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
+            } else if ($myMatchMember['type'] <= $data['type']) {
+                return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
+            } else if ($data['type'] == 7) {
+                // 如果为裁判员，先要检查资质
+                $refereeS = new RefereeService();
+                $refereeInfo = $refereeS->getReferee(['member_id' => $matchMemberInfo['member_id'], 'status' => 1]);
+                if (empty($refereeInfo)) {
+                    return json(['code' => 100, 'msg' => "该成员未通过裁判员审核，修改失败"]);
+                }
             }
         }
 
+        if ($matchMemberInfo['id'] != $myMatchMember['id'] && $matchMemberInfo['type'] >= $myMatchMember['type']) {
+            return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
+        }
+        
         try {
             // 修改联赛工作人员数据
-            $resultUpdate = $leagueS->saveMatchMember(['type' => $type, 'id' => $matchMemberInfo['id']]);
+            $data['id'] = $matchMemberInfo['id'];
+            $resultUpdate = $leagueS->saveMatchMember($data);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
 
-        // 向该会员发送被移出联赛工作人员 消息推送
-        try {
-            $messageContent = [
-                'title' => '联赛工作人员权限修改通知',
-                'content' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
-                'url' => url('keeper/message/index', '', '', true),
-                'keyword1' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
-                'keyword2' => '联赛权限修改',
-                'remark' => '点击登录平台查看更多信息',
-                'steward_type' => 2
-            ];
-            $messageS = new MessageService();
-            $messageS->sendMessageToMember($matchMemberInfo['member_id'], $messageContent, config('wxTemplateID.informationChange'));
-        } catch (Exception $e) {
-            trace('error:' . $e->getMessage(), 'error');
+        // 向该会员发送权限修改 消息推送
+        if (!empty($data['type']) && $data['type'] != $matchMemberInfo['type']) {
+            try {
+                $messageContent = [
+                    'title' => '联赛工作人员权限修改通知',
+                    'content' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
+                    'url' => url('keeper/message/index', '', '', true),
+                    'keyword1' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
+                    'keyword2' => '联赛权限修改',
+                    'remark' => '点击登录平台查看更多信息',
+                    'steward_type' => 2
+                ];
+                $messageS = new MessageService();
+                $messageS->sendMessageToMember($matchMemberInfo['member_id'], $messageContent, config('wxTemplateID.informationChange'));
+            } catch (Exception $e) {
+                trace('error:' . $e->getMessage(), 'error');
+            }
         }
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
@@ -3128,6 +3139,62 @@ class League extends Base
         try {
             // $leagueS->saveMatchSchedule(['id' => $scheduleInfo['id'], 'status' => -1]);
             $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
+        } catch (Exception $e) {
+            trace('error:' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+        if (!$result) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+    }
+
+    // 删除某比赛日的赛程
+    public function delmatchschedulebydate()
+    {
+        $match_id = input('match_id', 0, 'intval');
+        $date = input('date', '', 'string');
+        if (!$match_id || !$date) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $leagueS = new LeagueService();
+
+        // 检查会员登录信息
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+        }
+        // 检查会员操作权限
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $match_id,
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 获取赛程详情
+        $date_arr = explode('-', $date);
+        $dateTimeStamp = getStartAndEndUnixTimestamp($date_arr[0],$date_arr[1],$date_arr[2]);
+
+        $map['match_id'] = $match_id;
+        $map['match_time'] = ['between',[$dateTimeStamp['start'],$dateTimeStamp['end']]];
+        $schedules = $leagueS->getMatchSchedules($map);
+        if (!$schedules) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
+
+        $id_arr = [];
+        foreach ($schedules as $key => $value) {
+            if ($value["status"] == 2) {
+                return json(['code' => 100, 'msg' => '删除失败，当日赛程中已经有完成的比赛']);
+            }
+            array_push($id_arr, $value['id']);
+        }
+
+        try {
+            $result = $leagueS->delMatchSchedule($id_arr);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
