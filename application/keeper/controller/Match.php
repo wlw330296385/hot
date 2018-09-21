@@ -346,6 +346,18 @@ class Match extends Base {
     }
      // 联赛章程编辑
      public function regulationofleague() {
+         // 获取当前会员的联赛人员关系数据
+        $leagueS = new LeagueService();
+        $matchMemberInfo = $leagueS->getMatchMember([
+            'match_id' => $this->league_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$matchMemberInfo) {
+            $this->error(__lang('MSG_403'));
+        }
+
+        $this->assign('matchMemberInfo', $matchMemberInfo);
         return view('Match/regulation/regulationOfLeague');
     }
 
