@@ -40,10 +40,12 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view list detalis-list">
+            <ul class="mui-table-view list detalis-list mb" id="studentList">
                 <li class="mui-table-view-cell listli detalisli">学员名单
-                    <span class="students">{$gradeInfo.student_str}</span>
+                    <span>剩余课时</span>
                 </li>
+            </ul>
+            <ul class="mui-table-view list detalis-list">
                 <li class="mui-table-view-cell listli">班级类型
                     <span>{$gradeInfo.gradecate}</span>
                 </li>
@@ -180,6 +182,50 @@
             }
             $("#weektime").text(weekTime);
         })
+
+    function toStudentList(lesson_id, keyword) {
+        var url = "{:url('api/lesson_member/getLessonMemberJoinGradeMemberListApi','','',true)}";
+        var lessonID = "{$gradeInfo.lesson_id}";
+        $.ajax({
+            url: url,
+            data: {
+                lesson_id: lessonID,
+                status: 1
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            success: function (data) {
+                console.log(data)
+                if (data.code == 200) {
+                    var newli = '';
+                    var tys = '';
+                    for (var i = 0; i <= data.data.length - 1; i++) {
+                        newli +=
+                            ` <tr role="row" class="odd">
+                                <td>${data.data[i].student}</td>
+                                <td>
+                                    <a href="">查看详情</a>
+                                </td>
+                                <td>
+                                    <input name="checkbox-student" class="student" value="${data.data[i].student}" type="checkbox" 
+                                    data-id="${data.data[i].id}" data-student_id="${data.data[i].student_id}" data-student="${data.data[i].student}" 
+                                    data-camp="${data.data[i].camp}" data-camp_id="${data.data[i].camp_id}" data-lesson="${data.data[i].lesson}" data-lesson_id="${data.data[i].lesson_id}"
+                                     data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-student_typenum="${data.data[i].type_num}">
+                                </td>
+                            </tr>`
+                    }
+
+                    $("#studentList tbody").empty();
+                    if (newli == '') {
+                        newli = '<tr><td colspan="3" class="text-center">没有查找到数据!</td></tr>'
+                    }
+                    $("#studentList tbody").append(newli);
+                }
+            },
+            error: function (xhr, type, errerThrown) {}
+        });
+    };
 
     </script>
 </body>
