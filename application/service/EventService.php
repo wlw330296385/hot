@@ -67,6 +67,15 @@ class EventService {
         }
     }
 
+
+    public function getEventListNoPage($map=[], $order='id desc',$paginate=10,$field = ''){
+        $res = Event::field($field)->where($map)->order($order)->select();
+        return $res;
+    }
+
+
+
+
     // 软删除
     public function SoftDeleteEvent($id) {
         $res = db('event_member')->where(['event_id'=>$id])->find();

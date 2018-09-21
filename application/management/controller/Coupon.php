@@ -1,6 +1,6 @@
 <?php 
-namespace app\admin\controller;
-use app\admin\controller\base\Camp;
+namespace app\management\controller;
+use app\management\controller\Camp;
 use app\service\ItemCouponService;
 class Coupon extends Camp{
 	protected $ItemCouponService;
@@ -87,6 +87,7 @@ class Coupon extends Camp{
             $data['publish_start'] = strtotime($publishtime[0]);
             $data['publish_end'] = strtotime($publishtime[1]);
             $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $data['organization_type'] = 2;
             $data['organization'] = $this->campInfo['camp'];
             $data['organization_id'] = $this->campInfo['id'];
@@ -99,6 +100,10 @@ class Coupon extends Camp{
         }
         return view('Coupon/createItemCoupon');
     }
+
+
+
+
     // 分页获取数据
     public function itemCouponListApi(){
         $map = input('post.');
