@@ -605,7 +605,6 @@ class Match extends Base {
         $leagueS = new LeagueService();
         $member_id = input('member_id', 0, 'intval');
 
-
         $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id, 'status' => 1]);
         if (empty($matchMemberInfo)) {
             $this->error("没有找到该工作人员的信息");
@@ -615,7 +614,7 @@ class Match extends Base {
             'types' => $types,
             'matchMemberInfo' => $matchMemberInfo
         ]);
-   }
+    }
 
     // 邀请联赛工作人员
     public function addworkerofleague() {
