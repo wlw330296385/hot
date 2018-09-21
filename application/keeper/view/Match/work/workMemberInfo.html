@@ -38,7 +38,7 @@
                 <div class="mui-navigate-right typeRole">
                     <label>角色</label>
                     {if $memberInfo.id == $matchMemberInfo.member_id}
-                    <span name="type" class="data">{$matchMemberInfo.type}</span>
+                    <span name="type" class="data spanType"></span>
                     {else}
                     <span class="select-row">
                         <select name="type" id="roleSelect" class="data">
@@ -57,7 +57,11 @@
             </div>
             <div class="mui-input-row">
                 <label>电话</label>
+                {if $matchMemberInfo.telephone==0}
+                <input type="text" name="telephone" value="" class="data" placeholder="请填写电话">
+                {else/}
                 <input type="text" name="telephone" value="{$matchMemberInfo.telephone}" class="data" placeholder="请填写电话">
+                {/if}
             </div>
         </form>
 
@@ -88,16 +92,18 @@
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
         var type = "{$matchMemberInfo.type}";
-        if (type == "管理员") {
-            type = 9
-        } else if (type == "记录员") {
-            type = 8
-        } else if (type == "裁判员") {
-            type = 7
-        } else if (type == "工作人员") {
-            type = 0
+        if (type == 10) {
+            $(".spanType").text("负责人");
+        } else if (type == 9) {
+            $(".spanType").text("管理员");
+        } else if (type == 8) {
+            $(".spanType").text("记录员");
+        } else if (type == 7) {
+            $(".spanType").text("裁判员");
+        } else if (type == 0) {
+            $(".spanType").text("工作人员");
         }
-        $('#roleSelect option[value="' + type + '"]').prop("selected", true);
+        $('#roleSelect option[value="{$matchMemberInfo.type}"]').prop("selected", true);
 
         // 删除工作人员
         $(document).on('tap', '.deleteWorker', function () {
