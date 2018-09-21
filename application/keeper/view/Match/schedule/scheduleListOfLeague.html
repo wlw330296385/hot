@@ -13,9 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         .mbNumber {
-            width: 10%;
-            font-size: 20px;
-            line-height: 62px;
+            width: 13%;
             float: left;
             text-align: center;
             margin-right: 4px;
@@ -359,9 +357,22 @@
                                         <div class="mui-slider-right mui-disabled">
                                             <span class="mui-btn mui-btn-red delSchedule" data-schedule_id="${dataSchedule.id}">删除</span>
                                         </div>
-                                        <div class="mui-slider-handle">
-                                            <div class="mbNumber colororange">${j+1}</div>
-                                            <div class="mui-media-body wd58">
+                                        <div class="mui-slider-handle"> `
+                                if (dataSchedule.status == 2) {
+                                    newli +=
+                                        ` <div class="mbNumber">
+                                                <p class="lineHeight32 f18 colororange">${j+1}</p>
+                                                <p class="lineHeight32 colororange">完成</p>
+                                            </div>`
+                                } else {
+                                    newli +=
+                                        ` <div class="mbNumber">
+                                                <p class="lineHeight32 f18 colororange">${j+1}</p>
+                                                <p class="lineHeight32">未完成</p>
+                                            </div>`
+                                }
+                                newli +=
+                                    `<div class="mui-media-body wd52">
                                                     <p class="f14 mui-ellipsis lineHeight32">
                                                     <img class="img24" src="${dataSchedule.home_team_logo}" style="margin-right:10px;">${dataSchedule.home_team}`
                                 if (dataSchedule.home_team_color == "深色") {
@@ -381,7 +392,7 @@
                                 newli += `</p>`
                                 newli +=
                                     `</div>
-                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
+                                                <div class="price-frame mui-text-center" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;width: 16% !important">`;
                                 if (dataSchedule.match_group_id == '') {
                                     newli += `<p style="line-height:62px;">${Ttime}</p>`
                                 } else {
@@ -389,7 +400,7 @@
                                         `<p class="lineHeight32">${dataSchedule.match_group}</p><p class="lineHeight32">${Ttime}</p>`
                                 }
                                 newli +=
-                                    ` </div><div class="fl mui-text-center" style="width: 12%;">
+                                    ` </div><div class="fl mui-text-center" style="width: 13%;">
                                             <p class="lineHeight32">场地</p>`
                                 if (dataSchedule.court_no == '') {
                                     newli += ` <p class="lineHeight32">无</p>`
