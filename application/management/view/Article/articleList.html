@@ -8,32 +8,17 @@
 
 <div class="panel panel-default panel-intro">
     <div class="panel-heading">
-        <div class="panel-lead">
-            <em>会员管理</em>
-        </div>
     </div>
     <div class="panel-body">
         <div class="box no-border">
         	<div class="row">
 	        	<!-- 搜索框 -->
 	        	<div class="search-form col-md-10 col-md-offset-1">
-	                <form class="form-inline schedule-list" method="get">
+	                <form class="form-inline schedule-list" method="post">
 	                    <fieldset>
-	                         <div class="btn-group">
-			                  <button type="button" class="btn btn-success" id="field">{$field}</button>
-			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-			                    <span class="caret"></span>
-			                    <span class="sr-only">Toggle Dropdown</span>
-			                  </button>
-			                  <ul class="dropdown-menu search_opt" role="menu">
-			                    <li data = 'title'><a href="#">标题</a></li>
-			                    <li class="divider" ></li>
-			                    <li data = 'organization'><a href="#" >所属组织</a></li>
-			                  </ul>
-			                </div>
+	                    	<label>标题</label>
 	                        <div class="form-group">
-	                            <input class="form-control" type="text" name="keyword" required="required">
-	                            <input type="hidden" name="field" value="">
+	                            <input class="form-control" type="text" name="keyword" >
 	                        </div>
 	                        <div class="form-group">
 	                            <div class="col-sm-12 text-center">
@@ -96,20 +81,11 @@
                         	{$vo.status?'上架':'下架'}
                         </td>
                         <td class="text-center">
-                        	<a href="{:url('admin/article/articleInfo',['article_id'=>$vo['id']])}" class="btn btn-info" >详细</a>
-                            <div class="btn-group">
-			                  <button type="button" class="btn btn-success">文章操作</button>
-			                  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-			                    <span class="caret"></span>
-			                    <span class="sr-only">Toggle Dropdown</span>
-			                  </button>
-			                  <ul class="dropdown-menu" role="menu">
-			                    <li><a class="pop-iframe" data-href="">不要点</a></li>
-			                    <li><a class="pop-iframe" data-href="{:url('article/updateArticle',['article_id'=>$vo.id])}" href="{:url('article/updateArticle',['article_id'=>$vo.id])}">编辑</a></li>
-			                    <li class="divider"></li>
-			                    <li><a href="#">预留功能</a></li>
-			                  </ul>
-			                </div>
+                        	<li>
+                        		<a href="{:url('admin/article/articleInfo',['article_id'=>$vo['id']])}" class="btn btn-info" >详细</a><a  href="{:url('article/updateArticle',['article_id'=>$vo.id])}"  class="btn btn-success" >编辑</a>
+                        	</li>
+                        	
+			                    
                         </td>
                         
                     </tr>
@@ -129,41 +105,6 @@
 
 {block name='js'}
 <script type="text/javascript">
-	$(function(){
-		// $('.pop-iframe').click(function() {
-	 //        var iframeurl = $(this).attr('data-href');
-	 //        // alert(iframeurl);return;
-	 //        var title = $(this).text();
-	 //        layui.use('layer', function() {
-	 //            var layer = layui.layer;
-	            	
-	 //                layer.open({
-	 //                skin:'layui-layer-lan',
-	 //                type: 2,
-	 //                title: title,
-	 //                shadeClose: true,
-	 //                shade: false,
-	 //                maxmin: true, //开启最大化最小化按钮
-	 //                area: ['900px', '650px'],
-	 //                content: iframeurl
-	 //            });
-	 //        });
-	 //    });
-
-	})
-	
-	var field = 'woo';
-	$('.search_opt li').on('click',function(){
-		field = $(this).attr('data');
-		console.log(field);
-		$('#field').text(field);
-		$('input[type=hidden]').val(field)
-	})
-
-	$('input[type=reset]').on('click',function(){
-		$('input[type=hidden]').val('woo');
-		window.location.href="{:url('admin/article/articlelist')}";
-	})
 
 </script>
 {/block}

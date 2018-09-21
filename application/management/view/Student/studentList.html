@@ -22,6 +22,7 @@
 			<div class="box-body">
 				<div class="dataTables_wrapper form-inline dt-bootstrap">
 					<div class="row hotTbHeader">
+						<form method="post">
 						<div class="col-sm-12">
 							<div class="form-group">
 								<!-- /.input group -->
@@ -36,7 +37,7 @@
 								<div class="input-group radius4">
 									<select name="status" class="form-control radius4" style="border:none !important;">
 										<option value=""></option>
-										<option value="0">正常</option>
+										<option value="1">正常</option>
 										<option value="4">毕业</option>
 										<option value="-1">离营</option>
 									</select>
@@ -55,8 +56,9 @@
 							</div>
 							<div class="form-group">
 								<!-- /.input group -->
-								<button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+								<button type="submit" class="btn btn-default" id="goSearch">确认查询</button>
 							</div>
+						</form>
 							<h3 class="totalRight">
 								<span><small>学员总数：</small><strong class="text-yellow sAllCount"></strong></span>
 								<span><small>学员报课总数：</small><strong class="text-yellow sLessonCount"></strong></span>
@@ -94,8 +96,21 @@
 										<td>{$vol.total_schedule}</td>
 										<td>{$vol.total_schedule - $vol.rest_schedule}</td>
 										<td>{$vol.rest_schedule}</td>
-										<td>{$vol.type}</td>
-										<td>{$vol.status}</td>
+										<td>
+											{if $vol.type ==1}
+												正式生
+											{else /}
+												体验生
+											{/if}
+										</td>
+										<td>{switch $vol.status}
+											{case 1}在学{/case}
+											{case 2}已退款退学{/case}
+											{case 4}已毕业{/case}
+											{case -1}已离赢{/case}
+											{default /}{$vol.status}
+											{/switch}
+										</td>
 										<td><a class="btn btn-xs btn-info sInfo" data-student_id="{$vol['student_id']}"><i class="fa fa-inbox"></i> 查看详情</a></td>
 										<td><button  class="btn btn-xs btn-default sendTip" data-lesson="{$vol.lesson}" data-member_id = "{$vol['member_id']}" data-total_schedule = "{$vol.total_schedule}" data-rest_schedule = "{$vol.rest_schedule}"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
 									</tr>
@@ -182,36 +197,6 @@
 
         //=========================== 初始化数据 ==============================//
 
-
-        //查询统计
-        $("#goSearch").on("click", function () {
-            var type = $("select[name=type]").val();
-            var status = $("select[name=status]").val();
-            var keyword = $("input[name=keyword]").val();
-            var linkPram = '';
-            if(type==""&&status==""&&keyword==""){
-                alert("请填写或选择其中一项！");
-                return false;
-            }
-
-            if(type!=""&&type!=null){
-                linkPram = linkPram+"/type/"+type+"/";
-            }
-            if(status!=""){
-                linkPram = linkPram+"/status/"+status+"/";
-            }
-            if(keyword!=""&&keyword!=null){
-                linkPram = linkPram+"/keyword/"+keyword+"/";
-            }
-
-            //设置本地存储
-            localStorage.setItem('currType',type);
-            localStorage.setItem('currStatus',status);
-            localStorage.setItem('currKeyword',keyword);
-
-
-            window.location.href="{:url('management/Student/studentList')}"+linkPram;
-        })
 
 
         $(".sInfo").click(function(){

@@ -19,7 +19,7 @@ class Backend extends Base
 		if($power){
 			$this->power = $power;
 		}else{
-			$this->error('权限不足','Login/login');
+			$this->error('请重新选择训练营','Guider/choose');
 		}
 
 		if(!$this->checkAuth($power)){

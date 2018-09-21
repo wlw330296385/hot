@@ -1,0 +1,294 @@
+{extend name="layout/common"/}
+
+{block name="page-content"}
+
+
+
+<div class="row">
+    <div class="box no-border">
+        
+        <form role="form" action="" method="post" enctype="multipart/form-data" >
+            {:token()}
+            <div class="box-body">
+
+                <input type="hidden" class="form-control" placeholder="卡券名" name="organization_id" value="0" >
+                <input type="hidden" class="form-control" placeholder="卡券名" name="organization_type" value="1">
+                <input type="hidden" class="form-control" placeholder="卡券名" name="organization" value="篮球管家平台">
+                <input type="hidden" class="form-control" placeholder="卡券名" name="member">
+                <div class="form-group">
+                    <label>卡券名称</label>
+                    <input type="text" class="form-control" placeholder="请输入标题" name="coupon" value="{$itemCouponInfo.coupon}" required="required">
+                </div>
+
+
+                <div class="form-group">
+                    <label>发布数量</label>
+                    <input type="number" class="form-control" placeholder="0" name="max"  value="{$itemCouponInfo.max}">
+                </div>
+                <div class="form-group">
+                    <label>价值</label>
+                    <input type="text" class="form-control" placeholder="999" name="price" value="{$itemCouponInfo.price}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>使用有效期</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                        <input type="text" class="form-control pull-right" id="reservationtime" name="datetime" value="{:date('m/d/Y',strtotime($itemCouponInfo.start))} - {:date('m/d/Y',strtotime($itemCouponInfo.end))}" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>发行有效期期</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                        <input type="text" class="form-control pull-right" id="publishtime" name="publishtime" value="{:date('m/d/Y',strtotime($itemCouponInfo.publish_start))} - {:date('m/d/Y',strtotime($itemCouponInfo.publish_end))}" required="required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label >卡券图片</label>
+                    <a class="btn-banner" href="#" title="点击替换图片">
+                            <img class="img-thumbnail" id="uploader-preview1" src="{$itemCouponInfo.image_url}">
+                            <div id="filePicker1">选择上传</div>
+                            <input id="uploader-input1" type="hidden" name="image_url"  value="{$itemCouponInfo.image_url}" required="required">
+                    </a>
+                </div>
+                <section class="content-header">
+                  <h1>
+                    <small></small>
+                  </h1>
+                </section>
+                <div class="form-group">
+                    <label>卡券描述</label>
+                    <!-- Main content -->
+                    <section class="content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="box box-info">
+                                    <div class="box-header">
+                                        <h3 class="box-title">CK Editor
+                                        <small>Advanced and full of features</small>
+                                    </h3>
+                                    <!-- tools box -->
+                                    <div class="pull-right box-tools">
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                          <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <!-- /. tools -->
+                                    </div>
+                                    <!-- /.box-header -->
+                                    <div class="box-body pad">
+                                        <textarea id="editor1" name="coupon_des" rows="10" cols="80">
+                                            {$itemCouponInfo.coupon_des}
+                                        </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="form-group">
+                    <label>电话号码</label>
+                    <input type="text" class="form-control" placeholder="电话号码" name="telephone" value="{$itemCouponInfo.telephone}" required="required" >
+                </div>
+                <div class="form-group">
+                    <label>系统备注</label>
+                    <input type="text" class="form-control" placeholder="" name="system_remarks" value="{$itemCouponInfo.system_remarks}" required="required">
+                </div>
+                <div class="form-group">
+                    <label>赠送条件</label>
+                    <select name="target_type">
+                        <option value="-1">促销活动专用</option>
+                        <option value="1">购买课程赠送</option>
+                        <option value="2">购买活动赠送</option>
+                        <option value="3">产生订单赠送</option>
+                        <option value="4">文章活动赠送</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group bonusDom">
+                    <label>选择</label>
+                        <select class="form-control select2 select2-hidden-accessible" name="target_id" style="width: 100%;" tabindex="-1" aria-hidden="true" id="bonus" required="required">
+                            <option value="0">默认</option>
+                        </select>
+                        <input type="hidden" name="target" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>状态</label>
+                    <select name="status">
+                        <option value="-1" selected="selected">下架</option>
+                        <option value="1" selected="selected">上架</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success">提  交</button>
+            </div>
+
+        </form>
+        
+    </div>
+</div>
+{/block}
+
+
+{block name='js'}
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/uploadImg',['dir'=>'coupon'])}";
+</script>
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+
+<script src="/static/backend/layui/layui.js"></script>
+<!-- JQ -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- CK Editor -->
+<script src="/static/plugins/ckeditor/ckeditor.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- date-range-picker -->
+<script src="/static/plugins/moment/moment.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script>
+  $(function () {
+    // Replace the <textarea id="editor1"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace('coupon_des');
+    //bootstrap WYSIHTML5 - text editor
+    $(".textarea").wysihtml5();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY/MM/DD h:m:i'});
+    $('#publishtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY/MM/DD h:m:i'});
+
+
+    //设置默认项目
+      $('select[name="status"] option[value="{$itemCouponInfo.status}"]').prop("selected", true);
+      $('select[name="target_type"] option[value="{$itemCouponInfo.target_type}"]').prop("selected", true);
+      $('select[name="target_id"] option[value="{$itemCouponInfo.target_id}"]').prop("selected", true);
+
+      // 选择平台礼包/或文章
+      selectTargetType();
+
+     $('select[name=target_type]').on('change',function(){
+         selectTargetType()
+    })
+
+
+    // 更改礼包/文章
+    $('#bonus').on('change',function(){
+        var bonus = $('select#bonus option:selected').attr('data');
+        $('input[name=target]').val(bonus);
+    })
+
+
+  });
+
+    //礼包接口获取数据并追加到页面
+    var getBonusList = function () {
+        var url = "{:url('api/bonus/getBonusListNoPageApi')}";
+        $.post({
+            url: url,
+            data: {
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            success: function (data) {
+                if (data.code == 200) {
+                    let list = data.data;
+                    let newli = '';
+                    for (let i in list) {
+                        newli = `<option  value="${list[i].id}" data="${list[i].bonus}">${list[i].bonus}</option>`;
+                    }
+                    if (newli == '') {
+                        $('input[name=target]').val('');
+                        newli = "<option>没有相关礼品卡券,请先添加相关礼品卡券</option>"
+                    }else{
+                        $('input[name=target]').val(list[0].bonus);
+                    }
+                    $("#bonus").html(newli);
+                    
+                } else {
+                    $("#bonus").html("<option>没有相关礼品卡券,请先添加相关礼品卡券</option>");
+                }
+            },
+            error: function (xhr, type, errerThrown) {
+               alert('网络异常,请稍候再试');
+            }
+        });
+    };
+
+  //文章接口获取数据并追加到页面
+  var getArticleList = function () {
+      var url = "{:url('api/article/getArticleListByPageApi')}";
+      $.post({
+          url: url,
+          data: {
+              organization_type: 1,
+              organization_id: 0,
+              category: 4,
+              status: 1
+          },
+          dataType: 'json',//服务器返回json格式数据
+          type: 'post',//HTTP请求类型
+          timeout: 10000,//超时时间设置为10秒；
+          success: function (data) {
+              if (data.code == 200) {
+                  var newli = '';
+                  if (data.code == 200) {
+                      for (var i = 0; i <= data.data.data.length - 1; i++) {
+                          newli += '<option  value="' + data.data.data[i].id + '" data="' + data.data.data[i].title + '">' + data.data.data[i].title + '</option>';
+                      }
+                  }
+
+                  if (newli == '') {
+                      $('input[name=target]').val('');
+                      newli = "<option>没有相关文章,请先添加相关文章</option>"
+                  }else{
+                      $('input[name=target]').val(data.data.data[0].title);
+                  }
+                  $("#bonus").html(newli);
+
+              } else {
+                  $("#bonus").html("<option>没有相关文章,请先添加相关文章</option>");
+              }
+          },
+          error: function (xhr, type, errerThrown) {
+              alert('网络异常,请稍候再试');
+          }
+      });
+  };
+
+
+    function selectTargetType(){
+        var targetType =$('select[name=target_type] option:selected').val();
+        console.log(targetType);
+        if(targetType=="-1"){
+            $('.bonusDom').show();
+            $('.bonusDom label').text("请选择礼包");
+            getBonusList();
+        }else if(targetType=="4"){
+            $('.bonusDom').show();
+            $('.bonusDom label').text("请选择文章");
+            getArticleList();
+        }else{
+            $('.bonusDom').hide();
+        }
+    }
+
+
+</script>
+{/block}
+
+
+

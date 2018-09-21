@@ -712,12 +712,12 @@ class StatisticsCamp extends Camp{
             if($type ==1){
                 // 获取上个月的时间点
                 $time =  strtotime(date('Ym01',time()));
-                $e = date('Ymd',strtotime('-1 day',$time));
+                $e = date('Ymd',strtotime('-1 day',$time));//当前时间是2018-9-20,上个月的最后一天是2018-08-31,所以$e = 20180831,$point_in_time = 20180731,条件是date_str>20180731 and date_str<=20180831,
                 $date_str = [$point_in_time,$e];
-                $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
-                $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
-                $income = db('income')->where($map1)->sum('income');
-                $output = db('output')->where($map_1)->sum('output');
+                $map1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
+                $map_1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+                $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
                 $legend = ['收入','支出'];
                 $title = '课时收入支出图';
             }
@@ -734,10 +734,10 @@ class StatisticsCamp extends Camp{
             // $income1 = db('income')->where($map1)->sum('income');
             // $income2 = db('income')->where($map2)->sum('income');
             
-            $map1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
-            $map_1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
-            $output = db('output')->where($map_1)->sum('output');
-            $income = db('income')->where($map1)->sum('income');
+            $map1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
+            $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>2];
+            $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+            $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
             $legend = ['收入','支出'];
             $title = '收入支出图';
             $this->assign('income',$income?$income:0);
@@ -755,12 +755,12 @@ class StatisticsCamp extends Camp{
                 if($type ==1){
                     // 获取上个月的时间点
                     $time =  strtotime(date('Ym01',time()));
-                    $e = date('Ymd',strtotime('-1 day',$time));
+                    $e = date('Ymd',strtotime('-1 day',$time));//得到上个月的最后一天
                     $date_str = [$point_in_time,$e];
-                    $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
-                    $map_1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
-                    $income = db('income')->where($map1)->sum('income');
-                    $output = db('output')->where($map_1)->sum('output');
+                    $map1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
+                    $map_1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                    $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+                    $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
                     $withdraw = $income - $output;
                     if($withdraw<=0){
                         $this->error('收入为赤字不可提现');
@@ -781,10 +781,10 @@ class StatisticsCamp extends Camp{
                 }
                 $e = date('Ymd', strtotime('-1 sunday', time()));
                 $date_str = [$point_in_time,$e];
-                $map1 = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
-                $map_1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
-                $output = db('output')->where($map_1)->sum('output');
-                $income = db('income')->where($map1)->sum('income');
+                $map1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
+                $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>2];
+                $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+                $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
                 $output = 0;
                 $withdraw = $income;
                 if($withdraw<0){

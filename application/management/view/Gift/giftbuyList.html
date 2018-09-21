@@ -1,0 +1,102 @@
+{extend name="layout/common"/}
+
+{block name="css"}
+
+
+{block name="page-content"}
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#info" data-toggle="tab">赠课购买记录</a></li>
+            <li><a href="#score" data-toggle="tab">赠课记录</a></li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <div class="tab-content">
+            <!--#info-->
+            <div class="tab-pane fade active in" id="info">
+                <div class="col-md-12 col-sm-12">
+                    <div class="box no-border">
+                        
+						<div class="row">
+						    <div class="col-xs-12">
+						        <div class="box">
+						            <div class="box-body">
+						                <div class="dataTables_wrapper form-inline dt-bootstrap">
+						                    <div class="row hotTbHeader">
+						                        <div class="col-md-12">
+						                            <div class="form-group">
+						                                <label>课程名称</label>
+						                                <div class="input-group radius4">
+						                                    <input type="text" name="grade" class="form-control pull-right radius4" placeholder="课程名称" style="border:none !important;">
+						                                </div>
+						                            </div>
+						                            <div class="form-group">
+						                                <div class="col-sm-12 text-center">
+						                                    <button type="submit" class="btn btn-success btn-flat radius4">搜索</button>
+						                                    <button type="reset" class="btn btn-default btn-flat radius4">重置</button>
+						                                    <a href="{:url('grade/createGrade')}">
+						                                        <button type="button" class="btn btn-md btn-warning btn-flat radius4 pull-right">添加班级</button>
+						                                    </a>
+						                                </div>
+						                            </div>
+						                        </div>
+						                    </div>
+						                    <div class="row">
+						                        <div class="col-md-12 col-sm-12">
+						                            <div class="box-body">
+						                                <table class="table table-striped table-bordered table-hover">
+						                                    <thead>
+						                                        <tr>
+						                                            <th>序号</th>
+						                                            <th>课程名称</th>
+						                                            <th>当前课程单价</th>
+						                                            <th>购买会员名</th>
+						                                            <th>购买数量</th>
+						                                            <th>购买总价</th>
+						                                            <th>备注</th>
+						                                            <th>购买时间</th>
+						                                            <th>操作</th>
+						                                        </tr>
+						                                    </thead>
+						                                    <tbody>
+						                                    	{volist name="list" id="vol"}
+						                                    		<tr>
+						                                    			<td>{$i}</td>
+						                                    			<td>{$vol.lesson}</td>
+						                                    			<td>{$vol.cost}</td>
+						                                    			<td>{$vol.member}</td>
+						                                    			<td>{$vol.quantity}</td>
+						                                    			<td>{$vol.quantity*$vol.cost}</td>
+						                                    			<td>{$vol.remarks}</td>
+						                                    			<td>{$vol.create_time|date="Y-m-d",###}</td>
+						                                    			<td>
+						                                    				<a class="btn btn-success" href="">该课程下赠送详情</a>
+						                                    				<a class="btn btn-warning" href="">赠送课程</a>
+						                                    			</td>
+						                                    		</tr>
+						                                    	{/volist}
+						                                    </tbody>
+						                                </table>
+						                            </div>
+						                        </div>
+						                        <div class="col-md-12">
+						                            <div class="box-footer clearfix">
+						                                
+						                            </div>
+						                        </div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}

@@ -1,35 +1,26 @@
 <?php
 namespace app\management\controller;
 
-use app\management\controller\Backend;
+use app\management\controller\Camp;
 use app\service\ArticleService;
-class Article extends Backend {
+class Article extends Camp {
     private $ArticleListService; 
 	public function _initialize(){
 		parent::_initialize();
         $this->ArticleService = new ArticleService();
 	}
     public function articleList() {
-        $field = '请选择搜索关键词';
-        $map = [];
+        
+        $map = ['organization_type'=>2,'organization_id'=>$this->campInfo['id']];
 
-        $field = input('param.field');
         $keyword = input('param.keyword');
-        if($keyword==''){
-            $map = [];
-            $field = '请选择搜索关键词';
-        }else{
-            if($field){
-                $map = [$field=>['like',"%$keyword%"]];
-            }else{
-                $field = '请选择搜索关键词';
-                $map = function($query) use ($keyword){
-                    $query->where(['title'=>['like',"%$keyword%"]]);
-                };
-            }
+        if($keyword){
+            
+            $map = ['title'=>['like',"%$keyword%"]];
+            
         }
         $articleList = $this->ArticleService->getArticleListByPage($map);
-        $this->assign('field',$field);
+
         $this->assign('articleList',$articleList);    
         return view('Article/articleList');
     	
@@ -40,6 +31,9 @@ class Article extends Backend {
         $map['id'] = $article_id;
         $articleInfo = $this->ArticleService->getArticleInfo($map);
 
+        if ($articleInfo['organization_id']<>$this->campInfo['id']) {
+            $this->error('非法操作');
+        }
         $this->assign('articleInfo',$articleInfo);
         return  view('Article/articleInfo');
     }
@@ -47,8 +41,12 @@ class Article extends Backend {
     public function createArticle(){
         if(request()->isPost()){
             $data = input('post.');
-            $data['member_id']=$this->management['id'];
-            $data['member'] = $this->management['username'];
+            $data['member_id']=$this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['organization_type'] = 2;
+            $data['organization'] = $this->campInfo['camp'];
+            $data['organization_id'] = $this->campInfo['id'];
+            $data['category'] = 3;
             $result = $this->ArticleService->createArticle($data);
             if($result['code'] == 200){
                 $this->success($result['msg'],'/management/Article/articleList');
@@ -66,14 +64,22 @@ class Article extends Backend {
         $map['id'] = $article_id;
         $articleInfo = $this->ArticleService->getArticleInfo($map);
 
+        if ($articleInfo['organization_id']<>$this->campInfo['id']) {
+            $this->error('非法操作');
+        }
 
         if(request()->isPost()){
             $data = input('post.');
-            $id = $data['id'];
-
-            $data['member_id']=$this->management['id'];
-            $data['member'] = $this->management['username'];
-            $result = $this->ArticleService->updateArticle($data,['id'=>$id]);
+            if ($articleInfo['organization_id']<>$this->campInfo['id']) {
+                $this->error('非法操作');
+            }
+            $data['member_id']=$this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['organization_type'] = 2;
+            $data['organization'] = $this->campInfo['camp'];
+            $data['organization_id'] = $this->campInfo['id'];
+            $data['category'] = 3;
+            $result = $this->ArticleService->updateArticle($data,['id'=>$article_id]);
             if($result['code'] == 200){
                 $this->success($result['msg'],url('management/Article/articleInfo',['article_id'=>$article_id]));
             }else{
