@@ -15,7 +15,7 @@ class MatchMember extends Model
     // type字段内容列表
     public function getTypes() {
         return [
-            10 => '负责人',
+            // 10 => '负责人',
             9 => '管理员',
             8 => '记录员',
             7 => '裁判员',

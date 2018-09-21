@@ -1193,12 +1193,11 @@ class League extends Base
         }
     }
 
-    // 保存联赛球队分组数据
+// 保存联赛球队分组数据
     public function saveleaguegroup()
     {
         // 接收请求变量
         $data = input('post.');
-
         // 数据验证
         if (!array_key_exists('league_id', $data)) {
             return json(['code' => 100, 'msg' => __lang('MSG_402') . '传入league_id']);
@@ -1224,6 +1223,7 @@ class League extends Base
         if (!$power || $power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
+
         // 检查分组数据有效性
         if (!array_key_exists('groupList', $data)) {
             return json(['code' => 100, 'msg' => "请先点击 '分配' 以完成分组"]);
@@ -1232,67 +1232,140 @@ class League extends Base
             return json(['code' => 100, 'msg' => "请先点击 '分配' 以完成分组"]);
         }
 
-        // 事务处理：检查联赛有无球队分组数据 若有数据先物理删除原有数据
-        Db::startTrans();
-        try {
-            $matchGroups = $leagueS->getMatchGroups(['match_id' => $match['id']]);
-            $matchGroupTeams = $leagueS->getMatchGroupTeams(['match_id' => $match['id']]);
-            if ($matchGroups) {
-                $leagueS->deleteMatchGroup(['match_id' => $match['id']], true);
-            }
-            if ($matchGroupTeams) {
-                $leagueS->deleteMatchGroupTeam(['match_id' => $match['id']], true);
-            }
-            Db::commit();
-        } catch (\Exception $e) {
-            Db::rollback();
+        // 查 match_record 有无完成比赛的记录，有则无法修改分组
+        $count = $leagueS->getMatchRecordCount(['match_id' => $data['league_id']]);
+        if ($count > 0) {
+            return json(['code' => 100, 'msg' => "修改分组失败，联赛中已有完成的比赛"]);
         }
+
+        $is_reset = 0;
+
+        // 分组信息
+        $matchGroups = $leagueS->getMatchGroups(['match_id' => $match['id'], 'status' => 1]);
+        $groupIdArr = [];
+        if (empty($matchGroups)) {
+            $is_reset = 1;
+        } else {
+            foreach ($matchGroups as $row) {
+                array_push($groupIdArr, $row['id']);
+            }
+        }
+
+        // 拼接一个 当前数据库的 分组及组内队伍 的 数组
+        $matchGroupTeams = $leagueS->getMatchGroupTeams(['match_id' => $match['id']]);
+        $groupTeamArr = [];
+        if (empty($matchGroupTeams)) {
+            $is_reset = 1;
+        }else {
+            foreach ($matchGroupTeams as $row) {
+                if (empty($groupTeamArr[$row['group_id']])) {
+                    $groupTeamArr[$row['group_id']] = [];
+                }
+                array_push($groupTeamArr[$row['group_id']], $row['team_id']);
+            }
+        }
+
         // 解析post提交的球队分组数据
-        $dataGroups = json_decode($data['groupList'], true);
+        $dataGroupsCopy = $dataGroups = json_decode($data['groupList'], true);
         if (is_null($dataGroups)) {
             return json(['code' => 100, 'msg' => '数据不合法']);
         }
-        try {
-            foreach ($dataGroups as $k => $group) {
-                //dump($group);
-                // 保存分组数据
-                $groupData = [
-                    'match_id' => $match['id'],
-                    'match' => $match['name'],
-                    'name' => $group['groupName']
-                ];
-                $groupId = $leagueS->saveMatchGroup($groupData);
-                // 保存分组球队数据
-                foreach ($group['groupTeam'] as $j => $team) {
-                    //dump($team);
-                    $groupTeamData = [
-                        'match_id' => $match['id'],
-                        'match' => $match['name'],
-                        'match_logo' => $match['logo'],
-                        'team_id' => $team['team_id'],
-                        'team' => $team['team'],
-                        'team_logo' => $team['team_logo'],
-                        'group_id' => $groupId,
-                        'group_name' => $group['groupName'],
-                        'group_number' => $j + 1,
-                        'status' => 1,
-                        'win_num' => 0,
-                        'lost_num' => 0,
-                        'points' => 0,
-                        'is_seededteam' => isset($team['is_seedTeam']) ? $team['is_seedTeam'] : 0
-                    ];
-                    $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
+
+        // 判断有无重新分组，如果group_id都没变 并且 分组数也没变，则代表未重新分组，仅小改动。
+        if (count($dataGroupsCopy) != count($groupIdArr)) {
+            $is_reset = 1;
+        } else {
+            foreach ($dataGroupsCopy as $key => $row) {
+                if (!in_array($row["groupId"],$groupIdArr)) {
+                    $is_reset = 1;
+                    break;
+                }
+                foreach ($row["groupTeam"] as $k => $subrow) {
+                    // 当前组队伍，找出改过位置的队伍
+                    if (in_array($subrow['team_id'], $groupTeamArr[$row["groupId"]])) {
+                        unset($dataGroupsCopy[$key]["groupTeam"][$k]);
+                    }
                 }
             }
-        } catch (Exception $e) {
+        }
+
+        // 事务处理：检查联赛有无球队分组数据 若有数据先物理删除原有数据
+        Db::startTrans();
+        try {
+            if ($is_reset) {
+                // 重置操作，删掉$finalTeamIdArr内team_id 的所有相关信息，重新保存
+                $leagueS->deleteMatchGroup(['match_id' => $match['id']], true);
+                $leagueS->deleteMatchGroupTeam(['match_id' => $match['id']], true);
+                $leagueS->delMatchSchedule(['match_id' => $match['id']], true);
+                foreach ($dataGroups as $k => $group) {
+                    $groupData = [
+                        'match_id' => $match['id'],
+                        'match' => $match['name'],
+                        'name' => $group['groupName']
+                    ];
+                    $groupId = $leagueS->saveMatchGroup($groupData);
+                    // 保存分组球队数据
+                    foreach ($group['groupTeam'] as $j => $groupTeamItem) {
+                        //dump($team);
+                        $groupTeamData = [
+                            'match_id' => $match['id'],
+                            'match' => $match['name'],
+                            'match_logo' => $match['logo'],
+                            'team_id' => $groupTeamItem['team_id'],
+                            'team' => $groupTeamItem['team'],
+                            'team_logo' => $groupTeamItem['team_logo'],
+                            'group_id' => $groupId,
+                            'group_name' => $group['groupName'],
+                            'group_number' => $j + 1,
+                            'status' => 1,
+                            'win_num' => 0,
+                            'lost_num' => 0,
+                            'points' => 0,
+                            'is_seededteam' => isset($groupTeamItem['is_seedTeam']) ? $groupTeamItem['is_seedTeam'] : 0
+                        ];
+                        $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
+                    }
+                }
+            } else {
+                // 不重置，分组情况不变，仅修改个别球队的分组，并删除 相关球队的 所有赛程信息
+                // 1.删掉$finalTeamIdArr内team_id 的所有相关信息
+                // 2.将队伍到分组改为当前分组
+                $finalTeamIdArr = [];
+                foreach ($dataGroupsCopy as $row) {
+                    foreach ($row["groupTeam"] as $subrow) {
+                        array_push($finalTeamIdArr, $subrow["team_id"]);
+                    }
+                }
+                $leagueS->delMatchSchedule(['match_id' => $match['id'], 'home_team_id|away_team_id' => ['in', $finalTeamIdArr]], true);
+                foreach ($dataGroupsCopy as $k => $group) {
+                    $groupData = [
+                        'id' => $group["groupId"],
+                        'name' => $group['groupName']
+                    ];
+                    $leagueS->saveMatchGroup($groupData);
+                    // 保存分组球队数据
+                    foreach ($group['groupTeam'] as $j => $groupTeamItem) {
+                        //dump($team);
+                        $groupTeamData = [
+                            'id' => $groupTeamItem['id'],
+                            'group_id' => $group["groupId"],
+                            'group_name' => $group['groupName'],
+                            'status' => 1,
+                            'is_seededteam' => isset($groupTeamItem['is_seedTeam']) ? $groupTeamItem['is_seedTeam'] : 0
+                        ];
+                        $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
+                    }
+
+                }
+            }
+            Db::commit();
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } catch (\Exception $e) {
+            Db::rollback();
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
-        if ($groupTeamId) {
-            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
-        } else {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        }
+
     }
 
     // 清空联赛分组信息

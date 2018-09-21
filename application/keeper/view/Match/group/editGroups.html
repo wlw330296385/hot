@@ -143,7 +143,7 @@
                                 newli +=
                                     '<ul class="mui-table-view list border-b"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="组' +
                                     ((teams.slice(0, i).length + 1)) +
-                                    '" placeholder="请填写组名" style="padding:0;width:20%" /><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
+                                    '" placeholder="请填写组名" style="padding:0;width:20%" /><input type="hidden" name="groupId" value=""/><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
                                     ((teams.slice(0, i).length + 1)) +
                                     '</text></span></div>';
                                 for (var j = 0; j < teams[i].length; j++) {
@@ -213,12 +213,13 @@
                             newli +=
                                 '<ul class="mui-table-view list border-b secendUl"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' +
                                 data.data[i].name +
-                                '" placeholder="请填写组名" style="padding:0;width:20%" /><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
+                                '" placeholder="请填写组名" style="padding:0;width:20%" /><input type="hidden" name="groupId" value="' + data.data[i].id + '"/><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
                                 ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
                             var teams = data.data[i].group_teams;
                             for (var j = 0; j < teams.length; j++) {
                                 newli +=
-                                    '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' +
+                                    '<li class="mui-table-view-cell mui-media listli coach" data-id="' +
+                                    teams[j].id + '" data-team_logo="' +
                                     teams[j].team_logo + '" data-team="' + teams[j].team.team +
                                     '" data-team_id="' + teams[j].team.team_id + '" data-match="' +
                                     teams[j].team.match + '" data-match_id="' + teams[j].team.match_id +
@@ -292,7 +293,8 @@
                 $(".frame ul li").each(function (index) {
                     if (thisTeamId == $(this).attr("data-team_id")) {
                         moveli =
-                            '<li class="mui-table-view-cell mui-media listli coach" data-team_logo="' +
+                            '<li class="mui-table-view-cell mui-media listli coach" data-id="' +
+                            $(this).attr("data-id") + '" data-team_logo="' +
                             $(this).attr("data-team_logo") + '" data-team="' + $(this).attr(
                                 "data-team") + '" data-team_id="' + $(this).attr("data-team_id") +
                             '" data-match="' + $(this).attr("data-match") + '" data-match_id="' +
@@ -326,12 +328,14 @@
 
             $(".frame ul").each(function () {
                 var groupName = $(this).find("input[name=groupName]").val();
+                var groupId = $(this).find("input[name=groupId]").val();
                 if (!(/^.{0,2}$/).test(groupName)) {
                     mui.toast("组名只能填写两个文字");
                     return isOk = false;
                 }
                 groupTeam = [];
                 $(this).find("li").each(function () {
+                    var id = $(this).attr("data-id");
                     var team = $(this).attr("data-team");
                     var team_id = $(this).attr("data-team_id");
                     var team_logo = $(this).attr("data-team_logo");
@@ -340,6 +344,7 @@
                     var members_num = $(this).attr("data-members_num");
                     var is_seedTeam = $(this).find(".seedTeam").attr("data-is_seedTeam");
                     groupTeam.push({
+                        id,
                         team,
                         team_id,
                         team_logo,
@@ -351,6 +356,7 @@
                 })
                 groupList.push({
                     groupName,
+                    groupId,
                     groupTeam
                 })
             })
