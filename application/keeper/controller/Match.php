@@ -346,6 +346,18 @@ class Match extends Base {
     }
      // 联赛章程编辑
      public function regulationofleague() {
+         // 获取当前会员的联赛人员关系数据
+        $leagueS = new LeagueService();
+        $matchMemberInfo = $leagueS->getMatchMember([
+            'match_id' => $this->league_id,
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$matchMemberInfo) {
+            $this->error(__lang('MSG_403'));
+        }
+
+        $this->assign('matchMemberInfo', $matchMemberInfo);
         return view('Match/regulation/regulationOfLeague');
     }
 
@@ -574,9 +586,16 @@ class Match extends Base {
     public function workListOfLeague() {
          // 工作人员类型
         $leagueS = new LeagueService();
+
+        $myInfo = $leagueS->getMatchMember(['member_id' => $this->memberInfo['id'], 'match_id' => $this->league_id, 'status' => 1]);
+        if (empty($myInfo) || $myInfo['type'] < 9) {
+            $this->error("你不是该联赛的管理人员");
+        }
+
         $types = $leagueS->getMatchMemberTypes();
         return view('Match/work/workListOfLeague', [
-            'types' => $types
+            'types' => $types,
+            'myInfo' => $myInfo
         ]);
     }
 
@@ -587,12 +606,11 @@ class Match extends Base {
         $member_id = input('member_id', 0, 'intval');
 
 
-        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id]);
+        $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id, 'status' => 1]);
         if (empty($matchMemberInfo)) {
             $this->error("没有找到该工作人员的信息");
         }
         $types = $leagueS->getMatchMemberTypes();
-        $matchMemberInfo["type"] = $types[$matchMemberInfo["type"]];
         return view('Match/work/workMemberInfo', [
             'types' => $types,
             'matchMemberInfo' => $matchMemberInfo
@@ -671,8 +689,8 @@ class Match extends Base {
                 $applyInfo['type_text'] = '管理员';
                 break;  // 管理员
             case 8:
-                $applyInfo['type_text'] = '记分员';
-                break;  // 记分员
+                $applyInfo['type_text'] = '记录员';
+                break;  // 记录员
             case 6:
                 $applyInfo['type_text'] = '裁判员';
                 break;  // 裁判员
@@ -1236,4 +1254,29 @@ class Match extends Base {
    public function leagueGuide() {
     return view('Match/leagueGuide');
 }
+
+    // 联赛招募列表（对外）
+    public function recruitmentList() {
+        return view('Match/recruitment/recruitmentList');
+    }
+    // 联赛招募列表（对内）
+    public function recruitmentListOfLeague() {
+        return view('Match/recruitment/recruitmentListOfLeague');
+    }
+    // 联赛招募详情（对外）
+    public function recruitmentInfo() {
+        return view('Match/recruitment/recruitmentInfo');
+    }
+    // 联赛招募详情（对内）
+    public function recruitmentInfoOfLeague() {
+        return view('Match/recruitment/recruitmentInfoOfLeague');
+    }
+    // 联赛创建招募
+    public function createRecruitment() {
+        return view('Match/recruitment/createRecruitment');
+    }
+    // 联赛编辑招募
+    public function updateRecruitment() {
+        return view('Match/recruitment/updateRecruitment');
+    }
 }

@@ -16,7 +16,7 @@ class MatchOrgMember extends Model
         $type = [
             10 => '负责人',
             9 => '管理员',
-            8 => '记分员',
+            8 => '记录员',
             7 => '裁判员'
         ];
         return $type[$value];

@@ -205,6 +205,13 @@
             // 删除球队
             $(document).on("tap", ".deleteTeam", function () {
                 $(this).parents("li").remove();
+                var thisTeamId = $(this).parents("li").attr("data-team_id");
+                $(".teamList input[type=checkbox]").each(function () {
+                    if (thisTeamId == $(this).attr("data-team_id")) {
+                        $(this).prop("checked", true);
+                        $(this).removeAttr("disabled");
+                    }
+                });
             });
 
             //列表复选框赋值

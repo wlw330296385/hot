@@ -388,7 +388,7 @@ class Matchdata extends Base
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        // 需要联赛记分员以上
+        // 需要联赛记录员以上
         if (!$power || $power < 8) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }

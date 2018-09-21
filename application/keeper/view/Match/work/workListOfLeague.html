@@ -23,7 +23,7 @@
     <div class="mui-content list">
         <!-- 联赛名称模块 -->
         <ul class="mui-table-view mb" style="margin-top: -4px">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+            <li class="mui-table-view-cell listli" style="padding:11px 15px;">
                 <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                 <h4>{$leagueInfo.name}</h4>
                 <div class="mui-media-body wd49" style="line-height:20px !important">
@@ -38,6 +38,12 @@
                 <div class="price-frame" style="padding:0">
                     <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                 </div>
+            </li>
+        </ul>
+
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell listli mui-text-center colororange recruitmentWorker">
+                招募比赛工作人员
             </li>
         </ul>
 
@@ -91,6 +97,7 @@
     <script>
         markNum()
         followStatus()
+
         // 关注联赛
         $(".follow").on("tap", '', function () {
             var league_id = "{$league_id}";
@@ -141,8 +148,8 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        var urls = "{:url('match/workMemberInfo')}" + '/member_id/' + data.data[i].member_id +
-                            '/id/' + data.data[i].id;
+                        var urls = "{:url('match/workMemberInfo')}" + '/league_id/' + "{$league_id}" +
+                            '/member_id/' + data.data[i].member_id;
                         newli +=
                             `<li class="mui-table-view-cell mui-collapse listli">
                                 <a class="mui-navigate-right">
@@ -150,17 +157,25 @@
                                     <span class="colororange" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
                                 </a>
                                 <div class="mui-collapse-content dataCollapse">
-                                <div class="fl wd60">
-                                    <p>职能：暂定</p>
-                                    <p>联系电话：暂定</p>
-                                </div>`
-                        if (data.data[i].type != 10) {
+                                <div class="fl wd">`
+                        if (data.data[i].job_description == null) {
+                            newli += `<p>职称：暂定</p>`
+                        } else {
+                            newli += `<p>职称：${data.data[i].job_description}</p>`
+                        }
+                        if (data.data[i].telephone == 0) {
+                            newli += `<p>联系电话：暂定</p>`
+                        } else {
+                            newli += `<p>联系电话：${data.data[i].telephone}</p>`
+                        }
+                        newli += `</div>`
+                        if ("{$myInfo.type}" >= data.data[i].type) {
                             newli +=
-                                `<button class="btn bgred fr deleteWorker" data-id="${data.data[i].id}" style="margin-top: 6px;padding: 4px 8px;">删除</button>
-                                <a href="#typePopover" class="modifyBtn" data-id="${data.data[i].id}">
-                                    <button class="btn fr modifyWorker" style="margin-top: 6px;margin-right: 6px;padding: 4px 8px;">编辑</button>
+                                `<a href="${urls}">
+                                    <button type="button" class="fr" style="margin-top: 6px;padding: 4px 8px;">编辑</button>
                                  </a>`
                         }
+
                         newli += `</div>
                             </li>`
                     }
@@ -174,91 +189,6 @@
                 mui.toast('网络异常,请稍候再试');
             }
         });
-
-        // 删除工作人员
-        $(document).on('tap', '.deleteWorker', function () {
-            var btnArray = ['取消', '确认'];
-            var id = $(this).attr("data-id");
-            mui.confirm('确认删除该工作人员吗', '提示', btnArray, function (e) {
-                if (e.index == 1) {
-                    var apiurl = "{:url('api/league/delmatchmember')}";
-                    mui.ajax(apiurl, {
-                        data: {
-                            id: id,
-                        },
-                        dataType: 'json',
-                        type: 'post',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        success: function (data) {
-                            if (data.code == 200) {
-                                mui.toast(data.msg);
-                                location.reload();
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errotThrown) {
-                            mui.toast('网络异常,请稍候再试');
-                        }
-                    });
-                }
-            });
-        });
-
-        // 点击修改角色给 typelist赋值
-        $(document).on("tap", ".modifyBtn", function () {
-            $(".typeList").attr("data-id", $(this).attr("data-id"));
-            $(".typeList").attr("data-name", $(this).parent(".dataCollapse").siblings().find(".realName").text());
-            $(".typeList").attr("data-type", $(this).parent(".dataCollapse").siblings().find("span").attr(
-                "data-type"));
-            $(".typeList li").each(function () {
-                $(this).show();
-                var thisType = $(this).attr("data-type");
-                var parentType = $(this).parent().attr("data-type");
-                if (thisType == parentType) {
-                    $(this).hide();
-                }
-            })
-        });
-
-        // 修改工作人员角色
-        $(document).on('tap', '.typeList li', function () {
-            var btnArray = ['取消', '确认'];
-            var type = $(this).attr("data-type");
-            var id = $(this).parent().attr("data-id");
-            var name = $(this).parent().attr("data-name");
-            var thisRole = $(this).text();
-            mui.confirm('确认把' + name + '设置为' + thisRole + '吗？', '提示', btnArray, function (e) {
-                if (e.index == 1) {
-                    var apiurl = "{:url('api/league/updateMatchMember')}";
-                    mui.ajax(apiurl, {
-                        data: {
-                            id: id,
-                            type: type
-                        },
-                        dataType: 'json',
-                        type: 'post',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        success: function (data) {
-                            if (data.code == 200) {
-                                mui.toast(data.msg);
-                                location.reload();
-                            } else {
-                                mui.toast(data.msg);
-                            }
-                        },
-                        error: function (xhr, type, errotThrown) {
-                            mui.toast('网络异常,请稍候再试');
-                        }
-                    });
-                }
-            });
-        });
-
 
         // 判断当前的关注状态
         function followStatus() {

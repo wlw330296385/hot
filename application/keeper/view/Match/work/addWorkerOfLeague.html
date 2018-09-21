@@ -42,20 +42,24 @@
     <!-- 工作人员角色popover -->
     <div id="typePopover" class="mui-popover">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header border-b">
-            <span class="course wd">
+        <div class="page-header">
+            <span class="course">
                 <strong>请选择邀请成为的角色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue" id="typeConfirm">确认</button>
             </span>
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view list typeList">
+                <form class="mui-input-group typeList">
                     {volist name="types" id="vo"}
-                    <li class="mui-table-view-cell listli detalisli" data-type="{$key}">
-                        <font class="type">{$vo}</font>
-                    </li>
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>{$vo}</label>
+                        <input type="checkbox" name="type" value="{$vo}" data-type="{$key}">
+                    </div>
                     {/volist}
-                </ul>
+                </form>
             </div>
         </div>
     </div>
@@ -111,21 +115,26 @@
                         match_id: match_id,
                         member_id: member_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
                             var btnArray = ['取消', '确认'];
                             mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
                                 if (e.index == 1) {
-                                    $('#typePopover').attr('data-memberid', member_id).attr('data-matchid', match_id);
+                                    $('#typePopover').attr('data-memberid',
+                                        member_id).attr('data-matchid',
+                                        match_id);
                                 }
                             });
                         } else {
-                            $('#typePopover').attr('data-memberid', member_id).attr('data-matchid', match_id);
+                            $('#typePopover').attr('data-memberid', member_id).attr(
+                                'data-matchid', match_id);
                         }
                     },
                     error: function (xhr, type, errorThrown) {
@@ -136,20 +145,31 @@
             })
 
             // 工作人员角色popover点击绑定
-            $('.typeList').on('tap', 'li', function () {
-                var type = $(this).attr('data-type');
+            $("#typeConfirm").on('tap', '', function () {
                 var match_id = $('#typePopover').attr('data-matchid');
                 var member_id = $('#typePopover').attr('data-memberid');
+                var typeData = []
+                $(".typeList input[type=checkbox]:checked").each(function () {
+                    var type = $(this).val();
+                    var type_num = $(this).attr("data-type");
+                    typeData.push({
+                        type,
+                        type_num
+                    });
+                });
+                console.log(typeData)
                 mui.ajax("{:url('api/league/invitematchmebmer')}", {
                     data: {
                         match_id: match_id,
                         member_id: member_id,
-                        type: type
+                        type: typeData
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -165,7 +185,42 @@
                         console.log(type);
                     }
                 });
+                mui("#typePopover").popover("toggle");
             });
+
+            // 工作人员角色popover点击绑定
+            // $('.typeList').on('tap', 'li', function () {
+            //     var type = $(this).attr('data-type');
+            //     var match_id = $('#typePopover').attr('data-matchid');
+            //     var member_id = $('#typePopover').attr('data-memberid');
+            //     mui.ajax("{:url('api/league/invitematchmebmer')}", {
+            //         data: {
+            //             match_id: match_id,
+            //             member_id: member_id,
+            //             type: type
+            //         },
+            //         dataType: 'json', //服务器返回json格式数据
+            //         type: 'post', //HTTP请求类型
+            //         timeout: 10000, //超时时间设置为10秒；
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         success: function (data) {
+            //             console.log(data);
+            //             if (data.code == 200) {
+            //                 mui.toast("已经发送邀请，请耐心等待回复");
+            //                 window.setTimeout("location.reload()", 2000)
+            //             } else {
+            //                 mui.toast(data.msg);
+            //                 window.setTimeout("location.reload()", 2000)
+            //             }
+            //         },
+            //         error: function (xhr, type, errorThrown) {
+            //             //异常处理；
+            //             console.log(type);
+            //         }
+            //     });
+            // });
 
             // 接口获取数据并追加到页面
             function toList() {
@@ -176,24 +231,35 @@
                     data: {
                         keyword: keyword,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.data.length - 1; i++) {
                                 newli += '<li class="mui-table-view-cell mui-media listli">';
-                                newli += '<img class="img45 mui-pull-left" src="' + data.data.data[i].avatar + '" style="margin-top: 4px;"><div class="mui-media-body wd60">' + data.data.data[i].member;
-                                newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[i].city + '&nbsp;' + data.data.data[i].area + '</p></div><div class="price-frame"><a href="#typePopover" class="btn bgred typePo" data-member_id="' + data.data.data[i].id + '" style="margin-top:5px;padding: 8px 10px;border-radius: 3px;" >邀请</a></div>'
+                                newli += '<img class="img45 mui-pull-left" src="' + data.data.data[
+                                        i].avatar +
+                                    '" style="margin-top: 4px;"><div class="mui-media-body wd60">' +
+                                    data.data.data[i].member;
+                                newli += '<p>' + data.data.data[i].province + '&nbsp;' + data.data.data[
+                                        i].city + '&nbsp;' + data.data.data[i].area +
+                                    '</p></div><div class="price-frame"><a href="#typePopover" class="btn bgred typePo" data-member_id="' +
+                                    data.data.data[i].id +
+                                    '" style="margin-top:5px;padding: 8px 10px;border-radius: 3px;" >邀请</a></div>'
                                 newli += '</li>';
                             }
                         }
                         $("ul.memberList").empty().append(newli);
                         if (newli == '') {
-                            $("ul.memberList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $("ul.memberList").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                            );
                         }
                     },
                     error: function (xhr, type, errerThrown) {
