@@ -615,7 +615,6 @@
                 url: url,
                 data: {
                     league_id: league_id,
-                    type: 8
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -628,12 +627,14 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
+                            if (data.data[i].type < 9) {
                             newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
                                 i].realname + '</label>';
                             newli +=
                                 '<input name="checkbox-score" class="score" type="checkbox" data-realname=' +
                                 data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
                             newli += '</div>'
+                            }
                         }
                         $(".scoreList").empty().append(newli);
                     } else {

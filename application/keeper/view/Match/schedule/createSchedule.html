@@ -53,6 +53,11 @@
             margin: 20px 0 60px 0;
             text-align: center;
         }
+        #firght{
+            left: 0 !important;
+            width: 95%;
+            height: 450px;
+        }
     </style>
 </head>
 
@@ -172,7 +177,7 @@
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
             <span class="f14 ">
-                <strong>选择对阵球队</strong>
+                <strong>选择对阵球队（<text class="teamNum">0</text>）</strong>
             </span>
             <span class="fr">
                 <button type="button" id="closeConfirm">关闭</button>
@@ -341,7 +346,6 @@
                 mui("#firght").popover("toggle");
             })
 
-
             //列表复选框赋值
             $(document).on("tap", ".add", function () {
                 $(".firghtList input[type=checkbox]").attr("data-num", $(this).parents(".scheduleList")
@@ -351,6 +355,7 @@
                 $(".firghtList input[type='checkbox']").prop("disabled", false);
                 //然后遍历出对应所选
                 var dataNum = $(".firghtList input[type=checkbox]").attr("data-num");
+                //当前所在已选的
                 $(this).parents(".operation-btn").siblings(".box").find(".checkboxCont").each(function () {
                     if (dataNum == $(this).parents(".scheduleList").attr("data-num")) {
                         var homeaway_team_id = $(this).find("input[type=checkbox]").attr(
@@ -361,11 +366,40 @@
                                 $(this).prop("checked", true);
                                 $(this).prop("disabled", "disabled")
                             }
-                        })
+                        });
+
                     }
+                });
+
+                // 其他已选的
+                $(this).parents(".scheduleList").siblings().find(".checkboxCont").each(function () {
+                    var htid = $(this).find("input[type=checkbox]").attr(
+                        "data-homeaway_team_id")
+                    $(".firghtList input[type=checkbox]").each(function () {
+                        if ($(this).attr("data-homeaway_team_id") == htid) {
+                            $(this).prop("disabled", "disabled")
+                        }
+                    })
                 })
+                var checkedLength = $(".firghtList input[type=checkbox]:checked").length;
+                $("#firght .teamNum").text(checkedLength);
+
             });
 
+            // 所选赛程数量判断
+            $(document).on("tap", ".firghtList .mui-checkbox", function () {
+                var checkboxStatus = $(this).find("input[type=checkbox]").is(':checked');
+                var checkboxDisabled = $(this).find("input[type=checkbox]").prop("disabled");
+                var textNum = parseInt($(".teamNum").text());
+                if (checkboxDisabled == false) {
+                    if (checkboxStatus == false) {
+                        $(".teamNum").text(textNum + 1);
+                    } else {
+                        $(".teamNum").text(textNum - 1)
+                    }
+                }
+            });
+            
             // 删除整个比赛日
             $(document).on("tap", ".deleteModel", function () {
                 var btnArray = ['取消', '确认'];
@@ -630,6 +664,7 @@
             }
             console.log(schedules)
             var btnArray = ['取消', '确认'];
+            var btnSuccess = ['赛程列表', '继续添加'];
             mui.confirm("本赛程为初次预排，提交后需编辑完善修改信息后才能生效", "提示", btnArray, function (e) {
                 if (e.index == 1) {
                     var data = wooApi.getInputData('input', 'data');
@@ -641,10 +676,14 @@
                     var url = "{:url('api/league/saveallmatchschedule')}";
                     var ajaxResult = wooApi.asyncF(url, objData);
                     if (ajaxResult.code == 200) {
-                        mui.alert('创建成功', '确定', function () {
-                            var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' +
-                                "{$league_id}";
-                            window.top.location.href = goUrl;
+                        mui.confirm('赛程编辑成功', '提示', btnSuccess, function (w) {
+                            if (w.index == 0) {
+                                var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' +
+                                    "{$league_id}";
+                                window.top.location.href = goUrl;
+                            } else {
+                                window.location.reload();
+                            }
                         })
                     } else {
                         mui.alert(ajaxResult.msg, '创建失败');
