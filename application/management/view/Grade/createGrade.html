@@ -8,6 +8,9 @@
         line-height: 34px;
         margin-bottom: 0;
     }
+    .matchStudent td {
+        color: #f90;
+    }
 </style>
 {/block} {block name="page-content"}
 <div class="box no-border">
@@ -345,13 +348,14 @@
                         <thead>
                             <tr role="row">
                                 <th>学员名称</th>
+                                <th>剩余课时</th>
                                 <th>详情</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="3" class="text-center">请先选择课程!</td>
+                                <td colspan="4" class="text-center">请先选择课程!</td>
                             </tr>
                         </tbody>
                     </table>
@@ -841,11 +845,16 @@
 
         //搜索训练营
         $("#searchStudentBtn").on("click", '', function () {
-            var keyword = $(".studentName").val();
-            if (keyword == "") {
-                alert("请输入学员姓名！");
+            var keywordSD = $(".studentName").val();
+            $("#studentList .studentTr").removeClass("matchStudent");
+            if (keywordSD != '') {
+                $("#studentList .sName:contains('" + keywordSD + "')").parent().addClass("matchStudent");
+                $("#studentList .matchStudent").each(function (i) {
+                    $("#studentList .studentTr:first-child").before($(this));
+                });
+                $(".modal .tableScroll").animate({scrollTop:0},"fast");
             } else {
-                toStudentList(lesson_id, keyword);
+                mui.toast("没输入关键字哦");
             }
         })
 
@@ -1002,8 +1011,9 @@
                         //     .member + '" data-member_id="' + data.data[i].member_id +
                         //     '" data-student_typenum="' + data.data[i].type_num + '" ></div>'
                         newli +=
-                            ` <tr role="row" class="odd">
-                                <td>${data.data[i].student}</td>
+                            ` <tr role="row" class="studentTr">
+                                <td class="sName">${data.data[i].student}</td>
+                                <td>${data.data[i].rest_schedule}</td>
                                 <td>
                                     <a href="">查看详情</a>
                                 </td>

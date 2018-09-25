@@ -8,6 +8,9 @@
         line-height: 34px;
         margin-bottom: 0;
     }
+    .matchStudent td {
+        color: #f90;
+    }
 </style>
 {/block} {block name="page-content"}
 <div class="box no-border">
@@ -346,8 +349,8 @@
                         </thead>
                         <tbody>
                             {volist name="assignList" id="vol"}
-                            <tr role="row" class="odd">
-                                <td>{$vol.student}</td>
+                            <tr role="row" class="studentTr">
+                                <td class="sName">{$vol.student}</td>
                                 <td>{$vol.rest_schedule}</td>
                                 <td>
                                     <a href="">查看详情</a>
@@ -832,28 +835,28 @@
 
 
         //所属课程api
-        $(".lessonType").on("change", function () {
-            //获取课程的大小类型及ID
-            var gradecate_setion = $(this).children("option:checked").attr('data-gradecate_setion');
-            var gradecate_setion_id = $(this).children("option:checked").attr(
-                'data-gradecate_setion_id');
-            var gradecate = $(this).children("option:checked").attr('data-gradecate');
-            var gradecate_id = $(this).children("option:checked").attr('data-gradecate_id');
-            var is_school = $(this).children("option:checked").attr('data-is_school');
-            var lesson = $(this).children("option:checked").text();
-            lesson_id = $(this).children("option:checked").attr("data-id");
-            $("input[name='gradecate_setion']").val(gradecate_setion);
-            $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
-            $("input[name='gradecate']").val(gradecate);
-            $("input[name='gradecate_id']").val(gradecate_id);
-            $("input[name='is_school']").val(is_school);
-            $("input[name=lesson]").val(lesson);
-            $("input[name=lesson_id]").val(lesson_id);
-            $(".gradeType").text(gradecate_setion + gradecate);
-            //获取课程名称及ID并获取对应的学生
-            toStudentList(lesson_id, '');
+        // $(".lessonType").on("change", function () {
+        //     //获取课程的大小类型及ID
+        //     var gradecate_setion = $(this).children("option:checked").attr('data-gradecate_setion');
+        //     var gradecate_setion_id = $(this).children("option:checked").attr(
+        //         'data-gradecate_setion_id');
+        //     var gradecate = $(this).children("option:checked").attr('data-gradecate');
+        //     var gradecate_id = $(this).children("option:checked").attr('data-gradecate_id');
+        //     var is_school = $(this).children("option:checked").attr('data-is_school');
+        //     var lesson = $(this).children("option:checked").text();
+        //     lesson_id = $(this).children("option:checked").attr("data-id");
+        //     $("input[name='gradecate_setion']").val(gradecate_setion);
+        //     $("input[name='gradecate_setion_id']").val(gradecate_setion_id);
+        //     $("input[name='gradecate']").val(gradecate);
+        //     $("input[name='gradecate_id']").val(gradecate_id);
+        //     $("input[name='is_school']").val(is_school);
+        //     $("input[name=lesson]").val(lesson);
+        //     $("input[name=lesson_id]").val(lesson_id);
+        //     $(".gradeType").text(gradecate_setion + gradecate);
+        //     //获取课程名称及ID并获取对应的学生
+        //     toStudentList(lesson_id, '');
 
-        });
+        // });
 
         // 学员名单
         $("#studentConfirm").on('click', '', function () {
@@ -911,11 +914,16 @@
 
         //搜索训练营
         $("#searchStudentBtn").on("click", '', function () {
-            var keyword = $(".studentName").val();
-            if (keyword == "") {
-                alert("请输入学员姓名！");
+            var keywordSD = $(".studentName").val();
+            $("#studentList .studentTr").removeClass("matchStudent");
+            if (keywordSD != '') {
+                $("#studentList .sName:contains('" + keywordSD + "')").parent().addClass("matchStudent");
+                $("#studentList .matchStudent").each(function (i) {
+                    $("#studentList .studentTr:first-child").before($(this));
+                });
+                $(".modal .tableScroll").animate({scrollTop:0},"fast");
             } else {
-                toStudentList(lesson_id, keyword);
+                mui.toast("没输入关键字哦");
             }
         })
 
@@ -1039,49 +1047,49 @@
         // })
     })
 
-    function toStudentList(lesson_id, keyword) {
-        var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}";
-        var campID = "{$campInfo.id}";
-        $.ajax({
-            url: url,
-            data: {
-                lesson_id: "{$gradeInfo.lesson_id}",
-                keyword: keyword,
-                camp_id: campID,
-                status: 1
-            },
-            dataType: 'json', //服务器返回json格式数据
-            type: 'post', //HTTP请求类型
-            timeout: 10000, //超时时间设置为10秒；
-            success: function (data) {
-                console.log(data)
-                if (data.code == 200) {
-                    var newli = '';
-                    var tys = '';
-                    for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli +=
-                            ` <tr role="row" class="odd">
-                                <td>${data.data[i].student}</td>
-                                <td>
-                                    <a href="">查看详情</a>
-                                </td>
-                                <td>
-                                    <input name="checkbox-student" class="student" value="${data.data[i].student}" type="checkbox" 
-                                    data-id="${data.data[i].id}" data-student_id="${data.data[i].student_id}" data-student="${data.data[i].student}" 
-                                    data-camp="${data.data[i].camp}" data-camp_id="${data.data[i].camp_id}" data-lesson="${data.data[i].lesson}" data-lesson_id="${data.data[i].lesson_id}"
-                                     data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-student_typenum="${data.data[i].type_num}">
-                                </td>
-                            </tr>`
-                    }
+    // function toStudentList(lesson_id, keyword) {
+    //     var url = "{:url('api/lesson_member/searchLessonMemberNoPageApi','','',true)}";
+    //     var campID = "{$campInfo.id}";
+    //     $.ajax({
+    //         url: url,
+    //         data: {
+    //             lesson_id: "{$gradeInfo.lesson_id}",
+    //             keyword: keyword,
+    //             camp_id: campID,
+    //             status: 1
+    //         },
+    //         dataType: 'json', //服务器返回json格式数据
+    //         type: 'post', //HTTP请求类型
+    //         timeout: 10000, //超时时间设置为10秒；
+    //         success: function (data) {
+    //             console.log(data)
+    //             if (data.code == 200) {
+    //                 var newli = '';
+    //                 var tys = '';
+    //                 for (var i = 0; i <= data.data.length - 1; i++) {
+    //                     newli +=
+    //                         ` <tr role="row" class="odd">
+    //                             <td>${data.data[i].student}</td>
+    //                             <td>
+    //                                 <a href="">查看详情</a>
+    //                             </td>
+    //                             <td>
+    //                                 <input name="checkbox-student" class="student" value="${data.data[i].student}" type="checkbox" 
+    //                                 data-id="${data.data[i].id}" data-student_id="${data.data[i].student_id}" data-student="${data.data[i].student}" 
+    //                                 data-camp="${data.data[i].camp}" data-camp_id="${data.data[i].camp_id}" data-lesson="${data.data[i].lesson}" data-lesson_id="${data.data[i].lesson_id}"
+    //                                  data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-student_typenum="${data.data[i].type_num}">
+    //                             </td>
+    //                         </tr>`
+    //                 }
 
-                    $("#studentList tbody").empty();
-                    if (newli == '') {
-                        newli = '<tr><td colspan="3" class="text-center">没有查找到数据!</td></tr>'
-                    }
-                    $("#studentList tbody").append(newli);
-                }
-            },
-            error: function (xhr, type, errerThrown) {}
-        });
-    };
+    //                 $("#studentList tbody").empty();
+    //                 if (newli == '') {
+    //                     newli = '<tr><td colspan="3" class="text-center">没有查找到数据!</td></tr>'
+    //                 }
+    //                 $("#studentList tbody").append(newli);
+    //             }
+    //         },
+    //         error: function (xhr, type, errerThrown) {}
+    //     });
+    // };
 </script> {/block}
