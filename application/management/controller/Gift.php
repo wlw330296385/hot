@@ -17,6 +17,12 @@ class Gift extends Camp{
 
 	// 购买赠课
 	public function giftbuy(){
+
+		$lessonList = db('lesson')->where(['camp_id'=>$this->campInfo['id']])->select();
+
+
+
+		$this->assign('lessonList',$lessonList);
 		return view();
 	}
 

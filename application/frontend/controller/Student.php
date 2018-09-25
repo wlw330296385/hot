@@ -195,7 +195,8 @@ class Student extends Base
 		$camp_id = input('param.camp_id');
 		
         // 获取会员在训练营角色
-        $power = $this->CampService->isPower($camp_id,$this->memberInfo['id']);
+        $CampService = new \app\service\CampService;
+        $power = $CampService->isPower($camp_id,$this->memberInfo['id']);
         if($power <2){
             $this->error('权限不足');
         }
