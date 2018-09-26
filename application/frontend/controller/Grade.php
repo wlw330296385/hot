@@ -141,7 +141,11 @@ class Grade extends Base{
         $CampService = new \app\service\CampService;
         $isPower = $CampService->isPower($gradeInfo['camp_id'],$this->memberInfo['id']);
         // 班级同学
-        $studentList = $this->GradeService->getStudentList(['grade_id'=>$grade_id,'status'=>1]);
+        $studentList = db('grade_member')
+                ->field('lesson_member.*')
+                ->join('lesson_member','lesson_member.student_id = grade_member.student_id and lesson_member.lesson_id = grade_member.lesson_id','left')
+                ->where(['grade_member.grade_id'=>$grade_id])
+                ->select();
         $this->assign('studentList',$studentList);
         $this->assign('gradeInfo',$gradeInfo);
         $this->assign('isPower',$isPower);
