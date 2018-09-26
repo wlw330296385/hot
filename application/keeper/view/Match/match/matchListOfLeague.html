@@ -169,14 +169,14 @@
                                 newli += `<div class="page-header border-b bggray2">`
                                 if (data.data[i].date == 0) {
                                     newli +=
-                                        `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
+                                        `<span class="course">比赛时间待定</span>`
                                 } else {
                                     newli +=
-                                        `<span class="course" style="padding-left:8px;">${data.data[i].date} </span>`
+                                        `<span class="course">${data.data[i].date} </span>`
                                 }
                                 newli +=
                                     `</div><ul class="mui-table-view list border-b">
-                                      <p style="margin-bottom: 0;padding: 10px 0 0 22px;">${data.data[i].stage.name}</p>`;
+                                      <p style="margin-bottom: 0;padding: 10px 0 0 15px;">${data.data[i].stage.name}</p>`;
                             }
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.schedules.length - 1; j++) {
@@ -189,6 +189,7 @@
                                     league_id + '/id/' + dataSchedule.id;
                                 newli +=
                                     `<li class="mui-table-view-cell listli">
+                                        <div class="fl" style="line-height:62px;margin-right:10px;">${dataSchedule.match_group}</div>
                                                 <div class="mui-media-body wd52">
                                                     <p class="f14" style="margin-bottom: 8px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
                                                         <img class="img24" src="${dataSchedule.home_team_logo}" alt="">${dataSchedule.home_team}</p>
@@ -199,7 +200,7 @@
                                                 <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">
                                                         <p style="margin-bottom:8px;"><a href="${urlsEdit}"><button class="opclick bgred">赛程编辑</button></a></p>
                                                 <p><a href="${urlsRecord}"><button class="opclick bggreen">比赛结果</button></a></p></div>
-                                                <div class="fr" style="line-height:62px;margin-right:10px;">${dataSchedule.match_group}</div>`
+                                                `
                                 newli += `</li>`
                             }
                             if (data.data[i].stage.schedules != '') {
@@ -259,14 +260,14 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli += `<div class="page-header border-b bggray2">`
                             if (data.data[i].date == 0) {
-                                newli += `<span class="course" style="padding-left:8px;">比赛时间待定</span>`
+                                newli += `<span class="course">比赛时间待定</span>`
                             } else {
                                 newli +=
-                                    `<span class="course" style="padding-left:8px;">${data.data[i].date} </span>`
+                                    `<span class="course">${data.data[i].date} </span>`
                             }
                             newli +=
                                 `</div><ul class="mui-table-view list border-b">
-                                      <p style="margin-bottom: 0;padding: 10px 0 0 22px;">${data.data[i].stage.name}</p>`;
+                                      <p style="margin-bottom: 0;padding: 10px 0 0 15px;">${data.data[i].stage.name}</p>`;
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                 var dataRecord = data.data[i].stage.records[j]
@@ -279,9 +280,11 @@
                                     var urlsRecord = "{:url('match/editMatchofleague')}" +
                                         '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 }
+                               
                                 newli +=
                                     `<li class="mui-table-view-cell listli">
-                                                <div class="mui-media-body wd45">`
+                                        <div class="fl" style="line-height:62px;margin-right:10px;">${dataRecord.match_group}</div>
+                                                <div class="mui-media-body" style="width:49%">`
                                 if (dataRecord.home_score > dataRecord.away_score) {
                                     newli +=
                                         `<p class="f14" style="margin-bottom: 8px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
@@ -319,8 +322,7 @@
                                             <p class="lineHeight32 colorred">${dataRecord.home_score}</p>
                                             <p class="lineHeight32 colorred">${dataRecord.away_score}</p>
                                         </div>`
-                                newli +=
-                                    `<div class="fr" style="line-height:62px;margin-right:10px;">${dataRecord.match_group}</div>`
+                               
                                 newli += `</div></li>`
                             }
                             newli += `</ul >`
