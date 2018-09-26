@@ -52,10 +52,10 @@
                 <input type="text" name="award_org" class="data" value="{honorInfo.award_org}" placeholder="授奖单位">
             </div>
 
-            <div class="mui-input-row picker btn" id="demo4" data-options='{"type":"date"}'>
+            <div class="mui-input-row picker btn" data-options='{"type":"date"}'>
                 <div class="mui-navigate-right">
                     <label>授奖时间</label>
-                    <span id="result" class="ui-alert domData" name="honor_time">{honorInfo.honor_time}</span>
+                    <span id="result" class="domData" name="honor_time">{honorInfo.honor_time}</span>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
             </div>
             <textarea name="introduction" class="data introduction" style="display: none"></textarea>
             <div id="articleEditor" class="tuwenIntro"></div>
-           
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -199,8 +199,12 @@
                     honorMember += name + ','
                     honorMember_id += id + ','
                     $(".honorMember").text(honorMember.substring(0, honorMember.length - 1));
-                    $("input[name=prize_team_member]").val(honorMember_id.substring(0, honorMember_id.length - 1));
-                    honorMemberList += '<input type="hidden" class="honorMemberList" data-member="' + member + '" data-member_id="' + member_id + '" data-name="' + name + '" data-id="' + id + '">';
+                    $("input[name=prize_team_member]").val(honorMember_id.substring(0,
+                        honorMember_id.length - 1));
+                    honorMemberList +=
+                        '<input type="hidden" class="honorMemberList" data-member="' + member +
+                        '" data-member_id="' + member_id + '" data-name="' + name +
+                        '" data-id="' + id + '">';
                 });
                 $("#hideList").html(honorMemberList);
                 mui("#honorMember").popover("toggle");
@@ -233,7 +237,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
-       
+
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
@@ -255,7 +259,7 @@
                     window.top.location.href = goUrl;
                 })
             } else {
-                mui.alert(ajaxResult.msg, '编辑失败',function(){
+                mui.alert(ajaxResult.msg, '编辑失败', function () {
                     $("#articleEditor").append("<p class='Eleditor-placeholder'>点击编辑荣誉简介</p>");
                 });
                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
@@ -276,16 +280,23 @@
                     team_id: team_id,
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].name + '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' + data.data[i].member_id + '" data-member="' + data.data[i].member + '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name + '"></div>'
+                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                                    i].name +
+                                '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' +
+                                data.data[i].member_id + '" data-member="' + data.data[i].member +
+                                '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name +
+                                '"></div>'
                         }
                         $("#honorMemberDiv").empty();
                         if (newli == '') {
@@ -302,7 +313,6 @@
                 }
             });
         };
-
     </script>
 </body>
 
