@@ -20,6 +20,16 @@
             display: table;
             width: 100%;
         }
+        .mui-popover {
+            width: 90%;
+            height: 400px;
+            left: 0 !important;
+            right: 0;
+            margin: 0 auto;
+        }
+        .mui-popover .mui-control-content{
+            height: 308px;
+        }
     </style>
 </head>
 
@@ -29,14 +39,14 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
-        <h1 class="mui-title"></h1>
+        <h1 class="mui-title">{$leagueInfo.name}</h1>
     </header>
 
     <div class="mui-content pt">
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-        <input type="hidden" name="league_id" value="{league_id}" class="data">
-        <input type="hidden" name="match" value="{leagueInfo.name}" class="data">
+        <input type="hidden" name="league_id" value="{$league_id}" class="data">
+        <input type="hidden" name="match" value="{$leagueInfo.name}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
@@ -87,23 +97,36 @@
 
     </div>
 
-    <!--授奖人-->
-    <div id="honorMember" class="mui-popover">
+    <!--球队B-->
+    <div id="honorMember" class="mui-popover list">
         <div class="mui-popover-arrow"></div>
-        <div class="page-header">
-            <span class="course  wd45">
+        <div class="page-header border-b">
+            <span class="course wd36">
                 <strong>获奖者</strong>
             </span>
             <span class="fr">
-                <button class="mui-btn-blue" id="honorMemberConfirm">确认</button>
-            </span>
-            <span class="fr">
-                <button class="mui-btn qxBtn">全选</button>
+                <button class="mui-btn" id="deleteBtn">清除</button>
+                <button class="mui-btn bgblue" id="confirmBtn">确认</button>
             </span>
         </div>
-        <div class="mui-scroll-wrapper">
-            <div class="mui-scroll">
-                <form id="honorMemberDiv" class="mui-input-group honorMemberList"></form>
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item3">球队</a>
+                <a class="mui-control-item" href="#item4">球员</a>
+            </div>
+        </div>
+        <div id="item3" class="mui-control-content mui-active">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <form class="mui-input-group teamList"></form>
+                </div>
+            </div>
+        </div>
+        <div id="item4" class="mui-control-content">
+            <div class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <form class="mui-input-group teamMemberList"></form>
+                </div>
             </div>
         </div>
     </div>
@@ -182,8 +205,8 @@
 
 
         $(function () {
-            // TeamMemberOfList();
-
+            toTeamMemberList();
+            toTeamList()
             // 选择授奖人
             $("#honorMemberConfirm").on('tap', '', function () {
                 $(".honorMember").empty();
@@ -257,15 +280,55 @@
             }
         };
 
-        //自定义获取球员列表
-        var TeamMemberOfList = function () {
-            var url = "{:url('api/team/teammembers','','',true)}";
-            var team_id = "{leagueInfo.id}";
+        // 获取联赛已审球队列表
+        var toTeamList = function () {
+            var url = "{:url('api/league/leagueteams')}";
+            var league_id = "{$league_id}"
             mui.ajax({
                 url: url,
                 data: {
-                    team_id: team_id,
-                    status: 1
+                    league_id: league_id,
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli +=
+                                `<div class="mui-input-row mui-checkbox mui-left">
+                                    <label>${data.data[i].team.name}</label>
+                                    <input name="checkbox" type="checkbox" data-team="${data.data[i].team.name}" 
+                                    data-team_id="${data.data[i].team.name}" data-team_logo="data-team="${data.data[i].team.logo}">
+                                </div>`
+                        }
+                        if (newli == '') {
+                            newli = '<p class="mui-text-center">没有查找到数据哦</p>'
+                        }
+                        $(".teamList").empty().append(newli);
+                    } else {
+                        mui.toast('数据获取失败,请稍候再试');
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+        //获取联赛球员列表
+        var toTeamMemberList = function () {
+            var url = "{:url('api/league/leagueteams')}";
+            var league_id = "{$league_id}"
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id,
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -278,19 +341,17 @@
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
-                                    i].name +
-                                '</label><input name="checkbox-honor" class="coach" type="checkbox" data-member_id="' +
-                                data.data[i].member_id + '" data-member="' + data.data[i].member +
-                                '" data-id="' + data.data[i].id + '" data-name="' + data.data[i].name +
-                                '"></div>'
+                            newli +=
+                                `<div class="mui-input-row mui-checkbox mui-left">
+                                    <label>${data.data[i].team.name}</label>
+                                    <input name="checkbox" type="checkbox" data-team="${data.data[i].team.name}" 
+                                    data-team_id="${data.data[i].team.name}" data-team_logo="data-team="${data.data[i].team.logo}">
+                                </div>`
                         }
-                        $("#honorMemberDiv").empty();
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
-                        $("#honorMemberDiv").append(newli);
-
+                        $(".teamMemberList").empty().append(newli);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
