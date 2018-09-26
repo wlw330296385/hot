@@ -2690,7 +2690,7 @@ class League extends Base
         $data['match_id'] = $data['league_id'];
         unset($data['league_id']);
 
-        $match_member_list = json_decode($data['match_member_list']);
+        $match_member_list = json_decode($data['match_member_list'], true);
         if (empty($match_member_list)) {
             return json(['code' => 100, 'msg' => "JSON 解析失败"]);
         }
@@ -5625,6 +5625,24 @@ class League extends Base
         $result = $leagueS->delLeagueAndRelevancy($map);
         if ($result) {
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
+
+
+    public function getMatchHonorList() {
+        $data = input('param.');
+        if (empty($data["league_id"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        } else {
+            $data['match_id'] = $data["league_id"];
+            unset($data['league_id']);
+        }
+        $leagueS = new LeagueService();
+        $result = $leagueS->getMatchHonorList($data);
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } else {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
