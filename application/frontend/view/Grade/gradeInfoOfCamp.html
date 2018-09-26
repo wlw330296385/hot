@@ -41,9 +41,7 @@
             </ul>
 
             <ul class="mui-table-view list detalis-list mb" id="studentList">
-                <li class="mui-table-view-cell listli detalisli">学员名单
-                    <span>剩余课时</span>
-                </li>
+                <li class="mui-table-view-cell listli detalisli">学员名单<span>剩余课时</span></li>
             </ul>
             <ul class="mui-table-view list detalis-list">
                 <li class="mui-table-view-cell listli">班级类型
@@ -166,6 +164,9 @@
         });
         $(function () {
 
+            //学生名单
+            toStudentList();
+
             var isPower = "{$isPower}";
             if (isPower > 1) {
                 $(".isPower").show();
@@ -181,9 +182,10 @@
                 weekTime += wk[i] + "（" + ts[i] + "）"
             }
             $("#weektime").text(weekTime);
+
         })
 
-    function toStudentList(lesson_id, keyword) {
+    function toStudentList() {
         var url = "{:url('api/lesson_member/getLessonMemberJoinGradeMemberListApi','','',true)}";
         var lessonID = "{$gradeInfo.lesson_id}";
         $.ajax({
@@ -198,29 +200,19 @@
             success: function (data) {
                 console.log(data)
                 if (data.code == 200) {
+                    var grageID = '{$gradeInfo.id}';
                     var newli = '';
                     var tys = '';
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli +=
-                            ` <tr role="row" class="odd">
-                                <td>${data.data[i].student}</td>
-                                <td>
-                                    <a href="">查看详情</a>
-                                </td>
-                                <td>
-                                    <input name="checkbox-student" class="student" value="${data.data[i].student}" type="checkbox" 
-                                    data-id="${data.data[i].id}" data-student_id="${data.data[i].student_id}" data-student="${data.data[i].student}" 
-                                    data-camp="${data.data[i].camp}" data-camp_id="${data.data[i].camp_id}" data-lesson="${data.data[i].lesson}" data-lesson_id="${data.data[i].lesson_id}"
-                                     data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" data-student_typenum="${data.data[i].type_num}">
-                                </td>
-                            </tr>`
+                        if(data.data[i].g_id==grageID){
+                            newli += `<li class="mui-table-view-cell listli detalisli colororange">${data.data[i].student}<span>${data.data[i].rest_schedule} 节</span></li>`
+                        }
                     }
 
-                    $("#studentList tbody").empty();
                     if (newli == '') {
-                        newli = '<tr><td colspan="3" class="text-center">没有查找到数据!</td></tr>'
+                        newli = '<li class="mui-table-view-cell listli detalisli">没有查找到数据!</li>'
                     }
-                    $("#studentList tbody").append(newli);
+                    $("#studentList").append(newli);
                 }
             },
             error: function (xhr, type, errerThrown) {}
