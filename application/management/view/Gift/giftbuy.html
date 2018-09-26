@@ -25,6 +25,12 @@
                     </select>
                 </div>
             </div>
+            <div class="row  {if $campInfo.rebate_type==2} hide{/if}">
+            	<div class="col-md-2 col-sm-2 text-right"></div>
+            	<div class="col-md-5 col-sm-5">
+	            	注意:购买赠课将会扣除余额<span class="c color-red"></span>元
+	            </div>
+            </div>
         </div>
         <div class="form-group">
             <div class="row">
@@ -55,8 +61,16 @@
 
 {block name="js"}
 <script type="text/javascript">
-	$('input[name=l_id] option').on('selected',function(){
-		alert($(this).val())
+	var fn_c = function(){
+		var c = $("select[name=l_id]").find("option:selected").attr('data');
+		$('.c').text(c);
+	}
+	
+
+	$("select[name=l_id]").on('change',function(){
+		fn_c();
 	})
+
+	fn_c();
 </script>
 {/block}

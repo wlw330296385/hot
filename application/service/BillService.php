@@ -223,7 +223,7 @@ class BillService {
                 }
             }else{
                 //$re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
-                $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->whereNull('delete_time')->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status' => 1,'type' => 1,'update_time'=>time()]);
+                $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->whereNull('delete_time')->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status' => 1,'type' => 1,'update_time'=>time(),'system_remarks'=>date('Ymd',time()).'续费']);
                 $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->update();
                 if(!$re){
                     db('log_lesson_member')->insert(['member_id'=>$data['member_id'],'member'=>$data['member'],'data'=>json_encode($data)]);
@@ -232,14 +232,14 @@ class BillService {
                 }
                 
             }
-        //结束增加学生数据
-        // 发送模板消息
-        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
-        $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
-        //结束课程操作
+            //结束增加学生数据
+            // 发送模板消息
+            $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+            $MessageService->sendCampMessage($data['camp_id'],$MessageCampData,$MessageCampSaveData);
+            //结束课程操作
 
-        // 记录训练营课程营业额
-        if($data['balance_pay']>0 && $data['status'] == 1 && $campInfo['rebate_type'] == 2){
+            // 记录训练营课程营业额
+            if($data['balance_pay']>0 && $data['status'] == 1 && $campInfo['rebate_type'] == 2){
                 $daytime = $data['pay_time'];
                 $dataCampFinance = [
                     'money' => $data['balance_pay'],
