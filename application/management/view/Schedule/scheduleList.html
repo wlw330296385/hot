@@ -23,9 +23,10 @@
                                 <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-success btn-flat radius4">搜索</button>
                                     <button type="reset" class="btn btn-default btn-flat radius4">重置</button>
-                                    <a href="{:url('schedule/createSchedule')}">
-                                        <button type="button" class="btn btn-warning btn-flat radius4">录课</button>
-                                    </a>
+                                    <div data-toggle="modal" data-target="#lk" class="btn btn-warning btn-flat radius4">
+                                        录课
+                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -109,4 +110,42 @@
 </div>
 
 
+
+<!-- 录课选择班级 -->
+<div class="modal fade" id="lk">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">请选择班级</h4>
+            </div>
+            <form action="{:url('schedule/createSchedule')}" method="get">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>课程名称</label>
+                        <select name="g_id">
+                            {volist name="gradeList" id="vol"}
+                            <option value="{$vol.id}">{$vol.grade}</option>
+                            {/volist}
+                        </select>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="确定">
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+    
+
+{/block}
+
+{block name="js"}
+    <script type="text/javascript">
+      
+    </script>
 {/block}

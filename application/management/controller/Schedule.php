@@ -18,7 +18,7 @@ class Schedule extends Backend{
 	}
 
     public function createSchedule(){
-
+        $camp_id = $this->campInfo['id'];
         if(request()->isPost()){
             $data = input('post.');
             $ScheduleService = new \app\service\ScheduleService;
@@ -38,7 +38,6 @@ class Schedule extends Backend{
                 $this->error($result['msg']);
             }
         }else{
-            $camp_id = $this->campInfo['id'];
             //粉丝列表
             $fansList = db('follow')->where(['follow_id'=>$camp_id,'status'=>1,'type'=>2])->select();
             //教练列表
@@ -48,24 +47,33 @@ class Schedule extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-            $grade_id = input('param.grade_id');
+            $grade_id = input('param.g_id');
             if($grade_id){
                 $map = ['id'=>$grade_id];
             }else{
-                $map = ['camp_id'=>$camp_id,'status'=>1];
+                $this->error('请先选择班级');
             }
-            $gradeList = db('grade')->where($map)->where('delete_time',null)->select();
-            
+            $gradeInfo = db('grade')->where($map)->where('delete_time',null)->find();
+            if(!$gradeInfo){
+                $this->error('班级错误');
+            }
             $courtList = db('court_camp')
                 ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
                 ->join('court','court.id=court_camp.court_id')
                 ->where(['court_camp.camp_id' => $camp_id])
                 ->order('court_camp.id desc')
                 ->select();
+            $studentList = db('lesson_member')
+                    ->field('lesson_member.*,grade_member.student_id as gs_id,grade_member.lesson_id as gl_id,grade_member.grade_id as g_id')
+                    ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
+                    ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
+                    ->order('lesson_member.id desc')
+                    ->select();
             $this->assign('fansList',$fansList);
-            $this->assign('gradeList',$gradeList);  
+            $this->assign('gradeInfo',$gradeInfo);  
             $this->assign('coachList',$coachList);  
-            $this->assign('courtList',$courtList);  
+            $this->assign('courtList',$courtList);
+            $this->assign('studentList',$studentList);    
             return view('Schedule/createSchedule');
         }  
     }
@@ -74,7 +82,10 @@ class Schedule extends Backend{
 	public function scheduleList(){
 		$ScheduleService = new \app\service\ScheduleService;
 		$scheduleList = $ScheduleService->getScheduleListByPage(['camp_id'=>$this->campInfo['id']],'lesson_time desc',20);
+        $gradeList = db('grade')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->select();
 
+
+        $this->assign('gradeList',$gradeList);
         $this->assign('scheduleList',$scheduleList);
         return view('Schedule/scheduleList');
 	}
