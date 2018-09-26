@@ -23,7 +23,6 @@
     <div class="mui-content">
 
         <form action="" class="mui-input-group">
-            <input type="hidden" name="member_id" class="data" value="{$matchMemberInfo.member_id}">
             <input type="hidden" name="league_id" class="data" value="{$league_id}">
             <div class="page-header bggray2">
                 <span class="course wd45">
@@ -35,27 +34,6 @@
                 <span>{$matchMemberInfo.realname}</span>
             </div>
             <div class="mui-input-row">
-                <div class="mui-navigate-right typeRole">
-                    <label>角色</label>
-                    {if $memberInfo.id == $matchMemberInfo.member_id}
-                    <span name="type" class="data spanType"></span>
-                    {else}
-                    <span class="select-row">
-                        <select name="type" id="roleSelect" class="data">
-                            {volist name="types" id="vo"}
-                            <option value="{$key}">{$vo}</option>
-                            {/volist}
-                        </select>
-                    </span>
-                    {/if}
-                </div>
-            </div>
-            <div class="mui-input-row">
-                <label>职称</label>
-                <input type="text" name="job_description" value="{$matchMemberInfo.job_description}" class="data"
-                    placeholder="请填写职称信息">
-            </div>
-            <div class="mui-input-row">
                 <label>电话</label>
                 {if $matchMemberInfo.telephone==0}
                 <input type="text" name="telephone" value="" class="data" placeholder="请填写电话">
@@ -63,6 +41,13 @@
                 <input type="text" name="telephone" value="{$matchMemberInfo.telephone}" class="data" placeholder="请填写电话">
                 {/if}
             </div>
+            <div class="page-header bggray2">
+                <span class="course wd45">
+                    <strong>角色</strong>
+                </span>
+                <span class="fr f14 colorblue addRole">添加角色</span>
+            </div>
+
         </form>
 
         <ul class="mui-table-view operation mt">
@@ -87,23 +72,93 @@
 
     </div>
 
+    <!--工作人员-->
+    <div id="workerList" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>工作人员</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="viceCaptainDel">清除</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list workerList">
+                    {volist name="types" id="vo"}
+                    <li class="mui-table-view-cell listli" data-type="{$key}">{$vo}</li>
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script>
-        var type = "{$matchMemberInfo.type}";
-        if (type == 10) {
-            $(".spanType").text("负责人");
-        } else if (type == 9) {
-            $(".spanType").text("管理员");
-        } else if (type == 8) {
-            $(".spanType").text("记录员");
-        } else if (type == 7) {
-            $(".spanType").text("裁判员");
-        } else if (type == 0) {
-            $(".spanType").text("工作人员");
-        }
-        $('#roleSelect option[value="{$matchMemberInfo.type}"]').prop("selected", true);
+        var league_id = "{$league_id}";
+        var member_id = "{$matchMemberInfo.member_id}";
+        // var type = "{$matchMemberInfo.type}";
+        // if (type == 10) {
+        //     $(".spanType").text("负责人");
+        // } else if (type == 9) {
+        //     $(".spanType").text("管理员");
+        // } else if (type == 8) {
+        //     $(".spanType").text("记录员");
+        // } else if (type == 7) {
+        //     $(".spanType").text("裁判员");
+        // } else if (type == 0) {
+        //     $(".spanType").text("工作人员");
+        // }
+        // $('#roleSelect option[value="{$matchMemberInfo.type}"]').prop("selected", true);
+
+        var match_member_list = '';
+        workerPersonList();
+        //
+        $(document).on("tap", ".addRole", function () {
+            var str =
+                ` 
+           <div class="roleCont"><div class="mui-input-row">
+                            <a href="#workerList" class="typeRole">
+                                <div class="mui-navigate-right">
+                                    <label>角色<text></text></label>
+                                    <span class="worker" data-member="{$matchMemberInfo.member}" data-member_id="{$matchMemberInfo.member_id}" data-id="" data-type=""></span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>职称</label>
+                            <input type="text" name="job_description" value="" 
+                                placeholder="请填写职称信息">
+                        </div></div>`
+            $(".mui-input-group").append(str)
+        })
+        //获取序号并且赋值到工作人员列表
+        $(document).on("tap", ".typeRole", function () {
+            $(".workerList").attr("data-num", $(this).find("text").text());
+        })
+
+        // 修改工作人员
+        $(".workerList").on('tap', 'li', function () {
+            var worker = $(this).text();
+            var worker_type = $(this).attr('data-type');
+            var worker_id = $(this).attr('data-id');
+            var dataNum = $(this).parents(".workerList").attr("data-num");
+            $(".roleCont").each(function () {
+                if (dataNum == $(this).find("text").text()) {
+                    $(this).find(".worker").text(worker);
+                    $(this).find(".worker").attr("data-type", worker_type);
+                    $(this).find(".worker").attr("data-id", worker_id);
+                }
+            })
+            mui("#workerList").popover("toggle");
+        });
+        //关闭
+        $("#workerClose").on('tap', '', function () {
+            mui("#workerList").popover("toggle");
+        });
 
         // 删除工作人员
         $(document).on('tap', '.deleteWorker', function () {
@@ -137,14 +192,91 @@
             });
         });
 
+        // 工作人员角色
+        function workerPersonList() {
+            mui.ajax("{:url('api/league/getMatchMembers','','',true)}", {
+                data: {
+                    league_id: league_id,
+                    member_id: member_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli +=
+                                `
+                                <div class="roleCont">
+                        <div class="mui-input-row">
+                            <a href="#workerList" class="typeRole">
+                                <div class="mui-navigate-right">
+                                    <label>角色<text>${i+1}</text></label>
+                                    <span class="worker" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}"
+                                     data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="mui-input-row">
+                            <label>职称</label>`
+                            if (data.data[i].job_description == null) {
+                                newli +=
+                                    ` <input type="text" name="job_description" value="" 
+                                placeholder="请填写职称信息">`
+                            } else {
+                                newli +=
+                                    ` <input type="text" name="job_description" value="${data.data[i].job_description}" 
+                                placeholder="请填写职称信息">`
+                            }
+
+                            newli += `</div>
+                        </div>
+                        `
+                        }
+
+                    }
+                    $(".mui-input-group").append(newli);
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        }
+
         // 获取数据并进行提交
         $(document).on('tap', '.confirmBtn', function () {
+
+            match_member_list = []
+            $(".roleCont").each(function () {
+                var member = $(this).find(".worker").attr("data-member");
+                var member_id = $(this).find(".worker").attr("data-member_id");
+                var type = $(this).find(".worker").attr("data-type");
+                var type_text = $(this).find(".worker").text();
+                var id = $(this).find(".worker").attr("data-id");
+                var job_description = $(this).find("input[name=job_description]").val();
+                match_member_list.push({
+                    member,
+                    member_id,
+                    type,
+                    type_text,
+                    id,
+                    job_description
+                });
+            });
+            console.log(match_member_list)
+
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            var url = "{:url('api/league/updateMatchMember')}";
+            objData.match_member_list = JSON.stringify(match_member_list);
+            var url = "{:url('api/league/updateMatchMembers')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '提交成功', '确定', function () {

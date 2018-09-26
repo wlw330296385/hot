@@ -105,43 +105,42 @@
                     return false;
                 }
             })
-
             // 检查是否已发送|是否存在
             $(document).on("tap", ".typePo", function () {
                 var member_id = $(this).attr("data-member_id");
                 var match_id = "{$leagueInfo.id}";
-                mui.ajax("{:url('api/league/checkmatchmember')}", {
-                    data: {
-                        match_id: match_id,
-                        member_id: member_id
-                    },
-                    dataType: 'json', //服务器返回json格式数据
-                    type: 'post', //HTTP请求类型
-                    timeout: 10000, //超时时间设置为10秒；
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            var btnArray = ['取消', '确认'];
-                            mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
-                                if (e.index == 1) {
-                                    $('#typePopover').attr('data-memberid',
-                                        member_id).attr('data-matchid',
-                                        match_id);
-                                }
-                            });
-                        } else {
+                // mui.ajax("{:url('api/league/checkmatchmember')}", {
+                //     data: {
+                //         match_id: match_id,
+                //         member_id: member_id
+                //     },
+                //     dataType: 'json', //服务器返回json格式数据
+                //     type: 'post', //HTTP请求类型
+                //     timeout: 10000, //超时时间设置为10秒；
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     success: function (data) {
+                //         console.log(data);
+                //         if (data.code == 200) {
+                //             var btnArray = ['取消', '确认'];
+                //             mui.confirm('已发送邀请，是否再次邀请？', '', btnArray, function (e) {
+                //                 if (e.index == 1) {
+                //                     $('#typePopover').attr('data-memberid',
+                //                         member_id).attr('data-matchid',
+                //                         match_id);
+                //                 }
+                //             });
+                //         } else {
                             $('#typePopover').attr('data-memberid', member_id).attr(
                                 'data-matchid', match_id);
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
+                //         }
+                //     },
+                //     error: function (xhr, type, errorThrown) {
+                //         //异常处理；
+                //         console.log(type);
+                //     }
+                // });
             })
 
             // 工作人员角色popover点击绑定
@@ -150,11 +149,11 @@
                 var member_id = $('#typePopover').attr('data-memberid');
                 var typeData = []
                 $(".typeList input[type=checkbox]:checked").each(function () {
-                    var type = $(this).val();
-                    var type_num = $(this).attr("data-type");
+                    var type = $(this).attr("data-type");
+                    var type_str = $(this).val();
                     typeData.push({
                         type,
-                        type_num
+                        type_str
                     });
                 });
                 console.log(typeData)
@@ -177,7 +176,7 @@
                             window.setTimeout("location.reload()", 2000)
                         } else {
                             mui.toast(data.msg);
-                            window.setTimeout("location.reload()", 2000)
+                            // window.setTimeout("location.reload()", 2000)
                         }
                     },
                     error: function (xhr, type, errorThrown) {

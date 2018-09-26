@@ -18,6 +18,7 @@ use app\model\MatchStage;
 use app\model\MatchStageAdvteam;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
+use app\model\MatchHonor;
 use think\Db;
 
 class LeagueService
@@ -325,7 +326,7 @@ class LeagueService
     public function getMatchMember($map)
     {
         $model = new MatchMember();
-        $res = $model->where($map)->find();
+        $res = $model->where($map)->order('type desc')->find();
         if (!$res) {
             return $res;
         }
@@ -350,7 +351,7 @@ class LeagueService
     }
 
     // 获取联赛-工作人员列表（无分页）
-    public function getMatchMembers($map, $order = 'id desc')
+    public function getMatchMembers($map, $order = 'type desc, id desc')
     {
         $model = new MatchMember();
         $res = $model->where($map)->order($order)->select();
@@ -1324,22 +1325,6 @@ class LeagueService
 
     }
 
-    // public function countScheduleAndRecord($map) {
-
-    //     if (!empty($map["match_id"])) {
-    //         $map["match_schedule.match_id"] = $map["match_id"];
-    //         unset($map["match_id"]);
-    //     }
-    //     $model = new MatchSchedule();
-    //     $count = $model
-    //     ->join('match_record','match_record.match_schedule_id = match_schedule.id','left')
-    //     ->where($map)
-    //     ->order('match_record.match_time asc')
-    //     ->count();
-
-    //     return empty($count) ? 0 : $count;
-    // }
-
     public function getScheduleAndRecordList($map) {
 
         // 已完成 输出最近已完成所有比赛，包括联赛中已完成的一场
@@ -1376,5 +1361,24 @@ class LeagueService
 
         $result = $result->toArray();
         return $result;
+    }
+
+    // 获取联赛奖项
+    public function getMatchHonor($map, $order = 'id desc')
+    {
+        $model = new MatchHonor();
+        $res = $model->where($map)->order($order)->find();
+        return $res;
+    }
+
+    // 获取联赛奖项列表
+    public function getMatchHonorList($map, $order = 'id desc')
+    {
+        $model = new MatchHonor();
+        $res = $model->where($map)->order($order)->select();
+        if ($res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 }

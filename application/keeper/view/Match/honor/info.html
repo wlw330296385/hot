@@ -22,17 +22,27 @@
     </header>
 
     <div class="mui-content">
-        <div class="list coach mb44">
+        <div class="list  mb44">
+            <!-- 联赛主模块 -->
             <ul class="mui-table-view mb" style="margin-top: -4px">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="mui-media-object mui-pull-left coachicon" src="{leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <h4>{leagueInfo.name}</h4>
+                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$leagueInfo.name}</h4>
                     <div class="mui-media-body wd49" style="line-height:20px !important">
-                        <p>{leagueInfo.city} {leagueInfo.area}</p>
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                        <p>{$leagueInfo.city} {$leagueInfo.area}</p>
+                        <p class="f12">
+                            参赛队：
+                            <strong class="colororange">{$leagueInfo.teams_count}</strong>支 | 关注：
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong>
+                    <img class="mui-media-object mui-pull-left coachicon" src="{leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$leagueInfo.name}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">队员：
                             <strong class="colororange">{leagueInfo.member_num}</strong>人 |
                             <a href="{:url('team/fans')}">粉丝：
-                                <strong class="colororange">{leagueInfo.fans_num}</strong>
+                                <strong class="colororange">{$leagueInfo.fans_num}</strong>
                             </a>
                         </p>
                     </div>
@@ -46,22 +56,22 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-home-game colororange"></span>奖项名称</label>
-                    <span>{honorInfo.name}</span>
+                    <span>{$honorInfo.name}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-name colororange"></span>赛事名称</label>
-                    <span>{honorInfo.match}</span>
+                    <span>{$leagueInfo.name}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-home-activity colororange"></span>授奖单位</label>
-                    <span>{honorInfo.award_org}</span>
+                    <span>{$leagueInfo.match_org.name}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>授奖时间</label>
-                    <span>{honorInfo.honor_time}</span>
+                    <span>{:date('Y-m-d', $honorInfo.honor_time)}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -102,16 +112,16 @@
                         分享
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
                     <a href="{:url('team/honorEdit')}">
                         编辑
                     </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
+                </li> -->
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
                     <a href="#fbcomment">
                         评论
                     </a>
-                </li>
+                </li> -->
                 <li class="mui-table-view-cell mui-media mui-col-xs-8 mui-col-sm-8 opli bgblue">
                     <a href="#fbcomment">
                         发表评论
@@ -169,18 +179,20 @@
                 $(".desimg").parent().hide();
             }
 
-            // 关注球队
+            // 关注联赛
             $(".follow").on("tap", '', function () {
-                var team_id = "{teamInfo.id}";
+                var league_id = "{$league_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
-                        type: 4,
-                        team_id: team_id
+                        type: 5,
+                        league_id: league_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -218,10 +230,12 @@
                         commented: commented,
                         team_id: team_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -241,22 +255,21 @@
                 });
             });
 
+
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var commented_id = "{honorInfo.id}";
-                var commented = "{honorInfo.name}";
-                var team_id = "{honorInfo.prize_team_id}";
-                mui.ajax("{:url('api/team/dianzan')}", {
+                var match_id = "{$league_id}";
+                mui.ajax("{:url('api/league/dianzan')}", {
                     data: {
-                        commented_id: commented_id,
-                        comment_type: 5,
-                        commented: commented,
-                        team_id: team_id
+                        comment_type: 1,
+                        match_id: match_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -278,46 +291,20 @@
             followStatus(); //判断当前的关注状态
         });
 
-        // 判断当前的关注状态
-        function followStatus() {
-            var team_id = "{teamInfo.id}"
-            mui.ajax("{:url('api/follow/getfollow')}", {
-                data: {
-                    type: 4,
-                    team_id: team_id
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        if (data.data === 1) {
-                            $(".follow").text("取消关注");
-                        } else {
-                            $(".follow").text("关注");
-                        }
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
-            });
-        }
         // 点赞状态
         function isthumbsup() {
-            var commented_id = "{honorInfo.id}";
-            mui.ajax("{:url('api/team/isthumbup')}", {
+            var match_id = "{$league_id}";
+            mui.ajax("{:url('api/league/isthumbup')}", {
                 data: {
-                    commented_id: commented_id,
-                    comment_type: 5,
+                    match_id: match_id,
+                    comment_type: 1,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -338,22 +325,55 @@
             });
         }
 
+        // 判断当前的关注状态
+        function followStatus() {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api/follow/getfollow')}", {
+                data: {
+                    type: 5,
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        if (data.data === 1) {
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
+                        } else {
+                            $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
+                        }
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
@@ -366,24 +386,32 @@
                     commented_id: commented_id,
                     comment_type: 5,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                data.data[i].create_time +
+                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
                         if (newli == '') {
-                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                            $("ul.comment-list").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                            );
                         }
                     } else {
                         //下拉加载 gType==2
