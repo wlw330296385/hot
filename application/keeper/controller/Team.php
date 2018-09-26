@@ -2,7 +2,6 @@
 // 球队模块
 namespace app\keeper\controller;
 
-
 use app\model\MatchRefereeApply;
 use app\model\MatchStatistics;
 use app\service\LeagueService;
@@ -174,12 +173,18 @@ class Team extends Base
 
         // 获取会员所在联赛（联赛工作人员）
         $leagueS = new LeagueService();
-        $myWorkMatchs = $leagueS->getMatchMembers([
+        $result = $leagueS->getMatchMembers([
             'member_id' => $this->memberInfo['id'],
             'status' => 1
-        ]);
-
-        //dump($myWorkMatchs);
+        ], 'match_id desc, type desc');
+        $myWorkMatchs = [];
+        $tempId = 0;
+        foreach ($result as $row) {
+            if ($tempId != $row['match_id']) {
+                $tempId = $row['match_id'];
+                array_push($myWorkMatchs, $row);
+            }
+        }
         $this->assign('myTeamList', $myTeamList);
         $this->assign('refereeInfo', $refereeInfo);
         $this->assign('myMatchOrgList', $myOrganization);

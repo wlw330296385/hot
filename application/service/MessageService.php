@@ -364,6 +364,7 @@ class MessageService
             'member_id' => $member_id,
             'url' => $sendTemplateData['url'],
             'content' => serialize($sendTemplateData),
+            'system_remarks' => '',
             'create_time' => time(),
             'update_time' => time()
         ];
@@ -424,6 +425,7 @@ class MessageService
                 'member_id' => $val['id'],
                 'url' => $sendTemplateData['url'],
                 'content' => serialize($sendTemplateData),
+                'system_remarks' => '',
                 'create_time' => time(),
                 'update_time' => time()
             ];
