@@ -228,10 +228,11 @@
     <div id="referee" class="mui-popover" style="margin: 0">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
-            <span class="course wd45">
+            <span class="course wd25">
                 <strong>裁判列表</strong>
             </span>
             <span class="fr">
+                <button class="mui-btn" id="temporaryReferee">添加临时裁判</button>
                 <button class="mui-btn" id="RefereeDel">清除</button>
             </span>
         </div>
@@ -246,10 +247,11 @@
     <div id="score" class="mui-popover">
         <div class="mui-popover-arrow"></div>
         <div class="page-header">
-            <span class="course wd36">
+            <span class="course wd25">
                 <strong>记录员</strong>
             </span>
             <span class="fr">
+                <button class="mui-btn" id="temporaryScore">添加临时记录员</button>
                 <button class="mui-btn-blue" id="scoreConfirm">确认</button>
             </span>
         </div>
@@ -311,7 +313,7 @@
             });
         })(mui, document);
 
-        let league_id = "{$league_id}";
+        var league_id = "{$league_id}";
         $(function () {
             var courtKeyword = '';
             var wCourt = '';
@@ -365,16 +367,17 @@
             //////////////////////////////////////////////////////////////////////
             // 选择裁判
             $(".refereeTap").on("tap", "", function () {
-                let dataNum = $(this).find("label").attr("data-num");
+                var dataNum = $(this).find("label").attr("data-num");
                 $(".refereeList li").attr("data-num", dataNum);
+                $("#referee").attr("data-num", dataNum);
             })
             $(".refereeList").on('tap', 'li', function () {
-                let page_referee1_id = $("input[name=referee1_id]").val();
-                let page_referee2_id = $("input[name=referee2_id]").val();
-                let page_referee3_id = $("input[name=referee3_id]").val();
-                let referee = $(this).text();
-                let referee_id = $(this).attr("data-referee_id");
-                let liNum = $(this).attr("data-num");
+                var page_referee1_id = $("input[name=referee1_id]").val();
+                var page_referee2_id = $("input[name=referee2_id]").val();
+                var page_referee3_id = $("input[name=referee3_id]").val();
+                var referee = $(this).text();
+                var referee_id = $(this).attr("data-referee_id");
+                var liNum = $(this).attr("data-num");
                 var referee1_id = $(this).attr("data-referee_id");
                 if (referee1_id == page_referee1_id || referee1_id == page_referee2_id || referee1_id ==
                     page_referee3_id) {
@@ -382,7 +385,7 @@
                     return false;
                 }
                 $(".refereeTap").each(function () {
-                    let datanum = $(this).find("label").attr("data-num");
+                    var datanum = $(this).find("label").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text(referee);
                         $(this).find("input").val(referee_id);
@@ -390,12 +393,35 @@
                     }
                 })
             });
+
+            // 添加临时裁判
+            $("#temporaryReferee").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;">
+                  <button type="button" class="btn bgblue fr newRefereeBtn">确认</button>
+                </div>`
+                $(this).parents("#referee").find(".refereeList").prepend(str)
+            });
+            // 确认临时裁判
+            $(document).on("tap", ".newRefereeBtn", function () {
+                var thisVal = $(this).siblings().val();
+                var refereeNum = $(this).parents("#referee").attr("data-num");
+                $(".refereeTap").each(function () {
+                    var datanum = $(this).find("label").attr("data-num");
+                    if (refereeNum == datanum) {
+                        $(this).find("span").text(thisVal)
+                        $(this).find("input").val(-1)
+                        mui("#referee").popover("toggle");
+                    }
+                })
+            });
             //清除
             $("#RefereeDel").on('tap', '', function () {
-                let liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr(
+                var liNum = $(this).parents(".page-header").siblings("div").find(".listli").attr(
                     "data-num");
                 $(".refereeTap").each(function () {
-                    let datanum = $(this).find("label").attr("data-num");
+                    var datanum = $(this).find("label").attr("data-num");
                     if (liNum == datanum) {
                         $(this).find("span").text('');
                         $(this).find("input").val('');
@@ -464,6 +490,30 @@
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
             });
+
+            // 添加临时记录员
+            // $("#temporaryReferee").on('tap', '', function () {
+            //     var str =
+            //         `<div class="mui-table-view-cell listli">
+            //         <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;">
+            //       <button type="button" class="btn bgblue fr newRefereeBtn">确认</button>
+            //     </div>`
+            //     $(this).parents("#referee").find(".refereeList").prepend(str)
+            // });
+            // 确认临时记录员
+            // $(document).on("tap", ".newRefereeBtn", function () {
+            //     var thisVal = $(this).siblings().val();
+            //     var refereeNum = $(this).parents("#referee").attr("data-num");
+            //     $(".refereeTap").each(function () {
+            //         var datanum = $(this).find("label").attr("data-num");
+            //         if (refereeNum == datanum) {
+            //             $(this).find("span").text(thisVal)
+            //             $(this).find("input").val(-1)
+            //             mui("#referee").popover("toggle");
+            //         }
+            //     })
+            // });
+
 
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
@@ -628,12 +678,13 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].type < 9) {
-                            newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
-                                i].realname + '</label>';
-                            newli +=
-                                '<input name="checkbox-score" class="score" type="checkbox" data-realname=' +
-                                data.data[i].realname + ' data-member_id=' + data.data[i].member_id + '>'
-                            newli += '</div>'
+                                newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                                    i].realname + '</label>';
+                                newli +=
+                                    '<input name="checkbox-score" class="score" type="checkbox" data-realname=' +
+                                    data.data[i].realname + ' data-member_id=' + data.data[i].member_id +
+                                    '>'
+                                newli += '</div>'
                             }
                         }
                         $(".scoreList").empty().append(newli);
@@ -653,10 +704,10 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            let home_score = $("input[name=home_score]").val();
-            let away_score = $("input[name=away_score]").val();
-            let court_id = $("input[name=court_id]").val();
-            let match_time = $(".match_time").text();
+            var home_score = $("input[name=home_score]").val();
+            var away_score = $("input[name=away_score]").val();
+            var court_id = $("input[name=court_id]").val();
+            var match_time = $(".match_time").text();
             if (home_score == '' || away_score == '') {
                 mui.toast("比分不能为空");
                 return false;
@@ -677,8 +728,8 @@
 
 
             // 记录员
-            let scorersList = []
-            let realname = ''
+            var scorersList = []
+            var realname = ''
             $("#inactiveList .stdList").each(function () {
                 realname = $(this).attr("data-realname");
                 member_id = $(this).val();
@@ -687,7 +738,7 @@
                     member_id
                 })
             })
-            let scorers = JSON.stringify(scorersList);
+            var scorers = JSON.stringify(scorersList);
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
