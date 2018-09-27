@@ -24,6 +24,7 @@
 
         <form action="" class="mui-input-group">
             <input type="hidden" name="league_id" class="data" value="{$league_id}">
+            <input type="hidden" name="member_id" class="data" value="{$matchMemberInfo.member_id}">
             <div class="page-header bggray2">
                 <span class="course wd45">
                     <strong>基本信息</strong>
@@ -132,7 +133,7 @@
         // }
         // $('#roleSelect option[value="{$matchMemberInfo.type}"]').prop("selected", true);
 
-        var match_member_list = '';
+        var role_list = '';
         workerPersonList();
         //添加角色
         $(document).on("tap", ".addRole", function () {
@@ -229,7 +230,6 @@
             });
         });
 
-
         // 删除页面新增的角色
         $(document).on('tap', '.deleteRole', function () {
             $(this).parent().next().remove();
@@ -266,8 +266,7 @@
                             <a href="#workerList" class="typeRole">
                                 <div class="mui-navigate-right">
                                     <label>角色<text>${i+1}</text></label>
-                                    <span class="worker" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}"
-                                     data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
+                                    <span class="worker" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
                                 </div>
                             </a>
                         </div>
@@ -303,31 +302,25 @@
         // 获取数据并进行提交
         $(document).on('tap', '.confirmBtn', function () {
 
-            match_member_list = []
+            role_list = []
             $(".roleCont").each(function () {
-                var member = $(this).find(".worker").attr("data-member");
-                var member_id = $(this).find(".worker").attr("data-member_id");
                 var type = $(this).find(".worker").attr("data-type");
-                var type_text = $(this).find(".worker").text();
                 var id = $(this).find(".worker").attr("data-id");
                 var job_description = $(this).find("input[name=job_description]").val();
-                match_member_list.push({
-                    member,
-                    member_id,
+                role_list.push({
                     type,
-                    type_text,
                     id,
                     job_description
                 });
             });
-            console.log(match_member_list)
+            console.log(role_list)
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.match_member_list = JSON.stringify(match_member_list);
+            objData.role_list = JSON.stringify(role_list);
             var url = "{:url('api/league/updateMatchMembers')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
