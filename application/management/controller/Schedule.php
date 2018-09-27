@@ -36,7 +36,7 @@ class Schedule extends Backend{
         }
         if(request()->isPost()){
             $data = input('post.');
-            dump($data);die;
+
             $data['camp_id'] = $this->campInfo['id'];
             $data['camp'] = $this->campInfo['camp'];
             $data['member_id'] = $this->memberInfo['id'];
