@@ -2686,7 +2686,6 @@ class League extends Base
         if (empty($data['league_id']) || empty($data['role_list']) || empty($data['member_id'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
-
         $data['match_id'] = $data['league_id'];
         unset($data['league_id']);
 
@@ -2718,7 +2717,7 @@ class League extends Base
         // 数据模版
         $matchMemberTemplate = $matchMemberList[0];
         if (!empty($data['telephone'])) {
-            $matchMemberTemplate = $data['telephone'];
+            $matchMemberTemplate['telephone'] = $data['telephone'];
         }
         unset($matchMemberTemplate['id']);
         unset($matchMemberTemplate['create_time']);
