@@ -238,6 +238,15 @@
         })(mui, document);
 
         $(function () {
+            var confirmBtn = ["取消", "确认"]
+            mui.confirm("小组赛程已经结束，请前往创建其他阶段赛程", "提示", confirmBtn, function (e) {
+                if (e.index == 1) {
+                    window.location.href =
+                        "{:url('Match/createScheduleOfLeague1',['league_id'=>$leagueInfo.id])}";
+                }
+            })
+
+
             getbattle(); //获取对阵信息
             matchStage(); //获取比赛阶段数据
 
@@ -399,7 +408,7 @@
                     }
                 }
             });
-            
+
             // 删除整个比赛日
             $(document).on("tap", ".deleteModel", function () {
                 var btnArray = ['取消', '确认'];
