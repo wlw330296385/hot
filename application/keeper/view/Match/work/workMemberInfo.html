@@ -62,7 +62,7 @@
             </li>
             {else/}
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred deleteWorker">
-                删除
+                <a href="#myWorkerList">删除</a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bggreen confirmBtn">
                 提交
@@ -90,6 +90,24 @@
                     <li class="mui-table-view-cell listli" data-type="{$key}">{$vo}</li>
                     {/volist}
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--我的身份-->
+    <div id="myWorkerList" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header border-b">
+            <span class="course">
+                <strong>选择你要删除的角色</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="closeModal">关闭</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list myWorkerList"></ul>
             </div>
         </div>
     </div>
@@ -151,31 +169,39 @@
             var worker_type = $(this).attr('data-type');
             var worker_id = $(this).attr('data-id');
             var dataNum = $(this).parents(".workerList").attr("data-num");
+            var isOk = true
             $(".roleCont").each(function () {
+                // 判断选择的角色是否存在
+                var roleContType = $(this).find(".worker").attr("data-type");
+                if (worker_type == roleContType) {
+                    mui.toast("你已经是" + worker + ", 请选择其他角色")
+                    return isOk = false;
+                }
                 if (dataNum == $(this).find("text").text()) {
                     $(this).find(".worker").text(worker);
                     $(this).find(".worker").attr("data-type", worker_type);
                     $(this).find(".worker").attr("data-id", worker_id);
                 }
-            })
+            });
+            if (!isOk) {
+                return isOk
+            }
             mui("#workerList").popover("toggle");
         });
         //关闭
         $("#workerClose").on('tap', '', function () {
             mui("#workerList").popover("toggle");
         });
-
-        // var i = $(".roleCont").length;
-        // $(".roleCont").each(function () { //循环checkboxCont
-        //     $(this).find("text").text(i++); //更新序号
-        // });
-
+        $("#closeModal").on('tap', '', function () {
+            mui("#myWorkerList").popover("toggle");
+        });
 
         // 删除工作人员
-        $(document).on('tap', '.deleteWorker', function () {
+        $(document).on('tap', '.myWorkerList li', function () {
             var btnArray = ['取消', '确认'];
-            var id = "{$matchMemberInfo.id}";
-            mui.confirm('确认删除该工作人员吗', '提示', btnArray, function (e) {
+            var id = $(this).attr("data-id");
+            var roleText = $(this).text();
+            mui.confirm('确认删除该' + roleText + '职位吗', '提示', btnArray, function (e) {
                 if (e.index == 1) {
                     var apiurl = "{:url('api/league/delmatchmember')}";
                     mui.ajax(apiurl, {
@@ -230,6 +256,7 @@
                 success: function (data) {
                     console.log(data)
                     var newli = '';
+                    var newli1 = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
@@ -259,10 +286,13 @@
                             newli += `</div>
                         </div>
                         `
+                            newli1 +=
+                                `<li class="mui-table-view-cell listli" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</li>`
                         }
 
                     }
                     $(".mui-input-group").append(newli);
+                    $(".myWorkerList").append(newli1);
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
