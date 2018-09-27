@@ -19,8 +19,32 @@ class Schedule extends Backend{
 
     public function createSchedule(){
         $camp_id = $this->campInfo['id'];
+        $grade_id = input('param.g_id');
+        if($grade_id){
+            $map = ['id'=>$grade_id];
+        }else{
+            $this->error('请先选择班级');
+        }
+        $gradeInfo = db('grade')->where($map)->where('delete_time',null)->find();
+        if($gradeInfo['assistant_id']){
+            $gradeInfo['assistant_ids'] = unserialize($gradeInfo['assistant_id']);
+        }else{
+            $gradeInfo['assistant_ids'] = [];
+        }
+        if(!$gradeInfo){
+            $this->error('班级错误');
+        }
         if(request()->isPost()){
             $data = input('post.');
+            dump($data);die;
+            $data['camp_id'] = $this->campInfo['id'];
+            $data['camp'] = $this->campInfo['camp'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['lesson_id'] = $gradeInfo['lesson_id'];
+            $data['lesson'] = $gradeInfo['lesson'];
+            $data['grade_id'] = $gradeInfo['id'];
+            $data['grade'] = $gradeInfo['grade'];
             $ScheduleService = new \app\service\ScheduleService;
             $result = $ScheduleService->createSchedule($data);
             if ($result['code'] == 200) {
@@ -47,33 +71,37 @@ class Schedule extends Backend{
                 ->where(['cm.camp_id'=>$camp_id,'cm.type'=>['>',1],'cm.status'=>1])
                 ->order('cm.id desc')
                 ->select();
-            $grade_id = input('param.g_id');
-            if($grade_id){
-                $map = ['id'=>$grade_id];
-            }else{
-                $this->error('请先选择班级');
-            }
-            $gradeInfo = db('grade')->where($map)->where('delete_time',null)->find();
-            if(!$gradeInfo){
-                $this->error('班级错误');
-            }
+            
             $courtList = db('court_camp')
                 ->field('court_camp.id,court_camp.court_id,court_camp.court,court_camp.camp_id,court_camp.camp,court.location,court.id as c_id,court.province,court.city,court.area')
                 ->join('court','court.id=court_camp.court_id')
                 ->where(['court_camp.camp_id' => $camp_id])
                 ->order('court_camp.id desc')
                 ->select();
-            $studentList = db('lesson_member')
-                    ->field('lesson_member.*,grade_member.student_id as gs_id,grade_member.lesson_id as gl_id,grade_member.grade_id as g_id')
-                    ->join('grade_member','grade_member.student_id = lesson_member.student_id and grade_member.lesson_id = lesson_member.lesson_id','left')
-                    ->where(['lesson_member.lesson_id'=>$gradeInfo['lesson_id'],'lesson_member.status'=>1])
-                    ->order('lesson_member.id desc')
+            //获取班级学生        
+            $studentList_g = db('grade_member')
+                    ->where(['grade_id'=>$gradeInfo['id'],'status'=>1])
                     ->select();
+            
+            $student_ids = [];
+            foreach ($studentList_g as $key => $value) {
+                $student_ids[] = $value['student_id'];
+            }
+            //其他学生
+            $lessonInfo = db('lesson')->where(['id'=>$gradeInfo['lesson_id']])->find();
+            $studentList_l = db('lesson_member')
+                ->join('lesson','lesson.id = lesson_member.lesson_id')
+                ->where(['lesson.cost'=>$lessonInfo['cost'],'lesson_member.status'=>1,'lesson_member.camp_id'=>$this->campInfo['id']])
+                ->where(['lesson_member.student_id'=>['not in',$student_ids]])
+                ->order('lesson_member.id desc')
+                ->select();
+
             $this->assign('fansList',$fansList);
             $this->assign('gradeInfo',$gradeInfo);  
             $this->assign('coachList',$coachList);  
             $this->assign('courtList',$courtList);
-            $this->assign('studentList',$studentList);    
+            $this->assign('studentList_g',$studentList_g);  
+            $this->assign('studentList_l',$studentList_l);    
             return view('Schedule/createSchedule');
         }  
     }
