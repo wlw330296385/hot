@@ -2679,19 +2679,19 @@ class League extends Base
         return json($resultUpdateApply);
     }
 
-    // 批量修改联赛工作人员的权限
+    // 批量修改联赛工作人员的权限, 支持增加
     public function updateMatchMembers()
     {   
         $data = input('post.');
-        if (empty($data['league_id']) || empty($data['match_member_list'])) {
+        if (empty($data['league_id']) || empty($data['role_list']) || empty($data['member_id'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
         $data['match_id'] = $data['league_id'];
         unset($data['league_id']);
 
-        $match_member_list = json_decode($data['match_member_list'], true);
-        if (empty($match_member_list)) {
+        $role_list = json_decode($data['role_list'], true);
+        if (empty($role_list)) {
             return json(['code' => 100, 'msg' => "JSON 解析失败"]);
         }
 
@@ -2709,34 +2709,63 @@ class League extends Base
             return json(['code' => 100, 'msg' => "修改失败，你不是该联赛的工作人员"]);
         }
 
-        foreach ($match_member_list as $row) {
+        // 查询你在该联赛的角色列表
+        $matchMemberList = $leagueS->getMatchMembers(['member_id' => $data['member_id'],  'match_id' => $data['match_id'], 'status' => 1]);
+        if (!$matchMemberList) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+        }
 
-            // 查询要修改的联赛工作人员信息
-            if (!empty($row['id'])) {
-                $matchMemberInfo = $leagueS->getMatchMember(['id' => $row['id'], 'member_id' => $row['member_id'],  'match_id' => $data['match_id']]);
-                if (!$matchMemberInfo) {
-                    return json(['code' => 100, 'msg' => __lang('MSG_404')]);
-                }
+        // 数据模版
+        $matchMemberTemplate = $matchMemberList[0];
+        if (!empty($data['telephone'])) {
+            $matchMemberTemplate = $data['telephone'];
+        }
+        unset($matchMemberTemplate['id']);
+        unset($matchMemberTemplate['create_time']);
+        unset($matchMemberTemplate['update_time']);
+        $finalArr = [];
 
-                // 如果有权限的改动
-                if (!empty($row['type']) && $matchMemberInfo['type'] != $myMatchMember['type']) {
+        // 逐条审查
+        foreach ($role_list as $row) {
 
-                    if ($matchMemberInfo['id'] == $myMatchMember['id']) {
-                        return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
-                    } else if ($myMatchMember['type'] < 9) {
-                        return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
-                    } else if ($myMatchMember['type'] <= $matchMemberInfo['type']) {
-                        return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
-                    } else if ($myMatchMember['type'] <= $row['type']) {
-                        return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
-                    } else if ($row['type'] == 7) {
-                        // 如果为裁判员，先要检查资质
-                        $refereeS = new RefereeService();
-                        $refereeInfo = $refereeS->getReferee(['member_id' => $matchMemberInfo['member_id'], 'status' => 1]);
-                        if (empty($refereeInfo)) {
-                            return json(['code' => 100, 'msg' => "该成员未通过裁判员审核，修改失败"]);
-                        }
+            // 创建角色一定要带type
+            if (empty($row['id']) && !isset($row['type'])) {
+                return json(['code' => 100, 'msg' => "此条数据不完整"]);
+            }
+
+            // 如果有权限的改动
+            if (isset($row['type'])) {
+                if (!empty($row['id']) && $row['id'] == $myMatchMember['id']) {
+                    return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
+                } else if ($myMatchMember['type'] < 9) {
+                    return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
+                } else if ($myMatchMember['type'] <= $row['type']) {
+                    return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
+                } else if ($myMatchMember['type'] <= $row['type']) {
+                    return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
+                } else if ($row['type'] == 7) {
+                    // 如果为裁判员，先要检查资质
+                    $refereeS = new RefereeService();
+                    $refereeInfo = $refereeS->getReferee(['member_id' => $data['member_id'], 'status' => 1]);
+                    if (empty($refereeInfo)) {
+                        return json(['code' => 100, 'msg' => "该成员未通过裁判员审核，修改失败"]);
                     }
+                }
+            }
+
+            if (!empty($row['id'])) {
+                // 修改的联赛工作人员信息
+                $id_check_flag = 0;
+                foreach ($matchMemberList as $matchMember) {
+                    if ( $row['type'] == $matchMember['type'] && $row['id'] != $matchMember['id']) {
+                        return json(['code' => 100, 'msg' => "你已经有相同权限，无需重复创建"]);
+                    } else if ($row['id'] == $matchMember['id']) {
+                        $id_check_flag = 1;
+                    }
+                }
+                //检查id是否在内
+                if (!$id_check_flag) {
+                    return json(['code' => 100, 'msg' => "错误的id"]);
                 }
 
                 // 如果修改别人的信息 需要管理员权限，并且对方不是管理员以上
@@ -2748,39 +2777,34 @@ class League extends Base
                     }
                 }
             } else {
+                foreach ($matchMemberList as $matchMember) {
+                    if ( $row['type'] == $matchMember['type']) {
+                        return json(['code' => 100, 'msg' => "你已经有相同权限，无需重复创建"]);
+                    }
+                }
+                // 创建的联赛工作人员信息
                 if ($myMatchMember['type'] < 9) {
                     return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
                 }
             }
 
-            try {
-                // 修改联赛工作人员数据
-                $resultUpdate = $leagueS->saveMatchMember($row);
-            } catch (Exception $e) {
-                trace('error:' . $e->getMessage(), 'error');
-                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            // 数据拼接
+            $temp = $matchMemberTemplate;
+            $temp['type'] = $row['type'];
+            $temp['job_description'] = $row['job_description'];
+            if (!empty($row['id'])) {
+                $temp['id'] = $row['id'];
             }
-
-            // 向该会员发送权限修改 消息推送
-            if (!empty($row['type']) && $row['type'] != $matchMemberInfo['type']) {
-                try {
-                    $messageContent = [
-                        'title' => '联赛工作人员权限修改通知',
-                        'content' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
-                        'url' => url('keeper/message/index', '', '', true),
-                        'keyword1' => '您在联赛' . $matchMemberInfo['match'] . '中的权限已修改',
-                        'keyword2' => '联赛权限修改',
-                        'remark' => '点击登录平台查看更多信息',
-                        'steward_type' => 2
-                    ];
-                    $messageS = new MessageService();
-                    $messageS->sendMessageToMember($matchMemberInfo['member_id'], $messageContent, config('wxTemplateID.informationChange'));
-                } catch (Exception $e) {
-                    trace('error:' . $e->getMessage(), 'error');
-                }
-            }
+            array_push($finalArr, $temp);
         }
-        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+
+        // 修改联赛工作人员数据
+        $resultUpdate = $leagueS->saveAllMatchMember($finalArr);
+        if (!$resultUpdate) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
     }
 
     // 修改联赛工作人员
