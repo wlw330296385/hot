@@ -322,6 +322,14 @@ class LeagueService
         }
     }
 
+    // 批量保存联赛参赛球队球员数据
+    public function saveAllMatchMember($data)
+    {
+        $model = new MatchMember();
+        $res = $model->allowField(true)->saveAll($data);
+        return $res;
+    }
+
     // 获取联赛-工作人员详情
     public function getMatchMember($map)
     {
