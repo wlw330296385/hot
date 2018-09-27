@@ -18,7 +18,6 @@
     <form role="form" action="" method="post" enctype="multipart/form-data">
         {:token()}
         <div class="box-body">
-            <input type="hidden" name="memberData" value="">
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-2 col-sm-2 text-right">
@@ -64,7 +63,9 @@
                             <label for="">所属地区</label>
                         </div>
                         <div class="col-md-5 col-sm-5">
-                            <input type="text" id="city-picker3" class="form-control" placeholder="请选择所属地区" name="address" data-toggle="city-picker">
+                            <input type="text" id="city-picker3" class="form-control" placeholder="请选择所属地区" name="address" data-toggle="city-picker"
+                            value="{$gradeInfo.province} {$gradeInfo.city} {$gradeInfo.area}" 
+                            >
                         </div>
                     </div>
                     <input type="hidden" name="province" value="{$gradeInfo.province}">
@@ -333,8 +334,14 @@
     // 全选和反选
     $('.choiseAll').on('click',function(){
         var box =$(this).attr('box');
-
+        $('.'+box).prop('checked',true);
     })
 
+
+    // 全选和反选
+    $('.choiseDelete').on('click',function(){
+        var box =$(this).attr('box');
+        $('.'+box).prop('checked',false);
+    })
 </script> 
 {/block}
