@@ -116,14 +116,18 @@
 
         var match_member_list = '';
         workerPersonList();
-        //
+        //添加角色
         $(document).on("tap", ".addRole", function () {
+            var listLength = $(".roleCont").length + 1;
             var str =
-                ` 
-           <div class="roleCont"><div class="mui-input-row">
+                `  <div class="page-header bggray2">
+                <span class="fr f14 deleteRole">删除</span>
+            </div>
+           <div class="roleCont">
+            <div class="mui-input-row">
                             <a href="#workerList" class="typeRole">
                                 <div class="mui-navigate-right">
-                                    <label>角色<text></text></label>
+                                    <label>角色<text>${listLength}</text></label>
                                     <span class="worker" data-member="{$matchMemberInfo.member}" data-member_id="{$matchMemberInfo.member_id}" data-id="" data-type=""></span>
                                 </div>
                             </a>
@@ -132,7 +136,8 @@
                             <label>职称</label>
                             <input type="text" name="job_description" value="" 
                                 placeholder="请填写职称信息">
-                        </div></div>`
+                        </div></div>`;
+
             $(".mui-input-group").append(str)
         })
         //获取序号并且赋值到工作人员列表
@@ -159,6 +164,12 @@
         $("#workerClose").on('tap', '', function () {
             mui("#workerList").popover("toggle");
         });
+
+        // var i = $(".roleCont").length;
+        // $(".roleCont").each(function () { //循环checkboxCont
+        //     $(this).find("text").text(i++); //更新序号
+        // });
+
 
         // 删除工作人员
         $(document).on('tap', '.deleteWorker', function () {
@@ -189,6 +200,17 @@
                         }
                     });
                 }
+            });
+        });
+
+
+        // 删除页面新增的角色
+        $(document).on('tap', '.deleteRole', function () {
+            $(this).parent().next().remove();
+            $(this).parent().remove();
+            var i = 1;
+            $(".roleCont").each(function () { //循环checkboxCont
+                $(this).find("text").text(i++); //更新序号
             });
         });
 
