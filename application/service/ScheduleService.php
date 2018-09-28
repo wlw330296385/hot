@@ -58,21 +58,7 @@ class ScheduleService
         if ($is_power < 2) {
             return ['code' => 100, 'msg' => __lang('MSG_403')];
         }
-        if ($data['assistants']) {
-            $doms = explode(',', $data['assistants']);
-            $seria = serialize($doms);
-            $data['assistant'] = $seria;
-        } else {
-            $data['assistant'] = '';
-        }
-        if ($data['assistant_ids']) {
-            $doms = explode(',', $data['assistant_ids']);
-            $seria = serialize($doms);
-            $data['assistant_id'] = $seria;
-        } else {
-            $data['assistant_id'] = '';
-        }
-     
+        
         $data['status'] = -1;
         // 班级信息
         // $gradeInfo = db('grade')->where(['id'=>$data['grade_id']])->find();

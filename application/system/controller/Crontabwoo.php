@@ -71,7 +71,7 @@ class Crontabwoo extends Base {
 
                     // 课时工资收入结算 start
                     // 课时正式学员人数
-                    $numScheduleStudent = count(unserialize($schedule['student_str']));
+                    $numScheduleStudent = count($students);
                     $lesson = $lesson = Db::name('lesson')->where('id', $schedule['lesson_id'])->find();
                     
                     // 课时总收入
@@ -284,7 +284,7 @@ class Crontabwoo extends Base {
 
             //课时工资收入结算 start------------------------------
                 // 课时正式学员人数
-                $totalScheduleStudent = count(unserialize($schedule['student_str']));
+                $totalScheduleStudent = count($students);
                 $totalCoachSalary = 0;
                 $MemberFinanceData = [];
                 // 主教练课时人头工资提成

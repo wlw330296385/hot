@@ -188,6 +188,20 @@ class Schedule extends Base
             $data['member'] = $this->memberInfo['member'];
             $data['lesson_time'] = strtotime($data['lesson_time_date']);
             $data['student_str'] = serialize($data['studentList']);
+            if ($data['assistants']) {
+                $doms = explode(',', $data['assistants']);
+                $seria = serialize($doms);
+                $data['assistant'] = $seria;
+            } else {
+                $data['assistant'] = '';
+            }
+            if ($data['assistant_ids']) {
+                $doms = explode(',', $data['assistant_ids']);
+                $seria = serialize($doms);
+                $data['assistant_id'] = $seria;
+            } else {
+                $data['assistant_id'] = '';
+            }
             if (isset($data['expstudentList'])) {
                 $data['expstudent_str'] = serialize($data['expstudentList']);
             }

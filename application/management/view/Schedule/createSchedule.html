@@ -44,8 +44,8 @@
                         <label for="">训练时间</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入训练时间" name="lesson_time" id="datetimepicker">
-                        //2018-9-14 17:33:13 跟前端一样
+                        <input type="text" class="form-control" placeholder="请输入训练时间" name="lessontime" id="datetimepicker">
+      
                     </div>
                 </div>
             </div>
@@ -86,6 +86,8 @@
                             <option value="{$v.id}" {if $gradeInfo.court_id == $v.court_id} selected="selected" {/if} >{$v.court}</option>
                             {/volist}
                         </select>
+
+                        <input type="hidden" name="court" value="{$gradeInfo['court']}">
                     </div>
                 </div>
             </div>
@@ -106,12 +108,13 @@
                         <label for="">请选择主教练</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                       <select name="coach_id">
+                       <select name="coach_id" class="coach_id">
                             <option value="0"></option>
                             {volist name="coachList" id="v"}
                             <option value="{$v.id}" {if $gradeInfo.coach_id == $v.id} selected="selected" {/if} >{$v.coach}</option>
                             {/volist}
                         </select>
+                        <input type="hidden" name="coach" value="{$gradeInfo['coach']}">
                     </div>
                 </div>
             </div>
@@ -125,7 +128,7 @@
                        {volist name="coachList" id="v"}
                             <label>
                                 {$v.coach}
-                              <input type="checkbox" class="minimal" name="assistant_id" value="{$v.id}" {if in_array($v['id'],$gradeInfo['assistant_ids']) } checked {/if}   >
+                              <input type="checkbox" class="minimal assitant_id" name="assistantIdData[]" value="{$v.id}" {if in_array($v['id'],$gradeInfo['assistant_ids']) } checked {/if}   >
                             </label>
                         {/volist}
                     </div>
@@ -143,6 +146,7 @@
                             <option value="{$v.id}" {if $gradeInfo.leader_id == $v.member_id} selected="selected" {/if} >{$v.member}</option>
                             {/volist}
                         </select>
+                        <input type="hidden" name="leader" value="{$gradeInfo['leader']}">
                     </div>
                 </div>
             </div>
@@ -152,12 +156,14 @@
                         <label for="">请选择班主任</label>
                     </div>
                     <div class="col-md-5 col-sm-5">
-                        <select name="leader_id">
+                        <select name="teacher_id">
                             <option value="0"></option>
                             {volist name="fansList" id="v"}
                             <option value="{$v.id}" {if $gradeInfo.teacher_id == $v.member_id} selected="selected" {/if} >{$v.member}</option>
                             {/volist}
                         </select>
+
+                        <input type="hidden" name="teacher" value="{$gradeInfo['teacher']}">
                     </div>
                 </div>
             </div>
@@ -241,14 +247,14 @@
                             {if $vol.type==2}
                                 <label>
                                     {$vol.student}
-                                  <input type="checkbox" name="expstduentData[]" value="{$vol.student_id}"  class="minimal studentList_l" >
+                                  <input type="checkbox" name="expstduentData[]" value="{$vol.student_id}"  class="minimal studentList_exp" >
                                 </label>
                             {/if}
                             {/volist}
                         </div>
                         <div style="margin-bottom:10px;">
-                            <button type="button" class="btn btn-success choiseAll" box="studentList_l">全选</button>
-                            <button type="button" class="btn btn-danger choiseDelete" box="studentList_l">全不选</button>
+                            <button type="button" class="btn btn-success choiseAll" box="studentList_exp">全选</button>
+                            <button type="button" class="btn btn-danger choiseDelete" box="studentList_exp">全不选</button>
                         </div>
                        
                     </div>
@@ -303,9 +309,10 @@
 
         // boostrap时间选择器
         $('#datetimepicker').datetimepicker({
-            format: 'yy-mm-dd hh:ii',
-            startView: 1,
+            format: 'yyyy-mm-dd hh:ii',
+            startView: 3,
             autoclose: true,
+            todayBtn:true
         });
 
         // 获取省市区
@@ -339,11 +346,11 @@
 
 
     // 助教不允许与主教练相同
-    $('input[name=assistant_id]').on('click',function(){
+    $('.assitant_id').on('click',function(){
         var p = $(this).prop("checked");
         if(p){
             var a_v = $(this).val();
-            var c_v = $('select[name=coach_id]').val();
+            var c_v = $('select.coach_id').val();
             if(a_v == c_v){
                 $(this).attr("checked",false);
                 alert('助教不允许与主教练相同');
@@ -353,33 +360,49 @@
 
 
 
-
-    $('select[name=coach_id]').on('change',function(){
-        var c_v = $(this).val();
+    //主教练不允许与助教相同
+    $('select.coach_id').on('change',function(){
+        var c_v = $('select.coach_id').val();
         var a_v = new Array();
-        $('input[name=assistant_id]:checked').each(function(i){
+        $('.assitant_id:checked').each(function(i){
             a_v[i] = $(this).val();
         });
+        console.log(c_v);
+        console.log(a_v);
         if(a_v.indexOf(c_v)){
-            $('select[name=coach_id] option').first().attr("selected", true);
+            $('.coach_id option').first().attr("selected", true);
             alert('主教练不允许与助教相同');
+            return false;
         }
+        $('input[name=coach]').val($('select.coach_id').text());
     })
 
 
 
+    // 更换领队和班主任
+    $('select.teacher_id').on('change',function(){
+        $('input[name=teacher]').val($('select.teacher_id').text());
+    })
+    $('select.leader_id').on('change',function(){
+        $('input[name=leader]').val($('select.leader_id').text());
+    })
 
     // 全选和反选
     $('.choiseAll').on('click',function(){
+
         var box =$(this).attr('box');
-        $('.'+box).prop('checked',true);
+
+        // $('.'+box).prop('checked',true);
+        $('.'+box).iCheck('check');
+
     })
 
 
     // 全选和反选
     $('.choiseDelete').on('click',function(){
         var box =$(this).attr('box');
-        $('.'+box).prop('checked',false);
+        // $('.'+box).prop('checked',false);
+        $('.'+box).iCheck('uncheck');
     })
 </script> 
 

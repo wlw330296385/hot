@@ -34,30 +34,62 @@ class Schedule extends Backend{
         if(!$gradeInfo){
             $this->error('班级错误');
         }
+        //其他学生
+        $lessonInfo = db('lesson')->where(['id'=>$gradeInfo['lesson_id']])->find();
         if(request()->isPost()){
             $data = input('post.');
 
             $data['camp_id'] = $this->campInfo['id'];
             $data['camp'] = $this->campInfo['camp'];
+            $data['rebate_type'] = $this->campInfo['rebate_type'];
+            $data['schedule_rebate'] = $this->campInfo['schedule_rebate'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['lesson_id'] = $gradeInfo['lesson_id'];
             $data['lesson'] = $gradeInfo['lesson'];
+            $data['is_school'] = $lessonInfo['is_school'];
             $data['grade_id'] = $gradeInfo['id'];
             $data['grade'] = $gradeInfo['grade'];
+            $data['grade_category_id'] = $gradeInfo['gradecate_id'];
+            $data['grade_category'] = $gradeInfo['gradecate'];
+            $data['coach_salary'] = $gradeInfo['coach_salary'];
+            $data['assistant_salary'] = $gradeInfo['assistant_salary'];
+            $data['salary_base'] = $gradeInfo['salary_base'];
+            $data['cost'] = $lessonInfo['cost'];
+            $data['lesson_time'] = strtotime($data['lessontime']);
+            // 正式学生
+            if(isset($data['stduentData'])){
+                $list = $data['stduentData'];
+                $student_str = [];
+                foreach ($list as $key => $value) {
+                    $student_str[] = ['student_id'=>$value,'type'=>1];
+                }
+                $data['student_str'] = serialize($student_str);
+                $data['students'] = count($list);
+            }else{
+                $this->error('必须选择至少一个正式学生');
+            }
+            // 体验生
+            if(isset($data['expstduentData'])){
+                $lis2t = $data['expstduentData'];
+                $expstduentData = [];
+                foreach ($list2 as $key => $value) {
+                    $expstduentData[] = ['student_id'=>$value,'type'=>2];
+                }
+                $data['expstudent_str'] = serialize($expstduentData);
+
+            }else{
+                $data['expstudent_str'] = serialize([]);
+            }
+            // 助教
+            if(isset($data['assistantIdData'])){
+                $list = $data['assistantIdData'];
+                $data['assistant_id'] = serialize($list);
+            }
             $ScheduleService = new \app\service\ScheduleService;
             $result = $ScheduleService->createSchedule($data);
             if ($result['code'] == 200) {
-                if ($data['isprivate'] == 1) {
-                    $dataScheduleAssign['schedule_id'] = $result['data'];
-                    $dataScheduleAssign['schedule'] = $data['schedule'];
-                    $dataScheduleAssign['memberData'] = $data['memberData'];
-                    $resultSaveScheduleAssign = $ScheduleService->saveScheduleAssign($dataScheduleAssign);
-                    if (!$resultSaveScheduleAssign) {
-                        $this->error("私密课程须选择指定会员");
-                    }
-                }
-                $this->success($result['msg']);
+                $this->success($result['msg'],'scheduleList');
             }else{
                 $this->error($result['msg']);
             }
@@ -87,8 +119,7 @@ class Schedule extends Backend{
             foreach ($studentList_g as $key => $value) {
                 $student_ids[] = $value['student_id'];
             }
-            //其他学生
-            $lessonInfo = db('lesson')->where(['id'=>$gradeInfo['lesson_id']])->find();
+            
             $studentList_l = db('lesson_member')
                 ->join('lesson','lesson.id = lesson_member.lesson_id')
                 ->where(['lesson.cost'=>$lessonInfo['cost'],'lesson_member.status'=>1,'lesson_member.camp_id'=>$this->campInfo['id']])
