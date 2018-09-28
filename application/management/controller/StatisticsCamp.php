@@ -701,7 +701,7 @@ class StatisticsCamp extends Camp{
         $type = input('param.type',1);
         $data = [];
         // 最后一次提现的时间点
-        $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]]])->find();
+        $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]],'camp_id'=>$this->campInfo['id']])->find();
         if($lastWitchdraw){
             $point_in_time = $lastWitchdraw['point_in_time'];
         }else{
@@ -728,12 +728,6 @@ class StatisticsCamp extends Camp{
             // 获取上周日的时间点
             $e = date('Ymd', strtotime('-1 sunday', time()));
             $date_str = [$point_in_time,$e];
-
-            // $map1  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>1];
-            // $map2  = ['date_str'=>['between',$date_str],'camp_id'=>$this->campInfo['id'],'type'=>2];
-            // $income1 = db('income')->where($map1)->sum('income');
-            // $income2 = db('income')->where($map2)->sum('income');
-            
             $map1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
             $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>2];
             $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
@@ -809,6 +803,7 @@ class StatisticsCamp extends Camp{
             $data['camp_id'] = $this->campInfo['id'];
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $data['buffer'] = $withdraw;
             if($this->campInfo['rebate_type'] == 2){
                 $data['camp_withdraw_fee'] = $data['buffer']*$this->campInfo['schedule_rebate'];
             }else{
@@ -816,7 +811,6 @@ class StatisticsCamp extends Camp{
             }
             // $data['buffer'] = $withdraw + $data['camp_withdraw_fee'];
             $data['point_in_time'] = $e;
-            $data['buffer'] = $withdraw;
             $CampWithdrawService = new \app\service\CampWithdrawService;
             $result = $CampWithdrawService->createCampWithdraw($data);
             if($result['code'] == 200){
@@ -856,6 +850,7 @@ class StatisticsCamp extends Camp{
             $this->assign('legend',json_encode($legend));
             $this->assign('title',$title);
             $this->assign('type',$type);
+            $this->assign('date_str',$date_str);
             $this->assign('campBankcard',$campBankcard);
             return view('StatisticsCamp/withdraw');
         }

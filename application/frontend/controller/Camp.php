@@ -597,6 +597,7 @@ class Camp extends Base{
     // 训练营-提现操作
     public function campWithdraw() {
 
+        $this->error("很抱歉!手机端提现升级中,请去电脑后台提现,访问地址: https://m.hot-basketball.com/management");
         $campBankcard = db('camp_bankcard')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->find();
 
 

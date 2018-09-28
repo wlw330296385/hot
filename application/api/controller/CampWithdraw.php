@@ -77,6 +77,8 @@ class CampWithdraw extends Base{
     // 新建提现
     public function createCampWithdrawApi(){
          try{
+
+            return json(['code'=>100,'msg'=>'很抱歉!手机端提现升级中,请去电脑后台提现,访问地址: https://m.hot-basketball.com/management']);
             $isPower = $this->isPower();
             if($isPower<>4){
                 return json(['code'=>100,'msg'=>'权限不足']);
