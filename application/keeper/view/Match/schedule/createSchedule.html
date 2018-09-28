@@ -65,9 +65,9 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <a href="{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}">
+            <!-- <a href="{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}">
                 <button type="button" style="margin-top: 6px;">直接创建赛程</button>
-            </a>
+            </a> -->
             <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">添加日程</button>
         </h1>
     </header>
@@ -79,13 +79,16 @@
         <input type="hidden" name="match_stage" value="" class="data">
         <input type="hidden" name="match_stage_id" value="" class="data">
 
-        <ul class="mui-table-view mb list">
-            <li class="mui-table-view-cell listli">
-                <label>比赛阶段</label>
-                <span class="match_stage"></span>
-            </li>
-        </ul>
         <form action="" class="mui-input-group formList">
+            <div class="mui-input-row">
+                <div class="mui-navigate-right">
+                    <label>比赛阶段</label>
+                    <span class="select-row">
+                        <select name="type" class="match_stage"></select>
+                    </span>
+                </div>
+            </div>
+            <p class="pline formList"></p>
             {if condition="empty($matchScheduleInfo)"}
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
@@ -238,13 +241,13 @@
         })(mui, document);
 
         $(function () {
-            var confirmBtn = ["取消", "确认"]
-            mui.confirm("小组赛程已经结束，请前往创建其他阶段赛程", "提示", confirmBtn, function (e) {
-                if (e.index == 1) {
-                    window.location.href =
-                        "{:url('Match/createScheduleOfLeague1',['league_id'=>$leagueInfo.id])}";
-                }
-            })
+            // var confirmBtn = ["取消", "确认"]
+            // mui.confirm("小组赛程已经结束，请前往创建其他阶段赛程", "提示", confirmBtn, function (e) {
+            //     if (e.index == 1) {
+            //         window.location.href =
+            //             "{:url('Match/createScheduleOfLeague1',['league_id'=>$leagueInfo.id])}";
+            //     }
+            // })
 
 
             getbattle(); //获取对阵信息
@@ -254,6 +257,19 @@
             if ($(".scheduleList").length >= 1) {
                 $(".clearOperation").show();
             }
+
+            // 根据比赛阶段，显示管理赛程页面
+            $(document).on("change", ".match_stage", function () {
+                var thisType = $(this).children('option:selected').val();
+                if (thisType == 1) {
+                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}/" +
+                        "?matchStage=1"
+                } else {
+                    window.location.href =
+                        "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
+                        "?matchStage=" + thisType
+                }
+            });
 
             // 添加赛程
             $(".addSchedule").on("tap", "", function () {
@@ -286,7 +302,7 @@
                             </div>
                         </div>
                     </div>`;
-                $(".formList").prepend(str);
+                $(".formList").after(str);
 
                 if ($(".scheduleList").length > 1) {
                     $('.deleteModel').show();
@@ -511,7 +527,7 @@
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
                     league_id: league_id,
-                    type: 1
+                    // type: 1
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -521,10 +537,16 @@
                 },
                 success: function (data) {
                     console.log(data)
+                    var newli = ''
                     if (data.code == 200) {
-                        $("input[name=match_stage]").val(data.data[0].name);
-                        $("input[name=match_stage_id]").val(data.data[0].id);
-                        $(".match_stage").text(data.data[0].name);
+                        // $("input[name=match_stage]").val(data.data[0].name);
+                        // $("input[name=match_stage_id]").val(data.data[0].id);
+                        // $(".match_stage").text(data.data[0].name);
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli +=
+                                ` <option value="${data.data[i].type}">${data.data[i].name}</option>x`
+                        }
+                        $(".match_stage").append(newli)
                     } else {
                         var btnArray = ['取消', '确认'];
                         mui.alert("请先创建小组赛比赛阶段", function (e) {
