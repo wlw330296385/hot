@@ -2734,14 +2734,12 @@ class League extends Base
 
             // 如果有权限的改动
             if (isset($row['type'])) {
-                if (!empty($row['id']) && $row['id'] == $myMatchMember['id']) {
-                    return json(['code' => 100, 'msg' => "无法修改自己的权限"]);
+                if (!empty($row['id']) && $row['id'] == $myMatchMember['id'] && $row['type'] != $myMatchMember['type']) {
+                    return json(['code' => 100, 'msg' => "不能修改自己的最大权限"]);
                 } else if ($myMatchMember['type'] < 9) {
                     return json(['code' => 100, 'msg' => "权限不足，需要管理员以上权限"]);
-                } else if ($myMatchMember['type'] <= $row['type']) {
+                } else if ($myMatchMember['type'] <= $row['type'] && $data['member_id'] != $myMatchMember['member_id']) {
                     return json(['code' => 100, 'msg' => "修改失败，权限不足"]);
-                } else if ($myMatchMember['type'] <= $row['type']) {
-                    return json(['code' => 100, 'msg' => "修改失败，无法将其权限提升为同级或以上"]);
                 } else if ($row['type'] == 7) {
                     // 如果为裁判员，先要检查资质
                     $refereeS = new RefereeService();
@@ -2756,7 +2754,7 @@ class League extends Base
                 // 修改的联赛工作人员信息
                 $id_check_flag = 0;
                 foreach ($matchMemberList as $matchMember) {
-                    if ( $row['type'] == $matchMember['type'] && $row['id'] != $matchMember['id']) {
+                    if ( !empty($row['type']) && $row['type'] == $matchMember['type'] && $row['id'] != $matchMember['id']) {
                         return json(['code' => 100, 'msg' => "你已经有相同权限，无需重复创建"]);
                     } else if ($row['id'] == $matchMember['id']) {
                         $id_check_flag = 1;
@@ -2789,7 +2787,9 @@ class League extends Base
 
             // 数据拼接
             $temp = $matchMemberTemplate;
-            $temp['type'] = $row['type'];
+            if (!empty($row['type'])) {
+                $temp['type'] = $row['type'];
+            }
             $temp['job_description'] = $row['job_description'];
             if (!empty($row['id'])) {
                 $temp['id'] = $row['id'];

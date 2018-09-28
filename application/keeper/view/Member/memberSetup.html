@@ -653,7 +653,7 @@
                 var password = $(".reg_password").val();
                 var newpassword = $(".reg_newpassword").val();
                 var confirm = $(".reg_confirm").val();
-                if ((/^[a-z0-9_-]{6,16}$/.test(password) && /^[a-z0-9_-]{6,16}$/.test(newpassword)) && (newpassword == confirm)) {
+                if ((16<password.length<6) && (16<newpassword.length<6) && (newpassword == confirm)) {
                     $('.password_hint').text("");
                     $('.confirm_hint').text("");
                     mui.ajax("{:url('api/member/updatePasswordApi')}", {
@@ -672,6 +672,8 @@
                                 mui.toast(data.msg);
                                 location.reload();
                                 viewApi.back();
+                            }else{
+                                mui.toast(data.msg);
                             }
                         },
                         error: function (xhr, type, errorThrown) {
