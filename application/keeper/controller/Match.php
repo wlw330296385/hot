@@ -886,12 +886,12 @@ class Match extends Base {
         $groups = $leagueS->getMatchGroups([
             'match_id' => $this->league_id
         ]);
+
         $matchStageGroupInfo = $leagueS->getMatchStage([
             'match_id' => $this->league_id,
             'type' => 1
         ]);
-
-        $orderby = ['match_time' => 'asc', 'id' => 'asc'];
+        $orderby = ['match_time' => 'desc', 'id' => 'desc'];
         $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $matchStageGroupInfo['id']], $orderby);
 
         $finalArray = array();
@@ -909,6 +909,7 @@ class Match extends Base {
         $this->assign('groups', $groups);
         $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
         $this->assign('matchScheduleInfo', $finalArray);
+        $this->assign('firstMatchStageId', $matchStageGroupInfo['id']);
         return view('Match/schedule/createSchedule');
     }
 
@@ -932,8 +933,23 @@ class Match extends Base {
 
     // 手动创建赛程
     public function createscheduleofleague1() {
-        // 获取联赛分组列表
+        $match_stage_id = input('param.match_stage_id');
+
         $leagueS = new LeagueService();
+        $matchStage = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'id' => $match_stage_id
+        ]);
+        if (empty($matchStage)) {
+            $this->error('找不到该比赛阶段');
+        }
+        
+        $matchStageGroupInfo = $leagueS->getMatchStage([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+
+        // 获取联赛分组列表
         $groups = $leagueS->getMatchGroups([
             'match_id' => $this->league_id
         ]);
@@ -947,9 +963,25 @@ class Match extends Base {
         ]);
         $showMatchStageType1 = ($sysbuildMatchScheduleCount) ? 0 : 1;
 
+        $matchStageList = $leagueS->getMatchStages([
+            'match_id' => $this->league_id,
+            'pstage_id' => ['<=',$matchStage['pstage_id']]
+        ]);
+        $idArray = [];
+        foreach ($matchStageList as $item) {
+            array_push($idArray, $item['id']);
+        }
+
+        $dayCount = $leagueS->getScheduleDayCount([
+            'match_id' => $this->league_id,
+            'match_stage_id' => ['in', $idArray]
+        ]);
+
         $this->assign('groups', $groups);
         $this->assign('showMatchStageType1', $showMatchStageType1);
         $this->assign('hasGroup', $hasGroup);
+        $this->assign('dayCount', $dayCount);
+        $this->assign('firstMatchStageId', $matchStageGroupInfo['id']);
         return view('Match/schedule/createScheduleOfLeague1');
     }
 

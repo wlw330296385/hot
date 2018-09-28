@@ -90,7 +90,7 @@
 
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
-                    <span class="course">比赛日1</span>
+                    <span class="course">比赛日{$dayCount+1}</span>
                 </div>
                 <!-- <div class="mui-input-row">
                     <div class="mui-navigate-right">
@@ -282,14 +282,13 @@
 
             // 根据比赛阶段，显示管理赛程页面
             $(document).on("change", ".match_stage", function () {
-                var thisType = $(this).children('option:selected').val();
-                if (thisType == 1) {
-                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}/" +
-                        "?matchStage=1"
+                var match_stage_id = $(this).children('option:selected').val();
+                if (match_stage_id == {$firstMatchStageId}) {
+                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}"
                 } else {
                     window.location.href =
                         "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
-                        "?matchStage=" + thisType
+                        "?match_stage_id=" + match_stage_id
                 }
             });
 
@@ -313,7 +312,7 @@
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1;
+                var listLength = $(".scheduleList").length + 1 + {$dayCount};
                 var str =
                     `<div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
@@ -634,7 +633,7 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].type}">${data.data[i].name}</option>`
+                                ` <option value="${data.data[i].id}">${data.data[i].name}</option>`
                         }
                         var stageVal = wooApi.GetQueryString('matchStage');
                         $(".match_stage").append(newli)

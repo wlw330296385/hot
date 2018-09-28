@@ -1371,6 +1371,16 @@ class LeagueService
         return $result;
     }
 
+    public function getScheduleDayCount($map) {
+        $model = new MatchSchedule();
+        $res = $model->field("FROM_UNIXTIME(match_time,'%Y-%m-%d') AS match_time")
+        ->where($map)
+        ->group('match_time')
+        ->order('match_time asc')
+        ->select();
+        return count($res);
+    }
+
     // 获取联赛奖项
     public function getMatchHonor($map, $order = 'id desc')
     {

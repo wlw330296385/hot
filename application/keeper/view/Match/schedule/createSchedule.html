@@ -122,7 +122,7 @@
             {volist name="matchScheduleInfo" id="vo1" key="a"}
             <div class="scheduleList" data-num="{$a}">
                 <div class="page-header bggray2 border-b">
-                    <span class="course">比赛日<text class="tnum">{$a}</text></span>
+                    <span class="course">比赛日<text class="tnum">{:count($matchScheduleInfo) - $a + 1}</text></span>
                     <span class="fr f14 deleteModel">删除</span>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
@@ -260,14 +260,13 @@
 
             // 根据比赛阶段，显示管理赛程页面
             $(document).on("change", ".match_stage", function () {
-                var thisType = $(this).children('option:selected').val();
-                if (thisType == 1) {
-                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}/" +
-                        "?matchStage=1"
+                var match_stage_id = $(this).children('option:selected').val();
+                if (match_stage_id == {$firstMatchStageId}) {
+                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}"
                 } else {
                     window.location.href =
                         "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
-                        "?matchStage=" + thisType
+                        "?match_stage_id=" + match_stage_id
                 }
             });
 
@@ -544,7 +543,7 @@
                         // $(".match_stage").text(data.data[0].name);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].type}">${data.data[i].name}</option>x`
+                                ` <option value="${data.data[i].id}">${data.data[i].name}</option>x`
                         }
                         $(".match_stage").append(newli)
                     } else {
