@@ -76,10 +76,10 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="match" value="{$leagueInfo.name}" class="data">
         <input type="hidden" name="match_id" value="{$league_id}" class="data">
-        <input type="hidden" name="match_stage" value="" class="data">
-        <input type="hidden" name="match_stage_id" value="" class="data">
+        <input type="hidden" name="match_stage" value="小组赛" class="data">
+        <input type="hidden" name="match_stage_id" value="37" class="data">
 
-        <form action="" class="mui-input-group formList">
+        <form action="" class="mui-input-group">
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
@@ -122,7 +122,7 @@
             {volist name="matchScheduleInfo" id="vo1" key="a"}
             <div class="scheduleList" data-num="{$a}">
                 <div class="page-header bggray2 border-b">
-                    <span class="course">比赛日<text class="tnum">{$a}</text></span>
+                    <span class="course">比赛日<text class="tnum">{:count($matchScheduleInfo) - $a + 1}</text></span>
                     <span class="fr f14 deleteModel">删除</span>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
@@ -260,14 +260,13 @@
 
             // 根据比赛阶段，显示管理赛程页面
             $(document).on("change", ".match_stage", function () {
-                var thisType = $(this).children('option:selected').val();
-                if (thisType == 1) {
-                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}/" +
-                        "?matchStage=1"
+                var match_stage_id = $(this).children('option:selected').val();
+                if (match_stage_id == "{$firstMatchStageId}") {
+                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}"
                 } else {
                     window.location.href =
                         "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
-                        "?matchStage=" + thisType
+                        "?match_stage_id=" + match_stage_id
                 }
             });
 
@@ -544,7 +543,7 @@
                         // $(".match_stage").text(data.data[0].name);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].type}">${data.data[i].name}</option>x`
+                                ` <option value="${data.data[i].id}">${data.data[i].name}</option>x`
                         }
                         $(".match_stage").append(newli)
                     } else {
@@ -581,8 +580,14 @@
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
-
                         for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli +=
+                                `
+                                    <div class="mui-table-view-cell mui-collapse listli mui-active">`;
+                            newli +=
+                                `<a class="mui-navigate-right"  href="javascript:void(0)"><p>${data.data[i].group_name}</p></a>`
+                            newli +=
+                                `<div class="mui-collapse-content" style="padding-left:0">`;
                             for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
                                 var battlesArray = data.data[i].battles[j]
                                 newli +=
@@ -597,8 +602,25 @@
                                             data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> 
                                 </div>`
                             }
-
+                            newli += `</div></div>`
                         }
+                        // for (var i = 0; i <= data.data.length - 1; i++) {
+                        //     for (var j = 0; j <= data.data[i].battles.length - 1; j++) {
+                        //         var battlesArray = data.data[i].battles[j]
+                        //         newli +=
+                        //             `<div class="mui-input-row mui-checkbox mui-left">
+                        //             <span class="matchGroup" data-group_id="${data.data[i].group_id}">${data.data[i].group_name}</span>
+                        //             <label class="wd mui-ellipsis">${battlesArray.home_team} VS ${battlesArray.away_team}</label>
+                        //             <input name="checkbox-firght" type="checkbox" data-home_team="${battlesArray.home_team}" data-status="0"
+                        //                   data-home_team_id="${battlesArray.home_team_id}" data-home_team_logo="${battlesArray.home_team_logo}" 
+                        //                   data-home_team_alias="${battlesArray.home_team_alias}"  data-away_team="${battlesArray.away_team}"
+                        //                 data-away_team_id="${battlesArray.away_team_id}" data-away_team_logo="${battlesArray.away_team_logo}"
+                        //                 data-away_team_alias="${battlesArray.away_team_alias}" 
+                        //                     data-homeaway_team_id="${battlesArray.home_team_id}-${battlesArray.away_team_id}"> 
+                        //         </div>`
+                        //     }
+
+                        // }
                         if (newli != '') {
                             $(".firghtList").empty().append(newli);
                         }

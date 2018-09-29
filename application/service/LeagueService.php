@@ -948,7 +948,7 @@ class LeagueService
 
 
     // 获取比赛阶段列表
-    public function getMatchStageList($map, $page = 1, $order = 'id desc', $limit = 10)
+    public function getMatchStageList($map, $page = 1, $order = 'type asc', $limit = 10)
     {
         $model = new MatchStage();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
@@ -962,9 +962,9 @@ class LeagueService
         return $result;
     }
 
-    public function getMatchStages($map) {
+    public function getMatchStages($map, $order = 'type asc') {
         $model = new MatchStage();
-        $res = $model->where($map)->select();
+        $res = $model->where($map)->order($order)->select();
         if (!$res) {
             return $res;
         }
@@ -1369,6 +1369,16 @@ class LeagueService
 
         $result = $result->toArray();
         return $result;
+    }
+
+    public function getScheduleDayCount($map) {
+        $model = new MatchSchedule();
+        $res = $model->field("FROM_UNIXTIME(match_time,'%Y-%m-%d') AS match_time_str")
+        ->where($map)
+        ->group('match_time_str')
+        ->order('match_time_str asc')
+        ->select();
+        return count($res);
     }
 
     // 获取联赛奖项

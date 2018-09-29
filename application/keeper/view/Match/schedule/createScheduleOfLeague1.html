@@ -28,16 +28,19 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
-
+      
         .mui-popover {
-            left: 0;
+            left: 0 !important;
             right: 0;
             top: 130px;
-            width: 80%;
+            width: 95%;
+            height: 450px;
             margin: 0 auto;
             position: absolute;
         }
-
+        .mui-popover .mui-control-content{
+            height: 359px;
+        }
         .addInput {
             margin-top: 15px;
         }
@@ -59,6 +62,11 @@
         .HomeTeam:empty::before,.AwayTeam:empty::before{
 			content:attr(placeholder);
         }
+        .clearOperation{
+            margin: 20px 0 60px 0;
+            text-align: center;
+        }
+      
     </style>
 </head>
 
@@ -66,7 +74,6 @@
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
-            <!-- <a class="addSchedule colorblue">添加赛程</a> -->
             <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">添加日程</button>
         </h1>
     </header>
@@ -76,6 +83,8 @@
         <input type="hidden" name="match" value="{$leagueInfo.name}" class="data">
         <input type="hidden" name="match_id" value="{$leagueInfo.id}" class="data">
         <input type="hidden" name="add_mode" value="2" class="data">
+        <input type="hidden" name="match_stage" value="" class="data">
+        <input type="hidden" name="match_stage_id" value="" class="data">
         <form action="" class="mui-input-group mb44">
             <div class="mui-input-row">
                 <div class="mui-navigate-right">
@@ -86,22 +95,11 @@
                 </div>
             </div>
             <p class="pline formList"></p>
-
-
+            {if condition="empty($matchScheduleInfo)"}
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
-                    <span class="course">比赛日1</span>
+                    <span class="course">比赛日{$dayCount+1}</span>
                 </div>
-                <!-- <div class="mui-input-row">
-                    <div class="mui-navigate-right">
-                        <label>比赛阶段</label>
-                        <span class="select-row">
-                            <select class="matchStageType"></select>
-                            <input class="data" type="hidden" name="match_stage_id" value="">
-                            <input class="data" type="hidden" name="match_stage" value="">
-                        </span>
-                    </div>
-                </div> -->
                 <div class="mui-input-row timeTap" data-tnum="1" data-options='{"type":"date"}'>
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
@@ -145,8 +143,63 @@
                     </div>
                 </div>
             </div>
+            {/if}
 
+            {volist name="matchScheduleInfo" id="vo1" key="a"}
+            <div class="scheduleList" data-num="{$a}">
+                <div class="page-header bggray2 border-b">
+                    <span class="course">比赛日<text class="tnum">{$vo1.match_day_num}</text></span>
+                    <span class="fr f14 deleteModel">删除</span>
+                </div>
+                <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
+                    <div class="mui-navigate-right">
+                        <label>比赛时间</label>
+                        <span class="ui-alert">{$key}</span>
+                    </div>
+                </div>
+                <div class="operation-box mb clickTap" style="padding:15px;">
+                    <div class="mui-input-row">
+                        <label class="wd45">选择对阵的球队</label>
+                    </div>
+                    <div class="box">
+                        {volist name="vo1.scheduleList" id="vo2" key="b"}
+                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}">
+                            <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                                <div class="mui-col-xs-2 order">{$b}</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#HomeTeam" class="clickTap homeTeamTap" data-hteamnum="1">
+                                        <text class="HomeTeam" contenteditable="" placeholder="请选择主队">{$vo2.home_team}</text>
+                                        <input type="hidden" name="home_team_id" value="{$vo2.home_team_id}" class="checkId">
+                                        <input type="hidden" class="class2" name="home_team_logo" value="{$vo2.home_team_logo}">
+                                    </a>
+                                </div>
+                                <div class="mui-col-xs-1">VS</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#AwayTeam" class="clickTap awayTeamTap" data-ateamnum="1">
+                                        <text class="AwayTeam" contenteditable="" placeholder="请选择客队">{$vo2.away_team}</text>
+                                        <input type="hidden" name="away_team_id" value="{$vo2.away_team_id}" class="checkId">
+                                        <input type="hidden" class="class2" name="away_team_logo" value="{$vo2.home_team_logo}">
+                                    </a>
+                                </div>
+                                <input type="checkbox" name="" class="firght" value="" style="right:5px;">
+                            </div>
+                        </div>
+                        {/volist}
+
+
+                    </div>
+                    <div class="operation-btn">
+                        <span class="mui-badge">{$key+1}</span>
+                        <a class="all">全选</a>
+                        <a class="cancel">取消</a>
+                        <a class="del">[删除]</a>
+                        <a class="addSingleSchedule colorblue fr" style="margin-right:45px">添加赛程</a>
+                    </div>
+                </div>
+            </div>
+            {/volist}
         </form>
+        <!-- <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p> -->
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -156,7 +209,7 @@
     </div>
 
     <!--球队A-->
-    <div id="HomeTeam" class="mui-popover list" style="margin: 0">
+    <div id="HomeTeam" class="mui-popover list">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36">
@@ -194,7 +247,7 @@
     </div>
 
     <!--球队B-->
-    <div id="AwayTeam" class="mui-popover list" style="margin: 0">
+    <div id="AwayTeam" class="mui-popover list">
         <div class="mui-popover-arrow"></div>
         <div class="page-header border-b">
             <span class="course wd36">
@@ -275,23 +328,28 @@
                 });
             })
         })(mui, document);
-        var pstageId = ''
 
+        var pstageId = ''
+        var stageVal = wooApi.GetQueryString('match_stage_id');
         $(function () {
             matchStage(1); //比赛阶段
 
             // 根据比赛阶段，显示管理赛程页面
             $(document).on("change", ".match_stage", function () {
-                var thisType = $(this).children('option:selected').val();
-                if (thisType == 1) {
-                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}/" +
-                        "?matchStage=1"
+                var match_stage_id = $(this).children('option:selected').val();
+                if (match_stage_id == "{$firstMatchStageId}") {
+                    window.location.href = "{:url('match/createSchedule',['league_id'=>$league_id])}"
                 } else {
                     window.location.href =
                         "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
-                        "?matchStage=" + thisType
+                        "?match_stage_id=" + match_stage_id
                 }
             });
+
+            // 当赛程数量大于等于1条的时候显示清空按钮
+            if ($(".scheduleList").length >= 1) {
+                $(".clearOperation").show();
+            }
 
             if ("{$hasGroup}" == 0) {
                 allTeamList();
@@ -299,8 +357,7 @@
                 getbattle();
             }
 
-            var stageVal = wooApi.GetQueryString('matchStage');
-            $('.match_stage option[value="' + stageVal + '"]').prop("selected", true);
+            // 根据比赛阶段来显示选择列表
             if (stageVal == 1) {
                 getbattle();
                 $(".promotionList").empty();
@@ -313,11 +370,14 @@
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1;
+                var listLength = $(".scheduleList").length + 1 + {
+                    $dayCount
+                };
                 var str =
-                    `<div class="scheduleList" data-num="1">
+                    `<div class="scheduleList" data-num="${listLength}">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日${listLength}</span>
+                    <span class="fr f14 deleteModel">删除</span>
                 </div>
                 <div class="mui-input-row timeTap" data-tnum="${listLength}" data-options='{"type":"date"}'>
                     <div class="mui-navigate-right">
@@ -330,7 +390,28 @@
                     <div class="mui-input-row">
                         <label class="wd45">选择对阵的球队</label>
                     </div>
-                    <div class="box"></div>
+                    <div class="box">
+                            <div class="mui-input-row mui-checkbox checkboxCont ">
+                            <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                                <div class="mui-col-xs-2 order">1</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#HomeTeam" class="clickTap homeTeamTap" data-hTeamNum="${listLength}">
+                                        <text class="HomeTeam" contenteditable placeholder="请选择主队"></text>
+                                        <input type="hidden" name="home_team_id" value="" class="checkId">
+                                        <input type="hidden" class="class2" name="home_team_logo" value="">
+                                    </a>
+                                </div>
+                                <div class="mui-col-xs-1">VS</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#AwayTeam" class="clickTap awayTeamTap" data-aTeamNum="${listLength}">
+                                        <text class="AwayTeam" contenteditable placeholder="请选择客队"></text>
+                                        <input type="hidden" name="away_team_id" value="" class="checkId">
+                                        <input type="hidden" class="class2" name="away_team_logo" value="">
+                                    </a>
+                                </div>
+                                <input type="checkbox" name="" class="firght" value="" style="right:5px;">
+                            </div>
+                        </div></div>
                     <div class="operation-btn">
                         <span class="mui-badge">0</span>
                         <a class="all">全选</a>
@@ -613,6 +694,77 @@
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
 
+            // 删除整个比赛日
+            $(document).on("tap", ".deleteModel", function () {
+                var btnArray = ['取消', '确认'];
+                var thisdiv = $(this).parents(".scheduleList");
+                var date = $(this).parents(".page-header").siblings(".timeTap").find(".ui-alert").text();
+                var league_id = "{$league_id}";
+                mui.confirm("确认删除该比赛日程？", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        mui.ajax("{:url('api/league/delmatchschedulebydate','','',true)}", {
+                            data: {
+                                match_id: league_id,
+                                date: date
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast("删除成功");
+                                    thisdiv.remove();
+                                    if ($(".scheduleList").length == 1) {
+                                        $('.deleteModel').hide();
+                                    }
+                                    // 比赛日序号的更新
+                                    var i = 1;
+                                    $(".scheduleList").each(function () {
+                                        $(this).find(".tnum").text(i++); //更新序号
+                                    });
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                        });
+
+                    }
+                })
+            });
+
+            // 清空赛程操作-未产生赛果情况下才可以清空
+            $(document).on("tap", ".clearScheduleList", function () {
+                mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
+                    if (e.index == 1) {
+                        var league_id = "{$league_id}";
+                        mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
+                            data: {
+                                match_id: league_id,
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                    setTimeout('location.reload()', 2000);
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                        });
+                    }
+                })
+            })
+
         });
 
         // 比赛阶段
@@ -634,11 +786,13 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].type}">${data.data[i].name}</option>`
+                                ` <option value="${data.data[i].id}" data-pstage_id="${data.data[i].pstage_id}">${data.data[i].name}</option>`
                         }
-                        var stageVal = wooApi.GetQueryString('matchStage');
                         $(".match_stage").append(newli)
                         $('.match_stage option[value="' + stageVal + '"]').prop("selected", true);
+                        $("input[name=match_stage]").val($(".match_stage").children("option:selected").text())
+                        $("input[name=match_stage_id]").val($(".match_stage").val());
+                        pstageId = $(".match_stage").children('option:selected').attr("data-pstage_id");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -788,27 +942,51 @@
                 var away_team = $(this).find(".AwayTeam").text();
                 var away_team_id = $(this).find("input[name=away_team_id]").val();
                 var away_team_logo = $(this).find("input[name=away_team_logo]").val();
-                scheduleList.push({
-                    match_time,
-                    home_team,
-                    home_team_id,
-                    home_team_logo,
-                    away_team,
-                    away_team_id,
-                    away_team_logo,
-                })
+                var scheduleName = $(this).parents(".scheduleList").find(".course").text();
+                var status = 0;
+                if (match_time == '') {
+                    mui.toast("请选择" + scheduleName + "的比赛时间");
+                    return isOk = false;
+                }
+                if (home_team_id == '') {
+                    mui.toast("请选择" + scheduleName + "的主队");
+                    return isOk = false;
+                }
+                if (away_team_id == '') {
+                    mui.toast("请选择" + scheduleName + "的客队");
+                    return isOk = false;
+                }
+                var id = $(this).attr("data-id");
+                if (id != undefined) {
+                    scheduleList.push({
+                        match_time,
+                        home_team,
+                        home_team_id,
+                        home_team_logo,
+                        away_team,
+                        away_team_id,
+                        away_team_logo,
+                        status,
+                        id
+                    });
+                } else {
+                    scheduleList.push({
+                        match_time,
+                        home_team,
+                        home_team_id,
+                        home_team_logo,
+                        away_team,
+                        away_team_id,
+                        away_team_logo,
+                        status
+                    });
+                }
+
+
             });
-            // if (home_team_id == '') {
-            //     mui.toast("请选择" + scheduleName + "的主队");
-            //     return isOk = false;
-            // }
-            // if (away_team_id == '') {
-            //     mui.toast("请选择" + scheduleName + "的客队");
-            //     return isOk = false;
-            // }
-            // if (!isOk) {
-            //     return isOk
-            // }
+            if (!isOk) {
+                return isOk
+            }
             console.log(scheduleList)
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
