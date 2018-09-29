@@ -38,7 +38,9 @@
             margin: 0 auto;
             position: absolute;
         }
-
+        .mui-popover .mui-control-content{
+            height: 359px;
+        }
         .addInput {
             margin-top: 15px;
         }
@@ -93,8 +95,7 @@
                 </div>
             </div>
             <p class="pline formList"></p>
-
-
+            {if condition="empty($matchScheduleInfo)"}
             <div class="scheduleList" data-num="1">
                 <div class="page-header bggray2 border-b">
                     <span class="course">比赛日{$dayCount+1}</span>
@@ -111,7 +112,7 @@
                         <label class="wd45">选择对阵的球队</label>
                     </div>
                     <div class="box">
-                        <!-- <div class="mui-input-row mui-checkbox checkboxCont ">
+                        <div class="mui-input-row mui-checkbox checkboxCont ">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">1</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -131,7 +132,7 @@
                                 </div>
                                 <input type="checkbox" name="" class="firght" value="" style="right:5px;">
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="operation-btn">
                         <span class="mui-badge">1</span>
@@ -142,6 +143,7 @@
                     </div>
                 </div>
             </div>
+            {/if}
 
             {volist name="matchScheduleInfo" id="vo1" key="a"}
             <div class="scheduleList" data-num="{$a}">
@@ -152,7 +154,7 @@
                 <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
                     <div class="mui-navigate-right">
                         <label>比赛时间</label>
-                        <span class="matchTime">{$key}</span>
+                        <span class="ui-alert">{$key}</span>
                     </div>
                 </div>
                 <div class="operation-box mb clickTap" style="padding:15px;">
@@ -161,7 +163,7 @@
                     </div>
                     <div class="box">
                         {volist name="vo1" id="vo2" key="b"}
-                         <div class="mui-input-row mui-checkbox checkboxCont ">
+                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">{$b}</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -183,21 +185,21 @@
                             </div>
                         </div>
                         {/volist}
-                        
-                        
+
+
                     </div>
                     <div class="operation-btn">
                         <span class="mui-badge">{$key+1}</span>
                         <a class="all">全选</a>
                         <a class="cancel">取消</a>
                         <a class="del">[删除]</a>
-                        <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
+                        <a class="addSingleSchedule colorblue fr" style="margin-right:45px">添加赛程</a>
                     </div>
                 </div>
             </div>
             {/volist}
         </form>
-        <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p>
+        <!-- <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p> -->
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -368,7 +370,9 @@
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1 + {$dayCount};
+                var listLength = $(".scheduleList").length + 1 + {
+                    $dayCount
+                };
                 var str =
                     `<div class="scheduleList" data-num="${listLength}">
                 <div class="page-header bggray2 border-b">
@@ -782,12 +786,13 @@
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].id}">${data.data[i].name}</option>`
+                                ` <option value="${data.data[i].id}" data-pstage_id="${data.data[i].pstage_id}">${data.data[i].name}</option>`
                         }
                         $(".match_stage").append(newli)
                         $('.match_stage option[value="' + stageVal + '"]').prop("selected", true);
                         $("input[name=match_stage]").val($(".match_stage").children("option:selected").text())
-                        $("input[name=match_stage_id]").val($(".match_stage").val())
+                        $("input[name=match_stage_id]").val($(".match_stage").val());
+                        pstageId = $(".match_stage").children('option:selected').attr("data-pstage_id");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -951,16 +956,32 @@
                     mui.toast("请选择" + scheduleName + "的客队");
                     return isOk = false;
                 }
-                scheduleList.push({
-                    match_time,
-                    home_team,
-                    home_team_id,
-                    home_team_logo,
-                    away_team,
-                    away_team_id,
-                    away_team_logo,
-                    status
-                });
+                var id = $(this).attr("data-id");
+                if (id != undefined) {
+                    scheduleList.push({
+                        match_time,
+                        home_team,
+                        home_team_id,
+                        home_team_logo,
+                        away_team,
+                        away_team_id,
+                        away_team_logo,
+                        status,
+                        id
+                    });
+                } else {
+                    scheduleList.push({
+                        match_time,
+                        home_team,
+                        home_team_id,
+                        home_team_logo,
+                        away_team,
+                        away_team_id,
+                        away_team_logo,
+                        status
+                    });
+                }
+
 
             });
             if (!isOk) {
