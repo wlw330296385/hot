@@ -895,6 +895,7 @@ class Match extends Base {
 
         $orderby = ['match_time' => 'desc', 'id' => 'desc'];
         $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $matchStageGroupInfo['id']], $orderby);
+
         $finalArray = array();
         if (!empty($matchScheduleInfo)){
             foreach ($matchScheduleInfo as $row) {
@@ -905,6 +906,7 @@ class Match extends Base {
                 array_push($finalArray[$temp], $row);
             }
         }
+
         $this->assign('groups', $groups);
         $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
         $this->assign('matchScheduleInfo', $finalArray);
@@ -976,10 +978,24 @@ class Match extends Base {
             'match_stage_id' => ['in', $idArray]
         ]);
 
+        $orderby = ['match_time' => 'desc', 'id' => 'desc'];
+        $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $match_stage_id], $orderby);
+        $finalArray = array();
+        if (!empty($matchScheduleInfo)){
+            foreach ($matchScheduleInfo as $row) {
+                $temp = date("Y-m-d", $row['match_timestamp']);
+                if (!array_key_exists($temp, $finalArray)) {
+                    $finalArray[$temp] = array();
+                }
+                array_push($finalArray[$temp], $row);
+            }
+        }
+
         $this->assign('groups', $groups);
         $this->assign('showMatchStageType1', $showMatchStageType1);
         $this->assign('hasGroup', $hasGroup);
         $this->assign('dayCount', $dayCount);
+        $this->assign('matchScheduleInfo', $finalArray);
         $this->assign('firstMatchStageId', $matchStageGroupInfo['id']);
         return view('Match/schedule/createScheduleOfLeague1');
     }

@@ -111,7 +111,7 @@
                         <label class="wd45">选择对阵的球队</label>
                     </div>
                     <div class="box">
-                        <div class="mui-input-row mui-checkbox checkboxCont ">
+                        <!-- <div class="mui-input-row mui-checkbox checkboxCont ">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">1</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -131,7 +131,7 @@
                                 </div>
                                 <input type="checkbox" name="" class="firght" value="" style="right:5px;">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="operation-btn">
                         <span class="mui-badge">1</span>
@@ -143,6 +143,59 @@
                 </div>
             </div>
 
+            {volist name="matchScheduleInfo" id="vo1" key="a"}
+            <div class="scheduleList" data-num="{$a}">
+                <div class="page-header bggray2 border-b">
+                    <span class="course">比赛日<text class="tnum">{:count($matchScheduleInfo) - $a + 1}</text></span>
+                    <span class="fr f14 deleteModel">删除</span>
+                </div>
+                <div class="mui-input-row timeTap" data-tnum="{$a}" data-options='{"type":"date"}' class="btn mui-btn mui-btn-block">
+                    <div class="mui-navigate-right">
+                        <label>比赛时间</label>
+                        <span class="matchTime">{$key}</span>
+                    </div>
+                </div>
+                <div class="operation-box mb clickTap" style="padding:15px;">
+                    <div class="mui-input-row">
+                        <label class="wd45">选择对阵的球队</label>
+                    </div>
+                    <div class="box">
+                        {volist name="vo1" id="vo2" key="b"}
+                         <div class="mui-input-row mui-checkbox checkboxCont ">
+                            <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                                <div class="mui-col-xs-2 order">{$b}</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#HomeTeam" class="clickTap homeTeamTap" data-hteamnum="1">
+                                        <text class="HomeTeam" contenteditable="" placeholder="请选择主队">{$vo2.home_team}</text>
+                                        <input type="hidden" name="home_team_id" value="{$vo2.home_team_id}" class="checkId">
+                                        <input type="hidden" class="class2" name="home_team_logo" value="{$vo2.home_team_logo}">
+                                    </a>
+                                </div>
+                                <div class="mui-col-xs-1">VS</div>
+                                <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
+                                    <a href="#AwayTeam" class="clickTap awayTeamTap" data-ateamnum="1">
+                                        <text class="AwayTeam" contenteditable="" placeholder="请选择客队">{$vo2.away_team}</text>
+                                        <input type="hidden" name="away_team_id" value="{$vo2.away_team_id}" class="checkId">
+                                        <input type="hidden" class="class2" name="away_team_logo" value="{$vo2.home_team_logo}">
+                                    </a>
+                                </div>
+                                <input type="checkbox" name="" class="firght" value="" style="right:5px;">
+                            </div>
+                        </div>
+                        {/volist}
+                        
+                        
+                    </div>
+                    <div class="operation-btn">
+                        <span class="mui-badge">{$key+1}</span>
+                        <a class="all">全选</a>
+                        <a class="cancel">取消</a>
+                        <a class="del">[删除]</a>
+                        <a href="#firght" class="mui-icon mui-icon-personadd add"></a>
+                    </div>
+                </div>
+            </div>
+            {/volist}
         </form>
         <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p>
 
