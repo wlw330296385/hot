@@ -89,10 +89,20 @@ class MemberService{
         }
 
         //验证规则
-		$res = $MemberModel->validate('MemberVal.add')->allowField(true)->save($request);
+		$res = $MemberModel->validate('MemberVal')->save($request);
 		if ($res === false) {
-            return [ 'code' => 100, 'msg' => $MemberModel->getError() ];
+            return [ 'code' => 100, 'msg' => $MemberModel->getError()];
         } else {
+            //记录积分
+            db('score')->insert(
+                [
+                    'ccore'=>$request['score'],
+                    'member_id'=>$MemberModel->id,
+                    'member'=>$request['member'],
+                    'create_time'=>time(),
+                    'score_des'=>'注册送积分'
+                ]
+            );
 	        return ['code' => 200, 'msg' => __lang('MSG_200'), 'data'=>$MemberModel->id,'id'=>$MemberModel->id];
         }
 	}

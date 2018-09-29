@@ -35,7 +35,6 @@ class Login extends Base{
             if (Cookie::has('pid')) {
                 $data['pid'] = Cookie::get('pid');
             }
-
             $memberInfo = session('memberInfo', '', 'think');
             $memberS = new \app\service\MemberService;
             // myself: 标识是否本人电话与微信存入同一会员数据
@@ -45,20 +44,29 @@ class Login extends Base{
                 $data['openid'] = '';
                 $data['nickname'] = '';
             }
+
             // 如果有微信授权信息
             if (isset($memberInfo['openid']) && !empty($memberInfo['openid']) && $data['ismyself'] == 1) {
+
                 $isMember = $memberS->getMemberInfo(['openid' => $memberInfo['openid']]);
                 if ($isMember) {
-                    return ['code' => 100, 'msg' => '您的微信号已注册成为会员'];
+                    return json(['code' => 100, 'msg' => '您的微信号已注册成为会员']);
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
                     // 下载微信头像文件到本地
                     $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
                 }
-            }
+            } 
             // 性别获取wxuserinfo
             $data['sex'] = $memberInfo['sex'];
+            $setting = db('setting')->find();
+
+            // 注册送100积分;
+            $json_score = json_decode($setting['score_rule'],true);
+            $register_score = $json_score['register'];
+            $data['score'] = $register_score;
+
         	$response = $memberS->saveMemberInfo($data);
         	if ($response['code'] ==200) {
                 $result = $memberS->saveLogin($response['id']);
@@ -73,6 +81,23 @@ class Login extends Base{
                     } else {
                         $response['goto'] = url('frontend/member/registerSuccess');
                     }
+
+                    if($data['pid']){
+                        $referer_score = $register_score['referer'];
+                        db('member')->where(['id'=>$data['pid']])->inc('score',$referer_score)->update();
+                        //记录积分
+                        db('score')->insert(
+                            [
+                                'ccore'=>$referer_score,
+                                'member_id'=>$data['pid'],
+                                'member'=>$data['member'],
+                                'create_time'=>time(),
+                                'score_des'=>'邀请注册送积分'
+                            ]
+                        );
+                    }
+
+
                 }else{
                     return json(['code'=>100,'msg'=>'请重新登陆']);
                 }

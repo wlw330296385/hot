@@ -23,6 +23,8 @@ class Lesson extends Backend{
             $data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
+            $data['camp_id'] = $this->campInfo['id'];
+            $data['camp'] = $this->campInfo['camp'];
             $LessonService = new \app\service\LessonService;
             $result = $LessonService->createLesson($data);
             if ($result['code'] == 200) {
