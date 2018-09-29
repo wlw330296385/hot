@@ -973,24 +973,39 @@ class Match extends Base {
             array_push($idArray, $item['id']);
         }
 
-        $dayCount = $leagueS->getScheduleDayCount([
-            'match_id' => $this->league_id,
-            'match_stage_id' => ['in', $idArray]
-        ]);
-
         $orderby = ['match_time' => 'desc', 'id' => 'desc'];
-        $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $match_stage_id], $orderby);
+        $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id], $orderby);
         $finalArray = array();
+
+        $dayCount = $leagueS->getScheduleDayCount([
+            'match_id' => $this->league_id
+        ]);
+        $match_day_num = $dayCount + 1;
+
+        $temp_date = '';
+
         if (!empty($matchScheduleInfo)){
             foreach ($matchScheduleInfo as $row) {
-                $temp = date("Y-m-d", $row['match_timestamp']);
-                if (!array_key_exists($temp, $finalArray)) {
-                    $finalArray[$temp] = array();
+
+                if ($temp_date != date("Y-m-d", $row['match_timestamp'])) {
+                    $match_day_num--;
+                    $temp_date = date("Y-m-d", $row['match_timestamp']);
                 }
-                array_push($finalArray[$temp], $row);
+
+                if ($row['match_stage_id'] == $match_stage_id) {
+                    if (!array_key_exists($temp_date, $finalArray)) {
+                        $tempArray = [];
+                        $tempArray["date"] = $temp_date;
+                        $tempArray["match_day_num"] = $match_day_num;
+                        $tempArray["scheduleList"] = [];
+                        $tempArray["scheduleList"][0] = $row;
+                        $finalArray[$temp_date] = $tempArray;
+                    } else {
+                        array_push($finalArray[$temp_date]['scheduleList'], $row);
+                    }
+                }
             }
         }
-
         $this->assign('groups', $groups);
         $this->assign('showMatchStageType1', $showMatchStageType1);
         $this->assign('hasGroup', $hasGroup);
