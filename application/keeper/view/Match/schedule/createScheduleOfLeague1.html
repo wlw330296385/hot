@@ -86,7 +86,7 @@
                 <div class="mui-navigate-right">
                     <label>比赛阶段</label>
                     <span class="select-row">
-                        <select name="type" class="match_stage "></select>
+                        <select name="type" class="match_stage"></select>
                     </span>
                 </div>
             </div>
@@ -271,8 +271,9 @@
                 });
             })
         })(mui, document);
-        var pstageId = ''
 
+        var pstageId = ''
+        var stageVal = wooApi.GetQueryString('match_stage_id');
         $(function () {
             matchStage(1); //比赛阶段
 
@@ -299,8 +300,7 @@
                 getbattle();
             }
 
-            var stageVal = wooApi.GetQueryString('matchStage');
-            $('.match_stage option[value="' + stageVal + '"]').prop("selected", true);
+            // 根据比赛阶段来显示选择列表
             if (stageVal == 1) {
                 getbattle();
                 $(".promotionList").empty();
@@ -313,7 +313,7 @@
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1 + "{$dayCount+1}";
+                var listLength = $(".scheduleList").length + 1 + {$dayCount};
                 var str =
                     `<div class="scheduleList" data-num="${listLength}">
                 <div class="page-header bggray2 border-b">
@@ -729,9 +729,10 @@
                             newli +=
                                 ` <option value="${data.data[i].id}">${data.data[i].name}</option>`
                         }
-                        var stageVal = wooApi.GetQueryString('matchStage');
                         $(".match_stage").append(newli)
                         $('.match_stage option[value="' + stageVal + '"]').prop("selected", true);
+                        $("input[name=match_stage]").val($(".match_stage").children("option:selected").text())
+                        $("input[name=match_stage_id]").val($(".match_stage").val())
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -882,6 +883,7 @@
                 var away_team_id = $(this).find("input[name=away_team_id]").val();
                 var away_team_logo = $(this).find("input[name=away_team_logo]").val();
                 var scheduleName = $(this).parents(".scheduleList").find(".course").text();
+                var status = 0;
                 if (match_time == '') {
                     mui.toast("请选择" + scheduleName + "的比赛时间");
                     return isOk = false;
@@ -902,6 +904,7 @@
                     away_team,
                     away_team_id,
                     away_team_logo,
+                    status
                 });
 
             });
@@ -909,27 +912,27 @@
                 return isOk
             }
             console.log(scheduleList)
-            // var data = wooApi.getInputData('input', 'data');
-            // datas = wooApi.getInputData('select', 'data', data);
-            // // 获取其他标签值
-            // arrData = wooApi.getDomData('domData', datas);
-            // var objData = wooApi.arrTOobj(arrData);
-            // objData.scheduleList = JSON.stringify(scheduleList);
-            // var url = "{:url('api/league/saveallcustommatchschedule')}";
-            // var ajaxResult = wooApi.asyncF(url, objData);
-            // if (ajaxResult.code == 200) {
-            //     mui.alert('编辑成功', '确定', function () {
-            //         var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
-            //         window.top.location.href = goUrl;
-            //     })
-            // } else {
-            //     mui.alert(ajaxResult.msg, '编辑失败');
-            //     mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //         if (data.code === 200) {
-            //             $('input[name=__token__]').val(data.data);
-            //         }
-            //     }, 'json');
-            // }
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.scheduleList = JSON.stringify(scheduleList);
+            var url = "{:url('api/league/saveallcustommatchschedule')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert('编辑成功', '确定', function () {
+                    var goUrl = "{:url('match/scheduleListOfLeague')}" + '/league_id/' + "{$league_id}";
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '编辑失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
         };
     </script>
 </body>
