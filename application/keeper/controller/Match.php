@@ -891,13 +891,13 @@ class Match extends Base {
             'match_id' => $this->league_id,
             'type' => 1
         ]);
+        $firstMatchStageId = empty($matchStageGroupInfo) ? 0 : $matchStageGroupInfo['id'];
+
         $orderby = ['match_time' => 'desc', 'id' => 'desc'];
         $matchScheduleInfo = $leagueS->getMatchSchedules(['match_id' => $this->league_id, 'match_stage_id' => $matchStageGroupInfo['id']], $orderby);
-
         $finalArray = array();
         if (!empty($matchScheduleInfo)){
             foreach ($matchScheduleInfo as $row) {
-                // dump($row);exit;
                 $temp = date("Y-m-d", $row['match_timestamp']);
                 if (!array_key_exists($temp, $finalArray)) {
                     $finalArray[$temp] = array();
@@ -905,11 +905,10 @@ class Match extends Base {
                 array_push($finalArray[$temp], $row);
             }
         }
-
         $this->assign('groups', $groups);
         $this->assign('matchStageGroupInfo', $matchStageGroupInfo);
         $this->assign('matchScheduleInfo', $finalArray);
-        $this->assign('firstMatchStageId', $matchStageGroupInfo['id']);
+        $this->assign('firstMatchStageId', $firstMatchStageId);
         return view('Match/schedule/createSchedule');
     }
 
