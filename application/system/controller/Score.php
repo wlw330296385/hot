@@ -13,13 +13,25 @@ class Score extends Base{
     }
 
    //每天执行平台收支记录数据
-    public function dailyInOut(){
+    public function scheduleScore(){
     	try{
             $date_str = date('Ymd',time());
             $setting = db('setting')->find();
             $score_rule = json_decode($setting['score_rule'],true);
-            $map = ['can_settle_date'=>$date_str,'status'=>1,'is_settle'=>1];
-            $scheduleList = db('schedule')->where($map)->whereNull('delete_time')->select();
+            $map = ['schedule_member.status'=>-1,'schedule_member.is_ccore'=>-1];
+            $memberList = db('schedule_member')->field('schedule.students,schedule_member.*')->join('schedule','schedule.id = schedule_member.schedule_id')->where($map)->whereNull('delete_time')->select();
+            $stduent_memebr_ids = [];
+            $coach_member_ids = [];
+            $coach_score = [];
+            foreach ($memberList as $key => $value) {
+                if($value['type']==1){
+                    $stduent_memebr_ids[] = $value['member_id'];
+                }else{
+                    $coach_member_ids[] = $value['member_id'];
+                    $
+                }
+            }
+
 	    	$data = ['crontab'=>'教练和学生上课积分赠送'];
             $this->record($data);
     	}catch(Exception $e){
