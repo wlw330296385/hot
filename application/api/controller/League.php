@@ -3668,6 +3668,15 @@ class League extends Base
             return json(['code' => 100, 'msg' => '请提交预览赛程']);
         }
 
+        $matchStage = $leagueS->getMatchStage([
+            'match_id' => $data['match_id'],
+            'id' => $data['match_stage_id'],
+            'status' => 1
+        ]);
+        if (empty($matchStage)) {
+            return json(['code' => 100, 'msg' => "未找到该阶段"]);
+        }
+        
         // $data['status'] = empty($data['status']) ? 0 : $data['status'];
 
         // 事务处理：检查联赛有无赛程数据 若有数据先物理删除原有数据
