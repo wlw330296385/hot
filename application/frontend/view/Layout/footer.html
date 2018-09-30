@@ -19,15 +19,20 @@
 	mui("body").on("tap","a",function(){
 	    window.top.location.href=this.href;
 	});
-    
+    var unReadMessage = localStorage.getItem('unReadMessage');
     if({$memberInfo.id}>0){
-        if(window.unReadMessage){
-            var html = `<span class="mui-badge">${window.unReadMessage}</span>`;
-            $('#Message').html(html);
-            $('#Member').html(html);
-        }else{
-            wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
-        }
         
+        if(!unReadMessage){
+            unReadMessage = wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
+            
+        }
+        var html = `<span class="mui-badge">${unReadMessage}</span>`;
+        $('#Message').html(html);
+        $('#Member').html(html);
     }
+
+
+    $('#Message').on('tap',function(){
+        wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
+    });
 </script>
