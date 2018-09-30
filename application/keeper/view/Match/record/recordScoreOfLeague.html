@@ -29,6 +29,25 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
+         /* 花絮 */
+
+        .albumImg {
+            position: relative;
+        }
+
+        .albumImg .delbtn {
+            font-size: 16px;
+            right: 12px;
+            position: absolute;
+            top: 2px;
+            color: #fff;
+        }
+
+        .albumImg img {
+            float: left;
+            margin-right: 10px;
+            margin-bottom: 5px
+        }
     </style>
 </head>
 
@@ -181,6 +200,19 @@
                 <span name="telephone">134646465456</span>
             </div>{/if}
 
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli f14" style="line-height: 40px; color: #737373;">
+                    <span class="h-auto">比赛花絮</span>
+                    <a class="mui-navigate-right fr wd60">
+                        <div id="uploader-demo1" class="fr pdr15">
+                            <div id="fileList" class="uploader-list"></div>
+                            <div id="filePickerOne">选择图片</div>
+                        </div>
+                    </a>
+                </li>
+                <li class="mui-table-view-cell listli albumBox"></li>
+            </ul>
+
         </form>
 
         <ul class="mui-table-view operation">
@@ -270,6 +302,13 @@
     <script src="/static/frontend/js/mui.poppicker.js"></script>
     <script src="/static/frontend/js/city.data-3.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/libs/webuploader.min.js"></script>
+    <script>
+        var uploadApiUrl = "{:url('api/upload/imgwupload', ['usage' => 'leagueSchedule'])}";
+    </script>
+    <script src="/static/frontend/libs/webuploader.cert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadcert.js?v=<?php echo time();?>"></script>
+    <script src="/static/frontend/js/uploadduotu.js?v=<?php echo time();?>"></script>
     <script>
         //初始化
         mui.init({
@@ -399,13 +438,17 @@
                 var str =
                     `<div class="mui-table-view-cell listli">
                     <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;">
-                  <button type="button" class="btn bgblue fr newRefereeBtn">确认</button>
+                  <button type="button" class="btn mui-btn-blue fr newRefereeBtn">确认</button>
                 </div>`
                 $(this).parents("#referee").find(".refereeList").prepend(str)
             });
             // 确认临时裁判
             $(document).on("tap", ".newRefereeBtn", function () {
                 var thisVal = $(this).siblings().val();
+                if (thisVal == '') {
+                    mui.toast("请填写临时裁判员");
+                    return false;
+                }
                 var refereeNum = $(this).parents("#referee").attr("data-num");
                 $(".refereeTap").each(function () {
                     var datanum = $(this).find("label").attr("data-num");
@@ -492,27 +535,31 @@
             });
 
             // 添加临时记录员
-            // $("#temporaryReferee").on('tap', '', function () {
-            //     var str =
-            //         `<div class="mui-table-view-cell listli">
-            //         <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;">
-            //       <button type="button" class="btn bgblue fr newRefereeBtn">确认</button>
-            //     </div>`
-            //     $(this).parents("#referee").find(".refereeList").prepend(str)
-            // });
+            $("#temporaryScore").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;border: 1px solid #ddd;">
+                  <button type="button" class="btn mui-btn-blue fr newScoreBtn">确认</button>
+                </div>`
+                $(this).parents("#score").find(".scoreList").prepend(str)
+            });
             // 确认临时记录员
-            // $(document).on("tap", ".newRefereeBtn", function () {
-            //     var thisVal = $(this).siblings().val();
-            //     var refereeNum = $(this).parents("#referee").attr("data-num");
-            //     $(".refereeTap").each(function () {
-            //         var datanum = $(this).find("label").attr("data-num");
-            //         if (refereeNum == datanum) {
-            //             $(this).find("span").text(thisVal)
-            //             $(this).find("input").val(-1)
-            //             mui("#referee").popover("toggle");
-            //         }
-            //     })
-            // });
+            $(document).on("tap", ".newScoreBtn", function () {
+                if ($(this).siblings().val() == '') {
+                    mui.toast("请填写临时记录员");
+                    return false;
+                }
+                var str =
+                    `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label style="width:20%;">1</label>
+                                    <font class="f14">${$(this).siblings().val()}</font>
+                                    <input name="member" class="stdList" value="-1" data-realname="${$(this).siblings().val()}" type="checkbox">
+                                </div>`;
+                $("#inactiveList").append(str);
+                changeIndex(); //调用-更新序号
+                mui("#score").popover("toggle");
+                totalNum = $("#inactiveList .checkboxCont").length;
+            });
 
 
             // 比赛阶段
@@ -556,6 +603,16 @@
                 }
             });
         });
+
+        // 活动花絮图提交数组
+        function albumImg() {
+            album = [];
+            $(".albumImg img").each(function () {
+                var src = $(this).attr('src')
+                album.push(src);
+            }).get().join(",");
+            console.log(album)
+        }
 
         //更新学员序号
         function changeIndex() {
@@ -703,7 +760,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
-
+            albumImg()
             var home_score = $("input[name=home_score]").val();
             var away_score = $("input[name=away_score]").val();
             var court_id = $("input[name=court_id]").val();
