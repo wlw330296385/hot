@@ -17,14 +17,7 @@ class Index extends Controller
     }
 
     public function index1(){
-        $xlsName  = "export";
-        $xlsCell  = array(
-            array('uid','账号序列'),
-            array('nickname','名字'),
-            array('email','邮箱'),
-        );
-        $xlsData  = [['uid'=>'aaa','nickname'=>'bbbb','email'=>'ccc'],['uid'=>'aaa','nickname'=>'bbbb','email'=>'ccc']];
-        $this->exportExcel($xlsName,$xlsCell,$xlsData);
+        $i = 0 ;
     }
 
     function exportExcel($expTitle,$expCellName,$expTableData){
