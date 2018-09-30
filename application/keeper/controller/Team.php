@@ -609,7 +609,7 @@ class Team extends Base
     // 管理赛事详情
     public function matchinfoofteam()
     {
-        $match_id = input('match_id', 0);
+        $id = input('id', 0);
 
         $matchS = new MatchService();
         $teamS = new TeamService();
@@ -619,7 +619,7 @@ class Team extends Base
             $this->error('您没有权限');
         }
 
-        $map['match_id'] = $match_id;
+        $map['id'] = $id;
         $matchRecordInfo = $matchS->getMatchRecord($map);
 
         if (!empty($matchRecordInfo)) {
