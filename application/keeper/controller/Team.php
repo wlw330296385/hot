@@ -619,7 +619,7 @@ class Team extends Base
             $this->error('您没有权限');
         }
 
-        $map['id'] = $match_id;
+        $map['match_id'] = $match_id;
         $matchRecordInfo = $matchS->getMatchRecord($map);
 
         if (!empty($matchRecordInfo)) {
