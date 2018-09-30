@@ -609,8 +609,12 @@ class Team extends Base
     // 管理赛事详情
     public function matchinfoofteam()
     {
-        $id = input('id', 0);
-
+        if (!empty(input('id'))) {
+            $map['id'] = input('id');
+        }
+        if (!empty(input('match_id'))) {
+            $map['match_id'] = input('match_id');
+        }
         $matchS = new MatchService();
         $teamS = new TeamService();
         $refereeS = new RefereeService();
@@ -619,7 +623,6 @@ class Team extends Base
             $this->error('您没有权限');
         }
 
-        $map['id'] = $id;
         $matchRecordInfo = $matchS->getMatchRecord($map);
 
         if (!empty($matchRecordInfo)) {
