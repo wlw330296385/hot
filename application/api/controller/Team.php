@@ -15,6 +15,7 @@ use app\service\TeamEventService;
 use app\service\LeagueService;
 use app\service\MatchOrgMemberService;
 use think\Exception;
+use think\Db;
 
 class Team extends Base
 {
@@ -3202,4 +3203,16 @@ class Team extends Base
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
+
+    // team表 member_num 的数据验证
+    // public function checkTeamData() {
+    //     $list = Db::table('team')->select();
+    //     foreach ($list as $row) {
+    //         $res = Db::table('team_member')->where(['team_id' => $row['id'],'status' => 1])->count();
+            
+    //         $count = empty($res) ? 0 : $res;
+    //         $update_res = Db::query("UPDATE `team`  SET `member_num`=:member_num  WHERE  `id` = :id", ['member_num'=>$count, 'id'=>$row['id']]);
+    //     }
+    //     return 'ok';
+    // }
 }
