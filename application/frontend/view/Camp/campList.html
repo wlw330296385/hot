@@ -21,7 +21,7 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav search2">
+    <header class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title"><input type="search" class="mui-input-clear keyword" placeholder="请输入训练营名称"></h1>
         <span class="mui-icon mui-icon-search searchicon" id="searchBtn"></span>
@@ -32,16 +32,15 @@
         <div class="location-frame">
             <span class="location"></span>
             <span class="location-choise">
-             <select id="areaSelect">
-                <option value="">全部区域</option>
-            </select>
-        </span>
+                <select id="areaSelect">
+                    <option value="">全部区域</option>
+                </select>
+            </span>
         </div>
 
         <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 94px">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b camp">
-                </ul>
+                <ul class="mui-table-view list border-b camp"></ul>
             </div>
         </div>
 
@@ -97,10 +96,10 @@
         });
         //搜索、下拉刷选后触发
         function searchToList() {
-            count = 1;//显示第一页
+            count = 1; //显示第一页
             var page = count;
-            var gType = 1;//代表下拉刷新
-            toList(page, gType);//具体取数据的方法
+            var gType = 1; //代表下拉刷新
+            toList(page, gType); //具体取数据的方法
         }
 
         mui.init({
@@ -130,19 +129,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toList(page, gType); //具体取数据的方法
             }, 100);
         }
         //接口获取数据并追加到页面
@@ -159,38 +158,78 @@
                     area: sArea,
                     keyword: keyword
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 //processData:false,
                 success: function (data) {
+                    console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('camp/campInfo')}" + '/camp_id/' + data.data[i].id;
                             var star = data.data[i].star;
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body wd52 newline">' + data.data[i].camp + '<p class="mui-ellipsis">课程 <font class="coloryellow"> ' + data.data[i].total_lessons + ' </font>&nbsp;&nbsp报名<font class="coloryellow"> ' + data.data[i].total_member + ' </font>&nbsp;&nbsp;已上课<font class="coloryellow"> ' + data.data[i].total_schedule + '</font></p></div><div class="price-frame">'
+                            newli +=
+                                '<li class="mui-table-view-cell listli" data-id="' + data.data[
+                                    i].id + '"><a href="' +
+                                urls + '"><img class="mui-media-object mui-pull-left" src="' +
+                                data.data[i].logo +
+                                '"><div class="mui-media-body wd52 newline">' + data.data[i].camp +
+                                '<p class="mui-ellipsis">课程 <font class="coloryellow"> ' + data
+                                .data[i].total_lessons +
+                                ' </font>&nbsp;&nbsp报名<font class="coloryellow"> ' + data.data[
+                                    i].total_member +
+                                ' </font>&nbsp;&nbsp;已上课<font class="coloryellow"> ' + data.data[
+                                    i].total_schedule +
+                                '</font></p></div><div class="price-frame">'
                             if (star == 0) {
-                                newli += '<div class="icons mui-inline"><i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
+                                newli +=
+                                    '<div class="icons mui-inline"><i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i></div>';
                             } else {
-                                newli += '<div class="icons mui-inline">' + starShow(star) + '</div>';
+                                newli += '<div class="icons mui-inline">' + starShow(star) +
+                                    '</div>';
                             }
-                            newli += '<p class="address">' + data.data[i].area + '</p></div></a></li>';
+                            newli += '<p class="address">' + data.data[i].area +
+                                '</p></div></a></li>';
                         }
 
                     }
+                    var stari =
+                        `<i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                                    <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                                    <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                                    <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+                                    <i data-index="5" class="mui-icon mui-icon-star-filled"></i>`
                     if (gType == 1) {
                         //上拉加载
                         $("ul.camp").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.camp").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $("ul.camp").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                            );
                         }
+                        // 应燕子姐的要求，capm_id=32的训练营在没星星等级的时候默认给5颗星
+                        $("#refreshContainer").find("li").each(function () {
+                            var capm_id = $(this).attr("data-id");
+                            if (capm_id == 32) {
+                                $(this).find(".mui-inline").empty().append(stari);
+                            }
+                        });
                     } else {
                         //下拉刷新 gType==2
                         $("ul.camp").append(newli);
+                        // 应燕子姐的要求，capm_id=32的训练营在没星星等级的时候默认给5颗星
+                        $("#refreshContainer").find("li").each(function () {
+                            var capm_id = $(this).attr("data-id");
+                            if (capm_id == 32) {
+                                $(this).find(".mui-inline").empty().append(stari);
+                            }
+                        });
                     }
                     if (newli != '') {
                         mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
@@ -206,9 +245,7 @@
             });
         };
 
-
     })
-
 </script>
 
 </html>

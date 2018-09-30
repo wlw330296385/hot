@@ -88,7 +88,7 @@ class Login extends Base{
                         //记录积分
                         db('score')->insert(
                             [
-                                'ccore'=>$referer_score,
+                                'score'=>$referer_score,
                                 'member_id'=>$data['pid'],
                                 'member'=>$data['member'],
                                 'create_time'=>time(),

@@ -200,12 +200,11 @@ var wooApi = {
             complete: function(msg) {
 
                 if(msg.responseJSON.code == 200){
-                    window.unReadMessage = msg.responseJSON.data;
-                    var html = `<span class="mui-badge">${window.unReadMessage}</span>`;
-                    $('#Message').html(html);
+                    
+                    localStorage.setItem('unReadMessage',msg.responseJSON.data);
+                    return msg.responseJSON.data;
                 }else{
-                    window.unReadMessage = 0;
-                    $('#Message').html('');
+                    localStorage.setItem('unReadMessage',0);
                 } 
             }
         })

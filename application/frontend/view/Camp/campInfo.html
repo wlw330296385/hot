@@ -69,7 +69,7 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli detalisli">
                     <label class="starScore"></label>
-                    <div class="icons mui-inline">
+                    <div class="icons mui-inline starList">
                         <i data-index="1" class="mui-icon mui-icon-star-filled"></i>
                         <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
                         <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
@@ -291,7 +291,16 @@
             starShow(star);
             if (isNaN(star)) { star = 3 }
             $(".starScore").prepend('评分 ' + star + '.0');
-
+            
+            // 应燕子姐的要求，capm_id=32的训练营在没星星等级的时候默认给5颗星
+            if("{$campInfo.id}"==32){
+                var stari = `<i data-index="1" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="2" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="3" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="4" class="mui-icon mui-icon-star-filled"></i>
+                        <i data-index="5" class="mui-icon mui-icon-star-filled"></i>`
+                $(".starList").empty().append(stari);
+            }
 
             //选择身份申请加入
             var type = '';
