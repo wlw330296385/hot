@@ -273,7 +273,7 @@ class Team extends Base
                 if ( cookie('module') =='frontend' ) {
                     $map['type'] = ['not in', [2,3]];
                 } elseif (cookie('module') =='keeper') {
-                    $map['type'] = 3;
+                    // $map['type'] = 3;
                 }
             }
             // 组合查询条件end
