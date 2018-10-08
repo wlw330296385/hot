@@ -4,8 +4,29 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">系统错误列表</h3>
+            
+            <div class="box-header with-border">
+                <h3 class="box-title">当前列表显示：
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default">
+                        {switch :input('param.status', 0)}
+                            {case -1}已忽略的系统错误{/case}
+                            {case 1}已修复的系统错误{/case}
+                            {default /}待处理的系统错误
+                        {/switch}
+                    </button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="?status=0">待处理的系统错误</a></li>
+                        <li class="divider"></li>
+                        <li><a href="?status=1">已修复的系统错误</a></li>
+                        <li><a href="?status=-1">已忽略的系统错误</a></li>
+                    </ul>
+                </div>
+                </h3>
             </div>
             <div class="box-body">
                 <table id="myTable" class="table table-bordered table-striped">
@@ -27,7 +48,7 @@
                             <td>{$item.message}</td>
                             <td>{$item.file}</td>
                             <td>{$item.line}</td>
-                            <td><a href="{:url('admin/Logger/systemExceptionDetails', 'id='.$item.id)}" class="btn btn-info">详细</button></td>
+                            <td><a href="{:url('admin/systemexception/info', 'id='.$item.id)}" class="btn btn-info">详细</button></td>
                         </tr>
                         {/volist}
                     </tbody>

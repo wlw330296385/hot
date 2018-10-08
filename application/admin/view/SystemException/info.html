@@ -1,0 +1,255 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-lg-3 col-xs-6">
+        <!--small box-->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{$exceptionStats.id_count}</h3>
+                <p>总计发生次数</p>
+            </div>
+            <div class="icon">
+                 <i class="ion ion-android-warning"></i>
+            </div>
+        </div>
+    </div>
+    <!--./col-->
+    <div class="col-lg-3 col-xs-6">
+        <!--small box-->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{:round($exceptionStats.fix_rate, 2)}<sup style="font-size: 20px">%</sup></h3>
+                <p>处理率</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+        </div>
+    </div>
+    <!--./col-->
+    <div class="col-lg-3 col-xs-6">
+        <!--small box-->
+        <div class="small-box bg-yellow">
+            <div class="inner">
+                <h3>{$exceptionStats.member_count}</h3>
+                <p>受影响用户</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-ios-people"></i>
+            </div>
+        </div>
+    </div>
+    <!--./col-->
+    <div class="col-lg-3 col-xs-6">
+        <!--small box-->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{$exceptionStats.fix_count}</h3>
+                <p>处理次数</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pricetag"></i>
+            </div>
+        </div>
+    </div>
+    <!--./col-->
+</div>
+<div class="row">
+    <!--Content Header(Page header)-->
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="col-md-8">
+                    <form method="post" action="">
+                        <input type="hidden" id="member-id" name="mid" value="">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label >错误信息</label>
+                                <p>{$exceptionInfo.message}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >错误文件位置</label>
+                                <p>{$exceptionInfo.file}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >错误行</label>
+                                <p>{$exceptionInfo.line}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >请求参数</label>
+                                <p>{$exceptionInfo.data_json}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >用户ID</label>
+                                <p>{$exceptionInfo.member_id}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >用户名</label>
+                                <p>{$exceptionInfo.member}</p>
+                            </div>
+                            <div class="form-group">
+                                <label >Trace</label>
+                                <textarea class="form-control" rows="12" style="resize:vertical;" disabled="disabled">{$exceptionInfo.trace}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label >处理状态</label>
+                                <p>
+                                    {switch $exceptionInfo.status}
+                                        {case -1}<small class="label label-default">待解决</small>{/case}
+                                        {case '0'}<small class="label label-danger">待解决</small>{/case}
+                                        {case 1}<small class="label label-success">解决</small>{/case}
+                                    {/switch}
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label >备注</label>
+                                <p>{$exceptionInfo.remark}</p>
+                            </div>
+                            <hr/>
+                            {if condition="$exceptionInfo.status == 0"}
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-default">
+                                    修改状态
+                                </button>
+                            </div>
+                            {/if}
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <ul class="timeline">
+                        {if condition="!empty($exceptionGroup)"}
+                        {volist name="exceptionGroup" id="item"}
+                        <li class="time-label">
+                            <span class="bg-red">
+                                {:date('Y-m-d H:i:s', $item.update_time)}
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class="fa fa-check bg-blue"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">
+                                    <a href="#">
+                                        {$item.fixed_by}
+                                    </a>
+                                    将相同的 异常 标记为
+                                    {switch $item.status}
+                                        {case -1}<small class="label label-default">待解决</small>{/case}
+                                        {case '0'}<small class="label label-danger">待解决</small>{/case}
+                                        {case 1}<small class="label label-success">解决</small>{/case}
+                                    {/switch}
+                                </h3>
+                            </div>
+                        </li>
+
+                        {if condition="$exceptionStats.min != $item.min"}
+                        <li class="time-label">
+                            <span class="bg-red">
+                                {:date('Y-m-d H:i:s', $item.min)}
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class="fa fa-check bg-blue"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">
+                                    <a href="#">
+                                        系统
+                                    </a>
+                                    再次出现该BUG
+                                </h3>
+                            </div>
+                        </li>
+                        {/if}
+                        {/volist}
+                        {/if}
+                        <li class="time-label">
+                            <span class="bg-red">
+                                {:date('Y-m-d H:i:s', $exceptionStats.min)}
+                            </span>
+                        </li>
+                        <li>
+                            <i class="fa fa-exclamation bg-blue"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header">
+                                    <a href="#">
+                                        系统
+                                    </a>
+                                    首次出现该BUG
+                                </h3>
+                            </div>
+                        </li>
+                        
+                        <li>
+                            <i class="fa fa-clock-o bg-gray">
+                            </i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">修改异常状态</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>将此系统异常设为：</label>
+                        <select class="form-control" name="status">
+                            <option value="1">已修复</option>
+                            <option value="-1">忽略</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                        <input type="checkbox" name="is_batch" value="1" checked="checked" disabled="disabled" >
+                        同时修改相同的 待处理异常
+                        </label>
+                    </div>
+                </div>
+                    <div class="form-group">
+                        <label>备注（选填）：</label>
+                        <textarea class="form-control" name="remark" rows="3" placeholder="请输入..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                <button id="btnSave" type="button" class="btn btn-primary">保存修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    $("#btnSave").click(function(){
+        $.ajax({
+            type: 'post',
+            url: "{:url('update')}",
+            data: {
+                id       : {$exceptionInfo.id},
+                status   : $("select[name='status']").val(),
+                is_batch : $("input[name='is_batch']").is(":checked"),
+                remark   : $("textarea[name='remark']").val()
+            },
+            success: function(data) {
+                alert("修改成功");
+                window.location.reload();
+            }
+        })
+    });
+</script>
+{/block}
