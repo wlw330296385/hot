@@ -96,7 +96,7 @@ class MemberService{
             //记录积分
             db('score')->insert(
                 [
-                    'ccore'=>$request['score'],
+                    'score'=>$request['score'],
                     'member_id'=>$MemberModel->id,
                     'member'=>$request['member'],
                     'create_time'=>time(),
