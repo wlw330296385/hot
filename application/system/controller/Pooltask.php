@@ -178,7 +178,7 @@ class Pooltask extends Base{
                         $memberList[$k]['ranking'] = 1;
                         $memberList[$k]['bonus'] = $value['bonus'];
                         $memberList[$k]['punchs'] = $val['c_id'];
-                        $c_f_m[] = $val;
+                        $c_f_m[] = $memberList[$k];
                     }
                     if($val['c_id'] == $theSecond){
                         $memberList[$k]['ranking'] = 2;
@@ -190,7 +190,7 @@ class Pooltask extends Base{
                         $memberList[$k]['ranking'] = 3;
                         $memberList[$k]['bonus'] = $value['bonus'];
                         $memberList[$k]['punchs'] = $val['c_id'];
-                        $c_t_m[] = $val;
+                        $c_t_m[] = $memberList[$k];
                     }
                 }
                 

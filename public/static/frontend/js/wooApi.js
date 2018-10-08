@@ -190,21 +190,23 @@ var wooApi = {
     },
 
     // 获取消息小红点
-    'getUnreadMessage':function(url,data){
+    'getUnreadMessage':function(url,data,name){
         $.ajax({
             url: url,
             data: data,
-            async: true,
+            async: false,
             type: 'post',
             dataType:'json',
             complete: function(msg) {
-
+                
                 if(msg.responseJSON.code == 200){
-                    
-                    localStorage.setItem('unReadMessage',msg.responseJSON.data);
+                console.log(msg.responseJSON)    
+                    localStorage.setItem(name,msg.responseJSON.data);
                     return msg.responseJSON.data;
                 }else{
-                    localStorage.setItem('unReadMessage',0);
+                    
+                    localStorage.setItem(name,0);
+                    return 0;
                 } 
             }
         })

@@ -19,18 +19,50 @@
 	mui("body").on("tap","a",function(){
 	    window.top.location.href=this.href;
 	});
-    var unReadMessage = localStorage.getItem('unReadMessage');
+    var unReadMessage = localStorage.getItem('unReadMessage_'+{$memberInfo.id});
     if({$memberInfo.id}>0){
-        if(!unReadMessage || unReadMessage===undefined){
-            unReadMessage = wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
-            
+        if(!unReadMessage || unReadMessage===undefined || unReadMessage===null){
+            unReadMessage = getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_'+{$memberInfo.id});           
         }
-        var html = `<span class="mui-badge">${unReadMessage}</span>`;
-        $('#Message').html(html);
+
+
+        if(unReadMessage>0){
+            tips(unReadMessage);
+        }
     }
 
 
     $('#Message').on('tap',function(){
-        wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
+        getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_'+{$memberInfo.id});
     });
+
+
+
+    // 获取消息小红点
+    function getUnreadMessage(url,data,name){
+        $.ajax({
+            url: url,
+            data: data,
+            async: true,
+            type: 'post',
+            dataType:'json',
+            complete: function(msg) {
+                
+                if(msg.responseJSON.code == 200){
+                    localStorage.setItem(name,msg.responseJSON.data);
+                    tips(msg.responseJSON.data)
+                }else{
+                    
+                    localStorage.setItem(name,0);
+                } 
+            }
+        })
+        
+    }
+
+
+    function tips(unReadMessage){
+        var html = `<span class="mui-badge">${unReadMessage}</span>`;
+        $('#Message').html(html);
+    } 
 </script>
