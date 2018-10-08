@@ -29,6 +29,9 @@ class Index extends Backend {
         $sql = "select * from crontab_record where id in(select max(id) from crontab_record group by crontab) order by create_time";
         $crontabList =  Db::query($sql);//在mysql上效率太差,但是mariaDB就还好
 
+        // 未处理异常数
+        $exceptionCount = db('log_exception')->where(['status'=>0])->where('delete_time',null)->count();
+
     	$this->assign('memberCount',$memberCount);
     	$this->assign('campCount',$campCount);
         $this->assign('crontabList',$crontabList);
@@ -42,6 +45,8 @@ class Index extends Backend {
         $this->assign('studentCount',$studentCount);
         $this->assign('scheduleCount',$scheduleCount);
         $this->assign('refereeCount',$refereeCount);
+
+        $this->assign('exceptionCount',$exceptionCount);
         return view();
     }
 }
