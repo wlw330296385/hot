@@ -47,12 +47,12 @@ return [
         'cancelRefund'=>'gXXoLU9ccggzyEgKrvDZoNYNnX71k7-A6gXHRAPU1qs',//撤销退款通知,
         'withdraw'   =>'nNFXZvUitvcCj1KEQ2VNAV22cvORtmw_roFoMXjYLE8',//通用提现通知
     ],
-    
+
     'exception_handle'       => '\app\common\exception\ExceptionHandler',
 
     // 七牛云
     //accessKey
-    'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8',
+    'qn_accesskey' => 'OOzGcbsIECVSx8uNY7d6iy8z8j60LruYL88dCGj8 ',
     //secretKey
     'qn_secretkey' => 'jBcQ0f2v4z-bV35i-mbW46goE70LPKDS2FsY2MHl',
     //上传的空间
