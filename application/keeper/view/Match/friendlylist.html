@@ -51,15 +51,29 @@
             <span class="location"></span>
             <span class="location-choise">
                 <select id="areaSelect">
-                    <option value="">全部区域</option>
+                    <option value="">所属区域</option>
                 </select>
             </span>
             <span class="location-choise">
                 <select id="chosieTime" class="data" name="time">
-                    <option value="">全部</option>
+                    <option value="">不限时间</option>
                     <option value="1">近7天</option>
                     <option value="2">近15天</option>
                     <option value="3">近30天</option>
+                </select>
+            </span>
+            <span class="location-choise">
+                <select id="teamType">
+                    <option value="">球队类型</option>
+                    {if cookie('module') == 'keeper'}
+                    <option value="3">业余组织</option>
+                    <option value="2">企事业单位</option>
+                    {/if}
+                    <option value="1">训练营</option>
+                    <option value="4">大学生</option>
+                    <option value="5">高中生</option>
+                    <option value="6">初中生</option>
+                    <option value="7">小学生</option>
                 </select>
             </span>
         </div>
@@ -139,8 +153,14 @@
             geolocation.getCurrentPosition(function (status, result) {
                 console.log("getCurrentPosition");
                 console.log(result);
-                current_lat = result.position.lat;
-                current_lng = result.position.lng;
+                //alert(result.info)
+                if(result.info=='SUCCESS'){
+                    current_lat = result.position.lat;
+                    current_lng = result.position.lng;
+                }else{
+                    current_lat = null;
+                    current_lng = null;
+                }
                 //初始化全局变量
                 var count = 1;
                 var choice_time = '';
@@ -165,6 +185,7 @@
                 //生成区域选择下拉菜单
                 var arrArea = allArea.split(',');
                 var selectArea = '';
+                var sTeamType = '';
                 $.each(arrArea, function (i, areaName) {
                     selectArea += '<option value="' + areaName + '">' + areaName + '</option>';
                 });
@@ -186,6 +207,12 @@
                 // 选择地区下拉
                 $("#areaSelect").on("change", function () {
                     sArea = $(this).val();
+                    searchToList();
+                });
+
+                //选择球队类型下拉
+                $("#teamType").on("change", function () {
+                    sTeamType = $(this).find("option:checked").val();
                     searchToList();
                 });
 
@@ -253,7 +280,7 @@
                             keyword: keyword,
                             choice_time: choice_time,
                             is_finished: -1,
-                            type: 2,
+                            type: sTeamType,
                             status: 1,
                             islive: 1,
                             page: page,
