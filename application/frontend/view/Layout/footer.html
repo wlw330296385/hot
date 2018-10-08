@@ -21,14 +21,12 @@
 	});
     var unReadMessage = localStorage.getItem('unReadMessage');
     if({$memberInfo.id}>0){
-        
-        if(!unReadMessage){
+        if(!unReadMessage || unReadMessage===undefined){
             unReadMessage = wooApi.getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1});
             
         }
         var html = `<span class="mui-badge">${unReadMessage}</span>`;
         $('#Message').html(html);
-        $('#Member').html(html);
     }
 
 

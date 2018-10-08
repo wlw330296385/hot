@@ -34,7 +34,7 @@ class PunchService {
     public function createPunch($data){
         $stakes = ceil($data['stakes']);
         $hot_coin = session('memberInfo.hot_coin');
-  
+        $score = session('emberInfo.score');
         if($stakes > $hot_coin){
             return ['code'=>100,'msg'=>'热币不足'];
         }
@@ -63,6 +63,22 @@ class PunchService {
                     ]
                 );
             }
+            //增加积分
+            $setting = db('setting')->find();
+            $score_rule = json_decode($setting['score_rule'],true);
+            $punch_score = $score_rule['punch_score'];
+            db('member')->where(['id'=>$data['member_id']])->inc('score',$punch_score)->update();
+            session('memberInfo.hot_coin',($score+$punch_score));
+            //记录积分
+            db('score')->insert(
+                [
+                    'score'=>$punch_score,
+                    'member_id'=>$data['member_id'],
+                    'member'=>$data['member'],
+                    'create_time'=>time(),
+                    'score_des'=>'打卡送积分'
+                ]
+            );
             return ['code'=>200,'msg'=>'创建成功','data'=>$this->Punch->id];
         }else{
             return ['code'=>100,'msg'=>$this->Punch->getError()];

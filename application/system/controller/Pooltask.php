@@ -173,23 +173,23 @@ class Pooltask extends Base{
                 $c_f_m = [];//第一名会员数组;
                 $c_s_m = [];//第二名会员数组;
                 $c_t_m = [];//第三名会员数组;
-                foreach ($memberList as $k => &$val) {
+                foreach ($memberList as $k => $val) {
                     if($val['c_id'] == $theFirst){
-                        $val['ranking'] = 1;
-                        $val['bonus'] = $value['bonus'];
-                        $val['punchs'] = $val['c_id'];
+                        $memberList[$k]['ranking'] = 1;
+                        $memberList[$k]['bonus'] = $value['bonus'];
+                        $memberList[$k]['punchs'] = $val['c_id'];
                         $c_f_m[] = $val;
                     }
                     if($val['c_id'] == $theSecond){
-                        $val['ranking'] = 2;
-                        $val['bonus'] = $value['bonus'];
-                        $val['punchs'] = $val['c_id'];
+                        $memberList[$k]['ranking'] = 2;
+                        $memberList[$k]['bonus'] = $value['bonus'];
+                        $memberList[$k]['punchs'] = $val['c_id'];
                         $c_s_m[] = $val;
                     }
                     if($val['c_id'] == $theThird){
-                        $val['ranking'] = 3;
-                        $val['bonus'] = $value['bonus'];
-                        $val['punchs'] = $val['c_id'];
+                        $memberList[$k]['ranking'] = 3;
+                        $memberList[$k]['bonus'] = $value['bonus'];
+                        $memberList[$k]['punchs'] = $val['c_id'];
                         $c_t_m[] = $val;
                     }
                 }
@@ -206,14 +206,14 @@ class Pooltask extends Base{
                 // dump($theFirstReward*count($c_f_m));
                 // dump($theSecondReward*count($c_s_m));
                 // dump($theThirdReward*count($c_t_m));
-                foreach ($c_f_m as $k => &$val) {
-                    $val['winner_bonus'] = $theFirstReward;  
+                foreach ($c_f_m as $k => $val) {
+                    $c_f_m[$k]['winner_bonus'] = $theFirstReward;  
                 }
-                foreach ($c_s_m as $k => &$val) {
-                    $val['winner_bonus'] = $theSecondReward;  
+                foreach ($c_s_m as $k => $val) {
+                    $c_f_m[$k]['winner_bonus'] = $theSecondReward;  
                 }
-                foreach ($c_t_m as $k => &$val) {
-                    $val['winner_bonus'] = $theThirdReward;  
+                foreach ($c_t_m as $k => $val) {
+                    $c_f_m[$k]['winner_bonus'] = $theThirdReward;  
                 }
                 // dump($theFirstReward);
                 // dump($theSecondReward);
