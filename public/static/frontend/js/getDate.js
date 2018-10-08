@@ -23,6 +23,17 @@ function getNowTime() {
     return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
 }
 
+//获取具体时间格式 2018-08-10 15:30
+function getGsTime(t) {
+    var _time = new Date(t);
+    var year = _time.getFullYear();
+    var month = _time.getMonth() + 1;
+    var day = _time.getDate();
+    var hours = _time.getHours();
+    var minutes = _time.getMinutes();
+    return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
+}
+
 //获取当前年份 2018
 function getTimeYear(y) {
     var _time = new Date(y);

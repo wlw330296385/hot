@@ -36,8 +36,8 @@
 </head>
 
 <body class=whitebg>
-    
-    <header  class="mui-bar mui-bar-nav search2">
+
+    <header class="mui-bar mui-bar-nav search2">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">
             <input type="search" class="mui-input-clear keyword" placeholder="请输入球队名称">
@@ -106,6 +106,7 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/common.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <!--获取地址-->
     <script src="https://webapi.amap.com/maps?v=1.4.0&key=7568bf7e7c18c65a1fecd44762bcbd83"></script>
     <script>
@@ -122,17 +123,17 @@
         });
         AMap.plugin('AMap.Geolocation', function () {
             geolocation = new AMap.Geolocation({
-                enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                showButton: true,        //显示定位按钮，默认：true
-                buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
-                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                enableHighAccuracy: true, //是否使用高精度定位，默认:true
+                timeout: 10000, //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0, //定位结果缓存0毫秒，默认：0
+                convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true, //显示定位按钮，默认：true
+                buttonPosition: 'RB', //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: true //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
             });
 
             geolocation.getCurrentPosition(function (status, result) {
@@ -190,10 +191,10 @@
 
                 //搜索、下拉刷选后触发
                 function searchToList() {
-                    count = 1;//显示第一页
+                    count = 1; //显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toList(page, gType); //具体取数据的方法
                 }
 
                 mui.init({
@@ -203,19 +204,19 @@
                         container: "#refreshContainer",
                         down: {
                             //下拉刷新
-                            height: 50,//可选.默认50.触发下拉刷新拖动距离
-                            auto: true,//可选,默认false.自动下拉刷新一次
-                            contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                            contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                            contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                            height: 50, //可选.默认50.触发下拉刷新拖动距离
+                            auto: true, //可选,默认false.自动下拉刷新一次
+                            contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                            contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                            contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                             callback: pulldownRefresh
                         },
                         up: {
                             //上拉加载
-                            height: 150,//可选.默认50.触发上拉加载拖动距离
+                            height: 150, //可选.默认50.触发上拉加载拖动距离
                             //auto:true,//可选,默认false.自动上拉加载一次
                             contentrefresh: '正在加载...',
-                            contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                            contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                             callback: pullupRefresh
                         }
                     }
@@ -223,19 +224,19 @@
                 //下拉刷新具体业务实现
                 function pulldownRefresh() {
                     setTimeout(function () {
-                        count = 1;//刷新并显示第一页
+                        count = 1; //刷新并显示第一页
                         var page = count;
-                        var gType = 1;//代表下拉刷新
-                        toList(page, gType);//具体取数据的方法
+                        var gType = 1; //代表下拉刷新
+                        toList(page, gType); //具体取数据的方法
                     }, 100);
                 }
                 //上拉加载具体业务实现
                 function pullupRefresh() {
                     setTimeout(function () {
-                        count++;//翻下一页
+                        count++; //翻下一页
                         var page = count;
-                        var gType = 2;//代表上拉加载
-                        toList(page, gType);//具体取数据的方法
+                        var gType = 2; //代表上拉加载
+                        toList(page, gType); //具体取数据的方法
                     }, 100);
                 }
 
@@ -259,10 +260,12 @@
                             lng: current_lng,
                             lat: current_lat
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data)
                             var newli = '';
@@ -273,11 +276,14 @@
                                 var match_time = '';
                                 var isfinished = '';
                                 for (var i = 0; i <= data.data.length - 1; i++) {
-                                    urls = "{:url('match/friendlyinfo')}" + '/match_id/' + data.data[i].id;
+                                    urls = "{:url('match/friendlyinfo')}" +
+                                        '/match_id/' + data.data[i].id;
                                     if (data.data[i].apply_status_num == 2) {
-                                        isfinished = '<font class="tipCorner bggreen">完成约战</font>';
+                                        isfinished =
+                                            '<font class="tipCorner bggreen">完成约战</font>';
                                     }
-                                    if (data.data[i].sl == "" || data.data[i].sl == null) {
+                                    if (data.data[i].sl == "" || data.data[i].sl ==
+                                        null) {
                                         win_rate = "0";
                                     } else {
                                         win_rate = data.data[i].sl;
@@ -285,18 +291,37 @@
                                     if (data.data[i].match_time == 0) {
                                         match_time = '比赛时间待定';
                                     } else {
-                                        match_time = gettime(data.data[i].match_time * 1000);
+                                        match_time = getGsTime(data.data[i].match_time *
+                                            1000);
                                     }
-                                    if (data.data[i].court_lat == "" || data.data[i].court_lng == "") {
+                                    if (data.data[i].court_lat == "" || data.data[i].court_lng ==
+                                        "") {
                                         distance = '<font class="f10">未定位</font>';
                                     } else {
-                                        distance = data.data[i].distance.toFixed(1) + 'km';
+                                        distance = data.data[i].distance.toFixed(1) +
+                                            'km';
                                     }
-                                    newli += '<li class="mui-table-view-cell mui-media listli">';
-                                    newli += '<a href="' + urls + '" class="mui-navigate-right"><img class="logoCircle50 mui-pull-left" src="' + data.data[i].logo + '"><div class="mui-media-body"><strong>' + data.data[i].team + '</strong>&nbsp;<font class="tipCorner bgred">约</font>' + isfinished;
-                                    newli += '<p class="mui-ellipsis">胜率：<font class="colororange">' + win_rate + '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' + data.data[i].avg_height + '</font></p>';
-                                    newli += '<p class="mui-ellipsis">' + match_time + '</p>'
-                                    newli += '</div><div class="price-frame mui-text-center"><p>' + data.data[i].area + '</p><p class="colororange f12">' + distance + '</p></div></a>'
+                                    newli +=
+                                        '<li class="mui-table-view-cell mui-media listli">';
+                                    newli += '<a href="' + urls +
+                                        '" class="mui-navigate-right"><img class="logoCircle50 mui-pull-left" src="' +
+                                        data.data[i].logo +
+                                        '"><div class="mui-media-body"><strong>' + data
+                                        .data[i].team +
+                                        '</strong>&nbsp;<font class="tipCorner bgred">约</font>' +
+                                        isfinished;
+                                    newli +=
+                                        '<p class="mui-ellipsis">胜率：<font class="colororange">' +
+                                        win_rate +
+                                        '</font>&nbsp;&nbsp;平均身高：<font class="colororange">' +
+                                        data.data[i].avg_height + '</font></p>';
+                                    newli += '<p class="mui-ellipsis">' + match_time +
+                                        '</p>'
+                                    newli +=
+                                        '</div><div class="price-frame mui-text-center"><p>' +
+                                        data.data[i].area +
+                                        '</p><p class="colororange f12">' + distance +
+                                        '</p></div></a>'
                                     newli += '</li>';
                                 }
                             }
@@ -306,42 +331,33 @@
                                 mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                                 mui('#refreshContainer').pullRefresh().refresh(true);
                                 if (newli == '') {
-                                    $("ul.team").html('<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>');
+                                    $("ul.team").html(
+                                        '<li class="nodata"><i class="icon iconfont icon-m-Trainingteam1"></i><p>没有相关数据哦</p></li>'
+                                    );
                                 }
                             } else {
                                 //下拉加载 gType==2
                                 $("ul.team").append(newli);
                             }
                             if (newli != '') {
-                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(
+                                    false);
                             } else {
-                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                                mui('#refreshContainer').pullRefresh().endPullupToRefresh(
+                                    true);
                             }
 
                         },
                         error: function (xhr, type, errerThrown) {
                             mui.toast('网络异常,请稍候再试');
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(
+                                true);
                         }
                     });
                 };
 
             });
         });
-
-        //创建补0函数
-        function p(s) {
-            return s < 10 ? '0' + s : s;
-        }
-        function gettime(m) {
-            var _time = new Date(m);
-            var year = _time.getFullYear();
-            var month = _time.getMonth() + 1;
-            var day = _time.getDate();
-            var hours = _time.getHours();
-            var minutes = _time.getMinutes();
-            return p(year) + "-" + p(month) + "-" + p(day) + " " + p(hours) + ":" + p(minutes);
-        }
 
         $(function () {
 
@@ -351,24 +367,31 @@
                 mui.ajax({
                     url: url,
                     data: {
-                        member_id:member_id,
+                        member_id: member_id,
                         status: 1
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli choiseType" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</li>'
+                                newli = newli +
+                                    '<li class="mui-table-view-cell listli choiseType" data-team_id="' +
+                                    data.data[i].team.id + '">' + data.data[i].team.name +
+                                    '</li>'
                             }
                             $(".selectTeam").empty().append(newli);
 
                         } else {
-                            $(".selectTeam").empty().append("<p class='nohave'><a href='{:url('team/createteam')}'>还没有效力的球队,赶紧去创建吧</a></p>");
+                            $(".selectTeam").empty().append(
+                                "<p class='nohave'><a href='{:url('team/createteam')}'>还没有效力的球队,赶紧去创建吧</a></p>"
+                            );
                         }
                     },
                     error: function (xhr, type, errerThrown) {
@@ -380,7 +403,7 @@
             // 选择球队创建比赛
             $(document).on("tap", ".selectTeam li", function () {
                 var team_id = $(this).attr("data-team_id");
-                location.href = "{:url('team/createMatch')}" + "/team_id/" + team_id;
+                location.href = "{:url('team/createaboutmatch')}" + "/team_id/" + team_id;
             })
 
         })
