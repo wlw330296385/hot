@@ -92,7 +92,8 @@ class SystemException extends Backend
 
     public function update() {
         $data = input('post.');
-        dump($data);
+        echo 1;
+        dump($data);die;
         if (empty($data['id'])) {
             return json(['code' => 400, 'msg' => 'id不能为空']);
         }
