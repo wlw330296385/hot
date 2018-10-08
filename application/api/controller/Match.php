@@ -2383,6 +2383,10 @@ class Match extends Base
                 $map['c.camp_id'] = input('camp_id');
             }
 
+            if (!empty(input('param.type'))) {
+                $map['c.type'] = input('type');
+            }
+
             $result = db('match')
                 ->field("`match`.*,c.avg_height,c.logo,c.match_win,c.match_num,round(c.match_win/c.match_num) as sl,round(6378.138)*2*asin (sqrt(pow(sin(($lat *pi()/180 - `match`.court_lat*pi()/180)/2), 2)+cos($lat *pi()/180)*cos(`match`.court_lat*pi()/180)*pow(sin(($lng *pi()/180 - `match`.court_lng*pi()/180)/2),2))) as distance")
                 ->join('__TEAM__ c', 'match.team_id = c.id')
