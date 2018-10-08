@@ -18,6 +18,7 @@ class SystemException extends Backend
 
     public function index()
     {
+        echo $list;
         switch (input('param.status', 0)) {
             case '1':
                 $status = 1;
@@ -92,8 +93,6 @@ class SystemException extends Backend
 
     public function update() {
         $data = input('post.');
-        echo 1;
-        dump($data);die;
         if (empty($data['id'])) {
             return json(['code' => 400, 'msg' => 'id不能为空']);
         }

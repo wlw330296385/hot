@@ -114,7 +114,7 @@ class Pooltask extends Base{
                     'type'  =>1
                 ])->select();
         $this->lottery1($poolList_1);
-
+        dump($poolList_1);
         $this->Pool->isUpdate(true)->save(['status'=>-1],['end_str'=>['elt',$date_str],'status'=>2]);
         $data = ['crontab'=>'每日擂台开奖'];
         $this->record($data);
@@ -127,7 +127,7 @@ class Pooltask extends Base{
     private function lottery1($poolList){
         try{
             $model = new \app\model\PoolWinner;
-            // dump($poolList);
+            dump($poolList);die;
             foreach ($poolList as $key => $value) {
                 $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
