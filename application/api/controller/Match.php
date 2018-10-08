@@ -118,7 +118,7 @@ class Match extends Base
                             'match' => $data['name'],
                             'team_id' => $data['team_id'],
                             'team' => $data['team'],
-                            'telphone' => $this->memberInfo['telephone'],
+                            'telephone' => $this->memberInfo['telephone'],
                             'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                             'member_id' => $this->memberInfo['id'],
                             'member' => $this->memberInfo['member'],
@@ -562,7 +562,7 @@ class Match extends Base
                     'match' => $data['name'],
                     'team_id' => $data['team_id'],
                     'team' => $dataMatchRecord['home_team'],
-                    'telphone' => $this->memberInfo['telephone'],
+                    'telephone' => $this->memberInfo['telephone'],
                     'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                     'member_id' => $this->memberInfo['id'],
                     'member' => $this->memberInfo['member'],
@@ -757,7 +757,7 @@ class Match extends Base
                             'match' => $data['name'],
                             'team_id' => $homeTeamId,
                             'team' => $homeTeam,
-                            'telphone' => $this->memberInfo['telephone'],
+                            'telephone' => $this->memberInfo['telephone'],
                             'contact' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
                             'member_id' => $this->memberInfo['id'],
                             'member' => $this->memberInfo['member'],
@@ -2197,8 +2197,10 @@ class Match extends Base
                 $awayTeamInfo = $teamS->getTeam(['id' => $applyInfo['team_id']]);
                 // match_name更新新内容
                 $matchName = $matchRecordInfo['home_team'] . ' vs ' . $awayTeamInfo['name'];
+
                 $resultSaveMatchRecord = $matchS->saveMatchRecord([
                     'id' => $matchRecordInfo['id'],
+                    'match_id' => $applyInfo['match_id'],
                     'match' => $matchName,
                     'away_team_id' => $awayTeamInfo['id'],
                     'away_team' => $awayTeamInfo['name'],

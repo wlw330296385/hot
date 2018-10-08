@@ -149,11 +149,11 @@
                 {eq name="onlycamptype" value="1"}
                 <div class="mui-input-row camp-input-row" {neq name="teamInfo.type" value="1" }style="display:none;" {/neq}>
                     <a href="#camp" class="mui-navigate-right">
-                        <label class="wd36">所属训练营
-                            <i class="tip">*</i>
-                        </label>
-                        <span class="campCont domData" name="camp">{$teamInfo.camp}</span>
-                        <input type="hidden" name="camp_id" value="{$teamInfo.camp_id}" class="camp_id data">
+                    <label class="wd36">所属训练营
+                        <i class="tip">*</i>
+                    </label>
+                    <span class="campCont domData" name="camp">{$teamInfo.camp}</span>
+                    <input type="hidden" name="camp_id" value="{$teamInfo.camp_id}" class="camp_id data">
                     </a>
                 </div>
                 {/eq}
@@ -163,7 +163,8 @@
                             <label>所属地区
                                 <i class="tip">*</i>
                             </label>
-                            <span id="cityResult3" class="ui-alert domData" name="address">{$teamInfo.province} {$teamInfo.city} {$teamInfo.area}</span>
+                            <span id="cityResult3" class="ui-alert domData" name="address">{$teamInfo.province}
+                                {$teamInfo.city} {$teamInfo.area}</span>
                             <input type="hidden" name="province" value="{$teamInfo.province}" class="data" id="province">
                             <input type="hidden" name="city" value="{$teamInfo.city}" class="data" id="city">
                             <input type="hidden" name="area" value="{$teamInfo.area}" class="data" id="area">
@@ -189,7 +190,8 @@
                         </span>
                         <div id="hideqList">
                             {volist name="$teamInfo.colors" id="vol"}
-                            <input type="hidden" class="coList" data-eng="{$color.color_style}" data-color="{$color.color}"> {/volist}
+                            <input type="hidden" class="coList" data-eng="{$color.color_style}" data-color="{$color.color}">
+                            {/volist}
                         </div>
                     </a>
                 </div>
@@ -217,11 +219,12 @@
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#coach" id="setCoachBox" class="mui-navigate-right">
                         <label>教练</label>
-                        <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names" id="vol"}{$vol.name},{/volist}</span>
+                        <span class="coach" name="coach" style="width: 60%">{volist name="roleslist.coach_names"
+                            id="vol"}{$vol.name},{/volist}</span>
                         <div id="hideCoList">
                             {volist name="roleslist.coach_names" id="vol"}
-                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}"
-                                data-id="{$vol.id}"> {/volist}
+                            <input type="hidden" class="coList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"
+                                data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
                         </div>
                         <input type="hidden" name="coach_id" value="{$roleslist.coach_ids}" class="data">
                     </a>
@@ -247,31 +250,44 @@
                 <div class="mui-input-row price-input-row h-auto">
                     <a href="#committee" id="setCommitteeBox" class="mui-navigate-right">
                         <label>队委</label>
-                        <span class="committee" name="committee" style="width: 60%">{volist name="roleslist.committee_names" id="vol"}{$vol.name},{/volist}</span>
+                        <span class="committee" name="committee" style="width: 60%">{volist
+                            name="roleslist.committee_names" id="vol"}{$vol.name},{/volist}</span>
                         <div id="hideCtList">
                             {volist name="roleslist.committee_names" id="vol"}
-                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-name="{$vol.name}"
-                                data-id="{$vol.id}"> {/volist}
+                            <input type="hidden" class="ctList" data-member_id="{$vol.member_id}" data-member="{$vol.member}"
+                                data-name="{$vol.name}" data-id="{$vol.id}"> {/volist}
                         </div>
                         <input type="hidden" name="committee_id" value="{$roleslist.committee_ids}" class="data">
                     </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <label>平均年龄</label>
-                    <input type="text" name="avg_age" class="data" value="{$teamInfo.avg_age}" placeholder="请输入平均年龄">
+                <div class="mui-input-row" data-num="1">
+                    <a href="#teamMemberAge" class="mui-navigate-right">
+                        <label>平均年龄</label>
+                        <span class="domData avgABtn avg_age clearBtn" name="avg_age " style="width: 60%">{$teamInfo.avg_age}</span>
+                    </a>
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <label>平均身高</label>
+                <div class="mui-input-row" data-num="2">
+                    <a href="#teamMemberHeight" class="mui-navigate-right">
+                        <label>平均身高</label>
+                        <span class="domData avgHBtn avg_height clearBtn" name="avg_height " style="width: 60%">{$teamInfo.avg_height}</span>
+                    </a>
+                    <!-- <label>平均身高</label>
                     <small class="unit">cm</small>
-                    <input type="text" name="avg_height" class="data wd52" value="{$teamInfo.avg_height}" placeholder="请输入平均身高" style="padding-right:0">
+                    <input type="text" name="avg_height" class="data wd52 avgBtn avg_height" value="{$teamInfo.avg_height}"
+                        placeholder="请输入平均身高" style="padding-right:0"> -->
                 </div>
 
-                <div class="mui-input-row price-input-row">
-                    <label>平均体重</label>
+                <div class="mui-input-row" data-num="3">
+                    <a href="#teamMemberWeight" class="mui-navigate-right">
+                        <label>平均体重</label>
+                        <span class="domData avgWBtn avg_weight clearBtn" name="avg_weight " style="width: 60%">{$teamInfo.avg_weight}</span>
+                    </a>
+                    <!-- <label>平均体重</label>
                     <small class="unit">kg</small>
-                    <input type="text" name="avg_weight" class="data wd52" value="{$teamInfo.avg_weight}" placeholder="请输入平均体重" style="padding-right:0">
+                    <input type="text" name="avg_weight" class="data wd52 avgBtn avg_weight" value="{$teamInfo.avg_weight}"
+                        placeholder="请输入平均体重" style="padding-right:0"> -->
                 </div>
 
                 <div class="mui-input-row price-input-row h-auto">
@@ -618,6 +634,61 @@
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
                 <form id="committeeDiv" class="mui-input-group committeeList"></form>
+            </div>
+        </div>
+    </div>
+
+    <!--年龄-->
+    <div id="teamMemberAge" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择你要统计的平均值</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue addAge">手动填写</button>
+                <button class="mui-btn-blue" id="tmABtn">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group tmAList"></form>
+            </div>
+        </div>
+    </div>
+    <!--年龄-->
+    <div id="teamMemberHeight" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择你要统计的平均值</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue addHeight">手动填写</button>
+                <button class="mui-btn-blue" id="tmHBtn">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group tmHList"></form>
+            </div>
+        </div>
+    </div>
+    <!--年龄-->
+    <div id="teamMemberWeight" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd45">
+                <strong>选择你要统计的平均值</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn-blue addWeight">手动填写</button>
+                <button class="mui-btn-blue" id="tmWBtn">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group tmWList"></form>
             </div>
         </div>
     </div>
@@ -1107,6 +1178,127 @@
                 });
             });
 
+
+
+            // 赋值到弹框做标记
+            $(document).on("tap", ".clearBtn", function () {
+                $("#teamMemberAge").find("input[type=checkbox]").prop("checked", false);
+                $("#teamMemberHeight").find("input[type=checkbox]").prop("checked", false);
+                $("#teamMemberWeight").find("input[type=checkbox]").prop("checked", false);
+            });
+            // 统计平均值年龄
+            $("#tmABtn").on('tap', '', function () {
+                var sumAge = 0;
+                var ageCont = ''
+                var ageLenght = ''
+                $(".avgABtn").each(function () {
+                    $(".tmAList input[type=checkbox]:checked").each(function () {
+                        var age = $(this).attr("data-age");
+                        ageLenght = $(".tmAList input[type=checkbox]:checked").length;
+                        sumAge += parseInt(age);
+                    });
+                });
+                ageCont = Number(sumAge) / Number(ageLenght);
+                var ageText = Math.floor(ageCont)
+                $(".avg_age").text(ageText)
+                mui("#teamMemberAge").popover("toggle");
+            })
+            // 手动填写
+            $(".addAge").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="number" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;border:1px solid #ddd;">
+                  <button type="button" class="btn mui-btn-blue fr newAgeBtn">确认</button>
+                </div>`
+                $(".tmAList").prepend(str);
+            });
+            // 确认
+            $(document).on("tap", ".newAgeBtn", function () {
+                var thisVal = $(this).siblings().val();
+                if (thisVal == '') {
+                    mui.toast("请填写平均值");
+                    return false;
+                }
+                $(".avg_age").text(thisVal)
+                mui("#teamMemberAge").popover("toggle");
+            });
+
+            // 统计平均值身高
+            $("#tmHBtn").on('tap', '', function () {
+                var sumHeight = 0;
+                var heightCont = ''
+                var heightLenght = ''
+                $(".avgHBtn").each(function () {
+                    $(".tmHList input[type=checkbox]:checked").each(function () {
+                        var height = $(this).attr("data-height");
+                        heightLenght = $(".tmHList input[type=checkbox]:checked").length;
+                        sumHeight += parseInt(height);
+                    });
+                });
+                heightCont = Number(sumHeight) / Number(heightLenght);
+                var heighText = Math.floor(heightCont)
+                $(".avg_height").text(heighText)
+                mui("#teamMemberHeight").popover("toggle");
+            })
+            // 手动填写
+            $(".addHeight").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="number" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;border:1px solid #ddd;">
+                  <button type="button" class="btn mui-btn-blue fr newHeightBtn">确认</button>
+                </div>`
+                $(".tmHList").prepend(str);
+            });
+            // 确认
+            $(document).on("tap", ".newHeightBtn", function () {
+                var thisVal = $(this).siblings().val();
+                if (thisVal == '') {
+                    mui.toast("请填写平均值");
+                    return false;
+                }
+                $(".avg_height").text(thisVal)
+                mui("#teamMemberHeight").popover("toggle");
+            });
+
+
+
+            // 统计平均值体重
+            $("#tmWBtn").on('tap', '', function () {
+                var sumWeight = 0;
+                var weightCont = ''
+                var weightLenght = ''
+                $(".avgWBtn").each(function () {
+                    $(".tmWList input[type=checkbox]:checked").each(function () {
+                        var weight = $(this).attr("data-weight");
+                        weightLenght = $(".tmWList input[type=checkbox]:checked").length;
+                        sumWeight += parseInt(weight);
+                    });
+                });
+                weightCont = Number(sumWeight) / Number(weightLenght);
+                var weightText = Math.floor(weightCont)
+                $(".avg_weight").text(weightText)
+                mui("#teamMemberWeight").popover("toggle");
+            })
+            // 手动填写
+            $(".addWeight").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="number" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;border:1px solid #ddd;">
+                  <button type="button" class="btn mui-btn-blue fr newWeightBtn">确认</button>
+                </div>`
+                $(".tmWList").prepend(str);
+            });
+            // 确认
+            $(document).on("tap", ".newWeightBtn", function () {
+                var thisVal = $(this).siblings().val();
+                if (thisVal == '') {
+                    mui.toast("请填写平均值");
+                    return false;
+                }
+                $(".avg_weight").text(thisVal)
+                mui("#teamMemberWeight").popover("toggle");
+            });
+
             //////////////////////训练营////////////////////////////////////
             // 所属训练营
             $(".campList").on('tap', 'li', function () {
@@ -1270,9 +1462,9 @@
         // 获取数据并进行提交
         function submitAction() {
 
-            var avg_age = $("input[name=avg_age]").val();
-            var avg_height = $("input[name=avg_height]").val();
-            var avg_weight = $("input[name=avg_weight]").val();
+            var avg_age = $(".avg_age").text();
+            var avg_height = $(".avg_height").text();
+            var avg_weight = $(".avg_weight").text();
             if (!(/^[0-9]*$/).test(avg_age)) {
                 mui.toast("平均年龄请填写数字");
                 return false;
@@ -1349,7 +1541,7 @@
                     },
                     success: function (data) {
                         console.log(data)
-                        $this.attr("src",data.path)
+                        $this.attr("src", data.path)
                         introHtml = $("#editor-container .ql-editor").html();
                         $(".introduce").val(introHtml);
                         console.log(introHtml)
@@ -1619,14 +1811,17 @@
                                 '</label><input name="checkbox-committee" class="committee" type="checkbox" data-member_id="' +
                                 data.data[i].member_id + '" data-member="' + data.data[i].member +
                                 '" data-name="' + data.data[i].name + '" data-id="' + data.data[i].id +
-                                '"></div>'
+                                '" data-age="' + data.data[i].age + '" data-height="' + data.data[i].height +
+                                '" data-weight="' + data.data[i].weight + '"></div>'
                         }
                         $("#committeeDiv").empty();
                         if (teamOfCommitteehli == '') {
                             teamOfCommitteehli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
                         $("#committeeDiv").append(teamOfCommitteehli);
-
+                        $(".tmAList").append(teamOfCommitteehli);
+                        $(".tmHList").append(teamOfCommitteehli);
+                        $(".tmWList").append(teamOfCommitteehli);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }

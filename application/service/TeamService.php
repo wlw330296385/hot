@@ -323,6 +323,9 @@ class TeamService
         // team_member数据更新
         $model = new TeamMember();
         $delTeamMember = $model->save($data, $where);
+
+        $decMemberNum = db('team')->where('id', $teamMember['team_id'])->setDec('member_num');
+        
         if ($delTeamMember || ($delTeamMember === 0)) {
             return ['code' => 200, 'msg' => __lang('MSG_200')];
         } else {

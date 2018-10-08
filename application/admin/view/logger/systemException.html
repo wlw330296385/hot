@@ -1,0 +1,54 @@
+{extend name="layout/common" /}
+
+{block name="page-content"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">系统错误列表</h3>
+            </div>
+            <div class="box-body">
+                <table id="myTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>最后出错时间</th>
+                            <th>出错次数</th>
+                            <th>信息</th>
+                            <th>报错文件</th>
+                            <th>报错行</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {volist name="list" id="item"}
+                        <tr>
+                            <td>{:date('Y-m-d H:i',$item.max)}</td>
+                            <td>{$item.count}</td>
+                            <td>{$item.message}</td>
+                            <td>{$item.file}</td>
+                            <td>{$item.line}</td>
+                            <td><a href="{:url('admin/Logger/systemExceptionDetails', 'id='.$item.id)}" class="btn btn-info">详细</button></td>
+                        </tr>
+                        {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(document).ready( function () {
+        $('#myTable').DataTable({
+            'paging'      : true,
+            'lengthChange': true,
+            'searching'   : true,
+            'ordering'    : false,
+            'info'        : true,
+            'autoWidth'   : false
+        });
+    });
+</script>
+{/block}

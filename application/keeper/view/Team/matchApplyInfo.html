@@ -49,12 +49,16 @@
                 <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
             </div>
 
-            {eq name="$applyInfo.revice_team_id"  value="$team_id"}
             <div class="mui-button-row h-auto operationFrame">
-                <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
-                <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+                {if condition="$applyInfo.status == 2"}
+                    <button class="mui-btn mui-btn-danger" type="button" disabled="disabled">已同意</button>
+                {elseif condition="$applyInfo.status == 3"}
+                    <button class="mui-btn" type="button" disabled="disabled">已拒绝</button>
+                {else /}
+                    <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
+                    <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+                {/if}
             </div>
-            {/eq}
 
             <p class="pline"></p>
 
@@ -96,7 +100,7 @@
                 success: function (res) {
                     if (res.code == 200) {
                         mui.alert(res.msg, function () {
-                            setTimeout(window.location.href = "{:url('frontend/team/matchApplyList')}/team_id/{$team_id}", 3000);
+                            setTimeout(window.location.href = "{:url('keeper/team/matchApplyList')}/team_id/{$team_id}", 3000);
                         })
                     } else {
                         mui.toast(res.msg);
