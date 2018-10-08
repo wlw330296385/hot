@@ -37,7 +37,7 @@ class SystemException extends Backend
             ->select();
 
         $this->assign('list',$list);
-        return view('index');
+        return view('SystemException/index');
     }
 
     public function info()
@@ -87,7 +87,7 @@ class SystemException extends Backend
         $this->assign('exceptionInfo',$exceptionInfo);
         $this->assign('exceptionStats',$exceptionStats);
         $this->assign('exceptionGroup',$exceptionGroup);
-        return view('info');
+        return view('SystemException/info');
     }
 
     public function update() {
