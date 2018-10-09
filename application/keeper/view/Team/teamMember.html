@@ -151,29 +151,44 @@
                     team_id: team_id,
                     status: dataNum
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data.data[i].team_id + '/id/' + data.data[i].id;
-                            newli += '<li class="mui-table-view-cell mui-media listli"><a href="' + urls + '" class="mui-navigate-right">';
+                            var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + data
+                                .data[i].team_id + '/id/' + data.data[i].id;
+                            newli +=
+                                '<li class="mui-table-view-cell mui-media listli"><a href="' +
+                                urls + '" class="mui-navigate-right">';
                             if (data.data[i].number == null) {
                                 newli += '<div class="mbNumber">&nbsp;</div>';
                             } else {
-                                newli += '<div class="mbNumber colorred">' + data.data[i].number + '</div>';
+                                newli += '<div class="mbNumber colorred">' + data.data[i].number +
+                                    '</div>';
                             }
-                            newli += '<img class="img45 mui-pull-left" src="' + data.data[i].avatar + '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' + data.data[i].name + '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i].position + '</font>';
-                            newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' + data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[i].weight + 'kg</p></div></li>'
+                            newli += '<img class="img45 mui-pull-left" src="' + data.data[i]
+                                .avatar +
+                                '" style="width:45px !important;height:45px !important;margin-top:4px;"><div class="mui-media-body wd60">' +
+                                data.data[i].name +
+                                '&nbsp;&nbsp;<font class="colororange f12">' + data.data[i]
+                                .position + '</font>';
+                            newli += '<p>年龄:' + data.data[i].age + '&nbsp;&nbsp;&nbsp;身高:' +
+                                data.data[i].height + 'cm&nbsp;&nbsp;&nbsp;体重:' + data.data[
+                                    i].weight + 'kg</p></div></li>'
                         }
                     }
                     $(".match" + dataNum).empty().append(newli);
                     if (newli == '') {
-                        $(".match" + dataNum).append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                        $(".match" + dataNum).append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -182,7 +197,7 @@
             });
         });
 
-        toListIn()//在队球员列表
+        toListIn() //在队球员列表
     })
 
     // 在队
@@ -194,10 +209,12 @@
                 team_id: team_id,
                 status: 1
             },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newlils = '';
@@ -210,7 +227,8 @@
                     for (var i = 0; i <= data.data.length - 1; i++) {
 
                         if (data.data[i].role_arr != 0) {
-                            newlils += `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
+                            newlils +=
+                                `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
                                            data-name="${data.data[i].name}" data-position="${data.data[i].position}" data-age="${data.data[i].age}" 
                                            data-height="${data.data[i].height}" data-weight="${data.data[i].weight}">`
                             for (var j = 0; j <= data.data[i].role_arr.length - 1; j++) {
@@ -218,7 +236,8 @@
                             }
                             newlils += `</p>`
                         } else {
-                            newlitm += `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
+                            newlitm +=
+                                `<p data-id="${data.data[i].id}" data-number="${data.data[i].number}" data-avatar="${data.data[i].avatar}" 
                                            data-name="${data.data[i].name}" data-position="${data.data[i].position}" data-age="${data.data[i].age}" 
                                            data-height="${data.data[i].height}" data-weight="${data.data[i].weight}"></p>`
                         }
@@ -244,49 +263,82 @@
                     teamMemberLsListChild = []
                     $(this).find("span").each(function () {
                         role_arr = $(this).text();
-                        teamMemberLsListChild.push({ role_arr })
+                        teamMemberLsListChild.push({
+                            role_arr
+                        })
                     })
                     if (number == 'null') {
-                        teamMemberLsNullList.push({ id, number, avatar, name, position, age, height, weight, teamMemberLsListChild })
+                        teamMemberLsNullList.push({
+                            id,
+                            number,
+                            avatar,
+                            name,
+                            position,
+                            age,
+                            height,
+                            weight,
+                            teamMemberLsListChild
+                        })
                     } else {
-                        teamMemberLsList.push({ id, number, avatar, name, position, age, height, weight, teamMemberLsListChild })
-                        teamMemberLsList.sort(compare("number")).reverse();  // 排序
+                        teamMemberLsList.push({
+                            id,
+                            number,
+                            avatar,
+                            name,
+                            position,
+                            age,
+                            height,
+                            weight,
+                            teamMemberLsListChild
+                        })
+                        teamMemberLsList.sort(compare("number")).reverse(); // 排序
                     }
-                })  
-                
+                })
+
                 // 遍历获取的有球衣号码的理事列表
                 for (var i = 0; i <= teamMemberLsList.length - 1; i++) {
-                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsList[i].id;
-                    newlilsAfter += `<li class="mui-table-view-cell mui-media listli"><a href="${urls}" class="mui-navigate-right">`
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" +
+                        '/id/' + teamMemberLsList[i].id;
+                    newlilsAfter +=
+                        `<li class="mui-table-view-cell mui-media listli"><a href="${urls}" class="mui-navigate-right">`
                     if (teamMemberLsList[i].number == null) {
                         newlilsAfter += `<div class="mbNumber">&nbsp;</div>`;
                     } else {
-                        newlilsAfter += `<div class="mbNumber colorred">${teamMemberLsList[i].number}</div>`;
+                        newlilsAfter +=
+                            `<div class="mbNumber colorred">${teamMemberLsList[i].number}</div>`;
                     }
-                    newlilsAfter += `<img class="img45 mui-pull-left" src="${teamMemberLsList[i].avatar}" style="margin-top:4px;">
+                    newlilsAfter +=
+                        `<img class="img45 mui-pull-left" src="${teamMemberLsList[i].avatar}" style="margin-top:4px;">
                                 <div class="mui-media-body wd60">${teamMemberLsList[i].name}&nbsp;&nbsp;
                                     <font class="colororange f12">${teamMemberLsList[i].position}</font>`
                     for (var j = 0; j <= teamMemberLsList[i].teamMemberLsListChild.length - 1; j++) {
-                        newlilsAfter += `<font class="tipCorner bgred">${teamMemberLsList[i].teamMemberLsListChild[j].role_arr}</font>`;
+                        newlilsAfter +=
+                            `<font class="tipCorner bgred">${teamMemberLsList[i].teamMemberLsListChild[j].role_arr}</font>`;
                     }
-                    newlilsAfter += `<p>年龄:${teamMemberLsList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsList[i].height}cm&nbsp;&nbsp;&nbsp;
+                    newlilsAfter +=
+                        `<p>年龄:${teamMemberLsList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsList[i].height}cm&nbsp;&nbsp;&nbsp;
                                         体重:${teamMemberLsList[i].weight}kg
                                     </p>
                                 </div>
                             </li>`
                 }
-                 // 遍历获取的没有球衣号码的理事列表
+                // 遍历获取的没有球衣号码的理事列表
                 for (var i = 0; i <= teamMemberLsNullList.length - 1; i++) {
-                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberLsNullList[i].id;
-                    newlilsNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" +
+                        '/id/' + teamMemberLsNullList[i].id;
+                    newlilsNull +=
+                        `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
                     newlilsNull += `<div class="mbNumber">&nbsp;</div>`;
-                    newlilsNull += `<img class="img45 mui-pull-left" src="${teamMemberLsNullList[i].avatar}" style="margin-top:4px;">
+                    newlilsNull +=
+                        `<img class="img45 mui-pull-left" src="${teamMemberLsNullList[i].avatar}" style="margin-top:4px;">
                                 <div class="mui-media-body wd60">${teamMemberLsNullList[i].name}&nbsp;&nbsp;
                                     <font class="colororange f12">${teamMemberLsNullList[i].position}</font>`
                     for (var j = 0; j <= teamMemberLsNullList[i].teamMemberLsListChild.length - 1; j++) {
-                        newlilsNull += `<font class="tipCorner bgred">${teamMemberLsNullList[i].teamMemberLsListChild[j].role_arr}</font>`;
+                        newlilsNull +=
+                            `<font class="tipCorner bgred">${teamMemberLsNullList[i].teamMemberLsListChild[j].role_arr}</font>`;
                     }
-                    newlilsNull += `<p>年龄:${teamMemberLsNullList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsNullList[i].height}cm&nbsp;&nbsp;&nbsp;
+                    newlilsNull +=
+                        `<p>年龄:${teamMemberLsNullList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberLsNullList[i].height}cm&nbsp;&nbsp;&nbsp;
                                         体重:${teamMemberLsNullList[i].weight}kg
                                     </p>
                                 </div>
@@ -315,22 +367,44 @@
                     var height = $(this).attr("data-height");
                     var weight = $(this).attr("data-weight");
                     if (number == 'null') {
-                        teamMemberNullList.push({ id, number, avatar, name, position, age, height, weight })
+                        teamMemberNullList.push({
+                            id,
+                            number,
+                            avatar,
+                            name,
+                            position,
+                            age,
+                            height,
+                            weight
+                        })
                     } else {
-                        teamMemberList.push({ id, number, avatar, name, position, age, height, weight })
-                        teamMemberList.sort(compare("number")).reverse();  // 排序
+                        teamMemberList.push({
+                            id,
+                            number,
+                            avatar,
+                            name,
+                            position,
+                            age,
+                            height,
+                            weight
+                        })
+                        teamMemberList.sort(compare("number")).reverse(); // 排序
                     }
                 })
                 //遍历获取的有球衣号码的队员列表
                 for (var i = 0; i <= teamMemberList.length - 1; i++) {
-                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberList[i].id;
-                    newlitmAfter += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" +
+                        '/id/' + teamMemberList[i].id;
+                    newlitmAfter +=
+                        `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
                     if (teamMemberList[i].number == 'null') {
                         newlitmAfter += `<div class="mbNumber">&nbsp;</div>`;
                     } else {
-                        newlitmAfter += `<div class="mbNumber colorred">${teamMemberList[i].number}</div>`;
+                        newlitmAfter +=
+                            `<div class="mbNumber colorred">${teamMemberList[i].number}</div>`;
                     }
-                    newlitmAfter += `<img class="img45 mui-pull-left" src="${teamMemberList[i].avatar}" style="margin-top:4px;">
+                    newlitmAfter +=
+                        `<img class="img45 mui-pull-left" src="${teamMemberList[i].avatar}" style="margin-top:4px;">
                                 <div class="mui-media-body wd60">${teamMemberList[i].name}&nbsp;&nbsp;
                                     <font class="colororange f12">${teamMemberList[i].position}</font>
                                     <p>年龄:${teamMemberList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberList[i].height}cm&nbsp;&nbsp;&nbsp;
@@ -339,16 +413,20 @@
                                 </div>
                             </li>`
                 }
-                 //遍历获取的没有球衣号码的队员列表
+                //遍历获取的没有球衣号码的队员列表
                 for (var i = 0; i <= teamMemberNullList.length - 1; i++) {
-                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" + '/id/' + teamMemberNullList[i].id;
-                    newlitmNull += `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
+                    var urls = "{:url('team/teamMemberInfo')}" + '/team_id/' + "{$teamInfo.id}" +
+                        '/id/' + teamMemberNullList[i].id;
+                    newlitmNull +=
+                        `<li class="mui-table-view-cell listli"><a href="${urls}" class="mui-navigate-right">`
                     if (teamMemberNullList[i].number == 'null') {
                         newlitmNull += `<div class="mbNumber">&nbsp;</div>`;
                     } else {
-                        newlitmNull += `<div class="mbNumber colorred">${teamMemberNullList[i].number}</div>`;
+                        newlitmNull +=
+                            `<div class="mbNumber colorred">${teamMemberNullList[i].number}</div>`;
                     }
-                    newlitmNull += `<img class="img45 mui-pull-left" src="${teamMemberNullList[i].avatar}" style="margin-top:4px;">
+                    newlitmNull +=
+                        `<img class="img45 mui-pull-left" src="${teamMemberNullList[i].avatar}" style="margin-top:4px;">
                                 <div class="mui-media-body wd60">${teamMemberNullList[i].name}&nbsp;&nbsp;
                                     <font class="colororange f12">${teamMemberNullList[i].position}</font>
                                     <p>年龄:${teamMemberNullList[i].age}&nbsp;&nbsp;&nbsp;身高:${teamMemberNullList[i].height}cm&nbsp;&nbsp;&nbsp;
@@ -362,10 +440,14 @@
                 // 队员排序整体操作end
 
                 if (newlils == '') {
-                    $(".matchAdmin").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    $(".matchAdmin").append(
+                        '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                    );
                 }
                 if (newlitm == '') {
-                    $(".matchCommon").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                    $(".matchCommon").append(
+                        '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                    );
                 }
             },
             error: function (xhr, type, errerThrown) {
@@ -382,7 +464,6 @@
             return value2 - value1;
         }
     }
-
 </script>
 
 </html>

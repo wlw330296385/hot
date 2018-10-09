@@ -230,9 +230,9 @@
                             '/team_id/' + "{$team_id}";
                         newli += '<li class="mui-table-view-cell listli">';
                         if (data.data.data[i].is_finished == "未完成") {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data
-                                .data[i].id + '"><span class="mui-btn bgblue setFinished" data-id="' +
-                                data.data.data[i].id +
+                            newli += '<div class="mui-slider-right mui-disabled" data-match_id="' + data.data
+                                .data[i].match_id + '"><span class="mui-btn bgblue setFinished" data-match_id="' +
+                                data.data.data[i].match_id +
                                 '">设为完成</span><span class="mui-btn mui-btn-grey operationBtn" data-action="">通知队员</span><span class="mui-btn mui-btn-red operationBtn" data-action="del">删除</span></div>';
                         } else {
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data
@@ -366,7 +366,7 @@
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         var txt = elem.innerHTML;
-        var matchid = elem.parentNode.getAttribute('data-id');
+        var matchid = elem.parentNode.getAttribute('data-match_id');
         var action = elem.getAttribute('data-action');
         mui.confirm('确认该比赛' + txt + '?', '提示', btnArray, function (e) {
             if (e.index == 0) {
@@ -403,7 +403,7 @@
 
     // 将比赛设置为完成
     $(document).on('tap', '.setFinished', function () {
-        var match_id = $(this).attr("data-id");
+        var match_id = $(this).attr("data-match_id");
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
