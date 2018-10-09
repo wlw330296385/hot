@@ -14,34 +14,6 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .teamLogo {
-            width: 100%;
-            border-radius: 50%;
-        }
-
-        @media screen and (min-width: 320px) {
-            .teamLogo {
-                height: 4.5rem;
-            }
-        }
-
-        @media screen and (min-width: 375px) {
-            .teamLogo {
-                height: 5.4rem;
-            }
-        }
-
-        @media screen and (min-width: 414px) {
-            .teamLogo {
-                height: 6.0rem;
-            }
-        }
-
-        @media screen and (min-width: 768px) {
-            .teamLogo {
-                height: 11.5rem;
-            }
-        }
 
         .teamCollapse {
             padding: 0 !important;
@@ -79,9 +51,11 @@
     </header>
 
     <div class="mui-content">
-        <div class="list coach">
+        <div class="list">
+
+            <!-- 比分 -->
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli mui-text-center" style="padding:35px 15px 25px 15px;">
+                <li class="mui-table-view-cell listli mui-text-center" style="padding:15px;">
                     <div class="mui-row">
                         <div class="mui-col-sm-3 mui-col-xs-3">
                             <img src="{$matchInfo.record.home_team_logo}" class="teamLogo">
@@ -105,7 +79,8 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view">
+            <!-- 主队信息 -->
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
                     <h4>{$teamInfo.name}</h4>
@@ -124,16 +99,20 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view border-b dataList">
+            <!-- 球员数据信息 -->
+            {notempty name="teamMatchStaticList"}
+            <ul class="mui-table-view border-b dataList mui-text-center">
                 {volist name="teamMatchStaticList" id="vo"}
                 <li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2">
-                                <strong class=" colororange f18">{$vo.number}</strong>
+                                {if $vo.number==''}无球号{else/}
+                                <strong class="colororange f18">{$vo.number}</strong>
+                                {/if}
                             </div>
-                            <div class="mui-col-xs-3">{$vo.name}</div>
-                            <div class="mui-col-xs-7">
+                            <div class="mui-col-xs-4">{$vo.name}</div>
+                            <div class="mui-col-xs-6">
                                 <text class="colororange">{$vo.pts}</text>pts &nbsp;
                                 <text class="colororange">{$vo.ast}</text>Ast &nbsp;
                                 <text class="colororange">{$vo.reb}</text>Reb
@@ -259,19 +238,22 @@
                 </li>
                 {/volist}
             </ul>
+            {else/}
+            <p class="nohave whitebg">暂无球员信息</p>
+            {/notempty}
+
+            <!-- 评论区 -->
+            <div class="page-header border-b ">
+                <span class="course wd52">评论</span>
+                <span class="more f14">评论
+                    <span class="comment_count">0</span>&nbsp;|&nbsp;
+                    <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
+                    <span class="thumbup_count">0</span>
+                </span>
+            </div>
+            <ul class="mui-table-view comment-list mt55"></ul>
 
         </div>
-
-        <!-- 评论区 -->
-        <div class="page-header border-b ">
-            <span class="course wd52">评论</span>
-            <span class="more f14">评论
-                <span class="comment_count">0</span>&nbsp;|&nbsp;
-                <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup"></i>&nbsp;
-                <span class="thumbup_count">0</span>
-            </span>
-        </div>
-        <ul class="mui-table-view comment-list mt55"></ul>
 
         <!-- 底部操作 -->
         <ul class="mui-table-view operation mt">
@@ -313,7 +295,6 @@
             <li class="mui-col-xs-12 opli commentBtn">发表</li>
         </ul>
     </div>
-    </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -328,6 +309,10 @@
             pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             followStatus(); //判断当前的关注状态
+
+            // 球队logo圆形判断
+            var imgWidth = $(".teamLogo").width();
+            $(".teamLogo").css("height", imgWidth)
 
             // 关注球队
             $(".follow").on("tap", '', function () {
@@ -451,9 +436,11 @@
                     console.log(data);
                     if (data.code == 200) {
                         if (data.data === 1) {
-                            $(".follow").text("取消关注");
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
                         } else {
                             $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
                         }
                     }
                 },
