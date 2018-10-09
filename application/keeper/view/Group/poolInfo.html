@@ -28,6 +28,25 @@
             color:#999 !important;
             background-color: #efeff4 !important;
         }
+        #winner .avatar{
+            float: right;
+            margin-left: 8px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        #winner a{
+            padding-right: 35px !important;
+        }
+        #winner .avatar text{
+            display: block;
+            font-size: 11px;
+        }
+        #winner .avatar img {
+            width: 45px !important;
+            height: 45px !important;
+            margin-top: 4px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -43,48 +62,16 @@
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-name colororange"></span>社群名称
-                    </label>
-                    <span class="wd60">{$poolInfo.group}</span>
-                </li><li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-opponent colororange"></span>本期主题
+                        <span class="icon iconfont icon-activity-name colororange"></span>本期主题
                     </label>
                     <span class="wd60">{$poolInfo.pool}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-punch-masses colororange"></span>打卡人数
+                        <span class="icon iconfont icon-punch-masses colororange"></span>打卡数
                     </label>
-                    <span class="colororange" style="width: 8%">人</span>
+                    <span class="colororange" style="width: 8%">人次</span>
                     <span class="wd60">{$poolInfo.members}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-punch-bonuspool colororange"></span>奖池金额
-                    </label>
-                    <span class="colororange" style="width: 8%">HT</span>
-                    <span class="wd45">{$poolInfo.bonus}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-th-data colororange"></span>奖池分配
-                    </label>
-                    <span class="wd60">
-                            {if ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && ($poolInfo.second_scale==0||$poolInfo.second_scale==null)}
-                                奖励第一名
-                            {elseif ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && $poolInfo.second_scale>0}
-                                奖励前二名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}）
-                            {else/}
-                                奖励前三名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}:{$poolInfo.third_scale}）
-                            {/if}
-                    </span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-punch-Personal colororange"></span>擂主
-                    </label>
-                    <span class="wd60"></span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -111,6 +98,31 @@
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>结束时间
                     </label>
                     <span class="wd60">{$poolInfo.end}</span>
+                </li>
+            </ul>
+
+
+            <ul class="mui-table-view mb" id="winner">
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-punch-bonuspool colororange"></span>奖池金额
+                    </label>
+                    <span class="colororange" style="width: 8%">HT</span>
+                    <span class="wd45">{$poolInfo.bonus}</span>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <label>
+                        <span class="icon iconfont icon-th-data colororange"></span>奖池分配
+                    </label>
+                    <span class="wd60">
+                            {if ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && ($poolInfo.second_scale==0||$poolInfo.second_scale==null)}
+                                奖励第一名
+                            {elseif ($poolInfo.third_scale==0||$poolInfo.third_scale==null) && $poolInfo.second_scale>0}
+                                奖励前二名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}）
+                            {else/}
+                                奖励前三名（奖金比例 {$poolInfo.first_scale}:{$poolInfo.second_scale}:{$poolInfo.third_scale}）
+                            {/if}
+                    </span>
                 </li>
             </ul>
 
@@ -176,6 +188,77 @@
                 window.history.go(-1);
             }
         };
+
+
+        var pWinnerList = '';
+        var poolWinnerList = '{$poolInfo.winner_list}';
+        var poolSecondScale = "{$poolInfo.second_scale}";
+        var poolThirdScale = "{$poolInfo.third_scale}";
+        if(poolWinnerList!="[]"&&poolWinnerList!=""&&poolWinnerList!=null){
+
+            var winner_list = JSON.parse(poolWinnerList);              
+            var f_l = winner_list[0];//1
+            var s_l = winner_list[1];//2
+            var t_l = winner_list[2];//3
+            var f_l_s = '';
+            var s_l_s = '';
+            var t_l_s = '';
+            var sLi = '';
+            var tLi = '';
+            //第一名
+            for (var j = 0; j < f_l.length; j++) {
+                //f_l_s += `${f_l[j].member}，`;
+                f_l_s += `<div class="avatar"><img src="${f_l[j].avatar}" alt=""><text>${f_l[j].member}</text></div>`
+                
+            }
+            //判断是否设置有第二名
+            if(poolSecondScale>0){
+                for (var j = 0; j < s_l.length; j++) {
+                    s_l_s += `<div class="avatar"><img src="${s_l[j].avatar}" alt=""><text>${s_l[j].member}</text></div>`
+                }
+                sLi = `<li class="mui-table-view-cell listli">
+                                    <label>
+                                        <span class="icon iconfont icon-th-data-a colororange"></span>第二名
+                                    </label>`
+                if(s_l!=""){
+                    sLi+=`<span class="wd73">打卡次数：<text class="colororange">${s_l[0].punchs}</text>，获得奖金：<text class="colororange">${s_l[0].winner_bonus}</text><br />${s_l_s}</span>`
+                }else{
+                    sLi+=` <span class="wd73">无</span>`
+                }
+                sLi+=`</li>`
+            }
+            //判断是否设置有第三名
+            if(poolThirdScale>0){
+                for (var j = 0; j < t_l.length; j++) {
+                    t_l_s += `<div class="avatar"><img src="${t_l[j].avatar}" alt=""><text>${t_l[j].member}</text></div>`
+                }
+                tLi = `<li class="mui-table-view-cell listli">
+                                    <label>
+                                        <span class="icon iconfont icon-th-data colororange"></span>第三名
+                                    </label>`
+                if(t_l!=""){
+                    tLi+=` <span class="wd73">打卡次数：<text class="colororange">${t_l[0].punchs}</text>，获得奖金：<text class="colororange">${t_l[0].winner_bonus}</text><br />${t_l_s}</span>`
+                }else{
+                    tLi+=` <span class="wd73">无</span>`
+                }
+                tLi+=`</li>`
+            }
+
+            pWinnerList = `<li class="mui-table-view-cell listli">
+                                    <label>
+                                        <span class="icon iconfont icon-p-game colororange"></span>擂主
+                                    </label>
+                                    <span class="wd73">打卡次数：<text class="colororange">${f_l[0].punchs}</text>，获得奖金：<text class="colororange">${f_l[0].winner_bonus}</text><br />${f_l_s}</span>
+                                </li>`
+                                +sLi+tLi;
+
+            console.log(pWinnerList);
+            $("#winner").append(pWinnerList);
+
+        }
+
+
+
     </script>
 </body>
 
