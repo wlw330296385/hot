@@ -193,7 +193,7 @@ class Pooltask extends Base{
                         $memberList[$k]['ranking'] = 2;
                         $memberList[$k]['bonus'] = $value['bonus'];
                         $memberList[$k]['punchs'] = $val['c_id'];
-                        $c_s_m[] = $val;
+                        $c_s_m[] = $memberList[$k];
                     }
                     if($val['c_id'] == $theThird){
                         $memberList[$k]['ranking'] = 3;
@@ -220,10 +220,10 @@ class Pooltask extends Base{
                     $c_f_m[$k]['winner_bonus'] = $theFirstReward;  
                 }
                 foreach ($c_s_m as $k => $val) {
-                    $c_f_m[$k]['winner_bonus'] = $theSecondReward;  
+                    $c_s_m[$k]['winner_bonus'] = $theSecondReward;  
                 }
                 foreach ($c_t_m as $k => $val) {
-                    $c_f_m[$k]['winner_bonus'] = $theThirdReward;  
+                    $c_t_m[$k]['winner_bonus'] = $theThirdReward;  
                 }
                 // dump($theFirstReward);
                 // dump($theSecondReward);
@@ -233,7 +233,7 @@ class Pooltask extends Base{
                 $result = $this->Pool->isUpdate(true)->save(['winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m),'status'=>-1],['id'=>$value['id']]);
                 // 奖金得主诞生
                 $winners = array_merge($c_f_m,$c_s_m,$c_t_m);
-
+                dump($winners);
                 $model->saveAll($winners);
                 $this->updateMembersHotcoin($winners);
 
@@ -263,34 +263,35 @@ class Pooltask extends Base{
                     continue;
                 }
                 // dump($memberList);
-                // $totalWinners = $value['the_first_winners'] + $value['the_second_winners'] + $value['the_third_winners'] - 1;//一共有几个奖品,包括123...789等奖
-                $totalWinners = 3;
+                $totalWinners = $value['the_first_winners'] + $value['the_second_winners'] + $value['the_third_winners'] - 1;
+                //一共有几个奖品,包括123...789等奖
+                // $totalWinners = 3;
                 $the_first_winner_list = array_slice($memberList,0,$value['the_first_winners']);
                 $the_second_winner_list = array_slice($memberList,$value['the_first_winners'],$value['the_second_winners']);
                 $the_third_winner_list = array_slice($memberList,$value['the_second_winners']+$value['the_first_winners'],$value['the_third_winners']);
                 $winner_list = [];
-                foreach ($the_first_winner_list as $k => &$val) {
-                    $val['award_id'] = $value['the_first_award_id'];
-                    $val['award_id'] = $value['the_first_award'];
-                    $val['ranking'] = 1;
-                    $val['bonus'] = $value['bonus'];
-                    $val['punchs'] = $val['c_id'];
+                foreach ($the_first_winner_list as $k => $val) {
+                    $the_first_winner_list[$k]['award_id'] = $value['the_first_award_id'];
+                    $he_first_winner_list[$k]['award_id'] = $value['the_first_award'];
+                    $he_first_winner_list[$k]['ranking'] = 1;
+                    $he_first_winner_list[$k]['bonus'] = $value['bonus'];
+                    $he_first_winner_list[$k]['punchs'] = $val['c_id'];
                 }
                 // dump($the_first_winner_list);
-                foreach ($the_second_winner_list as $k => &$val) {
-                    $val['award_id'] = $value['the_first_award_id'];
-                    $val['award_id'] = $value['the_first_award'];
-                    $val['ranking'] = 2;
-                    $val['bonus'] = $value['bonus'];
-                    $val['punchs'] = $val['c_id'];
+                foreach ($the_second_winner_list as $k => $val) {
+                    $the_second_winner_list[$k]['award_id'] = $value['the_second_award_id'];
+                    $the_second_winner_list[$k]['award_id'] = $value['the_second_award'];
+                    $the_second_winner_list[$k]['ranking'] = 2;
+                    $the_second_winner_list[$k]['bonus'] = $value['bonus'];
+                    $the_second_winner_list[$k]['punchs'] = $val['c_id'];
                 }
                 // dump($the_second_winner_list);
                 foreach ($the_third_winner_list as $k => &$val) {
-                    $val['award_id'] = $value['the_first_award_id'];
-                    $val['award_id'] = $value['the_first_award'];
-                    $val['ranking'] = 3;
-                    $val['bonus'] = $value['bonus'];
-                    $val['punchs'] = $val['c_id'];
+                    $the_third_winner_list[$k]['award_id'] = $value['the_second_award_id'];
+                    $the_third_winner_list[$k]['award_id'] = $value['the_second_award'];
+                    $the_third_winner_list[$k]['ranking'] = 3;
+                    $the_third_winner_list[$k]['bonus'] = $value['bonus'];
+                    $the_third_winner_list[$k]['punchs'] = $val['c_id'];
                 }
                 // dump($the_third_winner_list);
                 $winner_list = array_merge($the_first_winner_list,$the_second_winner_list,$the_third_winner_list);

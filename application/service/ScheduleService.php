@@ -420,7 +420,6 @@ class ScheduleService
                 }
             }
         }
-        //return ['code' => 200, 'msg' => __lang('MSG_200')];
         return true;
     }
 

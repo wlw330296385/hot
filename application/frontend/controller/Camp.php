@@ -597,12 +597,52 @@ class Camp extends Base{
     // 训练营-提现操作
     public function campWithdraw() {
 
-        $this->error("很抱歉!手机端提现升级中,请去电脑后台提现,访问地址: https://m.hot-basketball.com/management");
+        $w = date('w',time());
+        $d = date('d',time());
+        $Ym = input('param.Ym',date('Ym',time()));
+        $type = input('param.type',1);
+        $data = [];
+        // 最后一次提现的时间点
+        $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]],'camp_id'=>$this->campInfo['id']])->find();
+        if($lastWitchdraw){
+            $point_in_time = $lastWitchdraw['point_in_time'];
+        }else{
+            $point_in_time = 2018-01-01;
+        }
+        if($this->campInfo['rebate_type'] == 1){
+            
+            if($type ==1){
+                // 获取上个月的时间点
+                $time =  strtotime(date('Ym01',time()));
+                $e = date('Ymd',strtotime('-1 day',$time));//当前时间是2018-9-20,上个月的最后一天是2018-08-31,所以$e = 20180831,$point_in_time = 20180731,条件是date_str>20180731 and date_str<=20180831,
+                $date_str = [$point_in_time,$e];
+                $map1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[3,4,5,6]]];
+                $map_1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>1];
+                $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+                $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+                $legend = ['收入','支出'];
+                $title = '课时收入支出图';
+            }
+        }else{
+           
+            // 获取上周日的时间点
+            $e = date('Ymd', strtotime('-1 sunday', time()));
+            $date_str = [$point_in_time,$e];
+            $map1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>['in',[1,2,4]]];
+            $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>2];
+            $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+            $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+            $legend = ['收入','支出'];
+            $title = '收入支出图';
+        }
+        $canWithdraw = (($income-$output) - $this->campInfo['balance'])<0?($income-$output):$this->campInfo['balance'];
+
         $campBankcard = db('camp_bankcard')->where(['camp_id'=>$this->campInfo['id'],'status'=>1])->find();
-
-
+// dump($canWithdraw);die;
         $this->assign('campBankcard',$campBankcard);
-
+        $this->assign('income',$income?$income:0);
+        $this->assign('output',$output?$output:0);
+        $this->assign('canWithdraw',$canWithdraw);
         return view('Camp/campWithdraw');
     }
 

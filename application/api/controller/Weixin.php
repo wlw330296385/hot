@@ -9,6 +9,14 @@ class Weixin extends Controller {
     public function mpbind() {
         $WechatService = new wechat();
         $WechatService->mpbind();
+        // $response = [
+        //     'ToUserName'=>'尊敬的客户',
+        //     'FromUserName'=>'woo',
+        //     'CreateTime'=>time(),
+        //     'MsgType'=>'text',
+        //     'Content'=>'您的信息已收到,稍后将会回复您(骚扰信息除外)'
+        // ];
+        // return xml($response);
     }
 
     public function getmenu() {

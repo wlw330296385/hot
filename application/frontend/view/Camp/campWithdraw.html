@@ -28,13 +28,30 @@
                 <span class="colororange">￥{$campInfo.balance}</span>
             </div>
             <div class="mui-input-row">
-                <label>提现金额</label>
-                <input type="text" name="withdraw" class="data" value="" placeholder="￥0.00">
+                <label>上阶段收入</label>
+                <span class="colororange">￥{$income}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>上阶段支出</label>
+                <span class="colororange">￥{$output}</span>
             </div>
             {if $campInfo.rebate_type == 2}
             <div class="mui-input-row">
+                <label>可提现金额</label>
+                <input type="text" name="withdraw" class="data" disabled="disabled" value="{$canWithdraw}">
+            </div>
+            <div class="mui-input-row">
                 <label class="wd36">提现手续费 <a href="#rebateTips"><i class="mui-icon mui-icon-info" style="font-size: 16px !important;"></i></a></label>
-                <span id="t_rebate"></span>
+                <span >￥{$canWithdraw*$campInfo.schedule_rebate}</span>
+            </div>
+            {else /}
+            <div class="mui-input-row">
+                <label>可提现金额</label>
+                <input type="text" name="withdraw" class="data"  disabled="disabled" value="{$canWithdraw}">
+            </div>
+            <div class="mui-input-row">
+                <label class="wd36">提现手续费 <a href="#rebateTips"><i class="mui-icon mui-icon-info" style="font-size: 16px !important;"></i></a></label>
+                <span >￥0</span>
             </div>
             {/if}
             <div class="mui-input-row">
@@ -128,13 +145,13 @@
         swipeBack: true //启用右滑关闭功能
     });
 
-    var ok = false;
+
     $(function(){
 
         {if $campBankcard}
         /////////////////////////////////////////////////////////有银行账号信息才能调用
         $('#submitBtn').on('click',function(){
-            validWithDraw();
+    
             var data1 = wooApi.getInputData();
             var objData = wooApi.arrTOobj(data1);
 
@@ -159,30 +176,8 @@
                 mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
             }
         })
-        //////////////////////////////////////////////////////////////////
         {/if}
-
-        // 提现金额
-        $('input[name=withdraw]').on('blur',function(){
-            validWithDraw();
-            if(ok == false){
-                mui.toast('提现金额填写有误，金额必须大于0，并小于可提余额');
-            }
-        })
     })
 
-    function validWithDraw(){
-        var withdraw = parseFloat($('input[name=withdraw]').val());
-        var balance = parseFloat("{$campInfo.balance}");
-        var rebate = parseFloat("{$campInfo.schedule_rebate}");
-        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
-        if(withdraw<=0||withdraw>balance||!reg.test(withdraw)){
-            ok = false;
-            return false;
-        }else{
-            var fee = withdraw*rebate;
-            $("#t_rebate").text("￥"+fee.toFixed(2));
-            ok = true;
-        }
-    }
+
 </script>

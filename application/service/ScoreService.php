@@ -39,8 +39,6 @@ class ScoreService {
         $result = $this->Score->save($data);
         if($result ===false){
             file_put_contents(ROOT_PATH.'/data/score/'.date('Y-m-d',time()).'.txt',json_encode(['error'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
-        }else{
-            file_put_contents(ROOT_PATH.'/data/score/'.date('Y-m-d',time()).'.txt',json_encode(['success'=>$data,'time'=>date('Y-m-d H:i:s',time())]));
         }
     }
 }

@@ -58,16 +58,7 @@ class Student extends Base
         
 		$campInfo = db('camp')->where(['id'=>$camp_id])->find();
 		
-		//学生的班级	
-		// $studentGradeList = db('grade_member')
-		// 					->join('grade','grade.id=grade_member.grade_id')
-		// 					->where([
-		// 						'grade_member.student_id'=>$student_id,
-		// 						'grade_member.camp_id'=>$camp_id,
-		// 						'grade_member.status'=>1
-		// 					])
-		// 					->order('grade_member.id desc')
-		// 					->select();
+
 		// 学员-课程课量
         $schedulenum = db('lesson_member')->whereNull('delete_time')
             ->where([
@@ -152,6 +143,10 @@ class Student extends Base
 					
         $this->assign('camp_id',$camp_id);
 		if($type==1){
+			// 在营学生总数
+			$list_1 =db('lesson_member')->where(['camp_id'=>$camp_id])->where(['status'=>1])->group('student_id')->select();
+			$count_1 = count($list_1);
+			$this->assign('count_1',$count_1);
 			return view('Student/studentListOfCamp');
 		}else{
 			return view('Student/expStudentListOfCamp');

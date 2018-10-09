@@ -35,7 +35,21 @@ class WechatService
     // 公众号绑定
     public function mpbind() {
         $weObj = new TPwechat($this->options);
+        // $weObj->valid();
         $weObj->valid();
+        $type = $weObj->getRev()->getRevType();
+        switch($type) {
+            case TPwechat::MSGTYPE_TEXT:
+               $weObj->text("已收到您的信息,稍后将回复您(骚扰消息除外)。")->reply();
+               exit;
+               break;
+            case TPwechat::MSGTYPE_EVENT:
+               break;
+            case TPwechat::MSGTYPE_IMAGE:
+               break;
+            default:
+             $weObj->text("help info")->reply();
+        }
         ob_clean();
     }
 

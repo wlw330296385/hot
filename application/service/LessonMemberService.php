@@ -20,9 +20,6 @@ class LessonMemberService{
     public function getLessonMemberListByPage($map = [],$paginate = 10,$order = 'student_id desc'){
         $result = $this->LessonMemberModel->where($map)->order($order)->paginate($paginate);
 
-        if($result){
-            return $result->toArray();
-        }
         return $result;
     }
 

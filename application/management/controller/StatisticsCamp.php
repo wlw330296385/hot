@@ -742,8 +742,8 @@ class StatisticsCamp extends Camp{
 
         if(request()->isPost()){
             if($this->campInfo['rebate_type'] == 1){
-                if($d<15){
-                    $this->error('每月15号之后方可申请提现');
+                if($d<5 || $d>15){
+                    $this->error('每月5-15号之间方可申请提现');
                 }
                 // 如果是负数不允许提现
                 if($type ==1){
