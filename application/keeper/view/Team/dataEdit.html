@@ -149,18 +149,21 @@
             </div>
             <ul class="mui-table-view list border-b dataList">
                 {volist name="matchStatcList" id="vol"}
-                <li class="mui-table-view-cell mui-collapse listli" data-team_member_id="{$vol.team_member_id}" data-member_id="{$vol.member_id}"
-                    data-id="{$vol.id}" data-match_record_member_id="{$vol.match_record_member_id}">
+                <li class="mui-table-view-cell mui-collapse listli" data-team_member_id="{$vol.team_member_id}"
+                    data-member_id="{$vol.member_id}" data-id="{$vol.id}" data-match_record_member_id="{$vol.match_record_member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2  colororange">
-                                <input type="text" name="number" class="addInput mui-text-center" value="{$vol.number}" placeholder="球号" disabled>
+                                <input type="text" name="number" class="addInput mui-text-center" value="{$vol.number}"
+                                    placeholder="球号" disabled>
                             </div>
                             <div class="mui-col-xs-5">
-                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}" placeholder="姓名" disabled>
+                                <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}"
+                                    placeholder="姓名" disabled>
                             </div>
                             <div class="mui-col-xs-2">
-                                <input type="text" name="personScore" class="addInput mui-text-center" value="{$vol.pts}" placeholder="得分" disabled>
+                                <input type="text" name="personScore" class="addInput mui-text-center" value="{$vol.pts}"
+                                    placeholder="得分" disabled>
                             </div>
                             <div class="mui-col-xs-2 mui-text-center dataIcon">
                                 <text class="bgcolor">
@@ -256,8 +259,8 @@
                 {/volist}
                 <div class="hideDataList">
                     {volist name="matchStatcList" id="vol"}
-                    <input type="hidden" data-id="{$vol.id}" data-member_id="{$vol.member_id}" data-fg="{$vol.fg}" data-threepfg="{$vol.threepfg}"
-                        data-ft="{$vol.ft}"> {/volist}
+                    <input type="hidden" data-id="{$vol.id}" data-member_id="{$vol.member_id}" data-fg="{$vol.fg}"
+                        data-threepfg="{$vol.threepfg}" data-ft="{$vol.ft}"> {/volist}
                 </div>
             </ul>
 
@@ -391,14 +394,22 @@
 
             // 球衣号码为空可编辑
             $(".dataList").find("input[name=number]").each(function () {
-                console.log($(this).val())
                 if ($(this).val() == 0) {
                     $(this).removeAttr("disabled");
                 }
-            })
+            });
+
+            // 遍历查找如果数据为0，清除数据
+            $(".dataCollapse").find("input").each(function () {
+                var inputVal = $(this).val();
+                if (inputVal == 0) {
+                    $(this).val('');
+                }
+            });
 
             // 公共数据
-            var dataPublic = `<div class="mui-collapse-content dataCollapse">
+            var dataPublic =
+                `<div class="mui-collapse-content dataCollapse">
                         <div class="mui-row dataTitle">
                             <div class="mui-col-xs-6">出手次数</div>
                             <div class="mui-col-xs-6">命中次数</div>
@@ -499,14 +510,17 @@
                         return isOk = false;
                     }
                 });
-                if (!isOk) { return isOk }
+                if (!isOk) {
+                    return isOk
+                }
 
                 var checkdisabled = 'disabled';
                 if (addtmNumber == 'null') {
                     addtmNumber = '';
                     var checkdisabled = '';
                 }
-                var tmFormal = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
+                var tmFormal =
+                    `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput mui-text-center" value="${addtmNumber}" ${checkdisabled}  placeholder="球号" ></div>
@@ -539,9 +553,12 @@
                         return isOk = false;
                     }
                 });
-                if (!isOk) { return isOk }
+                if (!isOk) {
+                    return isOk
+                }
 
-                var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-member_id="${member_id}">
+                var ptMember =
+                    `<li class="mui-table-view-cell mui-collapse listli" data-member_id="${member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
@@ -562,7 +579,8 @@
 
             //添加临时队员操作
             $(document).on("tap", ".addTp", function () {
-                var tmTemporary = `<li class="mui-table-view-cell mui-collapse listli">
+                var tmTemporary =
+                    `<li class="mui-table-view-cell mui-collapse listli">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
@@ -645,7 +663,8 @@
                         tmNumber = '';
                         var checkdisabled = '';
                     }
-                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
+                    var tmMatch =
+                        `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center"  value="${tmNumber}" placeholder="球号" ${checkdisabled}></div>
@@ -751,7 +770,8 @@
             $(document).on("tap", ".confirmBtn button", function () {
                 var confirmText = $(this).text();
                 if (confirmText == "确认") {
-                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#59b200");
+                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
+                        "#59b200");
                     $(this).text("取消");
                     $(this).parents(".mui-collapse").removeClass("mui-active");
                     //点击确认操作计算得分
@@ -761,7 +781,8 @@
                     var totalNum = Number(fgNum) * 2 + Number(threepfgNum) * 3 + Number(ftNum);
                     $(this).parents(".mui-collapse").find("input[name=personScore]").val(totalNum);
                 } else {
-                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#ddd");
+                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
+                        "#ddd");
                     $(this).text("确认");
                 }
             });
@@ -806,7 +827,7 @@
                 }
             });
             $(document).on("blur", "input[name=threepfg]", function () {
-                var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val();//三分出手数
+                var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val(); //三分出手数
                 if (parseInt($(this).val()) > parseInt(threepfga)) {
                     mui.toast("三分命中次数不能大于出手次数");
                     $(this).val('').focus();
@@ -836,7 +857,8 @@
             var delMembers = [];
             var personalScoreAll = 0;
             $(".dataCollapse").each(function () {
-                var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+                var match_record_member_id = $(this).parents(".mui-collapse").attr(
+                    "data-match_record_member_id");
                 if (match_record_member_id == undefined) {
                     match_record_member_id = 0;
                 }
@@ -866,7 +888,27 @@
                 personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
                 $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
                 personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
-                members.push({ match_record_member_id, member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+                members.push({
+                    match_record_member_id,
+                    member,
+                    member_id,
+                    name,
+                    team_member_id,
+                    number,
+                    lineup,
+                    fga,
+                    fg,
+                    threepfga,
+                    threepfg,
+                    fta,
+                    ft,
+                    reb,
+                    ast,
+                    stl,
+                    blk,
+                    turnover,
+                    foul
+                });
             });
             var teamScore = $(".home_score").text(); // 球队总得分
             console.log(teamScore)
@@ -896,7 +938,9 @@
                 //上面遍历过不存在就添加到最终变动球员列表中
                 if (delId == "Yes") {
                     var id = $(this).attr("data-id");
-                    delMembers.push({ id });
+                    delMembers.push({
+                        id
+                    });
                 }
             });
             console.log(delMembers)
@@ -947,25 +991,42 @@
                     is_finished: 1,
                     team_id: team_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-match_record_id="' + data.data.data[i].record.id + '"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].record.away_team + '" data-home_team="' + data.data.data[i].record.home_team + '" data-home_team_id="' + data.data.data[i].record.home_team_id + '" data-home_score="' + data.data.data[i].record.home_score + '" data-away_score="' + data.data.data[i].record.away_score + '" data-away_score="' + data.data.data[i].record.away_score + '"><font class="court">' + data.data.data[i].name + '</font>';
+                            newli += '<li class="mui-table-view-cell listli" data-match_record_id="' + data
+                                .data.data[i].record.id + '"  data-id="' + data.data.data[i].id +
+                                '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' +
+                                data.data.data[i].record.away_team + '" data-home_team="' + data.data.data[
+                                    i].record.home_team + '" data-home_team_id="' + data.data.data[i].record
+                                .home_team_id + '" data-home_score="' + data.data.data[i].record.home_score +
+                                '" data-away_score="' + data.data.data[i].record.away_score +
+                                '" data-away_score="' + data.data.data[i].record.away_score +
+                                '"><font class="court">' + data.data.data[i].name + '</font>';
                             newli += '<div class="hide">';
                             for (var j = 0; j <= data.data.data[i].record_members.length - 1; j++) {
-                                newli += '<input type="hidden" class="tmInfo" data-member="' + data.data.data[i].record_members[j].member + '" data-name="' + data.data.data[i].record_members[j].name + '" data-number="' + data.data.data[i].record_members[j].number + '" data-team_member_id="' + data.data.data[i].record_members[j].team_member_id + '" data-member_id="' + data.data.data[i].record_members[j].member_id + '" data-match_record_member_id="' + data.data.data[i].record_members[j].id + '">'
+                                newli += '<input type="hidden" class="tmInfo" data-member="' + data.data.data[
+                                        i].record_members[j].member + '" data-name="' + data.data.data[i].record_members[
+                                        j].name + '" data-number="' + data.data.data[i].record_members[j].number +
+                                    '" data-team_member_id="' + data.data.data[i].record_members[j].team_member_id +
+                                    '" data-member_id="' + data.data.data[i].record_members[j].member_id +
+                                    '" data-match_record_member_id="' + data.data.data[i].record_members[j]
+                                    .id + '">'
                             }
                             newli += '</div></li>'
                         }
                         if (newli == '') {
                             var matchUrl = "{:url('keeper/team/createMatch')}/" + 'team_id/' + "{$team_id}"
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据，<a href="' + matchUrl + '" class="colororange">前往创建比赛</a></p></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据，<a href="' +
+                                matchUrl + '" class="colororange">前往创建比赛</a></p></div>'
                         }
                         $(wMatchList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
@@ -990,16 +1051,22 @@
                     team_id: team_id,
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' + data.data[i].number + '" data-name="' + data.data[i].name + '" data-tmid="' + data.data[i].id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '">' + data.data[i].name + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' +
+                                data.data[i].number + '" data-name="' + data.data[i].name +
+                                '" data-tmid="' + data.data[i].id + '" data-member="' + data.data[i].member +
+                                '" data-member_id="' + data.data[i].member_id + '">' + data.data[i].name +
+                                '</li>'
                         }
                         $("ul.teamMemberList").empty();
                         if (newli == '') {
@@ -1034,16 +1101,20 @@
                     page: page,
                     keyword: keywordMB,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli"  data-member_id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" ><font class="court">' + data.data.data[i].member + '</font>';
+                            newli += '<li class="mui-table-view-cell listli"  data-member_id="' + data.data
+                                .data[i].id + '" data-member="' + data.data.data[i].member +
+                                '" ><font class="court">' + data.data.data[i].member + '</font>';
                             newli += '</div></li>'
                         }
                         if (newli == '') {
@@ -1061,7 +1132,6 @@
                 }
             });
         };
-
     </script>
 </body>
 

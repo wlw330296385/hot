@@ -8,7 +8,6 @@ use app\model\LogException;
 
 class ExceptionHandler extends Handle
 {
-
     public function render(Exception $e)
     {
         $e_file = $e->getFile();
@@ -33,6 +32,22 @@ class ExceptionHandler extends Handle
             $memberInfo = session('memberInfo','','think');
             $log_data['member_id'] = $memberInfo['id'];
             $log_data['member'] = $memberInfo['member'];
+        }
+
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $log_data['request_url'] = $_SERVER['REQUEST_URI'];
+        }
+
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $log_data['referer'] = $_SERVER['HTTP_REFERER'];
+        }
+
+        if (!empty($_SERVER['OS'])) {
+            $log_data['os'] = $_SERVER['OS'];
+        }
+
+        if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+            $log_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
         }
 
         $syslog = LogException::create($log_data);

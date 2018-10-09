@@ -679,17 +679,25 @@
             // 根据路径传参判断赋值比赛类型
             var typeVal = wooApi.GetQueryString('val');
             var type = wooApi.GetQueryString('type');
+            var yzType = wooApi.GetQueryString('yzType');
             $("input[name=type]").val(typeVal);
             if (typeVal == 2) {
                 $(".matchType").text("友谊赛");
             } else if (typeVal == 4) {
                 $(".matchType").text("公开赛");
             }
-            if(type==0){
-                 $(".matchType").text("友谊赛");
-                 $("input[name=type]").val(2);
+            if (type == 0) {
+                $(".matchType").text("友谊赛");
+                $("input[name=type]").val(2);
             }
-        
+            if (yzType == "zjcreate") {
+                $(".matchType").text("友谊赛");
+                $("input[name=type]").val(2);
+                $("input[name=islive]").val(1);
+                $(".mui-switch-handle").css("transform", "translate(43px, 0px)");
+                $(".isLive").addClass("mui-active");
+            }
+
             // 不搜索的情况下，对手不在平台时候点击
             $(document).on("tap", ".noInPlatform", function () {
                 var str =
@@ -1353,9 +1361,9 @@
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             if (data.data.data[i].id != "{$team_id}") {
                                 newli = newli +
-                                    '<li class="mui-table-view-cell listli detalisli" data-id="' + data.data
+                                    '<li class="mui-table-view-cell listli" data-id="' + data.data
                                     .data[i].opponent_team.id + '" data-logo="' + data.data.data[i].opponent_team
-                                    .logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team +
+                                    .logo + '"><label class="nameHistory">' + data.data.data[i].opponent_team.name +
                                     '</label></li>'
                             }
                         }

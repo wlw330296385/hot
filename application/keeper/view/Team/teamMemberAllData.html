@@ -105,21 +105,21 @@
                 </li>
             </ul>
 
-            <ul class="mui-table-view mb">
+            <ul class="mui-table-view">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="mui-media-object mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <div>
-                        <strong class="f16">{$teamInfo.name}</strong>
-                    </div>
-                    <div class="mui-media-body">
-                        <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
-                        <p class="mui-ellipsis" style="line-height:20px;">队员:
-                            <strong class="colororange">{$teamInfo.member_num}</strong>&nbsp;粉丝数:
-                            <strong class="colororange">{$teamInfo.fans_num}</strong>
+                    <img class="mui-media-object mui-pull-left coachicon" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <h4>{$teamInfo.name}</h4>
+                    <div class="mui-media-body wd49" style="line-height:20px !important">
+                        <p>{$teamInfo.city} {$teamInfo.area}</p>
+                        <p class="f12">队员：
+                            <strong class="colororange">{$teamInfo.member_num}</strong>人 |
+                            <a href="{:url('team/fans',['team_id'=>$teamInfo['id']])}">粉丝：
+                                <strong class="colororange">{$teamInfo.fans_num}</strong>
+                            </a>
                         </p>
                     </div>
-                    <div class="price-frame">
-                        <button class="mui-btn bgred opBtn follow fr">关注</button>
+                    <div class="price-frame" style="padding:0">
+                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
                     </div>
                 </li>
             </ul>
@@ -280,10 +280,10 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-3 mui-col-sm-3 opli">
+            <li class="mui-table-view-cell mui-col-xs-2 mui-col-sm-2 opli">
                 <a href="#shareGuide">分享</a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-7 mui-col-sm-7 opli bgblue">
+            <li class="mui-table-view-cell mui-col-xs-8 mui-col-sm-8 opli bgblue">
                 <a href="#fbcomment">发表评论</a>
             </li>
         </ul>
@@ -302,12 +302,13 @@
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <ul class="mui-table-view operation list">
-            <h5>
-                <span class="type">评价一下</span>
+            <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                <i class="mui-icon mui-icon-compose"></i>
+                <span class="type ">发表评论</span>
                 <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
             </h5>
             <li class="listli">
-                <textarea rows="4" class="comment" placeholder="为这个比赛做做评价吧。"></textarea>
+                <textarea rows="4" class="comment" placeholder="请输入内容"></textarea>
             </li>
             <li class="mui-col-xs-12 opli commentBtn">发表</li>
         </ul>
@@ -328,10 +329,6 @@
             isthumbsup(); //点赞状态
             followStatus(); //判断当前的关注状态
 
-            if ($(".dataList").html() == '') {
-                $("")
-            }
-
             // 关注球队
             $(".follow").on("tap", '', function () {
                 var team_id = "{$teamInfo.id}";
@@ -340,10 +337,12 @@
                         type: 4,
                         team_id: team_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -378,10 +377,12 @@
                         comment_type: 3,
                         comment: comment
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -409,10 +410,12 @@
                         commented_id: commented_id,
                         comment_type: 3,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -438,10 +441,12 @@
                     type: 4,
                     team_id: team_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -467,10 +472,12 @@
                     commented_id: commented_id,
                     comment_type: 3,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -494,19 +501,19 @@
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
@@ -519,24 +526,32 @@
                     commented_id: commented_id,
                     comment_type: 3,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                data.data[i].create_time +
+                                '</div><img class="img32 mui-pull-left" src="' + data.data[i].member_avatar +
+                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
                         if (newli == '') {
-                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                            $("ul.comment-list").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论。</p></li>'
+                            );
                         }
                     } else {
                         //下拉加载 gType==2
@@ -548,7 +563,6 @@
                 }
             });
         };
-
     </script>
 
 </body>

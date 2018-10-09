@@ -18,7 +18,6 @@ class SystemException extends Backend
 
     public function index()
     {
-        echo $list;
         switch (input('param.status', 0)) {
             case '1':
                 $status = 1;
