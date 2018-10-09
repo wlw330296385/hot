@@ -633,24 +633,24 @@ class Referee extends Base{
             $messageService->sendMessageToMember($matchInfo['member_id'], $messageData, config('wxTemplateID.checkPend'),3600);
 
             // 匹配比赛裁判价格与裁判出场费符合的数据字段位置
-            $updateMatchRecordData = [];
-            if ( empty( $matchRecordInfo['referee1_id'] ) ) {
-                $updateMatchRecordData['referee1_id'] = $refereeInfo['id'];
-                $updateMatchRecordData['referee1'] = $refereeInfo['referee'];
-                $updateMatchRecordData['referee1_cost'] = $refereeInfo['appearance_fee'];
-            } elseif ( empty( $matchRecordInfo['referee2_id'] ) ) {
-                $updateMatchRecordData['referee2_id'] = $refereeInfo['id'];
-                $updateMatchRecordData['referee2'] = $refereeInfo['referee'];
-                $updateMatchRecordData['referee2_cost'] = $refereeInfo['appearance_fee'];
-            } elseif ( empty( $matchRecordInfo['referee3_id'] ) ) {
-                $updateMatchRecordData['referee3_id'] = $refereeInfo['id'];
-                $updateMatchRecordData['referee3'] = $refereeInfo['referee'];
-                $updateMatchRecordData['referee3_cost'] = $refereeInfo['appearance_fee'];
-            }
-            if (!empty( $updateMatchRecordData )) {
-                $updateMatchRecordData['id'] = $matchInfo['record']['id'];
-                $matchService->saveMatchRecord($updateMatchRecordData);
-            }
+            // $updateMatchRecordData = [];
+            // if ( empty( $matchRecordInfo['referee1_id'] ) ) {
+            //     $updateMatchRecordData['referee1_id'] = $refereeInfo['id'];
+            //     $updateMatchRecordData['referee1'] = $refereeInfo['referee'];
+            //     $updateMatchRecordData['referee1_cost'] = $refereeInfo['appearance_fee'];
+            // } elseif ( empty( $matchRecordInfo['referee2_id'] ) ) {
+            //     $updateMatchRecordData['referee2_id'] = $refereeInfo['id'];
+            //     $updateMatchRecordData['referee2'] = $refereeInfo['referee'];
+            //     $updateMatchRecordData['referee2_cost'] = $refereeInfo['appearance_fee'];
+            // } elseif ( empty( $matchRecordInfo['referee3_id'] ) ) {
+            //     $updateMatchRecordData['referee3_id'] = $refereeInfo['id'];
+            //     $updateMatchRecordData['referee3'] = $refereeInfo['referee'];
+            //     $updateMatchRecordData['referee3_cost'] = $refereeInfo['appearance_fee'];
+            // }
+            // if (!empty( $updateMatchRecordData )) {
+            //     $updateMatchRecordData['id'] = $matchInfo['record']['id'];
+            //     $matchService->saveMatchRecord($updateMatchRecordData);
+            // }
         }
         return json($res);
     }

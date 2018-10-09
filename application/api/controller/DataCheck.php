@@ -7,14 +7,18 @@ class DataCheck extends Base{
     
     // team表 member_num 的数据验证
     // public function checkTeamData() {
+    //     $affectIds = [];
     //     $list = Db::table('team')->select();
     //     foreach ($list as $row) {
     //         $res = Db::table('team_member')->where(['team_id' => $row['id'],'status' => 1])->count();
             
     //         $count = empty($res) ? 0 : $res;
-    //         $update_res = Db::query("UPDATE `team`  SET `member_num`=:member_num  WHERE  `id` = :id", ['member_num'=>$count, 'id'=>$row['id']]);
+    //         if ($row['member_num'] != $count) {
+    //             $update_res = Db::query("UPDATE `team`  SET `member_num`=:member_num  WHERE  `id` = :id", ['member_num'=>$count, 'id'=>$row['id']]);
+    //             array_push($affectIds, $row['id']);
+    //         }
     //     }
-    //     return 'ok';
+    //     return json_encode($affectIds);
     // }
 
     // public function checkName() {
