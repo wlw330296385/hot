@@ -98,23 +98,31 @@ class Pooltask extends Base{
                     'status'=>2,
                     'type'  =>3
                 ])->select();
-        $this->lottery2($poolList_3);
-        $this->lottery1($poolList_3);
+        if(!empty($poolList_3)){
+            $this->lottery2($poolList_3);
+            $this->lottery1($poolList_3);
+        }
+        
 
         $poolList_2 = db('pool')->where([
                     'end_str'=>['elt',$date_str],
                     'status'=>2,
                     'type'  =>2
                 ])->select();
-        $this->lottery2($poolList_2);
+
+        if(!empty($poolList_2)){
+            $this->lottery2($poolList_2);
+        }
 
         $poolList_1 = db('pool')->where([
                     'end_str'=>['elt',$date_str],
                     'status'=>2,
                     'type'  =>1
                 ])->select();
-        $this->lottery1($poolList_1);
-        dump($poolList_1);
+        if(!empty($poolList_1)){
+
+            $this->lottery1($poolList_1); 
+        }
         $this->Pool->isUpdate(true)->save(['status'=>-1],['end_str'=>['elt',$date_str],'status'=>2]);
         $data = ['crontab'=>'每日擂台开奖'];
         $this->record($data);
@@ -127,7 +135,7 @@ class Pooltask extends Base{
     private function lottery1($poolList){
         try{
             $model = new \app\model\PoolWinner;
-            dump($poolList);die;
+
             foreach ($poolList as $key => $value) {
                 $memberList = db('group_punch')->field('count(id) as c_id,member_id,member,avatar,pool,pool_id,group_id,group')->where(['pool_id'=>$value['id']])->group('member_id')->select();
                 if(empty($memberList)){
@@ -140,11 +148,12 @@ class Pooltask extends Base{
                 }
                 
                 array_multisort($c_ids,SORT_DESC ,SORT_NUMERIC );
+   
                 // 比例
                 $F = $value['first_scale'];$S = $value['second_scale'];$T = $value['third_scale'];
                 //奖金池总奖金
                 $P = $value['bonus'];
-
+           
                 //第一名打卡总数
                 $theFirst = 0;
                 $theFirst = $c_ids[0];
@@ -194,6 +203,7 @@ class Pooltask extends Base{
                     }
                 }
                 
+  
                 // dump($P);
                 // 余数
                 $M = $P%((count($c_f_m)*$F)+(count($c_s_m)*$S)+(count($c_t_m)*$T));
@@ -223,6 +233,7 @@ class Pooltask extends Base{
                 $result = $this->Pool->isUpdate(true)->save(['winner_list'=>json_encode([$c_f_m,$c_s_m,$c_t_m]),'mod'=>$M,'rate'=>$R,'c_f_m'=>count($c_f_m),'c_s_m'=>count($c_s_m),'c_t_m'=>count($c_t_m),'status'=>-1],['id'=>$value['id']]);
                 // 奖金得主诞生
                 $winners = array_merge($c_f_m,$c_s_m,$c_t_m);
+
                 $model->saveAll($winners);
                 $this->updateMembersHotcoin($winners);
 
