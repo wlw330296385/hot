@@ -866,9 +866,14 @@
             // 选择球队约战
             $(document).on("tap", ".myTeamList li", function () {
                 var teamId = $(this).attr("data-team_id");
-                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId +
-                    "/away_id/{$teamInfo.id}" + '?yzType=zjcreate'
-                window.location.href = urls
+                var max_role = $(this).attr("data-max_role");
+                if (max_role == 0) {
+                    mui.toast('权限不足');
+                } else {
+                    var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId +
+                        "/away_id/{$teamInfo.id}" + '?yzType=zjcreate'
+                    window.location.href = urls
+                }
             });
 
             $(".closeMyTeam").on("tap", function () {
@@ -1411,26 +1416,27 @@
 
         //获取在队的球队列表
         function toTeam() {
-            var url = "{:url('api/team/myteamlist','','',true)}";
+            var url = "{:url('api/team/myTeamListWithRole','','',true)}";
             mui.ajax({
                 url: url,
-                data: {
-                    status: 1
-                },
                 dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
+                type: 'get', //HTTP请求类型
                 timeout: 10000, //超时时间设置为10秒；
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 success: function (data) {
+
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[i]
-                                .team_id + '">' + data.data[i].team.name +
-                                '</li>'
+                            if (data.data[i].max_role != 0) {
+                                newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[i]
+                                    .team_id + '" data-max_role="' + data.data[i].max_role + '">'
+                                    + data.data[i].team.name
+                                    +'</li>'
+                            }
                         }
                         $(".myTeamList").append(newli);
                     }

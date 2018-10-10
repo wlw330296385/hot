@@ -49,8 +49,12 @@ class TeamService
             $roleModel = new TeamMemberRole();
             foreach ($teammembers as $k => $teammember) {
                 $teammembers[$k]['role_text'] = '';
+                $teammembers[$k]['max_role'] = 0;
                 $memberRole = $roleModel->where(['member_id' => $teammember['member_id'], 'team_id' => $teammember['team_id'], 'status' => 1])->select();
                 foreach ($memberRole as $val) {
+                    if ($val['type'] > $teammembers[$k]['max_role']) {
+                        $teammembers[$k]['max_role'] = $val['type'];
+                    }
                     $teammembers[$k]['role_text'] .= $val['type_text'] . ',';
                 }
             }
@@ -1465,4 +1469,5 @@ class TeamService
             }
         }
     }
+
 }

@@ -534,6 +534,27 @@ class Team extends Base
         }
     }
 
+    // 我的球队列表
+    public function myTeamListWithRole()
+    {
+        try {
+            if (empty($this->memberInfo['id'])) {
+                $response = ['code' => 100, 'msg' => __lang('MSG_402')];
+            }
+
+            $teamS = new TeamService();
+            $result = $teamS->myTeamWithRole($this->memberInfo['id']);
+            
+            if (!$result) {
+                return json(['code' => 100, 'msg' => __lang('MSG_401')]);
+            } else {
+                return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+            }
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
     // 球队成员列表
     public function teammemberlist()
     {

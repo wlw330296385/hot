@@ -637,20 +637,51 @@ class Team extends Base
             $matchInfo['record'] = $matchRecordInfo;
         }
         // 判断比赛是否“免裁判” 0为“免裁判”
-        $matchInfo['referee_type'] = 0;
-        if (!empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3'])) {
-            $matchInfo['referee_type'] = 1;
-        }
+        // $matchInfo['referee_type'] = 0;
+        // if (!empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3'])) {
+        //     $matchInfo['referee_type'] = 1;
+        // }
 
         // 裁判列表:获取已同意的裁判比赛申请|邀请的裁判名单
         $refereeList = [];
-        $modelMatchRefereeApply = new MatchRefereeApply();
-        $refereeList = $modelMatchRefereeApply->where([
-            'match_id' => $matchRecordInfo['match_id'],
-            'match_record_id' => $matchRecordInfo['id'],
-            'status' => ['neq', 3]
-        ])->select();
+        // $modelMatchRefereeApply = new MatchRefereeApply();
+        // $refereeList = $modelMatchRefereeApply->where([
+        //     'match_id' => $matchRecordInfo['match_id'],
+        //     'match_record_id' => $matchRecordInfo['id'],
+        //     'status' => ['=', 2]
+        // ])->select();
 
+        if (!empty($matchInfo['record']['referee1'])) {
+            $referee1 = [
+                'referee_id' => $matchInfo['record']['referee1_id'],
+                'referee' => $matchInfo['record']['referee1'],
+                'referee_cost' => $matchInfo['record']['referee1_cost']
+            ];
+            array_push($refereeList, $referee1);
+        }
+        if (!empty($matchInfo['record']['referee2'])) {
+            $referee2 = [
+                'referee_id' => $matchInfo['record']['referee2_id'],
+                'referee' => $matchInfo['record']['referee2'],
+                'referee_cost' => $matchInfo['record']['referee2_cost']
+            ];
+            array_push($refereeList, $referee2);
+        }
+
+        if (!empty($matchInfo['record']['referee3'])) {
+            $referee3 = [
+                'referee_id' => $matchInfo['record']['referee3_id'],
+                'referee' => $matchInfo['record']['referee3'],
+                'referee_cost' => $matchInfo['record']['referee3_cost']
+            ];
+            array_push($refereeList, $referee3);
+        }
+
+        // 裁判是否满员
+        $is_referee_full = 0;
+        if (!empty($matchRecordInfo['referee1']) && !empty($matchRecordInfo['referee2']) && !empty($matchRecordInfo['referee3'])) {
+            $is_referee_full = 1;
+        }
         // 报名编辑按钮显示标识teamrole: 获取会员在球队角色身份（0-4）/会员不是球队成员（-1）
         // $teamMemberInfo = $teamS->getTeamMemberInfo([
         //     'team_id' => $this->team_id,
@@ -674,6 +705,7 @@ class Team extends Base
         $this->assign('countTeamMember', $countTeamMember);
         $this->assign('matchInfo', $matchInfo);
         $this->assign('refereeList', $refereeList);
+        $this->assign('is_referee_full', $is_referee_full);
         $this->assign('memberRefereeInfo', $memberRefereeInfo);
         return view('Team/matchInfoOfTeam');
     }

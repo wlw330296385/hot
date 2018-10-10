@@ -58,7 +58,7 @@
         <div class="list">
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="mui-media-object mui-pull-left" src="{$teamMemberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
+                    <img class="img50 mui-pull-left" src="{$teamMemberInfo.avatar}" style="width:60px !important;height:60px !important;margin-top:5px">
                     <div>
                         <strong class="f16">{$teamMemberInfo.name}</strong>
                         <i class="icon iconfont icon-sex1"></i>
@@ -74,7 +74,7 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <button class="mui-btn bgred opBtn follow fr">关注</button>
+                        <button class="mui-btn mui-btn-danger opBtn follow fr">关注</button>
                     </div>
                 </li>
             </ul>
@@ -206,10 +206,12 @@
                         type: 1,
                         member_id: "{$teamMemberInfo.member_id}"
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -236,10 +238,10 @@
 
             //搜索、下拉刷选后触发
             function searchToList() {
-                count = 1;//显示第一页
+                count = 1; //显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
             }
 
             mui.init({
@@ -249,19 +251,19 @@
                     container: "#refreshContainer",
                     down: {
                         //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                        height: 50, //可选.默认50.触发下拉刷新拖动距离
+                        auto: true, //可选,默认false.自动下拉刷新一次
+                        contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                         callback: pulldownRefresh
                     },
                     up: {
                         //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
+                        height: 150, //可选.默认50.触发上拉加载拖动距离
                         //auto:true,//可选,默认false.自动上拉加载一次
                         contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                         callback: pullupRefresh
                     }
                 }
@@ -269,19 +271,19 @@
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+                    count = 1; //刷新并显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
             function pullupRefresh() {
                 setTimeout(function () {
-                    count++;//翻下一页
+                    count++; //翻下一页
                     var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
 
@@ -294,13 +296,15 @@
                     data: {
                         team_id: team_id,
                         team_member_id: team_member_id,
-                        is_attend:1,
-                        year:sYear
+                        is_attend: 1,
+                        year: sYear
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
@@ -312,17 +316,44 @@
                                 // 将时间戳转成日期格式
                                 var matchTimeM = gettimeM(data.data.data[i].match_time * 1000);
                                 var matchTimeY = gettimeY(data.data.data[i].match_time * 1000);
-                                var urls = "{:url('team/teamMemberData')}" + '/match_id/' + data.data.data[i].match_id + '/team_id/' + "{$team_id}"+"/team_member_id/"+data.data.data[i].team_member_id;
-                                newli += '<li class="mui-table-view-cell"><a href="' + urls + '"><ul class="mui-row" style="padding:0">'
-                                newli += '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' + (data.data.data.slice(0, i).length + 1) + '</p></li><li class="mui-col-xs-3 mui-col-sm-3"><p>' + matchTimeY + '</p><p>' + matchTimeM + '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
-                                if (data.data.data[i].record.home_score > data.data.data[i].record.away_score) {
-                                    newli += '<p class="colororange">' + data.data.data[i].record.away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' + data.data.data[i].record.home_score + ':' + data.data.data[i].record.away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                var urls = "{:url('team/teamMemberData')}" + '/match_id/' +
+                                    data.data.data[i].match_id + '/team_id/' + "{$team_id}" +
+                                    "/team_member_id/" + data.data.data[i].team_member_id;
+                                newli += '<li class="mui-table-view-cell"><a href="' + urls +
+                                    '"><ul class="mui-row" style="padding:0">'
+                                if (data.data.data[i].record.home_score > data.data.data[i].record
+                                    .away_score) {
+                                    newli +=
+                                        '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p class="colororange">' +
+                                        (data.data.data.slice(0, i).length + 1) +
+                                        '</p></li><li class="mui-col-xs-3 mui-col-sm-3 "><p class="colororange">' +
+                                        matchTimeY + '</p><p class="colororange">' + matchTimeM +
+                                        '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+
+                                    newli += '<p class="colororange">' + data.data.data[i].record
+                                        .away_team +
+                                        '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p class="colororange">' +
+                                        data.data.data[i].record.home_score + ':' + data.data.data[
+                                            i].record.away_score +
+                                        '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
                                 } else {
-                                    newli += '<p>' + data.data.data[i].record.away_team + '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' + data.data.data[i].record.home_score + ':' + data.data.data[i].record.away_score + '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
+                                    newli +=
+                                        '<li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;"><p>' +
+                                        (data.data.data.slice(0, i).length + 1) +
+                                        '</p></li><li class="mui-col-xs-3 mui-col-sm-3 "><p>' +
+                                        matchTimeY + '</p><p>' + matchTimeM +
+                                        '</p></li><li class="mui-col-xs-4 mui-col-sm-4" style="line-height: 36px;">';
+                                    newli += '<p>' + data.data.data[i].record.away_team +
+                                        '</p></li><li class="mui-col-xs-3 mui-col-sm-3" style="line-height: 36px;"><p>' +
+                                        data.data.data[i].record.home_score + ':' + data.data.data[
+                                            i].record.away_score +
+                                        '</p></li><li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">';
                                 }
-                                if (data.data.data[i].record.home_score > data.data.data[i].record.away_score) {
+                                if (data.data.data[i].record.home_score > data.data.data[i].record
+                                    .away_score) {
                                     newli += '<p class="colororange">胜</p>'
-                                } else if (data.data.data[i].record.home_score < data.data.data[i].record.away_score) {
+                                } else if (data.data.data[i].record.home_score < data.data.data[
+                                        i].record.away_score) {
                                     newli += '<p>负</p>'
                                 } else {
                                     newli += '<p>--</p>'
@@ -336,7 +367,9 @@
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.match").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.match").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                                );
                             }
                         } else {
                             //下拉加载 gType==2
@@ -364,10 +397,12 @@
                     team_member_id: team_member_id,
                     year: sYear
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -388,17 +423,21 @@
                     type: 1,
                     member_id: "{$teamMemberInfo.member_id}"
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
                         if (data.data === 1) {
-                            $(".follow").text("取消关注");
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
                         } else {
                             $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
                         }
                     }
                 },
@@ -420,6 +459,7 @@
             var day = _time.getDate();
             return p(month) + "月" + p(day) + "日"
         }
+
         function gettimeY(Y) {
             var _time = new Date(Y);
             var year = _time.getFullYear();
