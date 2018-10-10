@@ -1431,14 +1431,12 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var tempstr = ''
-                            if (data.data[i].max_role == 0) {
-                                tempstr = ' （权限不足）'
+                            if (data.data[i].max_role != 0) {
+                                newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[i]
+                                    .team_id + '" data-max_role="' + data.data[i].max_role + '">'
+                                    + data.data[i].team.name
+                                    +'</li>'
                             }
-                            newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[i]
-                                .team_id + '" data-max_role="' + data.data[i].max_role + '">'
-                                + data.data[i].team.name + tempstr
-                                +'</li>'
                         }
                         $(".myTeamList").append(newli);
                     }
