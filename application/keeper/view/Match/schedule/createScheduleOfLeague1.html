@@ -144,7 +144,6 @@
                 </div>
             </div>
             {/if}
-
             {volist name="matchScheduleInfo" id="vo1" key="a"}
             <div class="scheduleList" data-num="{$a}">
                 <div class="page-header bggray2 border-b">
@@ -163,7 +162,7 @@
                     </div>
                     <div class="box">
                         {volist name="vo1.scheduleList" id="vo2" key="b"}
-                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}">
+                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}" data-status="{$vo2.status}">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">{$b}</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -351,26 +350,25 @@
                 $(".clearOperation").show();
             }
 
-            if ("{$hasGroup}" == 0) {
-                allTeamList();
-            } else {
-                getbattle();
-            }
+
+
 
             // 根据比赛阶段来显示选择列表
-            if (stageVal == 1) {
-                getbattle();
-                $(".promotionList").empty();
-                promotionTeamList(stageVal);
-            } else {
-                allTeamList();
-                $(".promotionList").empty();
-                promotionTeamList(stageVal);
-            }
+            // if (stageVal == 1) {
+            //     getbattle();
+            //     $(".promotionList").empty();
+            //     promotionTeamList(stageVal);
+            // } else {
+            //     allTeamList();
+            //     $(".promotionList").empty();
+            //     promotionTeamList(stageVal);
+            // }
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1 + {$dayCount};
+                var listLength = $(".scheduleList").length + 1 + {
+                    $dayCount
+                };
                 var str =
                     `<div class="scheduleList" data-num="${listLength}">
                 <div class="page-header bggray2 border-b">
@@ -411,7 +409,7 @@
             $(document).on("tap", ".addSingleSchedule", function () {
                 var listLength = $(this).parents().siblings(".box").find(".checkboxCont").length + 1;
                 var str =
-                    ` <div class="mui-input-row mui-checkbox checkboxCont ">
+                    ` <div class="mui-input-row mui-checkbox checkboxCont" data-status="0">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">${listLength}</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -770,6 +768,13 @@
                         $("input[name=match_stage]").val($(".match_stage").children("option:selected").text())
                         $("input[name=match_stage_id]").val($(".match_stage").val());
                         pstageId = $(".match_stage").children('option:selected').attr("data-pstage_id");
+                        if ("{$hasGroup}" == 0) {
+                            allTeamList();
+                            promotionTeamList(pstageId);
+                        } else {
+                            getbattle();
+                            promotionTeamList(pstageId);    
+                        }
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -777,7 +782,6 @@
                 }
             });
         }
-
         // 联赛晋级球队列表
         function promotionTeamList(pstageId) {
             var url = "{:url('api/league/getmatchstageadvteams')}";
@@ -920,7 +924,7 @@
                 var away_team_id = $(this).find("input[name=away_team_id]").val();
                 var away_team_logo = $(this).find("input[name=away_team_logo]").val();
                 var scheduleName = $(this).parents(".scheduleList").find(".course").text();
-                var status = 0;
+                var status = $(this).attr("data-status");
                 if (match_time == '') {
                     mui.toast("请选择" + scheduleName + "的比赛时间");
                     return isOk = false;
