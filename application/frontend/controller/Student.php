@@ -148,7 +148,7 @@ class Student extends Base
 			$count_1 = count($list_1);
 			// 历史学生总数
 			$list =db('lesson_member')->where(['camp_id'=>$camp_id])->group('student_id')->select();
-			$count = count($list_1);
+			$count = count($list);
 			$this->assign('count',$count);
 			$this->assign('count_1',$count_1);
 			return view('Student/studentListOfCamp');
