@@ -14,26 +14,26 @@ class MatchRecordService {
     }
 
     // 获取所有比赛记录
-    public function getAllMatchRecord($map, $order='match_time desc', $paginate=10) {
+    // public function getAllMatchRecord($map, $order='match_time desc', $paginate=10) {
 
-        $ext_sql = $map["is_finished"] == 1 ? "(`match_org_id` = 0 AND `is_finished` = 1) OR `is_record` = 1" : "`match_org_id` = 0 AND `is_finished` = -1";
-        unset($map["is_finished"]);
+    //     $ext_sql = $map["is_finished"] == 1 ? "(`match_org_id` = 0 AND `is_finished` = 1) OR `is_record` = 1" : "`match_org_id` = 0 AND `is_finished` = -1";
+    //     unset($map["is_finished"]);
 
-        $model = new Match();
-        $result = $model
-        ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
-        ->join('match_record','match.id = match_record.match_id')
-        ->where($map)
-        ->where($ext_sql)
-        ->order('match_record.match_id desc')
-        ->paginate($paginate);
+    //     $model = new Match();
+    //     $result = $model
+    //     ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
+    //     ->join('match_record','match.id = match_record.match_id')
+    //     ->where($map)
+    //     ->where($ext_sql)
+    //     ->order('match_record.match_id desc')
+    //     ->paginate($paginate);
 
-        if (!$result) {
-            return $result;
-        } else {
-            return $result;
-        }
-    }
+    //     if (!$result) {
+    //         return $result;
+    //     } else {
+    //         return $result;
+    //     }
+    // }
 
     // 获取最近比赛记录和序号
     public function getAllMatchRecordWithSN($map, $page=1, $limit=10) {

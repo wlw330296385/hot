@@ -12,4 +12,7 @@ class MatchHonor extends Model
     use SoftDelete;
     protected $deleteTime = 'delete_time';
 
+    public function getHonorTimeAttr($value) {
+        return ($value>0) ? date('Y-m-d', $value) : '';
+    }
 }

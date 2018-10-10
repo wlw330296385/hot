@@ -1382,7 +1382,7 @@ class LeagueService
     }
 
     // 获取联赛奖项
-    public function getMatchHonor($map, $order = 'id desc')
+    public function getMatchHonor($map, $order = 'id asc')
     {
         $model = new MatchHonor();
         $res = $model->where($map)->order($order)->find();
@@ -1390,13 +1390,17 @@ class LeagueService
     }
 
     // 获取联赛奖项列表
-    public function getMatchHonorList($map, $order = 'id desc')
+    public function getMatchHonorList($map, $order = 'id asc')
     {
         $model = new MatchHonor();
         $res = $model->where($map)->order($order)->select();
-        if ($res) {
-            return $res;
-        }
         return $res->toArray();
+    }
+
+    public function saveMatchHonor($data)
+    {
+        $model = new MatchHonor();
+        $res = $model->allowField(true)->isUpdate(true)->save($data);
+        return $res;
     }
 }
