@@ -115,7 +115,7 @@
                         </p>
                     </div>
                     <div class="price-frame">
-                        <button class="mui-btn bgred follow" style="margin-top:26px">关注</button>
+                        <button class="mui-btn mui-btn-danger follow" style="margin-top:26px">关注</button>
                     </div>
                 </li>
             </ul>
@@ -360,12 +360,15 @@
                     分享
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit">
+            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bggreen memberEdit fromMine">
                 <a href="{:url('member/memberInfo')}">
                     编辑
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgblue">
+            <li class="mui-table-view-cell mui-col-sm-4 mui-col-xs-4 opli bgblue fromMine">
+                <a href="#fbcomment">评论</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli bgblue hide fromFans">
                 <a href="#fbcomment">评论</a>
             </li>
         </ul>
@@ -419,6 +422,7 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/mui.view.js "></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <!-- 选择器 -->
     <script src="/static/frontend/js/mui.picker.min.js"></script>
     <script src="/static/frontend/js/mui.poppicker.js"></script>
@@ -450,6 +454,13 @@
         var id = "{$memberInfo.id}";
         var sYear = '';
         $(function () {
+            
+            //显示的是粉丝身份数据时，不显示编辑按钮 
+            var from = wooApi.GetQueryString('from');
+            if(from == 'fans'){
+                $(".fromMine").hide();
+                $(".fromFans").show();
+            }
 
             // 其他效力球队为空提示语
             var tips = $.trim($(".teammember").html())
@@ -767,9 +778,11 @@
                     console.log(data);
                     if (data.code == 200) {
                         if (data.data === 1) {
-                            $(".follow").text("取消关注");
+                            $(".follow").text("已关注");
+                            $(".follow").removeClass("mui-btn-danger");
                         } else {
                             $(".follow").text("关注");
+                            $(".follow").addClass("mui-btn-danger");
                         }
                     }
                 },

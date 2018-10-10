@@ -108,6 +108,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -117,6 +118,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -126,6 +128,7 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
@@ -135,6 +138,7 @@
             0% {
                 opacity: 1;
             }
+
             100% {
                 opacity: 0;
             }
@@ -253,7 +257,8 @@
                 <div class="page-header">
                     <span class="course colororange statusText">报名人员</span>
                     <span class="more">
-                        <a href="{:url('team/eventSignupList',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}/?eventOfTeam=1" class="mui-navigate-right">
+                        <a href="{:url('team/eventSignupList',['team_id'=>$teamInfo['id'],'event_id'=>$eventInfo['id']])}/?eventOfTeam=1"
+                            class="mui-navigate-right">
                             <b class="colororange">{$eventInfo.reg_number}</b> 人
                         </a>
                     </span>
@@ -270,7 +275,8 @@
                 <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y:hidden;">
                     {volist name="eventInfo.album" id="vol"}
                     <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
-                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;"> </div>
+                        <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;">
+                    </div>
                     {/volist}
                 </div>
             </div>
@@ -352,12 +358,13 @@
         <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
             <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
                 <ul class="mui-table-view operation">
-                    <h5>
-                        <span class="type">发表评论</span>
+                    <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                        <i class="mui-icon mui-icon-compose"></i>
+                        <span class="type ">发表评论</span>
                         <a href="#fbcomment" class="mui-icon mui-icon-closeempty"></a>
                     </h5>
                     <li class="listli">
-                        <textarea rows="4" class="comment" placeholder="为这个活动做做评价吧。"></textarea>
+                        <textarea rows="4" class="comment" placeholder="请输入内容"></textarea>
                     </li>
                     <li class="mui-col-xs-12 opli commentBtn">提交申请</li>
                 </ul>
@@ -370,8 +377,8 @@
                 <div>{:token()}</div>
                 <div id="container"></div>
                 <div id="tip">
-                    <input type="text" id="keyword" name="keyword" value="{$eventInfo.location}" onfocus='this.value=""' placeholder="请输入关键字：(选定后搜索)"
-                    />
+                    <input type="text" id="keyword" name="keyword" value="{$eventInfo.location}" onfocus='this.value=""'
+                        placeholder="请输入关键字：(选定后搜索)" />
                 </div>
                 <button class="mui-btn-blue" id="mapConfirm">确认</button>
             </div>
@@ -379,6 +386,7 @@
 
         <script src="/static/frontend/js/mui.min.js"></script>
         <script src="/static/frontend/js/wooApi.js"></script>
+        <script src="/static/frontend/js/getDate.js"></script>
         <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
         <script src="/static/frontend/js/mui.zoom.js"></script>
         <script src="/static/frontend/js/mui.previewimage.js"></script>
@@ -388,45 +396,47 @@
             var lng = '{$eventInfo.lng}';
             var lat = '{$eventInfo.lat}';
             // map(选择具体地址)
-            {if $eventInfo.lng == '' || $eventInfo.lat == ''}
+            {
+                if $eventInfo.lng == '' || $eventInfo.lat == ''
+            }
             var map = new AMap.Map('container', {
                 resizeEnable: true,
                 zoom: 13
-            });
-            {else}
+            }); {
+                else
+            }
             var map = new AMap.Map('container', {
                 resizeEnable: true,
                 zoom: 13,
-                center:[lng,lat]
-            });
-            {/if}
-            AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
-                var geocoder = new AMap.Geocoder({
-    
+                center: [lng, lat]
+            }); {
+                /if}
+                AMap.plugin(['AMap.Geocoder', 'AMap.PlaceSearch', 'AMap.Autocomplete', 'AMap.Geolocation'], function () {
+                    var geocoder = new AMap.Geocoder({
+
+                    });
+                    var marker = new AMap.Marker({
+                        map: map,
+                        bubble: true
+                    })
+                    geolocation = new AMap.Geolocation({
+                        enableHighAccuracy: true, //是否使用高精度定位，默认:true
+                        timeout: 10000, //超过10秒后停止定位，默认：无穷大
+                        maximumAge: 0, //定位结果缓存0毫秒，默认：0
+                        convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                        showButton: true, //显示定位按钮，默认：true
+                        buttonPosition: 'RB', //定位按钮停靠位置，默认：'LB'，左下角
+                        buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                        showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+                        showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+                        panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
+                        zoomToAccuracy: true //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                    });
+
+                    geolocation.getCurrentPosition(function (status, result) {
+                        console.log(result);
+                    });
                 });
-                var marker = new AMap.Marker({
-                    map: map,
-                    bubble: true
-                })
-                geolocation = new AMap.Geolocation({
-                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
-                    timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-                    maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-                    showButton: true,        //显示定位按钮，默认：true
-                    buttonPosition: 'RB',    //定位按钮停靠位置，默认：'LB'，左下角
-                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-                    panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-                    zoomToAccuracy: true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-                });
-    
-                geolocation.getCurrentPosition(function (status, result) {
-                    console.log(result);
-                });
-            });
-    
         </script>
         <script>
             mui.previewImage();
@@ -460,16 +470,17 @@
                 // 判断身份显示操作按钮
                 var teamrole = "{$teamrole}";
                 var is_finished = "{$eventInfo.is_finished}";
+                var end_time = "{$eventInfo.end_time}";
 
-                if (teamrole > 0 && is_finished == "已结束") {
+                if (teamrole > 0 && (is_finished == "已结束" || getNowTime() > end_time)) {
                     $(".status3").show();
-                } else if (teamrole > 0 && is_finished == "未开始") {
+                } else if (teamrole > 0 && (is_finished == "未开始" || getNowTime() > end_time)) {
                     $(".status4").show();
                 }
 
-                if (teamrole < 0 && is_finished == "已结束") {
+                if (teamrole < 0 && (is_finished == "已结束" || getNowTime() > end_time)) {
                     $(".status1").show();
-                } else if (teamrole < 0 && is_finished == "未开始") {
+                } else if (teamrole < 0 && (is_finished == "未开始" || getNowTime() > end_time)) {
                     $(".status2").show();
                 }
 
@@ -486,10 +497,12 @@
                         data: {
                             event_id: event_id,
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
@@ -523,10 +536,12 @@
                             comment_type: 2,
                             comment: comment
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
@@ -553,10 +568,12 @@
                             commented_id: commented_id,
                             comment_type: 2,
                         },
-                        dataType: 'json',//服务器返回json格式数据
-                        type: 'post',//HTTP请求类型
-                        timeout: 10000,//超时时间设置为10秒；
-                        headers: { 'Content-Type': 'application/json' },
+                        dataType: 'json', //服务器返回json格式数据
+                        type: 'post', //HTTP请求类型
+                        timeout: 10000, //超时时间设置为10秒；
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             console.log(data);
                             if (data.code == 200) {
@@ -582,10 +599,12 @@
                         commented_id: commented_id,
                         comment_type: 2,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -615,17 +634,20 @@
                     data: {
                         event_id: event_id,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         if (data.code == 200) {
                             var inactiveDiv = '';
                             $(".imgShow").empty();
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                inactiveDiv += '<img src="' + data.data[i].avatar + '" style="margin-right:3px">'
+                                inactiveDiv += '<img src="' + data.data[i].avatar +
+                                    '" style="margin-right:3px">'
                             };
                             $(".imgShow").append(inactiveDiv);
                         }
@@ -643,19 +665,19 @@
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+                    count = 1; //刷新并显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toCommentList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toCommentList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
             function pullupRefresh() {
                 setTimeout(function () {
-                    count++;//翻下一页
+                    count++; //翻下一页
                     var page = count;
-                    var gType = 2;//代表上拉加载
-                    toCommentList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toCommentList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //获取评论列表
@@ -668,24 +690,32 @@
                         commented_id: commented_id,
                         comment_type: 2,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             $(".comment_count").text(data.data.length);
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                newli = newli + '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' + data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar + '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+                                newli = newli +
+                                    '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                    data.data[i].create_time +
+                                    '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                    '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                             }
                         }
                         if (gType == 1) {
                             //上拉刷新
                             $("ul.comment-list").empty().append(newli);
                             if (newli == '') {
-                                $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+                                $("ul.comment-list").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                                );
                             }
                         } else {
                             //下拉加载 gType==2
