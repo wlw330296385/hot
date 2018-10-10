@@ -224,7 +224,7 @@ class CampWithdraw extends Base{
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             $data['buffer'] = $withdraw;
-            if($this->campInfo['rebate_type'] == 2){
+            if($campInfo['rebate_type'] == 2){
                 $data['camp_withdraw_fee'] = $data['buffer']*$campInfo['schedule_rebate'];
             }else{
                 $data['camp_withdraw_fee'] = 0;
@@ -259,7 +259,8 @@ class CampWithdraw extends Base{
                 $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
                 db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
                 //更新cookie
-                session('campInfo.balance',($this->campInfo['balance']-$data['buffer']));
+                session('campInfo.balance',($campInfo['balance']-$data['buffer']));
+            }
             return json($result);   
         }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
