@@ -74,36 +74,165 @@ class CampWithdraw extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
      }
-    // 新建提现
-    public function createCampWithdrawApi(){
-         try{
 
-            return json(['code'=>100,'msg'=>'很抱歉!手机端提现升级中,请去电脑后台提现,访问地址: https://m.hot-basketball.com/management']);
+
+    // 新建提现(所见即所得,废弃0)
+    // public function createCampWithdrawApi(){
+    //      try{
+
+    //         return json(['code'=>100,'msg'=>'很抱歉!手机端提现升级中,请去电脑后台提现,访问地址: https://m.hot-basketball.com/management']);
+    //         $isPower = $this->isPower();
+    //         if($isPower<>4){
+    //             return json(['code'=>100,'msg'=>'权限不足']);
+    //         }   
+    //         $data = input('post.');
+    //         $data['member_id'] = $this->memberInfo['id'];
+    //         $data['member'] = $this->memberInfo['member'];
+    //         $data['camp_id'] = input('param.camp_id');
+    //         $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
+    //         if($campInfo['balance']<$data['withdraw']){
+    //             return json(['code'=>100,'msg'=>'余额不足']);
+    //         }
+    //         $data['s_balance'] = $campInfo['balance'];
+    //         $data['e_balance'] = $campInfo['balance'] - $data['withdraw'];
+    //         $data['camp_type'] = $campInfo['type'];
+    //         $data['camp'] = $campInfo['camp'];
+    //         $data['rebate_type'] = $campInfo['rebate_type'];
+    //         $data['schedule_rebate'] = $campInfo['schedule_rebate'];
+    //         $data['buffer'] = $data['withdraw'];
+    //         if($campInfo['rebate_type'] == 2){
+    //             $data['camp_withdraw_fee'] = $data['buffer']*$campInfo['schedule_rebate'];
+    //         }else{
+    //             $data['camp_withdraw_fee'] = 0;
+    //         }
+    //         $result = $this->CampWithdrawService->createCampWithdraw($data);
+    //         if($result['code'] == 200){
+    //             $openid = $this->memberInfo['openid'];
+    //             $messageData = [
+    //                 "touser" => $openid,
+    //                 "template_id" => config('wxTemplateID.withdraw'),
+    //                 "url" => "https://m.hot-basketball.com/frontend/camp/campwallet/camp_id/{$data['camp_id']}",
+    //                 "topcolor"=>"#FF0000",
+    //                 "data" => [
+    //                     'first' => ['value' => '您的提现申请成功'],
+    //                     'keyword1' => ['value' => "{$data['withdraw']}"],
+    //                     'keyword2' => ['value' => "{$data['camp_withdraw_fee']}"],
+    //                     'keyword3' => ['value' => ($data['withdraw'] - $data['camp_withdraw_fee'])],
+    //                     'keyword4' => ['value' => "篮球管家公众号"],
+    //                     'remark' => ['value' => "该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。"]
+    //                 ]
+    //             ];
+    //             $saveData = [
+    //                 'title'=>"您的提现申请成功",
+    //                 'content'=>"该笔提现预计在1-2个工作日内处理，如有疑问,请联系平台管理员。",
+    //                 'url'=>url('frontend/camp/campwallet',['camp_id'=>$data['camp_id']],'',true),
+    //                 'member_id'=>$this->memberInfo['id']
+    //             ];
+    //             $MessageService = new \app\service\MessageService;
+    //             $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
+    //             db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
+    //         }
+    //         return json($result);   
+    //      }catch (Exception $e){
+    //          return json(['code'=>100,'msg'=>$e->getMessage()]);
+    //     }
+    // }
+
+     // 提现申请
+     public function createCampWithdrawApi(){
+         try{
+            $camp_id = input('param.camp_id');
             $isPower = $this->isPower();
             if($isPower<>4){
                 return json(['code'=>100,'msg'=>'权限不足']);
             }   
-            $data = input('post.');
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $data['camp_id'] = input('param.camp_id');
-            $campInfo = db('camp')->where(['id'=>input('param.camp_id')])->find();
-            if($campInfo['balance']<$data['withdraw']){
-                return json(['code'=>100,'msg'=>'余额不足']);
+            $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+            if(!$campInfo){
+                return json(['msg'=>'训练营信息错误','code'=>100]);
             }
+
+            $w = date('w',time());
+            $d = date('d',time());
+            $type = input('param.type',1);
+            // 最后一次提现的时间点
+            $lastWitchdraw = db('camp_withdraw')->where(['status'=>['in',[1,2,3]],'camp_id'=>$camp_id])->find();
+            if($lastWitchdraw){
+                $point_in_time = $lastWitchdraw['point_in_time'];
+            }else{
+                $point_in_time = 2018-01-01;
+            }
+            if($campInfo['rebate_type'] == 1){
+                if($d<5 || $d>15){
+                    $this->error('每月5-15号之间方可申请提现');
+                }
+                // 如果是负数不允许提现
+                if($type ==1){
+                    // 获取上个月的时间点
+                    $time =  strtotime(date('Ym01',time()));
+                    $e = date('Ymd',strtotime('-1 day',$time));//得到上个月的最后一天
+                    $date_str = [$point_in_time,$e];
+                    $map1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$campInfo['id'],'type'=>['in',[3,4,5,6]]];
+                    $map_1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$campInfo['id'],'type'=>1];
+                    $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+                    $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+                    $withdraw = $income - $output;
+                    if($withdraw<=0){
+                        return json(['msg'=>'收入为赤字不可提现','code'=>100]);
+                    }
+                    //如果小于余额,只能提余额
+                    if($withdraw >$campInfo['balance']){
+                        $withdraw = $campInfo['balance'];
+                    }
+                }else{
+
+                    return json(['msg'=>'其它收入未开放提现','code'=>100]);
+                }
+            //营业额版训练营
+
+            }else{
+                // 周五-日方可提现
+                if($w<>0 && $w <> 5 && $w <> 6){
+                    return json(['msg'=>'周五至周日才可申请提现','code'=>100]);
+                }
+                $e = date('Ymd', strtotime('-1 sunday', time()));
+                $date_str = [$point_in_time,$e];
+                $map1 = ['date_str'=>['gt',$point_in_time],'camp_id'=>$campInfo['id'],'type'=>['in',[1,2,4]]];
+                $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$campInfo['id'],'type'=>2];
+                $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
+                $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
+                $withdraw = $income;
+                if($withdraw<0){
+                    return json(['msg'=>'收入为赤字不可提现','code'=>100]);
+                }
+                //如果小于余额,只能提余额
+                if($withdraw >$campInfo['balance']){
+                    $withdraw = $campInfo['balance'];
+                }
+
+            }
+            
+            
+            $data['bank_id'] = input('param.bank_id');
+            $data['withdraw'] = $withdraw;
             $data['s_balance'] = $campInfo['balance'];
             $data['e_balance'] = $campInfo['balance'] - $data['withdraw'];
             $data['camp_type'] = $campInfo['type'];
             $data['camp'] = $campInfo['camp'];
             $data['rebate_type'] = $campInfo['rebate_type'];
             $data['schedule_rebate'] = $campInfo['schedule_rebate'];
-            $data['buffer'] = $data['withdraw'];
-            if($campInfo['rebate_type'] == 2){
+            $data['camp_id'] = $campInfo['id'];
+            $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
+            $data['buffer'] = $withdraw;
+            if($this->campInfo['rebate_type'] == 2){
                 $data['camp_withdraw_fee'] = $data['buffer']*$campInfo['schedule_rebate'];
             }else{
                 $data['camp_withdraw_fee'] = 0;
             }
-            $result = $this->CampWithdrawService->createCampWithdraw($data);
+            // $data['buffer'] = $withdraw + $data['camp_withdraw_fee'];
+            $data['point_in_time'] = $e;
+            $CampWithdrawService = new \app\service\CampWithdrawService;
+            $result = $CampWithdrawService->createCampWithdraw($data);
             if($result['code'] == 200){
                 $openid = $this->memberInfo['openid'];
                 $messageData = [
@@ -129,14 +258,13 @@ class CampWithdraw extends Base{
                 $MessageService = new \app\service\MessageService;
                 $MessageService->sendMessageMember($this->memberInfo['id'],$messageData,$saveData);
                 db('camp')->where(['id'=>$data['camp_id']])->dec('balance',$data['buffer'])->update();
-            }
+                //更新cookie
+                session('campInfo.balance',($this->campInfo['balance']-$data['buffer']));
             return json($result);   
-         }catch (Exception $e){
+        }catch (Exception $e){
              return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
-
-
     // 取消提现
     public function cancelWithdrawApi(){
         // Db::startTrans();

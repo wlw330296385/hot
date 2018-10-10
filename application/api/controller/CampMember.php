@@ -602,9 +602,10 @@ class CampMember extends Base
         }
     }
 
-    // 训练营 学生在营/离营操作
+    // 训练营 学生在营/离营操作(废弃)
     public function removestudent()
     {
+        return false;
         // 接收传参
         $student_id = input('param.student_id', 0);
         $camp_id = input('param.camp_id', 0);

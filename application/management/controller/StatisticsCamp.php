@@ -779,7 +779,7 @@ class StatisticsCamp extends Camp{
                 $map_1  = ['date_str'=>['gt',$point_in_time],'camp_id'=>$this->campInfo['id'],'type'=>2];
                 $output = db('output')->where($map_1)->where(['date_str'=>['elt',$e]])->sum('output');
                 $income = db('income')->where($map1)->where(['date_str'=>['elt',$e]])->sum('income');
-                $output = 0;
+            
                 $withdraw = $income;
                 if($withdraw<0){
                     $this->error('收入为赤字不可提现');
