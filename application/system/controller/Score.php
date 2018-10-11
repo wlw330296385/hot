@@ -12,7 +12,7 @@ class Score extends Base{
     	parent::_initialize();
     }
 
-   //每天执行平台收支记录数据
+   //每天执行sh上课积分定时任务
     public function scheduleScore(){
     	try{
             $date_str = date('Ymd',time());
@@ -55,7 +55,6 @@ class Score extends Base{
                 db('member')->where(['id'=>['in',$stduent_memebr_ids]])->inc('score',$student_score)->update();
                 // sleep(5);
             },'schedule_member.id');
-            
             db('schedule_member')->where(['status'=>1,'is_score'=>0])->update(['is_score'=>1]);
 	    	$data = ['crontab'=>'教练和学生上课积分赠送'];
             $this->record($data);

@@ -364,4 +364,27 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+
+    // 把学生设置离赢
+    public function intakeStudentApi(){
+        try {
+            $l_id = input('param.l_id');
+            $intake = input('param.intake');
+            $camp_id = db('lesson_member')->where(['id'=>$l_id])->value('camp_id');
+            $isPower = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
+            if(!$isPower || $isPower<3){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            $res = db('lesson_member')->where(['id'=>$l_id])->update(['intake'=>$intake]);
+            if($res){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'未改变任何状态']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
 }
