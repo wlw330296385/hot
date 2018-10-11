@@ -917,56 +917,61 @@ class Team extends Base
         $recordId = $matchRecordInfo['id'];
 
         // 比赛战绩是属于球队的话，插入球队认领的比赛战绩数据
-        if ($matchRecordInfo) {
-            if ($this->team_id != $matchRecordInfo['away_team_id']) {
-                $this->error('球队信息不匹配，不能访问');
-            }
-            // 比赛双方球队比分信息数据位置对换
-            $claimRecordData = [
-                'match_id' => $matchInfo['id'],
-                'match' => $matchRecordInfo['away_team'] . ' vs ' . $matchRecordInfo['home_team'],
-                'match_schedule_id' => $matchRecordInfo['match_schedule_id'],
-                'match_time' => $matchRecordInfo['match_time'],
-                'team_id' => $this->team_id,
-                'home_team_id' => $this->team_id,
-                'home_team' => $matchRecordInfo['away_team'],
-                'home_team_logo' => $matchRecordInfo['away_team_logo'],
-                'home_team_color' => $matchRecordInfo['away_team_color'],
-                'home_team_colorstyle' => $matchRecordInfo['away_team_colorstyle'],
-                'home_score' => $matchRecordInfo['away_score'],
-                "away_team_id" => $matchRecordInfo['home_team_id'],
-                "away_team" => $matchRecordInfo['home_team'],
-                "away_team_logo" => $matchRecordInfo['home_team_logo'],
-                "away_team_color" => $matchRecordInfo['home_team_color'],
-                "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
-                "away_score" => $matchRecordInfo['home_score'],
-                'referee1' => json_encode($matchRecordInfo['referee1'], JSON_UNESCAPED_UNICODE),
-                'referee2' => json_encode($matchRecordInfo['referee2'], JSON_UNESCAPED_UNICODE),
-                'referee3' => json_encode($matchRecordInfo['referee3'], JSON_UNESCAPED_UNICODE),
-                'win_team_id' => $matchRecordInfo['win_team_id'],
-                'lose_team_id' => $matchRecordInfo['lose_team_id'],
-                'claim_status' => 0,
-                'claim_team_id' => $this->team_id,
-                'claim_record_id' => $matchRecordInfo['id']
-            ];
-            // 查询有无已有数据
-            $hasClaimRecord = $matchService->getMatchRecord([
-                'match_id' => $matchInfo['id'],
-                'team_id' => $this->team_id,
-                'claim_team_id' => $this->team_id,
-                'claim_record_id' => $matchRecordInfo['id'],
-            ]);
-            if ($hasClaimRecord) {
-                $claimRecordData['id'] = $hasClaimRecord['id'];
-                $claimRecordData['claim_status'] = ($hasClaimRecord['claim_status'] == 1) ? 1 : 0;
-            }
-            $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
+        // if ($matchRecordInfo) {
+        //     if ($this->team_id != $matchRecordInfo['away_team_id']) {
+        //         $this->error('球队信息不匹配，不能访问');
+        //     }
+        //     // 比赛双方球队比分信息数据位置对换
+        //     $claimRecordData = [
+        //         'match_id' => $matchInfo['id'],
+        //         'match' => $matchRecordInfo['away_team'] . ' vs ' . $matchRecordInfo['home_team'],
+        //         'match_schedule_id' => $matchRecordInfo['match_schedule_id'],
+        //         'match_time' => $matchRecordInfo['match_time'],
+        //         'team_id' => $this->team_id,
+        //         'home_team_id' => $this->team_id,
+        //         'home_team' => $matchRecordInfo['away_team'],
+        //         'home_team_logo' => $matchRecordInfo['away_team_logo'],
+        //         'home_team_color' => $matchRecordInfo['away_team_color'],
+        //         'home_team_colorstyle' => $matchRecordInfo['away_team_colorstyle'],
+        //         'home_score' => $matchRecordInfo['away_score'],
+        //         "away_team_id" => $matchRecordInfo['home_team_id'],
+        //         "away_team" => $matchRecordInfo['home_team'],
+        //         "away_team_logo" => $matchRecordInfo['home_team_logo'],
+        //         "away_team_color" => $matchRecordInfo['home_team_color'],
+        //         "away_team_colorstyle" => $matchRecordInfo['home_team_colorstyle'],
+        //         "away_score" => $matchRecordInfo['home_score'],
+        //         'referee1' => json_encode($matchRecordInfo['referee1'], JSON_UNESCAPED_UNICODE),
+        //         'referee2' => json_encode($matchRecordInfo['referee2'], JSON_UNESCAPED_UNICODE),
+        //         'referee3' => json_encode($matchRecordInfo['referee3'], JSON_UNESCAPED_UNICODE),
+        //         'win_team_id' => $matchRecordInfo['win_team_id'],
+        //         'lose_team_id' => $matchRecordInfo['lose_team_id'],
+        //         'claim_status' => 0,
+        //         'claim_team_id' => $this->team_id,
+        //         'claim_record_id' => $matchRecordInfo['id']
+        //     ];
+        //     // 查询有无已有数据
+        //     $hasClaimRecord = $matchService->getMatchRecord([
+        //         'match_id' => $matchInfo['id'],
+        //         'team_id' => $this->team_id,
+        //         'claim_team_id' => $this->team_id,
+        //         'claim_record_id' => $matchRecordInfo['id'],
+        //     ]);
+        //     if ($hasClaimRecord) {
+        //         $claimRecordData['id'] = $hasClaimRecord['id'];
+        //         $claimRecordData['claim_status'] = ($hasClaimRecord['claim_status'] == 1) ? 1 : 0;
+        //     }
+        //     $resultSaveMatchRecord = $matchService->saveMatchRecord($claimRecordData);
 
-            // 页面输出的比赛战绩数据组合
-            $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
-            if (!empty($matchInfo['record']['album'])) {
-                $matchInfo['record']['album'] = json_decode($matchInfo['record']['album'], true);
-            }
+        //     // 页面输出的比赛战绩数据组合
+        //     $matchInfo['record'] = ($hasClaimRecord) ? $hasClaimRecord : $matchService->getMatchRecord(['id' => $resultSaveMatchRecord['data']]);
+        //     if (!empty($matchInfo['record']['album'])) {
+        //         $matchInfo['record']['album'] = json_decode($matchInfo['record']['album'], true);
+        //     }
+        // }
+
+        $matchInfo['record'] = $matchRecordInfo;
+        if (!empty($matchInfo['record']['album'])) {
+            $matchInfo['record']['album'] = json_decode($matchInfo['record']['album'], true);
         }
 
         // 进入认领编辑页按钮显示判断
@@ -977,7 +982,6 @@ class Team extends Base
             'is_attend' => 2,
             'status' => 1
         ]);
-
 
         // 当前球队成员总数
         $countTeamMember = $teamS->getTeamMemberCount(['team_id' => $this->team_id]);

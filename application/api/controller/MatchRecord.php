@@ -5,7 +5,7 @@ use app\service\TeamService;
 use app\service\TeamMemberService;
 use app\service\MatchRecordService;
 use think\Db;
-
+use app\model\Match;
 class MatchRecord extends Base
 { 
     public function getAllTypeMatch()
@@ -21,14 +21,32 @@ class MatchRecord extends Base
         }
         unset($map);
 
-        $map["match_record.home_team_id|match_record.away_team_id"] = intval(input('param.team_id'));
-        $map["is_finished"] = intval(input('param.is_finished'));
+        // 对手创建的比赛，需要认领后才会出现在列表
+        $team_id = intval(input('param.team_id'));
+        $sql = "
+        (`match_org_id` = 0 AND (`match_record`.`home_team_id` = %s OR  (`match_record`.`away_team_id` = %s AND `match_record`.`claim_status` = 1)))
+        OR
+        (`match_org_id` != 0 AND (`match_record`.`home_team_id` = %s OR `match_record`.`away_team_id` = %s))
+        ";
+
+        $ext_sql = str_replace('%s', $team_id, $sql);
+
         if(!empty(input('param.islive'))) {
             $map["islive"] = intval(input('param.islive'));
         }
 
-        $matchRecordS = new MatchRecordService();
-        $result = $matchRecordS -> getAllMatchRecord($map);
+        $is_finished = intval(input('param.is_finished'));
+        $ext_sql2 = $is_finished == 1 ? "(`match_org_id` = 0 AND `is_finished` = 1) OR `is_record` = 1" : "`match_org_id` = 0 AND `is_finished` = -1";
+
+        $model = new Match();
+        $result = $model
+        ->field('match_record.*, match.type, match.match_org_id, match.match_org, match.name, match.is_finished, match.islive, match.status')
+        ->join('match_record','match.id = match_record.match_id')
+        ->where($map)
+        ->where($ext_sql)
+        ->where($ext_sql2)
+        ->order('match_record.match_id desc')
+        ->paginate(10);
 
         if ($result) {
             $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];

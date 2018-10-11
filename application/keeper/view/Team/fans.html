@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
 </head>
 
-<body class=whitebg>
+<body>
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
@@ -21,29 +21,23 @@
     </header>
 
     <div class="mui-content">
-
         <div id="refreshContainer" class="mui-scroll-wrapper mt44">
             <div class="mui-scroll">
                 <ul class="mui-table-view detalis-list list border-b fans"></ul>
             </div>
         </div>
-
     </div>
-
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
-
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
-        $(function () {
-            //初始化全局变量
-            var count = 1;
-            // followStatus();
-        })
+        //初始化全局变量
+        var count = 1;
+
         mui.init({
             swipeBack: true, //启用右滑关闭功能
             pullRefresh: {
@@ -51,42 +45,42 @@
                 container: "#refreshContainer",
                 down: {
                     //下拉刷新
-                    height: 50,//可选.默认50.触发下拉刷新拖动距离
-                    auto: true,//可选,默认false.自动下拉刷新一次
-                    contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                    contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    height: 50, //可选.默认50.触发下拉刷新拖动距离
+                    auto: true, //可选,默认false.自动下拉刷新一次
+                    contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                     callback: pulldownRefresh
                 },
                 up: {
                     //上拉加载
-                    height: 150,//可选.默认50.触发上拉加载拖动距离
+                    height: 150, //可选.默认50.触发上拉加载拖动距离
                     //auto:true,//可选,默认false.自动上拉加载一次
                     contentrefresh: '正在加载...',
-                    contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                    contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                     callback: pullupRefresh
                 }
             }
         });
+
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toList(page, gType); //具体取数据的方法
             }, 100);
         }
-
 
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
@@ -99,35 +93,47 @@
                     team_id: team_id,
                     type: 4,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            var urls = "{:url('team/memberpersoninfo')}" + '/member_id/' + data.data.data[i].member_id;
+                            var urls = "{:url('team/memberpersoninfo')}"+'/team_id/'+'{$teamInfo.id}' + '/member_id/' + data.data.data[
+                                i].member_id+'?from=fans';
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<a href="' + urls + '" class="fl wd"><img class="img45 mui-pull-left" src="' + data.data.data[i].member_avatar + '" ><div class="mui-media-body" style="width:72%">' + data.data.data[i].member + '';
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time + '</p></div></a><div class="price-frame">';
+                            newli += '<a href="' + urls +
+                                '" class="fl wd"><img class="img45 mui-pull-left" src="' + data.data.data[
+                                    i].member_avatar +
+                                '" ><div class="mui-media-body" style="width:72%">' + data.data.data[i]
+                                .member + '';
+                            newli += '<p class="mui-ellipsis">' + data.data.data[i].create_time +
+                                '</p></div></a><div class="price-frame">';
                             if (data.data.data[i].follow_status == 1) {
-                                newli += '<button type="button" class="btn bgred" onclick="followFans(' + data.data.data[i].member_id + ')" >取消关注</button>'
+                                newli += '<button type="button" class="btn" onclick="followFans(' +
+                                    data.data.data[i].member_id + ')" >已关注</button>'
                             } else {
-                                newli += '<button type="button" class="btn bgred" onclick="followFans(' + data.data.data[i].member_id + ')" >关注</button>'
+                                newli += '<button type="button" class="btn bgred" onclick="followFans(' +
+                                    data.data.data[i].member_id + ')" >关注</button>'
                             }
                             newli += '</div></li>';
                         }
                     }
-                    
+
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.fans").empty().append(newli);
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
-                            $("ul.fans").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                            $("ul.fans").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                            );
                         }
                     } else {
                         //下拉加载 gType==2
@@ -155,12 +161,13 @@
                     type: 1,
                     member_id: member_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast(data.msg);
@@ -175,7 +182,6 @@
                 }
             });
         }
-
     </script>
 </body>
 

@@ -59,7 +59,7 @@ class Match extends Base
             // 比赛名称
             $data['name'] = $homeTeam['name'].' vs '.$data['away_team'];
         } else {
-            $data['name'] = $homeTeam['name'].'约战';
+            $data['name'] = $homeTeam['name'].' vs 待定';
         }
         // 保存数据
         $matchS = new MatchService();
@@ -264,6 +264,40 @@ class Match extends Base
     }
 
     // 更新球队比赛
+    // public function updateteammatch1()
+    // {
+        // 针对非联赛型比赛修改
+        // 1.查询原始数据
+        // 2.检查现在可否修改数据，【"比赛已完成 超过48小时不能修改", "已经认领的数据不能修改比分"】
+        // 3.处理数据
+        // 4.
+        // $data = input('post.');
+
+        // $matchS = new MatchService();
+        // $teamS = new TeamService();
+        // $messageS = new MessageService();
+        // $refereeS = new RefereeService();
+        // // 获取当前比赛数据、比赛战绩数据
+        // $match_id = $data['id'];
+        // $match = $matchS->getMatch(['id' => $match_id]);
+        // $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id'], 'id' => $data['record']['id']]);
+        // if (!$match || !$matchRecord) {
+        //     return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
+        // }
+        // // 比赛已完成 超过24小时不能修改
+        // if ($match['is_finished_num'] == 1 && (time() - $match['finished_time'] > 48*86400)) {
+        //     return json(['code' => 100, 'msg' => '比赛已完成不能修改了']);
+        // }
+        // // 认领比赛表示双方认可最终比分，不可修改
+        // if ($matchRecord['claim_status'] == 1) {
+        //     if ($matchRecord['home_score'] != $data['record']['home_score'] || $matchRecord['away_score'] != $data['record']['away_score']) {
+        //         return json(['code' => 100, 'msg' => '比赛双方已认领比赛，总比分不可再修改']);
+        //     }
+        // }
+
+    // }
+
+    // 更新球队比赛
     public function updateteammatch()
     {
         // 接收请求参数 $data：match表字段
@@ -276,13 +310,24 @@ class Match extends Base
         // 获取当前比赛数据、比赛战绩数据
         $match_id = $data['id'];
         $match = $matchS->getMatch(['id' => $match_id]);
-        $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id']]);
+        $matchRecord = $matchS->getMatchRecord(['match_id' => $match['id'], 'id' => $data['record']['id']]);
         if (!$match || !$matchRecord) {
             return json(['code' => 100, 'msg' => __lang('MSG_404') . '请选择其他比赛']);
         }
         // 比赛已完成 超过24小时不能修改
         if ($match['is_finished_num'] == 1 && ($match['finished_time']-time()>24*86400)) {
             return json(['code' => 100, 'msg' => '比赛已完成不能修改了']);
+        }
+        if ($matchRecord['claim_status'] == 1) {
+            if ($matchRecord['home_team_id'] != $data['record']['home_team_id'] || $matchRecord['away_team_id'] != $data['record']['away_team_id']) {
+                return json(['code' => 100, 'msg' => '比赛双方已认领比赛，对阵双方不可再修改']);
+            }
+            if ($matchRecord['home_team'] != $data['record']['home_team'] || $matchRecord['away_team'] != $data['record']['away_team']) {
+                return json(['code' => 100, 'msg' => '比赛双方已认领比赛，对阵双方不可再修改']);
+            }
+            if ($matchRecord['home_score'] != $data['record']['home_score'] || $matchRecord['away_score'] != $data['record']['away_score']) {
+                return json(['code' => 100, 'msg' => '比赛双方已认领比赛，总比分不可再修改']);
+            }
         }
         $matchRecordId = $matchRecord['id'];
         // 数据字段验证
@@ -292,14 +337,16 @@ class Match extends Base
         }
         // 时间字段格式转换
         $data['match_time'] = checkDatetimeIsValid($data['match_time']) ? strtotime($data['match_time']) : null;
+
         // 组合比赛战绩数据 match_record表字段
         $dataMatchRecord = $data['record'];
         // 比赛完成状态match is_finished标识
         $isFinished = 0;
         // 提取球队、比分变量
-        $homeTeamId = $dataMatchRecord['home_team_id'];
         $homeScore = $dataMatchRecord['home_score'];
         $awayTeamId = $dataMatchRecord['away_team_id'];
+        $awayTeam = $data['record']['away_team'];
+        $homeTeamId = $dataMatchRecord['home_team_id'];
         $awayScore = $dataMatchRecord['away_score'];
         // 提交is_finished=1 即比赛完成 验证数据
         if (isset($data['is_finished']) && $data['is_finished'] == 1) {
@@ -327,10 +374,11 @@ class Match extends Base
             $dataMatchRecord['album'] = $data['album'];
         }
         // 更新比赛名称match_name 有选择对手队：当前球队名vs对手队名|无选择对手队：当前球队名友谊赛（对手待定）
-        if (!empty($awayTeamId)) {
+        if (!empty($awayTeam)) {
             $data['name'] = $data['record']['home_team'] . ' vs ' . $data['record']['away_team'];
+            $dataMatchRecord['match'] = $data['name'];
         } else {
-            $data['name'] = $data['record']['home_team'] . '约战';
+            $data['name'] = $data['record']['home_team'] . ' vs 待定';
         }
         /**
          * 根据裁判员数据组合发送比赛邀请、比赛裁判任务领取、撤销邀请的推送消息接收裁判员会员id集合
@@ -574,8 +622,8 @@ class Match extends Base
                 $resApply = $matchS->saveMatchApply($applyData);
                 // 组合推送消息内容
                 $dataMessage = [
-                    'title' => '您好，' . $dataMatchRecord['home_team'] . '球队向您所在 ' . $dataMatchRecord['name'] . '球队发起约战',
-                    'content' => '您好，' . $dataMatchRecord['home_team'] . '球队向您所在 ' . $dataMatchRecord['name'] . '球队发起约战',
+                    'title' => '您好，' . $dataMatchRecord['home_team'] . '球队向您所在 ' . $dataMatchRecord['away_team'] . '球队发起约战',
+                    'content' => '您好，' . $dataMatchRecord['home_team'] . '球队向您所在 ' . $dataMatchRecord['away_team'] . '球队发起约战',
                     'url' => url('keeper/team/matchapplyinfo', ['apply_id' => $resApply['data'], 'team_id' => $awayTeam['id']], '', true),
                     'keyword1' => '球队发起约战',
                     'keyword2' => $this->memberInfo['member'],
