@@ -112,7 +112,7 @@
                         <label class="wd45">选择对阵的球队</label>
                     </div>
                     <div class="box">
-                        <div class="mui-input-row mui-checkbox checkboxCont ">
+                        <div class="mui-input-row mui-checkbox checkboxCont " data-status="0">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">1</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -162,7 +162,8 @@
                     </div>
                     <div class="box">
                         {volist name="vo1.scheduleList" id="vo2" key="b"}
-                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}" data-status="{$vo2.status}">
+                        <div class="mui-input-row mui-checkbox checkboxCont" data-id="{$vo2.id}" data-status="{$vo2.status}"
+                            data-match_time="{$vo2.match_time}">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">{$b}</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -409,7 +410,7 @@
             $(document).on("tap", ".addSingleSchedule", function () {
                 var listLength = $(this).parents().siblings(".box").find(".checkboxCont").length + 1;
                 var str =
-                    ` <div class="mui-input-row mui-checkbox checkboxCont" data-status="0">
+                    ` <div class="mui-input-row mui-checkbox checkboxCont" data-status="0" data-match_time="0">
                             <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                                 <div class="mui-col-xs-2 order">${listLength}</div>
                                 <div class="mui-col-xs-4 mui-ellipsis mui-text-center">
@@ -773,7 +774,7 @@
                             promotionTeamList(pstageId);
                         } else {
                             getbattle();
-                            promotionTeamList(pstageId);    
+                            promotionTeamList(pstageId);
                         }
                     }
                 },
@@ -915,56 +916,71 @@
         function submitAction() {
             scheduleList = []
             var isOk = true
-            $(".checkboxCont").each(function () {
-                var match_time = $(this).parents(".clickTap").siblings(".timeTap").find(".ui-alert").text();
-                var home_team = $(this).find(".HomeTeam").text();
-                var home_team_id = $(this).find("input[name=home_team_id]").val();
-                var home_team_logo = $(this).find("input[name=home_team_logo]").val();
-                var away_team = $(this).find(".AwayTeam").text();
-                var away_team_id = $(this).find("input[name=away_team_id]").val();
-                var away_team_logo = $(this).find("input[name=away_team_logo]").val();
-                var scheduleName = $(this).parents(".scheduleList").find(".course").text();
-                var status = $(this).attr("data-status");
-                if (match_time == '') {
-                    mui.toast("请选择" + scheduleName + "的比赛时间");
-                    return isOk = false;
-                }
-                if (home_team_id == '') {
-                    mui.toast("请选择" + scheduleName + "的主队");
-                    return isOk = false;
-                }
-                if (away_team_id == '') {
-                    mui.toast("请选择" + scheduleName + "的客队");
-                    return isOk = false;
-                }
-                var id = $(this).attr("data-id");
-                if (id != undefined) {
-                    scheduleList.push({
-                        match_time,
-                        home_team,
-                        home_team_id,
-                        home_team_logo,
-                        away_team,
-                        away_team_id,
-                        away_team_logo,
-                        status,
-                        id
-                    });
-                } else {
-                    scheduleList.push({
-                        match_time,
-                        home_team,
-                        home_team_id,
-                        home_team_logo,
-                        away_team,
-                        away_team_id,
-                        away_team_logo,
-                        status
-                    });
-                }
 
-
-            });
+            $(".scheduleList").each(function () {
+                var matchTime = $(this).find(".ui-alert").text();
+                $(".checkboxCont").each(function () {
+                    var status = $(this).attr("data-status");
+                    if (status == 0 || status == 1) {
+                        var home_team = $(this).find(".HomeTeam").text();
+                        var home_team_id = $(this).find("input[name=home_team_id]").val();
+                        var home_team_logo = $(this).find("input[name=home_team_logo]").val();
+                        var away_team = $(this).find(".AwayTeam").text();
+                        var away_team_id = $(this).find("input[name=away_team_id]").val();
+                        var away_team_logo = $(this).find("input[name=away_team_logo]").val();
+                        var scheduleName = $(this).parents(".scheduleList").find(".course").text();
+                        var match_time = $(this).attr("data-match_time");
+                        // 用于判断原来时间与最后选择时间是否一致
+                        var match_time_yyr = match_time.substr(0, 10); //年月日
+                        var match_time_hm = match_time.substr(11, 16); //时分
+                        // 如果时间不一样，就把最新的时间和原本的时分拼接提交
+                        if (match_time_yyr != matchTime) {
+                            match_time = matchTime + ' ' + match_time_hm
+                        }
+                        //a
+                        if (match_time == 0) {
+                            match_time = matchTime
+                        }
+                        if (match_time == '') {
+                            mui.toast("请选择" + scheduleName + "的比赛时间");
+                            return isOk = false;
+                        }
+                        if (home_team_id == '') {
+                            mui.toast("请选择" + scheduleName + "的主队");
+                            return isOk = false;
+                        }
+                        if (away_team_id == '') {
+                            mui.toast("请选择" + scheduleName + "的客队");
+                            return isOk = false;
+                        }
+                        var id = $(this).attr("data-id");
+                        if (id != undefined) {
+                            scheduleList.push({
+                                match_time,
+                                home_team,
+                                home_team_id,
+                                home_team_logo,
+                                away_team,
+                                away_team_id,
+                                away_team_logo,
+                                status,
+                                id
+                            });
+                        } else {
+                            scheduleList.push({
+                                match_time,
+                                home_team,
+                                home_team_id,
+                                home_team_logo,
+                                away_team,
+                                away_team_id,
+                                away_team_logo,
+                                status
+                            });
+                        }
+                    }
+                });
+            })
             if (!isOk) {
                 return isOk
             }
