@@ -554,7 +554,7 @@ class League extends Base
         // 根据team_id获取球队信息
         $teamS = new TeamService();
         $teamMemberRoleType = $teamS->checkMemberTeamRole($data['team_id'], $this->memberInfo['id']);
-        if ($teamMemberRoleType >= 1 ) {
+        if ($teamMemberRoleType <= 1) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 
