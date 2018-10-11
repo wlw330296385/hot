@@ -32,7 +32,7 @@
             <a class="mui-control-item mui-icon mui-icon-left-nav"
                href="{:url('camp/powerCamp',['camp_id'=>$camp_id])}"></a>
             <a class="mui-control-item mui-active" search-id="sOn" href="#onlineStudentList">在学</a>
-            <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">预结业</a>
+            <a class="mui-control-item " search-id="sGraduate" href="#graduateStudentList">待结业</a>
             <a class="mui-control-item" search-id="sOff" href="#offlineStudentList">正式结业</a>
             <a class="mui-control-item" search-id="sPend" href="#pendingStudentList">待处理</a>
         </div>
@@ -57,7 +57,7 @@
             <div class="mui-scroll">
                 <ul class="mui-table-view coach list border-b student4 OA_task_student"></ul>
             </div>
-            <div class="bottomInfo">Tips：学员完成课程将变为预结业状态，并自动退出所在班级</div>
+            <div class="bottomInfo">Tips：学员完成课程将变为待结业状态，并自动退出所在班级</div>
         </div>
         <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -360,7 +360,7 @@
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
                         newli += '<li class="mui-table-view-cell mui-media listli">';
                         
-                        if(data.data.data[i].status=="在学"||data.data.data[i].status=="预结业"){
+                        if(data.data.data[i].status=="在学"||data.data.data[i].status=="待结业"){
                             newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为结业</span></div>';
                         }
 
@@ -462,50 +462,51 @@
     };
 
     //拖拽后显示操作图标，点击操作图标删除元素；
-    // $('.OA_task_student').on('tap', '.mui-btn', function (event) {
-    //     var elem = this;
-    //     var li = elem.parentNode.parentNode;
-    //     var btnArray = ['确认', '取消'];
-    //     var txt = elem.innerHTML;
-    //     var student_id = elem.parentNode.getAttribute('data-id');
-    //     var action = elem.getAttribute('data-action');
-    //     var campID = "{$camp_id}";
-    //     mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
-    //         if (e.index == 0) {
-    //             //li.parentNode.removeChild(li);
-    //             var apiurl = "{:url('api/camp_member/removestudent')}";
-    //             mui.ajax(apiurl, {
-    //                 data: {
-    //                     student_id: student_id,
-    //                     action: action,
-    //                     camp_id: campID,
-    //                 },
-    //                 dataType: 'json',
-    //                 type: 'post',
-    //                 headers: {'Content-Type': 'application/json'},
-    //                 success: function (data) {
-    //                     //console.log(data);
-    //                     if (data.code == 200) {
-    //                         mui.alert(data.msg);
-    //                         setTimeout(function(){
-    //                                 li.parentNode.removeChild(li);
-    //                                 location.reload();
-    //                         },1000);
-    //                     } else {
-    //                         mui.toast(data.msg);
-    //                     }
-    //                 },
-    //                 error: function (xhr, type, errotThrown) {
-    //                     mui.toast('网络异常,请稍候再试');
-    //                 }
-    //             });
-    //         } else {
-    //             setTimeout(function () {
-    //                 mui.swipeoutClose(li);
-    //             }, 0);
-    //         }
-    //     });
-    // });
+    $('.OA_task_student').on('tap', '.mui-btn', function (event) {
+        mui.toast("此操作升级中，请稍后再试");
+        // var elem = this;
+        // var li = elem.parentNode.parentNode;
+        // var btnArray = ['确认', '取消'];
+        // var txt = elem.innerHTML;
+        // var student_id = elem.parentNode.getAttribute('data-id');
+        // var action = elem.getAttribute('data-action');
+        // var campID = "{$camp_id}";
+        // mui.confirm('确认该课程' + txt + '?', '提示', btnArray, function (e) {
+        //     if (e.index == 0) {
+        //         //li.parentNode.removeChild(li);
+        //         var apiurl = "{:url('api/camp_member/removestudent')}";
+        //         mui.ajax(apiurl, {
+        //             data: {
+        //                 student_id: student_id,
+        //                 action: action,
+        //                 camp_id: campID,
+        //             },
+        //             dataType: 'json',
+        //             type: 'post',
+        //             headers: {'Content-Type': 'application/json'},
+        //             success: function (data) {
+        //                 //console.log(data);
+        //                 if (data.code == 200) {
+        //                     mui.alert(data.msg);
+        //                     setTimeout(function(){
+        //                             li.parentNode.removeChild(li);
+        //                             location.reload();
+        //                     },1000);
+        //                 } else {
+        //                     mui.toast(data.msg);
+        //                 }
+        //             },
+        //             error: function (xhr, type, errotThrown) {
+        //                 mui.toast('网络异常,请稍候再试');
+        //             }
+        //         });
+        //     } else {
+        //         setTimeout(function () {
+        //             mui.swipeoutClose(li);
+        //         }, 0);
+        //     }
+        // });
+    });
 
 
     //训练营训练营未分配班级学生
