@@ -429,7 +429,9 @@ class StatisticsCamp extends Backend{
     // 赠课购买列表
     public function campGift(){
         $camp_id = $this->campInfo['id'];
-        $lesson_id = input('param.lesson_id');
+        if(request()->isPost()){
+            dump(input('post.'));die;
+        }
         $list = db('schedule_giftbuy')
         ->field('schedule_giftbuy.create_time,schedule_giftbuy.lesson_id,schedule_giftbuy.member,lesson.lesson,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,schedule_giftbuy.camp_id')
         ->join('lesson','lesson.id = schedule_giftbuy.lesson_id')
@@ -438,6 +440,8 @@ class StatisticsCamp extends Backend{
         ->group('schedule_giftbuy.lesson_id')
         ->order('schedule_giftbuy.id asc')
         ->select();
+        $campList = db('camp')->select();
+        $this->assign('campList',$campList);
         $this->assign('list',$list);
         return view('StatisticsCamp/campGift');
     }

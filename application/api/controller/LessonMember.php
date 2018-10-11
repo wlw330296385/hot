@@ -372,9 +372,11 @@ class LessonMember extends Base{
         try {
             $l_id = input('param.l_id');
             $intake = input('param.intake');
-            $camp_id = db('lesson_member')->where(['id'=>$l_id])->value('camp_id');
-
-            $isPower = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
+            $info = db('lesson_member')->where(['id'=>$l_id])->find();
+            if($info['rest_schedule'] >0){
+                return json(['code'=>100,'msg'=>'还有剩余课时不允许操作']);
+            }
+            $isPower = db('camp_member')->where(['camp_id'=>$info['camp_id'],'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
      
             if(!$isPower || $isPower<3){
                 return json(['code'=>100,'msg'=>'权限不足']);
