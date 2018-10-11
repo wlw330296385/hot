@@ -319,6 +319,12 @@ class Match extends Base
             return json(['code' => 100, 'msg' => '比赛已完成不能修改了']);
         }
         if ($matchRecord['claim_status'] == 1) {
+            if ($matchRecord['home_team_id'] != $data['record']['home_team_id'] || $matchRecord['away_team_id'] != $data['record']['away_team_id']) {
+                return json(['code' => 100, 'msg' => '比赛双方已认领比赛，对阵双方不可再修改']);
+            }
+            if ($matchRecord['home_team'] != $data['record']['home_team'] || $matchRecord['away_team'] != $data['record']['away_team']) {
+                return json(['code' => 100, 'msg' => '比赛双方已认领比赛，对阵双方不可再修改']);
+            }
             if ($matchRecord['home_score'] != $data['record']['home_score'] || $matchRecord['away_score'] != $data['record']['away_score']) {
                 return json(['code' => 100, 'msg' => '比赛双方已认领比赛，总比分不可再修改']);
             }
