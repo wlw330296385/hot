@@ -12,7 +12,8 @@ class LessonMember extends Model {
 
 
     public function getStatusAttr($value){
-        $status = [0=>'待审核',1=>'正常',2=>'退出',3=>'被开除',4=>'已毕业','-1' => '离营'];
+        // $status = [0=>'待审核',1=>'正常',2=>'退出',3=>'被开除',4=>'已毕业','-1' => '离营'];
+        $status = [0=>'待审核',1=>'在学',2=>'退出',3=>'被开除',4=>'预结业','-1' => '正式结业'];
         return $status[$value];
     }
 
