@@ -1484,17 +1484,17 @@ class League extends Base
         $leagueService = new LeagueService();
         $result = $leagueService->getMatchTeamMembers($data, "match_team_id asc");
 
-        $finalData = [];
+        $finalData = $tempData = [];
         if (!empty($result)) {
             foreach ($result as $row) {
-                if (!array_key_exists($row['match_team_id'], $finalData)) {
-                    $finalData[$row['match_team_id']] = [];
-                    $finalData[$row['match_team_id']]["match_team_id"] = $row["match_team_id"];
-                    $finalData[$row['match_team_id']]["team_id"] = $row["team_id"];
-                    $finalData[$row['match_team_id']]["team_member_id"] = $row["team_member_id"];
-                    $finalData[$row['match_team_id']]["member_id"] = $row["member_id"];
-                    $finalData[$row['match_team_id']]["name"] = $row["name"];
-                    $finalData[$row['match_team_id']]["match_team_members"] = []; 
+                if (!array_key_exists($row['match_team_id'], $tempData)) {
+                    $tempData[$row['match_team_id']] = [];
+                    $tempData[$row['match_team_id']]["match_team_id"] = $row["match_team_id"];
+                    $tempData[$row['match_team_id']]["team_id"] = $row["team_id"];
+                    $tempData[$row['match_team_id']]["team_member_id"] = $row["team_member_id"];
+                    $tempData[$row['match_team_id']]["member_id"] = $row["member_id"];
+                    $tempData[$row['match_team_id']]["name"] = $row["name"];
+                    $tempData[$row['match_team_id']]["match_team_members"] = []; 
                 }
                 $temp = [
                     "match_team_id" => $row["match_team_id"],
@@ -1503,7 +1503,11 @@ class League extends Base
                     "member_id" => $row["team_member_id"],
                     "name" => $row["name"]
                 ];
-                array_push($finalData[$row['match_team_id']]["match_team_members"], $temp);
+                array_push($tempData[$row['match_team_id']]["match_team_members"], $temp);
+            }
+
+            foreach ($tempData as $row) {
+                array_push($finalData, $row);
             }
         }
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $finalData]);
@@ -5924,5 +5928,9 @@ class League extends Base
         }
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    public function quickSignUp() {
+        $data = input("post.");
     }
 }
