@@ -41,12 +41,15 @@ class Camp extends Base{
             // 无营主显示创建训练营按钮
             $showCreateCampBtn = $campowner ? 0 : 1;
         }
-        // $campList = $CampMember::with('camp')->where(['member_id'=>$member_id,'status'=>1])->select();
         if($campList){
             $campList = $campList->toArray();
         }
+        //我的family
+        $Family = new \app\model\Family;
+        $familyList = $Family->where(['member_id'=>$this->memberInfo['id']])->select();
 
         $this->assign('campList',$campList);
+        $this->assign('familyList',$familyList);
         $this->assign('messageList',$messageList);
         $this->assign('showCreateCampBtn', $showCreateCampBtn);
         return view('Camp/index');

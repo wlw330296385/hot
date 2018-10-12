@@ -38,6 +38,7 @@ class Score extends Base{
                             'member'=>$value['user'],
                             'score'=>$student_score,
                             'score_des'=>'上课送积分',
+                            'date_str'=>date('Ymd',time()),
                             'create_time'=>time()
                         ]);
                     }else{
@@ -47,6 +48,7 @@ class Score extends Base{
                             'member'=>$value['user'],
                             'score'=>$value['students']*$coach_score,
                             'score_des'=>'授课送积分',
+                            'date_str'=>date('Ymd',time()),
                             'create_time'=>time()
                         ]);
                     }

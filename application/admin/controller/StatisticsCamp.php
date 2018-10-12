@@ -429,8 +429,9 @@ class StatisticsCamp extends Backend{
     // 赠课购买列表
     public function campGift(){
         $camp_id = $this->campInfo['id'];
-        if(request()->isPost()){
-            dump(input('post.'));die;
+        $dateYm = input('param.dateYm');
+        if($dateYm){
+
         }
         $list = db('schedule_giftbuy')
         ->field('schedule_giftbuy.create_time,schedule_giftbuy.lesson_id,schedule_giftbuy.member,lesson.lesson,lesson.cost,lesson.total_giftschedule,lesson.resi_giftschedule,schedule_giftbuy.camp_id')
@@ -604,12 +605,13 @@ class StatisticsCamp extends Backend{
         }
         if(isset($map)){
             $scheduleList = db('salary_in')
-            ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students,schedule.rebate_type')
+            ->field('salary_in.*,schedule.student_str,schedule.coach,schedule.assistant,schedule.cost,schedule.coach_salary,schedule.assistant_salary,schedule.salary_base,schedule.schedule_rebate,schedule.schedule_income,schedule.lesson_time,schedule.students,schedule.rebate_type,schedule.status,schedule.is_school')
             ->where($map)
             ->join('schedule','schedule.id = salary_in.schedule_id')
             ->where(['salary_in.create_time'=>['between',[$month_start,$month_end]]])
             ->order('schedule.id desc')
             ->select();
+            // dump($scheduleList);die;
         }else{
             $scheduleList = [];
         }
