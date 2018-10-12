@@ -1459,6 +1459,44 @@ class League extends Base
         }
     }
 
+    public function getMatchTeamWithMembers()
+    {
+        $data = input('param.');
+        // 参数league_id -> match_id
+        if (input('?param.league_id')) {
+            unset($data['league_id']);
+            $data['match_id'] = input('param.league_id');
+        }
+        $data["match_team_id"] = ["neq", 0];
+        // 获取分组列表数据
+        $leagueService = new LeagueService();
+        $result = $leagueService->getMatchTeamMembers($data, "match_team_id asc");
+
+        $finalData = [];
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                if (!array_key_exists($row['match_team_id'], $finalData)) {
+                    $finalData[$row['match_team_id']] = [];
+                    $finalData[$row['match_team_id']]["match_team_id"] = $row["match_team_id"];
+                    $finalData[$row['match_team_id']]["team_id"] = $row["team_id"];
+                    $finalData[$row['match_team_id']]["team_member_id"] = $row["team_member_id"];
+                    $finalData[$row['match_team_id']]["member_id"] = $row["member_id"];
+                    $finalData[$row['match_team_id']]["name"] = $row["name"];
+                    $finalData[$row['match_team_id']]["match_team_members"] = []; 
+                }
+                $temp = [
+                    "match_team_id" => $row["match_team_id"],
+                    "team_id" => $row["team_id"],
+                    "team_member_id" => $row["team_member_id"],
+                    "member_id" => $row["team_member_id"],
+                    "name" => $row["name"]
+                ];
+                array_push($finalData[$row['match_team_id']]["match_team_members"], $temp);
+            }
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $finalData]);
+    }
+
     // 获取联赛球队成员列表
     public function getmatchteammemberlist()
     {
@@ -5709,6 +5747,10 @@ class League extends Base
 
         if (empty($data['status'])) {
             $data['status'] = 1;
+        }
+
+        if (!empty($data['honor_time'])) {
+            $data['honor_time'] = strtotime($data['honor_time']);
         }
         // 权限验证
         $leagueS = new LeagueService();

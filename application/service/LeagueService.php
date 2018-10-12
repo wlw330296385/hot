@@ -659,10 +659,7 @@ class LeagueService
     {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->select();
-        if (!$res) {
-            return $res;
-        }
-        return $res->toArray();
+        return $res;
     }
 
     // 获取联赛球队球员列表
