@@ -19,6 +19,7 @@ use app\model\MatchStageAdvteam;
 use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 use app\model\MatchHonor;
+use app\model\MatchHonorMember;
 use think\Db;
 
 class LeagueService
@@ -420,6 +421,13 @@ class LeagueService
         return ($res) ? $res : 0;
     }
 
+    public function getMatchTeam($map)
+    {
+        $model = new MatchTeam();
+        $result = $model->where($map)->find();
+        return $result;
+    }
+
     // 获取联赛球队详情（关联比赛、球队详细）
     public function getMatchTeamInfo($map)
     {
@@ -651,10 +659,7 @@ class LeagueService
     {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->select();
-        if (!$res) {
-            return $res;
-        }
-        return $res->toArray();
+        return $res;
     }
 
     // 获取联赛球队球员列表
@@ -1400,7 +1405,40 @@ class LeagueService
     public function saveMatchHonor($data)
     {
         $model = new MatchHonor();
-        $res = $model->allowField(true)->isUpdate(true)->save($data);
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            
+        } else {
+            $res = $model->allowField(true)->isUpdate(false)->save($data);
+        }
+        return $model->id;
+    }
+
+    public function getMatchHonorMember($map)
+    {
+        $model = new MatchHonorMember();
+        $res = $model->where($map)->find();
+        return $res;
+    }
+
+    public function getMatchHonorMemberList($map, $order = 'id asc')
+    {
+        $model = new MatchHonorMember();
+        $res = $model->where($map)->order($order)->select();
+        return $res;
+    }
+
+    public function saveAllMatchHonorMember($data)
+    {
+        $model = new MatchHonorMember();
+        $res = $model->allowField(true)->isUpdate(true)->saveAll($data);
+        return $res;
+    }
+
+    public function delMatchHonorMember($map)
+    {
+        $model = new MatchHonorMember();
+        $res = $model->where($map)->delete(true);
         return $res;
     }
 }

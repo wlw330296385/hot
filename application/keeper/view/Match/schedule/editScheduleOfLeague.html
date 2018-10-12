@@ -29,7 +29,13 @@
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
-
+        .addInput {
+            margin-top: 15px;
+        }
+        .addBtn {
+            margin-top: 15px;
+            padding: 12px 11px;
+        }   
         /* 花絮 */
 
         .albumImg {
@@ -442,6 +448,13 @@
                     toCourtList(keyword, "court", pageCR);
                 }
             });
+            // 添加新对手
+            $(document).on("tap", ".addBtn", function () {
+                var court = $(".addInput").val();
+                $(".courtCont").text(court);
+                $("input[name=court_id]").val("-1");
+                mui("#court").popover("toggle");
+            })
             //关闭
             $(".closeCourt").on('tap', '', function () {
                 mui("#court").popover("toggle");
@@ -632,7 +645,10 @@
                         }
                         $(wCourtList).empty();
                         if (newli == '') {
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p></div>'
+                            newli =
+                                '<div class="mui-text-center"><p class="nohave">没有查找到数据哦</p><input type="text" class="addInput wd66" value="' +
+                                keyword +
+                                '" placeholder="请输入你要添加的场地" /><button class="mui-btn addBtn">确认</button></div>'
                         }
                         $(wCourtList).append(newli);
                         $(currPage).text(data.data.current_page);
@@ -672,7 +688,7 @@
                         $(".refereeList").empty().append(newli);
                     } else {
                         $(".refereeList").append(
-                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>'
+                            '<div class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></div>'
                         );
                     }
                 },
@@ -720,7 +736,9 @@
                         //     }
                         // })
                     } else {
-                        $(".scoreList").empty().append("<p class='nohave'>没有查找到数据哦</p>");
+                        $(".scoreList").empty().append(
+                            '<div class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></div>'
+                        );
                     }
                 },
                 error: function (xhr, type, errerThrown) {

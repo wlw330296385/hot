@@ -1351,4 +1351,10 @@ class Match extends Base {
     public function updateRecruitment() {
         return view('Match/recruitment/updateRecruitment');
     }
+
+
+     // 快捷报名
+     public function quickSignUp() {
+        return view('Match/quickSignUp');
+    }
 }
