@@ -47,22 +47,17 @@
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-home-game colororange"></span>奖项名称</label>
-                    <span>{honorInfo.name}</span>
-                </li>
-                <li class="mui-table-view-cell listli">
-                    <label>
-                        <span class="icon iconfont icon-activity-name colororange"></span>赛事名称</label>
-                    <span>{honorInfo.match}</span>
+                    <span>{$honorInfo.name}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-home-activity colororange"></span>授奖单位</label>
-                    <span>{honorInfo.award_org}</span>
+                    <span>{$leagueInfo.name}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
                         <span class="icon iconfont icon-activity-EndTime colororange"></span>授奖时间</label>
-                    <span>{honorInfo.honor_time}</span>
+                    <span>{$honorInfo.honor_time}</span>
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
@@ -78,7 +73,7 @@
                 </span>
             </div>
             <ul class="mui-table-view mb">
-                <li class="listli desimg">{honorInfo.introduction}</li>
+                <li class="listli desimg">{$honorInfo.introduction}</li>
             </ul>
 
             <div class="page-header border-b">
@@ -103,21 +98,21 @@
                         分享
                     </a>
                 </li>
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
-                    <a href="{:url('team/honorEdit')}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                    <a href="{:url('match/honotEditOfLeague',['league_id'=>$leagueInfo.id,'honor_id'=>$honorInfo.id])}">
                         编辑
                     </a>
-                </li> -->
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
                     <a href="#fbcomment">
                         评论
                     </a>
-                </li> -->
-                <li class="mui-table-view-cell mui-media mui-col-xs-8 mui-col-sm-8 opli bgblue">
+                </li>
+                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-8 mui-col-sm-8 opli bgblue">
                     <a href="#fbcomment">
                         发表评论
                     </a>
-                </li>
+                </li> -->
 
             </ul>
 
@@ -370,7 +365,7 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{honorInfo.id}";
+            var commented_id = "{$honorInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
