@@ -92,6 +92,7 @@ class Login extends Base{
                                 'member_id'=>$data['pid'],
                                 'member'=>$data['member'],
                                 'create_time'=>time(),
+                                'date_str'=>date('Ymd',time()),
                                 'score_des'=>'邀请注册送积分'
                             ]
                         );

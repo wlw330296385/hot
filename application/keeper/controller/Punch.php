@@ -17,9 +17,15 @@ class Punch extends Base{
     	$puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
     	//本月打卡总数
     	$monthPunch = count($puchList);
-
+        // 本月打卡积分总数
+        // 本月日期
+        $month = date('Ym',time());
+        $month_end = $month*100+32;
+        $month_start = $month*100+1;
+        $monthScore = db('score')->where(['member_id'=>$this->memberInfo['id'],'score_des'=>"打卡送积分"])->where(['date_str'=>['between',[$month_start,$month_end]]])->sum('score');
     	$this->assign('puchList',$puchList);
-    	$this->assign('monthPunch',$monthPunch);
+        $this->assign('monthScore',$monthScore?$monthScore:0);
+    	$this->assign('monthPunch',$monthPunch?$monthPunch:0);
         return view('Punch/index');
     }
 

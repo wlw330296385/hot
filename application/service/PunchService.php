@@ -76,6 +76,7 @@ class PunchService {
                     'member_id'=>$data['member_id'],
                     'member'=>$data['member'],
                     'create_time'=>time(),
+                    'date_str'=>date('Ymd',time()),
                     'score_des'=>'打卡送积分'
                 ]
             );

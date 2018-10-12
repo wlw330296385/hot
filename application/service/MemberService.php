@@ -100,6 +100,7 @@ class MemberService{
                     'member_id'=>$MemberModel->id,
                     'member'=>$request['member'],
                     'create_time'=>time(),
+                    'date_str'=>date('Ymd',time()),
                     'score_des'=>'注册送积分'
                 ]
             );
