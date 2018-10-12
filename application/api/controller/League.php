@@ -1468,6 +1468,18 @@ class League extends Base
             $data['match_id'] = input('param.league_id');
         }
         $data["match_team_id"] = ["neq", 0];
+        
+        // 权限验证
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power || $power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
         // 获取分组列表数据
         $leagueService = new LeagueService();
         $result = $leagueService->getMatchTeamMembers($data, "match_team_id asc");
