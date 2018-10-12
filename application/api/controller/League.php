@@ -895,6 +895,7 @@ class League extends Base
             $leagueService = new LeagueService();
             $matchService = new MatchService();
             $result = $matchService->getMatchApplyWithTeamPaginator($data);
+
             // 返回结果
             if (!$result) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
@@ -902,8 +903,9 @@ class League extends Base
             }
             // 遍历获取报名球队登记参赛球员数
             foreach ($result['data'] as $key => $value) {
-                $matchTeamInfo = $leagueService->getMatchTeamInfoSimple(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
-                $result['data'][$key]['checkin_member_num'] = ($matchTeamInfo) ? $matchTeamInfo['members_num'] : 0;
+                // $matchTeamInfo = $leagueService->getMatchTeamInfoSimple(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
+                $matchTeamMembers = $leagueService->getMatchTeamMembers(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
+                $result['data'][$key]['checkin_member_num'] = count($matchTeamMembers);
             }
             $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
@@ -5687,6 +5689,7 @@ class League extends Base
             unset($data['league_id']);
         }
         $leagueS = new LeagueService();
+
         $result = $leagueS->getMatchHonorList($data);
         if ($result) {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
@@ -5697,16 +5700,20 @@ class League extends Base
 
     public function saveMatchHonor() {
         $data = input('post.');
-        if (empty($data["league_id"]) || empty($data["type"])) {
+        if (empty($data["league_id"]) || empty($data["type"]) || empty($data["name"])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         } else {
             $data['match_id'] = $data["league_id"];
             unset($data['league_id']);
         }
+
+        if (empty($data['status'])) {
+            $data['status'] = 1;
+        }
         // 权限验证
         $leagueS = new LeagueService();
         $power = $leagueS->getMatchMemberType([
-            'match_id' => $data['league_id'],
+            'match_id' => $data['match_id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
@@ -5714,62 +5721,154 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 
+        // 是否删除过往颁奖人和颁奖队
+        $flagReset = 0;
+
         // 如果是修改联赛奖项信息
         if (!empty($data["id"])) {
-            $matchHonor = $leagueS->getMatchHonorList(['id' => $data['id'], 'match_id' => $data['match_id']]);
+            $matchHonor = $leagueS->getMatchHonor(['id' => $data['id'], 'match_id' => $data['match_id']]);
             if (empty($matchHonor)) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
+
+            if ($matchHonor['type'] != $data['type']) {
+                $flagReset = 1;
+            }
         }
-        
-        // 奖项颁发
-        if (!empty($data["team_id"])) {
+
+        $updateId = $leagueS->saveMatchHonor($data);
+
+        if (empty($updateId)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        } else {
+            $data['id'] = $updateId;
+        }
+
+        // 填了获奖人，奖项颁发
+        if (!empty($data['team_member_list']) || !empty($data['team_list'])) {
+            // 查之前的颁奖人信息
+            $matchHonorMemberList = $leagueS->getMatchHonorMemberList([
+                'match_id' => $data['match_id'], 
+                'match_honor_id' => $data['id']
+            ]);
+            $honorTeamIdArray = [];
+            $honorTeamMemberIdArray = [];
+            foreach ($matchHonorMemberList as $row) {
+                array_push($honorTeamIdArray, $row['team_id']);
+                array_push($honorTeamMemberIdArray, $row['team_member_id']);
+            }
+            $honorTeamIdArray = array_unique($honorTeamIdArray);
+            $honorTeamMemberIdArray = array_unique($honorTeamMemberIdArray);
+
+            $finalData = [];
             switch ($data['type']) {
                 case '1':
                     // 个人奖颁发时，team_id, team_member_id 都是必填
-                    if (empty($data['team_member_id'])) {
+                    if (empty($data['team_member_list'])) {
                         return json(['code' => 100, 'msg' => '此为个人奖项，获奖人不能为空']);
                     }
+                    $data['team_member_list'] = json_decode($data['team_member_list'], true);
 
-                    $matchTeamMember = $leagueS->getMatchTeamMember([
-                        'match_id' => $data['match_id'], 
-                        'team_id' => $data['team_member_id'], 
-                        'team_member_id' => $data['team_member_id']
-                    ]);
-                    if (empty($matchTeamMember)) {
-                        return json(['code' => 100, 'msg' => '该获奖人未参加该赛事']);
+                    // 数量不同 肯定重置
+                    if (count($honorTeamMemberIdArray) != count($data['team_member_list']) ) {
+                        $flagReset = 1;
                     }
-
-                    // 若之前颁给他人，删除之前颁给别人的荣誉
-                    $memberS = new MemberService();
-                    if (!empty($matchHonor['id'])) {
-                        $memberHonor = $memberS->getMemberHonor(['match_honor_id' => $data['id']]);
+                    foreach ($data['team_member_list'] as $row) {
+                        // 确定该队员参加了联赛
+                        $matchTeamMember = $leagueS->getMatchTeamMember([
+                            'match_id' => $data['match_id'], 
+                            'team_id' => $row['team_id'], 
+                            'team_member_id' => $row['team_member_id'],
+                            'member_id' => $row['member_id']
+                        ]);
+                        if (empty($matchTeamMember)) {
+                            return json(['code' => 100, 'msg' => $row['name'].' 该队员未参加该赛事']);
+                        }
+                        $temp = [
+                            "match_id" => $matchTeamMember["match_id"],
+                            "match_honor_id" => $data['id'],
+                            "team_id" => $matchTeamMember["team_id"],
+                            "team_member_id" => $matchTeamMember["team_member_id"],
+                            "member_id" => $matchTeamMember["member_id"] 
+                        ];
+                        // 如果team_member_id不在honorTeamMemberIdArray内就表示有修改
+                        if (!in_array($row['team_member_id'], $honorTeamMemberIdArray)) {
+                            $flagReset = 1;
+                        }
+                        array_push($finalData, $temp);
                     }
                     
-                    Db::startTrans();
-                    try {
-                        // 删除之前的 
-                        Db::commit();
-                    } catch (\Exception $e) {
-                        Db::rollback();
-                        trace('error:' . $e->getMessage(), 'error');
-                        return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-                    }
-
-                    $res = $leagueS->saveMatchHonor($data);
-                    
-
                     break;
                 case '2':
                     // 团队奖
+                    if (empty($data['team_list'])) {
+                        return json(['code' => 100, 'msg' => '此为团队奖项，获奖队伍不能为空']);
+                    }
+
+                    $data['team_list'] = json_decode($data['team_list'], true);
+
+                    if (count($honorTeamIdArray) != count($data['team_list']) ) {
+                        $flagReset = 1;
+                    }
+
+                    foreach ($data['team_list'] as $row) {
+                        $matchTeam = $leagueS->getMatchTeam([
+                            'match_id' => $data['match_id'], 
+                            'team_id' => $row['team_id']
+                        ]);
+                        if (empty($matchTeam)) {
+                            return json(['code' => 100, 'msg' => $row['name'].'该队伍未参加该赛事']);
+                        }
+
+                        if (!in_array($row['team_id'], $honorTeamIdArray)) {
+                            $flagReset = 1;
+                        }
+
+                        // 看看参赛队伍的队员，有则全部发奖，没有则记录一条
+                        $matchTeamMemberList = $leagueS->getMatchTeamMemberList([
+                            'match_id' => $data['match_id'], 
+                            'team_id' => $row['team_id']
+                        ]);
+                        if (!empty($matchTeamMemberList)) {
+                            foreach ($matchTeamMemberList as $row) {
+                                $temp = [
+                                    "match_id" => $row["match_id"],
+                                    "match_honor_id" => $data['id'],
+                                    "team_id" => $row["team_id"],
+                                    "team_member_id" => $row["team_member_id"],
+                                    "member_id" => $row["member_id"]
+                                ];
+                                array_push($finalData, $temp);
+                            }
+                        } else {
+                            $temp = [
+                                "match_id" => $matchTeam["match_id"],
+                                "match_honor_id" => $data['id'],
+                                "team_id" => $matchTeam["team_id"]
+                            ];
+                            array_push($finalData, $temp);
+                        }
+                    }
                     break;
             }
+
+            Db::startTrans();
+            try {
+                if ($flagReset) {
+                    $res1 = $leagueS->delMatchHonorMember([
+                        "match_id" => $data["match_id"],
+                        "match_honor_id" => $data["id"]
+                    ]);
+                    $res2 = $leagueS->saveAllMatchHonorMember($finalData);
+                }
+                Db::commit();
+            } catch (\Exception $e) {
+                Db::rollback();
+                trace('error:' . $e->getMessage(), 'error');
+                return json(['code' => 100, 'msg' => $e->getMessage()]);
+            }
         }
-        $res = $leagueS->saveMatchHonor($data);
-        if ($res) {
-            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
-        } else {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        }
+
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 }
